@@ -1,7 +1,10 @@
+import ax from "./RequestService";
+
 const choreos = [
   {
     id: "asdf",
     teamId: "testteam",
+    name: "RM 2023",
     counts: 200,
     actions: [
       {
@@ -90,11 +93,23 @@ const choreos = [
 
 class ChoreoService {
   async getByTeam(teamId) {
-    return choreos.filter((c) => c.teamId == teamId);
+    return ax
+      .get("/choreo", { params: { teamId } })
+      .then((res) => res.data)
+      .catch((e) => {
+        console.warn(e);
+        return choreos.filter((c) => c.teamId == teamId);
+      });
   }
 
   async getById(choreoId) {
-    return choreos.find((c) => c.id == choreoId);
+    return ax
+      .get(`/choreo/${choreoId}`)
+      .then((res) => res.data)
+      .catch((e) => {
+        console.warn(e);
+        return choreos.find((c) => c.id == choreoId);
+      });
   }
 }
 

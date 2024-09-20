@@ -281,6 +281,12 @@ const dotRadius = 20;
 export default {
   name: "MatEditor",
   components: { BIconMap },
+  props: {
+    choreoId: {
+      type: String,
+      required: true,
+    },
+  },
   data: () => ({
     count: 0,
     choreo: null,
@@ -421,29 +427,6 @@ export default {
 
       return result;
     },
-    loadTeam() {
-      return TeamService.getByName("TestTeam").then((team) => {
-        this.members = team.members.map((m, i) => {
-          let yNew = Math.floor(i / 8 + 1) * dotRadius + 20;
-          let xNew = (dotRadius * 3 * i + 50) % 500;
-
-          return {
-            ...m,
-            x: xNew,
-            y: yNew,
-            color: ColorService.getRandom(),
-            // id: (Math.random() + 1).toString(36).substring(7),
-          };
-        });
-
-        this.members = this.members.map((m) => {
-          if (!m.abbreviation) m.abbreviation = this.findAbbreviation(m);
-          return m;
-        });
-
-        return team;
-      });
-    },
     setColor(event, id) {
       const membersCopy = this.members;
       membersCopy.find((m) => m.id == id).color = event;
@@ -454,9 +437,31 @@ export default {
     },
   },
   mounted() {
-    this.loadTeam().then(() => {
-      ChoreoService.getById("asdf").then((choreo) => {
-        this.choreo = choreo;
+    ChoreoService.getById(this.choreoId).then((choreo) => {
+      this.choreo = choreo;
+
+      TeamService.getById(this.choreo.teamId).then((team) => {
+        console.log(team);
+        this.members = team.members.map((m, i) => {
+          let yNew = Math.floor(i / 8 + 1) * dotRadius + 20;
+          let xNew = (dotRadius * 3 * i + 50) % 500;
+
+          return {
+            ...m,
+            x: xNew,
+            y: yNew,
+            color: ColorService.getRandom(),
+          };
+        });
+
+        this.members = this.members.map((m) => {
+          if (!m.abbreviation) m.abbreviation = this.findAbbreviation(m);
+          return m;
+        });
+
+        console.log(this.members);
+
+        return team;
       });
     });
   },
@@ -495,7 +500,7 @@ export default {
                     if (item.x) member.x = item.x;
                     if (item.y) member.y = item.y;
                   } catch (e) {
-                    console.warn(member, item);
+                    console.warn(member, item, members);
                   }
                 });
                 break;

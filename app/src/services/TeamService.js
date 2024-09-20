@@ -1,7 +1,9 @@
+import ax from "./RequestService";
+
 const teams = [
   {
     id: "testteam",
-    name: "TestTeam",
+    name: "Glamourous Blush",
     members: [
       {
         id: "aaa",
@@ -45,15 +47,33 @@ const teams = [
 
 class TeamService {
   async getAll() {
-    return teams;
+    return ax
+      .get("/team")
+      .then((res) => res.data)
+      .catch((e) => {
+        console.warn(e);
+        return teams;
+      });
   }
 
   async getByName(name) {
-    return teams.find((t) => t.name == name);
+    return ax
+      .get("/team", { params: { name } })
+      .then((res) => res.data)
+      .catch((e) => {
+        console.warn(e);
+        return teams.find((t) => t.name == name);
+      });
   }
 
   async getById(teamId) {
-    return teams.find((t) => t.id == teamId);
+    return ax
+      .get(`/team/${teamId}`)
+      .then((res) => res.data)
+      .catch((e) => {
+        console.warn(e);
+        return teams.find((t) => t.id == teamId);
+      });
   }
 }
 

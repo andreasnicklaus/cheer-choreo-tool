@@ -1,0 +1,30 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andreasnicklaus/cheer-choreo-tool.git"
+  },
+  "author": "Andreas Nicklaus",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andreasnicklaus/cheer-choreo-tool/issues"
+  },
+  "homepage": "https://github.com/andreasnicklaus/cheer-choreo-tool#readme",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "winston": "^3.14.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
