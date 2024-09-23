@@ -1,0 +1,19 @@
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./data:/var/lib/postgresql/data
+
+  server:
+    build: server
+    restart: unless-stopped
+    env_file:
+      - .env
+      - .server.env
+    environment:
+     - DB_HOST=db
+    ports:
+      - 3000:3000

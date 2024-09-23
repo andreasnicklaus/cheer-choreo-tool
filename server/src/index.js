@@ -3,6 +3,9 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
+// DATABASE
+const db = require("./db");
+
 // MIDDLEWARES
 const {
   errorHandlingMiddleWare,
@@ -37,6 +40,13 @@ app.use(loggerMiddleWare);
 app.use(errorLoggingMiddleWare);
 app.use(errorHandlingMiddleWare);
 
-app.listen(port, () => {
-  logger.info(`Example app listening on port ${port}`);
-});
+db.authenticate()
+  .then(() => {
+    logger.info("DB Connection established");
+    app.listen(port, () => {
+      logger.info(`Example app listening on port ${port}`);
+    });
+  })
+  .catch((e) => {
+    logger.error("Unable to authenticate with the database");
+  });

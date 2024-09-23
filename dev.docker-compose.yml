@@ -1,0 +1,8 @@
+services:
+
+  server:
+    build:
+      context: server
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ./server/src:/usr/src/app/src
