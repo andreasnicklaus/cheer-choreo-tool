@@ -1,23 +1,28 @@
 const { DataTypes } = require("sequelize");
 const db = require("..");
 
-const Choreo = db.define("Choreo", {
+const Position = db.define("Position", {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
   },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  counts: {
-    type: DataTypes.INTEGER,
+  x: {
+    type: DataTypes.FLOAT,
     allowNull: false,
     validate: {
       min: 0,
+      max: 100,
+    },
+  },
+  y: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
+    validate: {
+      min: 0,
+      max: 100,
     },
   },
 });
 
-module.exports = Choreo;
+module.exports = Position;

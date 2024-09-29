@@ -21,4 +21,8 @@ export default {
   // text-align: center;
   color: #2c3e50;
 }
+
+.modal-open {
+  padding: 0 !important;
+}
 </style>

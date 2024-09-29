@@ -2,7 +2,7 @@
   <b-table-simple
     striped
     hover
-    sticky-header="2000px"
+    :sticky-header="tableHeight"
     head-variant="light"
     small
     :style="{
@@ -10,7 +10,7 @@
     }"
     class="text-center"
   >
-    <b-thead>
+    <b-thead head-variant="light">
       <b-tr>
         <b-th
           v-for="field in ['Achter', '1', '2', '3', '4', '5', '6', '7', '8']"
@@ -48,12 +48,8 @@
                 : 'outline-primary'
             "
           >
-            <span v-if="acht[label]?.some((a) => a.type == 'hit')">
-              <p
-                class="mb-0"
-                v-for="hit in acht[label].filter((a) => a.type == 'hit')"
-                :key="hit.name"
-              >
+            <span v-if="acht[label].length > 0">
+              <p class="mb-0" v-for="hit in acht[label]" :key="hit.name">
                 {{ hit.name }}
               </p>
             </span>
@@ -75,7 +71,6 @@ export default {
     },
     choreo: {
       type: Object,
-      required: true,
     },
   },
   methods: {
@@ -83,21 +78,14 @@ export default {
       this.$emit("setCounter", achter * 8 + count);
     },
     findActionsForCount(count) {
-      return this.choreo.actions.filter((a) => {
-        switch (a.type) {
-          case "hit":
-            return a.count == count;
-          case "position":
-            return a.startCount <= count && a.endCount >= count;
-          default:
-            return false;
-        }
+      return this.choreo.Hits.filter((a) => {
+        return a.count == count;
       });
     },
   },
   computed: {
     achter() {
-      if (!this.choreo) return [];
+      if (!this.choreo) return [null];
       else {
         const achterLength = Math.ceil(this.choreo.counts / 8);
         const achter = new Array(achterLength).fill(null).map((_, i) => ({
@@ -114,6 +102,15 @@ export default {
         return achter;
       }
     },
+    tableHeight() {
+      return window.innerHeight - 30 + "px";
+    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+td {
+  padding: 0;
+}
+</style>

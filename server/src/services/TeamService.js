@@ -4,7 +4,7 @@ const { logger } = require("../plugins/winston");
 class TeamService {
   async getAll() {
     return Team.findAll({
-      include: { all: true, nested: true },
+      include: { all: true },
     });
   }
 
@@ -20,16 +20,27 @@ class TeamService {
   }
 
   async create(name, ClubId) {
-    logger.debug(`TeamService.create ${{ name, ClubId }}`);
+    logger.debug(`TeamService.create ${JSON.stringify({ name, ClubId })}`);
     return Team.create({ name, ClubId });
+  }
+
+  async findOrCreate(name, ClubId) {
+    logger.debug(
+      `TeamService.findOrCreate ${JSON.stringify({ name, ClubId })}`
+    );
+    const [team, created] = await Team.findOrCreate({
+      where: { name, ClubId },
+    });
+    return team;
   }
 
   async update(id, data) {
     return Team.findByPk(id).then(async (foundTeam) => {
       if (foundTeam) {
-        logger.debug(`TeamService.update ${{ id, data }}`);
+        logger.debug(`TeamService.update ${JSON.stringify({ id, data })}`);
         await foundTeam.update(data);
-        return foundTeam.save();
+        await foundTeam.save();
+        return Team.findByPk(id, { include: { all: true, nested: true } });
       } else
         throw Error(`Beim Update wurde kein Team mit der ID ${id} gefunden`);
     });
@@ -38,7 +49,7 @@ class TeamService {
   async remove(id) {
     return Team.findByPk(id).then((foundTeam) => {
       if (foundTeam) {
-        logger.debug(`TeamService.remove ${{ id }}`);
+        logger.debug(`TeamService.remove ${JSON.stringify({ id })}`);
         return foundTeam.destroy();
       } else {
         throw Error(`Beim Löschen wurde kein Team mit der ID ${id} gefunden`);

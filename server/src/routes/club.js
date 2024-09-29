@@ -12,13 +12,22 @@ router.get("/:id?", (req, res, next) => {
         return next();
       })
       .catch((e) => next(e));
-  else
-    return ClubService.getAll()
-      .then((clubList) => {
-        res.send(clubList);
-        return next();
-      })
-      .catch((e) => next(e));
+  else {
+    if (req.query.name)
+      return ClubService.findByName(req.query.name)
+        .then((clubList) => {
+          res.send(clubList);
+          return next();
+        })
+        .catch((e) => next(e));
+    else
+      return ClubService.getAll()
+        .then((clubList) => {
+          res.send(clubList);
+          return next();
+        })
+        .catch((e) => next(e));
+  }
 });
 
 router.post("/", (req, res, next) => {

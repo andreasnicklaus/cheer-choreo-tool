@@ -1,0 +1,74 @@
+name: Build Vue and Deploy to Pages
+
+on:
+  push:
+    branches:
+      - "main"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./app
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: "npm"
+          cache-dependency-path: "**/package.json"
+
+      - name: Install dependencies
+        run: NODE_ENV=production npm ci
+
+      - name: Build app
+        run: npm run build
+
+      - name: Copy index.html to 404.html
+        run: cp dist/index.html dist/404.html
+
+      - name: Create CNAME file
+        run: echo cheer.andreasnicklaus.de > dist/CNAME
+
+      - name: Archive artifact
+        shell: sh
+        run: |
+          echo ::group::Archive artifact
+          tar \
+            --dereference --hard-dereference \
+            --directory "$INPUT_PATH" \
+            -cvf "$RUNNER_TEMP/artifact.tar" \
+            --exclude=.git \
+            --exclude=.github \
+            .
+          echo ::endgroup::
+        env:
+          INPUT_PATH: dist
+
+      - name: Upload Built files
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-pages
+          path: ${{ runner.temp }}/artifact.tar
+
+  deploy:
+    needs: build
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

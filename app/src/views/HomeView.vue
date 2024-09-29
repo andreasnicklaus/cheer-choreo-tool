@@ -2,7 +2,18 @@
   <b-container class="home">
     <b-row>
       <b-col cols="3">
-        <b-card title="Filter">
+        <b-card>
+          <b-card-title
+            class="d-flex justify-content-between align-items-center"
+          >
+            Filter
+            <b-icon-info id="popover-info-target" variant="secondary" />
+            <b-popover target="popover-info-target" triggers="hover">
+              <p><b>Suchen:</b> Suche nach einem Team oder einer Choreo</p>
+              <p><b>Team:</b> Filtere die Choreos nach Teams</p>
+              <p><b>Counts:</b> Filtere die Choreo nach ihrer Länge</p>
+            </b-popover>
+          </b-card-title>
           <b-input-group class="mb-4 mt-2">
             <b-form-input
               placeholder="Suchen"
@@ -45,7 +56,7 @@
                     {{ team.name }}
                     <b-badge variant="light">
                       {{
-                        filteredChoreos.filter((c) => c.teamId == team.id)
+                        filteredChoreos.filter((c) => c.TeamId == team.id)
                           .length
                       }}
                     </b-badge>
@@ -128,12 +139,12 @@
                   :to="{
                     name: 'Team',
                     params: {
-                      teamId: teams.find((t) => t.id == choreo.teamId)?.id,
+                      teamId: teams.find((t) => t.id == choreo.TeamId)?.id,
                     },
                   }"
                   :style="{ color: 'inherit' }"
                 >
-                  {{ teams.find((t) => t.id == choreo.teamId)?.name }}
+                  {{ teams.find((t) => t.id == choreo.TeamId)?.name }}
                 </router-link>
                 <p>
                   {{ Math.floor(choreo.counts / 8) }} Achter
@@ -149,14 +160,12 @@
 </template>
 
 <script>
-import ChoreoService from "@/services/ChoreoService";
 import ClubService from "@/services/ClubService";
-import TeamService from "@/services/TeamService";
 
 export default {
   name: "HomeView",
   data: () => ({
-    clubId: "testClub",
+    clubName: "Glamorous Cheerleader",
     teams: [],
     choreos: [],
     teamFilterIds: [],
@@ -167,18 +176,13 @@ export default {
   }),
   components: {},
   mounted() {
-    ClubService.getById(this.clubId).then((club) => {
-      Promise.all(
-        club.teamIds.map((teamId) => TeamService.getById(teamId))
-      ).then((teams) => (this.teams = teams));
-      Promise.all(
-        club.teamIds.map((teamId) => ChoreoService.getByTeam(teamId))
-      ).then((choreos) => {
-        this.choreos = choreos.flat();
-        setTimeout(() => (this.loading = false), 1000);
-        this.minCount = Math.min(...this.choreos.map((c) => c.counts));
-        this.maxCount = Math.max(...this.choreos.map((c) => c.counts));
-      });
+    ClubService.findByName(this.clubName).then((clubList) => {
+      const club = clubList[0];
+      this.teams = club.Teams;
+      this.choreos = club.Teams.map((t) => t.Choreos).flat();
+      this.minCount = Math.min(...this.choreos.map((c) => c.counts));
+      this.maxCount = Math.max(...this.choreos.map((c) => c.counts));
+      this.loading = false;
     });
   },
   methods: {
@@ -195,22 +199,19 @@ export default {
     },
   },
   computed: {
-    loading2() {
-      return this.loading;
-    },
     filteredChoreos() {
       let result = this.choreos;
       if (this.teamFilterIds.length > 0)
-        result = result.filter((r) => this.teamFilterIds.includes(r.teamId));
+        result = result.filter((r) => this.teamFilterIds.includes(r.TeamId));
       if (this.searchTerm)
         result = result.filter(
           (c) =>
-            c.name.toLowerCase().startsWith(this.searchTerm.toLowerCase()) ||
-            c.id.toLowerCase().startsWith(this.searchTerm.toLowerCase()) ||
+            c.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+            c.id.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
             this.teams
-              .find((t) => t.id == c.teamId)
+              .find((t) => t.id == c.TeamId)
               ?.name.toLowerCase()
-              .startsWith(this.searchTerm.toLowerCase())
+              .includes(this.searchTerm.toLowerCase())
         );
       result = result.filter(
         (c) => c.counts >= this.minCount && c.counts <= this.maxCount

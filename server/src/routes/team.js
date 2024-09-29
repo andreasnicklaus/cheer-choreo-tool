@@ -7,7 +7,6 @@ router.get("/:id?", (req, res, next) => {
   if (req.params.id)
     return TeamService.findById(req.params.id)
       .then((team) => {
-        console.log(team);
         res.send(team);
         return next();
       })

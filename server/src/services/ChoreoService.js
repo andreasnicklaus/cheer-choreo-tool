@@ -1,62 +1,9 @@
+const { Json } = require("sequelize/lib/utils");
 const Choreo = require("../db/models/choreo");
 const { logger } = require("../plugins/winston");
 
-// const choreos = [
-//   {
-//     id: "blush-rm2023",
-//     teamId: "blush",
-//     name: "RM 2023",
-//     counts: 200,
-//     actions: [
-//       {
-//         type: "position",
-//         startCount: 0,
-//         endCount: 2,
-//         items: [
-//           {
-//             memberId: "aaa",
-//             x: 50,
-//             y: 50,
-//           },
-//         ],
-//       },
-//       {
-//         type: "position",
-//         startCount: 6,
-//         endCount: 7,
-//         items: [
-//           {
-//             memberId: "aaa",
-//             x: 450,
-//             y: 450,
-//           },
-//         ],
-//       },
-//       {
-//         type: "hit",
-//         count: 0,
-//         name: "Pose",
-//       },
-//       {
-//         type: "hit",
-//         count: 0,
-//         name: "Test",
-//         memberIds: ["aaa"],
-//       },
-//     ],
-//   },
-//   {
-//     id: "berry-lm2024",
-//     teamId: "berry",
-//     name: "LM 2024",
-//     counts: 150,
-//     actions: [],
-//   },
-// ];
-
 class ChoreoService {
   async getAll() {
-    console.log(Choreo.associations);
     return Choreo.findAll({
       include: { all: true, nested: true },
     });
@@ -70,25 +17,49 @@ class ChoreoService {
   }
 
   async findById(id) {
-    return Choreo.findByPk(id);
+    // return Choreo.findByPk(id, { include: { all: true, nested: false } });
+    return Choreo.findByPk(id, {
+      include: [
+        {
+          association: "Team",
+          include: "Members",
+        },
+        {
+          association: "Lineups",
+          include: {
+            association: "Positions",
+            include: "Member",
+          },
+        },
+        "Hits",
+      ],
+    });
   }
 
-  async create(name, count, TeamId, Lineups = [], Hits = []) {
+  async create(name, counts, TeamId) {
     logger.debug(
-      `ChoreoService.create ${{ name, count, TeamId, Lineups, Hits }}`
+      `ChoreoService.create ${JSON.stringify({ name, counts, TeamId })}`
     );
-    return Choreo.create(
-      { name, count, TeamId, Lineups, Hits },
-      { include: ["Lineups", "Hits"] }
+    return Choreo.create({ name, counts, TeamId });
+  }
+
+  async findOrCreate(name, counts, TeamId) {
+    logger.debug(
+      `ChoreoService.findOrCreate ${JSON.stringify({ name, counts, TeamId })}`
     );
+    const [choreo, created] = await Choreo.findOrCreate({
+      where: { name, counts, TeamId },
+    });
+    return choreo;
   }
 
   async update(id, data) {
     return Choreo.findByPk(id).then(async (foundChoreo) => {
       if (foundChoreo) {
-        logger.debug(`ChoreoService.update ${{ id, data }}`);
+        logger.debug(`ChoreoService.update ${JSON.stringify({ id, data })}`);
         await foundChoreo.update(data);
-        return foundChoreo.save();
+        await foundChoreo.save();
+        return Choreo.findByPk(id, { include: { all: true, nested: true } });
       } else {
         throw new Error(
           `Beim Update wurde keine Choreo mit der ID ${id} gefunden`
@@ -100,7 +71,7 @@ class ChoreoService {
   async remove(id) {
     return Choreo.findByPk(id).then(async (foundChoreo) => {
       if (foundChoreo) {
-        logger.debug(`ChoreoService.remove ${{ id, data }}`);
+        logger.debug(`ChoreoService.remove ${JSON.stringify({ id, data })}`);
         return foundChoreo.destroy();
       } else {
         throw new Error(

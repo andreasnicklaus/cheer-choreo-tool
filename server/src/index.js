@@ -22,6 +22,10 @@ const { logger } = require("./plugins/winston");
 const { choreoRouter } = require("./routes/choreo");
 const { teamRouter } = require("./routes/team");
 const { clubRouter } = require("./routes/club");
+const { hitRouter } = require("./routes/hit");
+const { lineupRouter } = require("./routes/lineup");
+const { memberRouter } = require("./routes/member");
+const { positionRouter } = require("./routes/position");
 
 const app = express();
 const port = 3000;
@@ -35,18 +39,30 @@ app.get("/", (req, res) => {
 app.use("/choreo", choreoRouter);
 app.use("/team", teamRouter);
 app.use("/club", clubRouter);
+app.use("/hit", hitRouter);
+app.use("/lineup", lineupRouter);
+app.use("/member", memberRouter);
+app.use("/position", positionRouter);
 
 app.use(loggerMiddleWare);
 app.use(errorLoggingMiddleWare);
 app.use(errorHandlingMiddleWare);
 
-db.authenticate()
-  .then(() => {
-    logger.info("DB Connection established");
-    app.listen(port, () => {
-      logger.info(`Example app listening on port ${port}`);
+function startServer() {
+  db.authenticate()
+    .then(() => {
+      logger.info("DB Connection established");
+
+      app.listen(port, () => {
+        logger.info(`Example app listening on port ${port}`);
+      });
+    })
+    .catch((e) => {
+      logger.error(
+        "Unable to authenticate with the database. Restarting in 1 sec"
+      );
+      setTimeout(startServer, 1000);
     });
-  })
-  .catch((e) => {
-    logger.error("Unable to authenticate with the database");
-  });
+}
+
+startServer();

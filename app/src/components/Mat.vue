@@ -1,91 +1,102 @@
 <template>
-  <svg
-    ref="svgCanvas"
-    class="svgCanvas"
-    :height="height"
-    :width="width"
-    mlns="http://www.w3.org/2000/svg"
-    :style="{
-      border: '1px solid #000000',
-      backgroundColor: '#e5e5f7',
-      backgroundImage:
-        'linear-gradient(to right, #444cf766 5px, #e5e5f744 5px )',
-      backgroundSize: width / 7 + 'px 100%',
-      backgroundRepeat: 'repeat',
-      '-webkit-touch-callout': 'none',
-      '-webkit-user-select': 'none',
-      '-khtml-user-select': 'none',
-      '-moz-user-select': 'none',
-      '-ms-user-select': 'none',
-      'user-select': 'none',
-    }"
-    @mouseleave="mouseLeave"
+  <b-skeleton-wrapper
+    :loading="!currentPositions || currentPositions.length == 0"
   >
-    <circle
-      v-for="member in currentPositions"
-      :key="'c' + member.id"
-      :id="`member-${member.id}`"
-      :ref="`member-${member.id}`"
-      :cx="member.x"
-      :cy="member.y"
-      :r="dotRadius"
-      :stroke="member.color"
-      stroke-width="2"
-      :fill="
-        selectedMember && member.id == selectedMember.id
-          ? member.color + (member.color.length == 4 ? '2' : '22')
-          : member.color + (member.color.length == 4 ? '5' : '55')
-      "
-      @mousedown="() => mouseEnter(member)"
-      @mouseup="mouseLeave"
+    <template #loading>
+      <b-skeleton :width="width + 'px'" :height="height + 'px'"> </b-skeleton>
+    </template>
+    <svg
+      ref="svgCanvas"
+      class="svgCanvas"
+      :height="height"
+      :width="width"
+      mlns="http://www.w3.org/2000/svg"
       :style="{
-        opacity: selectedMember && member.id == selectedMember.id ? 0.7 : 1,
-        transition: !selectedMember ? `all ${transitionMs}ms` : null,
-        transitionTimingFunction: 'linear',
+        border: '1px solid #000000',
+        backgroundColor: '#e5e5f7',
+        backgroundImage:
+          'linear-gradient(to right, #444cf766 5px, #e5e5f744 5px )',
+        backgroundSize: width / 7 + 'px 100%',
+        backgroundRepeat: 'repeat',
+        '-webkit-touch-callout': 'none',
+        '-webkit-user-select': 'none',
+        '-khtml-user-select': 'none',
+        '-moz-user-select': 'none',
+        '-ms-user-select': 'none',
+        'user-select': 'none',
       }"
-    ></circle>
-    <text
-      v-for="member in currentPositions"
-      :key="'t' + member.id"
-      :id="'t' + member.id"
-      text-anchor="middle"
-      alignment-baseline="central"
-      :x="member.x"
-      :y="member.y"
-      :style="{
-        'pointer-events': 'none',
-        opacity: transitionRunning ? 0 : 1,
-        display:
-          selectedMember && selectedMember.id == member.id ? 'none' : null,
-        transition:
-          transitionRunning || selectedMember ? null : `all ${transitionMs}ms`,
-      }"
+      @mouseleave="mouseLeave"
     >
-      {{ member.abbreviation || member.nickname || member.name }}
-    </text>
-    <text
-      v-for="(_, i) in Array(7)"
-      :key="i"
-      text-anchor="middle"
-      alignment-baseline="central"
-      :y="15"
-      :x="(width / 7) * (i + 1) - width / 7 / 2"
-      :style="{
-        'pointer-events': 'none',
-        fill: '#6c757d !important',
-      }"
-    >
-      {{ i + 1 }}
-    </text>
-  </svg>
+      <circle
+        v-for="position in currentPositions"
+        :id="'c' + position.MemberId"
+        :key="'c' + position.MemberId"
+        :cx="(position.x * width) / 100"
+        :cy="(position.y * height) / 100"
+        :r="dotRadius"
+        :stroke="position.Member.color"
+        stroke-width="2"
+        :fill="
+          selectedMemberId && position.Member.id == selectedMemberId.id
+            ? position.Member.color +
+              (position.Member.color.length == 4 ? '2' : '22')
+            : position.Member.color +
+              (position.Member.color.length == 4 ? '5' : '55')
+        "
+        @mousedown="() => mouseEnter(position.MemberId)"
+        @mouseup="mouseLeave"
+        :style="{
+          opacity:
+            selectedMemberId && position.Member.id == selectedMemberId.id
+              ? 0.7
+              : 1,
+        }"
+      ></circle>
+      <text
+        v-for="position in currentPositions"
+        :id="'t' + position.MemberId"
+        :key="'t' + position.MemberId"
+        text-anchor="middle"
+        alignment-baseline="central"
+        :transform="`matrix(1,0,0,1,${(position.x * width) / 100},${
+          (position.y * height) / 100
+        })`"
+        :style="{
+          'pointer-events': 'none',
+        }"
+      >
+        {{
+          position.Member.abbreviation ||
+          position.Member.nickname ||
+          position.Member.name
+        }}
+      </text>
+      <text
+        v-for="(_, i) in Array(7)"
+        :key="i"
+        text-anchor="middle"
+        alignment-baseline="central"
+        :y="15"
+        :x="(width / 7) * (i + 1) - width / 7 / 2"
+        :style="{
+          'pointer-events': 'none',
+          fill: '#6c757d !important',
+        }"
+      >
+        {{ i + 1 }}
+      </text>
+    </svg>
+  </b-skeleton-wrapper>
 </template>
 
 <script>
+import gsap from "gsap";
+
 export default {
   name: "MatComponent",
   data: () => ({
-    selectedMember: null,
-    snappingDistance: 10,
+    selectedMemberId: null,
+    snappingDistance: 2,
   }),
   props: {
     currentPositions: {
@@ -108,10 +119,6 @@ export default {
       type: Boolean,
       default: true,
     },
-    transitionRunning: {
-      type: Boolean,
-      default: false,
-    },
     transitionMs: {
       type: Number,
       default: 1000,
@@ -119,8 +126,7 @@ export default {
   },
   methods: {
     mouseEnter(member) {
-      this.selectedMember = member;
-      // this.$refs[`member-${member.id}`][0].addEventListener(
+      this.selectedMemberId = member;
       this.$refs[`svgCanvas`].addEventListener(
         "mousemove",
         this.mouseMove,
@@ -128,38 +134,38 @@ export default {
       );
     },
     mouseLeave() {
-      if (!this.selectedMember) return;
+      if (!this.selectedMemberId) return;
       this.$refs[`svgCanvas`].removeEventListener("mousemove", this.mouseMove);
-      this.selectedMember = null;
+      this.selectedMemberId = null;
     },
     mouseMove(event) {
-      if (!this.selectedMember) return;
+      if (!this.selectedMemberId) return;
 
       const { x: canvasX, y: canvasY } =
         this.$refs.svgCanvas.getBoundingClientRect();
 
-      const m = this.currentPositions.find(
-        (m) => m.id == this.selectedMember.id
+      const selectedPosition = this.currentPositions.find(
+        (p) => p.MemberId == this.selectedMemberId
       );
 
-      let xNew = event.clientX - canvasX;
-      let yNew = event.clientY - canvasY;
+      let xNew = ((event.clientX - canvasX) / this.width) * 100;
+      let yNew = ((event.clientY - canvasY) / this.height) * 100;
 
-      if (xNew == m.x && yNew == m.y) return;
+      if (xNew == selectedPosition?.x && yNew == selectedPosition?.y) return;
 
       if (this.snapping) {
-        const otherMembers = this.currentPositions.filter(
-          (m) => m.id != this.selectedMember.id
+        const otherPositions = this.currentPositions.filter(
+          (p) => p.MemberId != this.selectedMemberId
         );
 
-        if (otherMembers.length > 0) {
-          const closestX = otherMembers.sort(
+        if (otherPositions.length > 0) {
+          const closestX = otherPositions.sort(
             (a, b) => Math.abs(a.x - xNew) - Math.abs(b.x - xNew)
           )[0].x;
           if (Math.abs(closestX - xNew) < this.snappingDistance)
             xNew = closestX;
 
-          const closestY = otherMembers.sort(
+          const closestY = otherPositions.sort(
             (a, b) => Math.abs(a.y - yNew) - Math.abs(b.y - yNew)
           )[0].y;
           if (Math.abs(closestY - yNew) < this.snappingDistance)
@@ -167,7 +173,38 @@ export default {
         }
       }
 
-      this.$emit("positionChange", this.selectedMember.id, xNew, yNew);
+      xNew = Math.round(xNew * 10) / 10;
+      yNew = Math.round(yNew * 10) / 10;
+
+      this.$emit("positionChange", this.selectedMemberId, xNew, yNew);
+    },
+  },
+  watch: {
+    currentPositions(newPositions, oldPositions) {
+      if (newPositions && oldPositions)
+        newPositions.forEach((np) => {
+          const op = oldPositions.find((p) => p.MemberId == np.MemberId);
+          if (np && op) {
+            gsap.fromTo(
+              `#c${np.MemberId}`,
+              { cx: (op.x * this.width) / 100, cy: (op.y * this.width) / 100 },
+              {
+                cx: (np.x * this.height) / 100,
+                cy: (np.y * this.height) / 100,
+                duration: this.transitionMs / 1000,
+              }
+            );
+            gsap.fromTo(
+              `#t${np.MemberId}`,
+              { x: (op.x * this.width) / 100, y: (op.y * this.width) / 100 },
+              {
+                x: (np.x * this.height) / 100,
+                y: (np.y * this.height) / 100,
+                duration: this.transitionMs / 1000,
+              }
+            );
+          }
+        });
     },
   },
 };

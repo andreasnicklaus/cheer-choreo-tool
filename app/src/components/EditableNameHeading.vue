@@ -6,7 +6,7 @@
       </b-col>
       <b-col>
         <b v-if="!edit" class="mt-2">
-          {{ value || "Neu" }}
+          {{ value || placeholder || "Neu" }}
         </b>
         <b-button
           v-if="!edit"
@@ -17,9 +17,14 @@
           <b-icon-pen />
         </b-button>
 
-        <b-input-group v-else>
+        <b-input-group
+          v-else
+          @keydown.esc="cancelEditing"
+          @keydown.enter="approveEdit"
+        >
           <b-form-input
             v-model="valueReplica"
+            autofocus
             :style="{
               fontSize: '2rem',
               fontWeight: 'bold',
@@ -58,10 +63,14 @@ export default {
     value: {
       type: String,
     },
+    placeholder: {
+      type: String,
+    },
   },
   data: () => ({
     edit: false,
     valueReplica: null,
+    lastKeyEvent: null,
   }),
   watch: {
     value() {

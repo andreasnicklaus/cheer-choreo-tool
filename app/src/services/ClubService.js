@@ -18,6 +18,16 @@ class ClubService {
         return clubs.find((t) => t.id == clubId);
       });
   }
+
+  findByName(name) {
+    return ax
+      .get("/club", { params: { name } })
+      .then((res) => res.data)
+      .catch((e) => {
+        console.warn(e);
+        return clubs.filter((c) => c.name == name);
+      });
+  }
 }
 
 export default new ClubService();

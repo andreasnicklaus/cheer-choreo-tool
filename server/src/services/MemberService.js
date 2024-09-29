@@ -1,9 +1,32 @@
+const { Op } = require("sequelize");
 const Member = require("../db/models/member");
 const { logger } = require("../plugins/winston");
 
+const defaultColors = [
+  "#FF1493",
+  "#C71585",
+  "#4B0082",
+  "#9400D3",
+  "#6A5ACD",
+  "#8B0000",
+  "#B22222",
+  "#FF4500",
+  "#FF8C00",
+  "#006400",
+  "#228B22",
+  "#00008B",
+  "#0000FF",
+  "#1E90FF",
+  "#A52A2A",
+  "#008080",
+  "#48D1CC",
+  "#00FFFF",
+  "#2F4F4F",
+  "#FFFF00",
+];
+
 class MemberService {
   async findAll() {
-    console.log(Member.associations);
     return Member.getAll();
   }
 
@@ -12,18 +35,83 @@ class MemberService {
   }
 
   async create(name, nickname, abbreviation, color, TeamId) {
+    if (!abbreviation)
+      abbreviation = name
+        .split(" ")
+        .map((s) => s.substring(0, 1))
+        .join("");
+
+    if (!color)
+      color = defaultColors[Math.floor(Math.random() * defaultColors.length)];
+
     logger.debug(
-      `MemberService.create ${{ name, nickname, abbreviation, color, TeamId }}`
+      `MemberService.create ${JSON.stringify({
+        name,
+        nickname,
+        abbreviation,
+        color,
+        TeamId,
+      })}`
     );
     return Member.create({ name, nickname, abbreviation, color, TeamId });
+  }
+
+  async findOrCreate(name, nickname, abbreviation, color, TeamId) {
+    logger.debug(
+      `MemberService.findOrCreate ${JSON.stringify({
+        name,
+        nickname,
+        abbreviation,
+        color,
+        TeamId,
+      })}`
+    );
+
+    const defaultAbbreviation = name
+      .split(" ")
+      .map((s) => s.substring(0, 1))
+      .join("");
+
+    const [member, created] = await Member.findOrCreate({
+      where: {
+        name,
+        nickname,
+        abbreviation: abbreviation || defaultAbbreviation,
+        TeamId,
+      },
+      defaults: {
+        color:
+          color ||
+          defaultColors[Math.floor(Math.random() * defaultColors.length)],
+      },
+    });
+    return member;
+
+    // let foundMember = await Member.findOne({
+    //   where: { name, nickname },
+    // });
+
+    // if (!foundMember)
+    //   foundMember = await this.create(
+    //     name,
+    //     nickname,
+    //     abbreviation,
+    //     color,
+    //     TeamId
+    //   );
+
+    // await foundMember.setTeam(TeamId);
+
+    // return foundMember;
   }
 
   async update(id, data) {
     return Member.findByPk(id).then(async (foundMember) => {
       if (foundMember) {
-        logger.debug(`MemberService.update ${{ id, data }}`);
+        logger.debug(`MemberService.update ${JSON.stringify({ id, data })}`);
         await foundMember.update(data);
-        return foundMember.save();
+        await foundMember.save();
+        return Member.findByPk(id);
       } else {
         throw Error(`Beim Update wurde kein Member mit der ID ${id} gefunden`);
       }
@@ -33,7 +121,7 @@ class MemberService {
   async remove(id) {
     return Member.findByPk(id).then((foundMember) => {
       if (foundMember) {
-        logger.debug(`MemberService.remove ${{ id }}`);
+        logger.debug(`MemberService.remove ${JSON.stringify({ id })}`);
         return foundMember.destroy();
       } else {
         throw Error(`Beim Löschen wurde kein Member mit der ID ${id} gefunden`);

@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:16
+    image: postgres:17-alpine
     restart: unless-stopped
     env_file:
       - .env
@@ -17,3 +17,5 @@ services:
      - DB_HOST=db
     ports:
       - 3000:3000
+    volumes:
+      - ./logs:/usr/src/app/logs

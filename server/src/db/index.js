@@ -21,8 +21,11 @@ const Team = require("./models/team");
 const Choreo = require("./models/choreo");
 const Lineup = require("./models/Lineup");
 const Hit = require("./models/hit");
+const Position = require("./models/position");
+const seed = require("./seed");
 
 Team.hasMany(Member);
+Member.belongsTo(Team);
 
 Club.hasMany(Team);
 Team.belongsTo(Club);
@@ -36,128 +39,31 @@ Lineup.belongsTo(Choreo);
 Choreo.hasMany(Hit);
 Hit.belongsTo(Choreo);
 
-const ClubService = require("../services/ClubService");
-const TeamService = require("../services/TeamService");
-const MemberService = require("../services/MemberService");
-const ChoreoService = require("../services/ChoreoService");
+Hit.belongsToMany(Member, { through: "HitMemberships" });
+Member.belongsToMany(Hit, { through: "HitMemberships" });
+
+Lineup.hasMany(Position);
+Position.belongsTo(Lineup);
+
+Member.hasMany(Position);
+Position.belongsTo(Member);
 
 db.sync({
-  force: true,
+  alter: true,
 }).then(() => {
-  ClubService.create("Glamourous Cheerleader").then((club) => {
-    console.log("TEST CLUB CREATED (club id: " + club.id + ")");
-    TeamService.create("Glamourous Blush", club.id).then((team) => {
-      console.log("TEST TEAM 1 CREATED (team id: " + team.id + ")");
-      const memberData = [
-        {
-          id: "aaa",
-          name: "Anna N",
-          nickname: "Anni",
-          abbreviation: "AN",
-          color: "#ff0000",
-        },
-        {
-          id: "sst",
-          name: "Sarah A",
-          nickname: null,
-          abbreviation: null,
-          color: "#ff8888",
-        },
-        {
-          id: "sss",
-          name: "Susanna A",
-          nickname: null,
-          abbreviation: null,
-          color: "#5555ff",
-        },
-        {
-          id: "aab",
-          name: "Anna N",
-          nickname: "Anna",
-          abbreviation: null,
-          color: "#00ff00",
-        },
-        {
-          id: "jjj",
-          name: "Julia",
-          nickname: null,
-          abbreviation: null,
-          color: "#ff00aa",
-        },
-        {
-          id: "mmm",
-          name: "Marie",
-          nickname: null,
-          abbreviation: null,
-          color: "#ff99ff",
-        },
-      ];
-      Promise.all(
-        memberData.map((mData) => {
-          return MemberService.create(
-            mData.name,
-            mData.nickname,
-            mData.abbreviation,
-            mData.color,
-            team.id
-          ).then((member) => {
-            console.log(
-              `TEST MEMBER ${mData.name} CREATED (member id: ${member.id})`
-            );
-            return member;
-          });
-        })
-      ).then((members) => {
-        return ChoreoService.create(
-          "RM 2023",
-          200,
-          team.id,
-          [
-            {
-              startCount: 0,
-              endCount: 2,
+  seed().then(() => {
+    setTimeout(async () => {
+      console.log(
+        JSON.stringify(
+          await Member.findAll({
+            where: {
+              name: "Aleyna Ortmann",
             },
-          ],
-          [
-            {
-              count: 0,
-              name: "Pose",
-            },
-            {
-              count: 0,
-              name: "Test",
-            },
-          ]
-        );
-      });
-    });
-    TeamService.create("Glamourous Berry", club.id).then((team) => {
-      console.log("TEST TEAM 2 CREATED (team id: " + team.id + ")");
-      const memberData = [
-        {
-          id: "aaa",
-          name: "Anna N",
-          nickname: "Anni",
-          abbreviation: "AN",
-          color: "#5555ff",
-        },
-      ];
-      Promise.all(
-        memberData.map((mData) => {
-          return MemberService.create(
-            mData.name,
-            mData.nickname,
-            mData.abbreviation,
-            mData.color,
-            team.id
-          ).then((member) => {
-            console.log(
-              `TEST MEMBER ${mData.name} CREATED (member id: ${member.id})`
-            );
-            return member;
-          });
-        })
+          }),
+          null,
+          2
+        )
       );
-    });
+    }, 2000);
   });
 });

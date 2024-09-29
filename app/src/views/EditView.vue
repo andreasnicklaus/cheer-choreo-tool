@@ -5,32 +5,69 @@
       :value="choreo?.name"
       class="mb-4"
       @input="onNameEdit"
+      placeholder="lädt..."
     />
 
-    <b-row align-v="center">
+    <b-row align-v="center" class="mb-4">
       <b-col>
-        <b-row align-h="between" align-v="center" class="mb-4 mx-auto w-50">
+        <b-row align-h="between" align-v="center" class="mx-auto w-50">
           <b-col cols="auto">
             <b-button
               variant="outline-secondary"
               @click="() => setCounter(count - 1)"
+              @dblclick="() => setCounter(0)"
               :disabled="count <= 0"
+              id="tooltip-target-previousCount"
             >
               <b-icon-arrow-left />
             </b-button>
+            <b-tooltip
+              v-if="count > 0"
+              target="tooltip-target-previousCount"
+              triggers="hover"
+            >
+              <p>Zum vorigen Count springen</p>
+              <p>Doppelklick: Zum Anfang springen</p>
+            </b-tooltip>
           </b-col>
           <b-col cols="auto">
-            <p class="mb-0">Achter: {{ Math.floor(count / 8) + 1 }}</p>
-            <p class="mb-0">Count: {{ (count % 8) + 1 }}</p>
+            <b-row align-v="center">
+              <b-button
+                :variant="playInterval ? 'danger' : 'outline-success'"
+                class="mr-2"
+                @click="playPause"
+              >
+                <b-icon-pause v-if="playInterval" />
+                <b-icon-play v-else />
+              </b-button>
+              <div>
+                <p class="mb-0">
+                  Achter: <b>{{ Math.floor(count / 8) + 1 }}</b>
+                </p>
+                <p class="mb-0">
+                  Count: <b>{{ (count % 8) + 1 }}</b>
+                </p>
+              </div>
+            </b-row>
           </b-col>
           <b-col cols="auto">
             <b-button
               variant="outline-secondary"
               @click="() => setCounter(count + 1)"
+              @dblclick="() => setCounter(choreo.counts - 1)"
               :disabled="choreo ? count >= choreo.counts - 1 : false"
+              id="tooltip-target-nextCount"
             >
               <b-icon-arrow-right />
             </b-button>
+            <b-tooltip
+              v-if="choreo && count < choreo.counts - 1"
+              target="tooltip-target-nextCount"
+              triggers="hover"
+            >
+              <p>Zum nächsten Count springen</p>
+              <p>Doppelklick: Zum Ende springen</p>
+            </b-tooltip>
           </b-col>
         </b-row>
       </b-col>
@@ -38,7 +75,7 @@
         <b-icon-info-circle id="popover-info-target" variant="secondary" />
         <b-popover
           target="popover-info-target"
-          triggers="hover"
+          triggers="hover focus"
           placement="left"
           :style="{ width: '400px' }"
         >
@@ -73,8 +110,24 @@
                   <b-badge variant="light"> Pfeil oben </b-badge>
                 </b-td>
               </b-tr>
+              <b-tr>
+                <b-td class="font-weight-bold">Play/Pause</b-td>
+                <b-td>
+                  <b-badge variant="light"> Leerzeichen </b-badge>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td class="font-weight-bold">Neuer Eintrag</b-td>
+                <b-td>
+                  <b-badge variant="light"> h </b-badge>
+                </b-td>
+              </b-tr>
             </b-tbody>
           </b-table-simple>
+
+          <b-checkbox switch v-model="snapping">
+            Positionen horizontal und vertikal ausrichten
+          </b-checkbox>
         </b-popover>
       </b-col>
     </b-row>
@@ -83,136 +136,23 @@
       <b-col cols="auto">
         <Mat
           :currentPositions="currentPositions"
-          :transitionRunning="transitionRunning"
           :transitionMs="transitionMs"
           @positionChange="onPositionChange"
+          :snapping="snapping"
         />
       </b-col>
       <b-col cols="12" md="6">
-        <b-card>
-          <b-card-header
-            class="d-flex justify-content-between align-items-center"
-          >
-            <b-card-title class="mb-0"> Dieser Count </b-card-title>
-            <b-badge>
-              {{ countToString(count) }}
-            </b-badge>
-          </b-card-header>
-          <b-list-group flush>
-            <b-skeleton-wrapper :loading="!actionsForCurrentCount">
-              <template #loading>
-                <b-list-group-item v-for="(_, i) in Array(1)" :key="i">
-                  <b-skeleton width="25%" height="30px" class="mb-2" />
-                  <b-skeleton width="50%" />
-                  <b-skeleton width="25%" class="mb-3" />
-                </b-list-group-item>
-              </template>
-              <b-list-group-item
-                v-for="(action, i) in actionsForCurrentCount"
-                :key="i"
-                :variant="action.type == 'hit' ? null : 'light'"
-              >
-                <div v-if="action.type == 'hit'">
-                  <h5>
-                    <b-row align-h="between" align-v="center">
-                      <b-col>
-                        {{ action.name }}
-                      </b-col>
-                      <b-col cols="auto">
-                        <b-button-group>
-                          <b-button
-                            variant="outline-primary"
-                            v-b-tooltip.hover
-                            title="Zum vorigen Count verschieben"
-                          >
-                            <b-icon-arrow-left />
-                          </b-button>
-                          <b-button
-                            variant="outline-primary"
-                            v-b-tooltip.hover
-                            title="Zum nächsten Count verschieben"
-                          >
-                            <b-icon-arrow-right />
-                          </b-button>
-                          <b-button variant="outline-success">
-                            <b-icon-pen />
-                          </b-button>
-                          <b-button variant="outline-danger">
-                            <b-icon-trash />
-                          </b-button>
-                        </b-button-group>
-                      </b-col>
-                    </b-row>
-                  </h5>
-                  <b-col v-if="action.memberIds">
-                    <b-row v-for="memberId in action.memberIds" :key="memberId">
-                      <div
-                        class="mr-2"
-                        :style="{
-                          height: '24px',
-                          width: '24px',
-                          backgroundColor:
-                            teamMembers?.find((m) => m.id == memberId)?.color +
-                            '55',
-                          borderRadius: '50%',
-                          border:
-                            'solid 2px ' +
-                            teamMembers?.find((m) => m.id == memberId)?.color,
-                        }"
-                      ></div>
-                      {{ teamMembers?.find((m) => m.id == memberId)?.name }}
-                    </b-row>
-                  </b-col>
-                  <p v-else>Alle</p>
-                </div>
-                <div v-else-if="action.type == 'position'">
-                  <h5>Aufstellung</h5>
-                  <p>
-                    Counts:
-                    <b-badge variant="light">
-                      {{ countToString(action.startCount) }}</b-badge
-                    >
-                    -
-                    <b-badge variant="light">
-                      {{ countToString(action.endCount) }}
-                    </b-badge>
-                  </p>
-                  <b-col v-if="action.items">
-                    <b-row v-for="item in action.items" :key="item.memberId">
-                      <div
-                        class="mr-2"
-                        :style="{
-                          height: '24px',
-                          width: '24px',
-                          backgroundColor:
-                            teamMembers?.find((m) => m.id == item.memberId)
-                              ?.color + '55',
-                          borderRadius: '50%',
-                          border:
-                            'solid 2px ' +
-                            teamMembers?.find((m) => m.id == item.memberId)
-                              ?.color,
-                        }"
-                      ></div>
-                      {{
-                        teamMembers?.find((m) => m.id == item.memberId)?.name
-                      }}
-                    </b-row>
-                  </b-col>
-                </div>
-              </b-list-group-item>
-            </b-skeleton-wrapper>
-            <b-list-group-item v-if="actionsForCurrentCount.length == 0">
-              <p class="text-muted">
-                Für diesen Count hast du noch nichts geplant
-              </p>
-            </b-list-group-item>
-          </b-list-group>
-          <b-button variant="outline-success" block class="mt-2">
-            <b-icon-plus />
-            Hinzufügen
-          </b-button>
-        </b-card>
+        <CountOverview
+          :count="count"
+          :choreo="choreo"
+          ref="countOverview"
+          :hitsForCurrentCount="hitsForCurrentCount"
+          :lineupsForCurrentCount="lineupsForCurrentCount"
+          :teamMembers="teamMembers"
+          :currentPositions="currentPositions"
+          @updateHits="onUpdateHits"
+          @updateLineups="onUpdateLineups"
+        />
       </b-col>
     </b-row>
 
@@ -253,16 +193,23 @@
 <script>
 import Mat from "@/components/Mat.vue";
 import ChoreoService from "@/services/ChoreoService";
-import ColorService from "@/services/ColorService";
-import TeamService from "@/services/TeamService";
 import CountSheet from "@/components/CountSheet.vue";
 import EditableNameHeading from "@/components/EditableNameHeading.vue";
+import CountOverview from "@/components/CountOverview.vue";
+import PositionService from "@/services/PositionService";
+import LineupService from "@/services/LineupService";
+
+const abortController = new AbortController();
+const { signal } = abortController;
+
 export default {
-  components: { Mat, CountSheet, EditableNameHeading },
+  name: "EditView",
+  components: { Mat, CountSheet, EditableNameHeading, CountOverview },
   data: () => ({
     choreoId: null,
     matHeight: 500,
     matWidth: 500,
+    snapping: true,
     count: 0,
     teamMembers: null,
     team_table_fields: [
@@ -273,73 +220,169 @@ export default {
     ],
     choreo: null,
     lastKeyEvent: null,
-    transitionRunning: false,
     transitionMs: 500,
+    newHitName: null,
+    newHitCount: 1,
+    newHitMembers: [],
+    positionUpdates: {},
+    lineupCreationInProgress: false,
+    playInterval: null,
   }),
   mounted() {
-    ChoreoService.getById(this.choreoId).then((choreo) => {
-      if (!choreo) return;
-
-      this.choreo = choreo;
-
-      TeamService.getById(choreo.teamId).then((team) => {
-        if (!team) return;
-
-        this.teamMembers = team.members.map((m) => {
-          // let yNew = Math.floor(i / 7) * 50 + 50;
-          // let xNew = (this.matWidth / 7) * (i % 7) + this.matWidth / 7 / 2;
-
-          if (!m.abbreviation)
-            m.abbreviation = m.name
-              .split(" ")
-              .map((s) => s.substring(0, 1) + ".")
-              .join("");
-
-          return {
-            ...m,
-            color: ColorService.getRandom(),
-          };
-        });
-      });
-    });
+    this.loadChoreo();
 
     document.addEventListener("keydown", this.onKeyPress);
-  },
-  unmounted() {
-    console.log("Unmount");
-    document.removeEventListener("keydown", this.onKeyPress);
+    window.addEventListener("beforeunload", this.beforeUnload, { signal });
   },
   watch: {
     "$route.params": {
       handler() {
         this.choreoId = this.$route.params.choreoId;
+        this.loadChoreo();
       },
       immediate: true,
     },
   },
   methods: {
-    onPositionChange(id, x, y) {
-      const memberToUpdate = this.currentPositions.find((c) => c.id == id);
-      memberToUpdate.x = x;
-      memberToUpdate.y = y;
-      // TODO: save position
+    beforeUnload() {
+      document.removeEventListener("keydown", this.onKeyPress);
+      abortController.abort();
+    },
+    loadChoreo() {
+      ChoreoService.getById(this.choreoId)
+        .then((choreo) => {
+          if (!choreo) return;
+
+          this.choreo = choreo;
+
+          this.teamMembers = choreo.Team.Members.sort((a, b) =>
+            a.name.localeCompare(b.name)
+          );
+        })
+        .catch((e) => {
+          console.error(e);
+          this.$router.push({ name: "Home" });
+        });
+    },
+    onPositionChange(memberId, x, y) {
+      const pos = this.currentPositions.find((p) => p.MemberId == memberId);
+      pos.x = x;
+      pos.y = y;
+
+      const positionToUpdate = this.lineupsForCurrentCount
+        .map((l) => l.Positions.filter((p) => p.MemberId == memberId))
+        .flat()[0];
+
+      if (positionToUpdate) {
+        const memberTimeout = this.positionUpdates[memberId];
+        if (memberTimeout) clearTimeout(memberTimeout);
+
+        this.positionUpdates[memberId] = setTimeout(() => {
+          if (positionToUpdate.id)
+            PositionService.update(
+              positionToUpdate.LineupId,
+              positionToUpdate.id,
+              x,
+              y
+            ).then((position) => {
+              let lineupCopy = this.choreo.Lineups;
+              let positionsCopy = lineupCopy.find(
+                (l) => l.id == positionToUpdate.LineupId
+              ).Positions;
+              positionsCopy = positionsCopy.filter(
+                (p) => p.id != positionToUpdate.id
+              );
+              positionsCopy.push(position);
+              lineupCopy.find(
+                (l) => l.id == positionToUpdate.LineupId
+              ).Positions = positionsCopy;
+              this.choreo.Lineups = lineupCopy;
+              this.positionUpdates[memberId] = null;
+            });
+        }, 1000);
+      } else {
+        let lineupToUpdate;
+        if (this.lineupsForCurrentCount.length == 1) {
+          lineupToUpdate = this.lineupsForCurrentCount[0];
+        } else if (this.lineupsForCurrentCount.length > 1) {
+          const lineupOnlyForCurrentCount = this.lineupsForCurrentCount.find(
+            (l) => l.startCount == this.count && l.endCount == this.count
+          );
+          if (lineupOnlyForCurrentCount)
+            lineupToUpdate = lineupOnlyForCurrentCount;
+        }
+
+        if (!lineupToUpdate) {
+          if (this.lineupCreationInProgress) return;
+
+          this.lineupCreationInProgress = true;
+          LineupService.create(this.count, this.count, this.choreoId).then(
+            (lineup) => {
+              let lineupCopy = this.choreo.Lineups;
+              if (!lineup.Positions) lineup.Positions = [];
+              lineupCopy.push(lineup);
+              this.choreo.Lineups = lineupCopy;
+              this.lineupCreationInProgress = false;
+            }
+          );
+        } else {
+          const memberTimeout = this.positionUpdates[memberId];
+          if (memberTimeout) clearTimeout(memberTimeout);
+
+          this.positionUpdates[memberId] = setTimeout(() => {
+            let lineupCopy = this.choreo.Lineups;
+            let positionsCopy = lineupCopy.find(
+              (l) => l.id == lineupToUpdate.id
+            ).Positions;
+            positionsCopy = positionsCopy.filter((p) => p.MemberId != memberId);
+            positionsCopy.push({
+              LineupId: lineupToUpdate.id,
+              MemberId: memberId,
+              Member: this.teamMembers.find((m) => m.id == memberId),
+              x,
+              y,
+            });
+            lineupCopy.find((l) => l.id == lineupToUpdate.id).Positions =
+              positionsCopy;
+            this.choreo.Lineups = lineupCopy;
+
+            PositionService.create(lineupToUpdate.id, x, y, memberId).then(
+              (position) => {
+                let lineupCopy = this.choreo.Lineups;
+                let positionsCopy = lineupCopy.find(
+                  (l) => l.id == lineupToUpdate.id
+                ).Positions;
+                positionsCopy = positionsCopy.filter(
+                  (p) => p.MemberId != memberId
+                );
+                positionsCopy.push(position);
+                lineupCopy.find((l) => l.id == lineupToUpdate.id).Positions =
+                  positionsCopy;
+                this.choreo.Lineups = lineupCopy;
+                this.positionUpdates[memberId] = null;
+              }
+            );
+          }, 0);
+        }
+      }
     },
     onKeyPress(event) {
-      if (["ArrowUp", "ArrowDown"].includes(event.key)) event.preventDefault();
+      if (["ArrowUp", "ArrowDown", "Space"].includes(event.code))
+        event.preventDefault();
 
       if (
         this.lastKeyEvent &&
         Date.now() - this.lastKeyEvent.time < 100 &&
-        this.lastKeyEvent.key == event.key
+        this.lastKeyEvent.code == event.code
       )
         return;
 
       this.lastKeyEvent = {
         time: Date.now(),
-        key: event.key,
+        code: event.code,
       };
 
-      switch (event.key) {
+      switch (event.code) {
         case "ArrowLeft":
           if (this.count > 0) this.setCounter(this.count - 1);
           break;
@@ -354,132 +397,162 @@ export default {
         case "ArrowUp":
           if (this.count > 7) this.setCounter(this.count - 8);
           break;
+        case "KeyH":
+          this.$refs.countOverview.openNewHitModal();
+          break;
+        case "Space":
+          this.playPause();
+          break;
       }
     },
     setCounter(count) {
       this.count = count;
-      this.transitionRunning = true;
-      setTimeout(() => (this.transitionRunning = false), this.transitionMs);
+    },
+    playPause() {
+      if (!this.playInterval) {
+        this.playInterval = setInterval(() => {
+          this.setCounter(this.count + 1);
+        }, this.transitionMs * 1.5);
+      } else {
+        clearInterval(this.playInterval);
+        this.playInterval = null;
+      }
     },
     countToString(count) {
       return `${Math.floor(count / 8) + 1} / ${(count % 8) + 1}`;
     },
     onNameEdit(nameNew) {
-      console.log(nameNew);
-      // TODO: save new name
+      this.choreo.name = nameNew;
+      ChoreoService.changeName(this.choreoId, nameNew).then((choreo) => {
+        this.choreo = choreo;
+      });
+    },
+    onUpdateHits(hits) {
+      this.choreo.Hits = hits;
+    },
+    onUpdateLineups(lineups) {
+      this.choreo.Lineups = lineups;
     },
   },
   computed: {
     currentPositions() {
-      if (!this.teamMembers || !this.choreo) return [];
-      else {
-        let positions = [...this.teamMembers].map((m, i) => {
-          let yNew = Math.floor(i / 7) * 50 + 50;
-          let xNew = (this.matWidth / 7) * (i % 7) + this.matWidth / 7 / 2;
+      if (!this.teamMembers || !this.choreo || !this.choreo.Lineups) return [];
 
-          return {
-            ...m,
-            x: xNew,
-            y: yNew,
+      const relevantLineups = this.choreo.Lineups.filter(
+        (l) =>
+          l.Positions &&
+          l.Positions.length > 0 &&
+          l.startCount <= this.count &&
+          l.endCount >= this.count
+      );
+
+      const positionsForCurrentCount = relevantLineups
+        .map((l) => l.Positions)
+        .flat();
+
+      let unPositionedTeamMembers = this.teamMembers.filter(
+        (m) => !positionsForCurrentCount.some((p) => p.MemberId == m.id)
+      );
+
+      const interpolatedPositions = [];
+      unPositionedTeamMembers.forEach((member) => {
+        const lineupsForMember = this.choreo.Lineups.filter(
+          (l) => l.Positions && l.Positions.some((p) => p.MemberId == member.id)
+        );
+
+        const previousLineupForMember = lineupsForMember
+          .filter((l) => l.endCount < this.count)
+          .sort((a, b) => b.endCount - a.endCount)[0];
+
+        const followingLineupForMember = lineupsForMember
+          .filter((l) => l.startCount > this.count)
+          .sort((a, b) => a.startCount - b.startCount)[0];
+
+        const previousPositionForMember = previousLineupForMember
+          ? previousLineupForMember.Positions.find(
+              (p) => p.MemberId == member.id
+            )
+          : null;
+        const followingPositionForMember = followingLineupForMember
+          ? followingLineupForMember.Positions.find(
+              (p) => p.MemberId == member.id
+            )
+          : null;
+
+        if (!previousPositionForMember && followingPositionForMember)
+          interpolatedPositions.push(followingPositionForMember);
+        else if (previousPositionForMember && !followingPositionForMember)
+          interpolatedPositions.push(previousPositionForMember);
+        else if (previousPositionForMember && followingPositionForMember) {
+          const countsSincePrevious =
+            this.count - previousLineupForMember.endCount;
+          const countsBetweenPreviousAndFollowing =
+            followingLineupForMember.startCount -
+            previousLineupForMember.endCount;
+
+          const advancement =
+            countsSincePrevious / countsBetweenPreviousAndFollowing;
+
+          const interpolatedPositionForMember = {
+            Member: member,
+            MemberId: member.id,
+            x:
+              previousPositionForMember.x +
+              (followingPositionForMember.x - previousPositionForMember.x) *
+                advancement,
+            y:
+              previousPositionForMember.y +
+              (followingPositionForMember.y - previousPositionForMember.y) *
+                advancement,
           };
-        });
 
-        positions.forEach((p) => {
-          const positionActions = this.choreo.actions.filter(
-            (a) =>
-              a.type == "position" &&
-              a.items.some((i) => i.memberId == p.id) &&
-              a.startCount <= this.count &&
-              a.endCount >= this.count
-          );
+          interpolatedPositions.push(interpolatedPositionForMember);
+        }
+      });
 
-          if (positionActions.length > 1)
-            throw Error(
-              "Es gibt überschneidende Actions in der Choreo mit type = 'position'"
-            );
-          else if (positionActions.length == 1) {
-            const currentPosition = positionActions[0].items.find(
-              (i) => i.memberId == p.id
-            );
-            p.x = currentPosition.x;
-            p.y = currentPosition.y;
-          } else {
-            let previousPosition = { x: p.x, y: p.y, count: this.count };
-            const previousPositionActions = this.choreo.actions
-              .filter(
-                (a) =>
-                  a.type == "position" &&
-                  a.items.some((i) => i.memberId == p.id) &&
-                  a.endCount < this.count
-              )
-              .sort((a, b) => b.endCount - a.endCount);
-            if (previousPositionActions.length > 0) {
-              previousPosition = previousPositionActions[0].items.find(
-                (i) => i.memberId == p.id
-              );
-              previousPosition.count = previousPositionActions[0].endCount;
-            }
+      unPositionedTeamMembers = this.teamMembers.filter(
+        (m) =>
+          ![...positionsForCurrentCount, ...interpolatedPositions].some(
+            (p) => p.MemberId == m.id
+          )
+      );
 
-            let followingPosition = { ...previousPosition };
-            followingPosition.count = this.choreo.counts;
-            const followingPositionActions = this.choreo.actions
-              .filter(
-                (a) =>
-                  a.type == "position" &&
-                  a.items.some((i) => i.memberId == p.id) &&
-                  a.startCount > this.count
-              )
-              .sort((a, b) => a.endCount - b.endCount);
-            if (followingPositionActions.length > 0) {
-              followingPosition = followingPositionActions[0].items.find(
-                (i) => i.memberId == p.id
-              );
-              followingPosition.count = followingPositionActions[0].startCount;
-            }
+      const defaultPositions = unPositionedTeamMembers.map((member, i) => {
+        let yNew = Math.floor(i / 7) * 10 + 10;
+        let xNew = (100 / 7) * (i % 7) + 100 / 14;
 
-            const countsSincePrevious = this.count - previousPosition.count;
-            const countsBetweenPreviousAndFollowing =
-              followingPosition.count - previousPosition.count;
+        return {
+          Member: member,
+          MemberId: member.id,
+          x: xNew,
+          y: yNew,
+        };
+      });
 
-            const advancement =
-              countsSincePrevious / countsBetweenPreviousAndFollowing;
+      // console.log({
+      //   positionsForCurrentCount,
+      //   interpolatedPositions,
+      //   defaultPositions,
+      // });
 
-            // console.table([
-            //   {
-            //     previousPosition: previousPosition.x,
-            //     followingPosition: followingPosition.x,
-            //     advancement,
-            //     count: this.count,
-            //     previousCount: previousPosition.count,
-            //     countsSincePrevious,
-            //     countsBetweenPreviousAndFollowing,
-            //   },
-            // ]);
-
-            p.x =
-              previousPosition.x +
-              (followingPosition.x - previousPosition.x) * advancement;
-            p.y =
-              previousPosition.y +
-              (followingPosition.y - previousPosition.y) * advancement;
-          }
-        });
-
-        return positions;
-      }
+      return [
+        ...positionsForCurrentCount,
+        ...interpolatedPositions,
+        ...defaultPositions,
+      ].sort((a, b) => a.Member.name.localeCompare(b.Member.name));
     },
-    actionsForCurrentCount() {
+    hitsForCurrentCount() {
       if (!this.choreo) return [];
 
-      return this.choreo.actions.filter((a) => {
-        switch (a.type) {
-          case "hit":
-            return a.count == this.count;
-          case "position":
-            return a.startCount <= this.count && a.endCount >= this.count;
-          default:
-            return false;
-        }
+      return this.choreo.Hits.filter((a) => {
+        return a.count == this.count;
+      });
+    },
+    lineupsForCurrentCount() {
+      if (!this.choreo) return [];
+
+      return this.choreo.Lineups.filter((a) => {
+        return a.startCount <= this.count && a.endCount >= this.count;
       });
     },
   },
