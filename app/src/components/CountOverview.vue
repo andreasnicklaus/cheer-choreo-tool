@@ -7,179 +7,6 @@
       </b-badge>
     </b-card-header>
     <b-list-group flush>
-      <!-- HITS -->
-      <b-skeleton-wrapper :loading="!hitsForCurrentCount">
-        <template #loading>
-          <b-list-group-item v-for="(_, i) in Array(1)" :key="i">
-            <b-skeleton width="25%" height="30px" class="mb-2" />
-            <b-skeleton width="50%" />
-            <b-skeleton width="25%" class="mb-3" />
-          </b-list-group-item>
-        </template>
-        <b-list-group-item
-          v-for="hit in hitsForCurrentCount"
-          :key="hit.id"
-          :variant="
-            editHitId != null ? (editHitId != hit.id ? 'light' : null) : null
-          "
-        >
-          <div v-if="hit.id != editHitId">
-            <h5>
-              <b-row align-h="between" align-v="center">
-                <b-col>
-                  {{ hit.name }}
-                </b-col>
-                <b-col cols="auto">
-                  <b-button-group>
-                    <b-button
-                      variant="outline-primary"
-                      v-b-tooltip.hover
-                      title="Zum vorigen Count verschieben"
-                      :disabled="count <= 0"
-                      @click="() => moveHitToPreviousCount(hit.id)"
-                    >
-                      <b-icon-chevron-left />
-                    </b-button>
-                    <b-button
-                      variant="outline-primary"
-                      v-b-tooltip.hover
-                      title="Zum nächsten Count verschieben"
-                      :disabled="count >= choreo.counts - 1"
-                      @click="() => moveHitToNextCount(hit.id)"
-                    >
-                      <b-icon-chevron-right />
-                    </b-button>
-                    <b-button
-                      variant="outline-success"
-                      @click="() => editHit(hit.id)"
-                      v-b-tooltip.hover
-                      title="bearbeiten"
-                    >
-                      <b-icon-pen />
-                    </b-button>
-                    <b-button
-                      variant="outline-danger"
-                      @click="() => deleteHit(hit.id)"
-                      v-b-tooltip.hover
-                      title="löschen"
-                    >
-                      <b-icon-trash />
-                    </b-button>
-                  </b-button-group>
-                </b-col>
-              </b-row>
-            </h5>
-
-            <b-col
-              v-if="
-                hit.Members &&
-                hit.Members.length > 0 &&
-                hit.Members.length != teamMembers.length
-              "
-            >
-              <b-row v-for="member in hit.Members" :key="member.id">
-                <div
-                  class="mr-2"
-                  :style="{
-                    height: '24px',
-                    width: '24px',
-                    backgroundColor: member.color + '55',
-                    borderRadius: '50%',
-                    border: 'solid 2px ' + member.color,
-                  }"
-                ></div>
-                {{ member.nickname || member.name }}
-              </b-row>
-            </b-col>
-            <p v-else>
-              <b-badge variant="info">Alle</b-badge>
-            </p>
-          </div>
-
-          <div v-else>
-            <h5 class="mb-4">
-              <b-row align-h="between" align-v="center">
-                <b-col>
-                  <b-form-group :state="Boolean(editHitName)" class="m-0">
-                    <b-form-input
-                      v-model="editHitName"
-                      :style="{
-                        color: '#2c3e50',
-                        border: 'none',
-                        fontSize: '20px',
-                        height: '1.2em',
-                        textDecoration: 'underline dotted',
-                      }"
-                      @keydown.enter="() => saveHit()"
-                      @keydown.esc="() => (editHitId = null)"
-                      class="p-0"
-                      autofocus
-                      placeholder="Name des Hits"
-                    />
-                  </b-form-group>
-                </b-col>
-                <b-col cols="auto">
-                  <b-button-group>
-                    <b-button
-                      variant="success"
-                      v-b-tooltip.hover
-                      title="Speichern"
-                      :disabled="!editHitName"
-                      @click="() => saveHit()"
-                    >
-                      <b-icon-check />
-                    </b-button>
-                    <b-button
-                      variant="danger"
-                      v-b-tooltip.hover
-                      title="Abbrechen"
-                      @click="() => (editHitId = null)"
-                    >
-                      <b-icon-x />
-                    </b-button>
-                  </b-button-group>
-                </b-col>
-              </b-row>
-            </h5>
-            <b-col>
-              <b-form-group label="Count:" label-cols="auto">
-                <b-form-input
-                  v-model="editHitCount"
-                  type="number"
-                  :min="1"
-                  :max="choreo.counts"
-                />
-              </b-form-group>
-              <b-form-checkbox-group
-                id="memberSelection"
-                v-model="editHitMembers"
-                stacked
-              >
-                <b-form-checkbox
-                  v-for="member in teamMembers"
-                  :key="member.id"
-                  :value="member.id"
-                >
-                  <b-row no-gutters class="mb-1">
-                    <div
-                      class="mr-2"
-                      :style="{
-                        height: '24px',
-                        width: '24px',
-                        backgroundColor: member.color + '55',
-                        borderRadius: '50%',
-                        border: 'solid 2px ' + member.color,
-                      }"
-                    ></div>
-                    {{ member.nickname || member.name }}
-                  </b-row>
-                </b-form-checkbox>
-              </b-form-checkbox-group>
-            </b-col>
-          </div>
-        </b-list-group-item>
-      </b-skeleton-wrapper>
-
       <!-- LINEUPS -->
       <b-skeleton-wrapper :loading="!lineupsForCurrentCount">
         <template #loading>
@@ -407,6 +234,179 @@
                 </b-form-checkbox>
               </b-form-checkbox-group>
             </b-form>
+          </div>
+        </b-list-group-item>
+      </b-skeleton-wrapper>
+
+      <!-- HITS -->
+      <b-skeleton-wrapper :loading="!hitsForCurrentCount">
+        <template #loading>
+          <b-list-group-item v-for="(_, i) in Array(1)" :key="i">
+            <b-skeleton width="25%" height="30px" class="mb-2" />
+            <b-skeleton width="50%" />
+            <b-skeleton width="25%" class="mb-3" />
+          </b-list-group-item>
+        </template>
+        <b-list-group-item
+          v-for="hit in hitsForCurrentCount"
+          :key="hit.id"
+          :variant="
+            editHitId != null ? (editHitId != hit.id ? 'light' : null) : null
+          "
+        >
+          <div v-if="hit.id != editHitId">
+            <h5>
+              <b-row align-h="between" align-v="center">
+                <b-col>
+                  {{ hit.name }}
+                </b-col>
+                <b-col cols="auto">
+                  <b-button-group>
+                    <b-button
+                      variant="outline-primary"
+                      v-b-tooltip.hover
+                      title="Zum vorigen Count verschieben"
+                      :disabled="count <= 0"
+                      @click="() => moveHitToPreviousCount(hit.id)"
+                    >
+                      <b-icon-chevron-left />
+                    </b-button>
+                    <b-button
+                      variant="outline-primary"
+                      v-b-tooltip.hover
+                      title="Zum nächsten Count verschieben"
+                      :disabled="count >= choreo.counts - 1"
+                      @click="() => moveHitToNextCount(hit.id)"
+                    >
+                      <b-icon-chevron-right />
+                    </b-button>
+                    <b-button
+                      variant="outline-success"
+                      @click="() => editHit(hit.id)"
+                      v-b-tooltip.hover
+                      title="bearbeiten"
+                    >
+                      <b-icon-pen />
+                    </b-button>
+                    <b-button
+                      variant="outline-danger"
+                      @click="() => deleteHit(hit.id)"
+                      v-b-tooltip.hover
+                      title="löschen"
+                    >
+                      <b-icon-trash />
+                    </b-button>
+                  </b-button-group>
+                </b-col>
+              </b-row>
+            </h5>
+
+            <b-col
+              v-if="
+                hit.Members &&
+                hit.Members.length > 0 &&
+                hit.Members.length != teamMembers.length
+              "
+            >
+              <b-row v-for="member in hit.Members" :key="member.id">
+                <div
+                  class="mr-2"
+                  :style="{
+                    height: '24px',
+                    width: '24px',
+                    backgroundColor: member.color + '55',
+                    borderRadius: '50%',
+                    border: 'solid 2px ' + member.color,
+                  }"
+                ></div>
+                {{ member.nickname || member.name }}
+              </b-row>
+            </b-col>
+            <p v-else>
+              <b-badge variant="info">Alle</b-badge>
+            </p>
+          </div>
+
+          <div v-else>
+            <h5 class="mb-4">
+              <b-row align-h="between" align-v="center">
+                <b-col>
+                  <b-form-group :state="Boolean(editHitName)" class="m-0">
+                    <b-form-input
+                      v-model="editHitName"
+                      :style="{
+                        color: '#2c3e50',
+                        border: 'none',
+                        fontSize: '20px',
+                        height: '1.2em',
+                        textDecoration: 'underline dotted',
+                      }"
+                      @keydown.enter="() => saveHit()"
+                      @keydown.esc="() => (editHitId = null)"
+                      class="p-0"
+                      autofocus
+                      placeholder="Name des Hits"
+                    />
+                  </b-form-group>
+                </b-col>
+                <b-col cols="auto">
+                  <b-button-group>
+                    <b-button
+                      variant="success"
+                      v-b-tooltip.hover
+                      title="Speichern"
+                      :disabled="!editHitName"
+                      @click="() => saveHit()"
+                    >
+                      <b-icon-check />
+                    </b-button>
+                    <b-button
+                      variant="danger"
+                      v-b-tooltip.hover
+                      title="Abbrechen"
+                      @click="() => (editHitId = null)"
+                    >
+                      <b-icon-x />
+                    </b-button>
+                  </b-button-group>
+                </b-col>
+              </b-row>
+            </h5>
+            <b-col>
+              <b-form-group label="Count:" label-cols="auto">
+                <b-form-input
+                  v-model="editHitCount"
+                  type="number"
+                  :min="1"
+                  :max="choreo.counts"
+                />
+              </b-form-group>
+              <b-form-checkbox-group
+                id="memberSelection"
+                v-model="editHitMembers"
+                stacked
+              >
+                <b-form-checkbox
+                  v-for="member in teamMembers"
+                  :key="member.id"
+                  :value="member.id"
+                >
+                  <b-row no-gutters class="mb-1">
+                    <div
+                      class="mr-2"
+                      :style="{
+                        height: '24px',
+                        width: '24px',
+                        backgroundColor: member.color + '55',
+                        borderRadius: '50%',
+                        border: 'solid 2px ' + member.color,
+                      }"
+                    ></div>
+                    {{ member.nickname || member.name }}
+                  </b-row>
+                </b-form-checkbox>
+              </b-form-checkbox-group>
+            </b-col>
           </div>
         </b-list-group-item>
       </b-skeleton-wrapper>

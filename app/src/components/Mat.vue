@@ -31,8 +31,6 @@
         v-for="position in currentPositions"
         :id="'c' + position.MemberId"
         :key="'c' + position.MemberId"
-        :cx="(position.x * width) / 100"
-        :cy="(position.y * height) / 100"
         :r="dotRadius"
         :stroke="position.Member.color"
         stroke-width="2"
@@ -50,6 +48,8 @@
             selectedMemberId && position.Member.id == selectedMemberId.id
               ? 0.7
               : 1,
+          cx: (position.x * width) / 100 + 'px',
+          cy: (position.y * height) / 100 + 'px',
         }"
       ></circle>
       <text
@@ -178,9 +178,7 @@ export default {
 
       this.$emit("positionChange", this.selectedMemberId, xNew, yNew);
     },
-  },
-  watch: {
-    currentPositions(newPositions, oldPositions) {
+    animatePositions(oldPositions, newPositions) {
       if (newPositions && oldPositions)
         newPositions.forEach((np) => {
           const op = oldPositions.find((p) => p.MemberId == np.MemberId);

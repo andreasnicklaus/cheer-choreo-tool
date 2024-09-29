@@ -135,6 +135,7 @@
     <b-row align-h="around">
       <b-col cols="auto">
         <Mat
+          ref="Mat"
           :currentPositions="currentPositions"
           :transitionMs="transitionMs"
           @positionChange="onPositionChange"
@@ -406,7 +407,9 @@ export default {
       }
     },
     setCounter(count) {
+      const oldPositions = this.currentPositions;
       this.count = count;
+      this.$refs.Mat.animatePositions(oldPositions, this.currentPositions);
     },
     playPause() {
       if (!this.playInterval) {
