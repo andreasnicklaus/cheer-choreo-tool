@@ -4,10 +4,9 @@ import { setupCache } from "axios-cache-interceptor";
 const ax = setupCache(
   axios.create({
     baseURL:
-      // process.env.NODE_ENV == "production"
-      //     ? "https://api.choreo.andreasnicklaus.de/"
-      //     : "http://localhost:8080/",
-      "http://localhost:3000/",
+      process.env.NODE_ENV == "production"
+        ? "https://api.cheer.andreasnicklaus.de/"
+        : "http://localhost:3000/",
   }),
   { headerInterpreter: () => 50 }
 );
