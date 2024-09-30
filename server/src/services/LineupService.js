@@ -1,4 +1,4 @@
-const Lineup = require("../db/models/Lineup");
+const Lineup = require("../db/models/lineup");
 const { logger } = require("../plugins/winston");
 
 class LineupService {
