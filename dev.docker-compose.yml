@@ -4,5 +4,6 @@ services:
     build:
       context: server
       dockerfile: dev.Dockerfile
+    image: anicklaus/cheer-tool:dev
     volumes:
       - ./server/src:/usr/src/app/src
