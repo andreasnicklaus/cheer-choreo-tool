@@ -22,6 +22,7 @@ const Choreo = require("./models/choreo");
 const Lineup = require("./models/lineup");
 const Hit = require("./models/hit");
 const Position = require("./models/position");
+const User = require("./models/user");
 const seed = require("./seed");
 
 Team.hasMany(Member);
@@ -48,22 +49,29 @@ Position.belongsTo(Lineup);
 Member.hasMany(Position);
 Position.belongsTo(Member);
 
+User.hasMany(Club);
+Club.belongsTo(User);
+
+User.hasMany(Team);
+Team.belongsTo(User);
+
+User.hasMany(Member);
+Member.belongsTo(User);
+
+User.hasMany(Choreo);
+Choreo.belongsTo(User);
+
+User.hasMany(Lineup);
+Lineup.belongsTo(User);
+
+User.hasMany(Position);
+Position.belongsTo(User);
+
+User.hasMany(Hit);
+Hit.belongsTo(User);
+
 db.sync({
   alter: true,
 }).then(() => {
-  seed().then(() => {
-    setTimeout(async () => {
-      console.log(
-        JSON.stringify(
-          await Member.findAll({
-            where: {
-              name: "Aleyna Ortmann",
-            },
-          }),
-          null,
-          2
-        )
-      );
-    }, 2000);
-  });
+  seed();
 });

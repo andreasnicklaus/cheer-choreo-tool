@@ -1,5 +1,5 @@
 <template>
-  <b-container class="team">
+  <b-container id="teamView">
     <EditableNameHeading
       name="Team"
       :value="teams?.find((t) => t.id == teamId)?.name"
@@ -34,12 +34,6 @@
           @click="() => (presentation = 'list')"
         >
           <b-icon-list-ul />
-        </b-button>
-        <b-button
-          :variant="presentation == 'grid' ? 'primary' : 'outline-primary'"
-          @click="() => (presentation = 'grid')"
-        >
-          <b-icon-grid />
         </b-button>
       </b-button-group>
     </b-row>
@@ -90,38 +84,24 @@
           ></div>
           {{ member.name }} {{ member.nickname ? `(${member.nickname})` : "" }}
         </div>
-        <b-badge v-if="member.abbreviation" variant="primary">{{
-          member.abbreviation
-        }}</b-badge>
+        <div>
+          <b-badge v-if="member.abbreviation" variant="primary" class="mr-4">
+            {{ member.abbreviation }}
+          </b-badge>
+          <b-button-group>
+            <b-button variant="outline-success" @click="editMember(member.id)">
+              <b-icon-pen />
+            </b-button>
+            <b-button
+              variant="outline-danger"
+              @click="requestMemberRemoval(member.id)"
+            >
+              <b-icon-trash />
+            </b-button>
+          </b-button-group>
+        </div>
       </b-list-group-item>
     </b-list-group>
-
-    <b-row v-if="presentation == 'grid'">
-      <b-col v-for="member in sortedMembersOfCurrentTeam" :key="member.id">
-        <b-card variant="primary" :title="member.name" class="w-100 h-100">
-          <b-card-text
-            class="d-flex justify-content-between align-items-center"
-          >
-            <div class="d-flex justify-content-between align-items-center">
-              <div
-                class="mr-2 d-inline-block"
-                :style="{
-                  height: '24px',
-                  width: '24px',
-                  backgroundColor: member.color + '55',
-                  borderRadius: '50%',
-                  border: 'solid 2px ' + member.color,
-                }"
-              ></div>
-              {{ member.nickname }}
-            </div>
-            <b-badge v-if="member.abbreviation" variant="primary">
-              {{ member.abbreviation }}
-            </b-badge>
-          </b-card-text>
-        </b-card>
-      </b-col>
-    </b-row>
 
     <p
       class="text-muted text-center"
@@ -230,8 +210,8 @@ export default {
     teams: [],
     tableFields: [
       { key: "name", sortable: true },
-      { key: "nickname", label: "Spitzname" },
-      { key: "abbreviation", label: "Abkürzung" },
+      { key: "nickname", label: "Spitzname", sortable: true },
+      { key: "abbreviation", label: "Abkürzung", sortable: true },
       { key: "color", label: "Farbe" },
       { key: "actions", label: "" },
     ],

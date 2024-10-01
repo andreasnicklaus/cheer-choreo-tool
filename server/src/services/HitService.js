@@ -3,43 +3,48 @@ const { logger } = require("../plugins/winston");
 const { Op } = require("sequelize");
 
 class HitService {
-  async getAll() {
-    return Hit.findAll({ include: "Members" });
+  async getAll(UserId) {
+    return Hit.findAll({ where: { UserId }, include: "Members" });
   }
 
-  async findById(id) {
-    return Hit.findByPk(id, { include: { all: true, nested: true } });
-  }
-
-  async findByName(name) {
-    return Hit.findAll({
-      where: { name },
+  async findById(id, UserId) {
+    return Hit.findOne({
+      where: { id, UserId },
       include: { all: true, nested: true },
     });
   }
 
-  async create(name, count, ChoreoId, memberIds = []) {
+  async findByName(name, UserId) {
+    return Hit.findAll({
+      where: { name, UserId },
+      include: { all: true, nested: true },
+    });
+  }
+
+  async create(name, count, ChoreoId, memberIds = [], UserId) {
     logger.debug(
       `HitService.create ${JSON.stringify({
         name,
         count,
         ChoreoId,
         memberIds,
+        UserId,
       })}`
     );
-    return Hit.create({ name, count, ChoreoId }).then(async (hit) => {
+    return Hit.create({ name, count, ChoreoId, UserId }).then(async (hit) => {
       if (memberIds.length > 0) await hit.setMembers(memberIds);
       return Hit.findByPk(hit.id, { include: "Members" });
     });
   }
 
-  async findOrCreate(name, count, ChoreoId, MemberIds = []) {
+  async findOrCreate(name, count, ChoreoId, MemberIds = [], UserId) {
     logger.debug(
       `HitService.findOrCreate ${JSON.stringify({
         name,
         count,
         ChoreoId,
         MemberIds,
+        UserId,
       })}`
     );
     const [hit, created] = await Hit.findOrCreate({
@@ -47,14 +52,15 @@ class HitService {
         name,
         count,
         ChoreoId,
+        UserId,
       },
     });
     await hit.setMembers(MemberIds);
     return hit;
   }
 
-  async update(id, data) {
-    return Hit.findByPk(id).then(async (foundHit) => {
+  async update(id, data, UserId) {
+    return Hit.findOne({ where: { id, UserId } }).then(async (foundHit) => {
       if (foundHit) {
         logger.debug(`HitService.update ${JSON.stringify({ id, data })}`);
         await foundHit.update(data);
@@ -66,9 +72,9 @@ class HitService {
   }
 
   async remove(id) {
-    return Hit.findByPk(id).then((foundHit) => {
+    return Hit.findOne({ where: { id, UserId } }).then((foundHit) => {
       if (foundHit) {
-        logger.debug(`HitService.remove ${JSON.stringify({ id })}`);
+        logger.debug(`HitService.remove ${JSON.stringify({ id, UserId })}`);
         return foundHit.destroy();
       } else {
         throw Error(`Beim Löschen wurde kein Hit mit der ID ${id} gefunden`);

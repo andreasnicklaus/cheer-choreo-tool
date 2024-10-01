@@ -1,11 +1,12 @@
 const { Router } = require("express");
 const MemberService = require("../services/MemberService");
+const { authenticateUser } = require("../services/AuthService");
 
 const router = Router();
 
-router.post("/", (req, res, next) => {
+router.post("/", authenticateUser, (req, res, next) => {
   const { name, nickname, abbreviation, color, teamId } = req.body;
-  MemberService.create(name, nickname, abbreviation, color, teamId)
+  MemberService.create(name, nickname, abbreviation, color, teamId, req.UserId)
     .then((member) => {
       res.send(member);
       return next();
@@ -13,11 +14,20 @@ router.post("/", (req, res, next) => {
     .catch((e) => next(e));
 });
 
-router.put("/:id", (req, res, next) => {
-  MemberService.update(req.params.id, req.body)
+router.put("/:id", authenticateUser, (req, res, next) => {
+  MemberService.update(req.params.id, req.body, req.UserId)
     .then((member) => {
       res.send(member);
       return next();
+    })
+    .catch((e) => next(e));
+});
+
+router.delete("/:id", authenticateUser, (req, res, next) => {
+  MemberService.remove(req.params.id, req.UserId)
+    .then((result) => {
+      res.send(result);
+      next();
     })
     .catch((e) => next(e));
 });

@@ -26,6 +26,8 @@ const { hitRouter } = require("./routes/hit");
 const { lineupRouter } = require("./routes/lineup");
 const { memberRouter } = require("./routes/member");
 const { positionRouter } = require("./routes/position");
+const { userRouter } = require("./routes/user");
+const { authRouter } = require("./routes/auth");
 
 const app = express();
 const port = 3000;
@@ -43,6 +45,8 @@ app.use("/hit", hitRouter);
 app.use("/lineup", lineupRouter);
 app.use("/member", memberRouter);
 app.use("/position", positionRouter);
+app.use("/user", userRouter);
+app.use("/auth", authRouter);
 
 app.use(loggerMiddleWare);
 app.use(errorLoggingMiddleWare);

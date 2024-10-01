@@ -1,16 +1,20 @@
 import ax from "./RequestService";
 
 class ChoreoService {
-  async getByTeam(teamId) {
+  getByTeam(teamId) {
     return ax.get("/choreo", { params: { teamId } }).then((res) => res.data);
   }
 
-  async getById(choreoId) {
+  getById(choreoId) {
     return ax.get(`/choreo/${choreoId}`).then((res) => res.data);
   }
 
-  async changeName(choreoId, name) {
+  changeName(choreoId, name) {
     return ax.put(`/choreo/${choreoId}`, { name }).then((res) => res.data);
+  }
+
+  create(name, counts, teamId) {
+    return ax.post("/choreo", { name, counts, teamId }).then((res) => res.data);
   }
 }
 

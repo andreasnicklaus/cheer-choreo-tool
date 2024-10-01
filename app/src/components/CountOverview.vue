@@ -114,8 +114,13 @@
                 lineup.Positions.length > 0 &&
                 lineup.Positions.length != teamMembers.length
               "
+              :style="{ columnCount: 2 }"
             >
-              <b-row v-for="position in lineup.Positions" :key="position.id">
+              <b-row
+                v-for="position in lineup.Positions"
+                :key="position.id"
+                no-gutters
+              >
                 <div
                   class="mr-2"
                   :style="{
@@ -307,6 +312,7 @@
                 hit.Members.length > 0 &&
                 hit.Members.length != teamMembers.length
               "
+              :style="{ columnCount: 2 }"
             >
               <b-row v-for="member in hit.Members" :key="member.id">
                 <div
@@ -437,9 +443,14 @@
       v-b-modal.modal-newHit
     >
       <b-icon-plus />
-      Hinzufügen
+      Count-Eintrag hinzufügen
+    </b-button>
+    <b-button variant="light" block class="mt-2" v-b-modal.modal-newLineup>
+      <b-icon-plus />
+      Aufstellung hinzufügen
     </b-button>
 
+    <!-- NEW HIT MODAL -->
     <b-modal
       id="modal-newHit"
       title="Neuer Eintrag"
@@ -514,11 +525,140 @@
       </template>
     </b-modal>
 
+    <!-- NEW LINEUP MODAL -->
+    <b-modal
+      id="modal-newLineup"
+      title="Neuer Eintrag"
+      centered
+      @show="resetLineupModal"
+      @hidden="resetLineupModal"
+      @ok="createLineup"
+    >
+      <b-form
+        @keydown.enter="
+          () => {
+            if (
+              editLineupStartAchter &&
+              editLineupStartCount &&
+              editLineupEndAchter &&
+              editLineupEndCount
+            ) {
+              $bvModal.hide('modal-newLineup');
+              createLineup();
+            }
+          }
+        "
+      >
+        <b-form-group label="Start:" label-cols="2">
+          <b-row>
+            <b-col>
+              <b-form-group description="Achter">
+                <b-form-input
+                  type="number"
+                  min="1"
+                  v-model="editLineupStartAchter"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col>
+              <b-form-group description="Count">
+                <b-form-input
+                  type="number"
+                  min="1"
+                  max="8"
+                  v-model="editLineupStartCount"
+                />
+              </b-form-group>
+            </b-col>
+          </b-row>
+        </b-form-group>
+        <b-form-group label="Ende:" label-cols="2">
+          <b-row>
+            <b-col>
+              <b-form-group description="Achter">
+                <b-form-input
+                  type="number"
+                  min="1"
+                  v-model="editLineupEndAchter"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col>
+              <b-form-group description="Count">
+                <b-form-input
+                  type="number"
+                  min="1"
+                  max="8"
+                  v-model="editLineupEndCount"
+                />
+              </b-form-group>
+            </b-col>
+          </b-row>
+        </b-form-group>
+        <b-form-checkbox-group
+          id="memberSelection-lineup"
+          v-model="editLineupMembers"
+          stacked
+        >
+          <b-form-checkbox
+            v-for="member in teamMembers"
+            :key="member.id"
+            :value="member.id"
+            :disabled="
+              lineupsForCurrentCount
+                .map((l) => l.Positions.map((p) => p.MemberId))
+                .flat()
+                .includes(member.id)
+            "
+          >
+            <b-row no-gutters class="mb-1">
+              <div
+                class="mr-2"
+                :style="{
+                  height: '24px',
+                  width: '24px',
+                  backgroundColor: member.color + '55',
+                  borderRadius: '50%',
+                  border: 'solid 2px ' + member.color,
+                }"
+              ></div>
+              {{ member.nickname || member.name }}
+              {{
+                lineupsForCurrentCount
+                  .map((l) => l.Positions.map((p) => p.MemberId))
+                  .flat()
+                  .includes(member.id)
+                  ? "(Ist in anderer Aufstellung)"
+                  : null
+              }}
+            </b-row>
+          </b-form-checkbox>
+        </b-form-checkbox-group>
+      </b-form>
+      <template #modal-footer="{ ok, cancel }">
+        <b-button
+          type="submit"
+          @click="ok"
+          variant="success"
+          :disabled="
+            !editLineupStartAchter ||
+            !editLineupStartCount ||
+            !editLineupEndAchter ||
+            !editLineupEndCount ||
+            editLineupMembers.length == 0
+          "
+        >
+          Speichern
+        </b-button>
+        <b-button @click="cancel" variant="danger">Abbrechen</b-button>
+      </template>
+    </b-modal>
+
     <b-modal
       id="modal-deleteLineup"
       title="Aufstellung löschen?"
       centered
-      @hidden="resetLineupModal"
+      @hidden="resetDeleteLineupModal"
       @ok="deleteLineup"
     >
       <p class="m-0">Du kannst das nicht rückgängig machen.</p>
@@ -728,14 +868,6 @@ export default {
           : this.teamMembers.map((m) => m.id);
     },
     saveLineup() {
-      console.log({
-        editLineupId: this.editLineupId,
-        editLineupStartAchter: this.editLineupStartAchter,
-        editLineupStartCount: this.editLineupStartCount,
-        editLineupEndAchter: this.editLineupEndAchter,
-        editLineupEndCount: this.editLineupEndCount,
-        editLineupMembers: this.editLineupMembers,
-      });
       const absoluteStartCount =
         (parseInt(this.editLineupStartAchter) - 1) * 8 +
         parseInt(this.editLineupStartCount) -
@@ -803,7 +935,7 @@ export default {
 
       this.editLineupId = null;
     },
-    resetLineupModal() {
+    resetDeleteLineupModal() {
       this.deleteLineupId = null;
     },
     openDeleteModal(lineupId) {
@@ -816,6 +948,59 @@ export default {
           "updateLineups",
           this.choreo.Lineups.filter((l) => l.id != this.deleteLineupId)
         );
+      });
+    },
+    resetLineupModal() {
+      this.editLineupStartCount = (this.count % 8) + 1;
+      this.editLineupStartAchter = Math.floor(this.count / 8) + 1;
+      this.editLineupEndCount = (this.count % 8) + 1;
+      this.editLineupEndAchter = Math.floor(this.count / 8) + 1;
+      const positionedMemberIds = this.lineupsForCurrentCount
+        .map((l) => l.Positions.map((p) => p.MemberId))
+        .flat();
+      this.editLineupMembers = this.teamMembers
+        .map((m) => m.id)
+        .filter((mId) => !positionedMemberIds.includes(mId));
+    },
+    createLineup() {
+      const absoluteStartCount =
+        (parseInt(this.editLineupStartAchter) - 1) * 8 +
+        parseInt(this.editLineupStartCount) -
+        1;
+      const absoluteEndCount =
+        (parseInt(this.editLineupEndAchter) - 1) * 8 +
+        parseInt(this.editLineupEndCount) -
+        1;
+
+      LineupService.create(
+        absoluteStartCount,
+        absoluteEndCount,
+        this.choreo.id
+      ).then((lineup) => {
+        return Promise.all(
+          this.editLineupMembers.map((mId) => {
+            const positionOfMember = this.currentPositions.find(
+              (p) => p.MemberId == mId
+            );
+            return PositionService.create(
+              lineup.id,
+              positionOfMember.x,
+              positionOfMember.y,
+              mId
+            );
+          })
+        ).then((createdPositions) => {
+          const lineupCopy = this.choreo.Lineups.filter(
+            (l) => l.id != lineup.id
+          );
+
+          const positionsCopy = lineup.Positions || [];
+          positionsCopy.push(...createdPositions);
+          lineup.Positions = positionsCopy;
+
+          lineupCopy.push(lineup);
+          this.$emit("updateLineups", lineupCopy);
+        });
       });
     },
   },

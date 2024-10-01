@@ -1,11 +1,12 @@
 const { Router } = require("express");
 const ChoreoService = require("../services/ChoreoService");
+const { authenticateUser } = require("../services/AuthService");
 
 const router = Router();
 
-router.get("/:id?", (req, res, next) => {
+router.get("/:id?", authenticateUser, (req, res, next) => {
   if (req.params.id)
-    ChoreoService.findById(req.params.id)
+    ChoreoService.findById(req.params.id, req.UserId)
       .then((foundChoreo) => {
         if (!foundChoreo) res.status(404).send("Not found");
         else res.send(foundChoreo);
@@ -14,14 +15,14 @@ router.get("/:id?", (req, res, next) => {
       .catch((e) => next(e));
   else {
     if (req.query.teamId)
-      ChoreoService.findByTeamId(req.query.teamId)
+      ChoreoService.findByTeamId(req.query.teamId, req.UserId)
         .then((choreoList) => {
           res.send(choreoList);
           return next();
         })
         .catch((e) => next(e));
     else
-      ChoreoService.getAll()
+      ChoreoService.getAll(req.UserId)
         .then((choreoList) => {
           res.send(choreoList);
           return next();
@@ -30,9 +31,9 @@ router.get("/:id?", (req, res, next) => {
   }
 });
 
-router.post("/", (req, res, next) => {
-  const { name, count } = req.body;
-  return ChoreoService.create(name, count)
+router.post("/", authenticateUser, (req, res, next) => {
+  const { name, counts, teamId } = req.body;
+  return ChoreoService.create(name, counts, teamId, req.UserId)
     .then((choreo) => {
       res.send(choreo);
       return next();
@@ -40,8 +41,8 @@ router.post("/", (req, res, next) => {
     .catch((e) => next(e));
 });
 
-router.put("/:id", (req, res, next) => {
-  return ChoreoService.update(req.params.id, req.body)
+router.put("/:id", authenticateUser, (req, res, next) => {
+  return ChoreoService.update(req.params.id, req.body, req.UserId)
     .then((result) => {
       res.send(result);
       return next();
@@ -49,8 +50,8 @@ router.put("/:id", (req, res, next) => {
     .catch((e) => next(e));
 });
 
-router.delete("/:id", (req, res, next) => {
-  return ChoreoService.remove(req.params.id)
+router.delete("/:id", authenticateUser, (req, res, next) => {
+  return ChoreoService.remove(req.params.id, req.UserId)
     .then((result) => {
       res.send(result);
       return next();

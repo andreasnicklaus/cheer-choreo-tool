@@ -1,32 +1,20 @@
 import ax from "./RequestService";
 
-const clubs = [
-  {
-    id: "testClub",
-    name: "Glamourous Cheerleader",
-    teamIds: ["testteam"],
-  },
-];
-
 class ClubService {
+  getAll() {
+    return ax.get("/club").then((res) => res.data);
+  }
+
   getById(clubId) {
-    return ax
-      .get(`/club/${clubId}`)
-      .then((res) => res.data)
-      .catch((e) => {
-        console.warn(e);
-        return clubs.find((t) => t.id == clubId);
-      });
+    return ax.get(`/club/${clubId}`).then((res) => res.data);
   }
 
   findByName(name) {
-    return ax
-      .get("/club", { params: { name } })
-      .then((res) => res.data)
-      .catch((e) => {
-        console.warn(e);
-        return clubs.filter((c) => c.name == name);
-      });
+    return ax.get("/club", { params: { name } }).then((res) => res.data);
+  }
+
+  create(name) {
+    return ax.post("/club", { name }).then((res) => res.data);
   }
 }
 

@@ -1,11 +1,12 @@
 {
-  "name": "app",
+  "name": "choreo-tool",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "serve": "npm run icons && vue-cli-service serve",
+    "build": "npm run icons && vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "icons": "vue-asset-generate -a ./public/icon.png -b #FFFFFF"
   },
   "dependencies": {
     "@babel/eslint-parser": "^7.12.16",
@@ -32,6 +33,7 @@
     "vue-cli-plugin-bootstrap-vue": "~0.8.2",
     "vue-cli-plugin-vuetify": "~2.5.8",
     "vue-meta": "^2.4.0",
+    "vue-pwa-asset-generator": "^1.7.3",
     "vue-router": "^3.5.1",
     "vuetify": "^2.6.0",
     "vuetify-loader": "^1.7.0",

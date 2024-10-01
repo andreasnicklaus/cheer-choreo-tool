@@ -26,15 +26,15 @@ const defaultColors = [
 ];
 
 class MemberService {
-  async findAll() {
-    return Member.getAll();
+  async findAll(UserId) {
+    return Member.getAll({ where: { UserId } });
   }
 
-  async findById(id) {
-    return Club.findByPk(id);
+  async findById(id, UserId) {
+    return Club.findOne({ where: { id, UserId } });
   }
 
-  async create(name, nickname, abbreviation, color, TeamId) {
+  async create(name, nickname, abbreviation, color, TeamId, UserId) {
     if (!abbreviation)
       abbreviation = name
         .split(" ")
@@ -51,12 +51,20 @@ class MemberService {
         abbreviation,
         color,
         TeamId,
+        UserId,
       })}`
     );
-    return Member.create({ name, nickname, abbreviation, color, TeamId });
+    return Member.create({
+      name,
+      nickname,
+      abbreviation,
+      color,
+      TeamId,
+      UserId,
+    });
   }
 
-  async findOrCreate(name, nickname, abbreviation, color, TeamId) {
+  async findOrCreate(name, nickname, abbreviation, color, TeamId, UserId) {
     logger.debug(
       `MemberService.findOrCreate ${JSON.stringify({
         name,
@@ -64,6 +72,7 @@ class MemberService {
         abbreviation,
         color,
         TeamId,
+        UserId,
       })}`
     );
 
@@ -78,6 +87,7 @@ class MemberService {
         nickname,
         abbreviation: abbreviation || defaultAbbreviation,
         TeamId,
+        UserId,
       },
       defaults: {
         color:
@@ -86,42 +96,31 @@ class MemberService {
       },
     });
     return member;
-
-    // let foundMember = await Member.findOne({
-    //   where: { name, nickname },
-    // });
-
-    // if (!foundMember)
-    //   foundMember = await this.create(
-    //     name,
-    //     nickname,
-    //     abbreviation,
-    //     color,
-    //     TeamId
-    //   );
-
-    // await foundMember.setTeam(TeamId);
-
-    // return foundMember;
   }
 
-  async update(id, data) {
-    return Member.findByPk(id).then(async (foundMember) => {
-      if (foundMember) {
-        logger.debug(`MemberService.update ${JSON.stringify({ id, data })}`);
-        await foundMember.update(data);
-        await foundMember.save();
-        return Member.findByPk(id);
-      } else {
-        throw Error(`Beim Update wurde kein Member mit der ID ${id} gefunden`);
+  async update(id, data, UserId) {
+    return Member.findOne({ where: { id, UserId } }).then(
+      async (foundMember) => {
+        if (foundMember) {
+          logger.debug(
+            `MemberService.update ${JSON.stringify({ id, data, UserId })}`
+          );
+          await foundMember.update(data);
+          await foundMember.save();
+          return Member.findOne({ where: { id, UserId } });
+        } else {
+          throw Error(
+            `Beim Update wurde kein Member mit der ID ${id} gefunden`
+          );
+        }
       }
-    });
+    );
   }
 
-  async remove(id) {
-    return Member.findByPk(id).then((foundMember) => {
+  async remove(id, UserId) {
+    return Member.findOne({ where: { id, UserId } }).then((foundMember) => {
       if (foundMember) {
-        logger.debug(`MemberService.remove ${JSON.stringify({ id })}`);
+        logger.debug(`MemberService.remove ${JSON.stringify({ id, UserId })}`);
         return foundMember.destroy();
       } else {
         throw Error(`Beim Löschen wurde kein Member mit der ID ${id} gefunden`);

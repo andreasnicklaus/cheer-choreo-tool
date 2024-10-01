@@ -1,19 +1,20 @@
 const { Router } = require("express");
 const PositionService = require("../services/PositionService");
+const { authenticateUser } = require("../services/AuthService");
 
 const router = Router();
 
-router.post("/", (req, res, next) => {
+router.post("/", authenticateUser, (req, res, next) => {
   const { x, y, memberId, lineupId } = req.body;
-  PositionService.create(x, y)
+  PositionService.create(x, y, req.UserId)
     .then(async (position) => {
       return Promise.all([
         position.setMember(memberId),
-        LineupService.findById(lineupId).then((lineup) =>
+        LineupService.findById(lineupId, req.UserId).then((lineup) =>
           lineup.addPosition(position)
         ),
       ]).then(() =>
-        PositionService.findById(position.id).then((p) => {
+        PositionService.findById(position.id, req.UserId).then((p) => {
           res.send(p);
           next();
         })
@@ -22,8 +23,8 @@ router.post("/", (req, res, next) => {
     .catch((e) => next(e));
 });
 
-router.put("/:id", (req, res, next) => {
-  PositionService.update(req.params.id, req.body)
+router.put("/:id", authenticateUser, (req, res, next) => {
+  PositionService.update(req.params.id, req.body, req.UserId)
     .then((position) => {
       res.send(position);
       next();
@@ -31,8 +32,8 @@ router.put("/:id", (req, res, next) => {
     .catch((e) => next(e));
 });
 
-router.delete("/:id", (req, res, next) => {
-  PositionService.remove(req.params.id)
+router.delete("/:id", authenticateUser, (req, res, next) => {
+  PositionService.remove(req.params.id, req.UserId)
     .then((result) => {
       res.send(result);
       next();

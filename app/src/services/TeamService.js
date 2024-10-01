@@ -1,19 +1,23 @@
 import ax from "./RequestService";
 
 class TeamService {
-  async getAll() {
+  getAll() {
     return ax.get("/team").then((res) => res.data);
   }
 
-  async getByName(name) {
+  getByName(name) {
     return ax.get("/team", { params: { name } }).then((res) => res.data);
   }
 
-  async getById(teamId) {
+  getById(teamId) {
     return ax.get(`/team/${teamId}`).then((res) => res.data);
   }
 
-  async setName(teamId, name) {
+  create(name, clubId) {
+    return ax.post("/team", { name, clubId }).then((res) => res.data);
+  }
+
+  setName(teamId, name) {
     return ax.put(`/team/${teamId}`, { name }).then((res) => res.data);
   }
 }

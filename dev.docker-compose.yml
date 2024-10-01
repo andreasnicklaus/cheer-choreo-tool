@@ -1,5 +1,9 @@
 services:
 
+  db: 
+    ports:
+      - 15432:5432
+
   server:
     build:
       context: server

@@ -1,5 +1,8 @@
 import axios from "axios";
 import { setupCache } from "axios-cache-interceptor";
+import AuthService from "./AuthService";
+import store from "@/store";
+import router from "@/router";
 
 const ax = setupCache(
   axios.create({
@@ -11,25 +14,38 @@ const ax = setupCache(
   { headerInterpreter: () => 50 }
 );
 
-// ax.interceptors.response.use(
-// (response) => response
-// (error) => {
-//   switch (error.response.status) {
-//     case 401:
-//       UserService.logout();
-//       break;
-//     case 403:
-//       UserService.logout({ name: "Login" });
-//       break;
-//     default:
-//       console.warn(error);
-//   }
-//   return Promise.reject(error);
-// }
-// );
+ax.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    switch (error.response.status) {
+      case 401:
+        AuthService.removeToken();
+        store.commit("setLoginState", false);
+        router.push({ name: "Login" }).catch(() => {});
+        break;
+      case 403:
+        AuthService.removeToken();
+        store.commit("setLoginState", false);
+        router.push({ name: "Login" }).catch(() => {});
+        break;
+      default:
+        console.warn(error);
+    }
+    return Promise.reject(error);
+  }
+);
 
-// const sessionAuthToken = sessionStorage.getItem("authToken");
-// if (sessionAuthToken)
-//   ax.defaults.headers.common.Authorization = "Bearer " + sessionAuthToken;
+ax.interceptors.request.use(
+  (config) => {
+    const token = AuthService.getAuthToken();
+    if (token) {
+      config.headers.Authorization = "Bearer " + token;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export default ax;

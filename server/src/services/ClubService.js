@@ -2,36 +2,48 @@ const Club = require("../db/models/club");
 const { logger } = require("../plugins/winston");
 
 class ClubService {
-  async getAll() {
-    return Club.findAll({ include: { all: true, nested: true } });
-  }
-
-  async findById(id) {
-    return Club.findByPk(id, { include: { all: true, nested: true } });
-  }
-
-  async findByName(name) {
+  async getAll(UserId) {
     return Club.findAll({
-      where: { name },
+      where: { UserId },
       include: [{ association: "Teams", include: "Choreos" }],
     });
   }
 
-  async create(name) {
-    logger.debug(`ClubService.create ${JSON.stringify({ name })}`);
-    return Club.create({ name });
+  async findById(id, UserId) {
+    return Club.findOne({
+      where: { id, UserId },
+      include: [{ association: "Teams", include: "Choreos" }],
+    });
   }
 
-  async findOrCreate(name) {
-    logger.debug(`ClubService.findOrCreate ${JSON.stringify({ name })}`);
-    const [club, created] = await Club.findOrCreate({ where: { name } });
+  async findByName(name, UserId) {
+    return Club.findAll({
+      where: { name, UserId },
+      include: [{ association: "Teams", include: "Choreos" }],
+    });
+  }
+
+  async create(name, UserId) {
+    logger.debug(`ClubService.create ${JSON.stringify({ name, UserId })}`);
+    return Club.create({ name, UserId });
+  }
+
+  async findOrCreate(name, UserId) {
+    logger.debug(
+      `ClubService.findOrCreate ${JSON.stringify({ name, UserId })}`
+    );
+    const [club, created] = await Club.findOrCreate({
+      where: { name, UserId },
+    });
     return club;
   }
 
-  async update(id, data) {
-    return Club.findByPk(id).then(async (foundClub) => {
+  async update(id, data, UserId) {
+    return Club.findOne({ where: { id, UserId } }).then(async (foundClub) => {
       if (foundClub) {
-        logger.debug(`ClubService.update ${JSON.stringify({ id, data })}`);
+        logger.debug(
+          `ClubService.update ${JSON.stringify({ id, data, UserId })}`
+        );
         await foundClub.update(data);
         return foundClub.save();
       } else {
@@ -40,8 +52,8 @@ class ClubService {
     });
   }
 
-  async remove(id) {
-    return Club.findByPk(id).then((foundClub) => {
+  async remove(id, UserId) {
+    return Club.findOne({ where: { id, UserId } }).then((foundClub) => {
       if (foundClub) {
         logger.debug(`ClubService.remove ${JSON.stringify({ id })}`);
         return foundClub.destroy();

@@ -1,5 +1,5 @@
 <template>
-  <b-container class="edit">
+  <b-container id="editView" @keydown="onKeyPress">
     <EditableNameHeading
       name="Choreo"
       :value="choreo?.name"
@@ -200,9 +200,6 @@ import CountOverview from "@/components/CountOverview.vue";
 import PositionService from "@/services/PositionService";
 import LineupService from "@/services/LineupService";
 
-const abortController = new AbortController();
-const { signal } = abortController;
-
 export default {
   name: "EditView",
   components: { Mat, CountSheet, EditableNameHeading, CountOverview },
@@ -221,7 +218,7 @@ export default {
     ],
     choreo: null,
     lastKeyEvent: null,
-    transitionMs: 500,
+    transitionMs: 800,
     newHitName: null,
     newHitCount: 1,
     newHitMembers: [],
@@ -231,9 +228,6 @@ export default {
   }),
   mounted() {
     this.loadChoreo();
-
-    document.addEventListener("keydown", this.onKeyPress);
-    window.addEventListener("beforeunload", this.beforeUnload, { signal });
   },
   watch: {
     "$route.params": {
@@ -245,10 +239,6 @@ export default {
     },
   },
   methods: {
-    beforeUnload() {
-      document.removeEventListener("keydown", this.onKeyPress);
-      abortController.abort();
-    },
     loadChoreo() {
       ChoreoService.getById(this.choreoId)
         .then((choreo) => {
@@ -260,9 +250,8 @@ export default {
             a.name.localeCompare(b.name)
           );
         })
-        .catch((e) => {
-          console.error(e);
-          this.$router.push({ name: "Home" });
+        .catch(() => {
+          this.$router.push({ name: "Start" });
         });
     },
     onPositionChange(memberId, x, y) {
@@ -409,13 +398,19 @@ export default {
     setCounter(count) {
       const oldPositions = this.currentPositions;
       this.count = count;
-      this.$refs.Mat.animatePositions(oldPositions, this.currentPositions);
+      if (this.$refs.Mat)
+        this.$refs.Mat.animatePositions(oldPositions, this.currentPositions);
     },
     playPause() {
       if (!this.playInterval) {
         this.playInterval = setInterval(() => {
-          this.setCounter(this.count + 1);
-        }, this.transitionMs * 1.5);
+          if (this.count + 1 < this.choreo.counts) {
+            this.setCounter(this.count + 1);
+          } else {
+            clearInterval(this.playInterval);
+            this.playInterval = null;
+          }
+        }, this.transitionMs);
       } else {
         clearInterval(this.playInterval);
         this.playInterval = null;
@@ -531,12 +526,6 @@ export default {
           y: yNew,
         };
       });
-
-      // console.log({
-      //   positionsForCurrentCount,
-      //   interpolatedPositions,
-      //   defaultPositions,
-      // });
 
       return [
         ...positionsForCurrentCount,

@@ -190,6 +190,7 @@ export default {
                 cx: (np.x * this.height) / 100,
                 cy: (np.y * this.height) / 100,
                 duration: this.transitionMs / 1000,
+                ease: "none",
               }
             );
             gsap.fromTo(
@@ -199,6 +200,7 @@ export default {
                 x: (np.x * this.height) / 100,
                 y: (np.y * this.height) / 100,
                 duration: this.transitionMs / 1000,
+                ease: "none",
               }
             );
           }
