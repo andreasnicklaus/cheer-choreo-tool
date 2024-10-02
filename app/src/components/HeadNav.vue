@@ -33,7 +33,7 @@
             v-if="$store.state.clubId"
           >
             <b-icon-plus />
-            Neue Choreo anlegen
+            Neue Choreo
           </b-dropdown-item>
         </b-nav-item-dropdown>
         <b-nav-item-dropdown text="Teams" :disabled="!$store.state.loggedIn">
@@ -51,7 +51,7 @@
             v-if="$store.state.clubId"
           >
             <b-icon-plus />
-            Neues Team anlegen
+            Neues Team
           </b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
@@ -88,7 +88,7 @@
             </b-dropdown-group>
             <b-dropdown-item variant="success" v-b-modal.modal-newClub-header>
               <b-icon-plus />
-              Neuen Verein anlegen
+              Neuer Verein
             </b-dropdown-item>
             <b-dropdown-divider />
             <b-dropdown-item variant="danger" @click="logout">

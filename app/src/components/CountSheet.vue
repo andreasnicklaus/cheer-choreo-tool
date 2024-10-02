@@ -32,6 +32,7 @@
           </span>
           <b-button
             v-else
+            :disabled="!interactive"
             :style="{
               minWidth: '50px',
               height: '100%',
@@ -71,6 +72,10 @@ export default {
     },
     choreo: {
       type: Object,
+    },
+    interactive: {
+      type: Boolean,
+      default: true,
     },
   },
   methods: {

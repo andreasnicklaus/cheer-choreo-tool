@@ -34,7 +34,7 @@
                         lineup.startCount <= 0 ? '' : 'nach vorne verlängern'
                       "
                       @click="() => extendLineupToBeginning(lineup.id)"
-                      :disabled="lineup.startCount <= 0"
+                      :disabled="lineup.startCount <= 0 || !interactive"
                     >
                       <b-icon-chevron-double-left />
                     </b-button>
@@ -47,7 +47,7 @@
                           : 'gesamte Aufstellung einen Count nach vorne verschieben'
                       "
                       @click="() => moveLineupToBeginning(lineup.id)"
-                      :disabled="lineup.startCount <= 0"
+                      :disabled="lineup.startCount <= 0 || !interactive"
                     >
                       <b-icon-chevron-left />
                     </b-button>
@@ -60,7 +60,9 @@
                           : 'gesamte Aufstellung einen Count nach hinten verschieben'
                       "
                       @click="() => moveLineupToEnd(lineup.id)"
-                      :disabled="lineup.endCount >= choreo.count - 1"
+                      :disabled="
+                        lineup.endCount >= choreo.count - 1 || !interactive
+                      "
                     >
                       <b-icon-chevron-right />
                     </b-button>
@@ -73,7 +75,9 @@
                           : 'nach hinten verlängern'
                       "
                       @click="() => extendLineupToEnd(lineup.id)"
-                      :disabled="lineup.endCount >= choreo.count - 1"
+                      :disabled="
+                        lineup.endCount >= choreo.count - 1 || !interactive
+                      "
                     >
                       <b-icon-chevron-double-right />
                     </b-button>
@@ -82,6 +86,7 @@
                       v-b-tooltip.hover
                       title="bearbeiten"
                       @click="() => editLineup(lineup.id)"
+                      :disabled="!interactive"
                     >
                       <b-icon-pen />
                     </b-button>
@@ -90,6 +95,7 @@
                       v-b-tooltip.hover
                       title="löschen"
                       @click="() => openDeleteModal(lineup.id)"
+                      :disabled="!interactive"
                     >
                       <b-icon-trash />
                     </b-button>
@@ -271,7 +277,7 @@
                       variant="outline-primary"
                       v-b-tooltip.hover
                       title="Zum vorigen Count verschieben"
-                      :disabled="count <= 0"
+                      :disabled="count <= 0 || !interactive"
                       @click="() => moveHitToPreviousCount(hit.id)"
                     >
                       <b-icon-chevron-left />
@@ -280,7 +286,7 @@
                       variant="outline-primary"
                       v-b-tooltip.hover
                       title="Zum nächsten Count verschieben"
-                      :disabled="count >= choreo.counts - 1"
+                      :disabled="count >= choreo.counts - 1 || !interactive"
                       @click="() => moveHitToNextCount(hit.id)"
                     >
                       <b-icon-chevron-right />
@@ -290,6 +296,7 @@
                       @click="() => editHit(hit.id)"
                       v-b-tooltip.hover
                       title="bearbeiten"
+                      :disabled="!interactive"
                     >
                       <b-icon-pen />
                     </b-button>
@@ -298,6 +305,7 @@
                       @click="() => deleteHit(hit.id)"
                       v-b-tooltip.hover
                       title="löschen"
+                      :disabled="!interactive"
                     >
                       <b-icon-trash />
                     </b-button>
@@ -441,11 +449,18 @@
       block
       class="mt-2"
       v-b-modal.modal-newHit
+      :disabled="!interactive"
     >
       <b-icon-plus />
       Count-Eintrag hinzufügen
     </b-button>
-    <b-button variant="light" block class="mt-2" v-b-modal.modal-newLineup>
+    <b-button
+      variant="light"
+      block
+      class="mt-2"
+      v-b-modal.modal-newLineup
+      :disabled="!interactive"
+    >
       <b-icon-plus />
       Aufstellung hinzufügen
     </b-button>
@@ -716,6 +731,10 @@ export default {
     },
     currentPositions: {
       type: Array,
+    },
+    interactive: {
+      type: Boolean,
+      default: true,
     },
   },
   mounted() {
