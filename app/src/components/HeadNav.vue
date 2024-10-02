@@ -56,7 +56,16 @@
         </b-nav-item-dropdown>
       </b-navbar-nav>
 
-      <b-navbar-nav class="ml-auto align-items-center">
+      <b-navbar-nav class="ml-auto align-items-sm-center align-items-start">
+        <b-nav-item
+          class="d-sm-block d-none"
+          v-if="onlineStatus != null"
+          v-b-tooltip.hover
+          :title="onlineStatus ? 'Server sind online' : 'Server sind offline'"
+        >
+          <b-icon-check-circle variant="success" v-if="onlineStatus === true" />
+          <b-icon-x-circle variant="danger" v-if="onlineStatus === false" />
+        </b-nav-item>
         <b-nav-item :to="{ name: 'Help' }">Hilfe</b-nav-item>
         <b-nav-item>
           <b-button
@@ -241,6 +250,11 @@ export default {
     newChoreoTeamId: null,
     newTeamName: null,
   }),
+  props: {
+    onlineStatus: {
+      type: Boolean,
+    },
+  },
   methods: {
     load() {
       if (this.$store.state.loggedIn) {

@@ -56,7 +56,6 @@
             <b-list-group-item>
               4. Mache Einträge in dein Countsheet, wer wann was macht
             </b-list-group-item>
-            <b-list-group-item>Fertig!</b-list-group-item>
           </b-list-group>
         </b-col>
         <b-col cols="auto">
@@ -84,7 +83,6 @@
               3. Erstelle Countsheets als Video oder als PDF für alle oder nur
               für bestimmte Teilnehmerinnen und Teilnehmer
             </b-list-group-item>
-            <b-list-group-item>Fertig!</b-list-group-item>
           </b-list-group>
         </b-col>
 
@@ -127,7 +125,6 @@
             <b-list-group-item>
               3. Warte, bis dein Video fertig ist
             </b-list-group-item>
-            <b-list-group-item>Fertig!</b-list-group-item>
           </b-list-group>
         </b-col>
         <b-col cols="auto">
