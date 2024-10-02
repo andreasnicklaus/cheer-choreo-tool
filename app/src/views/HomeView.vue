@@ -466,7 +466,7 @@ export default {
         scrub: -1,
       },
       y: 200,
-      width: "90vw",
+      width: "100%",
     });
     gsap.to("#helpLink", {
       scrollTrigger: {
