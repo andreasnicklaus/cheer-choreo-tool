@@ -17,6 +17,8 @@ const ax = setupCache(
 ax.interceptors.response.use(
   (response) => response,
   (error) => {
+    if (!error.response?.status) return Promise.reject(error);
+
     switch (error.response.status) {
       case 401:
         AuthService.removeToken();
