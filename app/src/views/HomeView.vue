@@ -23,10 +23,15 @@
           <b-col cols="auto" id="callout2"> 2. Countsheets teilen </b-col>
           <b-col cols="auto" id="callout3"> 3. Videos erstellen </b-col>
         </b-row>
-        <b-button variant="primary" :to="{ name: 'Login' }" class="my-4">
+        <b-button
+          id="registerButton"
+          variant="primary"
+          :to="{ name: 'Login' }"
+          class="my-4"
+        >
           Anmelden / Registrieren
         </b-button>
-        <router-link :to="{ name: 'Help' }"> Hilfe </router-link>
+        <router-link id="helpLink" :to="{ name: 'Help' }"> Hilfe </router-link>
       </b-col>
     </section>
 
@@ -130,6 +135,7 @@
         <b-col cols="auto">
           <b-form class="mt-5">
             <b-form-group
+              id="checkbox1"
               description="Wähle aus, wer auf dem Video erscheinen soll"
             >
               <b-form-checkbox-group
@@ -145,21 +151,25 @@
               />
             </b-form-group>
             <b-form-group
+              id="checkbox2"
               description="Soll das Video mit deinem Logo erstellt werden?"
             >
               <b-form-checkbox :checked="true">Mit Logo</b-form-checkbox>
             </b-form-group>
             <b-form-group
+              id="checkbox3"
               description="Soll das Video mit deinem Vereins- und Mannschaftsnamen erstellt werden?"
             >
               <b-form-checkbox :checked="true">Mit Namen</b-form-checkbox>
             </b-form-group>
             <b-form-group
+              id="checkbox4"
               description="Soll das Video einen durchlaufendem Count haben?"
             >
               <b-form-checkbox :checked="true">Mit Count</b-form-checkbox>
             </b-form-group>
             <b-form-group
+              id="checkbox5"
               description="Soll das Video Einträge aus dem Countsheet zeigen?"
             >
               <b-form-checkbox :checked="true">
@@ -448,6 +458,27 @@ export default {
 
     gsap.registerPlugin(ScrollTrigger);
 
+    gsap.to("#registerButton", {
+      scrollTrigger: {
+        trigger: "#sectionB",
+        start: "top bottom",
+        end: "top 30%",
+        scrub: -1,
+      },
+      y: 200,
+      width: "90vw",
+    });
+    gsap.to("#helpLink", {
+      scrollTrigger: {
+        trigger: "#sectionB",
+        start: "top bottom",
+        end: "top 30%",
+        scrub: -1,
+      },
+      y: 200,
+      opacity: 0,
+    });
+
     const scrollTimeLine = gsap.timeline({
       scrollTrigger: {
         trigger: "#sectionB",
@@ -554,6 +585,19 @@ export default {
       onUpdate: (self) => {
         this.count = Math.floor(4 * self.progress) * 2;
       },
+    });
+
+    Array.from(Array(5)).forEach((_, i) => {
+      gsap.from(`#checkbox${i + 1}`, {
+        scrollTrigger: {
+          trigger: `#checkbox${i + 1}`,
+          start: "top 90%",
+          end: i == 4 ? "+=80" : "+=150",
+          scrub: -1,
+        },
+        x: 100,
+        opacity: 0,
+      });
     });
   },
 };
