@@ -7,5 +7,3 @@ Vue.use(VueMatomo, {
   siteId: 3,
   router,
 });
-
-window._paq.push(["trackPageView"]);

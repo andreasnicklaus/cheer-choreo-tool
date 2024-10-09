@@ -18,3 +18,6 @@ new Vue({
   vuetify,
   render: (h) => h(App),
 }).$mount("#app");
+
+// Initialize Matomo Tracking
+window._paq.push(["trackPageView"]);
