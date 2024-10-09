@@ -34,6 +34,13 @@ const port = 3000;
 app.use(bodyParser.json());
 app.use(cors());
 
+app.use(
+  require("express-status-monitor")({
+    title: "Choreo Tool Server",
+    path: "/status",
+  })
+);
+
 app.get("/", (req, res) => {
   res.send("Server is up and running!");
 });
