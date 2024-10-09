@@ -72,7 +72,25 @@
         </b-row>
       </b-col>
       <b-col cols="auto" class="h3">
-        <b-icon-info-circle id="popover-info-target" variant="secondary" />
+        <b-button-group>
+          <b-dropdown right no-caret variant="light">
+            <template #button-content>
+              <b-icon-three-dots-vertical />
+            </template>
+            <!-- TODO: PDF page -->
+            <b-dropdown-item :to="{ name: 'PDF', params: { choreoId } }">
+              <b-icon-file-pdf />
+              PDF
+            </b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'Video', params: { choreoId } }">
+              <b-icon-film />
+              Video
+            </b-dropdown-item>
+          </b-dropdown>
+          <b-button id="popover-info-target" variant="light">
+            <b-icon-info-circle />
+          </b-button>
+        </b-button-group>
         <b-popover
           target="popover-info-target"
           triggers="hover focus"
@@ -434,104 +452,11 @@ export default {
   },
   computed: {
     currentPositions() {
-      if (!this.teamMembers || !this.choreo || !this.choreo.Lineups) return [];
-
-      const relevantLineups = this.choreo.Lineups.filter(
-        (l) =>
-          l.Positions &&
-          l.Positions.length > 0 &&
-          l.startCount <= this.count &&
-          l.endCount >= this.count
+      return ChoreoService.getPositionsFromChoreoAndCount(
+        this.choreo,
+        this.count,
+        this.teamMembers
       );
-
-      const positionsForCurrentCount = relevantLineups
-        .map((l) => l.Positions)
-        .flat();
-
-      let unPositionedTeamMembers = this.teamMembers.filter(
-        (m) => !positionsForCurrentCount.some((p) => p.MemberId == m.id)
-      );
-
-      const interpolatedPositions = [];
-      unPositionedTeamMembers.forEach((member) => {
-        const lineupsForMember = this.choreo.Lineups.filter(
-          (l) => l.Positions && l.Positions.some((p) => p.MemberId == member.id)
-        );
-
-        const previousLineupForMember = lineupsForMember
-          .filter((l) => l.endCount < this.count)
-          .sort((a, b) => b.endCount - a.endCount)[0];
-
-        const followingLineupForMember = lineupsForMember
-          .filter((l) => l.startCount > this.count)
-          .sort((a, b) => a.startCount - b.startCount)[0];
-
-        const previousPositionForMember = previousLineupForMember
-          ? previousLineupForMember.Positions.find(
-              (p) => p.MemberId == member.id
-            )
-          : null;
-        const followingPositionForMember = followingLineupForMember
-          ? followingLineupForMember.Positions.find(
-              (p) => p.MemberId == member.id
-            )
-          : null;
-
-        if (!previousPositionForMember && followingPositionForMember)
-          interpolatedPositions.push(followingPositionForMember);
-        else if (previousPositionForMember && !followingPositionForMember)
-          interpolatedPositions.push(previousPositionForMember);
-        else if (previousPositionForMember && followingPositionForMember) {
-          const countsSincePrevious =
-            this.count - previousLineupForMember.endCount;
-          const countsBetweenPreviousAndFollowing =
-            followingLineupForMember.startCount -
-            previousLineupForMember.endCount;
-
-          const advancement =
-            countsSincePrevious / countsBetweenPreviousAndFollowing;
-
-          const interpolatedPositionForMember = {
-            Member: member,
-            MemberId: member.id,
-            x:
-              previousPositionForMember.x +
-              (followingPositionForMember.x - previousPositionForMember.x) *
-                advancement,
-            y:
-              previousPositionForMember.y +
-              (followingPositionForMember.y - previousPositionForMember.y) *
-                advancement,
-          };
-
-          interpolatedPositions.push(interpolatedPositionForMember);
-        }
-      });
-
-      unPositionedTeamMembers = this.teamMembers.filter(
-        (m) =>
-          ![...positionsForCurrentCount, ...interpolatedPositions].some(
-            (p) => p.MemberId == m.id
-          )
-      );
-
-      const defaultPositions = unPositionedTeamMembers.map((member, i) => {
-        let yNew = Math.floor(i / 7) * 10 + 10;
-        let xNew = (100 / 7) * (i % 7) + 100 / 14;
-
-        return {
-          Member: member,
-          MemberId: member.id,
-          x: xNew,
-          y: yNew,
-        };
-      });
-
-      return [
-        ...positionsForCurrentCount,
-        ...interpolatedPositions,
-        ...defaultPositions,
-      ].sort((a, b) => a.Member.name.localeCompare(b.Member.name));
     },
     hitsForCurrentCount() {
       if (!this.choreo) return [];

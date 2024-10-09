@@ -143,7 +143,26 @@
                 :to="{ name: 'Edit', params: { choreoId: choreo.id } }"
                 variant="light"
               >
-                <h5>{{ choreo.name }}</h5>
+                <h5>
+                  <b-row align-h="between" align-v="center">
+                    <b-col>
+                      {{ choreo.name }}
+                    </b-col>
+                    <b-col cols="auto">
+                      <b-button-group>
+                        <b-button
+                          variant="light"
+                          :to="{
+                            name: 'Video',
+                            params: { choreoId: choreo.id },
+                          }"
+                        >
+                          <b-icon-film />
+                        </b-button>
+                      </b-button-group>
+                    </b-col>
+                  </b-row>
+                </h5>
                 <router-link
                   :to="{
                     name: 'Team',

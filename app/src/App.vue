@@ -1,10 +1,13 @@
 <template>
   <div id="app">
     <HeadNav :onlineStatus="online" />
-    <router-view />
+    <router-view :style="{ minHeight: 'calc(100vh - 116px)' }" />
     <footer
       class="d-flex justify-content-center py-2"
-      :style="{ backgroundColor: '#0069d9', color: 'white' }"
+      :style="{
+        backgroundColor: '#0069d9',
+        color: 'white',
+      }"
     >
       <span class="mr-2">
         Andreas Nicklaus @{{ new Date().getFullYear() }}

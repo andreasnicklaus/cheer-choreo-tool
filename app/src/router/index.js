@@ -35,6 +35,12 @@ const routes = [
     meta: { private: true },
   },
   {
+    path: "/video/:choreoId",
+    name: "Video",
+    component: () => import("../views/VideoView.vue"),
+    meta: { private: true },
+  },
+  {
     path: "/hilfe",
     name: "Help",
     component: () => import("../views/HelpView.vue"),

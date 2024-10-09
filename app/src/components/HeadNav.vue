@@ -78,9 +78,9 @@
           <b-dropdown v-else variant="light" right>
             <template #button-content> <b-icon-person-circle /> </template>
             <b-dropdown-group header="Konto">
-              <b-dropdown-item>
+              <b-dropdown-text>
                 <b-icon-person-circle class="mr-2" />{{ user?.username }}
-              </b-dropdown-item>
+              </b-dropdown-text>
             </b-dropdown-group>
 
             <b-dropdown-divider />
