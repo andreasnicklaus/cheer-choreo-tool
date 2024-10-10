@@ -77,14 +77,13 @@
             <template #button-content>
               <b-icon-three-dots-vertical />
             </template>
-            <!-- TODO: PDF page -->
             <b-dropdown-item :to="{ name: 'PDF', params: { choreoId } }">
               <b-icon-file-pdf />
-              PDF
+              PDF exportieren
             </b-dropdown-item>
             <b-dropdown-item :to="{ name: 'Video', params: { choreoId } }">
               <b-icon-film />
-              Video
+              Video exportieren
             </b-dropdown-item>
           </b-dropdown>
           <b-button id="popover-info-target" variant="light">

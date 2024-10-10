@@ -32,7 +32,10 @@ class ChoreoService {
             include: "Member",
           },
         },
-        "Hits",
+        {
+          association: "Hits",
+          include: "Members",
+        },
       ],
     });
   }

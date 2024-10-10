@@ -159,6 +159,12 @@
                         >
                           <b-icon-film />
                         </b-button>
+                        <b-button
+                          variant="light"
+                          :to="{ name: 'PDF', params: { choreoId: choreo.id } }"
+                        >
+                          <b-icon-file-pdf />
+                        </b-button>
                       </b-button-group>
                     </b-col>
                   </b-row>

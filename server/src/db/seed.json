@@ -127,7 +127,7 @@
                     {
                       "name": "Umdrehen",
                       "count": 0,
-                      "memberIndices": []
+                      "memberIndices": [0]
                     },
                     {
                       "name": "Dip 1",

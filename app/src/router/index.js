@@ -41,6 +41,12 @@ const routes = [
     meta: { private: true },
   },
   {
+    path: "/pdf/:choreoId",
+    name: "PDF",
+    component: () => import("../views/PdfView.vue"),
+    meta: { private: true },
+  },
+  {
     path: "/hilfe",
     name: "Help",
     component: () => import("../views/HelpView.vue"),

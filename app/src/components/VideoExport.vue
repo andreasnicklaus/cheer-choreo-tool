@@ -49,7 +49,7 @@
                   :style="{ columnCount: 2 }"
                   stacked
                   :options="
-                    choreo?.Team?.Members.map((m) => ({
+                    teamMembers.map((m) => ({
                       text: m.name,
                       value: m.id,
                     }))
@@ -202,6 +202,7 @@ export default {
     animationTimeline: null,
     bps: 2.51,
     choreo: null,
+    teamMembers: [],
     animationIsRunning: false,
     recordingIsRunning: false,
     includeCount: true,
@@ -261,6 +262,9 @@ export default {
       ChoreoService.getById(this.$route.params.choreoId)
         .then((choreo) => {
           this.choreo = choreo;
+          this.teamMembers = choreo.Team.Members.sort((a, b) =>
+            a.name.localeCompare(b.name)
+          );
           this.addAnimationsFromChoreo();
           this.initializeRecorder();
         })
@@ -526,8 +530,13 @@ export default {
         "Schuhe werden zusammengebunden...",
         "Haare werden geflochten...",
         "Schleifen werden gerichtet...",
-        "Maskottchen wird platziert...",
+        "Maskottchen wird hingelegt...",
         "1 - 3 - 5 - 7",
+        "Dehnen...",
+        "Aufstellungen werden gemalt...",
+        "Matte wird aufgezeichnet...",
+        "Sprungboden wird aufgebaut...",
+        "Schminke wird aufgetragen...",
       ];
       if (this.choreo.Team.name) slogans.push(`Go, ${this.choreo.Team.name}!`);
       return slogans[Math.floor(this.count / 10) % slogans.length];

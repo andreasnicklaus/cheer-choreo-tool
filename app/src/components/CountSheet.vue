@@ -1,12 +1,15 @@
 <template>
   <b-table-simple
+    lang="de"
     striped
     hover
-    :sticky-header="tableHeight"
+    :sticky-header="stickyHeader && tableHeight"
     head-variant="light"
     small
+    :fixed="fixed"
     :style="{
       placeItems: 'center',
+      fontSize: fontSize ? fontSize + 'px' : null,
     }"
     class="text-center"
   >
@@ -33,9 +36,13 @@
           <b-button
             v-else
             :disabled="!interactive"
+            class="p-1 py-2"
             :style="{
+              wordBreak: 'break-word',
+              hyphens: 'auto',
               minWidth: '50px',
               height: '100%',
+              fontSize: fontSize ? fontSize + 'px' : null,
               color:
                 Math.floor(count / 8) == i && count % 8 == label - 1
                   ? 'white'
@@ -77,6 +84,21 @@ export default {
       type: Boolean,
       default: true,
     },
+    stickyHeader: {
+      type: Boolean,
+      default: true,
+    },
+    fontSize: {
+      type: Number,
+    },
+    startCount: {
+      type: Number,
+      default: 0,
+    },
+    fixed: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     setCount(achter, count) {
@@ -90,19 +112,19 @@ export default {
   },
   computed: {
     achter() {
-      if (!this.choreo) return [null];
+      if (!this.choreo) return [];
       else {
         const achterLength = Math.ceil(this.choreo.counts / 8);
         const achter = new Array(achterLength).fill(null).map((_, i) => ({
-          achter: i,
-          1: this.findActionsForCount(i * 8 + 0),
-          2: this.findActionsForCount(i * 8 + 1),
-          3: this.findActionsForCount(i * 8 + 2),
-          4: this.findActionsForCount(i * 8 + 3),
-          5: this.findActionsForCount(i * 8 + 4),
-          6: this.findActionsForCount(i * 8 + 5),
-          7: this.findActionsForCount(i * 8 + 6),
-          8: this.findActionsForCount(i * 8 + 7),
+          achter: Math.floor(this.startCount / 8) + i,
+          1: this.findActionsForCount(this.startCount + i * 8 + 0),
+          2: this.findActionsForCount(this.startCount + i * 8 + 1),
+          3: this.findActionsForCount(this.startCount + i * 8 + 2),
+          4: this.findActionsForCount(this.startCount + i * 8 + 3),
+          5: this.findActionsForCount(this.startCount + i * 8 + 4),
+          6: this.findActionsForCount(this.startCount + i * 8 + 5),
+          7: this.findActionsForCount(this.startCount + i * 8 + 6),
+          8: this.findActionsForCount(this.startCount + i * 8 + 7),
         }));
         return achter;
       }
