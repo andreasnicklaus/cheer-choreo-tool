@@ -73,7 +73,7 @@ class ChoreoService {
           await foundChoreo.save();
           return Choreo.findOne({
             where: { id, UserId },
-            include: { all: true, nested: true },
+            include: { all: true, nested: false },
           });
         } else {
           throw new Error(
@@ -89,7 +89,7 @@ class ChoreoService {
       async (foundChoreo) => {
         if (foundChoreo) {
           logger.debug(
-            `ChoreoService.remove ${JSON.stringify({ id, data, UserId })}`
+            `ChoreoService.remove ${JSON.stringify({ id, UserId })}`
           );
           return foundChoreo.destroy();
         } else {

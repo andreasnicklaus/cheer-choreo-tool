@@ -22,6 +22,8 @@
         </b-dropdown-item>
       </b-dropdown>
 
+      <!-- TODO: Team löschen -> Was passiert mit den Members? (Modal) -->
+
       <b-button-group>
         <b-button
           :variant="presentation == 'table' ? 'primary' : 'outline-primary'"
@@ -52,6 +54,7 @@
       </template>
       <template #cell(actions)="data">
         <b-button-group>
+          <!-- TODO: Member in anderes Team verschieben (Modal) -->
           <b-button variant="outline-success" @click="editMember(data.item.id)">
             <b-icon-pen />
           </b-button>
@@ -173,7 +176,7 @@
         >
           Speichern
         </b-button>
-        <b-button @click="cancel" variant="danger">Abbrechen</b-button>
+        <b-button @click="cancel" variant="danger"> Abbrechen </b-button>
       </template>
     </b-modal>
 
@@ -187,7 +190,7 @@
       <p class="m-0">Du kannst das nicht rückgängig machen.</p>
       <template #modal-footer="{ ok, cancel }">
         <b-button @click="ok" variant="danger"> Löschen </b-button>
-        <b-button @click="cancel" variant="outline-secondary">
+        <b-button @click="cancel" variant="outline-secondary" autofocus>
           Abbrechen
         </b-button>
       </template>

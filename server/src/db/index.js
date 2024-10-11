@@ -34,6 +34,8 @@ Team.belongsTo(Club);
 Team.hasMany(Choreo);
 Choreo.belongsTo(Team);
 
+// TODO: Exclude Members from Choreo
+
 Choreo.hasMany(Lineup);
 Lineup.belongsTo(Choreo);
 

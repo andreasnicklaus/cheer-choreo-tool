@@ -158,7 +158,7 @@ export default {
       AuthService.login(this.username, this.password)
         .then(() => {
           this.$router
-            .push(this.$route.params?.redirectUrl || "/start")
+            .push(this.$route.query?.redirectUrl || "/start")
             .catch(() => {});
         })
         .catch((e) => {
@@ -173,7 +173,7 @@ export default {
 
       AuthService.register(this.username, this.password)
         .then(() => {
-          this.$router.push(this.$route.params?.redirectUrl || "/start");
+          this.$router.push(this.$route.query?.redirectUrl || "/start");
         })
         .catch((e) => {
           console.warn(e);

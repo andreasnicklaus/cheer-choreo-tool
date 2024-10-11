@@ -52,6 +52,21 @@ class AuthService {
       router.push({ name: "Login" }).catch(() => {});
   }
 
+  changeUsername(username) {
+    return ax.put("/user", { username }).then((res) => res.data);
+  }
+
+  changePassword(password) {
+    return ax.put("/user", { password }).then((res) => res.data);
+  }
+
+  deleteAccount() {
+    return ax.delete("/user").then((res) => {
+      this.logout();
+      return res.data;
+    });
+  }
+
   getAuthToken() {
     return localStorage.getItem(tokenStorageKey);
   }

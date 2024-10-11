@@ -13,8 +13,16 @@ class ChoreoService {
     return ax.put(`/choreo/${choreoId}`, { name }).then((res) => res.data);
   }
 
+  changeLength(choreoId, counts) {
+    return ax.put(`/choreo/${choreoId}`, { counts }).then((res) => res.data);
+  }
+
   create(name, counts, teamId) {
     return ax.post("/choreo", { name, counts, teamId }).then((res) => res.data);
+  }
+
+  remove(choreoId) {
+    return ax.delete(`/choreo/${choreoId}`).then((res) => res.data);
   }
 
   getPositionsFromChoreoAndCount(choreo, count, teamMembers) {

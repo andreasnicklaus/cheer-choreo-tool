@@ -40,7 +40,7 @@ class UserService {
         logger.debug(`UserService.update ${JSON.stringify({ id, data })}`);
         await foundUser.update(data);
         await foundUser.save();
-        return User.findByPk(id, { include: { all: true } });
+        return User.findByPk(id);
       } else
         throw Error(`Beim Update wurde kein User mit der ID ${id} gefunden`);
     });

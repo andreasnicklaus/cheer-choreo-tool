@@ -13,6 +13,10 @@
               <p><b>Suchen:</b> Suche nach einem Team oder einer Choreo</p>
               <p><b>Team:</b> Filtere die Choreos nach Teams</p>
               <p><b>Counts:</b> Filtere die Choreo nach ihrer Länge</p>
+              <hr />
+              <p class="text-muted">
+                Aktiver Verein: <b>{{ club?.name }}</b>
+              </p>
             </b-popover>
           </b-card-title>
           <b-input-group class="mb-4 mt-2">
@@ -197,6 +201,68 @@
                 </b-button>
               </b-list-group-item>
             </b-list-group>
+
+            <b-card
+              v-if="teams.length == 0 || choreos.length == 0"
+              title="Hier kannst du noch nichts finden..."
+              class="mt-5"
+            >
+              <b-card-text>
+                Du hast aktuell hier nichts zu sehen, weil du
+                <b>{{ teams.length }}</b> Teams und
+                <b>{{ choreos.length }}</b> Choreos angelegt hast.
+              </b-card-text>
+              <b-card-body>
+                <b-row>
+                  <b-col cols="6">
+                    <b-card title="Team anlegen">
+                      <b-card-text class="m-0">
+                        Wähle im Menü oben den Reiter
+                      </b-card-text>
+                      <b-dropdown
+                        variant="light"
+                        text="Teams"
+                        disabled
+                      ></b-dropdown>
+                      <b-card-text class="mb-2">
+                        aus und klicke auf
+                      </b-card-text>
+                      <span
+                        :style="{
+                          color: 'var(--success)',
+                        }"
+                      >
+                        <b-icon-plus />
+                        Neues Team
+                      </span>
+                    </b-card>
+                  </b-col>
+                  <b-col cols="6">
+                    <b-card title="Choreo anlegen">
+                      <b-card-text class="m-0">
+                        Wähle im Menü oben den Reiter
+                      </b-card-text>
+                      <b-dropdown
+                        variant="light"
+                        text="Choreos"
+                        disabled
+                      ></b-dropdown>
+                      <b-card-text class="mb-2">
+                        aus und klicke auf
+                      </b-card-text>
+                      <span
+                        :style="{
+                          color: 'var(--success)',
+                        }"
+                      >
+                        <b-icon-plus />
+                        Neue Choreo
+                      </span>
+                    </b-card>
+                  </b-col>
+                </b-row>
+              </b-card-body>
+            </b-card>
           </template>
         </b-skeleton-wrapper>
       </b-col>
@@ -206,7 +272,9 @@
       id="modal-newClub"
       title="Neuer Verein"
       centered
-      @hide="(event) => event.preventDefault()"
+      @close="(event) => event.preventDefault()"
+      no-close-on-backdrop
+      no-close-on-esc
       @show="resetClubModal"
       @ok="createClub"
       hide-header-close
@@ -240,6 +308,7 @@
             v-model="newChoreoName"
             :state="newChoreoNameIsValid"
             required
+            autofocus
           />
         </b-form-group>
         <b-form-group label="Länge">
@@ -281,6 +350,7 @@
             :options="teams.map((t) => ({ value: t.id, text: t.name }))"
           />
         </b-form-group>
+        <!-- TODO: Exclude Members -->
       </b-form>
       <template #modal-footer="{ ok, cancel }">
         <b-button
@@ -308,6 +378,7 @@ import ClubService from "@/services/ClubService";
 export default {
   name: "StartView",
   data: () => ({
+    club: null,
     teams: [],
     choreos: [],
     teamFilterIds: [],
@@ -330,6 +401,7 @@ export default {
         ClubService.getById(this.$store.state.clubId).then((club) => {
           if (!club) this.$store.commit("setClubId", null);
           else {
+            this.club = club;
             this.teams = club?.Teams || [];
             this.choreos = this.teams.map((t) => t.Choreos).flat();
             this.minCount =
@@ -349,6 +421,7 @@ export default {
             this.$bvModal.show("modal-newClub");
           } else {
             const club = clubList[0];
+            this.club = club;
             this.$store.commit("setClubId", club.id);
             this.teams = club?.Teams || [];
             this.choreos = this.teams.map((t) => t.Choreos).flat();
@@ -400,7 +473,7 @@ export default {
         count,
         this.newChoreoTeamId
       ).then((choreo) => {
-        this.choreos.push(choreo);
+        this.choreos = [...this.choreos, choreo];
       });
     },
   },

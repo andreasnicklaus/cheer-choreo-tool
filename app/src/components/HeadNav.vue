@@ -44,7 +44,7 @@
           >
             {{ team.name }}
           </b-dropdown-item>
-          <b-dropdown-divider />
+          <b-dropdown-divider v-if="teams && teams.length > 0" />
           <b-dropdown-item
             variant="success"
             v-b-modal.modal-newTeam-header
@@ -78,9 +78,9 @@
           <b-dropdown v-else variant="light" right>
             <template #button-content> <b-icon-person-circle /> </template>
             <b-dropdown-group header="Konto">
-              <b-dropdown-text>
+              <b-dropdown-item :to="{ name: 'Account' }">
                 <b-icon-person-circle class="mr-2" />{{ user?.username }}
-              </b-dropdown-text>
+              </b-dropdown-item>
             </b-dropdown-group>
 
             <b-dropdown-divider />
@@ -145,6 +145,7 @@
             v-model="newChoreoName"
             :state="newChoreoNameIsValid"
             required
+            autofocus
           />
         </b-form-group>
         <b-form-group label="Länge">
@@ -186,6 +187,7 @@
             :options="teams.map((t) => ({ value: t.id, text: t.name }))"
           />
         </b-form-group>
+        <!-- TODO: Exclude Members -->
       </b-form>
       <template #modal-footer="{ ok, cancel }">
         <b-button
@@ -272,6 +274,7 @@ export default {
         ClubService.getAll().then((clubList) => {
           this.clubs = clubList;
           const club = clubList[0];
+          if (!club) return;
           if (!this.$store.state.clubId)
             this.$store.commit("setClubId", club.id);
           this.teams = club?.Teams || [];

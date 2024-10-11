@@ -23,6 +23,12 @@ const routes = [
     meta: { private: true },
   },
   {
+    path: "/account",
+    name: "Account",
+    component: () => import("../views/AccountView.vue"),
+    meta: { private: true },
+  },
+  {
     path: "/edit/:choreoId",
     name: "Edit",
     component: () => import("../views/EditView.vue"),

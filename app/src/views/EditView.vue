@@ -78,12 +78,26 @@
               <b-icon-three-dots-vertical />
             </template>
             <b-dropdown-item :to="{ name: 'PDF', params: { choreoId } }">
-              <b-icon-file-pdf />
+              <b-icon-file-pdf class="mr-2" />
               PDF exportieren
             </b-dropdown-item>
             <b-dropdown-item :to="{ name: 'Video', params: { choreoId } }">
-              <b-icon-film />
+              <b-icon-film class="mr-2" />
               Video exportieren
+            </b-dropdown-item>
+            <b-dropdown-divider />
+            <b-dropdown-item v-b-modal.changeLengthModal :disabled="!choreo">
+              <b-icon-hash class="mr-2" />
+              Länge anpassen
+            </b-dropdown-item>
+            <b-dropdown-divider />
+            <b-dropdown-item
+              v-b-modal.deleteModal
+              :disabled="!choreo"
+              variant="danger"
+            >
+              <b-icon-trash class="mr-2" />
+              Löschen
             </b-dropdown-item>
           </b-dropdown>
           <b-button id="popover-info-target" variant="light">
@@ -191,6 +205,9 @@
           :fields="team_table_fields"
           sort-by="name"
         >
+          <!-- TODO: Teilnehmer ausschließen -->
+          <!-- TODO: Positionen mit anderem Member wechseln -->
+          <!-- TODO: Hits mit anderem Member wechseln -->
           <template #cell(color)="data">
             <div
               :style="{
@@ -205,6 +222,68 @@
         </b-table>
       </b-tab>
     </b-tabs>
+
+    <b-modal
+      id="changeLengthModal"
+      centered
+      title="Länge der Choreo ändern"
+      @show="
+        () => {
+          if (this.choreo) {
+            this.newChoreoAchter = Math.floor(this.choreo.counts / 8);
+            this.newChoreoCount = this.choreo.counts % 8;
+          }
+        }
+      "
+      @ok="changeChoreoLength"
+    >
+      <b-form>
+        <b-form-group description="Achter">
+          <b-form-input type="number" min="1" v-model="newChoreoAchter" />
+        </b-form-group>
+        <b-form-group
+          description="Counts (Zusätzliche Counts nach den Achtern)"
+        >
+          <b-form-input
+            type="number"
+            min="0"
+            max="7"
+            v-model="newChoreoCount"
+          />
+        </b-form-group>
+      </b-form>
+      <template #modal-footer="{ ok, cancel }">
+        <b-button
+          @click="ok"
+          variant="success"
+          :disabled="
+            !newChoreoAchter ||
+            newChoreoAchter <= 0 ||
+            !newChoreoCount ||
+            newChoreoCount < 0 ||
+            newChoreoCount > 7
+          "
+        >
+          Länge ändern
+        </b-button>
+        <b-button @click="cancel" variant="danger"> Abbrechen </b-button>
+      </template>
+    </b-modal>
+
+    <b-modal
+      id="deleteModal"
+      centered
+      @ok="removeChoreo"
+      title="Bist du sicher?"
+    >
+      Du kannst das nicht rückgängig machen.
+      <template #modal-footer="{ ok, cancel }">
+        <b-button @click="ok" variant="danger"> Löschen </b-button>
+        <b-button @click="cancel" variant="outline-secondary">
+          Abbrechen
+        </b-button>
+      </template>
+    </b-modal>
   </b-container>
 </template>
 
@@ -242,6 +321,8 @@ export default {
     positionUpdates: {},
     lineupCreationInProgress: false,
     playInterval: null,
+    newChoreoCount: 0,
+    newChoreoAchter: 1,
   }),
   mounted() {
     this.loadChoreo();
@@ -268,7 +349,7 @@ export default {
           );
         })
         .catch(() => {
-          this.$router.push({ name: "Start" });
+          this.$router.push({ name: "Start" }).catch(() => {});
         });
     },
     onPositionChange(memberId, x, y) {
@@ -439,7 +520,8 @@ export default {
     onNameEdit(nameNew) {
       this.choreo.name = nameNew;
       ChoreoService.changeName(this.choreoId, nameNew).then((choreo) => {
-        this.choreo = choreo;
+        console.debug(choreo);
+        this.choreo.name = nameNew;
       });
     },
     onUpdateHits(hits) {
@@ -447,6 +529,19 @@ export default {
     },
     onUpdateLineups(lineups) {
       this.choreo.Lineups = lineups;
+    },
+    changeChoreoLength() {
+      const counts =
+        parseInt(this.newChoreoAchter) * 8 + parseInt(this.newChoreoCount);
+      ChoreoService.changeLength(this.choreoId, counts).then((choreo) => {
+        console.debug(choreo);
+        this.choreo.counts = counts;
+      });
+    },
+    removeChoreo() {
+      ChoreoService.remove(this.choreoId).then(() => {
+        this.$router.push({ name: "Start" }).catch(() => {});
+      });
     },
   },
   computed: {
