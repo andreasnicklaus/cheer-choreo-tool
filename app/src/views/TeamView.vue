@@ -309,9 +309,9 @@ export default {
     saveMember() {
       if (!this.editMemberId)
         MemberService.create(
-          this.newMemberName.trim(),
+          this.newMemberName?.trim(),
           this.newMemberNickname?.trim(),
-          this.newMemberAbbreviation.trim() || this.proposedAbbreviation,
+          this.newMemberAbbreviation?.trim() || this.proposedAbbreviation,
           this.newMemberColor || ColorService.getRandom(),
           this.teamId
         ).then((member) => {
@@ -322,7 +322,7 @@ export default {
           name: this.newMemberName.trim(),
           nickname: this.newMemberNickname?.trim(),
           abbreviation:
-            this.newMemberAbbreviation.trim() || this.proposedAbbreviation,
+            this.newMemberAbbreviation?.trim() || this.proposedAbbreviation,
           color: this.newMemberColor || ColorService.getRandom(),
         };
         MemberService.update(this.editMemberId, data).then((member) => {
