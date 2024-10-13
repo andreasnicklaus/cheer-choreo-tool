@@ -44,7 +44,12 @@ router.post("/:id/position", authenticateUser, (req, res, next) => {
 });
 
 router.put("/:id/position/:positionId", authenticateUser, (req, res, next) => {
-  PositionService.update(req.params.positionId, req.params.id, req.body, req.UserId)
+  PositionService.update(
+    req.params.positionId,
+    req.params.id,
+    req.body,
+    req.UserId
+  )
     .then((position) => {
       res.send(position);
       next();

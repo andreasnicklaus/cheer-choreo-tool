@@ -210,7 +210,7 @@ export default {
         });
 
         const height = await promise;
-        const maxHeight = startIndex == 0 ? 860 : 940;
+        const maxHeight = startIndex == 0 ? 860 : 930;
 
         if (height < maxHeight) {
           nItems += 8;

@@ -21,18 +21,18 @@ class HitService {
     });
   }
 
-  async create(name, count, ChoreoId, memberIds = [], UserId) {
+  async create(name, count, ChoreoId, MemberIds = [], UserId) {
     logger.debug(
       `HitService.create ${JSON.stringify({
         name,
         count,
         ChoreoId,
-        memberIds,
+        MemberIds,
         UserId,
       })}`
     );
     return Hit.create({ name, count, ChoreoId, UserId }).then(async (hit) => {
-      if (memberIds.length > 0) await hit.setMembers(memberIds);
+      if (MemberIds.length > 0) await hit.setMembers(MemberIds);
       return Hit.findByPk(hit.id, { include: "Members" });
     });
   }
@@ -64,14 +64,19 @@ class HitService {
       if (foundHit) {
         logger.debug(`HitService.update ${JSON.stringify({ id, data })}`);
         await foundHit.update(data);
-        return foundHit.save();
+        await foundHit.save();
+        if (data.MemberIds) await foundHit.setMembers(data.MemberIds);
+        return Hit.findOne({
+          where: { id, UserId },
+          include: "Members",
+        });
       } else {
         throw Error(`Beim Update wurde kein Hit mit der ID ${id} gefunden`);
       }
     });
   }
 
-  async remove(id) {
+  async remove(id, UserId) {
     return Hit.findOne({ where: { id, UserId } }).then((foundHit) => {
       if (foundHit) {
         logger.debug(`HitService.remove ${JSON.stringify({ id, UserId })}`);

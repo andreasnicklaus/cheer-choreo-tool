@@ -2,17 +2,15 @@ const Position = require("../db/models/position");
 const { logger } = require("../plugins/winston");
 
 class PositionService {
-  async create(x, y, LineupId, MemberId, UserId) {
+  async create(x, y, UserId) {
     logger.debug(
       `PositionService.create ${JSON.stringify({
         x,
         y,
-        LineupId,
-        MemberId,
         UserId,
       })}`
     );
-    return Position.create({ x, y, LineupId, MemberId, UserId });
+    return Position.create({ x, y, UserId });
   }
 
   async findOrCreate(x, y, LineupId, MemberId, UserId) {
@@ -35,15 +33,15 @@ class PositionService {
     return Position.findOne({ where: { id, UserId }, include: "Member" });
   }
 
-  async update(positionId, LineupId, data, UserId) {
+  async update(id, LineupId, data, UserId) {
     return Position.findOne({
-      where: { LineupId, positionId, UserId },
+      where: { LineupId, id, UserId },
       include: "Member",
     }).then(async (foundPosition) => {
       if (foundPosition) {
         logger.debug(
           `PositionService.update ${JSON.stringify({
-            positionId,
+            id,
             data,
             UserId,
           })}`

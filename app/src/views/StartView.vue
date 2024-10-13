@@ -285,6 +285,7 @@
             v-model="newClubName"
             :state="newClubNameIsValid"
             required
+            placeholder="TSG Salach e.V., Glamorous Cheerleader, ..."
           />
         </b-form-group>
       </b-form>
@@ -309,6 +310,7 @@
             :state="newChoreoNameIsValid"
             required
             autofocus
+            :placeholder="`Landesmeisterschaft, RM ${new Date().getFullYear()}, ...`"
           />
         </b-form-group>
         <b-form-group label="Länge">

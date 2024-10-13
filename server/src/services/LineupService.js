@@ -56,7 +56,7 @@ class LineupService {
     );
   }
 
-  async findById(id) {
+  async findById(id, UserId) {
     return Lineup.findOne({ where: { id, UserId } });
   }
 

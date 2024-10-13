@@ -8,19 +8,24 @@
     />
 
     <b-row align-h="between" class="px-3 mb-4">
-      <b-dropdown
-        :text="teams.find((t) => t.id == teamId)?.name || 'Wähle ein Team'"
-        variant="outline-primary"
-      >
-        <b-dropdown-item
-          v-for="team in teams"
-          :key="team.id"
-          :to="{ name: 'Team', params: { teamId: team.id } }"
-          :variant="team.id == teamId ? 'primary' : 'outline-primary'"
+      <b-row align-v="center">
+        <b-dropdown
+          :text="teams.find((t) => t.id == teamId)?.name || 'Wähle ein Team'"
+          variant="outline-primary"
         >
-          {{ team.name }}
-        </b-dropdown-item>
-      </b-dropdown>
+          <b-dropdown-item
+            v-for="team in teams"
+            :key="team.id"
+            :to="{ name: 'Team', params: { teamId: team.id } }"
+            :variant="team.id == teamId ? 'primary' : 'outline-primary'"
+          >
+            {{ team.name }}
+          </b-dropdown-item>
+        </b-dropdown>
+        <p class="text-muted mb-0 ml-2">
+          {{ sortedMembersOfCurrentTeam.length }} Mitglieder
+        </p>
+      </b-row>
 
       <!-- TODO: Team löschen -> Was passiert mit den Members? (Modal) -->
 
@@ -295,7 +300,9 @@ export default {
         this.newMemberName = null;
         this.newMemberNickname = null;
         this.newMemberAbbreviation = null;
-        this.newMemberColor = ColorService.getRandom();
+        this.newMemberColor = ColorService.getRandom(
+          this.currentTeam.Members.map((m) => m.color)
+        );
       } else {
         const memberToUpdate = this.currentTeam.Members.find(
           (m) => m.id == this.editMemberId
@@ -312,7 +319,10 @@ export default {
           this.newMemberName?.trim(),
           this.newMemberNickname?.trim(),
           this.newMemberAbbreviation?.trim() || this.proposedAbbreviation,
-          this.newMemberColor || ColorService.getRandom(),
+          this.newMemberColor ||
+            ColorService.getRandom(
+              this.currentTeam.Members.map((m) => m.color)
+            ),
           this.teamId
         ).then((member) => {
           this.currentTeam.Members.push(member);
@@ -323,7 +333,11 @@ export default {
           nickname: this.newMemberNickname?.trim(),
           abbreviation:
             this.newMemberAbbreviation?.trim() || this.proposedAbbreviation,
-          color: this.newMemberColor || ColorService.getRandom(),
+          color:
+            this.newMemberColor ||
+            ColorService.getRandom(
+              this.currentTeam.Members.map((m) => m.color)
+            ),
         };
         MemberService.update(this.editMemberId, data).then((member) => {
           const membersCopy = this.currentTeam.Members.filter(

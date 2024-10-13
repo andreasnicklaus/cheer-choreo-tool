@@ -8,6 +8,7 @@
       placeholder="lädt..."
     />
 
+    <!-- Controls -->
     <b-row align-v="center" class="mb-4">
       <b-col>
         <b-row align-h="between" align-v="center" class="mx-auto w-50">
@@ -73,7 +74,21 @@
       </b-col>
       <b-col cols="auto" class="h3">
         <b-button-group>
-          <b-dropdown right no-caret variant="light">
+          <b-button
+            variant="light"
+            v-b-tooltip.hover
+            title="Anleitung"
+            v-b-modal.howToModal
+          >
+            <b-icon-question />
+          </b-button>
+          <b-dropdown
+            right
+            no-caret
+            variant="light"
+            v-b-tooltip.hover
+            title="Optionen"
+          >
             <template #button-content>
               <b-icon-three-dots-vertical />
             </template>
@@ -111,50 +126,7 @@
           :style="{ width: '400px' }"
         >
           <template #title>Steuerung</template>
-          <b-table-simple>
-            <b-tbody>
-              <b-tr>
-                <b-td class="font-weight-bold">Nächster Count</b-td>
-                <b-td>
-                  <b-icon-arrow-right class="mr-1" />
-                  <b-badge variant="light"> Pfeil rechts </b-badge>
-                </b-td>
-              </b-tr>
-              <b-tr>
-                <b-td class="font-weight-bold">Voriger Count</b-td>
-                <b-td>
-                  <b-icon-arrow-left class="mr-1" />
-                  <b-badge variant="light"> Pfeil links </b-badge>
-                </b-td>
-              </b-tr>
-              <b-tr>
-                <b-td class="font-weight-bold">Nächster Achter</b-td>
-                <b-td>
-                  <b-icon-arrow-down class="mr-1" />
-                  <b-badge variant="light"> Pfeil unten </b-badge>
-                </b-td>
-              </b-tr>
-              <b-tr>
-                <b-td class="font-weight-bold">Voriger Achter</b-td>
-                <b-td>
-                  <b-icon-arrow-up class="mr-1" />
-                  <b-badge variant="light"> Pfeil oben </b-badge>
-                </b-td>
-              </b-tr>
-              <b-tr>
-                <b-td class="font-weight-bold">Play/Pause</b-td>
-                <b-td>
-                  <b-badge variant="light"> Leerzeichen </b-badge>
-                </b-td>
-              </b-tr>
-              <b-tr>
-                <b-td class="font-weight-bold">Neuer Eintrag</b-td>
-                <b-td>
-                  <b-badge variant="light"> h </b-badge>
-                </b-td>
-              </b-tr>
-            </b-tbody>
-          </b-table-simple>
+          <EditViewShortcutTutorial />
 
           <b-checkbox switch v-model="snapping">
             Positionen horizontal und vertikal ausrichten
@@ -163,6 +135,7 @@
       </b-col>
     </b-row>
 
+    <!-- Main: Mat + CountOverview -->
     <b-row align-h="around">
       <b-col cols="auto">
         <Mat
@@ -188,6 +161,7 @@
       </b-col>
     </b-row>
 
+    <!-- Tabs: Countsheet + Team -->
     <b-tabs content-class="mt-3" class="mt-5" fill>
       <b-tab title="Countsheet" active>
         <CountSheet
@@ -195,6 +169,7 @@
           :count="count"
           :choreo="choreo"
           @setCounter="setCounter"
+          @openCreateHitModal="openCreateHitModal"
         />
       </b-tab>
       <b-tab title="Team">
@@ -223,6 +198,18 @@
       </b-tab>
     </b-tabs>
 
+    <!-- NEW HIT MODAL -->
+    <CreateHitModal
+      ref="createHitModal"
+      :teamMembers="teamMembers"
+      :choreoId="choreoId"
+      :count="count"
+      :hitsForCurrentCount="hitsForCurrentCount"
+      :maxCount="choreo?.counts"
+      @hitCreated="onHitCreated"
+    />
+
+    <!-- Modal: change length of choreo -->
     <b-modal
       id="changeLengthModal"
       centered
@@ -270,6 +257,7 @@
       </template>
     </b-modal>
 
+    <!-- Modal: delete choreo -->
     <b-modal
       id="deleteModal"
       centered
@@ -280,6 +268,148 @@
       <template #modal-footer="{ ok, cancel }">
         <b-button @click="ok" variant="danger"> Löschen </b-button>
         <b-button @click="cancel" variant="outline-secondary">
+          Abbrechen
+        </b-button>
+      </template>
+    </b-modal>
+
+    <!-- Modal: How To -->
+    <b-modal
+      id="howToModal"
+      centered
+      title="Anleitung"
+      hide-footer
+      scrollable
+      size="xl"
+    >
+      <b-row>
+        <b-col>
+          <b-card title="Aufstellungen">
+            <b-card-text>
+              <p>
+                Aufstellungen definieren, wo sich die Teilnehmer deiner Choreo
+                auf der Matte befinden. Jede Aufstellung besteht aus den
+                Positionen für die Teilnehmer und einer Dauer, wie lange die
+                Aufstellung gehalten wird.
+              </p>
+              <p>
+                <b>Aufstellungen anlegen:</b> Um deine erste Aufstellung
+                anzulegen, klicke einfach einen Teilnehmer auf der Matte an und
+                platziere den Marker
+                <span
+                  :style="{
+                    height: '24px',
+                    width: '24px !important',
+                    backgroundColor: '#ffab0655',
+                    borderRadius: '50%',
+                    border: 'solid 2px #ffab06',
+                    display: 'inline-block',
+                  }"
+                />
+                an die gewünschte Stelle. Es wird automatisch eine neue
+                Aufstellung angelegt oder der Teilnehmer zu einer bestehenden
+                Aufstellung hinzugefügt.
+              </p>
+              <p>
+                <b>Aufstellungen aufteilen:</b> Wenn Aufstellungen nicht für
+                alle gleich lang gelten, brauchst du auf denselben Count mehrere
+                Aufstellungen. Entferne dafür ggf. Teilnehmer aus der
+                Aufstellung, indem du in der Liste an Aufstellung und
+                Countsheet-Einträgen auf <b-icon-pen /> klickst und die Häkchen
+                bei den Teilnehmern entfernst. Klicke dann auf
+                <b-button
+                  variant="light"
+                  disabled
+                  :style="{
+                    display: 'inline-block',
+                  }"
+                >
+                  <b-icon-plus />Aufstellung hinzufügen
+                </b-button>
+                , wähle die Teilnehmer für die zweite Gruppe aus und ziehe die
+                Marker dann auf der Matte an die richtige Stelle.
+              </p>
+              <b-alert variant="warning" show>
+                Wenn du Aufstellungen definierst, die sich für einen Teilnehmer
+                überschneiden, werden Animationen nicht richtig angezeigt!
+              </b-alert>
+            </b-card-text>
+          </b-card>
+        </b-col>
+        <b-col>
+          <b-card title="Countsheet">
+            <b-card-text>
+              <p>
+                Einträge im Countsheet werden durch den Count, an dem sie
+                passieren, einem Namen und durch eine Liste an Teilnehmern
+                definiert.
+              </p>
+              <p>
+                <b>Einträge hinzufügen:</b> Klicke auf
+                <b-button
+                  variant="outline-success"
+                  disabled
+                  :style="{
+                    display: 'inline-block',
+                  }"
+                >
+                  <b-icon-plus />Eintrag hinzufügen
+                </b-button>
+                oder nutze den Shortcuts
+                <b-badge variant="light">H</b-badge> oder
+                <b-badge variant="light">N</b-badge> oder mache einen
+                Doppelklick auf die Zelle im Countsheet, um einen Neuen Eintrag
+                anzulegen.
+              </p>
+              <p>
+                Dabei kannst du den Namen festlegen und wählen, für wen dieser
+                Eintrag gilt. Standardmäßig wird der Eintrag für den aktuellen
+                Count angelegt.
+              </p>
+              <p>
+                <b>Einträge bearbeiten:</b> Angelegte Einträge findest in der
+                Liste an Aufstellung und Countsheet-Einträgen. Klicke auf
+                <b-icon-pen /> neben dem Eintrag, den du bearbeiten willst und
+                klicke anschließend auf
+                <b-button
+                  variant="success"
+                  disabled
+                  :style="{
+                    display: 'inline-block',
+                  }"
+                >
+                  <b-icon-check /> </b-button
+                >, um deine Änderungen zuu speichern.
+              </p>
+            </b-card-text>
+          </b-card>
+        </b-col>
+        <b-col>
+          <b-card title="Steuerung">
+            <EditViewShortcutTutorial />
+          </b-card>
+        </b-col>
+      </b-row>
+    </b-modal>
+
+    <!-- Modal: selectHitToUpdate -->
+    <b-modal
+      id="modal-selectHitToUpdate"
+      centered
+      @ok="() => setHitUpdateMode()"
+      title="Welchen Eintrag willst du ändern?"
+    >
+      <b-form-radio-group
+        id="hitToUpdateSelectGroup"
+        v-model="hitIdToUpdate"
+        :options="
+          hitsForCurrentCount.map((h) => ({ text: h.name, value: h.id }))
+        "
+        name="hitToUpdateSelectGroup"
+      ></b-form-radio-group>
+      <template #modal-footer="{ ok, cancel }">
+        <b-button @click="ok" variant="success"> Auswählen </b-button>
+        <b-button @click="cancel" variant="outline-danger">
           Abbrechen
         </b-button>
       </template>
@@ -295,10 +425,19 @@ import EditableNameHeading from "@/components/EditableNameHeading.vue";
 import CountOverview from "@/components/CountOverview.vue";
 import PositionService from "@/services/PositionService";
 import LineupService from "@/services/LineupService";
+import EditViewShortcutTutorial from "@/components/EditViewShortcutTutorial.vue";
+import CreateHitModal from "@/components/modals/CreateHitModal.vue";
 
 export default {
   name: "EditView",
-  components: { Mat, CountSheet, EditableNameHeading, CountOverview },
+  components: {
+    Mat,
+    CountSheet,
+    EditableNameHeading,
+    CountOverview,
+    EditViewShortcutTutorial,
+    CreateHitModal,
+  },
   data: () => ({
     choreoId: null,
     matHeight: 500,
@@ -323,6 +462,7 @@ export default {
     playInterval: null,
     newChoreoCount: 0,
     newChoreoAchter: 1,
+    hitIdToUpdate: null,
   }),
   mounted() {
     this.loadChoreo();
@@ -347,6 +487,9 @@ export default {
           this.teamMembers = choreo.Team.Members.sort((a, b) =>
             a.name.localeCompare(b.name)
           );
+
+          if (choreo.Lineups.length == 0 && choreo.Hits.length == 0)
+            this.$bvModal.show("howToModal");
         })
         .catch(() => {
           this.$router.push({ name: "Start" }).catch(() => {});
@@ -404,12 +547,14 @@ export default {
           if (this.lineupCreationInProgress) return;
 
           this.lineupCreationInProgress = true;
+          console.log("starting lineupCreation");
           LineupService.create(this.count, this.count, this.choreoId).then(
             (lineup) => {
               let lineupCopy = this.choreo.Lineups;
               if (!lineup.Positions) lineup.Positions = [];
               lineupCopy.push(lineup);
               this.choreo.Lineups = lineupCopy;
+              console.log("Ending lineupCreation");
               this.lineupCreationInProgress = false;
             }
           );
@@ -486,7 +631,11 @@ export default {
           if (this.count > 7) this.setCounter(this.count - 8);
           break;
         case "KeyH":
+        case "KeyN":
           this.$refs.countOverview.openNewHitModal();
+          break;
+        case "Quote":
+          this.initiateHitUpdate();
           break;
         case "Space":
           this.playPause();
@@ -525,7 +674,9 @@ export default {
       });
     },
     onUpdateHits(hits) {
+      console.log(hits);
       this.choreo.Hits = hits;
+      console.log(this.choreo);
     },
     onUpdateLineups(lineups) {
       this.choreo.Lineups = lineups;
@@ -543,6 +694,31 @@ export default {
         this.$router.push({ name: "Start" }).catch(() => {});
       });
     },
+    openCreateHitModal() {
+      this.$refs.createHitModal.open();
+    },
+    onHitCreated(hit) {
+      let hitsCopy = this.choreo.Hits;
+      hitsCopy.push(hit);
+      this.choreo.Hits = hitsCopy;
+    },
+    initiateHitUpdate() {
+      if (this.hitsForCurrentCount.length == 0) return;
+      else if (this.hitsForCurrentCount.length == 1)
+        this.setHitUpdateMode(this.hitsForCurrentCount[0].id);
+      else {
+        this.hitIdToUpdate = this.hitsForCurrentCount[0].id;
+        this.$bvModal.show("modal-selectHitToUpdate");
+      }
+    },
+    setHitUpdateMode(hitId = this.hitIdToUpdate) {
+      console.log(hitId, this.$refs.countOverview);
+      this.$refs.countOverview.editHit(hitId);
+      this.scrollToCountOverView();
+    },
+    scrollToCountOverView() {
+      this.$refs.countOverview.$el.scrollIntoView({ behavior: "smooth" });
+    },
   },
   computed: {
     currentPositions() {
@@ -557,7 +733,7 @@ export default {
 
       return this.choreo.Hits.filter((a) => {
         return a.count == this.count;
-      });
+      }).sort((a, b) => b.Members?.length - a.Members?.length);
     },
     lineupsForCurrentCount() {
       if (!this.choreo) return [];

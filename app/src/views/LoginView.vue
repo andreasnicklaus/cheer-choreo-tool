@@ -110,6 +110,22 @@
             </b-button>
           </div>
         </b-form>
+
+        <b-card title="Information" class="my-2">
+          <b-card-text>
+            <p>
+              Dein Konto ist der
+              <b>Zugang für das gesamte Trainerteam</b>. Wähle Nutzername und
+              Passwort frei nach Lust und Laune und teile es anschließend mit
+              deinem Verein.
+            </p>
+            <p>
+              <b>Dein Nutzername muss nicht der Vereinsname sein!</b> Nach der
+              Erstellung deines Kontos wirst du aufgefordert, deinem Verein
+              einen Namen zu geben.
+            </p>
+          </b-card-text>
+        </b-card>
       </b-tab>
     </b-tabs>
   </b-container>

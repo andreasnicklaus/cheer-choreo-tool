@@ -50,6 +50,7 @@
             }"
             block
             @click="() => setCount(i, parseInt(label - 1))"
+            @dblclick="() => $emit('openCreateHitModal')"
             :variant="
               Math.floor(count / 8) == i && count % 8 == label - 1
                 ? 'primary'

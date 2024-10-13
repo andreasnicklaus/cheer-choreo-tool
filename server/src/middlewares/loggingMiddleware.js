@@ -15,7 +15,7 @@ function loggerMiddleWare(req, res, next) {
 
   res.on("finish", function () {
     logger.info(
-      `${req.method} ${req.url} ; ${res.statusCode} ; Referrer: ${
+      `${req.method} ${req.url} ; Referrer: ${
         req.get("Referrer") || null
       } ; Body: ${JSON.stringify(requestBody)};`
     );

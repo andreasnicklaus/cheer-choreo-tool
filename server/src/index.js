@@ -34,6 +34,8 @@ const port = 3000;
 app.use(bodyParser.json());
 app.use(cors());
 
+app.use(loggerMiddleWare);
+
 app.use(
   require("express-status-monitor")({
     title: "Choreo Tool Server",
@@ -55,7 +57,6 @@ app.use("/position", positionRouter);
 app.use("/user", userRouter);
 app.use("/auth", authRouter);
 
-app.use(loggerMiddleWare);
 app.use(errorLoggingMiddleWare);
 app.use(errorHandlingMiddleWare);
 
