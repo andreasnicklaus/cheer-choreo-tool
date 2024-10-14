@@ -736,14 +736,12 @@ export default {
       this.editHitCount = selectedHit.count + 1;
     },
     saveHit() {
-      console.log({ editHitMembers: this.editHitMembers });
       HitService.update(
         this.editHitId,
         this.editHitName,
         this.editHitCount - 1,
         this.editHitMembers
       ).then((hit) => {
-        console.log(hit);
         let hitsCopy = this.choreo.Hits.filter((h) => h.id != hit.id);
         hitsCopy.push(hit);
         this.$emit("updateHits", hitsCopy);

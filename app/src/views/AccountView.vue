@@ -166,7 +166,18 @@ export default {
       .then((user) => {
         this.user = user;
       })
-      .catch((e) => console.error(e));
+      .catch(() => {
+        this.$bvToast.toast(
+          "Ein unbekannter Fehler ist aufgetreten. Lade die Seite neu oder logge dich erneut ein, um die Seite anzuzeigen.",
+          {
+            variant: "danger",
+            title: "Das hat nicht funktioniert",
+            autoHideDelay: 3000,
+            appendToast: true,
+            solid: true,
+          }
+        );
+      });
   },
   methods: {
     onNameEdit(username) {

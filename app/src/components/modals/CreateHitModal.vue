@@ -18,10 +18,13 @@
           :state="Boolean(newHitName)"
           list="hitName-options"
         />
-        <datalist id="hitName-options">
+        <datalist
+          id="hitName-options"
+          v-if="newHitName && newHitName.length > 1"
+        >
           <option
             v-for="proposal in hitNameProposals.filter((p) =>
-              p.startsWith(newHitName)
+              p.toLowerCase().startsWith(newHitName.toLowerCase())
             )"
             :key="proposal"
           >

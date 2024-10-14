@@ -34,9 +34,8 @@ export default {
       .then(() => {
         setTimeout(() => (this.online = true), 1000);
       })
-      .catch((e) => {
+      .catch(() => {
         this.online = false;
-        console.error(e);
         this.$bvToast.toast(
           "Die Server sind zurzeit offline. Bitte versuche es später nochmal!",
           {

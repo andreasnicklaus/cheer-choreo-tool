@@ -1,6 +1,10 @@
 <template>
   <div>
-    <b-card class="mb-3">
+    <b-card
+      class="mb-3"
+      title="Video zusammenstellen"
+      :sub-title="choreo ? `Ausgewählte Choreo: ${choreo.name}` : 'Choreo lädt'"
+    >
       <b-card-body>
         <b-row class="mb-3">
           <b-col cols="6">
@@ -32,6 +36,9 @@
                 Choreo-Name anzeigen
               </b-form-checkbox>
             </b-form-group>
+            <b-alert variant="danger" :show="includedMembers.length == 0">
+              Du musst mindestens einen Teilnehmer auswählen.
+            </b-alert>
           </b-col>
           <b-col cols="6" class="mb-3">
             <b-skeleton-wrapper
@@ -41,11 +48,29 @@
                 <b-skeleton v-for="(_, i) in Array(3)" :key="i"></b-skeleton>
               </template>
               <b-form-group
-                description="Teilnehmer, die NICHT angezeigt werden sollen"
+                description="Teilnehmer, die im Video angezeigt werden sollen"
               >
+                <b-button-group class="mb-2">
+                  <b-button
+                    variant="light"
+                    @click="
+                      () => (includedMembers = teamMembers.map((m) => m.id))
+                    "
+                  >
+                    <b-icon-check-all />
+                    Alle auswählen
+                  </b-button>
+                  <b-button
+                    variant="light"
+                    @click="() => (includedMembers = [])"
+                  >
+                    <b-icon-slash />
+                    Keine auswählen
+                  </b-button>
+                </b-button-group>
                 <b-checkbox-group
                   :disabled="recordingIsRunning"
-                  v-model="excludedMembers"
+                  v-model="includedMembers"
                   :style="{ columnCount: 2 }"
                   stacked
                   :options="
@@ -88,7 +113,9 @@
               variant="success"
               block
               @click="startRecording"
-              :disabled="!choreo || recordingIsRunning"
+              :disabled="
+                !choreo || recordingIsRunning || includedMembers.length == 0
+              "
             >
               <b-icon-film class="mr-2" />
               Video generieren
@@ -208,7 +235,7 @@ export default {
     includeCount: true,
     includeTeamName: true,
     includeChoreoName: true,
-    excludedMembers: [],
+    includedMembers: [],
     selectedDownloadOptionId: "mp4",
     downloadOptions: [
       {
@@ -265,6 +292,7 @@ export default {
           this.teamMembers = choreo.Team.Members.sort((a, b) =>
             a.name.localeCompare(b.name)
           );
+          this.includedMembers = this.teamMembers.map((m) => m.id);
           this.addAnimationsFromChoreo();
           this.initializeRecorder();
         })
@@ -379,7 +407,7 @@ export default {
       const positions = this.getPositions();
       this.drawPositions(
         positions
-          .filter((p) => !this.excludedMembers.includes(p.MemberId))
+          .filter((p) => this.includedMembers.includes(p.MemberId))
           .map((p) => ({
             text: p.Member.abbreviation || p.Member.nickname || p.Member.name,
             color: p.Member.color,
@@ -497,7 +525,7 @@ export default {
         this.drawCanvas();
       },
     },
-    excludedMembers: {
+    includedMembers: {
       handler() {
         this.drawCanvas();
       },
@@ -527,7 +555,7 @@ export default {
   computed: {
     waitingSlogan() {
       const slogans = [
-        "Schuhe werden zusammengebunden...",
+        "Schuhe werden gebunden...",
         "Haare werden geflochten...",
         "Schleifen werden gerichtet...",
         "Maskottchen wird hingelegt...",

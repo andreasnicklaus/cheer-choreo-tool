@@ -74,6 +74,9 @@
       </b-col>
       <b-col cols="auto" class="h3">
         <b-button-group>
+          <b-button id="popover-info-target" variant="light">
+            <b-icon-info-circle />
+          </b-button>
           <b-button
             variant="light"
             v-b-tooltip.hover
@@ -94,7 +97,7 @@
             </template>
             <b-dropdown-item :to="{ name: 'PDF', params: { choreoId } }">
               <b-icon-file-pdf class="mr-2" />
-              PDF exportieren
+              Countsheet als PDF
             </b-dropdown-item>
             <b-dropdown-item :to="{ name: 'Video', params: { choreoId } }">
               <b-icon-film class="mr-2" />
@@ -115,9 +118,6 @@
               Löschen
             </b-dropdown-item>
           </b-dropdown>
-          <b-button id="popover-info-target" variant="light">
-            <b-icon-info-circle />
-          </b-button>
         </b-button-group>
         <b-popover
           target="popover-info-target"
@@ -274,17 +274,10 @@
     </b-modal>
 
     <!-- Modal: How To -->
-    <b-modal
-      id="howToModal"
-      centered
-      title="Anleitung"
-      hide-footer
-      scrollable
-      size="xl"
-    >
-      <b-row>
-        <b-col>
-          <b-card title="Aufstellungen">
+    <b-modal id="howToModal" title="Anleitung" hide-footer scrollable size="xl">
+      <b-tabs fill>
+        <b-tab title="Aufstellungen">
+          <b-card title="Aufstellungen" border-variant="light">
             <b-card-text>
               <p>
                 Aufstellungen definieren, wo sich die Teilnehmer deiner Choreo
@@ -292,6 +285,7 @@
                 Positionen für die Teilnehmer und einer Dauer, wie lange die
                 Aufstellung gehalten wird.
               </p>
+              <hr />
               <p>
                 <b>Aufstellungen anlegen:</b> Um deine erste Aufstellung
                 anzulegen, klicke einfach einen Teilnehmer auf der Matte an und
@@ -310,6 +304,7 @@
                 Aufstellung angelegt oder der Teilnehmer zu einer bestehenden
                 Aufstellung hinzugefügt.
               </p>
+              <hr />
               <p>
                 <b>Aufstellungen aufteilen:</b> Wenn Aufstellungen nicht für
                 alle gleich lang gelten, brauchst du auf denselben Count mehrere
@@ -329,21 +324,23 @@
                 , wähle die Teilnehmer für die zweite Gruppe aus und ziehe die
                 Marker dann auf der Matte an die richtige Stelle.
               </p>
+              <hr />
               <b-alert variant="warning" show>
                 Wenn du Aufstellungen definierst, die sich für einen Teilnehmer
                 überschneiden, werden Animationen nicht richtig angezeigt!
               </b-alert>
             </b-card-text>
           </b-card>
-        </b-col>
-        <b-col>
-          <b-card title="Countsheet">
+        </b-tab>
+        <b-tab title="Countsheet">
+          <b-card title="Countsheet" border-variant="light">
             <b-card-text>
               <p>
                 Einträge im Countsheet werden durch den Count, an dem sie
                 passieren, einem Namen und durch eine Liste an Teilnehmern
                 definiert.
               </p>
+              <hr />
               <p>
                 <b>Einträge hinzufügen:</b> Klicke auf
                 <b-button
@@ -359,18 +356,21 @@
                 <b-badge variant="light">H</b-badge> oder
                 <b-badge variant="light">N</b-badge> oder mache einen
                 Doppelklick auf die Zelle im Countsheet, um einen Neuen Eintrag
-                anzulegen.
+                anzulegen. Dabei kannst du den Namen festlegen und wählen, für
+                wen dieser Eintrag gilt. Standardmäßig wird der Eintrag für den
+                aktuellen Count angelegt.
               </p>
-              <p>
-                Dabei kannst du den Namen festlegen und wählen, für wen dieser
-                Eintrag gilt. Standardmäßig wird der Eintrag für den aktuellen
-                Count angelegt.
-              </p>
+              <b-alert variant="info" show>
+                Wenn du dir die Mühe machst anzugeben, für wen der Eintrag gilt,
+                kannst du später persönliche Countsheets austeilen.
+              </b-alert>
+              <hr />
               <p>
                 <b>Einträge bearbeiten:</b> Angelegte Einträge findest in der
                 Liste an Aufstellung und Countsheet-Einträgen. Klicke auf
-                <b-icon-pen /> neben dem Eintrag, den du bearbeiten willst und
-                klicke anschließend auf
+                <b-icon-pen /> neben dem Eintrag, den du bearbeiten willst oder
+                nutze den Shortcut <b-badge variant="light">Ä</b-badge> und
+                klicke nach dem Bearbeiten auf
                 <b-button
                   variant="success"
                   disabled
@@ -379,17 +379,69 @@
                   }"
                 >
                   <b-icon-check /> </b-button
-                >, um deine Änderungen zuu speichern.
+                >, um deine Änderungen zu speichern.
               </p>
             </b-card-text>
           </b-card>
-        </b-col>
-        <b-col>
-          <b-card title="Steuerung">
+        </b-tab>
+        <b-tab title="Steuerung">
+          <b-card title="Steuerung" border-variant="light">
             <EditViewShortcutTutorial />
           </b-card>
-        </b-col>
-      </b-row>
+        </b-tab>
+        <b-tab title="Video und Countsheet downloaden">
+          <b-card
+            title="Video und Countsheet downloaden"
+            border-variant="light"
+          >
+            <b-card-text>
+              <p>
+                <b>Countsheet als PDF downloaden:</b> Klicke im Menü oben rechts
+                auf
+                <b-button
+                  variant="light"
+                  disabled
+                  :style="{ display: 'inline-block' }"
+                >
+                  <b-icon-three-dots-vertical />
+                </b-button>
+                und wähle
+                <b-button
+                  variant="light"
+                  disabled
+                  :style="{ display: 'inline-block' }"
+                >
+                  <b-icon-file-pdf />
+                  Countsheet als PDF
+                </b-button>
+                aus, um das Countsheet zusammenzustellen und herunterzuladen.
+              </p>
+              <hr />
+              <p>
+                <b>Aufstellungen als Video downloaden:</b> Klicke im Menü oben
+                rechts auf
+                <b-button
+                  variant="light"
+                  disabled
+                  :style="{ display: 'inline-block' }"
+                >
+                  <b-icon-three-dots-vertical />
+                </b-button>
+                und wähle
+                <b-button
+                  variant="light"
+                  disabled
+                  :style="{ display: 'inline-block' }"
+                >
+                  <b-icon-film />
+                  Video exportieren
+                </b-button>
+                aus, um dein Video zusammenzustellen und herunterzuladen.
+              </p>
+            </b-card-text>
+          </b-card>
+        </b-tab>
+      </b-tabs>
     </b-modal>
 
     <!-- Modal: selectHitToUpdate -->
@@ -406,6 +458,7 @@
           hitsForCurrentCount.map((h) => ({ text: h.name, value: h.id }))
         "
         name="hitToUpdateSelectGroup"
+        stacked
       ></b-form-radio-group>
       <template #modal-footer="{ ok, cancel }">
         <b-button @click="ok" variant="success"> Auswählen </b-button>
@@ -547,14 +600,12 @@ export default {
           if (this.lineupCreationInProgress) return;
 
           this.lineupCreationInProgress = true;
-          console.log("starting lineupCreation");
           LineupService.create(this.count, this.count, this.choreoId).then(
             (lineup) => {
               let lineupCopy = this.choreo.Lineups;
               if (!lineup.Positions) lineup.Positions = [];
               lineupCopy.push(lineup);
               this.choreo.Lineups = lineupCopy;
-              console.log("Ending lineupCreation");
               this.lineupCreationInProgress = false;
             }
           );
@@ -668,15 +719,12 @@ export default {
     },
     onNameEdit(nameNew) {
       this.choreo.name = nameNew;
-      ChoreoService.changeName(this.choreoId, nameNew).then((choreo) => {
-        console.debug(choreo);
+      ChoreoService.changeName(this.choreoId, nameNew).then(() => {
         this.choreo.name = nameNew;
       });
     },
     onUpdateHits(hits) {
-      console.log(hits);
       this.choreo.Hits = hits;
-      console.log(this.choreo);
     },
     onUpdateLineups(lineups) {
       this.choreo.Lineups = lineups;
@@ -684,8 +732,7 @@ export default {
     changeChoreoLength() {
       const counts =
         parseInt(this.newChoreoAchter) * 8 + parseInt(this.newChoreoCount);
-      ChoreoService.changeLength(this.choreoId, counts).then((choreo) => {
-        console.debug(choreo);
+      ChoreoService.changeLength(this.choreoId, counts).then(() => {
         this.choreo.counts = counts;
       });
     },
@@ -712,7 +759,6 @@ export default {
       }
     },
     setHitUpdateMode(hitId = this.hitIdToUpdate) {
-      console.log(hitId, this.$refs.countOverview);
       this.$refs.countOverview.editHit(hitId);
       this.scrollToCountOverView();
     },

@@ -34,7 +34,7 @@
             {{ acht[label] + 1 }}
           </span>
           <b-button
-            v-else
+            v-else-if="i * 8 + parseInt(label) <= choreo.counts"
             :disabled="!interactive"
             class="p-1 py-2"
             :style="{

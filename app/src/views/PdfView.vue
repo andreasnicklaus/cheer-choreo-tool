@@ -20,13 +20,34 @@
       <section slot="pdf-content">
         <div v-for="(split, i) in hitSplits" :key="split.startIndex">
           <h1 v-if="i == 0">{{ choreo?.name }}</h1>
-          <b-row align-h="between" align-v="center" class="mb-2">
-            <b-col cols="auto" v-if="i != 0 && includeChoreoName">{{
-              choreo?.name
-            }}</b-col>
-            <b-col cols="auto" v-if="includeTeamName">{{
-              choreo?.Team?.name
-            }}</b-col>
+          <b-row
+            align-h="between"
+            align-v="center"
+            class="mb-2"
+            :ref="`count-sheet-info-${split.startIndex}`"
+          >
+            <b-col cols="auto" v-if="i != 0 && includeChoreoName">
+              {{ choreo?.name }}
+            </b-col>
+            <b-col cols="auto" v-if="includeTeamName">
+              {{ choreo?.Team?.name }}
+            </b-col>
+            <b-col
+              cols="auto"
+              v-if="
+                includeMemberNames &&
+                !allMembers &&
+                includedMembers.length > 0 &&
+                includedMembers < teamMembers.length
+              "
+            >
+              {{
+                teamMembers
+                  .filter((m) => includedMembers.includes(m.id))
+                  .map((m) => m.nickname || m.name)
+                  .join(", ")
+              }}
+            </b-col>
             <b-col cols="auto" v-if="includeDate">
               {{ new Date(date).toLocaleDateString("de-de") }}
             </b-col>
@@ -63,7 +84,11 @@
         </div>
       </section>
     </vue-html2pdf>
-    <b-card class="text-left mb-4" title="Countsheet zusammenstellen">
+    <b-card
+      class="text-left mb-4"
+      title="Countsheet zusammenstellen"
+      :sub-title="choreo ? `Ausgewählte Choreo: ${choreo.name}` : 'Choreo lädt'"
+    >
       <b-card-body>
         <b-row>
           <b-col cols="6">
@@ -91,6 +116,34 @@
                 Choreo-Name anzeigen
               </b-form-checkbox>
             </b-form-group>
+            <b-form-group
+              description="Die Namen der Teilnehmer auf das Countsheet schreiben"
+            >
+              <b-form-checkbox v-model="includeMemberNames">
+                Teilnehmer-Namen anzeigen
+              </b-form-checkbox>
+            </b-form-group>
+            <b-alert
+              variant="warning"
+              :show="
+                includeMemberNames &&
+                (allMembers ||
+                  includedMembers.length <= 0 ||
+                  includedMembers.length >= teamMembers.length)
+              "
+            >
+              {{
+                includedMembers.length == teamMembers.length || allMembers
+                  ? "Wenn du alle Teilnehmer auswählst, werden die Namen nicht auf das Countsheet geschrieben, um Platz zu sparen."
+                  : "Wenn du keinen Teilnehmer auswählst, können auch keine Namen geschrieben werden."
+              }}
+            </b-alert>
+            <b-alert
+              variant="danger"
+              :show="!allMembers && includedMembers.length == 0"
+            >
+              Du musst mindestens einen Teilnehmer auswählen.
+            </b-alert>
           </b-col>
           <b-col cols="6" class="mb-3">
             <b-skeleton-wrapper
@@ -102,6 +155,26 @@
               <b-form-group description="Für wen ist das Countsheet?">
                 <b-form-checkbox v-model="allMembers"> Alle </b-form-checkbox>
                 <hr />
+                <b-button-group class="mb-2">
+                  <b-button
+                    variant="light"
+                    @click="
+                      () => (includedMembers = teamMembers.map((m) => m.id))
+                    "
+                    :disabled="allMembers"
+                  >
+                    <b-icon-check-all />
+                    Alle auswählen
+                  </b-button>
+                  <b-button
+                    variant="light"
+                    @click="() => (includedMembers = [])"
+                    :disabled="allMembers"
+                  >
+                    <b-icon-slash />
+                    Keine auswählen
+                  </b-button>
+                </b-button-group>
                 <b-checkbox-group
                   :disabled="allMembers"
                   v-model="includedMembers"
@@ -124,7 +197,13 @@
           <b-spinner />
           <p>{{ slogan || "Choreo wird geladen..." }}</p>
         </div>
-        <b-button block v-else @click="generatePdf" variant="success">
+        <b-button
+          block
+          v-else
+          @click="generatePdf"
+          variant="success"
+          :disabled="!allMembers && includedMembers.length == 0"
+        >
           <b-icon-file-pdf />
           PDF generieren
         </b-button>
@@ -139,7 +218,7 @@ import ChoreoService from "@/services/ChoreoService";
 import VueHtml2pdf from "vue-html2pdf";
 
 const slogans = [
-  "Schuhe werden zusammengebunden...",
+  "Schuhe werden gebunden...",
   "Haare werden geflochten...",
   "Schleifen werden gerichtet...",
   "Maskottchen wird hingelegt...",
@@ -164,6 +243,7 @@ export default {
     includeDate: true,
     includeTeamName: true,
     includeChoreoName: true,
+    includeMemberNames: false,
     allMembers: true,
     includedMembers: [],
     loading: true,
@@ -202,15 +282,19 @@ export default {
           },
         ];
 
-        const promise = new Promise((resolve) => {
+        const [height, infoHeight] = await new Promise((resolve) => {
           this.$nextTick(function () {
             const countSheetSplit = this.$refs[`count-sheet-${startIndex}`][0];
-            resolve(countSheetSplit.$el.clientHeight);
+            const countSheetSplitInfo =
+              this.$refs[`count-sheet-info-${startIndex}`][0];
+            resolve([
+              countSheetSplit.$el.clientHeight,
+              countSheetSplitInfo.clientHeight,
+            ]);
           });
         });
 
-        const height = await promise;
-        const maxHeight = startIndex == 0 ? 860 : 930;
+        const maxHeight = (startIndex == 0 ? 890 : 960) - infoHeight;
 
         if (height < maxHeight) {
           nItems += 8;
@@ -242,6 +326,33 @@ export default {
   computed: {
     slogan() {
       return slogans[this.sloganIndex];
+    },
+  },
+  watch: {
+    allMembers: {
+      handler() {
+        this.calculateHitSplits();
+      },
+    },
+    includeDate: {
+      handler() {
+        this.calculateHitSplits();
+      },
+    },
+    includeTeamName: {
+      handler() {
+        this.calculateHitSplits();
+      },
+    },
+    includeChoreoName: {
+      handler() {
+        this.calculateHitSplits();
+      },
+    },
+    includedMembers: {
+      handler() {
+        this.calculateHitSplits();
+      },
     },
   },
 };
