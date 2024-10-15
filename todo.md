@@ -1,0 +1,4 @@
+- [x] Eintrag ändern: 1 Spalte
+- [x] console.log weg "starting lineupCreation", "ending lineupcreation"
+- [x] Countsheet Ende ggf. nicht füllen
+- [ ] Choreo laden beschleunigen

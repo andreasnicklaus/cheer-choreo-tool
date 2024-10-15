@@ -21,7 +21,7 @@
             <b-dropdown-item
               v-for="choreo in choreos.filter((c) => c.TeamId == team.id)"
               :key="choreo.id"
-              :to="{ name: 'Edit', params: { choreoId: choreo.id } }"
+              :to="{ name: 'Choreo', params: { choreoId: choreo.id } }"
             >
               {{ choreo.name }}
             </b-dropdown-item>
@@ -316,7 +316,7 @@ export default {
         this.newChoreoTeamId
       ).then((choreo) => {
         this.choreos.push(choreo);
-        this.$router.push({ name: "Edit", params: { choreoId: choreo.id } });
+        this.$router.push({ name: "Choreo", params: { choreoId: choreo.id } });
       });
     },
     resetTeamModal() {

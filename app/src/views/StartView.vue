@@ -144,7 +144,7 @@
               <b-list-group-item
                 v-for="choreo in filteredChoreos"
                 :key="choreo.id"
-                :to="{ name: 'Edit', params: { choreoId: choreo.id } }"
+                :to="{ name: 'Choreo', params: { choreoId: choreo.id } }"
                 variant="light"
               >
                 <h5>

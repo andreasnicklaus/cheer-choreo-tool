@@ -29,8 +29,8 @@ const routes = [
     meta: { private: true },
   },
   {
-    path: "/edit/:choreoId",
-    name: "Edit",
+    path: "/choreo/:choreoId",
+    name: "Choreo",
     component: () => import("../views/EditView.vue"),
     meta: { private: true },
   },

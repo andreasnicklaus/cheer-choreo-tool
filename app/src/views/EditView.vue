@@ -74,9 +74,6 @@
       </b-col>
       <b-col cols="auto" class="h3">
         <b-button-group>
-          <b-button id="popover-info-target" variant="light">
-            <b-icon-info-circle />
-          </b-button>
           <b-button
             variant="light"
             v-b-tooltip.hover
@@ -108,6 +105,11 @@
               <b-icon-hash class="mr-2" />
               Länge anpassen
             </b-dropdown-item>
+            <b-dropdown-text>
+              <b-checkbox switch v-model="snapping">
+                Positionen horizontal und vertikal ausrichten
+              </b-checkbox>
+            </b-dropdown-text>
             <b-dropdown-divider />
             <b-dropdown-item
               v-b-modal.deleteModal
@@ -119,19 +121,6 @@
             </b-dropdown-item>
           </b-dropdown>
         </b-button-group>
-        <b-popover
-          target="popover-info-target"
-          triggers="hover focus"
-          placement="left"
-          :style="{ width: '400px' }"
-        >
-          <template #title>Steuerung</template>
-          <EditViewShortcutTutorial />
-
-          <b-checkbox switch v-model="snapping">
-            Positionen horizontal und vertikal ausrichten
-          </b-checkbox>
-        </b-popover>
       </b-col>
     </b-row>
 
