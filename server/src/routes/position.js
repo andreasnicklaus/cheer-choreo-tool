@@ -4,6 +4,16 @@ const { authenticateUser } = require("../services/AuthService");
 
 const router = Router();
 
+router.get("/", authenticateUser, (req, res, next) => {
+  if (req.query.lineupId)
+    PositionService.findByLineupId(req.query.lineupId, req.UserId)
+      .then((foundPositions) => {
+        res.send(foundPositions);
+        return next();
+      })
+      .catch((e) => next(e));
+});
+
 router.post("/", authenticateUser, (req, res, next) => {
   const { x, y, memberId, lineupId } = req.body;
   PositionService.create(x, y, req.UserId)

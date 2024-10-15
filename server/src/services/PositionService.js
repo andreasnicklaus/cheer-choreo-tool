@@ -29,6 +29,10 @@ class PositionService {
     return position;
   }
 
+  async findByLineupId(LineupId, UserId) {
+    return Position.findAll({ where: { LineupId, UserId }, include: "Member" });
+  }
+
   async findById(id, UserId) {
     return Position.findOne({ where: { id, UserId }, include: "Member" });
   }

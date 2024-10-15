@@ -7,6 +7,12 @@ class PositionService {
       .then((res) => res.data);
   }
 
+  getByLineupId(lineupId) {
+    return ax
+      .get(`/position`, { params: { lineupId } })
+      .then((res) => res.data);
+  }
+
   update(lineupId, positionId, x, y) {
     return ax
       .put(`/lineup/${lineupId}/position/${positionId}`, { x, y })

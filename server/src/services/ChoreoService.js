@@ -1,19 +1,20 @@
 const { Json } = require("sequelize/lib/utils");
 const Choreo = require("../db/models/choreo");
 const { logger } = require("../plugins/winston");
+const PositionService = require("./PositionService");
 
 class ChoreoService {
   async getAll(UserId) {
     return Choreo.findAll({
       where: { UserId },
-      include: { all: true, nested: true },
+      include: { all: true, nested: false },
     });
   }
 
   async findByTeamId(TeamId, UserId) {
     return Choreo.findAll({
       where: { TeamId, UserId },
-      include: { all: true, nested: true },
+      include: { all: true, nested: false },
     });
   }
 
@@ -25,18 +26,23 @@ class ChoreoService {
           association: "Team",
           include: "Members",
         },
-        {
-          association: "Lineups",
-          include: {
-            association: "Positions",
-            include: "Member",
-          },
-        },
+        "Lineups",
         {
           association: "Hits",
           include: "Members",
         },
       ],
+    }).then(async (choreo) => {
+      await Promise.all(
+        choreo.Lineups.map(async (lineup) => {
+          lineup.dataValues.Positions = await PositionService.findByLineupId(
+            lineup.id,
+            UserId
+          );
+          return lineup;
+        })
+      );
+      return choreo;
     });
   }
 

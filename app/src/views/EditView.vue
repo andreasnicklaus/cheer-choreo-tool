@@ -165,7 +165,7 @@
     <b-tabs content-class="mt-3" class="mt-5" fill>
       <b-tab title="Countsheet" active>
         <CountSheet
-          v-if="choreo"
+          v-if="choreo && choreo.Hits"
           :count="count"
           :choreo="choreo"
           @setCounter="setCounter"
@@ -775,14 +775,14 @@ export default {
       );
     },
     hitsForCurrentCount() {
-      if (!this.choreo) return [];
+      if (!this.choreo || !this.choreo.Hits) return [];
 
       return this.choreo.Hits.filter((a) => {
         return a.count == this.count;
       }).sort((a, b) => b.Members?.length - a.Members?.length);
     },
     lineupsForCurrentCount() {
-      if (!this.choreo) return [];
+      if (!this.choreo || !this.choreo.Lineups) return [];
 
       return this.choreo.Lineups.filter((a) => {
         return a.startCount <= this.count && a.endCount >= this.count;

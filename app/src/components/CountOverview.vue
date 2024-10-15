@@ -578,7 +578,7 @@
             :value="member.id"
             :disabled="
               lineupsForCurrentCount
-                .map((l) => l.Positions.map((p) => p.MemberId))
+                .map((l) => l?.Positions.map((p) => p.MemberId))
                 .flat()
                 .includes(member.id)
             "
