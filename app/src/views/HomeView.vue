@@ -13,7 +13,7 @@
         class="d-flex flex-column justify-content-center align-items-center"
       >
         <img id="logoImg" src="/Icon.png" alt="" width="200" />
-        <h1 id="title">Editor für Cheer-Choreos</h1>
+        <h1 id="title" class="text-center">Editor für Cheer-Choreos</h1>
         <b-row
           class="w-75 my-4"
           align-h="around"
@@ -44,7 +44,7 @@
       }"
     >
       <b-row align-v="center" align-h="center" class="w-100" id="sectionB">
-        <b-col cols="6">
+        <b-col cols="12" lg="6" class="mb-lg-0 mb-2">
           <h2>Choreos erstellen</h2>
           <b-list-group>
             <b-list-group-item>
@@ -64,8 +64,12 @@
           </b-list-group>
         </b-col>
         <b-col cols="auto">
-          <Mat :current-positions="currentPositions"
-        /></b-col>
+          <Mat
+            :current-positions="currentPositions"
+            :width="matWidth"
+            :height="matWidth"
+          />
+        </b-col>
       </b-row>
     </section>
 
@@ -73,7 +77,7 @@
 
     <section id="sectionC">
       <b-row align-h="center">
-        <b-col cols="6">
+        <b-col cols="12" lg="6" class="mb-lg-0 mb-2">
           <h2>Countsheets teilen</h2>
           <b-list-group>
             <b-list-group-item>
@@ -91,7 +95,7 @@
           </b-list-group>
         </b-col>
 
-        <b-col cols="6" :style="{ minHeight: '400px' }">
+        <b-col cols="12" lg="6" :style="{ minHeight: '400px' }">
           <CountOverview
             id="CountOverview"
             :count="count"
@@ -102,7 +106,7 @@
             :interactive="false"
           />
         </b-col>
-        <b-col cols="11">
+        <b-col cols="12" class="d-none d-md-flex flex-column">
           <CountSheet
             id="CountSheet"
             :count="count"
@@ -117,7 +121,7 @@
 
     <section id="sectionD">
       <b-row align-h="center">
-        <b-col cols="6">
+        <b-col cols="12" lg="6">
           <h2>Videos erstellen</h2>
           <b-list-group>
             <b-list-group-item>
@@ -132,8 +136,8 @@
             </b-list-group-item>
           </b-list-group>
         </b-col>
-        <b-col cols="auto">
-          <b-form class="mt-5">
+        <b-col cols="12" lg="6">
+          <b-form class="mt-5" id="video-form">
             <b-form-group
               id="checkbox1"
               description="Wähle aus, wer auf dem Video erscheinen soll"
@@ -192,7 +196,11 @@ import { ScrollTrigger } from "gsap/all";
 
 export default {
   name: "HomeView",
-  components: { Mat, CountSheet, CountOverview },
+  components: {
+    Mat,
+    CountSheet,
+    CountOverview,
+  },
   data: () => ({
     count: 0,
     teamMembers: [
@@ -360,7 +368,7 @@ export default {
           nickname: "Anni",
           color: "#dd45a8",
         },
-        x: 50,
+        x: 40,
         y: 50,
       },
       {
@@ -405,6 +413,20 @@ export default {
         ...h,
         id: (Math.random() + 1).toString(36).substring(7),
       }));
+    },
+    matWidth() {
+      switch (this.$vuetify.breakpoint.name) {
+        case "xs":
+          return 220;
+        case "sm":
+        case "md":
+          return 350;
+        case "lg":
+        case "xl":
+          return 500;
+        default:
+          return null;
+      }
     },
   },
   mounted() {
@@ -460,22 +482,22 @@ export default {
 
     gsap.to("#registerButton", {
       scrollTrigger: {
-        trigger: "#sectionB",
-        start: "top bottom",
-        end: "top 30%",
+        trigger: "#sectionA",
+        start: "center center",
+        end: "bottom 20%",
         scrub: -1,
       },
-      y: 200,
+      y: "15vh",
       width: "100%",
     });
     gsap.to("#helpLink", {
       scrollTrigger: {
-        trigger: "#sectionB",
-        start: "top bottom",
-        end: "top 30%",
+        trigger: "#sectionA",
+        start: "center center",
+        end: "bottom 20%",
         scrub: -1,
       },
-      y: 200,
+      y: "15vh",
       opacity: 0,
     });
 
@@ -493,16 +515,16 @@ export default {
         id: "test",
         positions: [
           {
-            x: 20,
-            y: 60,
+            x: 0.08,
+            y: 0.12,
           },
           {
-            x: 250,
-            y: 60,
+            x: 0.5,
+            y: 0.12,
           },
           {
-            x: 250,
-            y: 420,
+            x: 0.5,
+            y: 0.84,
           },
         ],
       },
@@ -510,16 +532,16 @@ export default {
         id: "test2",
         positions: [
           {
-            x: 480,
-            y: 60,
+            x: 0.92,
+            y: 0.12,
           },
           {
-            x: 250,
-            y: 250,
+            x: 0.5,
+            y: 0.5,
           },
           {
-            x: 250,
-            y: 450,
+            x: 0.5,
+            y: 0.9,
           },
         ],
       },
@@ -527,16 +549,16 @@ export default {
         id: "test3",
         positions: [
           {
-            x: 230,
-            y: 250,
+            x: 0.46,
+            y: 0.5,
           },
           {
-            x: 60,
-            y: 250,
+            x: 0.12,
+            y: 0.5,
           },
           {
-            x: 230,
-            y: 450,
+            x: 0.46,
+            y: 0.9,
           },
         ],
       },
@@ -544,16 +566,16 @@ export default {
         id: "test4",
         positions: [
           {
-            x: 270,
-            y: 250,
+            x: 0.54,
+            y: 0.5,
           },
           {
-            x: 440,
-            y: 250,
+            x: 0.88,
+            y: 0.5,
           },
           {
-            x: 270,
-            y: 450,
+            x: 0.54,
+            y: 0.9,
           },
         ],
       },
@@ -563,14 +585,22 @@ export default {
       scrollTimeLine.to(
         `#t${id}`,
         {
-          keyframes: positions,
+          keyframes: positions.map((p) => ({
+            ease: p.ease,
+            x: p.x * this.matWidth,
+            y: p.y * this.matWidth,
+          })),
         },
         "<"
       );
       scrollTimeLine.to(
         `#c${id}`,
         {
-          keyframes: positions.map((p) => ({ ease: p.ease, cx: p.x, cy: p.y })),
+          keyframes: positions.map((p) => ({
+            ease: p.ease,
+            cx: p.x * this.matWidth,
+            cy: p.y * this.matWidth,
+          })),
         },
         "<"
       );
@@ -585,19 +615,6 @@ export default {
       onUpdate: (self) => {
         this.count = Math.floor(4 * self.progress) * 2;
       },
-    });
-
-    Array.from(Array(5)).forEach((_, i) => {
-      gsap.from(`#checkbox${i + 1}`, {
-        scrollTrigger: {
-          trigger: `#checkbox${i + 1}`,
-          start: "top 90%",
-          end: i == 4 ? "+=80" : "+=150",
-          scrub: -1,
-        },
-        x: 100,
-        opacity: 0,
-      });
     });
   },
 };
