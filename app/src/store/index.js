@@ -3,9 +3,11 @@ import Vuex from "vuex";
 
 Vue.use(Vuex);
 
+const tokenStorageKey = "cheer-token";
+
 export default new Vuex.Store({
   state: {
-    loggedIn: false,
+    loggedIn: localStorage.getItem(tokenStorageKey) != null,
     clubId: null,
   },
   getters: {},
