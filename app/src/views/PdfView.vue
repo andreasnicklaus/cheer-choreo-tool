@@ -294,7 +294,7 @@ export default {
           });
         });
 
-        const maxHeight = (startIndex == 0 ? 890 : 960) - infoHeight;
+        const maxHeight = (startIndex == 0 ? 890 : 950) - infoHeight;
 
         if (height < maxHeight) {
           nItems += 8;
