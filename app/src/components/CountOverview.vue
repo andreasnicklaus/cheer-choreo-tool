@@ -233,7 +233,7 @@
                 <b-col> Aufstellung </b-col>
                 <b-col cols="auto">
                   <b-button-group>
-                    <b-button
+                    <!-- <b-button
                       variant="outline-primary"
                       v-b-tooltip.hover
                       :title="
@@ -286,7 +286,7 @@
                       "
                     >
                       <b-icon-chevron-double-right />
-                    </b-button>
+                    </b-button> -->
                     <b-button
                       variant="outline-success"
                       v-b-tooltip.hover
