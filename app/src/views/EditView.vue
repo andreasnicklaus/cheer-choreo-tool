@@ -640,7 +640,13 @@ export default {
       }
     },
     onKeyPress(event) {
-      if (["ArrowUp", "ArrowDown", "Space"].includes(event.code))
+      if (
+        [
+          "ArrowUp",
+          "ArrowDown",
+          // "Space"
+        ].includes(event.code)
+      )
         event.preventDefault();
 
       if (
@@ -677,9 +683,9 @@ export default {
         case "Quote":
           this.initiateHitUpdate();
           break;
-        case "Space":
-          this.playPause();
-          break;
+        // case "Space":
+        //   this.playPause();
+        //   break;
       }
     },
     setCounter(count) {
