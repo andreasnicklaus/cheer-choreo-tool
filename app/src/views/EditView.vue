@@ -642,8 +642,8 @@ export default {
     onKeyPress(event) {
       if (
         [
-          "ArrowUp",
-          "ArrowDown",
+          // "ArrowUp",
+          // "ArrowDown",
           // "Space"
         ].includes(event.code)
       )
@@ -662,30 +662,31 @@ export default {
       };
 
       switch (event.code) {
-        case "ArrowLeft":
-          if (this.count > 0) this.setCounter(this.count - 1);
-          break;
-        case "ArrowRight":
-          if (this.count < this.choreo.counts - 1)
-            this.setCounter(this.count + 1);
-          break;
-        case "ArrowDown":
-          if (this.count < this.choreo.counts - 8)
-            this.setCounter(this.count + 8);
-          break;
-        case "ArrowUp":
-          if (this.count > 7) this.setCounter(this.count - 8);
-          break;
-        case "KeyH":
-        case "KeyN":
-          this.$refs.countOverview.openNewHitModal();
-          break;
-        case "Quote":
-          this.initiateHitUpdate();
-          break;
+        // case "ArrowLeft":
+        //   if (this.count > 0) this.setCounter(this.count - 1);
+        //   break;
+        // case "ArrowRight":
+        //   if (this.count < this.choreo.counts - 1)
+        //     this.setCounter(this.count + 1);
+        //   break;
+        // case "ArrowDown":
+        //   if (this.count < this.choreo.counts - 8)
+        //     this.setCounter(this.count + 8);
+        //   break;
+        // case "ArrowUp":
+        //   if (this.count > 7) this.setCounter(this.count - 8);
+        //   break;
+        // case "KeyH":
+        // case "KeyN":
+        //   this.$refs.countOverview.openNewHitModal();
+        //   break;
+        // case "Quote":
+        //   this.initiateHitUpdate();
+        //   break;
         // case "Space":
         //   this.playPause();
         //   break;
+        default:
       }
     },
     setCounter(count) {
