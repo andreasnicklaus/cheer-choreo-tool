@@ -36,7 +36,10 @@
                 Choreo-Name anzeigen
               </b-form-checkbox>
             </b-form-group>
-            <b-alert variant="danger" :show="includedMembers.length == 0">
+            <b-alert
+              variant="danger"
+              :show="choreo && includedMembers.length == 0"
+            >
               Du musst mindestens einen Teilnehmer auswählen.
             </b-alert>
           </b-col>
@@ -565,6 +568,7 @@ export default {
         "Matte wird aufgezeichnet...",
         "Sprungboden wird aufgebaut...",
         "Schminke wird aufgetragen...",
+        "Zopf wird gebunden...",
       ];
       if (this.choreo.Team.name) slogans.push(`Go, ${this.choreo.Team.name}!`);
       return slogans[Math.floor(this.count / 10) % slogans.length];

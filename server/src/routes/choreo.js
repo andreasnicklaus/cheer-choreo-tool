@@ -8,6 +8,7 @@ router.get("/:id?", authenticateUser, (req, res, next) => {
   if (req.params.id)
     ChoreoService.findById(req.params.id, req.UserId)
       .then((foundChoreo) => {
+        // console.log(foundChoreo.Lineups.length);
         if (!foundChoreo) res.status(404).send("Not found");
         else res.send(foundChoreo);
         return next();

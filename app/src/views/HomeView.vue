@@ -28,6 +28,7 @@
           variant="primary"
           :to="{ name: 'Login' }"
           class="my-4"
+          :style="{ textWrap: 'no-wrap' }"
         >
           Anmelden / Registrieren
         </b-button>

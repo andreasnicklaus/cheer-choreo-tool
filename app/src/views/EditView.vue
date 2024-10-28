@@ -11,24 +11,44 @@
     <!-- Controls -->
     <b-row align-v="center" class="mb-4">
       <b-col>
-        <b-row align-h="between" align-v="center" class="mx-auto w-50">
+        <b-row
+          align-h="center"
+          align-v="center"
+          class="mx-auto"
+          :style="{ flexWrap: 'nowrap' }"
+        >
           <b-col cols="auto">
-            <b-button
-              variant="outline-secondary"
-              @click="() => setCounter(count - 1)"
-              @dblclick="() => setCounter(0)"
-              :disabled="count <= 0"
-              id="tooltip-target-previousCount"
-            >
-              <b-icon-arrow-left />
-            </b-button>
+            <b-button-group>
+              <b-button
+                variant="outline-secondary"
+                @click="skipToStart"
+                :disabled="count <= 0"
+                id="tooltip-target-skipToStart"
+              >
+                <b-icon-chevron-double-left />
+              </b-button>
+              <b-button
+                variant="outline-secondary"
+                @click="previousCount"
+                :disabled="count <= 0"
+                id="tooltip-target-previousCount"
+              >
+                <b-icon-chevron-left />
+              </b-button>
+            </b-button-group>
             <b-tooltip
-              v-if="count > 0"
+              v-if="count > 0 && countBackButtonHasNeverBeenUsed"
               target="tooltip-target-previousCount"
               triggers="hover"
             >
-              <p>Zum vorigen Count springen</p>
-              <p>Doppelklick: Zum Anfang springen</p>
+              Zum vorigen Count springen
+            </b-tooltip>
+            <b-tooltip
+              v-if="count > 0 && countStartButtonHasNeverBeenUsed"
+              target="tooltip-target-skipToStart"
+              triggers="hover"
+            >
+              Zum Anfang springen
             </b-tooltip>
           </b-col>
           <b-col cols="auto">
@@ -52,22 +72,45 @@
             </b-row>
           </b-col>
           <b-col cols="auto">
-            <b-button
-              variant="outline-secondary"
-              @click="() => setCounter(count + 1)"
-              @dblclick="() => setCounter(choreo.counts - 1)"
-              :disabled="choreo ? count >= choreo.counts - 1 : false"
-              id="tooltip-target-nextCount"
-            >
-              <b-icon-arrow-right />
-            </b-button>
+            <b-button-group>
+              <b-button
+                variant="outline-secondary"
+                @click="nextCount"
+                :disabled="choreo ? count >= choreo.counts - 1 : true"
+                id="tooltip-target-nextCount"
+              >
+                <b-icon-chevron-right />
+              </b-button>
+              <b-button
+                variant="outline-secondary"
+                @click="skipToEnd"
+                :disabled="choreo ? count >= choreo.counts - 1 : true"
+                id="tooltip-target-endCount"
+              >
+                <b-icon-chevron-double-right />
+              </b-button>
+            </b-button-group>
             <b-tooltip
-              v-if="choreo && count < choreo.counts - 1"
+              v-if="
+                choreo &&
+                count < choreo.counts - 1 &&
+                countNextButtonHasNeverBeenUsed
+              "
               target="tooltip-target-nextCount"
               triggers="hover"
             >
-              <p>Zum nächsten Count springen</p>
-              <p>Doppelklick: Zum Ende springen</p>
+              Zum nächsten Count springen
+            </b-tooltip>
+            <b-tooltip
+              v-if="
+                choreo &&
+                count < choreo.counts - 1 &&
+                countEndButtonHasNeverBeenUsed
+              "
+              target="tooltip-target-endCount"
+              triggers="hover"
+            >
+              Zum Ende springen
             </b-tooltip>
           </b-col>
         </b-row>
@@ -110,6 +153,11 @@
                 Positionen horizontal und vertikal ausrichten
               </b-checkbox>
             </b-dropdown-text>
+            <b-dropdown-text>
+              <b-checkbox switch v-model="moveWithCountEdit">
+                Beim Bearbeiten den Count mitwechseln
+              </b-checkbox>
+            </b-dropdown-text>
             <b-dropdown-divider />
             <b-dropdown-item
               v-b-modal.deleteModal
@@ -146,6 +194,7 @@
           :currentPositions="currentPositions"
           @updateHits="onUpdateHits"
           @updateLineups="onUpdateLineups"
+          @updateCount="onUpdateCount"
         />
       </b-col>
     </b-row>
@@ -485,6 +534,7 @@ export default {
     matHeight: 500,
     matWidth: 500,
     snapping: true,
+    moveWithCountEdit: true,
     count: 0,
     teamMembers: null,
     team_table_fields: [
@@ -505,6 +555,10 @@ export default {
     newChoreoCount: 0,
     newChoreoAchter: 1,
     hitIdToUpdate: null,
+    countBackButtonHasNeverBeenUsed: true,
+    countStartButtonHasNeverBeenUsed: true,
+    countNextButtonHasNeverBeenUsed: true,
+    countEndButtonHasNeverBeenUsed: true,
   }),
   mounted() {
     this.loadChoreo();
@@ -571,6 +625,8 @@ export default {
               ).Positions = positionsCopy;
               this.choreo.Lineups = lineupCopy;
               this.positionUpdates[memberId] = null;
+
+              this.showSuccessMessage("Aufstellung");
             });
         }, 1000);
       } else {
@@ -596,6 +652,8 @@ export default {
               lineupCopy.push(lineup);
               this.choreo.Lineups = lineupCopy;
               this.lineupCreationInProgress = false;
+
+              this.showSuccessMessage("Aufstellung");
             }
           );
         } else {
@@ -633,6 +691,7 @@ export default {
                   positionsCopy;
                 this.choreo.Lineups = lineupCopy;
                 this.positionUpdates[memberId] = null;
+                this.showSuccessMessage("Aufstellung");
               }
             );
           }, 0);
@@ -640,13 +699,15 @@ export default {
       }
     },
     onKeyPress(event) {
-      if (
-        [
-          // "ArrowUp",
-          // "ArrowDown",
-          // "Space"
-        ].includes(event.code)
-      )
+      // Prevent keyboard shortcuts if the user is typing in a text input field
+      const inputElements = Array.from(document.getElementsByTagName("input"));
+      const activeElement = document.activeElement;
+      const anInputElementIsInFocus = inputElements.some(
+        (e) => e == activeElement && e.type == "text"
+      );
+      if (anInputElementIsInFocus) return;
+
+      if (["ArrowUp", "ArrowDown", "Space"].includes(event.code))
         event.preventDefault();
 
       if (
@@ -662,30 +723,30 @@ export default {
       };
 
       switch (event.code) {
-        // case "ArrowLeft":
-        //   if (this.count > 0) this.setCounter(this.count - 1);
-        //   break;
-        // case "ArrowRight":
-        //   if (this.count < this.choreo.counts - 1)
-        //     this.setCounter(this.count + 1);
-        //   break;
-        // case "ArrowDown":
-        //   if (this.count < this.choreo.counts - 8)
-        //     this.setCounter(this.count + 8);
-        //   break;
-        // case "ArrowUp":
-        //   if (this.count > 7) this.setCounter(this.count - 8);
-        //   break;
-        // case "KeyH":
-        // case "KeyN":
-        //   this.$refs.countOverview.openNewHitModal();
-        //   break;
-        // case "Quote":
-        //   this.initiateHitUpdate();
-        //   break;
-        // case "Space":
-        //   this.playPause();
-        //   break;
+        case "ArrowLeft":
+          if (this.count > 0) this.setCounter(this.count - 1);
+          break;
+        case "ArrowRight":
+          if (this.count < this.choreo.counts - 1)
+            this.setCounter(this.count + 1);
+          break;
+        case "ArrowDown":
+          if (this.count < this.choreo.counts - 8)
+            this.setCounter(this.count + 8);
+          break;
+        case "ArrowUp":
+          if (this.count > 7) this.setCounter(this.count - 8);
+          break;
+        case "KeyH":
+        case "KeyN":
+          this.$refs.countOverview.openNewHitModal();
+          break;
+        case "Quote":
+          this.initiateHitUpdate();
+          break;
+        case "Space":
+          this.playPause();
+          break;
         default:
       }
     },
@@ -717,19 +778,26 @@ export default {
       this.choreo.name = nameNew;
       ChoreoService.changeName(this.choreoId, nameNew).then(() => {
         this.choreo.name = nameNew;
+        this.showSuccessMessage();
       });
     },
     onUpdateHits(hits) {
       this.choreo.Hits = hits;
+      this.showSuccessMessage("Countsheet");
     },
     onUpdateLineups(lineups) {
       this.choreo.Lineups = lineups;
+      this.showSuccessMessage("Aufstellung");
+    },
+    onUpdateCount(count) {
+      if (this.moveWithCountEdit) this.setCounter(count);
     },
     changeChoreoLength() {
       const counts =
         parseInt(this.newChoreoAchter) * 8 + parseInt(this.newChoreoCount);
       ChoreoService.changeLength(this.choreoId, counts).then(() => {
         this.choreo.counts = counts;
+        this.showSuccessMessage();
       });
     },
     removeChoreo() {
@@ -744,6 +812,7 @@ export default {
       let hitsCopy = this.choreo.Hits;
       hitsCopy.push(hit);
       this.choreo.Hits = hitsCopy;
+      this.showSuccessMessage("Countsheet");
     },
     initiateHitUpdate() {
       if (this.hitsForCurrentCount.length == 0) return;
@@ -760,6 +829,39 @@ export default {
     },
     scrollToCountOverView() {
       this.$refs.countOverview.$el.scrollIntoView({ behavior: "smooth" });
+    },
+    showSuccessMessage(savedType) {
+      const toastId = "toastId";
+      this.$bvToast.hide(toastId);
+      this.$bvToast.toast(
+        savedType
+          ? `${savedType} wurde gespeichert`
+          : "Deine Choreo wurde gespeichert",
+        {
+          variant: "success",
+          title: "Gespeichert",
+          autoHideDelay: 1500,
+          appendToast: false,
+          solid: true,
+          id: toastId,
+        }
+      );
+    },
+    skipToStart() {
+      this.setCounter(0);
+      this.countStartButtonHasNeverBeenUsed = false;
+    },
+    previousCount() {
+      this.setCounter(this.count - 1);
+      this.countBackButtonHasNeverBeenUsed = false;
+    },
+    nextCount() {
+      this.setCounter(this.count + 1);
+      this.countNextButtonHasNeverBeenUsed = false;
+    },
+    skipToEnd() {
+      this.setCounter(this.choreo.counts - 1);
+      this.countEndButtonHasNeverBeenUsed = false;
     },
   },
   computed: {

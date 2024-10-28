@@ -16,7 +16,8 @@ router.get("/", authenticateUser, (req, res, next) => {
 
 router.post("/", authenticateUser, (req, res, next) => {
   const { x, y, memberId, lineupId } = req.body;
-  PositionService.create(x, y, req.UserId)
+
+  PositionService.findOrCreate(x, y, lineupId, memberId, req.UserId)
     .then(async (position) => {
       return Promise.all([
         position.setMember(memberId),

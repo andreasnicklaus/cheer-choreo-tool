@@ -60,6 +60,10 @@ class LineupService {
     return Lineup.findOne({ where: { id, UserId } });
   }
 
+  async findByChoreoId(ChoreoId) {
+    return Lineup.findAll({ where: { ChoreoId } });
+  }
+
   async remove(id, UserId) {
     return Lineup.findOne({ where: { id, UserId } }).then((foundLineup) => {
       if (foundLineup) {

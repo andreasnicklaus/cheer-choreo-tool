@@ -2,6 +2,7 @@ const { Json } = require("sequelize/lib/utils");
 const Choreo = require("../db/models/choreo");
 const { logger } = require("../plugins/winston");
 const PositionService = require("./PositionService");
+const LineupService = require("./LineupService");
 
 class ChoreoService {
   async getAll(UserId) {
@@ -26,15 +27,17 @@ class ChoreoService {
           association: "Team",
           include: "Members",
         },
-        "Lineups",
+        // "Lineups",
         {
           association: "Hits",
           include: "Members",
         },
       ],
     }).then(async (choreo) => {
+      const lineups = await LineupService.findByChoreoId(choreo.id);
+      choreo.dataValues.Lineups = lineups;
       await Promise.all(
-        choreo.Lineups.map(async (lineup) => {
+        choreo.dataValues.Lineups.map(async (lineup) => {
           lineup.dataValues.Positions = await PositionService.findByLineupId(
             lineup.id,
             UserId

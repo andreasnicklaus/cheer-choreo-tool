@@ -17,7 +17,11 @@ const ax = setupCache(
 ax.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (!error.response?.status) return Promise.reject(error);
+    if (!error.response?.status) {
+      AuthService.removeToken();
+      store.commit("setLoginState", false);
+      return Promise.reject(error);
+    }
 
     switch (error.response.status) {
       case 401:

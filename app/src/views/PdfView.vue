@@ -19,27 +19,29 @@
     >
       <section slot="pdf-content">
         <div v-for="(split, i) in hitSplits" :key="split.startIndex">
-          <h1 v-if="i == 0">{{ choreo?.name }}</h1>
           <b-row
             align-h="between"
             align-v="center"
             class="mb-2"
             :ref="`count-sheet-info-${split.startIndex}`"
           >
-            <b-col cols="auto" v-if="i != 0 && includeChoreoName">
+            <b-col cols="auto" v-if="includeChoreoName">
               {{ choreo?.name }}
             </b-col>
             <b-col cols="auto" v-if="includeTeamName">
               {{ choreo?.Team?.name }}
             </b-col>
+            <b-col cols="auto" v-if="includeDate">
+              {{ new Date(date).toLocaleDateString("de-de") }}
+            </b-col>
             <b-col
               cols="auto"
               v-if="
                 includeMemberNames &&
-                !allMembers &&
                 includedMembers.length > 0 &&
-                includedMembers < teamMembers.length
+                includedMembers.length < teamMembers.length
               "
+              class="text-start"
             >
               {{
                 teamMembers
@@ -47,9 +49,6 @@
                   .map((m) => m.nickname || m.name)
                   .join(", ")
               }}
-            </b-col>
-            <b-col cols="auto" v-if="includeDate">
-              {{ new Date(date).toLocaleDateString("de-de") }}
             </b-col>
           </b-row>
           <CountSheet
@@ -63,9 +62,9 @@
                     counts: split.nItems,
                     Hits: choreo?.Hits.filter(
                       (h) =>
-                        (allMembers ||
-                          !h.Members ||
+                        (!h.Members ||
                           h.Members.length == 0 ||
+                          h.Members.length == teamMembers.length ||
                           h.Members.some((m) =>
                             includedMembers.includes(m.id)
                           )) &&
@@ -126,21 +125,21 @@
             <b-alert
               variant="warning"
               :show="
+                choreo &&
                 includeMemberNames &&
-                (allMembers ||
-                  includedMembers.length <= 0 ||
+                (includedMembers.length <= 0 ||
                   includedMembers.length >= teamMembers.length)
               "
             >
               {{
-                includedMembers.length == teamMembers.length || allMembers
+                includedMembers.length == teamMembers.length
                   ? "Wenn du alle Teilnehmer auswählst, werden die Namen nicht auf das Countsheet geschrieben, um Platz zu sparen."
                   : "Wenn du keinen Teilnehmer auswählst, können auch keine Namen geschrieben werden."
               }}
             </b-alert>
             <b-alert
               variant="danger"
-              :show="!allMembers && includedMembers.length == 0"
+              :show="choreo && includedMembers.length == 0"
             >
               Du musst mindestens einen Teilnehmer auswählen.
             </b-alert>
@@ -153,15 +152,16 @@
                 <b-skeleton v-for="(_, i) in Array(3)" :key="i"></b-skeleton>
               </template>
               <b-form-group description="Für wen ist das Countsheet?">
-                <b-form-checkbox v-model="allMembers"> Alle </b-form-checkbox>
-                <hr />
                 <b-button-group class="mb-2">
                   <b-button
                     variant="light"
                     @click="
                       () => (includedMembers = teamMembers.map((m) => m.id))
                     "
-                    :disabled="allMembers"
+                    :disabled="
+                      !includeMemberNames ||
+                      includedMembers.length == teamMembers.length
+                    "
                   >
                     <b-icon-check-all />
                     Alle auswählen
@@ -169,14 +169,16 @@
                   <b-button
                     variant="light"
                     @click="() => (includedMembers = [])"
-                    :disabled="allMembers"
+                    :disabled="
+                      !includeMemberNames || includedMembers.length == 0
+                    "
                   >
                     <b-icon-slash />
                     Keine auswählen
                   </b-button>
                 </b-button-group>
                 <b-checkbox-group
-                  :disabled="allMembers"
+                  :disabled="!includeMemberNames"
                   v-model="includedMembers"
                   :style="{ columnCount: 2 }"
                   stacked
@@ -202,13 +204,30 @@
           v-else
           @click="generatePdf"
           variant="success"
-          :disabled="!allMembers && includedMembers.length == 0"
+          :disabled="includedMembers.length == 0"
         >
           <b-icon-file-pdf />
           PDF generieren
         </b-button>
       </template>
     </b-card>
+
+    <b-modal
+      id="loading-modal"
+      centered
+      no-close-on-backdrop
+      no-close-on-esc
+      hide-footer
+      hide-header
+      @close="(event) => event.preventDefault()"
+    >
+      <b-row align-h="center">
+        <b-col cols="auto" class="text-center my-5">
+          <b-spinner />
+          <p class="m-0">PDF wird generiert</p>
+        </b-col>
+      </b-row>
+    </b-modal>
   </b-container>
 </template>
 
@@ -228,6 +247,7 @@ const slogans = [
   "Tabelle wird gemalt...",
   "Einträge werden geschrieben...",
   "Schminke wird aufgetragen...",
+  "Zopf wird gebunden...",
 ];
 
 export default {
@@ -244,28 +264,38 @@ export default {
     includeTeamName: true,
     includeChoreoName: true,
     includeMemberNames: false,
-    allMembers: true,
     includedMembers: [],
     loading: true,
     date: new Date().toISOString().split("T")[0],
   }),
   methods: {
     loadChoreo() {
+      console.time("choreoLoad");
       ChoreoService.getById(this.choreoId).then((choreo) => {
+        console.timeEnd("choreoLoad");
         this.choreo = choreo;
         this.teamMembers = choreo.Team.Members.sort((a, b) =>
           a.name.localeCompare(b.name)
         );
         this.includedMembers = choreo.Team.Members.map((m) => m.id);
         this.calculateHitSplits().then(() => {
-          this.loading = false;
-          //   this.generatePdf();
           if (this.sloganInterval) clearInterval(this.sloganInterval);
+          this.loading = false;
         });
       });
     },
     generatePdf() {
-      this.$refs.html2pdf.generatePdf();
+      this.sloganIndex = Math.floor(Math.random() * slogans.length);
+
+      this.$bvModal.show("loading-modal");
+
+      setTimeout(() => {
+        this.calculateHitSplits().then(() => {
+          this.$bvModal.hide("loading-modal");
+          clearInterval(this.sloganInterval);
+          this.$refs.html2pdf.generatePdf();
+        });
+      }, 500);
     },
     async calculateHitSplits() {
       let startIndex = 0;
@@ -294,7 +324,7 @@ export default {
           });
         });
 
-        const maxHeight = (startIndex == 0 ? 890 : 950) - infoHeight;
+        const maxHeight = 950 - infoHeight;
 
         if (height < maxHeight) {
           nItems += 8;
@@ -326,33 +356,6 @@ export default {
   computed: {
     slogan() {
       return slogans[this.sloganIndex];
-    },
-  },
-  watch: {
-    allMembers: {
-      handler() {
-        this.calculateHitSplits();
-      },
-    },
-    includeDate: {
-      handler() {
-        this.calculateHitSplits();
-      },
-    },
-    includeTeamName: {
-      handler() {
-        this.calculateHitSplits();
-      },
-    },
-    includeChoreoName: {
-      handler() {
-        this.calculateHitSplits();
-      },
-    },
-    includedMembers: {
-      handler() {
-        this.calculateHitSplits();
-      },
     },
   },
 };

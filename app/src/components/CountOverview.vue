@@ -60,7 +60,7 @@
                     </b-button>
                     <b-button
                       variant="outline-danger"
-                      @click="() => deleteHit(hit.id)"
+                      @click="() => openHitDeleteModal(hit.id)"
                       v-b-tooltip.hover
                       title="löschen"
                       :disabled="!interactive"
@@ -145,13 +145,28 @@
               </b-row>
             </h5>
             <b-col>
-              <b-form-group label="Count:" label-cols="auto">
-                <b-form-input
-                  v-model="editHitCount"
-                  type="number"
-                  :min="1"
-                  :max="choreo.counts"
-                />
+              <b-form-group label="Count:" label-cols="2">
+                <b-row>
+                  <b-col>
+                    <b-form-group description="Achter">
+                      <b-form-input
+                        type="number"
+                        min="1"
+                        v-model="editHitAchter"
+                      />
+                    </b-form-group>
+                  </b-col>
+                  <b-col>
+                    <b-form-group description="Count">
+                      <b-form-input
+                        type="number"
+                        min="1"
+                        max="8"
+                        v-model="editHitCount"
+                      />
+                    </b-form-group>
+                  </b-col>
+                </b-row>
               </b-form-group>
               <b-form-checkbox-group
                 id="memberSelection"
@@ -232,61 +247,19 @@
               <b-row align-h="between" align-v="center">
                 <b-col> Aufstellung </b-col>
                 <b-col cols="auto">
+                  <b-button-group class="mr-2">
+                    <b-button
+                      v-if="lineup.Positions.length != teamMembers.length"
+                      variant="outline-primary"
+                      v-b-tooltip.hover
+                      title="Alle Teilnehmer in der Aufstellung speichern"
+                      @click="() => addAllMembersToLineup(lineup.id)"
+                      :disabled="!interactive"
+                    >
+                      <b-icon-people-fill />
+                    </b-button>
+                  </b-button-group>
                   <b-button-group>
-                    <!-- <b-button
-                      variant="outline-primary"
-                      v-b-tooltip.hover
-                      :title="
-                        lineup.startCount <= 0 ? '' : 'nach vorne verlängern'
-                      "
-                      @click="() => extendLineupToBeginning(lineup.id)"
-                      :disabled="lineup.startCount <= 0 || !interactive"
-                    >
-                      <b-icon-chevron-double-left />
-                    </b-button>
-                    <b-button
-                      variant="outline-primary"
-                      v-b-tooltip.hover
-                      :title="
-                        lineup.startCount <= 0
-                          ? ''
-                          : 'gesamte Aufstellung einen Count nach vorne verschieben'
-                      "
-                      @click="() => moveLineupToBeginning(lineup.id)"
-                      :disabled="lineup.startCount <= 0 || !interactive"
-                    >
-                      <b-icon-chevron-left />
-                    </b-button>
-                    <b-button
-                      variant="outline-primary"
-                      v-b-tooltip.hover
-                      :title="
-                        lineup.endCount >= choreo.count - 1
-                          ? ''
-                          : 'gesamte Aufstellung einen Count nach hinten verschieben'
-                      "
-                      @click="() => moveLineupToEnd(lineup.id)"
-                      :disabled="
-                        lineup.endCount >= choreo.count - 1 || !interactive
-                      "
-                    >
-                      <b-icon-chevron-right />
-                    </b-button>
-                    <b-button
-                      variant="outline-primary"
-                      v-b-tooltip.hover
-                      :title="
-                        lineup.endCount >= choreo.count - 1
-                          ? ''
-                          : 'nach hinten verlängern'
-                      "
-                      @click="() => extendLineupToEnd(lineup.id)"
-                      :disabled="
-                        lineup.endCount >= choreo.count - 1 || !interactive
-                      "
-                    >
-                      <b-icon-chevron-double-right />
-                    </b-button> -->
                     <b-button
                       variant="outline-success"
                       v-b-tooltip.hover
@@ -300,7 +273,7 @@
                       variant="outline-danger"
                       v-b-tooltip.hover
                       title="löschen"
-                      @click="() => openDeleteModal(lineup.id)"
+                      @click="() => openLineupDeleteModal(lineup.id)"
                       :disabled="!interactive"
                     >
                       <b-icon-trash />
@@ -329,7 +302,13 @@
               :style="{ columnCount: 2 }"
             >
               <b-row
-                v-for="position in lineup.Positions"
+                v-for="position in lineup.Positions.slice().sort((a, b) =>
+                  teamMembers
+                    .find((m) => m.id == a.MemberId)
+                    .name.localeCompare(
+                      teamMembers.find((m) => m.id == b.MemberId).name
+                    )
+                )"
                 :key="position.id"
                 no-gutters
               >
@@ -362,6 +341,7 @@
                       v-b-tooltip.hover
                       title="Speichern"
                       @click="() => saveLineup()"
+                      :disabled="editLineupMembers.length == 0"
                     >
                       <b-icon-check />
                     </b-button>
@@ -429,6 +409,7 @@
                 id="memberSelection-lineup"
                 v-model="editLineupMembers"
                 stacked
+                :style="{ columnCount: 2 }"
               >
                 <b-form-checkbox
                   v-for="member in teamMembers"
@@ -450,6 +431,42 @@
                   </b-row>
                 </b-form-checkbox>
               </b-form-checkbox-group>
+              <b-button-group class="mt-2">
+                <b-button
+                  variant="light"
+                  @click="
+                    () => (editLineupMembers = teamMembers.map((m) => m.id))
+                  "
+                  :disabled="editLineupMembers.length == teamMembers.length"
+                >
+                  <b-icon-check-all />
+                  Alle auswählen
+                </b-button>
+                <b-button
+                  variant="light"
+                  @click="() => (editLineupMembers = [])"
+                  :disabled="editLineupMembers.length == 0"
+                >
+                  <b-icon-slash />
+                  Keine auswählen
+                </b-button>
+                <b-button
+                  variant="light"
+                  @click="
+                    () =>
+                      (editLineupMembers = teamMembers
+                        .filter((m) => !editLineupMembers.includes(m.id))
+                        .map((m) => m.id))
+                  "
+                  :disabled="
+                    editLineupMembers?.length == 0 ||
+                    editLineupMembers?.length == teamMembers?.length
+                  "
+                >
+                  <b-icon-arrow-repeat />
+                  Auswahl wechseln
+                </b-button>
+              </b-button-group>
             </b-form>
           </div>
         </b-list-group-item>
@@ -642,6 +659,23 @@
         </b-button>
       </template>
     </b-modal>
+
+    <!-- DELETE HIT MODAL -->
+    <b-modal
+      id="modal-deleteHit"
+      title="Countsheet-Eintrag löschen?"
+      centered
+      @hidden="resetDeleteHitModal"
+      @ok="deleteHit"
+    >
+      <p class="m-0">Du kannst das nicht rückgängig machen.</p>
+      <template #modal-footer="{ ok, cancel }">
+        <b-button @click="ok" variant="danger"> Löschen </b-button>
+        <b-button @click="cancel" variant="outline-secondary">
+          Abbrechen
+        </b-button>
+      </template>
+    </b-modal>
   </b-card>
 </template>
 
@@ -658,14 +692,16 @@ export default {
     newHitMembers: [],
     editHitId: null,
     editHitName: null,
+    editHitAchter: 1,
     editHitCount: 1,
     editHitMembers: [],
     editLineupId: null,
     deleteLineupId: null,
-    editLineupStartAchter: 0,
-    editLineupStartCount: 0,
-    editLineupEndAchter: 0,
-    editLineupEndCount: 0,
+    deleteHitId: null,
+    editLineupStartAchter: 1,
+    editLineupStartCount: 1,
+    editLineupEndAchter: 1,
+    editLineupEndCount: 1,
     editLineupMembers: [],
   }),
   props: {
@@ -710,6 +746,7 @@ export default {
         let hitsCopy = this.choreo.Hits;
         hitsCopy.find((h) => h.id == hitId).count = this.count - 1;
         this.$emit("updateHits", hitsCopy);
+        this.$emit("updateCount", this.count - 1);
       });
     },
     moveHitToNextCount(hitId) {
@@ -717,12 +754,7 @@ export default {
         let hitsCopy = this.choreo.Hits;
         hitsCopy.find((h) => h.id == hitId).count = this.count + 1;
         this.$emit("updateHits", hitsCopy);
-      });
-    },
-    deleteHit(hitId) {
-      HitService.remove(hitId).then(() => {
-        let hitsCopy = this.choreo.Hits.filter((h) => h.id != hitId);
-        this.$emit("updateHits", hitsCopy);
+        this.$emit("updateCount", this.count + 1);
       });
     },
     editHit(id) {
@@ -733,13 +765,18 @@ export default {
         selectedHit.Members && selectedHit.Members.length > 0
           ? selectedHit.Members.map((m) => m.id)
           : this.teamMembers.map((m) => m.id);
-      this.editHitCount = selectedHit.count + 1;
+      this.editHitCount = (selectedHit.count % 8) + 1;
+      this.editHitAchter = Math.floor(selectedHit.count / 8) + 1;
     },
     saveHit() {
+      const absoluteCount =
+        (parseInt(this.editHitAchter) - 1) * 8 +
+        parseInt(this.editHitCount) -
+        1;
       HitService.update(
         this.editHitId,
         this.editHitName,
-        this.editHitCount - 1,
+        absoluteCount,
         this.editHitMembers
       ).then((hit) => {
         let hitsCopy = this.choreo.Hits.filter((h) => h.id != hit.id);
@@ -747,62 +784,6 @@ export default {
         this.$emit("updateHits", hitsCopy);
 
         this.editHitId = null;
-      });
-    },
-    extendLineupToBeginning(lineupId) {
-      const lineupToUpdate = this.lineupsForCurrentCount.find(
-        (l) => l.id == lineupId
-      );
-      lineupToUpdate.startCount -= 1;
-      LineupService.update(lineupId, {
-        startCount: lineupToUpdate.startCount,
-      }).then((lineup) => {
-        const lineupCopy = this.choreo.Lineups.filter((l) => l.id != lineup.id);
-        lineupCopy.push(lineup);
-        this.$emit("updateLineups", lineupCopy);
-      });
-    },
-    extendLineupToEnd(lineupId) {
-      const lineupToUpdate = this.lineupsForCurrentCount.find(
-        (l) => l.id == lineupId
-      );
-      lineupToUpdate.endCount += 1;
-      LineupService.update(lineupId, {
-        endCount: lineupToUpdate.endCount,
-      }).then((lineup) => {
-        const lineupCopy = this.choreo.Lineups.filter((l) => l.id != lineup.id);
-        lineupCopy.push(lineup);
-        this.$emit("updateLineups", lineupCopy);
-      });
-    },
-    moveLineupToBeginning(lineupId) {
-      const lineupToUpdate = this.lineupsForCurrentCount.find(
-        (l) => l.id == lineupId
-      );
-      lineupToUpdate.endCount -= 1;
-      lineupToUpdate.startCount -= 1;
-      LineupService.update(lineupId, {
-        startCount: lineupToUpdate.startCount,
-        endCount: lineupToUpdate.endCount,
-      }).then((lineup) => {
-        const lineupCopy = this.choreo.Lineups.filter((l) => l.id != lineup.id);
-        lineupCopy.push(lineup);
-        this.$emit("updateLineups", lineupCopy);
-      });
-    },
-    moveLineupToEnd(lineupId) {
-      const lineupToUpdate = this.lineupsForCurrentCount.find(
-        (l) => l.id == lineupId
-      );
-      lineupToUpdate.endCount += 1;
-      lineupToUpdate.startCount += 1;
-      LineupService.update(lineupId, {
-        startCount: lineupToUpdate.startCount,
-        endCount: lineupToUpdate.endCount,
-      }).then((lineup) => {
-        const lineupCopy = this.choreo.Lineups.filter((l) => l.id != lineup.id);
-        lineupCopy.push(lineup);
-        this.$emit("updateLineups", lineupCopy);
       });
     },
     editLineup(lineupId) {
@@ -888,10 +869,47 @@ export default {
 
       this.editLineupId = null;
     },
+    addAllMembersToLineup(lineupId) {
+      const lineupToUpdate = this.lineupsForCurrentCount.find(
+        (l) => l.id == lineupId
+      );
+      const memberIdsWithoutPositions = this.teamMembers
+        .filter(
+          (m) => !lineupToUpdate.Positions.map((p) => p.MemberId).includes(m.id)
+        )
+        .map((m) => m.id);
+
+      const positionCreation = Promise.all(
+        memberIdsWithoutPositions.map((mId) => {
+          const positionOfMember = this.currentPositions.find(
+            (p) => p.MemberId == mId
+          );
+          return PositionService.create(
+            lineupToUpdate.id,
+            positionOfMember.x,
+            positionOfMember.y,
+            mId
+          );
+        })
+      );
+
+      positionCreation.then((createdPositions) => {
+        const lineupCopy = this.choreo.Lineups.filter(
+          (l) => l.id != lineupToUpdate.id
+        );
+
+        const positionsCopy = lineupToUpdate.Positions;
+        positionsCopy.push(...createdPositions);
+        lineupToUpdate.Positions = positionsCopy;
+
+        lineupCopy.push(lineupToUpdate);
+        this.$emit("updateLineups", lineupCopy);
+      });
+    },
     resetDeleteLineupModal() {
       this.deleteLineupId = null;
     },
-    openDeleteModal(lineupId) {
+    openLineupDeleteModal(lineupId) {
       this.deleteLineupId = lineupId;
       this.$bvModal.show("modal-deleteLineup");
     },
@@ -914,6 +932,21 @@ export default {
       this.editLineupMembers = this.teamMembers
         .map((m) => m.id)
         .filter((mId) => !positionedMemberIds.includes(mId));
+    },
+    openHitDeleteModal(hitId) {
+      this.deleteHitId = hitId;
+      this.$bvModal.show("modal-deleteHit");
+    },
+    deleteHit() {
+      HitService.remove(this.deleteHitId).then(() => {
+        this.$emit(
+          "updateHits",
+          this.choreo.Hits.filter((h) => h.id != this.deleteHitId)
+        );
+      });
+    },
+    resetDeleteHitModal() {
+      this.deleteHitId = null;
     },
     createLineup() {
       const absoluteStartCount =

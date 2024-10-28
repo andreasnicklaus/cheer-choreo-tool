@@ -130,7 +130,7 @@ function generateHitNameProposals() {
     "vorne",
   ];
 
-  const preActions = [null, "Set", "Go", "Start", "Dip"];
+  const preActions = [null, "Set", "Go", "Start", "Dip", "Half Up"];
 
   const actions = [
     null,
@@ -171,7 +171,14 @@ function generateHitNameProposals() {
     "Wurf",
   ];
 
-  const standAlones = ["Clean", "Raussetzen", "Loslaufen", "Umgreifen", "Ende"];
+  const standAlones = [
+    "Clean",
+    "Raussetzen",
+    "Loslaufen",
+    "Umgreifen",
+    "Greifen",
+    "Ende",
+  ];
 
   const combinations = preDirections
     .map((preDirection) => {
