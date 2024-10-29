@@ -59,6 +59,7 @@
                     @click="
                       () => (includedMembers = teamMembers.map((m) => m.id))
                     "
+                    :disabled="recordingIsRunning"
                   >
                     <b-icon-check-all />
                     Alle auswählen
@@ -66,6 +67,7 @@
                   <b-button
                     variant="light"
                     @click="() => (includedMembers = [])"
+                    :disabled="recordingIsRunning"
                   >
                     <b-icon-slash />
                     Keine auswählen
@@ -124,6 +126,12 @@
               Video generieren
             </b-button>
           </b-col>
+          <b-col cols="auto" v-if="downloadUrl">
+            <b-button variant="outline-success" v-b-modal.video-download-modal>
+              <b-icon-download />
+              Herunterladen
+            </b-button>
+          </b-col>
         </b-row>
 
         <b-skeleton-wrapper :loading="!choreo">
@@ -161,56 +169,61 @@
         </b-skeleton-wrapper>
       </b-card-body>
     </b-card>
-    <b-card v-show="downloadUrl" class="mb-3">
-      <b-card-body class="text-center">
-        <b-row>
-          <b-col>
-            <video
-              :width="width"
-              :height="height"
-              controls
-              ref="outputVideo"
-              :src="downloadUrl"
-            ></video>
-          </b-col>
-          <b-col>
-            <b-row>
-              <b-col>
-                <b-button
-                  ref="downloadButton"
-                  split
-                  block
-                  variant="success"
-                  :href="downloadUrl"
-                  :download="
-                    (choreo ? `${choreo.name}` : 'video') +
-                    selectedDownloadOption.ext
-                  "
-                >
+
+    <b-modal
+      hide-footer
+      id="video-download-modal"
+      title="Video herunterladen"
+      size="xl"
+    >
+      <b-row align-v="end">
+        <b-col>
+          <video
+            :width="width"
+            controls
+            ref="outputVideo"
+            :src="downloadUrl"
+            :style="{ width: '100%', minWidth: '100px', aspectRatio: '1/1' }"
+          ></video>
+        </b-col>
+        <b-col>
+          <b-row class="mb-1" no-gutters>
+            <b-col>
+              <b-button
+                ref="downloadButton"
+                split
+                block
+                variant="success"
+                :href="downloadUrl"
+                :download="
+                  (choreo ? `${choreo.name}` : 'video') +
+                  selectedDownloadOption.ext
+                "
+              >
+                <b-icon-download />
+                Download {{ selectedDownloadOption.name }}
+              </b-button>
+            </b-col>
+            <b-col cols="auto">
+              <b-dropdown variant="light">
+                <template #button-content>
                   <b-icon-film />
-                  Download {{ selectedDownloadOption.name }}
-                </b-button>
-              </b-col>
-              <b-col cols="auto">
-                <b-dropdown variant="light">
-                  <template #button-content>
-                    {{ selectedDownloadOption.name || "Format" }}
-                  </template>
-                  <b-dropdown-item
-                    v-for="option in downloadOptions"
-                    :key="option.id"
-                    @click="() => selectDownloadOption(option.id)"
-                  >
-                    {{ option.name }}
-                    <span class="text-muted">{{ option.ext }}</span>
-                  </b-dropdown-item>
-                </b-dropdown>
-              </b-col>
-            </b-row>
-          </b-col>
-        </b-row>
-      </b-card-body>
-    </b-card>
+                  {{ selectedDownloadOption.name || "Format" }}
+                </template>
+                <b-dropdown-item
+                  v-for="option in downloadOptions"
+                  :key="option.id"
+                  @click="() => selectDownloadOption(option.id)"
+                >
+                  {{ option.name }}
+                  <span class="text-muted">{{ option.ext }}</span>
+                </b-dropdown-item>
+              </b-dropdown>
+            </b-col>
+          </b-row>
+        </b-col>
+      </b-row>
+    </b-modal>
   </div>
 </template>
 
@@ -467,6 +480,7 @@ export default {
         this.downloadUrl = URL.createObjectURL(
           new Blob(this.recordingChunks, { type: "video/webm" })
         );
+        this.$bvModal.show("video-download-modal");
       };
     },
     selectDownloadOption(optionId) {
