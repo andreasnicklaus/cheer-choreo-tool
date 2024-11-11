@@ -147,7 +147,11 @@
       @addChoreo="reloadPage"
     />
 
-    <CreateTeamModal ref="createTeamModal" @teamCreated="onTeamCreated" />
+    <CreateTeamModal
+      ref="createTeamModal"
+      @teamCreated="onTeamCreated"
+      v-if="$store.state.loggedIn"
+    />
   </b-navbar>
 </template>
 
