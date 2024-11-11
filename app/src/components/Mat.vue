@@ -1,7 +1,5 @@
 <template>
-  <b-skeleton-wrapper
-    :loading="!currentPositions || currentPositions.length == 0"
-  >
+  <b-skeleton-wrapper :loading="!currentPositions">
     <template #loading>
       <b-skeleton :width="width + 'px'" :height="height + 'px'"> </b-skeleton>
     </template>
@@ -28,18 +26,21 @@
       @mouseleave="mouseLeave"
     >
       <circle
-        v-for="position in currentPositions"
+        v-for="position in positions || currentPositions"
         :id="'c' + position.MemberId"
         :key="'c' + position.MemberId"
         :r="dotRadius"
-        :stroke="position.Member.color"
+        :stroke="
+          teamMembers.find((tm) => tm.id == position.MemberId)
+            .ChoreoParticipation.color
+        "
         stroke-width="2"
         :fill="
           selectedMemberId && position.Member.id == selectedMemberId.id
-            ? position.Member.color +
-              (position.Member.color.length == 4 ? '2' : '22')
-            : position.Member.color +
-              (position.Member.color.length == 4 ? '5' : '55')
+            ? teamMembers.find((tm) => tm.id == position.MemberId)
+                .ChoreoParticipation.color + '22'
+            : teamMembers.find((tm) => tm.id == position.MemberId)
+                .ChoreoParticipation.color + '55'
         "
         @mousedown="() => mouseEnter(position.MemberId)"
         @mouseup="mouseLeave"
@@ -53,7 +54,7 @@
         }"
       ></circle>
       <text
-        v-for="position in currentPositions"
+        v-for="position in positions || currentPositions"
         :id="'t' + position.MemberId"
         :key="'t' + position.MemberId"
         text-anchor="middle"
@@ -97,9 +98,14 @@ export default {
   data: () => ({
     selectedMemberId: null,
     snappingDistance: 2,
+    positions: null,
   }),
   props: {
     currentPositions: {
+      type: Array,
+      default: () => [],
+    },
+    teamMembers: {
       type: Array,
       default: () => [],
     },
@@ -123,9 +129,17 @@ export default {
       type: Number,
       default: 1000,
     },
+    interactive: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  mounted() {
+    this.positions = this.currentPositions;
   },
   methods: {
     mouseEnter(member) {
+      if (!this.interactive) return;
       this.selectedMemberId = member;
       this.$refs[`svgCanvas`].addEventListener(
         "mousemove",
@@ -134,6 +148,7 @@ export default {
       );
     },
     mouseLeave() {
+      if (!this.interactive) return;
       if (!this.selectedMemberId) return;
       this.$refs[`svgCanvas`].removeEventListener("mousemove", this.mouseMove);
       this.selectedMemberId = null;
@@ -176,6 +191,12 @@ export default {
       xNew = Math.round(xNew * 10) / 10;
       yNew = Math.round(yNew * 10) / 10;
 
+      const pos = this.positions.find(
+        (p) => p.MemberId == this.selectedMemberId
+      );
+      pos.x = xNew;
+      pos.y = yNew;
+
       this.$emit("positionChange", this.selectedMemberId, xNew, yNew);
     },
     animatePositions(oldPositions, newPositions) {
@@ -205,6 +226,13 @@ export default {
             );
           }
         });
+    },
+  },
+  watch: {
+    currentPositions: {
+      handler(value) {
+        this.positions = value;
+      },
     },
   },
 };

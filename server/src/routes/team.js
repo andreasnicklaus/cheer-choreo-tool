@@ -34,8 +34,8 @@ router.get("/:id?", authenticateUser, (req, res, next) => {
 });
 
 router.post("/", authenticateUser, (req, res, next) => {
-  const { name, clubId } = req.body;
-  return TeamService.create(name, clubId, req.UserId)
+  const { name, clubId, seasonId } = req.body;
+  return TeamService.create(name, clubId, seasonId, req.UserId)
     .then((result) => {
       res.send(result);
       return next();

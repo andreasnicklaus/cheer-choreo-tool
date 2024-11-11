@@ -1,6 +1,6 @@
 <template>
   <b-container id="loginView">
-    <b-tabs fill>
+    <b-tabs fill v-model="tabIndex">
       <b-tab title="Anmelden" class="mt-4">
         <b-form @submit="onLoginSubmit" @reset="onReset">
           <b-form-group
@@ -46,6 +46,11 @@
               <b-icon-arrow-counterclockwise />
             </b-button>
           </div>
+
+          <p class="my-3">
+            Du hast schon kein Konto?
+            <a href="#" @click="() => (tabIndex = 1)"> registrieren </a>
+          </p>
         </b-form>
       </b-tab>
       <b-tab title="Registrieren" class="mt-4">
@@ -54,6 +59,7 @@
             label="Nutzername"
             :state="usernameIsValid"
             :invalid-feedback="usernameError"
+            valid-feedback="Gültig!"
           >
             <b-form-input
               placeholder="Nutzername"
@@ -65,6 +71,7 @@
             label="Passwort"
             :state="passwordIsValid"
             :invalid-feedback="passwordError"
+            valid-feedback="Gültig!"
           >
             <b-form-input
               placeholder="Passwort"
@@ -77,6 +84,7 @@
             label="Passwort"
             :state="passwordRepetitionIsValid"
             :invalid-feedback="passwordRepetitionError"
+            valid-feedback="Gültig!"
           >
             <b-form-input
               placeholder="Passwort wiederholen"
@@ -109,9 +117,14 @@
               <b-icon-arrow-counterclockwise />
             </b-button>
           </div>
+
+          <p class="my-3">
+            Du hast schon ein Konto?
+            <a href="#" @click="() => (tabIndex = 0)"> anmelden </a>
+          </p>
         </b-form>
 
-        <b-card title="Information" class="my-2">
+        <b-card title="Information" class="mb-3">
           <b-card-text>
             <p>
               Dein Konto ist der
@@ -123,6 +136,11 @@
               <b>Dein Nutzername muss nicht der Vereinsname sein!</b> Nach der
               Erstellung deines Kontos wirst du aufgefordert, deinem Verein
               einen Namen zu geben.
+            </p>
+            <p>
+              Du kannst mit einem Konto <b>mehrere Verein verwalten!</b> Es ist
+              möglich, mehrere Vereine in einem Benutzerkonto zusammenzufassen,
+              aber du kannst immer nur einen Verein gleichzeitig bearbeiten.
             </p>
           </b-card-text>
         </b-card>
@@ -150,6 +168,7 @@ export default {
     username: null,
     password: null,
     passwordRepetition: null,
+    tabIndex: 0,
   }),
   methods: {
     showFailMessage(message) {
@@ -205,7 +224,7 @@ export default {
     },
     usernameError() {
       if (this.username == null || this.username.length == 0)
-        return "Bitte angeben!";
+        return "Bitte angeben";
       else if (this.username.length < 6)
         return "Dein Benutzername muss mindestens 6 Zeichen lang sein.";
       else return null;

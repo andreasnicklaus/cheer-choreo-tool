@@ -17,8 +17,35 @@ class ChoreoService {
     return ax.put(`/choreo/${choreoId}`, { counts }).then((res) => res.data);
   }
 
-  create(name, counts, teamId) {
-    return ax.post("/choreo", { name, counts, teamId }).then((res) => res.data);
+  addParticipant(choreoId, memberId, color) {
+    return ax
+      .post(`/choreo/${choreoId}/participants`, { memberId, color })
+      .then((res) => res.data);
+  }
+
+  removeParticipant(choreoId, memberId) {
+    return ax.delete(`/choreo/${choreoId}/participants/${memberId}`);
+  }
+
+  replaceParticipant(choreoId, memberToRemoveId, memberToAddId) {
+    return ax
+      .patch(`/choreo/${choreoId}/participants`, {
+        memberToRemoveId,
+        memberToAddId,
+      })
+      .then((res) => res.data);
+  }
+
+  changeParticipantColor(choreoId, participantId, color) {
+    return ax
+      .patch(`/choreo/${choreoId}/participants/${participantId}`, { color })
+      .then((res) => res.data);
+  }
+
+  create(name, counts, seasonTeamId, participants) {
+    return ax
+      .post("/choreo", { name, counts, seasonTeamId, participants })
+      .then((res) => res.data);
   }
 
   remove(choreoId) {
@@ -120,7 +147,12 @@ class ChoreoService {
       ...positionsForCurrentCount,
       ...interpolatedPositions,
       ...defaultPositions,
-    ].sort((a, b) => a.Member.name.localeCompare(b.Member.name));
+    ]
+      .map((p) => ({
+        ...p,
+        Member: teamMembers.find((tm) => tm.id == p.MemberId),
+      }))
+      .sort((a, b) => a.Member.name.localeCompare(b.Member.name));
   }
 }
 

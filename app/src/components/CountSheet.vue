@@ -28,7 +28,11 @@
         <b-td
           v-for="label in ['achter', '1', '2', '3', '4', '5', '6', '7', '8']"
           :key="label"
-          :style="{ height: 'inherit', verticalAlign: 'middle' }"
+          :style="{
+            height: 'inherit',
+            verticalAlign: 'middle',
+            // border: 'none',
+          }"
         >
           <span v-if="label == 'achter'">
             {{ acht[label] + 1 }}
@@ -37,6 +41,7 @@
             v-else-if="i * 8 + parseInt(label) <= choreo.counts"
             :disabled="!interactive"
             class="p-1 py-2"
+            squared
             :style="{
               wordBreak: 'break-word',
               hyphens: 'auto',

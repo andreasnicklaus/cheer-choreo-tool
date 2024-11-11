@@ -9,6 +9,7 @@ import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
 import vueMatomo from "vue-matomo";
+import VueCookie from "vue-cookie";
 
 Vue.config.productionTip = false;
 
@@ -18,6 +19,8 @@ Vue.use(vueMatomo, {
   router,
 });
 
+Vue.use(VueCookie);
+
 new Vue({
   router,
   store,
@@ -25,5 +28,7 @@ new Vue({
   render: (h) => h(App),
 }).$mount("#app");
 
+// Disable Matomo Tracking Before Consent
+window._paq.push(["requireConsent"]);
 // Initialize Matomo Tracking
 window._paq.push(["trackPageView"]);

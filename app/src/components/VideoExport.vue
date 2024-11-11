@@ -1,10 +1,17 @@
 <template>
   <div>
-    <b-card
-      class="mb-3"
-      title="Video zusammenstellen"
-      :sub-title="choreo ? `Ausgewählte Choreo: ${choreo.name}` : 'Choreo lädt'"
-    >
+    <b-card class="mb-3" title="Video zusammenstellen">
+      <b-card-sub-title v-if="choreo">
+        <p class="m-0">Ausgewählte Choreo: {{ choreo.name }}</p>
+        <p class="m-0">
+          Team: {{ choreo.SeasonTeam.Team.name }} ({{
+            choreo.SeasonTeam.Season.name
+          }})
+        </p>
+      </b-card-sub-title>
+      <b-card-sub-title v-else :style="{ height: '38.38px' }">
+        Choreo lädt
+      </b-card-sub-title>
       <b-card-body>
         <b-row class="mb-3">
           <b-col cols="6">
@@ -36,22 +43,16 @@
                 Choreo-Name anzeigen
               </b-form-checkbox>
             </b-form-group>
-            <b-alert
-              variant="danger"
-              :show="choreo && includedMembers.length == 0"
-            >
-              Du musst mindestens einen Teilnehmer auswählen.
-            </b-alert>
           </b-col>
           <b-col cols="6" class="mb-3">
-            <b-skeleton-wrapper
-              :loading="!choreo || !choreo.Team || !choreo.Team.Members"
-            >
+            <b-skeleton-wrapper :loading="!choreo || !choreo.Participants">
               <template #loading>
                 <b-skeleton v-for="(_, i) in Array(3)" :key="i"></b-skeleton>
               </template>
               <b-form-group
                 description="Teilnehmer, die im Video angezeigt werden sollen"
+                :state="includedMembers.length > 0"
+                invalid-feedback="Min. 1 Teilnehmer erforderlich"
               >
                 <b-button-group class="mb-2">
                   <b-button
@@ -59,7 +60,10 @@
                     @click="
                       () => (includedMembers = teamMembers.map((m) => m.id))
                     "
-                    :disabled="recordingIsRunning"
+                    :disabled="
+                      recordingIsRunning ||
+                      includedMembers.length == teamMembers.length
+                    "
                   >
                     <b-icon-check-all />
                     Alle auswählen
@@ -67,7 +71,9 @@
                   <b-button
                     variant="light"
                     @click="() => (includedMembers = [])"
-                    :disabled="recordingIsRunning"
+                    :disabled="
+                      recordingIsRunning || includedMembers.length == 0
+                    "
                   >
                     <b-icon-slash />
                     Keine auswählen
@@ -127,7 +133,10 @@
             </b-button>
           </b-col>
           <b-col cols="auto" v-if="downloadUrl">
-            <b-button variant="outline-success" v-b-modal.video-download-modal>
+            <b-button
+              variant="outline-success"
+              @click="() => $refs.videoDownloadModal.open()"
+            >
               <b-icon-download />
               Herunterladen
             </b-button>
@@ -170,60 +179,14 @@
       </b-card-body>
     </b-card>
 
-    <b-modal
-      hide-footer
-      id="video-download-modal"
-      title="Video herunterladen"
-      size="xl"
-    >
-      <b-row align-v="end">
-        <b-col>
-          <video
-            :width="width"
-            controls
-            ref="outputVideo"
-            :src="downloadUrl"
-            :style="{ width: '100%', minWidth: '100px', aspectRatio: '1/1' }"
-          ></video>
-        </b-col>
-        <b-col>
-          <b-row class="mb-1" no-gutters>
-            <b-col>
-              <b-button
-                ref="downloadButton"
-                split
-                block
-                variant="success"
-                :href="downloadUrl"
-                :download="
-                  (choreo ? `${choreo.name}` : 'video') +
-                  selectedDownloadOption.ext
-                "
-              >
-                <b-icon-download />
-                Download {{ selectedDownloadOption.name }}
-              </b-button>
-            </b-col>
-            <b-col cols="auto">
-              <b-dropdown variant="light">
-                <template #button-content>
-                  <b-icon-film />
-                  {{ selectedDownloadOption.name || "Format" }}
-                </template>
-                <b-dropdown-item
-                  v-for="option in downloadOptions"
-                  :key="option.id"
-                  @click="() => selectDownloadOption(option.id)"
-                >
-                  {{ option.name }}
-                  <span class="text-muted">{{ option.ext }}</span>
-                </b-dropdown-item>
-              </b-dropdown>
-            </b-col>
-          </b-row>
-        </b-col>
-      </b-row>
-    </b-modal>
+    <VideoDownloadModal
+      ref="videoDownloadModal"
+      :choreo="choreo"
+      :width="width"
+      :downloadUrl="downloadUrl"
+      :downloadOptions="downloadOptions"
+      @downloadOptionChanged="selectDownloadOption"
+    />
   </div>
 </template>
 
@@ -232,9 +195,11 @@ import ChoreoService from "@/services/ChoreoService";
 import gsap from "gsap";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
+import VideoDownloadModal from "./modals/VideoDownloadModal.vue";
 
 export default {
   name: "VideoExport",
+  components: { VideoDownloadModal },
   data: () => ({
     width: 500,
     height: 500,
@@ -252,7 +217,6 @@ export default {
     includeTeamName: true,
     includeChoreoName: true,
     includedMembers: [],
-    selectedDownloadOptionId: "mp4",
     downloadOptions: [
       {
         id: "webm",
@@ -305,7 +269,7 @@ export default {
       ChoreoService.getById(this.$route.params.choreoId)
         .then((choreo) => {
           this.choreo = choreo;
-          this.teamMembers = choreo.Team.Members.sort((a, b) =>
+          this.teamMembers = choreo.Participants.sort((a, b) =>
             a.name.localeCompare(b.name)
           );
           this.includedMembers = this.teamMembers.map((m) => m.id);
@@ -401,7 +365,7 @@ export default {
       context.font = "16px Sans-Serif";
 
       context.fillText(
-        this.choreo.Team.name,
+        this.choreo.SeasonTeam.Team.name,
         canvas.width / 2,
         canvas.height - 20
       );
@@ -426,7 +390,7 @@ export default {
           .filter((p) => this.includedMembers.includes(p.MemberId))
           .map((p) => ({
             text: p.Member.abbreviation || p.Member.nickname || p.Member.name,
-            color: p.Member.color,
+            color: p.Member?.ChoreoParticipation?.color,
             x: p.x,
             y: p.y,
           }))
@@ -459,7 +423,7 @@ export default {
       return ChoreoService.getPositionsFromChoreoAndCount(
         this.choreo,
         this.count,
-        this.choreo.Team.Members.sort((a, b) => a.name.localeCompare(b.name))
+        this.choreo.Participants.sort((a, b) => a.name.localeCompare(b.name))
       );
     },
     initializeRecorder() {
@@ -484,7 +448,6 @@ export default {
       };
     },
     selectDownloadOption(optionId) {
-      this.selectedDownloadOptionId = optionId;
       switch (optionId) {
         case "mp4":
           this.downloadMp4();
@@ -584,13 +547,9 @@ export default {
         "Schminke wird aufgetragen...",
         "Zopf wird gebunden...",
       ];
-      if (this.choreo.Team.name) slogans.push(`Go, ${this.choreo.Team.name}!`);
+      if (this.choreo.SeasonTeam.Team.name)
+        slogans.push(`Go, ${this.choreo.SeasonTeam.Team.name}!`);
       return slogans[Math.floor(this.count / 10) % slogans.length];
-    },
-    selectedDownloadOption() {
-      return this.downloadOptions.find(
-        (o) => o.id == this.selectedDownloadOptionId
-      );
     },
   },
 };

@@ -1,6 +1,6 @@
 <template>
   <b-modal
-    id="modal-newHit"
+    :id="`modal-newHit-${id}`"
     title="Neuer Eintrag"
     centered
     size="lg"
@@ -9,13 +9,18 @@
     @ok="createHit"
   >
     <b-form>
-      <b-form-group label="Name:">
+      <b-form-group
+        label="Name:"
+        :state="newHitNameIsValid"
+        :invalid-feedback="newHitNameStateFeedback"
+        valid-feedback="Gültig!"
+      >
         <b-form-input
           v-model="newHitName"
           placeholder="Wie heißt der neue Eintrag?"
           autofocus
           required
-          :state="Boolean(newHitName)"
+          :state="newHitNameIsValid"
           list="hitName-options"
         />
         <datalist
@@ -34,36 +39,47 @@
       </b-form-group>
       <b-row>
         <b-col cols="6">
-          <b-form-group description="Achter">
+          <b-form-group
+            description="Achter"
+            :state="newHitAchterIsValid"
+            :invalid-feedback="newHitAchterStateFeedback"
+            valid-feedback="Gültig!"
+          >
             <b-form-input
               v-model="newHitAchter"
               type="number"
               min="1"
               :max="Math.ceil(maxCount / 8)"
-              :state="Boolean(newHitAchter)"
+              :state="newHitAchterIsValid"
             />
           </b-form-group>
         </b-col>
         <b-col cols="6">
-          <b-form-group description="Count:">
+          <b-form-group
+            description="Count:"
+            :state="newHitCountIsValid"
+            :invalid-feedback="newHitCountStateFeedback"
+            valid-feedback="Gültig!"
+          >
             <b-form-input
               v-model="newHitCount"
               type="number"
               min="1"
               :max="8"
-              :state="Boolean(newHitCount)"
+              :state="newHitCountIsValid"
             />
           </b-form-group>
         </b-col>
       </b-row>
-      <b-form-group label="Teilnehmer:">
-        <b-form-checkbox-group
-          id="memberSelection"
-          :options="teamMembers?.map((m) => ({ text: m.name, value: m.id }))"
-          v-model="newHitMembers"
-          stacked
-          :style="{ columnCount: 2 }"
-        />
+
+      <hr />
+
+      <b-form-group
+        label="Teilnehmer:"
+        :state="newHitMembersIsValid"
+        :invalid-feedback="newHitMembersStateFeedback"
+        valid-feedback="Gültig!"
+      >
         <b-button-group>
           <b-button
             variant="light"
@@ -97,6 +113,32 @@
             Auswahl wechseln
           </b-button>
         </b-button-group>
+        <b-form-checkbox-group
+          id="memberSelection"
+          v-model="newHitMembers"
+          stacked
+          :style="{ columnCount: 2 }"
+        >
+          <b-form-checkbox
+            v-for="member in teamMembers"
+            :key="member.id"
+            :value="member.id"
+          >
+            <b-row no-gutters class="mb-1">
+              <div
+                class="mr-2"
+                :style="{
+                  height: '24px',
+                  width: '24px',
+                  backgroundColor: member.ChoreoParticipation.color + '55',
+                  borderRadius: '50%',
+                  border: 'solid 2px ' + member.ChoreoParticipation.color,
+                }"
+              ></div>
+              {{ member.nickname || member.name }}
+            </b-row>
+          </b-form-checkbox>
+        </b-form-checkbox-group>
       </b-form-group>
     </b-form>
     <template #modal-footer="{ ok, cancel }">
@@ -104,7 +146,12 @@
         type="submit"
         @click="ok"
         variant="success"
-        :disabled="!newHitName || !newHitCount"
+        :disabled="
+          !newHitNameIsValid ||
+          !newHitAchterIsValid ||
+          !newHitCountIsValid ||
+          !newHitMembersIsValid
+        "
       >
         Speichern
       </b-button>
@@ -201,6 +248,7 @@ const hitNameProposals = generateHitNameProposals();
 export default {
   name: "CreateHitModal",
   data: () => ({
+    id: (Math.random() + 1).toString(36).substring(7),
     newHitName: null,
     newHitAchter: 1,
     newHitCount: 1,
@@ -231,7 +279,7 @@ export default {
   },
   methods: {
     open() {
-      this.$bvModal.show("modal-newHit");
+      this.$bvModal.show(`modal-newHit-${this.id}`);
     },
     resetModal() {
       this.newHitAchter = Math.floor(this.count / 8) + 1;
@@ -258,6 +306,38 @@ export default {
       ).then((hit) => {
         this.$emit("hitCreated", hit);
       });
+    },
+  },
+  computed: {
+    newHitNameIsValid() {
+      return Boolean(this.newHitName) && this.newHitName.trim().length >= 3;
+    },
+    newHitNameStateFeedback() {
+      if (!this.newHitName) return "Erforderlich";
+      if (this.newHitName.trim().length < 3) return "Min. 3 Zeichen";
+      return null;
+    },
+    newHitAchterIsValid() {
+      return Boolean(this.newHitAchter);
+    },
+    newHitAchterStateFeedback() {
+      if (!this.newHitAchter) return "Erforderlich";
+      return null;
+    },
+    newHitCountIsValid() {
+      return Boolean(this.newHitCount);
+    },
+    newHitCountStateFeedback() {
+      if (!this.newHitCount) return "Erforderlich";
+      return null;
+    },
+    newHitMembersIsValid() {
+      return Boolean(this.newHitMembers) && this.newHitMembers.length > 0;
+    },
+    newHitMembersStateFeedback() {
+      if (!this.newHitMembers || this.newHitMembers.length == 0)
+        return "Erforderlich";
+      return null;
     },
   },
 };

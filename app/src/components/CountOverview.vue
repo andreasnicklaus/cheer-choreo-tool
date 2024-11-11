@@ -60,7 +60,7 @@
                     </b-button>
                     <b-button
                       variant="outline-danger"
-                      @click="() => openHitDeleteModal(hit.id)"
+                      @click="() => $refs.deleteHitModal.open(hit.id)"
                       v-b-tooltip.hover
                       title="löschen"
                       :disabled="!interactive"
@@ -86,9 +86,14 @@
                   :style="{
                     height: '24px',
                     width: '24px',
-                    backgroundColor: member.color + '55',
+                    backgroundColor:
+                      teamMembers.find((tm) => tm.id == member.id)
+                        .ChoreoParticipation.color + '55',
                     borderRadius: '50%',
-                    border: 'solid 2px ' + member.color,
+                    border:
+                      'solid 2px ' +
+                      teamMembers.find((tm) => tm.id == member.id)
+                        .ChoreoParticipation.color,
                   }"
                 ></div>
                 {{ member.nickname || member.name }}
@@ -103,7 +108,12 @@
             <h5 class="mb-4">
               <b-row align-h="between" align-v="center">
                 <b-col>
-                  <b-form-group :state="Boolean(editHitName)" class="m-0">
+                  <b-form-group :state="editHitNameIsValid" class="m-0">
+                    <template #invalid-feedback>
+                      <span :style="{ fontSize: '14px' }">
+                        {{ editHitNameStateFeedback }}
+                      </span>
+                    </template>
                     <b-form-input
                       v-model="editHitName"
                       :style="{
@@ -113,11 +123,16 @@
                         height: '1.2em',
                         textDecoration: 'underline dotted',
                       }"
-                      @keydown.enter="() => saveHit()"
+                      @keydown.enter="
+                        () => {
+                          if (editHitNameIsValid) saveHit();
+                        }
+                      "
                       @keydown.esc="() => (editHitId = null)"
                       class="p-0"
                       autofocus
                       placeholder="Name des Hits"
+                      :state="editHitNameIsValid"
                     />
                   </b-form-group>
                 </b-col>
@@ -127,7 +142,12 @@
                       variant="success"
                       v-b-tooltip.hover
                       title="Speichern"
-                      :disabled="!editHitName"
+                      :disabled="
+                        !editHitName ||
+                        !editHitAchterIsValid ||
+                        !editHitCountIsValid ||
+                        !editHitMembersIsValid
+                      "
                       @click="() => saveHit()"
                     >
                       <b-icon-check />
@@ -148,81 +168,107 @@
               <b-form-group label="Count:" label-cols="2">
                 <b-row>
                   <b-col>
-                    <b-form-group description="Achter">
+                    <b-form-group
+                      description="Achter"
+                      :state="editHitAchterIsValid"
+                      :invalid-feedback="editHitAchterStateFeedback"
+                    >
                       <b-form-input
                         type="number"
                         min="1"
                         v-model="editHitAchter"
+                        :state="editHitAchterIsValid"
                       />
                     </b-form-group>
                   </b-col>
                   <b-col>
-                    <b-form-group description="Count">
+                    <b-form-group
+                      description="Count"
+                      :state="editHitCountIsValid"
+                      :invalid-feedback="editHitCountStateFeedback"
+                    >
                       <b-form-input
                         type="number"
                         min="1"
                         max="8"
                         v-model="editHitCount"
+                        :state="editHitCountIsValid"
                       />
                     </b-form-group>
                   </b-col>
                 </b-row>
               </b-form-group>
-              <b-form-checkbox-group
-                id="memberSelection"
-                v-model="editHitMembers"
-                stacked
-                :style="{ columnCount: 2 }"
+
+              <hr />
+
+              <b-form-group
+                label="Teilnehmer:"
+                :state="editHitMembersIsValid"
+                :invalid-feedback="editHitMembersStateFeedback"
               >
-                <b-form-checkbox
-                  v-for="member in teamMembers"
-                  :key="member.id"
-                  :value="member.id"
+                <b-button-group>
+                  <b-button
+                    variant="light"
+                    @click="
+                      () => (editHitMembers = teamMembers.map((m) => m.id))
+                    "
+                  >
+                    <b-icon-check-all />
+                    Alle auswählen
+                  </b-button>
+                  <b-button
+                    variant="light"
+                    @click="() => (editHitMembers = [])"
+                  >
+                    <b-icon-slash />
+                    Keine auswählen
+                  </b-button>
+                  <b-button
+                    variant="light"
+                    @click="
+                      () =>
+                        (editHitMembers = teamMembers
+                          .filter((m) => !editHitMembers.includes(m.id))
+                          .map((m) => m.id))
+                    "
+                    :disabled="
+                      editHitMembers?.length == 0 ||
+                      editHitMembers?.length == teamMembers?.length
+                    "
+                  >
+                    <b-icon-arrow-repeat />
+                    Auswahl wechseln
+                  </b-button>
+                </b-button-group>
+                <b-form-checkbox-group
+                  id="memberSelection"
+                  v-model="editHitMembers"
+                  stacked
+                  :style="{ columnCount: 2 }"
                 >
-                  <b-row no-gutters class="mb-1">
-                    <div
-                      class="mr-2"
-                      :style="{
-                        height: '24px',
-                        width: '24px',
-                        backgroundColor: member.color + '55',
-                        borderRadius: '50%',
-                        border: 'solid 2px ' + member.color,
-                      }"
-                    ></div>
-                    {{ member.nickname || member.name }}
-                  </b-row>
-                </b-form-checkbox>
-              </b-form-checkbox-group>
-              <b-button-group class="mt-2">
-                <b-button
-                  variant="light"
-                  @click="() => (editHitMembers = teamMembers.map((m) => m.id))"
-                >
-                  <b-icon-check-all />
-                  Alle auswählen
-                </b-button>
-                <b-button variant="light" @click="() => (editHitMembers = [])">
-                  <b-icon-slash />
-                  Keine auswählen
-                </b-button>
-                <b-button
-                  variant="light"
-                  @click="
-                    () =>
-                      (editHitMembers = teamMembers
-                        .filter((m) => !editHitMembers.includes(m.id))
-                        .map((m) => m.id))
-                  "
-                  :disabled="
-                    editHitMembers?.length == 0 ||
-                    editHitMembers?.length == teamMembers?.length
-                  "
-                >
-                  <b-icon-arrow-repeat />
-                  Auswahl wechseln
-                </b-button>
-              </b-button-group>
+                  <b-form-checkbox
+                    v-for="member in teamMembers"
+                    :key="member.id"
+                    :value="member.id"
+                  >
+                    <b-row no-gutters class="mb-1">
+                      <div
+                        class="mr-2"
+                        :style="{
+                          height: '24px',
+                          width: '24px',
+                          backgroundColor:
+                            member.ChoreoParticipation.color + '55',
+                          borderRadius: '50%',
+                          border:
+                            'solid 2px ' + member.ChoreoParticipation.color,
+                        }"
+                      ></div>
+                      {{ member.nickname || member.name }}
+                    </b-row>
+                  </b-form-checkbox>
+                </b-form-checkbox-group>
+              </b-form-group>
             </b-col>
           </div>
         </b-list-group-item>
@@ -273,7 +319,7 @@
                       variant="outline-danger"
                       v-b-tooltip.hover
                       title="löschen"
-                      @click="() => openLineupDeleteModal(lineup.id)"
+                      @click="() => $refs.deleteLineupModal.open(lineup.id)"
                       :disabled="!interactive"
                     >
                       <b-icon-trash />
@@ -317,9 +363,14 @@
                   :style="{
                     height: '24px',
                     width: '24px',
-                    backgroundColor: position.Member.color + '55',
+                    backgroundColor:
+                      teamMembers.find((tm) => tm.id == position.MemberId)
+                        .ChoreoParticipation.color + '55',
                     borderRadius: '50%',
-                    border: 'solid 2px ' + position.Member.color,
+                    border:
+                      'solid 2px ' +
+                      teamMembers.find((tm) => tm.id == position.MemberId)
+                        .ChoreoParticipation.color,
                   }"
                 ></div>
                 {{ position.Member.name }}
@@ -341,7 +392,13 @@
                       v-b-tooltip.hover
                       title="Speichern"
                       @click="() => saveLineup()"
-                      :disabled="editLineupMembers.length == 0"
+                      :disabled="
+                        !editLineupStartAchterIsValid ||
+                        !editLineupStartCountIsValid ||
+                        !editLineupEndAchterIsValid ||
+                        !editLineupEndCountIsValid ||
+                        !editLineupMembersIsValid
+                      "
                     >
                       <b-icon-check />
                     </b-button>
@@ -362,111 +419,148 @@
               <b-form-group label="Start:" label-cols="2">
                 <b-row>
                   <b-col>
-                    <b-form-group description="Achter">
+                    <b-form-group
+                      description="Achter"
+                      :state="editLineupStartAchterIsValid"
+                      :invalid-feedback="editLineupStartAchterStateFeedback"
+                    >
                       <b-form-input
                         type="number"
                         min="1"
                         v-model="editLineupStartAchter"
+                        :state="editLineupStartAchterIsValid"
                       />
                     </b-form-group>
                   </b-col>
                   <b-col>
-                    <b-form-group description="Count">
+                    <b-form-group
+                      description="Count"
+                      :state="editLineupStartCountIsValid"
+                      :invalid-feedback="editLineupStartCountStateFeedback"
+                    >
                       <b-form-input
                         type="number"
                         min="1"
                         max="8"
                         v-model="editLineupStartCount"
+                        :state="editLineupStartCountIsValid"
                       />
                     </b-form-group>
                   </b-col>
                 </b-row>
               </b-form-group>
-              <b-form-group label="Ende:" label-cols="2">
+              <b-form-group
+                label="Ende:"
+                label-cols="2"
+                :state="editLineupStartIsBeforeEnd"
+                :invalid-feedback="editLineupStartIsBeforeEndStateFeedback"
+              >
                 <b-row>
                   <b-col>
-                    <b-form-group description="Achter">
+                    <b-form-group
+                      description="Achter"
+                      :state="editLineupEndAchterIsValid"
+                      :invalid-feedback="editLineupEndAchterStateFeedback"
+                    >
                       <b-form-input
                         type="number"
                         min="1"
                         v-model="editLineupEndAchter"
+                        :state="editLineupEndAchterIsValid"
                       />
                     </b-form-group>
                   </b-col>
                   <b-col>
-                    <b-form-group description="Count">
+                    <b-form-group
+                      description="Count"
+                      :state="editLineupEndCountIsValid"
+                      :invalid-feedback="editLineupEndCountStateFeedback"
+                    >
                       <b-form-input
                         type="number"
                         min="1"
                         max="8"
                         v-model="editLineupEndCount"
+                        :state="editLineupEndCountIsValid"
                       />
                     </b-form-group>
                   </b-col>
                 </b-row>
               </b-form-group>
-              <b-form-checkbox-group
-                id="memberSelection-lineup"
-                v-model="editLineupMembers"
-                stacked
-                :style="{ columnCount: 2 }"
+
+              <hr />
+
+              <b-form-group
+                label="Teilnehmer:"
+                :state="editLineupMembersIsValid"
+                :invalid-feedback="editLineupMembersStateFeedback"
               >
-                <b-form-checkbox
-                  v-for="member in teamMembers"
-                  :key="member.id"
-                  :value="member.id"
+                <b-button-group>
+                  <b-button
+                    variant="light"
+                    @click="
+                      () => (editLineupMembers = teamMembers.map((m) => m.id))
+                    "
+                    :disabled="editLineupMembers.length == teamMembers.length"
+                  >
+                    <b-icon-check-all />
+                    Alle auswählen
+                  </b-button>
+                  <b-button
+                    variant="light"
+                    @click="() => (editLineupMembers = [])"
+                    :disabled="editLineupMembers.length == 0"
+                  >
+                    <b-icon-slash />
+                    Keine auswählen
+                  </b-button>
+                  <b-button
+                    variant="light"
+                    @click="
+                      () =>
+                        (editLineupMembers = teamMembers
+                          .filter((m) => !editLineupMembers.includes(m.id))
+                          .map((m) => m.id))
+                    "
+                    :disabled="
+                      editLineupMembers?.length == 0 ||
+                      editLineupMembers?.length == teamMembers?.length
+                    "
+                  >
+                    <b-icon-arrow-repeat />
+                    Auswahl wechseln
+                  </b-button>
+                </b-button-group>
+
+                <b-form-checkbox-group
+                  id="memberSelection-lineup"
+                  v-model="editLineupMembers"
+                  stacked
+                  :style="{ columnCount: 2 }"
                 >
-                  <b-row no-gutters class="mb-1">
-                    <div
-                      class="mr-2"
-                      :style="{
-                        height: '24px',
-                        width: '24px',
-                        backgroundColor: member.color + '55',
-                        borderRadius: '50%',
-                        border: 'solid 2px ' + member.color,
-                      }"
-                    ></div>
-                    {{ member.nickname || member.name }}
-                  </b-row>
-                </b-form-checkbox>
-              </b-form-checkbox-group>
-              <b-button-group class="mt-2">
-                <b-button
-                  variant="light"
-                  @click="
-                    () => (editLineupMembers = teamMembers.map((m) => m.id))
-                  "
-                  :disabled="editLineupMembers.length == teamMembers.length"
-                >
-                  <b-icon-check-all />
-                  Alle auswählen
-                </b-button>
-                <b-button
-                  variant="light"
-                  @click="() => (editLineupMembers = [])"
-                  :disabled="editLineupMembers.length == 0"
-                >
-                  <b-icon-slash />
-                  Keine auswählen
-                </b-button>
-                <b-button
-                  variant="light"
-                  @click="
-                    () =>
-                      (editLineupMembers = teamMembers
-                        .filter((m) => !editLineupMembers.includes(m.id))
-                        .map((m) => m.id))
-                  "
-                  :disabled="
-                    editLineupMembers?.length == 0 ||
-                    editLineupMembers?.length == teamMembers?.length
-                  "
-                >
-                  <b-icon-arrow-repeat />
-                  Auswahl wechseln
-                </b-button>
-              </b-button-group>
+                  <b-form-checkbox
+                    v-for="member in teamMembers"
+                    :key="member.id"
+                    :value="member.id"
+                  >
+                    <b-row no-gutters class="mb-1">
+                      <div
+                        class="mr-2"
+                        :style="{
+                          height: '24px',
+                          width: '24px',
+                          backgroundColor:
+                            member.ChoreoParticipation.color + '55',
+                          borderRadius: '50%',
+                          border:
+                            'solid 2px ' + member.ChoreoParticipation.color,
+                        }"
+                      ></div>
+                      {{ member.nickname || member.name }}
+                    </b-row>
+                  </b-form-checkbox>
+                </b-form-checkbox-group>
+              </b-form-group>
             </b-form>
           </div>
         </b-list-group-item>
@@ -495,7 +589,7 @@
       variant="outline-success"
       block
       class="mt-2"
-      v-b-modal.modal-newHit
+      @click="() => $emit('openCreateHitModal')"
       :disabled="!interactive"
     >
       <b-icon-plus />
@@ -505,177 +599,34 @@
       variant="light"
       block
       class="mt-2"
-      v-b-modal.modal-newLineup
+      @click="() => $refs.createLineupModal.open()"
       :disabled="!interactive"
     >
       <b-icon-plus />
       Aufstellung hinzufügen
     </b-button>
 
-    <!-- NEW LINEUP MODAL -->
-    <b-modal
-      id="modal-newLineup"
-      title="Neue Aufstellung"
-      centered
-      @show="resetLineupModal"
-      @hidden="resetLineupModal"
-      @ok="createLineup"
-      size="lg"
-    >
-      <b-form
-        @keydown.enter="
-          () => {
-            if (
-              editLineupStartAchter &&
-              editLineupStartCount &&
-              editLineupEndAchter &&
-              editLineupEndCount
-            ) {
-              $bvModal.hide('modal-newLineup');
-              createLineup();
-            }
-          }
-        "
-      >
-        <b-form-group label="Start:" label-cols="2">
-          <b-row>
-            <b-col>
-              <b-form-group description="Achter">
-                <b-form-input
-                  type="number"
-                  min="1"
-                  v-model="editLineupStartAchter"
-                />
-              </b-form-group>
-            </b-col>
-            <b-col>
-              <b-form-group description="Count">
-                <b-form-input
-                  type="number"
-                  min="1"
-                  max="8"
-                  v-model="editLineupStartCount"
-                />
-              </b-form-group>
-            </b-col>
-          </b-row>
-        </b-form-group>
-        <b-form-group label="Ende:" label-cols="2">
-          <b-row>
-            <b-col>
-              <b-form-group description="Achter">
-                <b-form-input
-                  type="number"
-                  min="1"
-                  v-model="editLineupEndAchter"
-                />
-              </b-form-group>
-            </b-col>
-            <b-col>
-              <b-form-group description="Count">
-                <b-form-input
-                  type="number"
-                  min="1"
-                  max="8"
-                  v-model="editLineupEndCount"
-                />
-              </b-form-group>
-            </b-col>
-          </b-row>
-        </b-form-group>
-        <b-form-checkbox-group
-          id="memberSelection-lineup"
-          v-model="editLineupMembers"
-          stacked
-          :style="{ columnCount: 2 }"
-        >
-          <b-form-checkbox
-            v-for="member in teamMembers"
-            :key="member.id"
-            :value="member.id"
-            :disabled="
-              lineupsForCurrentCount
-                .map((l) => l?.Positions.map((p) => p.MemberId))
-                .flat()
-                .includes(member.id)
-            "
-          >
-            <b-row no-gutters class="mb-1">
-              <div
-                class="mr-2"
-                :style="{
-                  height: '24px',
-                  width: '24px',
-                  backgroundColor: member.color + '55',
-                  borderRadius: '50%',
-                  border: 'solid 2px ' + member.color,
-                }"
-              ></div>
-              {{ member.nickname || member.name }}
-              {{
-                lineupsForCurrentCount
-                  .map((l) => l.Positions.map((p) => p.MemberId))
-                  .flat()
-                  .includes(member.id)
-                  ? "(Ist in anderer Aufstellung)"
-                  : null
-              }}
-            </b-row>
-          </b-form-checkbox>
-        </b-form-checkbox-group>
-      </b-form>
-      <template #modal-footer="{ ok, cancel }">
-        <b-button
-          type="submit"
-          @click="ok"
-          variant="success"
-          :disabled="
-            !editLineupStartAchter ||
-            !editLineupStartCount ||
-            !editLineupEndAchter ||
-            !editLineupEndCount ||
-            editLineupMembers.length == 0
-          "
-        >
-          Speichern
-        </b-button>
-        <b-button @click="cancel" variant="danger">Abbrechen</b-button>
-      </template>
-    </b-modal>
+    <CreateLineupModal
+      ref="createLineupModal"
+      :count="count"
+      :choreo="choreo"
+      :teamMembers="teamMembers"
+      :lineupsForCurrentCount="lineupsForCurrentCount"
+      :currentPositions="currentPositions"
+      @updateLineups="(lineupCopy) => $emit('updateLineups', lineupCopy)"
+    />
 
-    <!-- DELETE LINEUP MODAL -->
-    <b-modal
-      id="modal-deleteLineup"
-      title="Aufstellung löschen?"
-      centered
-      @hidden="resetDeleteLineupModal"
-      @ok="deleteLineup"
-    >
-      <p class="m-0">Du kannst das nicht rückgängig machen.</p>
-      <template #modal-footer="{ ok, cancel }">
-        <b-button @click="ok" variant="danger"> Löschen </b-button>
-        <b-button @click="cancel" variant="outline-secondary">
-          Abbrechen
-        </b-button>
-      </template>
-    </b-modal>
+    <DeleteLineupModal
+      ref="deleteLineupModal"
+      :choreo="choreo"
+      @updateLineups="(lineupCopy) => $emit('updateLineups', lineupCopy)"
+    />
 
-    <!-- DELETE HIT MODAL -->
-    <b-modal
-      id="modal-deleteHit"
-      title="Countsheet-Eintrag löschen?"
-      centered
-      @hidden="resetDeleteHitModal"
-      @ok="deleteHit"
-    >
-      <p class="m-0">Du kannst das nicht rückgängig machen.</p>
-      <template #modal-footer="{ ok, cancel }">
-        <b-button @click="ok" variant="danger"> Löschen </b-button>
-        <b-button @click="cancel" variant="outline-secondary">
-          Abbrechen
-        </b-button>
-      </template>
-    </b-modal>
+    <DeleteHitModal
+      ref="deleteHitModal"
+      :choreo="choreo"
+      @updateHits="(hitCopy) => $emit('updateHits', hitCopy)"
+    />
   </b-card>
 </template>
 
@@ -683,21 +634,20 @@
 import HitService from "@/services/HitService";
 import LineupService from "@/services/LineupService";
 import PositionService from "@/services/PositionService";
+import CreateLineupModal from "./modals/CreateLineupModal.vue";
+import DeleteLineupModal from "./modals/DeleteLineupModal.vue";
+import DeleteHitModal from "./modals/DeleteHitModal.vue";
 
 export default {
   name: "CountOverview",
+  components: { CreateLineupModal, DeleteLineupModal, DeleteHitModal },
   data: () => ({
-    newHitName: null,
-    newHitCount: null,
-    newHitMembers: [],
     editHitId: null,
     editHitName: null,
     editHitAchter: 1,
     editHitCount: 1,
     editHitMembers: [],
     editLineupId: null,
-    deleteLineupId: null,
-    deleteHitId: null,
     editLineupStartAchter: 1,
     editLineupStartCount: 1,
     editLineupEndAchter: 1,
@@ -730,9 +680,6 @@ export default {
       type: Boolean,
       default: true,
     },
-  },
-  mounted() {
-    // this.editLineupId = this.lineupsForCurrentCount[0].id;
   },
   methods: {
     openNewHitModal() {
@@ -906,49 +853,42 @@ export default {
         this.$emit("updateLineups", lineupCopy);
       });
     },
-    resetDeleteLineupModal() {
-      this.deleteLineupId = null;
-    },
-    openLineupDeleteModal(lineupId) {
-      this.deleteLineupId = lineupId;
-      this.$bvModal.show("modal-deleteLineup");
-    },
-    deleteLineup() {
-      LineupService.remove(this.deleteLineupId).then(() => {
-        this.$emit(
-          "updateLineups",
-          this.choreo.Lineups.filter((l) => l.id != this.deleteLineupId)
-        );
-      });
-    },
-    resetLineupModal() {
-      this.editLineupStartCount = (this.count % 8) + 1;
-      this.editLineupStartAchter = Math.floor(this.count / 8) + 1;
-      this.editLineupEndCount = (this.count % 8) + 1;
-      this.editLineupEndAchter = Math.floor(this.count / 8) + 1;
-      const positionedMemberIds = this.lineupsForCurrentCount
-        .map((l) => l.Positions.map((p) => p.MemberId))
-        .flat();
-      this.editLineupMembers = this.teamMembers
-        .map((m) => m.id)
-        .filter((mId) => !positionedMemberIds.includes(mId));
-    },
     openHitDeleteModal(hitId) {
-      this.deleteHitId = hitId;
-      this.$bvModal.show("modal-deleteHit");
+      this.$refs.deleteHitModal(hitId);
     },
-    deleteHit() {
-      HitService.remove(this.deleteHitId).then(() => {
-        this.$emit(
-          "updateHits",
-          this.choreo.Hits.filter((h) => h.id != this.deleteHitId)
-        );
-      });
+  },
+  computed: {
+    editHitNameIsValid() {
+      return Boolean(this.editHitName) && this.editHitName.trim().length >= 3;
     },
-    resetDeleteHitModal() {
-      this.deleteHitId = null;
+    editHitNameStateFeedback() {
+      if (!this.editHitName) return "Erforderlich";
+      if (this.editHitName.trim().length < 3) return "Min. 3 Zeichen";
+      return null;
     },
-    createLineup() {
+    editHitAchterIsValid() {
+      return Boolean(this.editHitAchter);
+    },
+    editHitAchterStateFeedback() {
+      if (!this.editHitAchter) return "Erforderlich";
+      return null;
+    },
+    editHitCountIsValid() {
+      return Boolean(this.editHitCount);
+    },
+    editHitCountStateFeedback() {
+      if (!this.editHitCount) return "Erforderlich";
+      return null;
+    },
+    editHitMembersIsValid() {
+      return Boolean(this.editHitMembers) && this.editHitMembers.length > 0;
+    },
+    editHitMembersStateFeedback() {
+      if (!this.editHitMembers || this.editHitMembers.length == 0)
+        return "Erforderlich";
+      return null;
+    },
+    editLineupStartIsBeforeEnd() {
       const absoluteStartCount =
         (parseInt(this.editLineupStartAchter) - 1) * 8 +
         parseInt(this.editLineupStartCount) -
@@ -957,37 +897,58 @@ export default {
         (parseInt(this.editLineupEndAchter) - 1) * 8 +
         parseInt(this.editLineupEndCount) -
         1;
-
-      LineupService.create(
-        absoluteStartCount,
-        absoluteEndCount,
-        this.choreo.id
-      ).then((lineup) => {
-        return Promise.all(
-          this.editLineupMembers.map((mId) => {
-            const positionOfMember = this.currentPositions.find(
-              (p) => p.MemberId == mId
-            );
-            return PositionService.create(
-              lineup.id,
-              positionOfMember.x,
-              positionOfMember.y,
-              mId
-            );
-          })
-        ).then((createdPositions) => {
-          const lineupCopy = this.choreo.Lineups.filter(
-            (l) => l.id != lineup.id
-          );
-
-          const positionsCopy = lineup.Positions || [];
-          positionsCopy.push(...createdPositions);
-          lineup.Positions = positionsCopy;
-
-          lineupCopy.push(lineup);
-          this.$emit("updateLineups", lineupCopy);
-        });
-      });
+      return absoluteStartCount <= absoluteEndCount;
+    },
+    editLineupStartIsBeforeEndStateFeedback() {
+      if (!this.editLineupStartIsBeforeEnd)
+        return "Der Start deiner Aufstellung muss vor dem Ende liegen!";
+      return null;
+    },
+    editLineupEndAchterIsValid() {
+      return (
+        Boolean(this.editLineupEndAchter) && this.editLineupStartIsBeforeEnd
+      );
+    },
+    editLineupEndAchterStateFeedback() {
+      if (!this.editLineupEndAchter) return "Erforderlich";
+      return null;
+    },
+    editLineupStartAchterIsValid() {
+      return (
+        Boolean(this.editLineupStartAchter) && this.editLineupStartIsBeforeEnd
+      );
+    },
+    editLineupStartAchterStateFeedback() {
+      if (!this.editLineupStartAchter) return "Erforderlich";
+      return null;
+    },
+    editLineupStartCountIsValid() {
+      return (
+        Boolean(this.editLineupStartCount) && this.editLineupStartIsBeforeEnd
+      );
+    },
+    editLineupStartCountStateFeedback() {
+      if (!this.editLineupStartCount) return "Erforderlich";
+      return null;
+    },
+    editLineupEndCountIsValid() {
+      return (
+        Boolean(this.editLineupEndCount) && this.editLineupStartIsBeforeEnd
+      );
+    },
+    editLineupEndCountStateFeedback() {
+      if (!this.editLineupEndCount) return "Erforderlich";
+      return null;
+    },
+    editLineupMembersIsValid() {
+      return (
+        Boolean(this.editLineupMembers) && this.editLineupMembers.length > 0
+      );
+    },
+    editLineupMembersStateFeedback() {
+      if (!this.editLineupMembers || this.editLineupMembers.length == 0)
+        return "Erforderlich";
+      return null;
     },
   },
 };

@@ -1,28 +1,5 @@
-const { Op } = require("sequelize");
 const Member = require("../db/models/member");
 const { logger } = require("../plugins/winston");
-
-const defaultColors = [
-  "#FF1493",
-  "#C71585",
-  "#4B0082",
-  "#9400D3",
-  "#6A5ACD",
-  "#8B0000",
-  "#FF4500",
-  "#FF8C00",
-  "#006400",
-  "#228B22",
-  "#00008B",
-  "#0000FF",
-  "#1E90FF",
-  "#A52A2A",
-  "#008080",
-  "#48D1CC",
-  "#00FFFF",
-  "#2F4F4F",
-  "#FFFF00",
-];
 
 class MemberService {
   async findAll(UserId) {
@@ -30,26 +7,22 @@ class MemberService {
   }
 
   async findById(id, UserId) {
-    return Club.findOne({ where: { id, UserId } });
+    return Member.findOne({ where: { id, UserId } });
   }
 
-  async create(name, nickname, abbreviation, color, TeamId, UserId) {
+  async create(name, nickname, abbreviation, SeasonTeamId, UserId) {
     if (!abbreviation)
       abbreviation = name
         .split(" ")
         .map((s) => s.substring(0, 1))
         .join("");
 
-    if (!color)
-      color = defaultColors[Math.floor(Math.random() * defaultColors.length)];
-
     logger.debug(
       `MemberService.create ${JSON.stringify({
         name,
         nickname,
         abbreviation,
-        color,
-        TeamId,
+        SeasonTeamId,
         UserId,
       })}`
     );
@@ -57,20 +30,18 @@ class MemberService {
       name,
       nickname,
       abbreviation,
-      color,
-      TeamId,
+      SeasonTeamId,
       UserId,
     });
   }
 
-  async findOrCreate(name, nickname, abbreviation, color, TeamId, UserId) {
+  async findOrCreate(name, nickname, abbreviation, SeasonTeamId, UserId) {
     logger.debug(
       `MemberService.findOrCreate ${JSON.stringify({
         name,
         nickname,
         abbreviation,
-        color,
-        TeamId,
+        SeasonTeamId,
         UserId,
       })}`
     );
@@ -85,13 +56,8 @@ class MemberService {
         name,
         nickname,
         abbreviation: abbreviation || defaultAbbreviation,
-        TeamId,
+        SeasonTeamId,
         UserId,
-      },
-      defaults: {
-        color:
-          color ||
-          defaultColors[Math.floor(Math.random() * defaultColors.length)],
       },
     });
     return member;

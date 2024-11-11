@@ -28,6 +28,8 @@ const { memberRouter } = require("./routes/member");
 const { positionRouter } = require("./routes/position");
 const { userRouter } = require("./routes/user");
 const { authRouter } = require("./routes/auth");
+const { seasonRouter } = require("./routes/season");
+const { seasonTeamRouter } = require("./routes/seasonTeam");
 
 const app = express();
 const port = 3000;
@@ -56,6 +58,8 @@ app.use("/member", memberRouter);
 app.use("/position", positionRouter);
 app.use("/user", userRouter);
 app.use("/auth", authRouter);
+app.use("/season", seasonRouter);
+app.use("/seasonTeam", seasonTeamRouter);
 
 app.use(errorLoggingMiddleWare);
 app.use(errorHandlingMiddleWare);

@@ -17,15 +17,17 @@
         alt=""
       />
     </footer>
+    <ConsentWindow />
   </div>
 </template>
 
 <script>
+import ConsentWindow from "./components/ConsentWindow.vue";
 import HeadNav from "./components/HeadNav.vue";
 import ax from "./services/RequestService";
 
 export default {
-  components: { HeadNav },
+  components: { HeadNav, ConsentWindow },
   data: () => ({
     online: null,
   }),
@@ -59,5 +61,9 @@ export default {
 
 .modal-open {
   padding: 0 !important;
+}
+
+.router-link-active {
+  color: #2c3e50 !important;
 }
 </style>

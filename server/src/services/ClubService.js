@@ -1,25 +1,71 @@
 const Club = require("../db/models/club");
+const Member = require("../db/models/member");
+const SeasonTeam = require("../db/models/seasonTeam");
+const Team = require("../db/models/team");
 const { logger } = require("../plugins/winston");
+
+const defaultInclude = [
+  {
+    association: "Teams",
+    include: {
+      association: "SeasonTeams",
+      include: ["Choreos", "Season", "Members"],
+    },
+  },
+];
 
 class ClubService {
   async getAll(UserId) {
     return Club.findAll({
       where: { UserId },
-      include: [{ association: "Teams", include: "Choreos" }],
+      include: defaultInclude,
+      order: [
+        ["createdAt"],
+        [Club.associations.Teams, "name"],
+        [
+          Club.associations.Teams,
+          Team.associations.SeasonTeams,
+          SeasonTeam.associations.Season,
+          "year",
+          "DESC NULLS LAST",
+        ],
+        [
+          Club.associations.Teams,
+          Team.associations.SeasonTeams,
+          SeasonTeam.associations.Season,
+          "name",
+        ],
+      ],
     });
   }
 
   async findById(id, UserId) {
     return Club.findOne({
       where: { id, UserId },
-      include: [{ association: "Teams", include: "Choreos" }],
+      include: defaultInclude,
+      order: [
+        [Club.associations.Teams, "name"],
+        [
+          Club.associations.Teams,
+          Team.associations.SeasonTeams,
+          SeasonTeam.associations.Season,
+          "year",
+          "DESC NULLS LAST",
+        ],
+        [
+          Club.associations.Teams,
+          Team.associations.SeasonTeams,
+          SeasonTeam.associations.Members,
+          "name",
+        ],
+      ],
     });
   }
 
   async findByName(name, UserId) {
     return Club.findAll({
       where: { name, UserId },
-      include: [{ association: "Teams", include: "Choreos" }],
+      include: defaultInclude,
     });
   }
 

@@ -1,14 +1,10 @@
 import ax from "./RequestService";
 
 class MemberService {
-  create(name, nickname, abbreviation, color, teamId) {
+  create(name, nickname, abbreviation, seasonTeamId) {
     return ax
-      .post("/member", { name, nickname, abbreviation, color, teamId })
+      .post("/member", { name, nickname, abbreviation, seasonTeamId })
       .then((res) => res.data);
-  }
-
-  setColor(memberId, color) {
-    return ax.put(`/member/${memberId}`, { color }).then((res) => res.data);
   }
 
   update(memberId, data) {

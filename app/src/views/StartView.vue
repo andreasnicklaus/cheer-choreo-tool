@@ -12,6 +12,7 @@
             <b-popover target="popover-info-target" triggers="hover">
               <p><b>Suchen:</b> Suche nach einem Team oder einer Choreo</p>
               <p><b>Team:</b> Filtere die Choreos nach Teams</p>
+              <p><b>Season:</b> Filtere die Choreos nach Season</p>
               <p><b>Counts:</b> Filtere die Choreo nach ihrer Länge</p>
               <hr />
               <p class="text-muted">
@@ -40,7 +41,10 @@
             <b-skeleton-wrapper :loading="loading">
               <template #loading>
                 <b-list-group flush class="mb-2">
-                  <b-list-group-item v-for="(_, ix) in Array(2)" :key="ix">
+                  <b-list-group-item
+                    v-for="(_, ix) in Array(2)"
+                    :key="`teamSkeleton-${ix}`"
+                  >
                     <b-skeleton />
                   </b-list-group-item>
                 </b-list-group>
@@ -61,8 +65,74 @@
                     {{ team.name }}
                     <b-badge variant="light">
                       {{
-                        filteredChoreos.filter((c) => c.TeamId == team.id)
-                          .length
+                        teams
+                          .find((t) => t.id == team.id)
+                          .SeasonTeams.filter(
+                            (st) =>
+                              seasonFilterIds.length == 0 ||
+                              seasonFilterIds.includes(st.Season.id)
+                          )
+                          .map((st) =>
+                            st.Choreos.filter(
+                              (c) =>
+                                c.counts >= minCount && c.counts <= maxCount
+                            )
+                          )
+                          .flat(Infinity).length
+                      }}
+                    </b-badge>
+                  </b-list-group-item>
+                </b-list-group>
+              </template>
+            </b-skeleton-wrapper>
+          </div>
+
+          <div v-if="seasons.length > 0">
+            <p class="mb-0 font-weight-bold font-italic text-muted">Season</p>
+            <b-skeleton-wrapper :loading="loading">
+              <template #loading>
+                <b-list-group flush class="mb-2">
+                  <b-list-group-item
+                    v-for="(_, ix) in Array(2)"
+                    :key="`seasonSkeleton-${ix}`"
+                  >
+                    <b-skeleton />
+                  </b-list-group-item>
+                </b-list-group>
+              </template>
+              <template #default>
+                <b-list-group flush class="mb-2">
+                  <b-list-group-item
+                    v-for="season in seasons"
+                    :key="season.id"
+                    :variant="
+                      seasonFilterIds.includes(season.id) ? 'dark' : 'light'
+                    "
+                    @click="() => addOrRemoveSeasonFilter(season.id)"
+                    class="d-flex justify-content-between align-items-center"
+                    block
+                    href="#"
+                  >
+                    {{ season.name }}
+                    <b-badge variant="light">
+                      {{
+                        teams
+                          .filter(
+                            (t) =>
+                              teamFilterIds.length == 0 ||
+                              teamFilterIds.includes(t.id)
+                          )
+                          .map((t) =>
+                            t.SeasonTeams.filter(
+                              (st) => st.Season.id == season.id
+                            ).map((st) =>
+                              st.Choreos.filter(
+                                (c) =>
+                                  c.counts >= minCount && c.counts <= maxCount
+                              )
+                            )
+                          )
+                          .flat(Infinity).length
                       }}
                     </b-badge>
                   </b-list-group-item>
@@ -79,34 +149,39 @@
             "
           >
             <p class="mb-0 font-weight-bold font-italic text-muted">Counts</p>
-            <b-skeleton-wrapper :loading="loading" :key="'asdf'">
+            <b-skeleton-wrapper :loading="loading">
               <template #loading>
                 <b-skeleton type="input" />
                 <b-skeleton type="input" />
               </template>
               <template #default>
-                <b-input-group>
-                  <b-input-group-prepend is-text>
-                    {{ minCount }}
-                  </b-input-group-prepend>
+                <b-form-group
+                  label="Min. Länge:"
+                  :description="`${Math.floor(minCount / 8)} Achter + ${
+                    minCount % 8
+                  }`"
+                >
                   <b-form-input
                     v-model="minCount"
                     :min="Math.min(...choreos.map((c) => c.counts))"
                     :max="Math.max(...choreos.map((c) => c.counts))"
                     type="range"
                   />
-                </b-input-group>
-                <b-input-group>
-                  <b-input-group-prepend is-text>
-                    {{ maxCount }}
-                  </b-input-group-prepend>
+                </b-form-group>
+                <hr />
+                <b-form-group
+                  label="Max. Länge:"
+                  :description="`${Math.floor(maxCount / 8)} Achter + ${
+                    maxCount % 8
+                  }`"
+                >
                   <b-form-input
                     v-model="maxCount"
                     :min="Math.min(...choreos.map((c) => c.counts))"
                     :max="Math.max(...choreos.map((c) => c.counts))"
                     type="range"
                   />
-                </b-input-group>
+                </b-form-group>
               </template>
             </b-skeleton-wrapper>
           </div>
@@ -114,13 +189,19 @@
           <b-button
             block
             class="mt-2"
-            :disabled="!this.searchTerm && this.teamFilterIds.length == 0"
+            :disabled="
+              !this.searchTerm &&
+              this.teamFilterIds.length == 0 &&
+              this.seasonFilterIds == 0
+            "
             :variant="
-              !this.searchTerm && this.teamFilterIds.length == 0
+              !this.searchTerm &&
+              this.teamFilterIds.length == 0 &&
+              this.seasonFilterIds.length == 0
                 ? 'outline-secondary'
                 : 'secondary'
             "
-            @click="() => resetFilters()"
+            @click="resetFilters"
           >
             Zurücksetzen
           </b-button>
@@ -132,7 +213,10 @@
         <b-skeleton-wrapper :loading="loading">
           <template #loading>
             <b-list-group flush>
-              <b-list-group-item v-for="i in Array(3)" :key="i">
+              <b-list-group-item
+                v-for="(_, ix) in Array(3)"
+                :key="`choreoSkeleton-${ix}`"
+              >
                 <b-skeleton width="25%" height="30px" class="mb-2" />
                 <b-skeleton width="50%" />
                 <b-skeleton width="25%" class="mb-3" />
@@ -142,63 +226,153 @@
           <template #default>
             <b-list-group flush>
               <b-list-group-item
-                v-for="choreo in filteredChoreos"
-                :key="choreo.id"
-                :to="{ name: 'Choreo', params: { choreoId: choreo.id } }"
-                variant="light"
+                v-for="team in teams"
+                :key="team.id"
+                :variant="useFolderColors ? 'info' : 'light'"
+                href="#"
+                class="collapse-submenu p-0"
               >
-                <h5>
-                  <b-row align-h="between" align-v="center">
-                    <b-col>
-                      {{ choreo.name }}
-                    </b-col>
-                    <b-col cols="auto">
-                      <b-button-group>
-                        <b-button
-                          variant="light"
-                          :to="{
-                            name: 'Video',
-                            params: { choreoId: choreo.id },
-                          }"
-                        >
-                          <b-icon-film />
-                        </b-button>
-                        <b-button
-                          variant="light"
-                          :to="{ name: 'PDF', params: { choreoId: choreo.id } }"
-                        >
-                          <b-icon-file-pdf />
-                        </b-button>
-                      </b-button-group>
-                    </b-col>
-                  </b-row>
-                </h5>
-                <router-link
-                  :to="{
-                    name: 'Team',
-                    params: {
-                      teamId: teams.find((t) => t.id == choreo.TeamId)?.id,
-                    },
-                  }"
-                  :style="{ color: 'inherit' }"
+                <div
+                  v-b-toggle="`team-collapse-${team.id}`"
+                  :style="{ padding: '12px 20px' }"
                 >
-                  {{ teams.find((t) => t.id == choreo.TeamId)?.name }}
-                </router-link>
-                <p>
-                  {{ Math.floor(choreo.counts / 8) }} Achter
-                  {{ choreo.counts % 8 > 0 ? `+ ${choreo.counts % 8}` : "" }}
-                </p>
+                  <b-icon-caret-down-fill variant="secondary" />
+                  {{ team.name }}
+                  ({{ seasonCountStringByTeam(team) }})
+                </div>
+                <b-collapse :id="`team-collapse-${team.id}`" class="ml-3">
+                  <b-list-group flush>
+                    <b-list-group-item
+                      v-for="seasonTeam in team.SeasonTeams"
+                      :key="seasonTeam.id"
+                      :variant="useFolderColors ? 'warning' : 'light'"
+                      href="#"
+                      class="collapse-submenu p-0"
+                    >
+                      <div
+                        v-b-toggle="`seasonTeam-collapse-${seasonTeam.id}`"
+                        :style="{ padding: '12px 20px' }"
+                      >
+                        <b-icon-caret-down-fill variant="secondary" />
+                        {{ seasonTeam.Season.name }}
+                        ({{ choreoCountStringBySeasonTeam(seasonTeam) }})
+                      </div>
+                      <b-collapse
+                        :id="`seasonTeam-collapse-${seasonTeam.id}`"
+                        class="ml-3"
+                      >
+                        <b-list-group flush>
+                          <b-list-group-item
+                            v-for="choreo in seasonTeam.Choreos.filter(
+                              (c) =>
+                                c.counts >= minCount &&
+                                c.counts <= maxCount &&
+                                (seasonFilterIds.length == 0 ||
+                                  seasonFilterIds.includes(
+                                    seasonTeam.Season.id
+                                  )) &&
+                                (teamFilterIds.length == 0 ||
+                                  teamFilterIds.includes(team.id))
+                            )"
+                            :key="choreo.id"
+                            variant="light"
+                            :to="{
+                              name: 'Choreo',
+                              params: {
+                                choreoId: choreo.id,
+                              },
+                            }"
+                          >
+                            <b>
+                              <b-row align-h="between" align-v="center">
+                                <b-col>
+                                  {{ choreo.name }}
+                                </b-col>
+                                <b-col cols="auto">
+                                  <b-button-group>
+                                    <b-button
+                                      variant="light"
+                                      :to="{
+                                        name: 'Video',
+                                        params: { choreoId: choreo.id },
+                                      }"
+                                    >
+                                      <b-icon-film />
+                                    </b-button>
+                                    <b-button
+                                      variant="light"
+                                      :to="{
+                                        name: 'PDF',
+                                        params: { choreoId: choreo.id },
+                                      }"
+                                    >
+                                      <b-icon-file-pdf />
+                                    </b-button>
+                                  </b-button-group>
+                                </b-col>
+                              </b-row>
+                            </b>
+                            <router-link
+                              :to="{
+                                name: 'Team',
+                                params: {
+                                  teamId: team.id,
+                                },
+                              }"
+                              :style="{ color: 'inherit' }"
+                            >
+                              {{ team.name }}
+                            </router-link>
+                            <p class="m-0">
+                              {{ seasonTeam.Season.name }}
+                            </p>
+                            <p class="m-0">
+                              {{ Math.floor(choreo.counts / 8) }} Achter
+                              {{
+                                choreo.counts % 8 > 0
+                                  ? `+ ${choreo.counts % 8}`
+                                  : ""
+                              }}
+                            </p>
+                          </b-list-group-item>
+                          <b-list-group-item
+                            variant="light"
+                            class="text-muted"
+                            @click="
+                              () =>
+                                $refs.createChoreoModal.open(
+                                  team.id,
+                                  seasonTeam.Season.id
+                                )
+                            "
+                            href="#"
+                          >
+                            <b-icon-plus-square class="mr-1" />
+                            <u>Choreo hinzufügen</u>
+                          </b-list-group-item>
+                        </b-list-group>
+                      </b-collapse>
+                    </b-list-group-item>
+                    <b-list-group-item
+                      variant="light"
+                      class="text-muted"
+                      @click="() => $refs.createSeasonModal.open(team.id)"
+                      href="#"
+                    >
+                      <b-icon-plus-square class="mr-1" />
+                      <u>Saison anfangen</u>
+                    </b-list-group-item>
+                  </b-list-group>
+                </b-collapse>
               </b-list-group-item>
-              <b-list-group-item>
-                <b-button
-                  block
-                  variant="light"
-                  class="text-muted"
-                  v-b-modal.modal-newChoreo
-                >
-                  <b-icon-plus />
-                  Neue Choreo anlegen
-                </b-button>
+              <b-list-group-item
+                variant="light"
+                class="text-muted"
+                @click="() => $refs.createTeamModal.open()"
+                href="#"
+              >
+                <b-icon-plus-square class="mr-1" />
+                <u>Team hinzufügen</u>
               </b-list-group-item>
             </b-list-group>
 
@@ -268,263 +442,186 @@
       </b-col>
     </b-row>
 
-    <b-modal
-      id="modal-newClub"
-      title="Neuer Verein"
-      centered
-      @close="(event) => event.preventDefault()"
-      no-close-on-backdrop
-      no-close-on-esc
-      @show="resetClubModal"
-      @ok="createClub"
-      hide-header-close
-    >
-      <b-form>
-        <b-form-group label="Vereinsname" :state="newClubNameIsValid">
-          <b-form-input
-            v-model="newClubName"
-            :state="newClubNameIsValid"
-            required
-            placeholder="TSG Salach e.V., Glamorous Cheerleader, ..."
-          />
-        </b-form-group>
-      </b-form>
-      <template #modal-footer="{ ok }">
-        <b-button @click="ok" variant="success" :disabled="!newClubName">
-          Erstellen
-        </b-button>
-      </template>
-    </b-modal>
+    <CreateClubModal
+      ref="createClubModal"
+      :preventClosing="true"
+      @clubCreated="onClubCreated"
+    />
 
-    <b-modal
-      id="modal-newChoreo"
-      title="Neue Choreo"
-      centered
-      @show="resetChoreoModal"
-      @ok="createChoreo"
-    >
-      <b-form>
-        <b-form-group label="Name" :state="newChoreoNameIsValid">
-          <b-form-input
-            v-model="newChoreoName"
-            :state="newChoreoNameIsValid"
-            required
-            autofocus
-            :placeholder="`Landesmeisterschaft, RM ${new Date().getFullYear()}, ...`"
-          />
-        </b-form-group>
-        <b-form-group label="Länge">
-          <b-row>
-            <b-col>
-              <b-form-group
-                description="Achter"
-                :state="newChoreoAchterIsValid"
-              >
-                <b-form-input
-                  type="number"
-                  min="1"
-                  v-model="newChoreoAchter"
-                  :state="newChoreoAchterIsValid"
-                />
-              </b-form-group>
-            </b-col>
-            <b-col>
-              <b-form-group
-                description="Counts (Zusätzliche Counts nach den Achtern)"
-                :state="newChoreoCountIsValid"
-              >
-                <b-form-input
-                  type="number"
-                  min="0"
-                  max="7"
-                  v-model="newChoreoCount"
-                  :state="newChoreoCountIsValid"
-                />
-              </b-form-group>
-            </b-col>
-          </b-row>
-        </b-form-group>
-        <b-form-group label="Team" :state="newChoreoTeamIsValid">
-          <b-form-select
-            v-model="newChoreoTeamId"
-            :state="newChoreoTeamIsValid"
-            required
-            :options="teams.map((t) => ({ value: t.id, text: t.name }))"
-          />
-        </b-form-group>
-        <!-- TODO: Exclude Members -->
-      </b-form>
-      <template #modal-footer="{ ok, cancel }">
-        <b-button
-          @click="ok"
-          variant="success"
-          :disabled="
-            !newChoreoNameIsValid ||
-            !newChoreoCountIsValid ||
-            !newChoreoAchterIsValid ||
-            !newChoreoTeamIsValid
-          "
-        >
-          Erstellen
-        </b-button>
-        <b-button @click="cancel" variant="danger">Abbrechen</b-button>
-      </template>
-    </b-modal>
+    <CreateChoreoModal
+      ref="createChoreoModal"
+      :teams="teams"
+      @addChoreo="addChoreo"
+    />
+
+    <CreateTeamModal ref="createTeamModal" @teamCreated="onTeamCreated" />
+
+    <CreateSeasonModal
+      ref="createSeasonModal"
+      :teams="teams"
+      @seasonTeamCreated="onSeasonTeamCreation"
+    />
   </b-container>
 </template>
 
 <script>
-import ChoreoService from "@/services/ChoreoService";
+import CreateChoreoModal from "@/components/modals/CreateChoreoModal.vue";
+import CreateClubModal from "@/components/modals/CreateClubModal.vue";
+import CreateSeasonModal from "@/components/modals/CreateSeasonModal.vue";
+import CreateTeamModal from "@/components/modals/CreateTeamModal.vue";
 import ClubService from "@/services/ClubService";
 
 export default {
   name: "StartView",
+  components: {
+    CreateChoreoModal,
+    CreateTeamModal,
+    CreateClubModal,
+    CreateSeasonModal,
+  },
   data: () => ({
+    useFolderColors: true,
     club: null,
     teams: [],
     choreos: [],
+    seasons: [],
     teamFilterIds: [],
+    seasonFilterIds: [],
     searchTerm: null,
     minCount: 0,
     maxCount: 400,
     loading: true,
-    newClubName: null,
-    newChoreoName: null,
-    newChoreoAchter: 1,
-    newChoreoCount: 0,
-    newChoreoTeamId: null,
   }),
   mounted() {
     this.load();
   },
   methods: {
     load() {
+      let getClubPromise = null;
+
       if (this.$store.state.clubId) {
-        ClubService.getById(this.$store.state.clubId).then((club) => {
-          if (!club) this.$store.commit("setClubId", null);
-          else {
-            this.club = club;
-            this.teams = club?.Teams || [];
-            this.choreos = this.teams.map((t) => t.Choreos).flat();
-            this.minCount =
-              this.choreos.length > 0
-                ? Math.min(...this.choreos.map((c) => c.counts))
-                : 0;
-            this.maxCount =
-              this.choreos.length > 0
-                ? Math.max(...this.choreos.map((c) => c.counts))
-                : 0;
-            this.loading = false;
-          }
-        });
+        getClubPromise = ClubService.getById(this.$store.state.clubId);
       } else {
-        ClubService.getAll().then((clubList) => {
+        getClubPromise = ClubService.getAll().then((clubList) => {
           if (clubList.length == 0) {
-            this.$bvModal.show("modal-newClub");
+            this.$refs.createClubModal.open();
           } else {
             const club = clubList[0];
-            this.club = club;
-            this.$store.commit("setClubId", club.id);
-            this.teams = club?.Teams || [];
-            this.choreos = this.teams.map((t) => t.Choreos).flat();
-            this.minCount =
-              this.choreos.length > 0
-                ? Math.min(...this.choreos.map((c) => c.counts))
-                : 0;
-            this.maxCount =
-              this.choreos.length > 0
-                ? Math.max(...this.choreos.map((c) => c.counts))
-                : 0;
-            this.loading = false;
+            return club;
           }
         });
       }
+
+      getClubPromise.then((club) => {
+        if (!club) this.$store.commit("setClubId", null);
+        else {
+          this.club = club;
+          this.teams =
+            club?.Teams.map((t) => ({
+              ...t,
+              SeasonTeams: t.SeasonTeams.sort(
+                (a, b) => b.Season.year - a.Season.year
+              ).map((st) => ({
+                ...st,
+                Choreos: st.Choreos.sort(
+                  (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+                ),
+              })),
+            })).sort((a, b) => a.name.localeCompare(b.name)) || [];
+          this.choreos = this.teams
+            .map((t) =>
+              t.SeasonTeams.map((st) =>
+                st.Choreos.map((c) => ({
+                  ...c,
+                  SeasonTeam: { ...st, Team: t },
+                }))
+              )
+            )
+            .flat(Infinity);
+          this.seasons = Array.from(
+            new Set(
+              this.teams
+                .map((t) =>
+                  t.SeasonTeams.sort(
+                    (a, b) => b.Season.year - a.Season.year
+                  ).map((st) => JSON.stringify(st.Season))
+                )
+                .flat(Infinity)
+            )
+          ).map((s) => JSON.parse(s));
+          this.minCount =
+            this.choreos.length > 0
+              ? Math.min(...this.choreos.map((c) => c.counts))
+              : 0;
+          this.maxCount =
+            this.choreos.length > 0
+              ? Math.max(...this.choreos.map((c) => c.counts))
+              : 0;
+          this.loading = false;
+        }
+      });
     },
     addOrRemoveTeamFilter(teamId) {
       if (this.teamFilterIds.includes(teamId))
         this.teamFilterIds.splice(this.teamFilterIds.indexOf(teamId), 1);
       else this.teamFilterIds.push(teamId);
     },
+    addOrRemoveSeasonFilter(seasonId) {
+      if (this.seasonFilterIds.includes(seasonId))
+        this.seasonFilterIds.splice(this.seasonFilterIds.indexOf(seasonId), 1);
+      else this.seasonFilterIds.push(seasonId);
+    },
     resetFilters() {
       this.searchTerm = null;
       this.teamFilterIds = [];
+      this.seasonFilterIds = [];
       this.minCount = Math.min(...this.choreos.map((c) => c.counts));
       this.maxCount = Math.max(...this.choreos.map((c) => c.counts));
     },
-    resetClubModal() {
-      this.newClubName = null;
+    onClubCreated() {
+      this.$refs.createClubModal.close();
+      this.load();
     },
-    createClub() {
-      ClubService.create(this.newClubName).then((club) => {
-        this.$store.commit("setClubId", club.id);
-        this.$bvModal.hide("modal-newClub");
-        this.load();
+    addChoreo(choreo) {
+      const selectedTeam = this.teams.find((t) =>
+        t.SeasonTeams.some((st) => st.id == choreo.SeasonTeamId)
+      );
+      const selectedSeasonTeam = selectedTeam.SeasonTeams.find(
+        (st) => st.id == choreo.SeasonTeamId
+      );
+      selectedSeasonTeam.Choreos.push({
+        ...choreo,
+        SeasonTeamId: selectedSeasonTeam.id,
+        SeasonTeam: {
+          ...selectedSeasonTeam,
+          TeamId: selectedTeam.id,
+          Team: selectedTeam,
+        },
       });
     },
-    resetChoreoModal() {
-      this.newChoreoName = null;
-      this.newChoreoAchter = 1;
-      this.newChoreoCount = 0;
-      this.newChoreoTeamId = this.teams[0]?.id;
+    onTeamCreated(team) {
+      this.$router
+        .push({ name: "Team", params: { teamId: team.id } })
+        .catch(() => {});
     },
-    createChoreo() {
-      const count =
-        parseInt(this.newChoreoAchter) * 8 + parseInt(this.newChoreoCount);
-      ChoreoService.create(
-        this.newChoreoName,
-        count,
-        this.newChoreoTeamId
-      ).then((choreo) => {
-        this.choreos = [...this.choreos, choreo];
-      });
-    },
-  },
-  computed: {
-    filteredChoreos() {
-      let result = this.choreos;
-      if (this.teamFilterIds.length > 0)
-        result = result.filter((r) => this.teamFilterIds.includes(r.TeamId));
-      if (this.searchTerm)
-        result = result.filter(
-          (c) =>
-            c.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-            c.id.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-            this.teams
-              .find((t) => t.id == c.TeamId)
-              ?.name.toLowerCase()
-              .includes(this.searchTerm.toLowerCase())
-        );
-      result = result.filter(
+    choreoCountStringBySeasonTeam(seasonTeam) {
+      const count = seasonTeam.Choreos.filter(
         (c) => c.counts >= this.minCount && c.counts <= this.maxCount
-      );
-      return result;
+      ).length;
+      const choreoDeclination = count == 1 ? "Choreo" : "Choreos";
+      return `${count} ${choreoDeclination}`;
     },
-    newClubNameIsValid() {
-      return this.newClubName != null && this.newClubName.length > 0;
+    seasonCountStringByTeam(team) {
+      const count = team.SeasonTeams.filter(
+        (st) =>
+          this.seasonFilterIds.length == 0 ||
+          this.seasonFilterIds.includes(st.Season.id)
+      ).flat(Infinity).length;
+      const seasonDeclination = count == 1 ? "Season" : "Seasons";
+      return `${count} ${seasonDeclination}`;
     },
-    newChoreoNameIsValid() {
-      return this.newChoreoName != null && this.newChoreoName.length >= 2;
-    },
-    newChoreoCountIsValid() {
-      return (
-        this.newChoreoCount != null &&
-        this.newChoreoCount !== "" &&
-        parseInt(this.newChoreoCount) >= 0 &&
-        parseInt(this.newChoreoCount) <= 7
-      );
-    },
-    newChoreoAchterIsValid() {
-      return (
-        this.newChoreoAchter != null &&
-        this.newChoreoAchter !== "" &&
-        parseInt(this.newChoreoAchter) > 0
-      );
-    },
-    newChoreoTeamIsValid() {
-      return (
-        this.newChoreoTeamId != null &&
-        this.teams.map((t) => t.id).includes(this.newChoreoTeamId)
-      );
+    onSeasonTeamCreation() {
+      this.load();
     },
   },
   watch: {
@@ -545,5 +642,19 @@ h5 {
 
 .filters button.btn:not(:disabled) {
   color: white !important;
+}
+
+.collapse-submenu:hover:has(:not(div):hover) {
+  background-color: #ffffff;
+
+  &.list-group-item-info {
+    background-color: #bee5eb;
+  }
+  &.list-group-item-success {
+    background-color: #c3e6cb;
+  }
+  &.list-group-item-warning {
+    background-color: #ffeeba;
+  }
 }
 </style>

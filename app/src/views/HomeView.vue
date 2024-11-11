@@ -66,9 +66,11 @@
         </b-col>
         <b-col cols="auto">
           <Mat
-            :current-positions="currentPositions"
+            :currentPositions="currentPositions"
             :width="matWidth"
             :height="matWidth"
+            :teamMembers="teamMembers"
+            :interactive="false"
           />
         </b-col>
       </b-row>
@@ -206,16 +208,40 @@ export default {
     count: 0,
     teamMembers: [
       {
+        id: "a",
         name: "Anna Unersetzlich",
         abbreviation: "AU",
         nickname: "Anni",
-        color: "#dd45a8",
+        ChoreoParticipation: {
+          color: "#dd45a8",
+        },
       },
       {
+        id: "m",
         name: "Maxi Supidupi",
         abbreviation: "MS",
         nickname: "Maxi",
-        color: "#00ee8a",
+        ChoreoParticipation: {
+          color: "#00ee8a",
+        },
+      },
+      {
+        id: "t",
+        name: "Theresa Toll",
+        abbreviation: "TT",
+        nickname: "Theresa",
+        ChoreoParticipation: {
+          color: "#0000aa",
+        },
+      },
+      {
+        id: "p",
+        name: "Paulina Flickflack",
+        abbreviation: "PF",
+        nickname: "Pauli",
+        ChoreoParticipation: {
+          color: "#FFFF22",
+        },
       },
     ],
     choreo: {
@@ -226,10 +252,13 @@ export default {
           count: 0,
           Members: [
             {
+              id: "a",
               name: "Anna Unersetzlich",
               abbreviation: "AU",
               nickname: "Anni",
-              color: "#dd45a8",
+              ChoreoParticipation: {
+                color: "#dd45a8",
+              },
             },
           ],
         },
@@ -238,10 +267,13 @@ export default {
           count: 0,
           Members: [
             {
+              id: "m",
               name: "Maxi Supidupi",
               abbreviation: "MS",
               nickname: "Maxi",
-              color: "#00ee8a",
+              ChoreoParticipation: {
+                color: "#00ee8a",
+              },
             },
           ],
         },
@@ -262,10 +294,13 @@ export default {
           count: 8,
           Members: [
             {
+              id: "m",
               name: "Maxi Supidupi",
               abbreviation: "MS",
               nickname: "Maxi",
-              color: "#00ee8a",
+              ChoreoParticipation: {
+                color: "#00ee8a",
+              },
             },
           ],
         },
@@ -274,10 +309,13 @@ export default {
           count: 8,
           Members: [
             {
+              id: "a",
               name: "Anna Unersetzlich",
               abbreviation: "AU",
               nickname: "Anni",
-              color: "#dd45a8",
+              ChoreoParticipation: {
+                color: "#dd45a8",
+              },
             },
           ],
         },
@@ -362,45 +400,57 @@ export default {
     },
     currentPositions: [
       {
-        MemberId: "test",
+        MemberId: "a",
         Member: {
+          id: "a",
           name: "Anna Unersetzlich",
           abbreviation: "AU",
           nickname: "Anni",
-          color: "#dd45a8",
+          ChoreoParticipation: {
+            color: "#dd45a8",
+          },
         },
         x: 40,
         y: 50,
       },
       {
-        MemberId: "test2",
+        MemberId: "m",
         Member: {
+          id: "m",
           name: "Maxi Supidupi",
           abbreviation: "MS",
           nickname: "Maxi",
-          color: "#00ee8a",
+          ChoreoParticipation: {
+            color: "#00ee8a",
+          },
         },
         x: 60,
         y: 50,
       },
       {
-        MemberId: "test3",
+        MemberId: "t",
         Member: {
+          id: "t",
           name: "Theresa Toll",
           abbreviation: "TT",
           nickname: "Theresa",
-          color: "#0000aa",
+          ChoreoParticipation: {
+            color: "#0000aa",
+          },
         },
         x: 45,
         y: 10,
       },
       {
-        MemberId: "test4",
+        MemberId: "p",
         Member: {
+          id: "p",
           name: "Paulina Flickflack",
           abbreviation: "PF",
           nickname: "Pauli",
-          color: "#FFFF22",
+          ChoreoParticipation: {
+            color: "#FFFF22",
+          },
         },
         x: 55,
         y: 10,
@@ -513,7 +563,7 @@ export default {
 
     const matAnimations = [
       {
-        id: "test",
+        id: "a",
         positions: [
           {
             x: 0.08,
@@ -530,7 +580,7 @@ export default {
         ],
       },
       {
-        id: "test2",
+        id: "m",
         positions: [
           {
             x: 0.92,
@@ -547,7 +597,7 @@ export default {
         ],
       },
       {
-        id: "test3",
+        id: "t",
         positions: [
           {
             x: 0.46,
@@ -564,7 +614,7 @@ export default {
         ],
       },
       {
-        id: "test4",
+        id: "p",
         positions: [
           {
             x: 0.54,
@@ -610,7 +660,7 @@ export default {
     ScrollTrigger.create({
       trigger: "#CountOverview",
       start: "top 40%",
-      endTrigger: "#CountSheet",
+      endTrigger: "#sectionC",
       end: "bottom center",
       scrub: -1,
       onUpdate: (self) => {

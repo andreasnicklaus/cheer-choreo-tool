@@ -5,8 +5,8 @@ const { authenticateUser } = require("../services/AuthService");
 const router = Router();
 
 router.post("/", authenticateUser, (req, res, next) => {
-  const { name, nickname, abbreviation, color, teamId } = req.body;
-  MemberService.create(name, nickname, abbreviation, color, teamId, req.UserId)
+  const { name, nickname, abbreviation, seasonTeamId } = req.body;
+  MemberService.create(name, nickname, abbreviation, seasonTeamId, req.UserId)
     .then((member) => {
       res.send(member);
       return next();

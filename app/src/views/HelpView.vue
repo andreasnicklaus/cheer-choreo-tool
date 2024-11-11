@@ -17,6 +17,60 @@
             geteilt werden, um das Einstudieren einfacher zu machen.
           </p>
         </b-list-group-item>
+
+        <b-list-group-item>
+          <h5>Wie kann ich Probleme melden?</h5>
+          <p>
+            Probleme können zur Zeit nur per Mail an
+            <a href="mailto:andreas.nicklaus@gmail.com">
+              andreas.nicklaus@gmail.com
+            </a>
+            gemeldet werden. Ein Kontaktformular ist zwar geplant, aber noch
+            nicht bereit.
+          </p>
+        </b-list-group-item>
+        <b-list-group-item>
+          <h5>Wie viele Teams kann ich verwalten?</h5>
+          <p>
+            Kurz und knapp: So viele du willst! Es ist möglich, beliebig viele
+            Vereine, Teams, Season, Choreos und Teilnehmer anzulegen.
+          </p>
+        </b-list-group-item>
+        <b-list-group-item>
+          <h5>Muss ich für jede Season ein neues Team anlegen?</h5>
+          <p>
+            Nein! Du kannst ganz einfach mit deinem bestehenden Team eine neue
+            Season anfangen und den Kader neu aufstellen. Dabei kannst du sogar
+            Teilnehmer aus anderen Seasons oder sogar anderen Teams in die neue
+            Season mitnehmen.
+          </p>
+        </b-list-group-item>
+        <b-list-group-item>
+          <h5>
+            Ich habe aus Versehen etwas gelöscht. Kann ich das rückgängig
+            machen?
+          </h5>
+          <p>
+            Ja, aber nicht du selber! Du kannst dich jeder Zeit dazu an uns
+            wenden. Dann können folgende Daten wiederhergestellt werden:
+          </p>
+          <ul class="ml-3">
+            <li>Nutzerkonten</li>
+            <li>Vereine</li>
+            <li>Teams</li>
+            <li>Seasons</li>
+            <li>Choreos</li>
+            <li>Kader</li>
+          </ul>
+          <p>
+            Bitte beschreibe in deiner Kontaktaufnahme per Mail an
+            <a href="mailto:andreas.nicklaus@gmail.com">
+              andreas.nicklaus@gmail.com
+            </a>
+            gleich das Datum und die Uhrzeit der Löschung, damit wir dein
+            Problem schnell lösen können.
+          </p>
+        </b-list-group-item>
         <b-list-group-item>
           <h5>Kann ich mit anderen zusammenarbeiten?</h5>
           <p>
@@ -31,17 +85,8 @@
             noch nicht bereit.
           </p>
         </b-list-group-item>
-        <b-list-group-item>
-          <h5>Wie kann ich Probleme melden?</h5>
-          <p>
-            Probleme können zur Zeit nur per Mail an
-            <a href="mailto:andreas.nicklaus@gmail.com">
-              andreas.nicklaus@gmail.com
-            </a>
-            gemeldet werden. Ein Kontaktformular ist zwar geplant, aber noch
-            nicht bereit.
-          </p>
-        </b-list-group-item>
+
+        <!-- DATENSCHUTZ -->
         <b-list-group-item>
           <h5>Datenschutz</h5>
           <p>

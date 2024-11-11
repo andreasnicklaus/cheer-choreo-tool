@@ -1,4 +1,4 @@
-const { Sequelize } = require("sequelize");
+const { Sequelize, DataTypes } = require("sequelize");
 const { dbLogger } = require("../plugins/winston");
 require("dotenv").config();
 
@@ -23,54 +23,110 @@ const Lineup = require("./models/lineup");
 const Hit = require("./models/hit");
 const Position = require("./models/position");
 const User = require("./models/user");
+const Season = require("./models/season");
+const SeasonTeam = require("./models/seasonTeam");
 const seed = require("./seed");
+const ChoreoParticipation = require("./models/choreoParticipation");
 
-Team.hasMany(Member);
-Member.belongsTo(Team);
+Team.hasMany(SeasonTeam, {
+  onDelete: "CASCADE",
+});
+SeasonTeam.belongsTo(Team);
+SeasonTeam.hasMany(Member, {
+  onDelete: "CASCADE",
+});
+Member.belongsTo(SeasonTeam);
 
-Club.hasMany(Team);
+Season.hasMany(SeasonTeam, {
+  onDelete: "CASCADE",
+});
+SeasonTeam.belongsTo(Season);
+
+Club.hasMany(Team, {
+  onDelete: "CASCADE",
+});
 Team.belongsTo(Club);
 
-Team.hasMany(Choreo);
-Choreo.belongsTo(Team);
+SeasonTeam.hasMany(Choreo, {
+  onDelete: "CASCADE",
+});
+Choreo.belongsTo(SeasonTeam);
 
-// TODO: Exclude Members from Choreo
-
-Choreo.hasMany(Lineup);
+Choreo.hasMany(Lineup, {
+  onDelete: "CASCADE",
+});
 Lineup.belongsTo(Choreo);
 
-Choreo.hasMany(Hit);
+Choreo.hasMany(Hit, {
+  onDelete: "CASCADE",
+});
 Hit.belongsTo(Choreo);
+
+Choreo.belongsToMany(Member, {
+  through: ChoreoParticipation,
+  as: "Participants",
+});
+Member.belongsToMany(Choreo, {
+  through: ChoreoParticipation,
+});
 
 Hit.belongsToMany(Member, { through: "HitMemberships" });
 Member.belongsToMany(Hit, { through: "HitMemberships" });
 
-Lineup.hasMany(Position);
+Lineup.hasMany(Position, {
+  onDelete: "CASCADE",
+});
 Position.belongsTo(Lineup);
 
-Member.hasMany(Position);
+Member.hasMany(Position, {
+  onDelete: "CASCADE",
+});
 Position.belongsTo(Member);
 
-User.hasMany(Club);
+User.hasMany(Club, {
+  onDelete: "CASCADE",
+});
 Club.belongsTo(User);
 
-User.hasMany(Team);
+User.hasMany(Team, {
+  onDelete: "CASCADE",
+});
 Team.belongsTo(User);
 
-User.hasMany(Member);
+User.hasMany(SeasonTeam, {
+  onDelete: "CASCADE",
+});
+SeasonTeam.belongsTo(User);
+
+User.hasMany(Member, {
+  onDelete: "CASCADE",
+});
 Member.belongsTo(User);
 
-User.hasMany(Choreo);
+User.hasMany(Choreo, {
+  onDelete: "CASCADE",
+});
 Choreo.belongsTo(User);
 
-User.hasMany(Lineup);
+User.hasMany(Lineup, {
+  onDelete: "CASCADE",
+});
 Lineup.belongsTo(User);
 
-User.hasMany(Position);
+User.hasMany(Position, {
+  onDelete: "CASCADE",
+});
 Position.belongsTo(User);
 
-User.hasMany(Hit);
+User.hasMany(Hit, {
+  onDelete: "CASCADE",
+});
 Hit.belongsTo(User);
+
+User.hasMany(Season, {
+  onDelete: "CASCADE",
+});
+Season.belongsTo(User);
 
 db.sync({
   alter: true,

@@ -1,33 +1,45 @@
 const Team = require("../db/models/team");
 const { logger } = require("../plugins/winston");
+const SeasonTeamService = require("./SeasonTeamService");
+
+const defaultInclude = [
+  {
+    association: "SeasonTeams",
+    include: ["Season", "Members"],
+  },
+];
 
 class TeamService {
   async getAll(UserId) {
     return Team.findAll({
       where: { UserId },
-      include: { all: true },
+      include: defaultInclude,
     });
   }
 
   async findByName(name, UserId) {
     return Team.findAll({
       where: { name, UserId },
-      include: { all: true, nested: true },
+      include: defaultInclude,
     });
   }
 
   async findById(id, UserId) {
     return Team.findOne({
       where: { id, UserId },
-      include: { all: true, nested: true },
+      include: defaultInclude,
     });
   }
 
-  async create(name, ClubId, UserId) {
+  async create(name, ClubId, SeasonId, UserId) {
     logger.debug(
-      `TeamService.create ${JSON.stringify({ name, ClubId, UserId })}`
+      `TeamService.create ${JSON.stringify({ name, ClubId, SeasonId, UserId })}`
     );
-    return Team.create({ name, ClubId, UserId });
+    return Team.create({ name, ClubId, UserId }).then((team) =>
+      SeasonTeamService.create(team.id, SeasonId, UserId).then((seasonTeam) =>
+        this.findById(team.id, UserId)
+      )
+    );
   }
 
   async findOrCreate(name, ClubId, UserId) {

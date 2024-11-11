@@ -70,7 +70,6 @@ export default {
   data: () => ({
     edit: false,
     valueReplica: null,
-    lastKeyEvent: null,
   }),
   watch: {
     value() {

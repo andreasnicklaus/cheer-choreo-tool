@@ -71,7 +71,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   const isPrivate = to.meta.private;
 
-  if (from.name == to.name) return false;
+  if (from.name == to.name && from.params == to.params) return false;
 
   if (!isPrivate) next();
   else if (!store.state.loggedIn)

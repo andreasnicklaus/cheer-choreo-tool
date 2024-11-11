@@ -8,7 +8,7 @@
     />
 
     <b-row align-h="between" class="px-3 mb-4">
-      <b-row align-v="center">
+      <b-col>
         <b-dropdown
           :text="teams.find((t) => t.id == teamId)?.name || 'Wähle ein Team'"
           variant="outline-primary"
@@ -22,218 +22,255 @@
             {{ team.name }}
           </b-dropdown-item>
         </b-dropdown>
-        <p class="text-muted mb-0 ml-2">
-          {{ sortedMembersOfCurrentTeam.length }} Mitglieder
-        </p>
-      </b-row>
-
-      <!-- TODO: Team löschen -> Was passiert mit den Members? (Modal) -->
-
-      <b-button-group>
-        <b-button
-          :variant="presentation == 'table' ? 'primary' : 'outline-primary'"
-          @click="() => (presentation = 'table')"
-        >
-          <b-icon-table />
-        </b-button>
-        <b-button
-          :variant="presentation == 'list' ? 'primary' : 'outline-primary'"
-          @click="() => (presentation = 'list')"
-        >
-          <b-icon-list-ul />
-        </b-button>
-      </b-button-group>
-    </b-row>
-
-    <b-table
-      v-if="presentation == 'table'"
-      :items="sortedMembersOfCurrentTeam.map((m) => ({ ...m, actions: null }))"
-      :fields="tableFields"
-    >
-      <template #cell(color)="data">
-        <b-form-input
-          type="color"
-          :value="data.value"
-          @change="(value) => setColor(data.item.id, value)"
-        />
-      </template>
-      <template #cell(actions)="data">
+      </b-col>
+      <b-col cols="auto">
         <b-button-group>
-          <!-- TODO: Member in anderes Team verschieben (Modal) -->
-          <b-button variant="outline-success" @click="editMember(data.item.id)">
-            <b-icon-pen />
+          <b-button
+            :variant="presentation == 'table' ? 'primary' : 'outline-primary'"
+            @click="() => (presentation = 'table')"
+            v-b-tooltip.hover
+            title="Tabelle"
+          >
+            <b-icon-table />
           </b-button>
           <b-button
-            variant="outline-danger"
-            @click="requestMemberRemoval(data.item.id)"
+            :variant="presentation == 'list' ? 'primary' : 'outline-primary'"
+            @click="() => (presentation = 'list')"
+            v-b-tooltip.hover
+            title="Liste"
           >
-            <b-icon-trash />
+            <b-icon-list-ul />
           </b-button>
         </b-button-group>
-      </template>
-    </b-table>
 
-    <b-list-group v-if="presentation == 'list'">
-      <b-list-group-item
-        v-for="member in sortedMembersOfCurrentTeam"
-        :key="member.id"
-        class="d-flex justify-content-between align-items-center"
-      >
-        <div class="d-flex justify-content-between align-items-center">
-          <div
-            class="mr-2 d-inline-block"
-            :style="{
-              height: '24px',
-              width: '24px',
-              backgroundColor: member.color + '55',
-              borderRadius: '50%',
-              border: 'solid 2px ' + member.color,
-            }"
-          ></div>
-          {{ member.name }} {{ member.nickname ? `(${member.nickname})` : "" }}
-        </div>
-        <div>
-          <b-badge v-if="member.abbreviation" variant="primary" class="mr-4">
-            {{ member.abbreviation }}
-          </b-badge>
-          <b-button-group>
-            <b-button variant="outline-success" @click="editMember(member.id)">
-              <b-icon-pen />
-            </b-button>
-            <b-button
-              variant="outline-danger"
-              @click="requestMemberRemoval(member.id)"
-            >
-              <b-icon-trash />
-            </b-button>
-          </b-button-group>
-        </div>
-      </b-list-group-item>
-    </b-list-group>
-
-    <p
-      class="text-muted text-center"
-      v-if="sortedMembersOfCurrentTeam.length == 0"
-    >
-      Dieses Team hat noch keine Mitglieder...
-    </p>
-
-    <b-button
-      block
-      class="my-3"
-      variant="outline-success"
-      v-b-modal.modal-newMember
-    >
-      Hinzufügen
-      <b-icon-plus />
-    </b-button>
-
-    <b-modal
-      id="modal-newMember"
-      title="Neues Mitglied"
-      centered
-      @show="resetMemberModal"
-      @hidden="resetMemberModal"
-      @ok="saveMember"
-    >
-      <b-form>
-        <b-form-group
-          label="Name:"
-          :state="Boolean(newMemberName) && newMemberName.trim().length > 0"
-          :invalid-feedback="'erforderlich'"
+        <b-dropdown
+          right
+          no-caret
+          variant="light"
+          v-b-tooltip.hover
+          title="Optionen"
+          class="ml-2"
         >
-          <b-form-input
-            v-model="newMemberName"
-            placeholder="Name"
-            autofocus
-            required
-            :state="Boolean(newMemberName) && newMemberName.trim().length > 0"
-          />
-        </b-form-group>
-        <b-form-group label="Spitzname:" :state="true">
-          <b-form-input
-            v-model="newMemberNickname"
-            placeholder="Spitzname"
-            :state="true"
-          />
-        </b-form-group>
-        <b-form-group label="Abkürzung:" :state="abbreviationIsValid">
-          <b-form-input
-            v-model="newMemberAbbreviation"
-            :placeholder="
-              proposedAbbreviation == -1 || !proposedAbbreviation
-                ? 'Abkürzung'
-                : proposedAbbreviation
+          <template #button-content>
+            <b-icon-three-dots-vertical />
+          </template>
+          <b-dropdown-item
+            @click="
+              () =>
+                $refs.deleteSeasonTeamModal.open(
+                  currentTeam.SeasonTeams[seasonTabIndex].id
+                )
             "
-            :state="abbreviationIsValid"
-          />
-        </b-form-group>
-        <b-form-group label="Farbe:">
-          <b-form-input v-model="newMemberColor" type="color" />
-        </b-form-group>
-      </b-form>
-      <template #modal-footer="{ ok, cancel }">
-        <b-button
-          type="submit"
-          @click="ok"
-          variant="success"
-          :disabled="!newMemberName || !abbreviationIsValid"
-        >
-          Speichern
-        </b-button>
-        <b-button @click="cancel" variant="danger"> Abbrechen </b-button>
-      </template>
-    </b-modal>
+            :disabled="!currentTeam"
+          >
+            <b-icon-trash class="mr-2" />
+            Season löschen
+          </b-dropdown-item>
+          <b-dropdown-item
+            @click="() => $refs.deleteTeamModal.open(teamId)"
+            :disabled="!currentTeam"
+            variant="danger"
+          >
+            <b-icon-trash class="mr-2" />
+            Team löschen
+          </b-dropdown-item>
+        </b-dropdown>
+      </b-col>
+    </b-row>
 
-    <b-modal
-      id="modal-deleteMember"
-      title="Teilnehmer löschen?"
-      centered
-      @hidden="resetMemberDeleteModal"
-      @ok="deleteMember"
-    >
-      <p class="m-0">Du kannst das nicht rückgängig machen.</p>
-      <template #modal-footer="{ ok, cancel }">
-        <b-button @click="ok" variant="danger"> Löschen </b-button>
-        <b-button @click="cancel" variant="outline-secondary" autofocus>
-          Abbrechen
+    <b-tabs fill v-model="seasonTabIndex">
+      <b-tab
+        v-for="seasonTeam in currentTeam?.SeasonTeams"
+        :key="seasonTeam.id"
+      >
+        <template #title>
+          {{ seasonTeam?.Season?.name }}
+          <span class="text-muted ml-2">
+            (<b-icon-person /> {{ seasonTeam.Members.length }})
+          </span>
+        </template>
+        <b-table
+          v-if="presentation == 'table'"
+          :items="
+            sortedMembersOfCurrentTeam.map((m) => ({ ...m, actions: null }))
+          "
+          :fields="tableFields"
+        >
+          <template #cell(actions)="data">
+            <b-button-group>
+              <b-button
+                variant="outline-success"
+                @click="editMember(data.item.id)"
+              >
+                <b-icon-pen />
+              </b-button>
+              <b-button
+                variant="outline-danger"
+                @click="requestMemberRemoval(data.item.id)"
+              >
+                <b-icon-trash />
+              </b-button>
+            </b-button-group>
+          </template>
+        </b-table>
+
+        <b-list-group v-if="presentation == 'list'">
+          <b-list-group-item
+            v-for="member in sortedMembersOfCurrentTeam"
+            :key="member.id"
+            class="d-flex justify-content-between align-items-center"
+          >
+            <div class="d-flex justify-content-between align-items-center">
+              {{ member.name }}
+              {{ member.nickname ? `(${member.nickname})` : "" }}
+            </div>
+            <div>
+              <b-badge
+                v-if="member.abbreviation"
+                variant="primary"
+                class="mr-4"
+              >
+                {{ member.abbreviation }}
+              </b-badge>
+              <b-button-group>
+                <b-button
+                  variant="outline-success"
+                  @click="editMember(member.id)"
+                >
+                  <b-icon-pen />
+                </b-button>
+                <b-button
+                  variant="outline-danger"
+                  @click="requestMemberRemoval(member.id)"
+                >
+                  <b-icon-trash />
+                </b-button>
+              </b-button-group>
+            </div>
+          </b-list-group-item>
+        </b-list-group>
+
+        <p
+          class="text-muted text-center"
+          v-if="sortedMembersOfCurrentTeam.length == 0"
+        >
+          Dieses Team hat noch keine Mitglieder...
+        </p>
+
+        <b-button
+          block
+          class="my-3"
+          variant="success"
+          @click="
+            () => {
+              editMemberId = null;
+              openMemberModal();
+            }
+          "
+        >
+          <b-icon-plus />
+          Hinzufügen
+        </b-button>
+
+        <b-button
+          block
+          class="my-3"
+          variant="outline-success"
+          @click="
+            () => {
+              $refs.importMemberModal.open();
+            }
+          "
+        >
+          <b-icon-box-arrow-in-right />
+          Importieren
+        </b-button>
+      </b-tab>
+      <template #tabs-end>
+        <b-button
+          v-b-tooltip.hover
+          title="Neue Season anfangen"
+          variant="success"
+          @click="() => $refs.createSeasonModal.open(currentTeam.id)"
+        >
+          <b-icon-plus />
         </b-button>
       </template>
-    </b-modal>
+    </b-tabs>
+
+    <CreateMemberModal
+      ref="createMemberModal"
+      :currentTeam="currentTeam"
+      :editMemberId="editMemberId"
+      :seasonTabIndex="seasonTabIndex"
+      @memberCreated="onMemberCreation"
+      @memberUpdated="onMemberUpdate"
+    />
+
+    <DeleteMemberModal
+      ref="deleteMemberModal"
+      @memberDeleted="onMemberDeletion"
+    />
+
+    <DeleteTeamModal ref="deleteTeamModal" @teamDeleted="onTeamDeletion" />
+
+    <CreateSeasonModal
+      ref="createSeasonModal"
+      :teams="teams"
+      @seasonTeamCreated="onSeasonTeamCreation"
+    />
+
+    <DeleteSeasonTeamModal
+      ref="deleteSeasonTeamModal"
+      @seasonTeamDeleted="onSeasonTeamDeletion"
+    />
+
+    <ImportMemberModal
+      ref="importMemberModal"
+      :teams="teams"
+      :currentTeamId="teamId"
+      :currentSeasonTeamId="currentTeam?.SeasonTeams[this.seasonTabIndex]?.id"
+      @import="onMemberImport"
+    />
   </b-container>
 </template>
 
 <script>
 import EditableNameHeading from "@/components/EditableNameHeading.vue";
-import ColorService from "@/services/ColorService";
-import MemberService from "@/services/MemberService";
+import CreateMemberModal from "@/components/modals/CreateMemberModal.vue";
+import CreateSeasonModal from "@/components/modals/CreateSeasonModal.vue";
+import DeleteMemberModal from "@/components/modals/DeleteMemberModal.vue";
+import DeleteSeasonTeamModal from "@/components/modals/DeleteSeasonTeamModal.vue";
+import DeleteTeamModal from "@/components/modals/DeleteTeamModal.vue";
+import ImportMemberModal from "@/components/modals/ImportMemberModal.vue";
 import TeamService from "@/services/TeamService";
 
 export default {
   name: "TeamView",
-  components: { EditableNameHeading },
+  components: {
+    EditableNameHeading,
+    CreateMemberModal,
+    DeleteMemberModal,
+    DeleteTeamModal,
+    CreateSeasonModal,
+    DeleteSeasonTeamModal,
+    ImportMemberModal,
+  },
   data: () => ({
     presentation: "table",
     teamId: null,
     teams: [],
+    seasonTabIndex: 0,
     tableFields: [
       { key: "name", sortable: true },
       { key: "nickname", label: "Spitzname", sortable: true },
       { key: "abbreviation", label: "Abkürzung", sortable: true },
-      { key: "color", label: "Farbe" },
-      { key: "actions", label: "" },
+      { key: "actions", label: "", class: "text-right" },
     ],
-    newMemberName: null,
-    newMemberNickname: null,
-    newMemberAbbreviation: null,
-    newMemberColor: null,
     editMemberId: null,
-    deleteMemberId: null,
   }),
   mounted() {
-    TeamService.getAll().then((teams) => {
-      this.teams = teams;
-    });
+    this.load();
   },
   computed: {
     currentTeam() {
@@ -242,47 +279,24 @@ export default {
       return this.teams.find((t) => t.id == this.teamId);
     },
     sortedMembersOfCurrentTeam() {
-      if (!this.currentTeam?.Members) return [];
-      return [...this.currentTeam?.Members].sort((a, b) =>
-        a.name.localeCompare(b.name)
-      );
-    },
-    proposedAbbreviation() {
-      if (!this.newMemberName) return null;
-      let abbreviationFound = false;
-      let result = null;
-      let substringLength = 1;
-      while (!abbreviationFound) {
-        const proposal = this.newMemberName
-          .split(" ")
-          .filter((s) => s)
-          .map((s) => s.substring(0, substringLength).toUpperCase())
-          .join("");
-        if (
-          !this.sortedMembersOfCurrentTeam
-            .map((m) => m.abbreviation)
-            .includes(proposal)
-        ) {
-          result = proposal;
-          abbreviationFound = true;
-        } else if (proposal.length <= substringLength) {
-          result = -1;
-          abbreviationFound = true;
-        } else substringLength++;
-      }
-      return result;
-    },
-    abbreviationIsValid() {
-      return Boolean(
-        this.newMemberAbbreviation
-          ? !this.currentTeam.Members.filter((m) => m.id != this.editMemberId)
-              .map((m) => m.abbreviation)
-              .includes(this.newMemberAbbreviation)
-          : this.proposedAbbreviation != -1
-      );
+      if (!this.currentTeam?.SeasonTeams[this.seasonTabIndex]?.Members)
+        return [];
+      return [
+        ...this.currentTeam?.SeasonTeams[this.seasonTabIndex].Members,
+      ].sort((a, b) => a.name.localeCompare(b.name));
     },
   },
   methods: {
+    load() {
+      return TeamService.getAll().then((teams) => {
+        this.teams = teams.map((t) => ({
+          ...t,
+          SeasonTeams: t.SeasonTeams.sort(
+            (a, b) => b.Season.year - a.Season.year
+          ),
+        }));
+      });
+    },
     onNameEdit(nameNew) {
       this.currentTeam.name = nameNew;
       TeamService.setName(this.teamId, nameNew).then((team) => {
@@ -291,81 +305,58 @@ export default {
         this.teams = teamCopy;
       });
     },
-    setColor(memberId, value) {
-      this.currentTeam.Members.find((m) => m.id == memberId).color = value;
-      MemberService.setColor(memberId, value);
+    onMemberCreation(member) {
+      this.currentTeam.SeasonTeams[this.seasonTabIndex].Members.push(member);
+      this.editMemberId = null;
     },
-    resetMemberModal() {
-      if (!this.editMemberId) {
-        this.newMemberName = null;
-        this.newMemberNickname = null;
-        this.newMemberAbbreviation = null;
-        this.newMemberColor = ColorService.getRandom(
-          this.currentTeam.Members.map((m) => m.color)
-        );
-      } else {
-        const memberToUpdate = this.currentTeam.Members.find(
-          (m) => m.id == this.editMemberId
-        );
-        this.newMemberName = memberToUpdate.name;
-        this.newMemberNickname = memberToUpdate.nickname;
-        this.newMemberAbbreviation = memberToUpdate.abbreviation;
-        this.newMemberColor = memberToUpdate.color;
-      }
-    },
-    saveMember() {
-      if (!this.editMemberId)
-        MemberService.create(
-          this.newMemberName?.trim(),
-          this.newMemberNickname?.trim(),
-          this.newMemberAbbreviation?.trim() || this.proposedAbbreviation,
-          this.newMemberColor ||
-            ColorService.getRandom(
-              this.currentTeam.Members.map((m) => m.color)
-            ),
-          this.teamId
-        ).then((member) => {
-          this.currentTeam.Members.push(member);
-        });
-      else {
-        const data = {
-          name: this.newMemberName.trim(),
-          nickname: this.newMemberNickname?.trim(),
-          abbreviation:
-            this.newMemberAbbreviation?.trim() || this.proposedAbbreviation,
-          color:
-            this.newMemberColor ||
-            ColorService.getRandom(
-              this.currentTeam.Members.map((m) => m.color)
-            ),
-        };
-        MemberService.update(this.editMemberId, data).then((member) => {
-          const membersCopy = this.currentTeam.Members.filter(
-            (m) => m.id != this.editMemberId
-          );
-          membersCopy.push(member);
-          this.currentTeam.Members = membersCopy;
-        });
-      }
+    onMemberUpdate(member) {
+      const membersCopy = this.currentTeam.SeasonTeams[
+        this.seasonTabIndex
+      ].Members.filter((m) => m.id != this.editMemberId);
+      membersCopy.push(member);
+      this.currentTeam.SeasonTeams[this.seasonTabIndex].Members = membersCopy;
+      this.editMemberId = null;
     },
     requestMemberRemoval(id) {
-      this.deleteMemberId = id;
-      this.$bvModal.show("modal-deleteMember");
+      this.$refs.deleteMemberModal.open(id);
     },
-    resetMemberDeleteModal() {
-      this.deleteMemberId = null;
-    },
-    deleteMember() {
-      MemberService.remove(this.deleteMemberId).then(() => {
-        this.currentTeam.Members = this.currentTeam.Members.filter(
-          (m) => m.id != this.deleteMemberId
+    onMemberDeletion(memberId) {
+      this.currentTeam.SeasonTeams[this.seasonTabIndex].Members =
+        this.currentTeam.SeasonTeams[this.seasonTabIndex].Members.filter(
+          (m) => m.id != memberId
         );
-        this.deleteMemberId = null;
-      });
     },
     editMember(id) {
       this.editMemberId = id;
-      this.$bvModal.show("modal-newMember");
+      this.openMemberModal();
+    },
+    openMemberModal() {
+      this.$nextTick(() => {
+        this.$refs.createMemberModal.open();
+      });
+    },
+    onTeamDeletion(teamId) {
+      this.teams = this.teams.filter((t) => t.id != teamId);
+      if (this.teams.length > 0)
+        this.$router
+          .push({
+            name: "Team",
+            params: { teamId: this.teams[0].id },
+          })
+          .catch(() => {});
+      else this.$router.push({ name: "Start" }).catch(() => {});
+    },
+    onSeasonTeamCreation() {
+      this.load();
+    },
+    onSeasonTeamDeletion() {
+      this.load();
+    },
+    onMemberImport(newMembers) {
+      console.table(newMembers);
+      this.currentTeam?.SeasonTeams[this.seasonTabIndex]?.Members.push(
+        ...newMembers
+      );
     },
   },
   watch: {

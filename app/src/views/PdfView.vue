@@ -29,7 +29,7 @@
               {{ choreo?.name }}
             </b-col>
             <b-col cols="auto" v-if="includeTeamName">
-              {{ choreo?.Team?.name }}
+              {{ choreo?.SeasonTeam.Team?.name }}
             </b-col>
             <b-col cols="auto" v-if="includeDate">
               {{ new Date(date).toLocaleDateString("de-de") }}
@@ -83,15 +83,27 @@
         </div>
       </section>
     </vue-html2pdf>
-    <b-card
-      class="text-left mb-4"
-      title="Countsheet zusammenstellen"
-      :sub-title="choreo ? `Ausgewählte Choreo: ${choreo.name}` : 'Choreo lädt'"
-    >
+
+    <b-card class="text-left mb-4" title="Countsheet zusammenstellen">
+      <b-card-sub-title v-if="choreo">
+        <p class="m-0">Ausgewählte Choreo: {{ choreo.name }}</p>
+        <p class="m-0">
+          Team: {{ choreo.SeasonTeam.Team.name }} ({{
+            choreo.SeasonTeam.Season.name
+          }})
+        </p>
+      </b-card-sub-title>
+      <b-card-sub-title v-else :style="{ height: '38.38px' }">
+        Choreo lädt
+      </b-card-sub-title>
       <b-card-body>
         <b-row>
           <b-col cols="6">
-            <b-form-group description="Das Datum auf das Countsheet schreiben">
+            <b-form-group
+              description="Das Datum auf das Countsheet schreiben"
+              :state="dateIsValid"
+              :invalid-feedback="dateStateFeedback"
+            >
               <b-form-checkbox v-model="includeDate">
                 Datum anzeigen
               </b-form-checkbox>
@@ -99,6 +111,7 @@
                 type="date"
                 v-model="date"
                 :disabled="!includeDate"
+                :state="dateIsValid"
               />
             </b-form-group>
             <b-form-group
@@ -122,46 +135,28 @@
                 Teilnehmer-Namen anzeigen
               </b-form-checkbox>
             </b-form-group>
-            <b-alert
-              variant="warning"
-              :show="
-                choreo &&
-                includeMemberNames &&
-                (includedMembers.length <= 0 ||
-                  includedMembers.length >= teamMembers.length)
-              "
-            >
-              {{
-                includedMembers.length == teamMembers.length
-                  ? "Wenn du alle Teilnehmer auswählst, werden die Namen nicht auf das Countsheet geschrieben, um Platz zu sparen."
-                  : "Wenn du keinen Teilnehmer auswählst, können auch keine Namen geschrieben werden."
-              }}
-            </b-alert>
-            <b-alert
-              variant="danger"
-              :show="choreo && includedMembers.length == 0"
-            >
-              Du musst mindestens einen Teilnehmer auswählen.
-            </b-alert>
           </b-col>
           <b-col cols="6" class="mb-3">
             <b-skeleton-wrapper
-              :loading="!choreo || !choreo.Team || !choreo.Team.Members"
+              :loading="
+                !choreo || !choreo.SeasonTeam.Team || !choreo.Participants
+              "
             >
               <template #loading>
                 <b-skeleton v-for="(_, i) in Array(3)" :key="i"></b-skeleton>
               </template>
-              <b-form-group description="Für wen ist das Countsheet?">
+              <b-form-group
+                description="Für wen ist das Countsheet?"
+                :state="includedMembersIsValid"
+                :invalid-feedback="includedMembersStateFeedback"
+              >
                 <b-button-group class="mb-2">
                   <b-button
                     variant="light"
                     @click="
                       () => (includedMembers = teamMembers.map((m) => m.id))
                     "
-                    :disabled="
-                      !includeMemberNames ||
-                      includedMembers.length == teamMembers.length
-                    "
+                    :disabled="includedMembers.length == teamMembers.length"
                   >
                     <b-icon-check-all />
                     Alle auswählen
@@ -169,16 +164,13 @@
                   <b-button
                     variant="light"
                     @click="() => (includedMembers = [])"
-                    :disabled="
-                      !includeMemberNames || includedMembers.length == 0
-                    "
+                    :disabled="includedMembers.length == 0"
                   >
                     <b-icon-slash />
                     Keine auswählen
                   </b-button>
                 </b-button-group>
                 <b-checkbox-group
-                  :disabled="!includeMemberNames"
                   v-model="includedMembers"
                   :style="{ columnCount: 2 }"
                   stacked
@@ -191,6 +183,19 @@
                 />
               </b-form-group>
             </b-skeleton-wrapper>
+          </b-col>
+          <b-col>
+            <b-alert
+              variant="warning"
+              :show="
+                choreo &&
+                includeMemberNames &&
+                includedMembers.length >= teamMembers.length
+              "
+            >
+              Wenn du alle Teilnehmer auswählst, werden die Namen nicht auf das
+              Countsheet geschrieben, um Platz zu sparen.
+            </b-alert>
           </b-col>
         </b-row>
       </b-card-body>
@@ -212,27 +217,13 @@
       </template>
     </b-card>
 
-    <b-modal
-      id="loading-modal"
-      centered
-      no-close-on-backdrop
-      no-close-on-esc
-      hide-footer
-      hide-header
-      @close="(event) => event.preventDefault()"
-    >
-      <b-row align-h="center">
-        <b-col cols="auto" class="text-center my-5">
-          <b-spinner />
-          <p class="m-0">PDF wird generiert</p>
-        </b-col>
-      </b-row>
-    </b-modal>
+    <LoadingModal ref="loadingModal" description="PDF wird generiert" />
   </b-container>
 </template>
 
 <script>
 import CountSheet from "@/components/CountSheet.vue";
+import LoadingModal from "@/components/modals/LoadingModal.vue";
 import ChoreoService from "@/services/ChoreoService";
 import VueHtml2pdf from "vue-html2pdf";
 
@@ -252,7 +243,7 @@ const slogans = [
 
 export default {
   name: "PdfView",
-  components: { CountSheet, VueHtml2pdf },
+  components: { CountSheet, VueHtml2pdf, LoadingModal },
   data: () => ({
     choreoId: null,
     choreo: null,
@@ -270,14 +261,12 @@ export default {
   }),
   methods: {
     loadChoreo() {
-      console.time("choreoLoad");
       ChoreoService.getById(this.choreoId).then((choreo) => {
-        console.timeEnd("choreoLoad");
         this.choreo = choreo;
-        this.teamMembers = choreo.Team.Members.sort((a, b) =>
+        this.teamMembers = choreo.Participants.sort((a, b) =>
           a.name.localeCompare(b.name)
         );
-        this.includedMembers = choreo.Team.Members.map((m) => m.id);
+        this.includedMembers = choreo.Participants.map((m) => m.id);
         this.calculateHitSplits().then(() => {
           if (this.sloganInterval) clearInterval(this.sloganInterval);
           this.loading = false;
@@ -287,11 +276,11 @@ export default {
     generatePdf() {
       this.sloganIndex = Math.floor(Math.random() * slogans.length);
 
-      this.$bvModal.show("loading-modal");
+      this.$refs.loadingModal.open();
 
       setTimeout(() => {
         this.calculateHitSplits().then(() => {
-          this.$bvModal.hide("loading-modal");
+          this.$refs.loadingModal.close();
           clearInterval(this.sloganInterval);
           this.$refs.html2pdf.generatePdf();
         });
@@ -356,6 +345,26 @@ export default {
   computed: {
     slogan() {
       return slogans[this.sloganIndex];
+    },
+    dateIsValid() {
+      return (
+        !this.includeDate ||
+        (Boolean(this.date) && Boolean(new Date(this.date)))
+      );
+    },
+    dateStateFeedback() {
+      if (!this.includeDate) return null;
+      if (Boolean(this.date) && Boolean(new Date(this.date)))
+        return "Erforderlich";
+      return null;
+    },
+    includedMembersIsValid() {
+      return this.includedMembers.length > 0;
+    },
+    includedMembersStateFeedback() {
+      if (this.includedMembers.length <= 0)
+        return "Min. 1 Teilnehmer erforderlich";
+      return null;
     },
   },
 };

@@ -8,35 +8,62 @@
 
     <b-collapse id="nav-collapse" is-nav>
       <b-navbar-nav>
-        <b-nav-item :to="{ name: 'Start' }" :disabled="!$store.state.loggedIn"
-          >Start</b-nav-item
-        >
+        <b-nav-item :to="{ name: 'Start' }" :disabled="!$store.state.loggedIn">
+          Start
+        </b-nav-item>
 
         <b-nav-item-dropdown text="Choreos" :disabled="!$store.state.loggedIn">
+          <template #button-content>
+            <span :class="{ 'router-link-active': $route.name == 'Choreo' }">
+              Choreos
+            </span>
+          </template>
           <b-dropdown-group
-            v-for="team in teams"
+            v-for="team in teams.filter((t) =>
+              t.SeasonTeams.some((st) => st.Choreos.length > 0)
+            )"
             :key="team.id"
             :header="team.name"
           >
-            <b-dropdown-item
-              v-for="choreo in choreos.filter((c) => c.TeamId == team.id)"
-              :key="choreo.id"
-              :to="{ name: 'Choreo', params: { choreoId: choreo.id } }"
+            <b-dropdown-text
+              v-for="seasonTeam in team.SeasonTeams.filter(
+                (st) => st.Choreos.length > 0
+              )"
+              :key="seasonTeam.id"
+              v-b-toggle="`collapse-${seasonTeam.id}`"
+              class="dropdown-submenu"
             >
-              {{ choreo.name }}
-            </b-dropdown-item>
-            <b-dropdown-divider></b-dropdown-divider>
+              <span class="d-flex justify-content-between align-items-center">
+                {{ seasonTeam.Season.name }}
+                <b-icon-caret-down-fill class="ml-auto" variant="secondary" />
+              </span>
+              <b-collapse :id="`collapse-${seasonTeam.id}`">
+                <b-dropdown-item
+                  v-for="choreo in seasonTeam.Choreos"
+                  :key="choreo.id"
+                  :to="{ name: 'Choreo', params: { choreoId: choreo.id } }"
+                >
+                  {{ choreo.name }}
+                </b-dropdown-item>
+              </b-collapse>
+            </b-dropdown-text>
+            <b-dropdown-divider />
           </b-dropdown-group>
           <b-dropdown-item
             variant="success"
-            v-b-modal.modal-newChoreo-header
+            @click="() => $refs.createChoreoModal.open()"
             v-if="$store.state.clubId"
           >
             <b-icon-plus />
             Neue Choreo
           </b-dropdown-item>
         </b-nav-item-dropdown>
-        <b-nav-item-dropdown text="Teams" :disabled="!$store.state.loggedIn">
+        <b-nav-item-dropdown :disabled="!$store.state.loggedIn">
+          <template #button-content>
+            <span :class="{ 'router-link-active': $route.name == 'Team' }">
+              Teams
+            </span>
+          </template>
           <b-dropdown-item
             v-for="team in teams"
             :key="team.id"
@@ -47,7 +74,7 @@
           <b-dropdown-divider v-if="teams && teams.length > 0" />
           <b-dropdown-item
             variant="success"
-            v-b-modal.modal-newTeam-header
+            @click="() => $refs.createTeamModal.open()"
             v-if="$store.state.clubId"
           >
             <b-icon-plus />
@@ -95,165 +122,50 @@
                 {{ club.name }}
               </b-dropdown-item>
             </b-dropdown-group>
-            <b-dropdown-item variant="success" v-b-modal.modal-newClub-header>
+            <b-dropdown-item
+              variant="success"
+              @click="() => $refs.createClubModal.open()"
+            >
               <b-icon-plus />
               Neuer Verein
             </b-dropdown-item>
             <b-dropdown-divider />
             <b-dropdown-item variant="danger" @click="logout">
-              <b-icon-door-open class="mr-2" />Ausloggen
+              <b-icon-door-open class="mr-2" />
+              Ausloggen
             </b-dropdown-item>
           </b-dropdown>
         </b-nav-item>
       </b-navbar-nav>
     </b-collapse>
 
-    <b-modal
-      id="modal-newClub-header"
-      title="Neuer Verein"
-      centered
-      @show="resetClubModal"
-      @ok="createAndSelectClub"
-    >
-      <b-form>
-        <b-form-group label="Vereinsname" :state="newClubNameIsValid">
-          <b-form-input
-            v-model="newClubName"
-            :state="newClubNameIsValid"
-            required
-            placeholder="TSG Salach e.V., Glamorous Cheerleader, ..."
-          />
-        </b-form-group>
-      </b-form>
-      <template #modal-footer="{ ok, cancel }">
-        <b-button @click="ok" variant="success" :disabled="!newClubName">
-          Erstellen
-        </b-button>
-        <b-button @click="cancel" variant="danger">Abbrechen</b-button>
-      </template></b-modal
-    >
+    <CreateClubModal ref="createClubModal" @clubCreated="reloadPage" />
 
-    <b-modal
-      id="modal-newChoreo-header"
-      title="Neue Choreo"
-      centered
-      @show="resetChoreoModal"
-      @ok="createChoreo"
-    >
-      <b-form>
-        <b-form-group label="Name" :state="newChoreoNameIsValid">
-          <b-form-input
-            v-model="newChoreoName"
-            :state="newChoreoNameIsValid"
-            required
-            autofocus
-            :placeholder="`Landesmeisterschaft, RM ${new Date().getFullYear()}, ...`"
-          />
-        </b-form-group>
-        <b-form-group label="Länge">
-          <b-row>
-            <b-col>
-              <b-form-group
-                description="Achter"
-                :state="newChoreoAchterIsValid"
-              >
-                <b-form-input
-                  type="number"
-                  min="1"
-                  v-model="newChoreoAchter"
-                  :state="newChoreoAchterIsValid"
-                />
-              </b-form-group>
-            </b-col>
-            <b-col>
-              <b-form-group
-                description="Counts (Zusätzliche Counts nach den Achtern)"
-                :state="newChoreoCountIsValid"
-              >
-                <b-form-input
-                  type="number"
-                  min="0"
-                  max="7"
-                  v-model="newChoreoCount"
-                  :state="newChoreoCountIsValid"
-                />
-              </b-form-group>
-            </b-col>
-          </b-row>
-        </b-form-group>
-        <b-form-group label="Team" :state="newChoreoTeamIsValid">
-          <b-form-select
-            v-model="newChoreoTeamId"
-            :state="newChoreoTeamIsValid"
-            required
-            :options="teams.map((t) => ({ value: t.id, text: t.name }))"
-          />
-        </b-form-group>
-        <!-- TODO: Exclude Members -->
-      </b-form>
-      <template #modal-footer="{ ok, cancel }">
-        <b-button
-          @click="ok"
-          variant="success"
-          :disabled="
-            !newChoreoNameIsValid ||
-            !newChoreoCountIsValid ||
-            !newChoreoAchterIsValid ||
-            !newChoreoTeamIsValid
-          "
-        >
-          Erstellen
-        </b-button>
-        <b-button @click="cancel" variant="danger">Abbrechen</b-button>
-      </template>
-    </b-modal>
+    <CreateChoreoModal
+      ref="createChoreoModal"
+      :teams="teams"
+      @addChoreo="reloadPage"
+    />
 
-    <b-modal
-      id="modal-newTeam-header"
-      title="Neues Team"
-      centered
-      @show="resetTeamModal"
-      @ok="createTeam"
-    >
-      <b-form>
-        <b-form-group label="Name" :state="newTeamNameIsValid">
-          <b-form-input
-            v-model="newTeamName"
-            :state="newTeamNameIsValid"
-            required
-            placeholder="Glamorous Cheerleader, Glamorous Ruby, ..."
-          />
-        </b-form-group>
-      </b-form>
-      <template #modal-footer="{ ok, cancel }">
-        <b-button @click="ok" variant="success" :disabled="!newTeamNameIsValid">
-          Erstellen
-        </b-button>
-        <b-button @click="cancel" variant="danger">Abbrechen</b-button>
-      </template>
-    </b-modal>
+    <CreateTeamModal ref="createTeamModal" @teamCreated="onTeamCreated" />
   </b-navbar>
 </template>
 
 <script>
 import AuthService from "@/services/AuthService";
-import ChoreoService from "@/services/ChoreoService";
 import ClubService from "@/services/ClubService";
-import TeamService from "@/services/TeamService";
+import CreateChoreoModal from "./modals/CreateChoreoModal.vue";
+import CreateClubModal from "./modals/CreateClubModal.vue";
+import CreateTeamModal from "./modals/CreateTeamModal.vue";
 
 export default {
   name: "HeadNav",
+  components: { CreateChoreoModal, CreateClubModal, CreateTeamModal },
   data: () => ({
     teams: [],
     choreos: [],
     clubs: [],
     user: null,
-    newClubName: null,
-    newChoreoName: null,
-    newChoreoAchter: 1,
-    newChoreoCount: 0,
-    newChoreoTeamId: null,
-    newTeamName: null,
   }),
   props: {
     onlineStatus: {
@@ -270,7 +182,9 @@ export default {
         if (this.$store.state.clubId) {
           ClubService.getById(this.$store.state.clubId).then((club) => {
             this.teams = club?.Teams || [];
-            this.choreos = this.teams.map((t) => t.Choreos).flat();
+            this.choreos = this.teams
+              .map((t) => t.SeasonTeams.map((st) => st.Choreos))
+              .flat(Infinity);
           });
         }
 
@@ -291,76 +205,12 @@ export default {
     selectCurrentClub(id) {
       this.$store.commit("setClubId", id);
     },
-    resetClubModal() {
-      this.newClubName = null;
+    onTeamCreated(team) {
+      this.teams.push(team);
+      this.$router.push({ name: "Team", params: { teamId: team.id } });
     },
-    createAndSelectClub() {
-      ClubService.create(this.newClubName).then((club) => {
-        this.$store.commit("setClubId", club.id);
-        this.$bvModal.hide("modal-newClub");
-        this.load();
-      });
-    },
-    resetChoreoModal() {
-      this.newChoreoName = null;
-      this.newChoreoAchter = 1;
-      this.newChoreoCount = 0;
-      this.newChoreoTeamId = this.teams[0]?.id;
-    },
-    createChoreo() {
-      const count =
-        parseInt(this.newChoreoAchter) * 8 + parseInt(this.newChoreoCount);
-      ChoreoService.create(
-        this.newChoreoName,
-        count,
-        this.newChoreoTeamId
-      ).then((choreo) => {
-        this.choreos.push(choreo);
-        this.$router.push({ name: "Choreo", params: { choreoId: choreo.id } });
-      });
-    },
-    resetTeamModal() {
-      this.newTeamName = null;
-    },
-    createTeam() {
-      TeamService.create(this.newTeamName, this.$store.state.clubId).then(
-        (team) => {
-          this.teams.push(team);
-          this.$router.push({ name: "Team", params: { teamId: team.id } });
-        }
-      );
-    },
-  },
-  computed: {
-    newClubNameIsValid() {
-      return this.newClubName != null && this.newClubName.length > 0;
-    },
-    newChoreoNameIsValid() {
-      return this.newChoreoName != null && this.newChoreoName.length >= 2;
-    },
-    newChoreoCountIsValid() {
-      return (
-        this.newChoreoCount != null &&
-        this.newChoreoCount !== "" &&
-        parseInt(this.newChoreoCount) >= 0 &&
-        parseInt(this.newChoreoCount) <= 7
-      );
-    },
-    newChoreoAchterIsValid() {
-      return (
-        this.newChoreoAchter != null &&
-        this.newChoreoAchter !== "" &&
-        parseInt(this.newChoreoAchter) > 0
-      );
-    },
-    newChoreoTeamIsValid() {
-      return (
-        this.newChoreoTeamId != null &&
-        this.teams.map((t) => t.id).includes(this.newChoreoTeamId)
-      );
-    },
-    newTeamNameIsValid() {
-      return this.newTeamName != null && this.newTeamName.length > 2;
+    reloadPage() {
+      location.reload();
     },
   },
   watch: {
@@ -377,6 +227,14 @@ export default {
   },
   mounted() {
     this.load();
+    setInterval(this.load, 60_000);
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.dropdown-submenu:hover:not(:has(div.collapse:hover)) {
+  color: #16181b;
+  background-color: #e9ecef;
+}
+</style>

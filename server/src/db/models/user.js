@@ -42,6 +42,11 @@ const User = db.define(
       },
     },
     paranoid: true,
+    afterDestroy: function (instance, options) {
+      instance
+        .getClubs()
+        .then((clubList) => clubList.forEach((club) => club.destroy()));
+    },
   }
 );
 
