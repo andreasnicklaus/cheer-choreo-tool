@@ -3,7 +3,7 @@
     <HeadNav :onlineStatus="online" />
     <router-view :style="{ minHeight: 'calc(100vh - 116px)' }" />
     <footer
-      class="d-flex justify-content-center py-2"
+      class="d-flex justify-content-center align-items-center py-2"
       :style="{
         backgroundColor: '#0069d9',
         color: 'white',
@@ -16,6 +16,12 @@
         src="https://uptime.betterstack.com/status-badges/v3/monitor/1l68q.svg"
         alt=""
       />
+      <span
+        class="mx-2"
+        :style="{ fontFamily: 'monospace', fontSize: '0.8em' }"
+      >
+        Version: {{ applicationVersion }}
+      </span>
     </footer>
     <ConsentWindow />
   </div>
@@ -30,6 +36,7 @@ export default {
   components: { HeadNav, ConsentWindow },
   data: () => ({
     online: null,
+    applicationVersion: process.env.VUE_APP_VERSION,
   }),
   mounted() {
     ax.get("/")
