@@ -1,63 +1,9 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import HomeView from "../views/HomeView.vue";
 import store from "@/store";
+import routes from "./routes";
 
 Vue.use(VueRouter);
-
-const routes = [
-  {
-    path: "/",
-    name: "Home",
-    component: HomeView,
-  },
-  {
-    path: "/login",
-    name: "Login",
-    component: () => import("../views/LoginView.vue"),
-  },
-  {
-    path: "/start",
-    name: "Start",
-    component: () => import("../views/StartView.vue"),
-    meta: { private: true },
-  },
-  {
-    path: "/account",
-    name: "Account",
-    component: () => import("../views/AccountView.vue"),
-    meta: { private: true },
-  },
-  {
-    path: "/choreo/:choreoId",
-    name: "Choreo",
-    component: () => import("../views/EditView.vue"),
-    meta: { private: true },
-  },
-  {
-    path: "/team/:teamId",
-    name: "Team",
-    component: () => import("../views/TeamView.vue"),
-    meta: { private: true },
-  },
-  {
-    path: "/video/:choreoId",
-    name: "Video",
-    component: () => import("../views/VideoView.vue"),
-    meta: { private: true },
-  },
-  {
-    path: "/pdf/:choreoId",
-    name: "PDF",
-    component: () => import("../views/PdfView.vue"),
-    meta: { private: true },
-  },
-  {
-    path: "/hilfe",
-    name: "Help",
-    component: () => import("../views/HelpView.vue"),
-  },
-];
 
 const router = new VueRouter({
   mode: "history",

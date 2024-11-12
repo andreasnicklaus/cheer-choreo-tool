@@ -1,2 +1,4 @@
+sitemap: https://cheer.andreasnicklaus.de/sitemap.xml
+
 User-agent: *
 Disallow:
