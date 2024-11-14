@@ -5,39 +5,36 @@ const path = require("path");
 
 process.env.VUE_APP_VERSION = require("./package.json").version;
 
-console.log("Bratwurst", path.join(__dirname, "dist"));
-
 const productionPlugins = [
   new PrerenderSpaPlugin({
     staticDir: path.join(__dirname, "dist"),
     routes: routes.filter((r) => r.meta?.prerender).map((r) => r.path),
-    // minify: {
-    //   collapseBooleanAttributes: true,
-    //   collapseWhitespace: true,
-    //   decodeEntities: true,
-    //   keepClosingSlash: true,
-    //   sortAttributes: true,
-    // },
+    minify: {
+      collapseBooleanAttributes: true,
+      collapseWhitespace: true,
+      decodeEntities: true,
+      keepClosingSlash: true,
+      sortAttributes: true,
+    },
     renderer: new PrerenderSpaPlugin.PuppeteerRenderer({
       inject: {},
       renderAfterElementExists: "[data-view]",
-      headless: false,
     }),
-    // postProcess: (renderedRoute) => {
-    //   renderedRoute.html = renderedRoute.html
-    //     .replace(
-    //       /<link href="(.*?)" rel="stylesheet">/g,
-    //       `<link rel="preload" href="$1" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="$1"></noscript>`
-    //     )
-    //     .replace(
-    //       /<link rel="stylesheet" (.*?)>/g,
-    //       `<link rel="preload" $1 as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" $1></noscript>`
-    //     )
-    //     .replace(/<script (((?!defer).)*?)>/g, "<script $1 defer>")
-    //     .replace('id="app"', 'id="app" data-server-rendered="true"');
+    postProcess: (renderedRoute) => {
+      renderedRoute.html = renderedRoute.html
+        .replace(
+          /<link href="(.*?)" rel="stylesheet">/g,
+          `<link rel="preload" href="$1" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="$1"></noscript>`
+        )
+        .replace(
+          /<link rel="stylesheet" (.*?)>/g,
+          `<link rel="preload" $1 as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" $1></noscript>`
+        )
+        .replace(/<script (((?!defer).)*?)>/g, "<script $1 defer>")
+        .replace('id="app"', 'id="app" data-server-rendered="true"');
 
-    //   return renderedRoute;
-    // },
+      return renderedRoute;
+    },
   }),
 ];
 
@@ -53,7 +50,6 @@ module.exports = defineConfig({
       splitChunks: {
         chunks: "all",
         maxInitialRequests: Infinity,
-        // minSize: 120000,
         maxSize: 500_000,
       },
     };
