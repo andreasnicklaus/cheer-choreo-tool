@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="vue-app">
     <HeadNav :onlineStatus="online" />
     <router-view :style="{ minHeight: 'calc(100vh - 116px)' }" />
     <footer
@@ -61,20 +61,21 @@ export default {
     };
   },
   mounted() {
-    ax.get("/")
-      .then(() => {
-        setTimeout(() => (this.online = true), 1000);
-      })
-      .catch(() => {
-        this.online = false;
-        this.$bvToast.toast(
-          "Die Server sind zurzeit offline. Bitte versuche es später nochmal!",
-          {
-            title: "Offline",
-            variant: "danger",
-          }
-        );
-      });
+    if (!window.__PRERENDER_INJECTED)
+      ax.get("/")
+        .then(() => {
+          setTimeout(() => (this.online = true), 1000);
+        })
+        .catch(() => {
+          this.online = false;
+          this.$bvToast.toast(
+            "Die Server sind zurzeit offline. Bitte versuche es später nochmal!",
+            {
+              title: "Offline",
+              variant: "danger",
+            }
+          );
+        });
   },
 };
 </script>

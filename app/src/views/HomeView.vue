@@ -1,5 +1,5 @@
 <template>
-  <b-container id="homeView">
+  <b-container id="homeView" data-view>
     <section
       id="sectionA"
       :style="{

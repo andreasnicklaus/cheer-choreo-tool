@@ -1,5 +1,5 @@
 <template>
-  <b-container id="editView" @keydown="onKeyPress">
+  <b-container id="editView" @keydown="onKeyPress" data-view>
     <EditableNameHeading
       name="Choreo"
       :value="choreo?.name"

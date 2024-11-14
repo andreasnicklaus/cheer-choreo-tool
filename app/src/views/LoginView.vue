@@ -1,5 +1,5 @@
 <template>
-  <b-container id="loginView">
+  <b-container id="loginView" data-view>
     <b-tabs fill v-model="tabIndex">
       <b-tab title="Anmelden" class="mt-4">
         <b-form @submit="onLoginSubmit" @reset="onReset">

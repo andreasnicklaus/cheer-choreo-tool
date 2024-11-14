@@ -12,7 +12,7 @@
     v-show="showConsentWindow"
   >
     <p>
-      🍪 Diese Website verwendet Matomo, um den Datenverkehr zu analysieren und
+      🍪 Diese Webseite verwendet Matomo, um den Datenverkehr zu analysieren und
       uns dabei zu helfen, Ihr Nutzererlebnis zu verbessern. Wir verarbeiten
       Ihre IP-Adresse sowie Browser- und Geräteinformationen, und Cookies werden
       in Ihrem Browser gespeichert. Diese Daten werden nur von uns und unserer

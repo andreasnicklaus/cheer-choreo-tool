@@ -2,6 +2,7 @@
   <b-container
     id="helpView"
     :style="{ minHeight: '90vh', placeItems: 'center', display: 'grid' }"
+    data-view
   >
     <b-card
       title="Der Choreo-Editor"

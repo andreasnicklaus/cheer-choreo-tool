@@ -1,5 +1,5 @@
 <template>
-  <b-container class="text-center">
+  <b-container class="text-center" data-view>
     <vue-html2pdf
       ref="html2pdf"
       :show-layout="false"

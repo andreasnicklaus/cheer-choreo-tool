@@ -18,11 +18,12 @@ Vue.use(VueMeta, {
   refreshOnceOnNavigation: true,
 });
 
-Vue.use(vueMatomo, {
-  host: "https://matomo.andreasnicklaus.de",
-  siteId: 3,
-  router,
-});
+if (!window.__PRERENDER_INJECTED)
+  Vue.use(vueMatomo, {
+    host: "https://matomo.andreasnicklaus.de",
+    siteId: 3,
+    router,
+  });
 
 Vue.use(VueCookie);
 
@@ -33,7 +34,9 @@ new Vue({
   render: (h) => h(App),
 }).$mount("#app");
 
-// Disable Matomo Tracking Before Consent
-window._paq.push(["requireConsent"]);
-// Initialize Matomo Tracking
-window._paq.push(["trackPageView"]);
+if (!window.__PRERENDER_INJECTED) {
+  // Disable Matomo Tracking Before Consent
+  window._paq.push(["requireConsent"]);
+  // Initialize Matomo Tracking
+  window._paq.push(["trackPageView"]);
+}

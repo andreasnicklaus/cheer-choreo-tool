@@ -3,11 +3,13 @@ module.exports = [
     path: "/",
     name: "Home",
     component: () => import("../views/HomeView.vue"),
+    meta: { prerender: true },
   },
   {
     path: "/login",
     name: "Login",
     component: () => import("../views/LoginView.vue"),
+    meta: { prerender: true },
   },
   {
     path: "/start",
@@ -49,5 +51,6 @@ module.exports = [
     path: "/hilfe",
     name: "Help",
     component: () => import("../views/HelpView.vue"),
+    meta: { prerender: true },
   },
 ];

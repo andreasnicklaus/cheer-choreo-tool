@@ -1,5 +1,5 @@
 <template>
-  <b-container>
+  <b-container data-view>
     <VideoExport />
   </b-container>
 </template>

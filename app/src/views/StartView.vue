@@ -1,5 +1,5 @@
 <template>
-  <b-container id="startView">
+  <b-container id="startView" data-view>
     <b-row>
       <!-- FILTER -->
       <b-col cols="12" lg="3">

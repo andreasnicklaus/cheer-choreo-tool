@@ -1,5 +1,5 @@
 <template>
-  <b-container id="AccountView" class="w-75">
+  <b-container id="AccountView" class="w-75" data-view>
     <b-row align-v="center" align-h="between">
       <b-col cols="auto">
         <b-icon-person-circle class="h1" />

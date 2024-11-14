@@ -1,5 +1,5 @@
 <template>
-  <b-container id="teamView">
+  <b-container id="teamView" data-view>
     <EditableNameHeading
       name="Team"
       :value="teams?.find((t) => t.id == teamId)?.name"

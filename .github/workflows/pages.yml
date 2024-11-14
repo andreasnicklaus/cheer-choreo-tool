@@ -24,7 +24,7 @@ jobs:
           cache-dependency-path: "**/package.json"
 
       - name: Install dependencies
-        run: NODE_ENV=production npm ci
+        run: NODE_ENV=production npm i
 
       - name: Build app
         run: npm run build
