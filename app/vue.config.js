@@ -65,4 +65,8 @@ module.exports = defineConfig({
       },
     },
   },
+  pwa: {
+    name: "Choreo Editor",
+    themeColor: "#007bff",
+  },
 });
