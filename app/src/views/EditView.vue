@@ -756,5 +756,17 @@ export default {
       });
     },
   },
+  metaInfo() {
+    return {
+      title: this.choreo?.name || "Lädt Choreo",
+      meta: [
+        {
+          name: "description",
+          content:
+            "Bearbeite deine Choreo und erstelle Aufstellungen und Countsheets.",
+        },
+      ],
+    };
+  },
 };
 </script>

@@ -251,5 +251,15 @@ export default {
       else return null;
     },
   },
+  metaInfo: {
+    title: "Einloggen",
+    meta: [
+      {
+        name: "description",
+        content:
+          "Logge dich ein und nutze den alle Funktionen des Choreo Editors!",
+      },
+    ],
+  },
 };
 </script>

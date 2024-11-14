@@ -38,6 +38,28 @@ export default {
     online: null,
     applicationVersion: process.env.VUE_APP_VERSION,
   }),
+  metaInfo() {
+    return {
+      titleTemplate: "%s - Choreo Editor",
+      meta: [
+        {
+          name: "keywords",
+          content:
+            "Choreo, Choreographie, Cheer, Cheerleading, Tanz, Planer, Editor",
+        },
+        {
+          name: "author",
+          content: "Andreas Nicklaus",
+        },
+      ],
+      link: [
+        {
+          rel: "canonical",
+          href: "https://cheer.andreasnicklaus.de" + this.$route.path,
+        },
+      ],
+    };
+  },
   mounted() {
     ax.get("/")
       .then(() => {

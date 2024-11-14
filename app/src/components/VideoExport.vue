@@ -552,5 +552,16 @@ export default {
       return slogans[Math.floor(this.count / 10) % slogans.length];
     },
   },
+  metaInfo() {
+    return {
+      title: (this.choreo?.name || "Lädt Choreo") + " - Video",
+      meta: [
+        {
+          name: "description",
+          content: "Exportiere die Aufstellungen deiner Choreo als Video!",
+        },
+      ],
+    };
+  },
 };
 </script>

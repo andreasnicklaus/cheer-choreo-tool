@@ -111,5 +111,15 @@ export default {
         });
     },
   },
+  metaInfo: {
+    title: "Konto",
+    meta: [
+      {
+        name: "description",
+        content:
+          "Verwalte dein Konto und nehme Aktionen wie Passwortänderungen vor.",
+      },
+    ],
+  },
 };
 </script>

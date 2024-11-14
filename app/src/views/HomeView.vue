@@ -460,6 +460,17 @@ export default {
     ],
     selectedTeamMembers: [],
   }),
+  metaInfo: {
+    title: "Choreo Editor",
+    titleTemplate: null,
+    meta: [
+      {
+        name: "description",
+        content:
+          "Dein Planungs-Tool für Choreographien im Tanz und Cheerleading",
+      },
+    ],
+  },
   computed: {
     hitsForCurrentCount() {
       return this.choreo.Hits.filter((h) => h.count == this.count).map((h) => ({

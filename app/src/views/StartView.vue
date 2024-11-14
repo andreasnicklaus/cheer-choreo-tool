@@ -631,6 +631,16 @@ export default {
       },
     },
   },
+  metaInfo: {
+    title: "Start",
+    meta: [
+      {
+        name: "description",
+        content:
+          "Dein Planungs-Tool für Choreographien im Tanz und Cheerleading",
+      },
+    ],
+  },
 };
 </script>
 

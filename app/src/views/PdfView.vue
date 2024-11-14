@@ -367,5 +367,16 @@ export default {
       return null;
     },
   },
+  metaInfo() {
+    return {
+      title: (this.choreo?.name || "Lädt Choreo") + " - PDF",
+      meta: [
+        {
+          name: "description",
+          content: "Exportiere das Countsheet deiner Choreo als PDF!",
+        },
+      ],
+    };
+  },
 };
 </script>

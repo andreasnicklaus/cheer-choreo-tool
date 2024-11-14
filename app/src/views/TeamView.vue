@@ -367,5 +367,16 @@ export default {
       immediate: true,
     },
   },
+  metaInfo() {
+    return {
+      title: this.currentTeam?.name || "Team",
+      meta: [
+        {
+          name: "description",
+          content: "Bearbeite deine Teams und deren Mitglieder!",
+        },
+      ],
+    };
+  },
 };
 </script>

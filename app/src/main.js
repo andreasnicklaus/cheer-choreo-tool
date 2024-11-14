@@ -10,8 +10,13 @@ import store from "./store";
 import vuetify from "./plugins/vuetify";
 import vueMatomo from "vue-matomo";
 import VueCookie from "vue-cookie";
+import VueMeta from "vue-meta";
 
 Vue.config.productionTip = false;
+
+Vue.use(VueMeta, {
+  refreshOnceOnNavigation: true,
+});
 
 Vue.use(vueMatomo, {
   host: "https://matomo.andreasnicklaus.de",
