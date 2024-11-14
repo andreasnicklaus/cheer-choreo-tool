@@ -1,5 +1,5 @@
 <template>
-  <div id="vue-app">
+  <div id="app">
     <HeadNav :onlineStatus="online" />
     <router-view :style="{ minHeight: 'calc(100vh - 116px)' }" />
     <footer
