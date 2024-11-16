@@ -36,8 +36,8 @@ class TeamService {
       `TeamService.create ${JSON.stringify({ name, ClubId, SeasonId, UserId })}`
     );
     return Team.create({ name, ClubId, UserId }).then((team) =>
-      SeasonTeamService.create(team.id, SeasonId, UserId).then((seasonTeam) =>
-        this.findById(team.id, UserId)
+      SeasonTeamService.create(team.id, SeasonId, [], UserId).then(
+        (seasonTeam) => this.findById(team.id, UserId)
       )
     );
   }
