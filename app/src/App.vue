@@ -11,8 +11,7 @@
     >
       <b-row align-h="center" class="w-75 footer-link">
         <b-col cols="auto">
-          <b-button variant="link" :to="{ name: 'Start' }">
-            Startseite </b-button
+          <b-button variant="link" :to="{ name: 'Home' }"> Startseite </b-button
           ><br />
           <b-button variant="link" :to="{ name: 'Help' }"> Hilfe </b-button
           ><br />
