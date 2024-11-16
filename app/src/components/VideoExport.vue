@@ -560,6 +560,14 @@ export default {
           name: "description",
           content: "Exportiere die Aufstellungen deiner Choreo als Video!",
         },
+        {
+          name: "twitter:description",
+          content: "Exportiere die Aufstellungen deiner Choreo als Video!",
+        },
+        {
+          name: "og:description",
+          content: "Exportiere die Aufstellungen deiner Choreo als Video!",
+        },
       ],
     };
   },

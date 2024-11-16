@@ -53,4 +53,16 @@ module.exports = [
     component: () => import("../views/HelpView.vue"),
     meta: { prerender: true },
   },
+  {
+    path: "/impressum",
+    name: "Impressum",
+    component: () => import("../views/ImpressumView.vue"),
+    meta: { prerender: true },
+  },
+  {
+    path: "/datenschutz",
+    name: "Datenschutz",
+    component: () => import("../views/DatenschutzView.vue"),
+    meta: { prerender: true },
+  },
 ];

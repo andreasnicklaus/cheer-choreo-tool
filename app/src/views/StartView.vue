@@ -2,7 +2,7 @@
   <b-container id="startView" data-view>
     <b-row>
       <!-- FILTER -->
-      <b-col cols="12" lg="3">
+      <b-col cols="12" lg="3" v-if="teams.length > 0">
         <b-card class="filters">
           <b-card-title
             class="d-flex justify-content-between align-items-center"
@@ -366,8 +366,8 @@
                 </b-collapse>
               </b-list-group-item>
               <b-list-group-item
-                variant="light"
-                class="text-muted"
+                :variant="teams.length == 0 ? 'success' : 'light'"
+                :class="{ 'text-muted': teams.length > 0 }"
                 @click="() => $refs.createTeamModal.open()"
                 href="#"
               >
@@ -377,65 +377,14 @@
             </b-list-group>
 
             <b-card
-              v-if="teams.length == 0 || choreos.length == 0"
+              v-if="teams.length == 0"
               title="Hier kannst du noch nichts finden..."
               class="mt-5"
             >
               <b-card-text>
-                Du hast aktuell hier nichts zu sehen, weil du
-                <b>{{ teams.length }}</b> Teams und
-                <b>{{ choreos.length }}</b> Choreos angelegt hast.
+                Du hast aktuell hier nichts zu sehen, weil du noch keine Teams
+                angelegt hast.
               </b-card-text>
-              <b-card-body>
-                <b-row>
-                  <b-col cols="6">
-                    <b-card title="Team anlegen">
-                      <b-card-text class="m-0">
-                        Wähle im Menü oben den Reiter
-                      </b-card-text>
-                      <b-dropdown
-                        variant="light"
-                        text="Teams"
-                        disabled
-                      ></b-dropdown>
-                      <b-card-text class="mb-2">
-                        aus und klicke auf
-                      </b-card-text>
-                      <span
-                        :style="{
-                          color: 'var(--success)',
-                        }"
-                      >
-                        <b-icon-plus />
-                        Neues Team
-                      </span>
-                    </b-card>
-                  </b-col>
-                  <b-col cols="6">
-                    <b-card title="Choreo anlegen">
-                      <b-card-text class="m-0">
-                        Wähle im Menü oben den Reiter
-                      </b-card-text>
-                      <b-dropdown
-                        variant="light"
-                        text="Choreos"
-                        disabled
-                      ></b-dropdown>
-                      <b-card-text class="mb-2">
-                        aus und klicke auf
-                      </b-card-text>
-                      <span
-                        :style="{
-                          color: 'var(--success)',
-                        }"
-                      >
-                        <b-icon-plus />
-                        Neue Choreo
-                      </span>
-                    </b-card>
-                  </b-col>
-                </b-row>
-              </b-card-body>
             </b-card>
           </template>
         </b-skeleton-wrapper>
@@ -483,7 +432,6 @@ export default {
     useFolderColors: true,
     club: null,
     teams: [],
-    choreos: [],
     seasons: [],
     teamFilterIds: [],
     seasonFilterIds: [],
@@ -528,16 +476,6 @@ export default {
                 ),
               })),
             })).sort((a, b) => a.name.localeCompare(b.name)) || [];
-          this.choreos = this.teams
-            .map((t) =>
-              t.SeasonTeams.map((st) =>
-                st.Choreos.map((c) => ({
-                  ...c,
-                  SeasonTeam: { ...st, Team: t },
-                }))
-              )
-            )
-            .flat(Infinity);
           this.seasons = Array.from(
             new Set(
               this.teams
@@ -624,6 +562,20 @@ export default {
       this.load();
     },
   },
+  computed: {
+    choreos() {
+      return this.teams
+        .map((t) =>
+          t.SeasonTeams.map((st) =>
+            st.Choreos.map((c) => ({
+              ...c,
+              SeasonTeam: { ...st, Team: t },
+            }))
+          )
+        )
+        .flat(Infinity);
+    },
+  },
   watch: {
     "$store.state.clubId": {
       handler() {
@@ -636,6 +588,16 @@ export default {
     meta: [
       {
         name: "description",
+        content:
+          "Dein Planungs-Tool für Choreographien im Tanz und Cheerleading",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Dein Planungs-Tool für Choreographien im Tanz und Cheerleading",
+      },
+      {
+        name: "og:description",
         content:
           "Dein Planungs-Tool für Choreographien im Tanz und Cheerleading",
       },

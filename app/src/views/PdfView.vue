@@ -375,6 +375,14 @@ export default {
           name: "description",
           content: "Exportiere das Countsheet deiner Choreo als PDF!",
         },
+        {
+          name: "twitter:description",
+          content: "Exportiere das Countsheet deiner Choreo als PDF!",
+        },
+        {
+          name: "og:description",
+          content: "Exportiere das Countsheet deiner Choreo als PDF!",
+        },
       ],
     };
   },

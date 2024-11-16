@@ -256,6 +256,9 @@
             </b-button-group>
           </template>
         </b-table>
+        <p class="text-muted" v-if="teamMembers.length == 0">
+          Bisher steht noch kein Teammitglied auf der Matte.
+        </p>
 
         <hr class="my-5" />
 
@@ -298,6 +301,9 @@
             </b-button-group>
           </template>
         </b-table>
+        <p class="text-muted" v-if="notParticipatingMembers.length == 0">
+          Alle Mitglieder deines Teams stehen schon auf der Matte.
+        </p>
       </b-tab>
     </b-tabs>
 
@@ -762,6 +768,16 @@ export default {
       meta: [
         {
           name: "description",
+          content:
+            "Bearbeite deine Choreo und erstelle Aufstellungen und Countsheets.",
+        },
+        {
+          name: "twitter:description",
+          content:
+            "Bearbeite deine Choreo und erstelle Aufstellungen und Countsheets.",
+        },
+        {
+          name: "og:description",
           content:
             "Bearbeite deine Choreo und erstelle Aufstellungen und Countsheets.",
         },

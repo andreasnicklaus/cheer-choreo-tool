@@ -119,6 +119,16 @@ export default {
         content:
           "Verwalte dein Konto und nehme Aktionen wie Passwortänderungen vor.",
       },
+      {
+        name: "twitter:description",
+        content:
+          "Verwalte dein Konto und nehme Aktionen wie Passwortänderungen vor.",
+      },
+      {
+        name: "og:description",
+        content:
+          "Verwalte dein Konto und nehme Aktionen wie Passwortänderungen vor.",
+      },
     ],
   },
 };

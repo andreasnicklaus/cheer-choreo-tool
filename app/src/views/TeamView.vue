@@ -375,6 +375,14 @@ export default {
           name: "description",
           content: "Bearbeite deine Teams und deren Mitglieder!",
         },
+        {
+          name: "twitter:description",
+          content: "Bearbeite deine Teams und deren Mitglieder!",
+        },
+        {
+          name: "og:description",
+          content: "Bearbeite deine Teams und deren Mitglieder!",
+        },
       ],
     };
   },

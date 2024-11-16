@@ -8,8 +8,16 @@
 
     <b-collapse id="nav-collapse" is-nav>
       <b-navbar-nav>
-        <b-nav-item :to="{ name: 'Start' }" :disabled="!$store.state.loggedIn">
+        <b-nav-item
+          :to="{ name: 'Home' }"
+          v-bind:active-class="
+            $route.name == 'Home' ? 'router-link-active' : ''
+          "
+        >
           Start
+        </b-nav-item>
+        <b-nav-item :to="{ name: 'Start' }" :disabled="!$store.state.loggedIn">
+          Übersicht
         </b-nav-item>
 
         <b-nav-item-dropdown text="Choreos" :disabled="!$store.state.loggedIn">

@@ -469,6 +469,16 @@ export default {
         content:
           "Dein Planungs-Tool für Choreographien im Tanz und Cheerleading",
       },
+      {
+        name: "twitter:description",
+        content:
+          "Dein Planungs-Tool für Choreographien im Tanz und Cheerleading",
+      },
+      {
+        name: "og:description",
+        content:
+          "Dein Planungs-Tool für Choreographien im Tanz und Cheerleading",
+      },
     ],
   },
   computed: {

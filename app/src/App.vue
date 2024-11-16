@@ -3,25 +3,45 @@
     <HeadNav :onlineStatus="online" />
     <router-view :style="{ minHeight: 'calc(100vh - 116px)' }" />
     <footer
-      class="d-flex justify-content-center align-items-center py-2"
+      class="p-2 px-5 d-flex flex-column align-items-center"
       :style="{
         backgroundColor: '#0069d9',
         color: 'white',
       }"
     >
-      <span class="mr-2">
-        Andreas Nicklaus @{{ new Date().getFullYear() }}
-      </span>
-      <img
-        src="https://uptime.betterstack.com/status-badges/v3/monitor/1l68q.svg"
-        alt=""
-      />
-      <span
-        class="mx-2"
-        :style="{ fontFamily: 'monospace', fontSize: '0.8em' }"
-      >
-        Version: {{ applicationVersion }}
-      </span>
+      <b-row align-h="center" class="w-75 footer-link">
+        <b-col cols="auto">
+          <b-button variant="link" :to="{ name: 'Start' }">
+            Startseite </b-button
+          ><br />
+          <b-button variant="link" :to="{ name: 'Help' }"> Hilfe </b-button
+          ><br />
+          <b-button variant="link" :to="{ name: 'Impressum' }">
+            Impressum </b-button
+          ><br />
+          <b-button variant="link" :to="{ name: 'Datenschutz' }">
+            Datenschutz </b-button
+          ><br />
+        </b-col>
+      </b-row>
+      <hr :style="{ width: '100%', borderColor: '000225' }" class="my-3" />
+      <b-row align-h="center">
+        <b-col cols="auto">
+          <span class="mr-2">
+            Andreas Nicklaus @{{ new Date().getFullYear() }}
+          </span>
+          <img
+            src="https://uptime.betterstack.com/status-badges/v3/monitor/1l68q.svg"
+            alt=""
+          />
+          <span
+            class="mx-2"
+            :style="{ fontFamily: 'monospace', fontSize: '0.8em' }"
+          >
+            Version: {{ applicationVersion }}
+          </span>
+        </b-col>
+      </b-row>
     </footer>
     <ConsentWindow />
   </div>
@@ -50,6 +70,18 @@ export default {
         {
           name: "author",
           content: "Andreas Nicklaus",
+        },
+        {
+          property: "og:url",
+          content: "https://cheer.andreasnicklaus.de" + this.$route.path,
+        },
+        {
+          property: "twitter:url",
+          content: "https://cheer.andreasnicklaus.de" + this.$route.path,
+        },
+        {
+          property: "twitter:domain",
+          content: "https://cheer.andreasnicklaus.de",
         },
       ],
       link: [
@@ -95,5 +127,16 @@ export default {
 
 .router-link-active {
   color: #2c3e50 !important;
+}
+
+footer a {
+  color: white !important;
+  text-decoration: underline;
+  &.router-link-active:not(:hover) {
+    color: white !important;
+  }
+  &:hover {
+    color: #000225 !important;
+  }
 }
 </style>
