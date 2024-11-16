@@ -1,5 +1,5 @@
 <template>
-  <b-container>
+  <b-container id="impressumView" data-view>
     <h1 class="mb-4">Impressum</h1>
     <h2>Angaben gemäß § 5 TMG</h2>
     <p>

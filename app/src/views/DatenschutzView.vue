@@ -1,5 +1,5 @@
 <template>
-  <b-container>
+  <b-container id="helpView" data-view>
     <h1 class="mb-4">Datenschutzerklärung</h1>
     <h2>1. Allgemeine Hinweise</h2>
     <p>
