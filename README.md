@@ -4,8 +4,8 @@
 # Choreo Editor
 ![License](https://img.shields.io/github/license/andreasnicklaus/cheer-choreo-tool?style=for-the-badge)
 ![Status](https://img.shields.io/badge/In_Development-ffb02e?style=for-the-badge&logo=checkmarx&logoColor=white&label=status)
-![Version](https://img.shields.io/github/package-json/v/andreasnicklaus/cheer-choreo-tool?filename=server%2Fpackage.json&style=for-the-badge
-)
+![Server Version](https://img.shields.io/github/package-json/v/andreasnicklaus/cheer-choreo-tool?filename=server%2Fpackage.json&style=for-the-badge&label=Server%20Version)
+![Website Version](https://img.shields.io/github/package-json/v/andreasnicklaus/cheer-choreo-tool?filename=app%2Fpackage.json&style=for-the-badge&label=Website%20Version)
 ![Website status](https://img.shields.io/website?url=https%3A%2F%2Fcheer.andreasnicklaus.de&style=for-the-badge)
 ![Backend status](https://img.shields.io/website?url=https%3A%2F%2Fapi.cheer.andreasnicklaus.de&style=for-the-badge&label=Backend)
 ![Last commit](https://img.shields.io/github/last-commit/andreasnicklaus/cheer-choreo-tool?style=for-the-badge)
