@@ -38,10 +38,9 @@
           >
             <b-card-body class="px-3 pb-0 pt-2">
               <b-card-text>
-                <p
-                  v-html="markdownToHtml(faq.markdown)"
-                  class="mb-0 faq-answer"
-                ></p>
+                <vue-markdown :breaks="false" class="mb-0">
+                  {{ faq.markdown.replace(/  +/g, " ") }}
+                </vue-markdown>
               </b-card-text>
             </b-card-body>
           </b-collapse>
@@ -64,7 +63,7 @@
 </template>
 
 <script>
-import { marked } from "marked";
+import VueMarkdown from "vue-markdown-v2";
 
 export default {
   name: "HelpView",
@@ -128,7 +127,7 @@ export default {
             title: "Für wen ist der Editor gedacht?",
             markdown: `Der Editor ist für Trainerinnen und Trainer für Cheerleading-Teams.
             Die Endprodukte (Countsheets, Bilder und Videos) sollen an die Teams
-            geteilt werden, um das Einstudieren einfacher zu machen.`,
+            geteilt werden, um das Lernen der Choreos einfacher zu machen.`,
           },
         ],
       },
@@ -155,13 +154,16 @@ export default {
             vorgesehen, dass Trainerinnen und Trainer eines Vereins sich
             **einen Zugang teilen**. Damit soll es dann auch einfach sein,
             Teilnehmer zwischen Teams zu verschieben.
-            
+
             Ein mögliches "Extrazugang anlegen" für ein Konto ist geplant.`,
           },
         ],
       },
     ].sort((a, b) => a.order - b.order),
   }),
+  components: {
+    VueMarkdown,
+  },
   computed: {
     filteredFaqCategories() {
       if (!this.searchTerm) return this.faqCategories;
@@ -176,11 +178,6 @@ export default {
           ),
         }))
         .filter((fc) => fc.faqs.length > 0);
-    },
-  },
-  methods: {
-    markdownToHtml(markdown) {
-      return marked(markdown.replace(/  +/g, " "));
     },
   },
   metaInfo: {
@@ -205,9 +202,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.faq-answer > ul {
-  margin: 16px !important;
-}
-</style>
