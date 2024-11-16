@@ -99,9 +99,17 @@ export default {
           "Die Datenschutzerklärung des Choreo Planer. Angaben und Informationen zur Kontaktaufnahme und Haftung bzgl. der Nutzung des Choreo Planers.",
       },
       {
-        name: "og:description",
+        property: "og:description",
         content:
           "Die Datenschutzerklärung des Choreo Planer. Angaben und Informationen zur Kontaktaufnahme und Haftung bzgl. der Nutzung des Choreo Planers.",
+      },
+      {
+        property: "og:title",
+        content: "Datenschutz - Choreo Editor",
+      },
+      {
+        name: "twitter:title",
+        content: "Datenschutz - Choreo Editor",
       },
     ],
   },

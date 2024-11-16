@@ -597,9 +597,17 @@ export default {
           "Dein Planungs-Tool für Choreographien im Tanz und Cheerleading",
       },
       {
-        name: "og:description",
+        property: "og:description",
         content:
           "Dein Planungs-Tool für Choreographien im Tanz und Cheerleading",
+      },
+      {
+        property: "og:title",
+        content: "Start - Choreo Editor",
+      },
+      {
+        name: "twitter:title",
+        content: "Start - Choreo Editor",
       },
     ],
   },

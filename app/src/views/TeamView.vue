@@ -380,8 +380,16 @@ export default {
           content: "Bearbeite deine Teams und deren Mitglieder!",
         },
         {
-          name: "og:description",
+          property: "og:description",
           content: "Bearbeite deine Teams und deren Mitglieder!",
+        },
+        {
+          property: "og:title",
+          content: (this.currentTeam?.name || "Team") + " - Choreo Editor",
+        },
+        {
+          name: "twitter:title",
+          content: (this.currentTeam?.name || "Team") + " - Choreo Editor",
         },
       ],
     };

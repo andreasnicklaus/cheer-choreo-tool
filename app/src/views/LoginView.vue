@@ -265,9 +265,17 @@ export default {
           "Logge dich ein und nutze den alle Funktionen des Choreo Editors!",
       },
       {
-        name: "og:description",
+        property: "og:description",
         content:
           "Logge dich ein und nutze den alle Funktionen des Choreo Editors!",
+      },
+      {
+        property: "og:title",
+        content: "Einloggen - Choreo Editor",
+      },
+      {
+        name: "twitter:title",
+        content: "Einloggen - Choreo Editor",
       },
     ],
   },

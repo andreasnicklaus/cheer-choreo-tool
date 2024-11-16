@@ -565,8 +565,22 @@ export default {
           content: "Exportiere die Aufstellungen deiner Choreo als Video!",
         },
         {
-          name: "og:description",
+          property: "og:description",
           content: "Exportiere die Aufstellungen deiner Choreo als Video!",
+        },
+        {
+          property: "og:title",
+          content:
+            (this.choreo?.name || "Lädt Choreo") +
+            " - Video" +
+            " - Choreo Editor",
+        },
+        {
+          name: "twitter:title",
+          content:
+            (this.choreo?.name || "Lädt Choreo") +
+            " - Video" +
+            " - Choreo Editor",
         },
       ],
     };

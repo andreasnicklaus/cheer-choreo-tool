@@ -777,9 +777,17 @@ export default {
             "Bearbeite deine Choreo und erstelle Aufstellungen und Countsheets.",
         },
         {
-          name: "og:description",
+          property: "og:description",
           content:
             "Bearbeite deine Choreo und erstelle Aufstellungen und Countsheets.",
+        },
+        {
+          property: "og:title",
+          content: (this.choreo?.name || "Lädt Choreo") + " - Choreo Editor",
+        },
+        {
+          name: "twitter:title",
+          content: (this.choreo?.name || "Lädt Choreo") + " - Choreo Editor",
         },
       ],
     };

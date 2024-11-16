@@ -194,9 +194,13 @@ export default {
           "Erhalte Infos über den Choreo Editor und Antworten auf deine Fragen und Probleme. In unserem FAQ beantworten alle häufig gestellten Fragen über die Nutzung und Funktionen des Editors.",
       },
       {
-        name: "og:description",
+        property: "og:description",
         content:
           "Erhalte Infos über den Choreo Editor und Antworten auf deine Fragen und Probleme. In unserem FAQ beantworten alle häufig gestellten Fragen über die Nutzung und Funktionen des Editors.",
+      },
+      {
+        property: "og:title",
+        content: "Hilfe - Choreo Editor",
       },
     ],
   },

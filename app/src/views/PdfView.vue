@@ -380,8 +380,22 @@ export default {
           content: "Exportiere das Countsheet deiner Choreo als PDF!",
         },
         {
-          name: "og:description",
+          property: "og:description",
           content: "Exportiere das Countsheet deiner Choreo als PDF!",
+        },
+        {
+          property: "og:title",
+          content:
+            (this.choreo?.name || "Lädt Choreo") +
+            " - PDF" +
+            " - Choreo Editor",
+        },
+        {
+          name: "twitter:title",
+          content:
+            (this.choreo?.name || "Lädt Choreo") +
+            " - PDF" +
+            " - Choreo Editor",
         },
       ],
     };

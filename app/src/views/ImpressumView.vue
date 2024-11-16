@@ -86,9 +86,17 @@ export default {
           "Das Impressum des Choreo Planer. Angaben und Informationen zur Kontaktaufnahme und Haftung bzgl. der Nutzung des Choreo Planers.",
       },
       {
-        name: "og:description",
+        property: "og:description",
         content:
           "Das Impressum des Choreo Planer. Angaben und Informationen zur Kontaktaufnahme und Haftung bzgl. der Nutzung des Choreo Planers.",
+      },
+      {
+        property: "og:title",
+        content: "Impressum - Choreo Editor",
+      },
+      {
+        name: "twitter:title",
+        content: "Impressum - Choreo Editor",
       },
     ],
   },

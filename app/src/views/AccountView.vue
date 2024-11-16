@@ -125,9 +125,17 @@ export default {
           "Verwalte dein Konto und nehme Aktionen wie Passwortänderungen vor.",
       },
       {
-        name: "og:description",
+        property: "og:description",
         content:
           "Verwalte dein Konto und nehme Aktionen wie Passwortänderungen vor.",
+      },
+      {
+        property: "og:title",
+        content: "Konto - Choreo Editor",
+      },
+      {
+        name: "twitter:title",
+        content: "Konto - Choreo Editor",
       },
     ],
   },
