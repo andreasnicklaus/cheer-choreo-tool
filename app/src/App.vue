@@ -3,7 +3,7 @@
     <HeadNav :onlineStatus="online" />
     <router-view :style="{ minHeight: 'calc(100vh - 116px)' }" />
     <footer class="p-4 px-5 d-flex flex-column align-items-center">
-      <b-row align-h="between" class="w-75 footer-link">
+      <b-row align-h="around" class="w-75 footer-link">
         <b-col cols="auto">
           <h5>
             <b>Interne Links</b>
