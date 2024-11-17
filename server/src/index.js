@@ -1,4 +1,5 @@
 const path = require("path");
+const { version } = require("../package.json");
 
 // EXPRESS REQUIREMENTS
 const express = require("express");
@@ -43,7 +44,7 @@ app.use(loggerMiddleWare);
 
 app.use(
   require("express-status-monitor")({
-    title: "Choreo Tool Server",
+    title: "Choreo Planer Server",
     path: "/status",
   })
 );
@@ -51,7 +52,10 @@ app.use(
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 
 app.get("/", (req, res) => {
-  res.send("Server is up and running!");
+  res.send(`Server is up and running! Aktuelle Version: ${version}`);
+});
+app.get("/version", (req, res) => {
+  res.send(version);
 });
 
 app.use("/choreo", choreoRouter);
