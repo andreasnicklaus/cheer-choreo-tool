@@ -1,3 +1,5 @@
+const path = require("path");
+
 // EXPRESS REQUIREMENTS
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -14,6 +16,7 @@ const {
   errorLoggingMiddleWare,
   loggerMiddleWare,
 } = require("./middlewares/loggingMiddleware");
+const favicon = require("serve-favicon");
 
 // LOGGER
 const { logger } = require("./plugins/winston");
@@ -44,6 +47,8 @@ app.use(
     path: "/status",
   })
 );
+
+app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 
 app.get("/", (req, res) => {
   res.send("Server is up and running!");
