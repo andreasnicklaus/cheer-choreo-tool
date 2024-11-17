@@ -385,11 +385,11 @@ export default {
         },
         {
           property: "og:title",
-          content: (this.currentTeam?.name || "Team") + " - Choreo Editor",
+          content: (this.currentTeam?.name || "Team") + " - Choreo Planer",
         },
         {
           name: "twitter:title",
-          content: (this.currentTeam?.name || "Team") + " - Choreo Editor",
+          content: (this.currentTeam?.name || "Team") + " - Choreo Planer",
         },
       ],
     };

@@ -8,7 +8,7 @@ const ax = setupCache(
   axios.create({
     baseURL:
       process.env.NODE_ENV == "production"
-        ? "https://api.cheer.andreasnicklaus.de/"
+        ? "https://api.choreo-planer.de/"
         : "http://localhost:3000/",
   }),
   { headerInterpreter: () => 50 }

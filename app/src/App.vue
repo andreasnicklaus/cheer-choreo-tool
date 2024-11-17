@@ -59,7 +59,7 @@ export default {
   }),
   metaInfo() {
     return {
-      titleTemplate: "%s - Choreo Editor",
+      titleTemplate: "%s - Choreo Planer",
       meta: [
         {
           name: "keywords",
@@ -72,21 +72,21 @@ export default {
         },
         {
           property: "og:url",
-          content: "https://cheer.andreasnicklaus.de" + this.$route.path,
+          content: window.location.origin + this.$route.path,
         },
         {
           property: "twitter:url",
-          content: "https://cheer.andreasnicklaus.de" + this.$route.path,
+          content: window.location.origin + this.$route.path,
         },
         {
           property: "twitter:domain",
-          content: "https://cheer.andreasnicklaus.de",
+          content: window.location.origin,
         },
       ],
       link: [
         {
           rel: "canonical",
-          href: "https://cheer.andreasnicklaus.de" + this.$route.path,
+          href: window.location.href + this.$route.path,
         },
       ],
     };

@@ -1,4 +1,4 @@
-sitemap: https://cheer.andreasnicklaus.de/sitemap.xml
+sitemap: https://www.choreo-planer.de/sitemap.xml
 
 User-agent: *
 Disallow:

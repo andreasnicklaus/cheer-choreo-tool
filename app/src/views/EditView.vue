@@ -783,11 +783,11 @@ export default {
         },
         {
           property: "og:title",
-          content: (this.choreo?.name || "Lädt Choreo") + " - Choreo Editor",
+          content: (this.choreo?.name || "Lädt Choreo") + " - Choreo Planer",
         },
         {
           name: "twitter:title",
-          content: (this.choreo?.name || "Lädt Choreo") + " - Choreo Editor",
+          content: (this.choreo?.name || "Lädt Choreo") + " - Choreo Planer",
         },
       ],
     };

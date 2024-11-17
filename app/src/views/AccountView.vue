@@ -131,11 +131,11 @@ export default {
       },
       {
         property: "og:title",
-        content: "Konto - Choreo Editor",
+        content: "Konto - Choreo Planer",
       },
       {
         name: "twitter:title",
-        content: "Konto - Choreo Editor",
+        content: "Konto - Choreo Planer",
       },
     ],
   },

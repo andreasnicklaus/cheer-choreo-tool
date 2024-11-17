@@ -388,14 +388,14 @@ export default {
           content:
             (this.choreo?.name || "Lädt Choreo") +
             " - PDF" +
-            " - Choreo Editor",
+            " - Choreo Planer",
         },
         {
           name: "twitter:title",
           content:
             (this.choreo?.name || "Lädt Choreo") +
             " - PDF" +
-            " - Choreo Editor",
+            " - Choreo Planer",
         },
       ],
     };

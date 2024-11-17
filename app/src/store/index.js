@@ -3,7 +3,7 @@ import Vuex from "vuex";
 
 Vue.use(Vuex);
 
-const tokenStorageKey = "cheer-token";
+const tokenStorageKey = "choreo-planer-token";
 
 export default new Vuex.Store({
   state: {

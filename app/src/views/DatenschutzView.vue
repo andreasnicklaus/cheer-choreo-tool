@@ -105,11 +105,11 @@ export default {
       },
       {
         property: "og:title",
-        content: "Datenschutz - Choreo Editor",
+        content: "Datenschutz - Choreo Planer",
       },
       {
         name: "twitter:title",
-        content: "Datenschutz - Choreo Editor",
+        content: "Datenschutz - Choreo Planer",
       },
     ],
   },

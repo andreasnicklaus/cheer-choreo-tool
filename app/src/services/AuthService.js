@@ -2,7 +2,7 @@ import router from "@/router";
 import ax from "./RequestService";
 import store from "@/store";
 
-const tokenStorageKey = "cheer-token";
+const tokenStorageKey = "choreo-planer-token";
 
 class AuthService {
   async login(username, password) {

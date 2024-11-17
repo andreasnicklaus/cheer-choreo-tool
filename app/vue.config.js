@@ -56,7 +56,7 @@ module.exports = defineConfig({
   },
   pluginOptions: {
     sitemap: {
-      baseURL: "https://cheer.andreasnicklaus.de",
+      baseURL: "https://www.choreo-planer.de",
       routes,
       trailingSlash: true,
       pretty: true,
@@ -66,7 +66,7 @@ module.exports = defineConfig({
     },
   },
   pwa: {
-    name: "Choreo Editor",
+    name: "Choreo Planer",
     themeColor: "#007bff",
   },
 });

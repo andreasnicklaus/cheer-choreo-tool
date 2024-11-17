@@ -92,11 +92,11 @@ export default {
       },
       {
         property: "og:title",
-        content: "Impressum - Choreo Editor",
+        content: "Impressum - Choreo Planer",
       },
       {
         name: "twitter:title",
-        content: "Impressum - Choreo Editor",
+        content: "Impressum - Choreo Planer",
       },
     ],
   },

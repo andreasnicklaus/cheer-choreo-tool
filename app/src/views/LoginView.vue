@@ -257,25 +257,25 @@ export default {
       {
         name: "description",
         content:
-          "Logge dich ein und nutze den alle Funktionen des Choreo Editors!",
+          "Logge dich ein und nutze den alle Funktionen des Choreo Planers!",
       },
       {
         name: "twitter:description",
         content:
-          "Logge dich ein und nutze den alle Funktionen des Choreo Editors!",
+          "Logge dich ein und nutze den alle Funktionen des Choreo Planers!",
       },
       {
         property: "og:description",
         content:
-          "Logge dich ein und nutze den alle Funktionen des Choreo Editors!",
+          "Logge dich ein und nutze den alle Funktionen des Choreo Planers!",
       },
       {
         property: "og:title",
-        content: "Einloggen - Choreo Editor",
+        content: "Einloggen - Choreo Planer",
       },
       {
         name: "twitter:title",
-        content: "Einloggen - Choreo Editor",
+        content: "Einloggen - Choreo Planer",
       },
     ],
   },

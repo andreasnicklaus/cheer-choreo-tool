@@ -36,7 +36,7 @@ jobs:
         run: cp dist/index.html dist/404.html
 
       - name: Create CNAME file
-        run: echo cheer.andreasnicklaus.de > dist/CNAME
+        run: echo www.choreo-planer.de > dist/CNAME
 
       - name: Archive artifact
         shell: sh

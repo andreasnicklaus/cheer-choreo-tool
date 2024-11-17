@@ -13,9 +13,7 @@
         class="d-flex flex-column justify-content-center align-items-center"
       >
         <img id="logoImg" src="/Icon.png" alt="" width="200" />
-        <h1 id="title" class="text-center display-4">
-          Editor für Cheer-Choreos
-        </h1>
+        <h1 id="title" class="text-center display-4">Dein Choreo Planer</h1>
         <b-row
           class="w-75 my-4"
           align-h="around"
@@ -461,7 +459,7 @@ export default {
     selectedTeamMembers: [],
   }),
   metaInfo: {
-    title: "Choreo Editor",
+    title: "Choreo Planer",
     titleTemplate: null,
     meta: [
       {
@@ -481,11 +479,11 @@ export default {
       },
       {
         property: "og:title",
-        content: "Choreo Editor",
+        content: "Choreo Planer",
       },
       {
         name: "twitter:title",
-        content: "Choreo Editor",
+        content: "Choreo Planer",
       },
     ],
   },

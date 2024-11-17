@@ -124,8 +124,8 @@ export default {
         order: 1,
         faqs: [
           {
-            title: "Für wen ist der Editor gedacht?",
-            markdown: `Der Editor ist für Trainerinnen und Trainer für Cheerleading-Teams.
+            title: "Für wen ist der Choreo Planer gedacht?",
+            markdown: `Der Choreo Planer ist für Trainerinnen und Trainer für Cheerleading-Teams.
             Die Endprodukte (Countsheets, Bilder und Videos) sollen an die Teams
             geteilt werden, um das Lernen der Choreos einfacher zu machen.`,
           },
@@ -186,21 +186,21 @@ export default {
       {
         name: "description",
         content:
-          "Erhalte Infos über den Choreo Editor und Antworten auf deine Fragen und Probleme. In unserem FAQ beantworten alle häufig gestellten Fragen über die Nutzung und Funktionen des Editors.",
+          "Erhalte Infos über den Choreo Planer und Antworten auf deine Fragen und Probleme. In unserem FAQ beantworten alle häufig gestellten Fragen über die Nutzung und Funktionen des Choreo Planers.",
       },
       {
         name: "twitter:description",
         content:
-          "Erhalte Infos über den Choreo Editor und Antworten auf deine Fragen und Probleme. In unserem FAQ beantworten alle häufig gestellten Fragen über die Nutzung und Funktionen des Editors.",
+          "Erhalte Infos über den Choreo Planer und Antworten auf deine Fragen und Probleme. In unserem FAQ beantworten alle häufig gestellten Fragen über die Nutzung und Funktionen des Choreo Planers.",
       },
       {
         property: "og:description",
         content:
-          "Erhalte Infos über den Choreo Editor und Antworten auf deine Fragen und Probleme. In unserem FAQ beantworten alle häufig gestellten Fragen über die Nutzung und Funktionen des Editors.",
+          "Erhalte Infos über den Choreo Planer und Antworten auf deine Fragen und Probleme. In unserem FAQ beantworten alle häufig gestellten Fragen über die Nutzung und Funktionen des Choreo Planers.",
       },
       {
         property: "og:title",
-        content: "Hilfe - Choreo Editor",
+        content: "Hilfe - Choreo Planer",
       },
     ],
   },

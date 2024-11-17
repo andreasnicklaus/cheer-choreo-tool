@@ -603,11 +603,11 @@ export default {
       },
       {
         property: "og:title",
-        content: "Start - Choreo Editor",
+        content: "Start - Choreo Planer",
       },
       {
         name: "twitter:title",
-        content: "Start - Choreo Editor",
+        content: "Start - Choreo Planer",
       },
     ],
   },
