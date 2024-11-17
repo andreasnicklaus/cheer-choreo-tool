@@ -2,15 +2,12 @@
   <div id="app">
     <HeadNav :onlineStatus="online" />
     <router-view :style="{ minHeight: 'calc(100vh - 116px)' }" />
-    <footer
-      class="p-2 px-5 d-flex flex-column align-items-center"
-      :style="{
-        backgroundColor: '#0069d9',
-        color: 'white',
-      }"
-    >
-      <b-row align-h="center" class="w-75 footer-link">
+    <footer class="p-4 px-5 d-flex flex-column align-items-center">
+      <b-row align-h="between" class="w-75 footer-link">
         <b-col cols="auto">
+          <h5>
+            <b>Interne Links</b>
+          </h5>
           <b-button variant="link" :to="{ name: 'Home' }"> Startseite </b-button
           ><br />
           <b-button variant="link" :to="{ name: 'Help' }"> Hilfe </b-button
@@ -20,6 +17,25 @@
           ><br />
           <b-button variant="link" :to="{ name: 'Datenschutz' }">
             Datenschutz </b-button
+          ><br />
+        </b-col>
+        <b-col cols="auto">
+          <h5>
+            <b>Externe Links</b>
+          </h5>
+          <b-button
+            variant="link"
+            href="https://www.instagram.com/choreoplaner/"
+          >
+            <b-icon-instagram class="mr-2" />
+            Instagram </b-button
+          ><br />
+          <b-button
+            variant="link"
+            href="https://github.com/andreasnicklaus/cheer-choreo-tool"
+          >
+            <b-icon-github class="mr-2" />
+            Github </b-button
           ><br />
         </b-col>
       </b-row>
@@ -135,7 +151,12 @@ footer a {
     color: white !important;
   }
   &:hover {
-    color: #000225 !important;
+    color: #d6d6d6 !important;
   }
+}
+
+footer {
+  color: white;
+  background-color: #0150a4;
 }
 </style>
