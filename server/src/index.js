@@ -52,7 +52,7 @@ app.use(
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 
 app.get("/", (req, res) => {
-  res.send(`Server is up and running! Aktuelle Version: ${version}`);
+  res.send(`Server is up and running! Current Version: ${version}`);
 });
 app.get("/version", (req, res) => {
   res.send(version);
