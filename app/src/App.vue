@@ -88,21 +88,21 @@ export default {
         },
         {
           property: "og:url",
-          content: window.location.origin + this.$route.path,
+          content: "https://www.choreo-planer.de" + this.$route.path,
         },
         {
           property: "twitter:url",
-          content: window.location.origin + this.$route.path,
+          content: "https://www.choreo-planer.de" + this.$route.path,
         },
         {
           property: "twitter:domain",
-          content: window.location.origin,
+          content: "https://www.choreo-planer.de",
         },
       ],
       link: [
         {
           rel: "canonical",
-          href: window.location.href + this.$route.path,
+          href: "https://www.choreo-planer.de" + this.$route.path,
         },
       ],
     };
