@@ -57,12 +57,12 @@
           <span
             class="mx-2"
             :style="{ fontFamily: 'monospace', fontSize: '0.8em' }"
-            v-if="serverVersion && serverVersion != applicationVersion"
           >
             Version: {{ applicationVersion }}
             <span
               v-b-tooltip.hover
               :title="`Die Version der Webseite (${applicationVersion}) entspricht nicht der Version der Server (${serverVersion})!`"
+              v-if="serverVersion && serverVersion != applicationVersion"
             >
               <b-icon-exclamation-triangle-fill />
             </span>
