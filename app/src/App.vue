@@ -26,6 +26,7 @@
           <b-button
             variant="link"
             href="https://www.instagram.com/choreoplaner/"
+            target="_blank"
           >
             <b-icon-instagram class="mr-2" />
             Instagram </b-button
@@ -33,6 +34,7 @@
           <b-button
             variant="link"
             href="https://github.com/andreasnicklaus/cheer-choreo-tool"
+            target="_blank"
           >
             <b-icon-github class="mr-2" />
             Github </b-button

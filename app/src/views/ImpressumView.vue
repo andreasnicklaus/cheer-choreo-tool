@@ -56,7 +56,7 @@
     <p>
       Die Europäische Kommission stellt eine Plattform zur
       Online-Streitbeilegung (OS) bereit:
-      <a href="https://ec.europa.eu/consumers/odr">
+      <a href="https://ec.europa.eu/consumers/odr" target="_blank">
         https://ec.europa.eu/consumers/odr </a
       >.
       <br />
