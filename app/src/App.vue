@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <AppInstallWindow />
-    <HeadNav :onlineStatus="online" />
+    <HeadNav :onlineStatus="online" :serverVersion="serverVersion" />
     <router-view :style="{ minHeight: 'calc(100vh - 116px)' }" />
     <footer class="p-4 px-5 d-flex flex-column align-items-center">
       <b-row align-h="around" class="w-75 footer-link">
@@ -57,8 +57,15 @@
           <span
             class="mx-2"
             :style="{ fontFamily: 'monospace', fontSize: '0.8em' }"
+            v-if="serverVersion && serverVersion != applicationVersion"
           >
             Version: {{ applicationVersion }}
+            <span
+              v-b-tooltip.hover
+              :title="`Die Version der Webseite (${applicationVersion}) entspricht nicht der Version der Server (${serverVersion})!`"
+            >
+              <b-icon-exclamation-triangle-fill />
+            </span>
           </span>
         </b-col>
       </b-row>
@@ -77,6 +84,7 @@ export default {
   components: { HeadNav, ConsentWindow, AppInstallWindow },
   data: () => ({
     online: true,
+    serverVersion: null,
     applicationVersion: process.env.VUE_APP_VERSION,
   }),
   metaInfo() {
@@ -115,9 +123,10 @@ export default {
   },
   mounted() {
     if (!window.__PRERENDER_INJECTED)
-      ax.get("/")
-        .then(() => {
-          setTimeout(() => (this.online = true), 1000);
+      ax.get("/version")
+        .then((res) => {
+          this.online = true;
+          this.serverVersion = res.data;
         })
         .catch(() => {
           this.online = false;

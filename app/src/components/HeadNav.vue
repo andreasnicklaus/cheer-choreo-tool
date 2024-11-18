@@ -100,7 +100,11 @@
           class="d-sm-block d-none"
           v-if="onlineStatus != null"
           v-b-tooltip.hover
-          :title="onlineStatus ? 'Server sind online' : 'Server sind offline'"
+          :title="
+            onlineStatus
+              ? 'Server sind online' + (serverVersion && ` (${serverVersion})`)
+              : 'Server sind offline'
+          "
         >
           <b-icon-check-circle variant="success" v-if="onlineStatus === true" />
           <b-icon-x-circle variant="danger" v-if="onlineStatus === false" />
@@ -186,6 +190,10 @@ export default {
   props: {
     onlineStatus: {
       type: Boolean,
+    },
+    serverVersion: {
+      type: String,
+      default: null,
     },
   },
   methods: {
