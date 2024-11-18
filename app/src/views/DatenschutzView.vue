@@ -14,9 +14,7 @@
       Verantwortlich für die Datenverarbeitung: <br />
       Andreas Nicklaus <br />
       E-Mail:
-      <a href="mailto:andreas.nicklaus@gmail.com">
-        andreas.nicklaus@gmail.com
-      </a>
+      <a href="mailto:info@choreo-planer.de"> info@choreo-planer.de </a>
     </p>
     <h2>3. Verarbeitung personenbezogener Daten</h2>
     <ol class="ml-3">
@@ -52,9 +50,7 @@
       Zusätzlich haben Sie das Recht auf Berichtigung, Sperrung oder Löschung
       dieser Daten, sofern zutreffend. Wenden Sie sich dazu bitte an: <br />
       E-Mail:
-      <a href="mailto:andreas.nicklaus@gmail.com">
-        andreas.nicklaus@gmail.com
-      </a>
+      <a href="mailto:info@choreo-planer.de"> info@choreo-planer.de </a>
     </p>
     <h2>6. Sicherheit der Datenverarbeitung</h2>
     <p>
@@ -75,9 +71,7 @@
       Datenschutzerklärung kontaktieren Sie mich bitte unter: <br />
       Andreas Nicklaus <br />
       E-Mail:
-      <a href="mailto:andreas.nicklaus@gmail.com">
-        andreas.nicklaus@gmail.com
-      </a>
+      <a href="mailto:info@choreo-planer.de"> info@choreo-planer.de </a>
     </p>
   </b-container>
 </template>

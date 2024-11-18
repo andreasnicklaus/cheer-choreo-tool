@@ -58,9 +58,7 @@
 
       <p>
         Nicht die richtige Antwort dabei gewesen? Kontaktiere uns unter
-        <a href="mailto:andreas.nicklaus@gmail.com">
-          andreas.nicklaus@gmail.com
-        </a>
+        <a href="mailto:info@choreo-planer.de"> info@choreo-planer.de </a>
         und beschreibe dein Problem.
       </p>
     </b-card>
@@ -87,7 +85,7 @@ export default {
 
             Diese Daten werden nur zur Bereitstellung dieser Anwendung genutzt
             und sind auf Wunsch unmittelbar zu löschen. Dazu nimm bitte per Mail
-            an [andreas.nicklaus@gmail.com](mailto:andreas.nicklaus@gmail.com)
+            an [info@choreo-planer.de](mailto:info@choreo-planer.de)
             Kontakt auf.`,
           },
         ],
@@ -99,7 +97,7 @@ export default {
           {
             title: "Wie kann ich Probleme melden?",
             markdown: `Probleme können zur Zeit nur per Mail an
-            [andreas.nicklaus@gmail.com](mailto:andreas.nicklaus@gmail.com)
+            [info@choreo-planer.de](mailto:info@choreo-planer.de)
             gemeldet werden. Ein Kontaktformular ist geplant.`,
           },
           {
@@ -118,7 +116,7 @@ export default {
             </ul>
 
             Bitte beschreibe in deiner Kontaktaufnahme per Mail an
-            [andreas.nicklaus@gmail.com](mailto:andreas.nicklaus@gmail.com)
+            [info@choreo-planer.de](mailto:info@choreo-planer.de)
             gleich das Datum und die Uhrzeit der Löschung, damit wir dein
             Problem schnell lösen können.`,
           },

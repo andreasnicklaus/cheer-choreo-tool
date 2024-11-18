@@ -6,9 +6,7 @@
       Andreas Nicklaus
       <br />
       E-Mail:
-      <a href="mailto:andreas.nicklaus@gmail.com">
-        andreas.nicklaus@gmail.com
-      </a>
+      <a href="mailto:info@choreo-planer.de"> info@choreo-planer.de </a>
     </p>
     <h2>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:</h2>
     <p>Andreas Nicklaus</p>
