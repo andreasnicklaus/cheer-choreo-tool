@@ -76,6 +76,7 @@
             :height="matWidth"
             :teamMembers="teamMembers"
             :interactive="false"
+            :dotRadius="(matWidth / 500) * 20"
           />
         </b-col>
       </b-row>

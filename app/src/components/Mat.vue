@@ -59,6 +59,7 @@
         :key="'t' + position.MemberId"
         text-anchor="middle"
         alignment-baseline="central"
+        :font-size="dotRadius / 20 + 'em'"
         :transform="`matrix(1,0,0,1,${(position.x * width) / 100},${
           (position.y * height) / 100
         })`"
