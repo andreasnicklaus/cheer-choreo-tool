@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <AppInstallWindow />
     <HeadNav :onlineStatus="online" />
     <router-view :style="{ minHeight: 'calc(100vh - 116px)' }" />
     <footer class="p-4 px-5 d-flex flex-column align-items-center">
@@ -67,12 +68,13 @@
 </template>
 
 <script>
+import AppInstallWindow from "./components/AppInstallWindow.vue";
 import ConsentWindow from "./components/ConsentWindow.vue";
 import HeadNav from "./components/HeadNav.vue";
 import ax from "./services/RequestService";
 
 export default {
-  components: { HeadNav, ConsentWindow },
+  components: { HeadNav, ConsentWindow, AppInstallWindow },
   data: () => ({
     online: true,
     applicationVersion: process.env.VUE_APP_VERSION,
