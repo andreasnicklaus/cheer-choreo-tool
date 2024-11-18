@@ -1,5 +1,5 @@
 <div align="center">
-<img src="app/public/Icon.png/" width="200">
+<img src="app/public/Icon.png/" width="200" alt="Cheerleaderin-Icon">
 
 # Choreo Planer
 ![License](https://img.shields.io/github/license/andreasnicklaus/cheer-choreo-tool?style=for-the-badge)

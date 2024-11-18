@@ -1,7 +1,11 @@
 <template>
   <b-navbar toggleable="sm">
     <b-navbar-brand :to="{ name: 'Home' }">
-      <img src="/Icon.png" alt="" width="50" />
+      <img
+        src="/Icon.png"
+        alt="Cheerleaderin-Icon, das ein Rad schlägt"
+        width="50"
+      />
     </b-navbar-brand>
 
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>

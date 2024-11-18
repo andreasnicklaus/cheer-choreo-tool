@@ -12,7 +12,12 @@
         id="homeView"
         class="d-flex flex-column justify-content-center align-items-center"
       >
-        <img id="logoImg" src="/Icon.png" alt="" width="200" />
+        <img
+          id="logoImg"
+          src="/Icon.png"
+          alt="Cheerleaderin-Icon, das ein Rad schlägt"
+          width="200"
+        />
         <h1 id="title" class="text-center display-4">Dein Choreo Planer</h1>
         <b-row
           class="w-75 my-4"

@@ -47,7 +47,9 @@
           </span>
           <img
             src="https://uptime.betterstack.com/status-badges/v3/monitor/1l68q.svg"
-            alt=""
+            :alt="`Status-Anzeige der Server: Server sind ${
+              online ? ' nicht online' : 'online'
+            }`"
           />
           <span
             class="mx-2"
@@ -70,7 +72,7 @@ import ax from "./services/RequestService";
 export default {
   components: { HeadNav, ConsentWindow },
   data: () => ({
-    online: null,
+    online: true,
     applicationVersion: process.env.VUE_APP_VERSION,
   }),
   metaInfo() {
