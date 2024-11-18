@@ -1,6 +1,11 @@
 <template>
   <b-container id="helpView" data-view class="d-flex justify-content-center">
-    <b-card title="Hilfe bekommen" class="w-75 mb-2" border-variant="light">
+    <b-card
+      title="Hilfe bekommen"
+      class="w-75 mb-2"
+      border-variant="light"
+      title-tag="h1"
+    >
       <b-input
         type="text"
         placeholder="Suchen"
