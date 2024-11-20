@@ -79,14 +79,7 @@ export default {
         faqs: [
           {
             title: "Datenschutz",
-            markdown: `Die Nutzung von Daten, die zur Identifikation einer Person genutzt
-            werden können, sind der Vereinsname, der Mannschaftsname, der Name
-            und Spitzname einer Person und ggf. der Nutzername eines Kontos.
-
-            Diese Daten werden nur zur Bereitstellung dieser Anwendung genutzt
-            und sind auf Wunsch unmittelbar zu löschen. Dazu nimm bitte per Mail
-            an [info@choreo-planer.de](mailto:info@choreo-planer.de)
-            Kontakt auf.`,
+            markdown: `Bitte ließ dir zu Fragen bzgl. des Datenschutzes die [Datenschutzerklärung](/datenschutz) durch.`,
           },
         ],
       },
