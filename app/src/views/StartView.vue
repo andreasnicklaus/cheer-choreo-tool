@@ -316,6 +316,8 @@
                                         name: 'Video',
                                         params: { choreoId: choreo.id },
                                       }"
+                                      v-b-tooltip.hover
+                                      title="Video erstellen"
                                     >
                                       <b-icon-film />
                                     </b-button>
@@ -325,6 +327,8 @@
                                         name: 'PDF',
                                         params: { choreoId: choreo.id },
                                       }"
+                                      v-b-tooltip.hover
+                                      title="PDF erstellen"
                                     >
                                       <b-icon-file-pdf />
                                     </b-button>
@@ -339,7 +343,10 @@
                                   teamId: team.id,
                                 },
                               }"
-                              :style="{ color: 'inherit' }"
+                              :style="{
+                                color: 'inherit',
+                                textDecoration: 'underline',
+                              }"
                             >
                               {{ team.name }}
                             </router-link>
