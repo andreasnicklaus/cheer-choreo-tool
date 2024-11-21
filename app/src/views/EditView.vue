@@ -6,10 +6,11 @@
       class="mb-4"
       @input="onNameEdit"
       placeholder="lädt..."
+      v-if="!$store.state.isMobile"
     />
 
     <!-- Controls -->
-    <b-row align-v="center" class="mb-4">
+    <b-row align-v="center" class="mb-4" v-if="!$store.state.isMobile">
       <b-col>
         <b-row
           align-h="center"
@@ -176,7 +177,7 @@
     </b-row>
 
     <!-- Main: Mat + CountOverview -->
-    <b-row align-h="around">
+    <b-row align-h="around" v-if="!$store.state.isMobile">
       <b-col cols="auto">
         <Mat
           ref="Mat"
@@ -205,7 +206,12 @@
     </b-row>
 
     <!-- Tabs: Countsheet + Team -->
-    <b-tabs content-class="mt-3" class="mt-5" fill>
+    <b-tabs
+      content-class="mt-3"
+      class="mt-5"
+      fill
+      v-if="!$store.state.isMobile"
+    >
       <b-tab title="Countsheet" active>
         <CountSheet
           v-if="choreo && choreo.Hits"
@@ -337,6 +343,7 @@
       :nonParticipants="notParticipatingMembers"
       @substitution="onSubstitution"
     />
+    <MobileChoreoEditModal :choreoId="choreoId" ref="mobileChoreoEditModal" />
   </b-container>
 </template>
 
@@ -355,6 +362,7 @@ import ChangeChoreoLengthModal from "@/components/modals/ChangeChoreoLengthModal
 import SelectHitModal from "@/components/modals/SelectHitModal.vue";
 import ColorService from "@/services/ColorService";
 import ParticipantSubstitutionModal from "@/components/modals/ParticipantSubstitutionModal.vue";
+import MobileChoreoEditModal from "@/components/modals/MobileChoreoEditModal.vue";
 
 export default {
   name: "EditView",
@@ -369,6 +377,7 @@ export default {
     ChangeChoreoLengthModal,
     SelectHitModal,
     ParticipantSubstitutionModal,
+    MobileChoreoEditModal,
   },
   data: () => ({
     choreoId: null,
@@ -402,13 +411,19 @@ export default {
     countEndButtonHasNeverBeenUsed: true,
   }),
   mounted() {
-    this.loadChoreo();
+    if (this.$store.state.isMobile) {
+      if (this.$refs.mobileChoreoEditModal)
+        this.$refs.mobileChoreoEditModal.open(this.choreoId);
+    } else this.loadChoreo();
   },
   watch: {
     "$route.params": {
       handler() {
         this.choreoId = this.$route.params.choreoId;
-        this.loadChoreo();
+        if (this.$store.state.isMobile) {
+          if (this.$refs.mobileChoreoEditModal)
+            this.$refs.mobileChoreoEditModal.open(this.choreoId);
+        } else this.loadChoreo();
       },
       immediate: true,
     },

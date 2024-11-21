@@ -97,8 +97,8 @@
         Choreo lädt
       </b-card-sub-title>
       <b-card-body>
-        <b-row>
-          <b-col cols="6">
+        <b-row :style="{ rowGap: '16px' }">
+          <b-col md="6" cols="12">
             <b-form-group
               description="Das Datum auf das Countsheet schreiben"
               :state="dateIsValid"
@@ -136,7 +136,7 @@
               </b-form-checkbox>
             </b-form-group>
           </b-col>
-          <b-col cols="6" class="mb-3">
+          <b-col md="6" cols="12" class="mb-3">
             <b-skeleton-wrapper
               :loading="
                 !choreo || !choreo.SeasonTeam.Team || !choreo.Participants
@@ -172,7 +172,7 @@
                 </b-button-group>
                 <b-checkbox-group
                   v-model="includedMembers"
-                  :style="{ columnCount: 2 }"
+                  :style="{ columnCount: $store.state.isMobile ? 1 : 2 }"
                   stacked
                   :options="
                     teamMembers.map((m) => ({

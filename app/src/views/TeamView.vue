@@ -82,6 +82,7 @@
       <b-tab
         v-for="seasonTeam in currentTeam?.SeasonTeams"
         :key="seasonTeam.id"
+        lazy
       >
         <template #title>
           {{ seasonTeam?.Season?.name }}
@@ -95,6 +96,7 @@
             sortedMembersOfCurrentTeam.map((m) => ({ ...m, actions: null }))
           "
           :fields="tableFields"
+          stacked="md"
         >
           <template #cell(actions)="data">
             <b-button-group>

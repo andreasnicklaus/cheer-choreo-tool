@@ -9,6 +9,7 @@ export default new Vuex.Store({
   state: {
     loggedIn: localStorage.getItem(tokenStorageKey) != null,
     clubId: null,
+    isMobile: true,
   },
   getters: {},
   mutations: {
@@ -18,6 +19,9 @@ export default new Vuex.Store({
     },
     setClubId(state, id) {
       state.clubId = id;
+    },
+    setMobile(state, isMobile) {
+      state.isMobile = isMobile;
     },
   },
   actions: {},

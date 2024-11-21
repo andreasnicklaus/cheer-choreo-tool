@@ -13,8 +13,8 @@
         Choreo lädt
       </b-card-sub-title>
       <b-card-body>
-        <b-row class="mb-3">
-          <b-col cols="6">
+        <b-row class="mb-3" :style="{ rowGap: '16px' }">
+          <b-col md="6" cols="12">
             <b-form-group description="Den Count im Video anzeigen">
               <b-form-checkbox
                 v-model="includeCount"
@@ -44,7 +44,7 @@
               </b-form-checkbox>
             </b-form-group>
           </b-col>
-          <b-col cols="6" class="mb-3">
+          <b-col md="6" cols="12" class="mb-3">
             <b-skeleton-wrapper :loading="!choreo || !choreo.Participants">
               <template #loading>
                 <b-skeleton v-for="(_, i) in Array(3)" :key="i"></b-skeleton>
@@ -82,7 +82,7 @@
                 <b-checkbox-group
                   :disabled="recordingIsRunning"
                   v-model="includedMembers"
-                  :style="{ columnCount: 2 }"
+                  :style="{ columnCount: $store.state.isMobile ? 1 : 2 }"
                   stacked
                   :options="
                     teamMembers.map((m) => ({
@@ -132,10 +132,11 @@
               Video generieren
             </b-button>
           </b-col>
-          <b-col cols="auto" v-if="downloadUrl">
+          <b-col md="auto" cols="12" v-if="downloadUrl">
             <b-button
               variant="outline-success"
               @click="() => $refs.videoDownloadModal.open()"
+              block
             >
               <b-icon-download />
               Herunterladen
@@ -157,7 +158,7 @@
               ref="videoCanvas"
               :width="width"
               :height="height"
-              :style="{}"
+              :style="{ width: '100%' }"
             ></canvas>
             <template #overlay>
               <div class="text-center" :style="{ minWidth: '70vw' }">
@@ -201,8 +202,8 @@ export default {
   name: "VideoExport",
   components: { VideoDownloadModal },
   data: () => ({
-    width: 500,
-    height: 500,
+    width: 1800,
+    height: 1800,
     downloadUrl: null,
     mediaRecorder: null,
     recordingChunks: [],
@@ -289,7 +290,12 @@ export default {
 
       context.fillStyle = "#444cf766";
       for (let i = 0; i < 6; i++) {
-        context.fillRect((canvas.width / 7) * (i + 1), 0, 5, canvas.height);
+        context.fillRect(
+          (canvas.width / 7) * (i + 1),
+          0,
+          (5 / 500) * this.width,
+          canvas.height
+        );
       }
     },
     clearCanvas() {
@@ -309,21 +315,21 @@ export default {
       context.arc(
         (x * canvas.width) / 100,
         (y * canvas.height) / 100,
-        20,
+        (20 / 500) * this.width,
         0,
         2 * Math.PI
       );
       context.fillStyle = color + "55";
       context.fill();
 
-      context.lineWidth = 2;
+      context.lineWidth = (2 / 500) * this.width;
       context.strokeStyle = color;
       context.stroke();
 
       context.fillStyle = "black";
       context.textBaseline = "middle";
       context.textAlign = "center";
-      context.font = "16px Sans-Serif";
+      context.font = (16 / 500) * this.height + "px Sans-Serif";
       context.fillText(
         text,
         (x * canvas.width) / 100,
@@ -345,13 +351,17 @@ export default {
       context.fillStyle = "grey";
       context.textBaseline = "middle";
       context.textAlign = "right";
-      context.font = "16px Sans-Serif";
+      context.font = (16 / 500) * this.width + "px Sans-Serif";
 
       const text = `${Math.floor(this.count / 8) + 1}/${
         Math.floor(this.count % 8) + 1
       }`;
 
-      context.fillText(text, canvas.width - 20, canvas.height - 20);
+      context.fillText(
+        text,
+        canvas.width - (20 / 500) * this.width,
+        canvas.height - (20 / 500) * this.width
+      );
     },
     drawTeamName() {
       const canvas = this.$refs.videoCanvas;
@@ -362,12 +372,12 @@ export default {
       context.fillStyle = "grey";
       context.textBaseline = "middle";
       context.textAlign = "center";
-      context.font = "16px Sans-Serif";
+      context.font = (16 / 500) * this.width + "px Sans-Serif";
 
       context.fillText(
         this.choreo.SeasonTeam.Team.name,
         canvas.width / 2,
-        canvas.height - 20
+        canvas.height - (20 / 500) * this.width
       );
     },
     drawChoreoName() {
@@ -379,9 +389,13 @@ export default {
       context.fillStyle = "grey";
       context.textBaseline = "middle";
       context.textAlign = "left";
-      context.font = "16px Sans-Serif";
+      context.font = (16 / 500) * this.width + "px Sans-Serif";
 
-      context.fillText(this.choreo.name, 20, canvas.height - 20);
+      context.fillText(
+        this.choreo.name,
+        (20 / 500) * this.width,
+        canvas.height - (20 / 500) * this.width
+      );
     },
     drawCanvas() {
       const positions = this.getPositions();

@@ -1,10 +1,10 @@
 <template>
-  <div id="app">
+  <div id="app" :class="{ mobile: $store.state.isMobile }">
     <AppInstallWindow />
     <HeadNav :onlineStatus="online" :serverVersion="serverVersion" />
-    <router-view :style="{ minHeight: 'calc(100vh - 116px)' }" />
+    <router-view :style="{ minHeight: 'calc(100vh - 116px)' }" class="mb-2" />
     <footer class="p-4 px-5 d-flex flex-column align-items-center">
-      <b-row align-h="around" class="w-75 footer-link">
+      <b-row align-h="around" class="w-75 footer-link" :style="{ gap: '20px' }">
         <b-col cols="auto">
           <h5>
             <b>Interne Links</b>
@@ -48,15 +48,23 @@
           <span class="mr-2">
             Andreas Nicklaus @{{ new Date().getFullYear() }}
           </span>
+        </b-col>
+        <b-col cols="auto">
           <img
             src="https://uptime.betterstack.com/status-badges/v3/monitor/1l68q.svg"
             :alt="`Status-Anzeige der Server: Server sind ${
               online ? ' nicht online' : 'online'
             }`"
           />
+        </b-col>
+        <b-col cols="auto">
           <span
             class="mx-2"
-            :style="{ fontFamily: 'monospace', fontSize: '0.8em' }"
+            :style="{
+              display: 'inline-block',
+              fontFamily: 'monospace',
+              fontSize: '0.8em',
+            }"
           >
             Version: {{ applicationVersion }}
             <span
@@ -139,8 +147,20 @@ export default {
           );
         });
   },
+  watch: {
+    "$vuetify.breakpoint.smAndDown": {
+      handler(value) {
+        this.$store.commit("setMobile", value);
+      },
+    },
+  },
 };
 </script>
+<style lang="scss">
+.modal-open {
+  padding: 0 !important;
+}
+</style>
 
 <style lang="scss" scoped>
 #app {
@@ -149,10 +169,9 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   // text-align: center;
   color: #2c3e50;
-}
-
-.modal-open {
-  padding: 0 !important;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
 }
 
 .router-link-active {

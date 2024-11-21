@@ -95,7 +95,7 @@
         </b-nav-item-dropdown>
       </b-navbar-nav>
 
-      <b-navbar-nav class="ml-auto align-items-sm-center align-items-start">
+      <b-navbar-nav class="ml-auto align-items-sm-center">
         <b-nav-item
           class="d-sm-block d-none"
           v-if="onlineStatus != null"
@@ -115,11 +115,22 @@
             variant="primary"
             :to="{ name: 'Login' }"
             v-if="!$store.state.loggedIn"
+            :block="$vuetify.breakpoint.xs"
           >
             Anmelden / Registrieren
           </b-button>
-          <b-dropdown v-else variant="light" right>
-            <template #button-content> <b-icon-person-circle /> </template>
+          <b-dropdown
+            v-else
+            :variant="$vuetify.breakpoint.xs ? 'outline-secondary' : 'light'"
+            right
+            :block="$vuetify.breakpoint.xs"
+          >
+            <template #button-content>
+              <b-icon-person-circle />
+              <span v-if="$vuetify.breakpoint.xs" class="mx-2">{{
+                user?.username
+              }}</span>
+            </template>
             <b-dropdown-group header="Konto">
               <b-dropdown-item :to="{ name: 'Account' }">
                 <b-icon-person-circle class="mr-2" />{{ user?.username }}

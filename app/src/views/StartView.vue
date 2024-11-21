@@ -2,14 +2,14 @@
   <b-container id="startView" data-view>
     <b-row>
       <!-- FILTER -->
-      <b-col cols="12" lg="3" v-if="teams.length > 0">
-        <b-card class="filters">
+      <b-col cols="12" lg="3" v-if="teams.length > 0" class="mb-3">
+        <b-card class="filters" body-class="pb-2">
           <b-card-title
             class="d-flex justify-content-between align-items-center"
           >
             Filter
             <b-icon-info id="popover-info-target" variant="secondary" />
-            <b-popover target="popover-info-target" triggers="hover">
+            <b-popover target="popover-info-target" triggers="hover, focus">
               <p><b>Suchen:</b> Suche nach einem Team oder einer Choreo</p>
               <p><b>Team:</b> Filtere die Choreos nach Teams</p>
               <p><b>Season:</b> Filtere die Choreos nach Season</p>
@@ -20,190 +20,210 @@
               </p>
             </b-popover>
           </b-card-title>
-          <b-input-group class="mb-4 mt-2">
-            <b-form-input
-              placeholder="Suchen"
-              v-model="searchTerm"
-              type="search"
-            />
-            <b-input-group-append>
-              <b-button
-                :disabled="!searchTerm"
-                @click="() => (this.searchTerm = null)"
-              >
-                <b-icon-x />
-              </b-button>
-            </b-input-group-append>
-          </b-input-group>
 
-          <div v-if="teams.length > 0">
-            <p class="mb-0 font-weight-bold font-italic text-muted">Team</p>
-            <b-skeleton-wrapper :loading="loading">
-              <template #loading>
-                <b-list-group flush class="mb-2">
-                  <b-list-group-item
-                    v-for="(_, ix) in Array(2)"
-                    :key="`teamSkeleton-${ix}`"
-                  >
-                    <b-skeleton />
-                  </b-list-group-item>
-                </b-list-group>
-              </template>
-              <template #default>
-                <b-list-group flush class="mb-2">
-                  <b-list-group-item
-                    v-for="team in teams"
-                    :key="team.id"
-                    :variant="
-                      teamFilterIds.includes(team.id) ? 'dark' : 'light'
-                    "
-                    @click="() => addOrRemoveTeamFilter(team.id)"
-                    class="d-flex justify-content-between align-items-center"
-                    block
-                    href="#"
-                  >
-                    {{ team.name }}
-                    <b-badge variant="light">
-                      {{
-                        teams
-                          .find((t) => t.id == team.id)
-                          .SeasonTeams.filter(
-                            (st) =>
-                              seasonFilterIds.length == 0 ||
-                              seasonFilterIds.includes(st.Season.id)
-                          )
-                          .map((st) =>
-                            st.Choreos.filter(
-                              (c) =>
-                                c.counts >= minCount && c.counts <= maxCount
+          <b-collapse
+            id="filter-collapse"
+            v-model="filterCollapseVisible"
+            class="mb-2"
+          >
+            <b-input-group class="mb-4 mt-2">
+              <b-form-input
+                placeholder="Suchen"
+                v-model="searchTerm"
+                type="search"
+              />
+              <b-input-group-append>
+                <b-button
+                  :disabled="!searchTerm"
+                  @click="() => (this.searchTerm = null)"
+                >
+                  <b-icon-x />
+                </b-button>
+              </b-input-group-append>
+            </b-input-group>
+
+            <div v-if="teams.length > 0">
+              <p class="mb-0 font-weight-bold font-italic text-muted">Team</p>
+              <b-skeleton-wrapper :loading="loading">
+                <template #loading>
+                  <b-list-group flush class="mb-2">
+                    <b-list-group-item
+                      v-for="(_, ix) in Array(2)"
+                      :key="`teamSkeleton-${ix}`"
+                    >
+                      <b-skeleton />
+                    </b-list-group-item>
+                  </b-list-group>
+                </template>
+                <template #default>
+                  <b-list-group flush class="mb-2">
+                    <b-list-group-item
+                      v-for="team in teams"
+                      :key="team.id"
+                      :variant="
+                        teamFilterIds.includes(team.id) ? 'dark' : 'light'
+                      "
+                      @click="() => addOrRemoveTeamFilter(team.id)"
+                      class="d-flex justify-content-between align-items-center"
+                      block
+                      href="#"
+                    >
+                      {{ team.name }}
+                      <b-badge variant="light">
+                        {{
+                          teams
+                            .find((t) => t.id == team.id)
+                            .SeasonTeams.filter(
+                              (st) =>
+                                seasonFilterIds.length == 0 ||
+                                seasonFilterIds.includes(st.Season.id)
                             )
-                          )
-                          .flat(Infinity).length
-                      }}
-                    </b-badge>
-                  </b-list-group-item>
-                </b-list-group>
-              </template>
-            </b-skeleton-wrapper>
-          </div>
-
-          <div v-if="seasons.length > 0">
-            <p class="mb-0 font-weight-bold font-italic text-muted">Season</p>
-            <b-skeleton-wrapper :loading="loading">
-              <template #loading>
-                <b-list-group flush class="mb-2">
-                  <b-list-group-item
-                    v-for="(_, ix) in Array(2)"
-                    :key="`seasonSkeleton-${ix}`"
-                  >
-                    <b-skeleton />
-                  </b-list-group-item>
-                </b-list-group>
-              </template>
-              <template #default>
-                <b-list-group flush class="mb-2">
-                  <b-list-group-item
-                    v-for="season in seasons"
-                    :key="season.id"
-                    :variant="
-                      seasonFilterIds.includes(season.id) ? 'dark' : 'light'
-                    "
-                    @click="() => addOrRemoveSeasonFilter(season.id)"
-                    class="d-flex justify-content-between align-items-center"
-                    block
-                    href="#"
-                  >
-                    {{ season.name }}
-                    <b-badge variant="light">
-                      {{
-                        teams
-                          .filter(
-                            (t) =>
-                              teamFilterIds.length == 0 ||
-                              teamFilterIds.includes(t.id)
-                          )
-                          .map((t) =>
-                            t.SeasonTeams.filter(
-                              (st) => st.Season.id == season.id
-                            ).map((st) =>
+                            .map((st) =>
                               st.Choreos.filter(
                                 (c) =>
                                   c.counts >= minCount && c.counts <= maxCount
                               )
                             )
-                          )
-                          .flat(Infinity).length
-                      }}
-                    </b-badge>
-                  </b-list-group-item>
-                </b-list-group>
-              </template>
-            </b-skeleton-wrapper>
-          </div>
+                            .flat(Infinity).length
+                        }}
+                      </b-badge>
+                    </b-list-group-item>
+                  </b-list-group>
+                </template>
+              </b-skeleton-wrapper>
+            </div>
 
-          <div
-            v-if="
-              choreos.length > 0 &&
-              Math.min(...choreos.map((c) => c.counts)) !=
-                Math.max(...choreos.map((c) => c.counts))
-            "
-          >
-            <p class="mb-0 font-weight-bold font-italic text-muted">Counts</p>
-            <b-skeleton-wrapper :loading="loading">
-              <template #loading>
-                <b-skeleton type="input" />
-                <b-skeleton type="input" />
-              </template>
-              <template #default>
-                <b-form-group
-                  label="Min. Länge:"
-                  :description="`${Math.floor(minCount / 8)} Achter + ${
-                    minCount % 8
-                  }`"
-                >
-                  <b-form-input
-                    v-model="minCount"
-                    :min="Math.min(...choreos.map((c) => c.counts))"
-                    :max="Math.max(...choreos.map((c) => c.counts))"
-                    type="range"
-                  />
-                </b-form-group>
-                <hr />
-                <b-form-group
-                  label="Max. Länge:"
-                  :description="`${Math.floor(maxCount / 8)} Achter + ${
-                    maxCount % 8
-                  }`"
-                >
-                  <b-form-input
-                    v-model="maxCount"
-                    :min="Math.min(...choreos.map((c) => c.counts))"
-                    :max="Math.max(...choreos.map((c) => c.counts))"
-                    type="range"
-                  />
-                </b-form-group>
-              </template>
-            </b-skeleton-wrapper>
-          </div>
+            <div v-if="seasons.length > 0">
+              <p class="mb-0 font-weight-bold font-italic text-muted">Season</p>
+              <b-skeleton-wrapper :loading="loading">
+                <template #loading>
+                  <b-list-group flush class="mb-2">
+                    <b-list-group-item
+                      v-for="(_, ix) in Array(2)"
+                      :key="`seasonSkeleton-${ix}`"
+                    >
+                      <b-skeleton />
+                    </b-list-group-item>
+                  </b-list-group>
+                </template>
+                <template #default>
+                  <b-list-group flush class="mb-2">
+                    <b-list-group-item
+                      v-for="season in seasons"
+                      :key="season.id"
+                      :variant="
+                        seasonFilterIds.includes(season.id) ? 'dark' : 'light'
+                      "
+                      @click="() => addOrRemoveSeasonFilter(season.id)"
+                      class="d-flex justify-content-between align-items-center"
+                      block
+                      href="#"
+                    >
+                      {{ season.name }}
+                      <b-badge variant="light">
+                        {{
+                          teams
+                            .filter(
+                              (t) =>
+                                teamFilterIds.length == 0 ||
+                                teamFilterIds.includes(t.id)
+                            )
+                            .map((t) =>
+                              t.SeasonTeams.filter(
+                                (st) => st.Season.id == season.id
+                              ).map((st) =>
+                                st.Choreos.filter(
+                                  (c) =>
+                                    c.counts >= minCount && c.counts <= maxCount
+                                )
+                              )
+                            )
+                            .flat(Infinity).length
+                        }}
+                      </b-badge>
+                    </b-list-group-item>
+                  </b-list-group>
+                </template>
+              </b-skeleton-wrapper>
+            </div>
+
+            <div
+              v-if="
+                choreos.length > 0 &&
+                Math.min(...choreos.map((c) => c.counts)) !=
+                  Math.max(...choreos.map((c) => c.counts))
+              "
+            >
+              <p class="mb-0 font-weight-bold font-italic text-muted">Counts</p>
+              <b-skeleton-wrapper :loading="loading">
+                <template #loading>
+                  <b-skeleton type="input" />
+                  <b-skeleton type="input" />
+                </template>
+                <template #default>
+                  <b-form-group
+                    label="Min. Länge:"
+                    :description="`${Math.floor(minCount / 8)} Achter + ${
+                      minCount % 8
+                    }`"
+                  >
+                    <b-form-input
+                      v-model="minCount"
+                      :min="Math.min(...choreos.map((c) => c.counts))"
+                      :max="Math.max(...choreos.map((c) => c.counts))"
+                      type="range"
+                    />
+                  </b-form-group>
+                  <hr />
+                  <b-form-group
+                    label="Max. Länge:"
+                    :description="`${Math.floor(maxCount / 8)} Achter + ${
+                      maxCount % 8
+                    }`"
+                  >
+                    <b-form-input
+                      v-model="maxCount"
+                      :min="Math.min(...choreos.map((c) => c.counts))"
+                      :max="Math.max(...choreos.map((c) => c.counts))"
+                      type="range"
+                    />
+                  </b-form-group>
+                </template>
+              </b-skeleton-wrapper>
+            </div>
+
+            <b-button
+              block
+              class="mt-2"
+              :disabled="
+                !this.searchTerm &&
+                this.teamFilterIds.length == 0 &&
+                this.seasonFilterIds == 0
+              "
+              :variant="
+                !this.searchTerm &&
+                this.teamFilterIds.length == 0 &&
+                this.seasonFilterIds.length == 0
+                  ? 'outline-secondary'
+                  : 'secondary'
+              "
+              @click="resetFilters"
+            >
+              Zurücksetzen
+            </b-button>
+          </b-collapse>
 
           <b-button
+            v-if="$store.state.isMobile"
+            variant="light"
             block
-            class="mt-2"
-            :disabled="
-              !this.searchTerm &&
-              this.teamFilterIds.length == 0 &&
-              this.seasonFilterIds == 0
-            "
-            :variant="
-              !this.searchTerm &&
-              this.teamFilterIds.length == 0 &&
-              this.seasonFilterIds.length == 0
-                ? 'outline-secondary'
-                : 'secondary'
-            "
-            @click="resetFilters"
+            v-b-toggle.filter-collapse
           >
-            Zurücksetzen
+            <b-icon-caret-down-fill
+              v-if="!filterCollapseVisible"
+              variant="secondary"
+            />
+            <b-icon-caret-up-fill v-else variant="secondary" />
           </b-button>
         </b-card>
       </b-col>
@@ -439,12 +459,14 @@ export default {
     minCount: 0,
     maxCount: 400,
     loading: true,
+    filterCollapseVisible: false,
   }),
   mounted() {
     this.load();
   },
   methods: {
     load() {
+      this.filterCollapseVisible = !this.$store.state.isMobile;
       let getClubPromise = null;
 
       if (this.$store.state.clubId) {

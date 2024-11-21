@@ -1,11 +1,6 @@
 <template>
   <b-container id="helpView" data-view class="d-flex justify-content-center">
-    <b-card
-      title="Hilfe bekommen"
-      class="w-75 mb-2"
-      border-variant="light"
-      title-tag="h1"
-    >
+    <b-card title="Hilfe bekommen" border-variant="light" title-tag="h1">
       <b-input
         type="text"
         placeholder="Suchen"
@@ -20,7 +15,6 @@
         <h5 class="ml-1 text-muted">{{ category.name }}</h5>
         <b-card
           no-body
-          class="mb-1"
           v-for="(faq, faqId) in category.faqs"
           :key="faq.title"
           border-variant="light"
