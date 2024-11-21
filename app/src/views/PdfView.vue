@@ -292,7 +292,7 @@ export default {
 
       let confirmedHitSplits = [];
 
-      while (startIndex + nItems < this.choreo.counts) {
+      while (startIndex + nItems <= this.choreo.counts) {
         this.hitSplits = [
           ...confirmedHitSplits,
           {
