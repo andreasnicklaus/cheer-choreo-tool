@@ -7,7 +7,7 @@
       verarbeite Ihre Daten ausschließlich auf Grundlage der gesetzlichen
       Bestimmungen (DSGVO, TMG). In dieser Datenschutzerklärung informiere ich
       Sie über die wichtigsten Aspekte der Datenverarbeitung im Zusammenhang mit
-      der Nutzung meines Online-Tools „Choreo-Planer“.
+      der Nutzung meines Online-Tools „Choreo Planer“.
     </p>
     <h2>2. Verantwortlicher</h2>
     <p>
@@ -19,7 +19,7 @@
     <h2>3. Verarbeitung personenbezogener Daten</h2>
     <ol class="ml-3">
       <li>
-        Speicherung von Daten Das Online-Tool „Choreo-Planer“ ist vollständig
+        Speicherung von Daten Das Online-Tool „Choreo Planer“ ist vollständig
         kostenlos nutzbar. Es werden keine personenbezogenen Daten der Nutzer
         erhoben, gespeichert oder verarbeitet, die zur Identifikation von
         Personen verwendet werden könnten.

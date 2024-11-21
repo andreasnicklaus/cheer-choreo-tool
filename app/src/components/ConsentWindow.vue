@@ -14,9 +14,12 @@
     <p>
       🍪 Diese Webseite verwendet Matomo, um den Datenverkehr zu analysieren und
       uns dabei zu helfen, Ihr Nutzererlebnis zu verbessern. Wir verarbeiten
-      Ihre IP-Adresse sowie Browser- und Geräteinformationen, und Cookies werden
-      in Ihrem Browser gespeichert. Diese Daten werden nur von uns und unserer
-      Webhosting-Plattform verarbeitet.
+      Browser- und Geräteinformationen, und Cookies werden in Ihrem Browser
+      gespeichert. Diese Daten werden nur von uns und unserer
+      Webhosting-Plattform verarbeitet. Mehr Informationen finden Sie in der
+      <router-link :to="{ name: 'Datenschutz' }"
+        >Datenschutzerklärung</router-link
+      >.
     </p>
     <b-row align-v="center">
       <b-col>
@@ -40,6 +43,7 @@
 
 <script>
 const cookieName = "mtm_consent";
+const dismissCookieName = "consent-dismissed";
 
 export default {
   name: "ConsentWindow",
@@ -48,8 +52,10 @@ export default {
   }),
   mounted() {
     const consent = this.$cookie.get(cookieName);
-    if (!consent) this.showConsentWindow = true;
-    else {
+    if (!consent) {
+      const dismissed = this.$cookie.get(dismissCookieName);
+      if (!dismissed) this.showConsentWindow = true;
+    } else {
       window._paq.push(["rememberConsentGiven"]);
     }
   },
@@ -60,6 +66,7 @@ export default {
     },
     closeWithoutConsent() {
       this.showConsentWindow = false;
+      this.$cookie.set(dismissCookieName, true, { expires: 1 });
     },
   },
 };
