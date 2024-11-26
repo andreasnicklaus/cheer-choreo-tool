@@ -6,6 +6,13 @@ services:
       - .env
     volumes:
       - ./data:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      start_interval: 3s
+      timeout: 10s
 
   server:
     build: server
@@ -13,9 +20,40 @@ services:
     env_file:
       - .env
       - .server.env
+      - .mail-server.env
     environment:
-     - DB_HOST=db
+      - DB_HOST=db
+      - MAILPROXY_HOST=mailproxy
     ports:
       - 3000:3000
     volumes:
       - ./logs:/usr/src/app/logs
+    depends_on:
+      mailproxy:
+        condition: service_healthy
+        restart: true
+      db:
+        condition: service_healthy
+        restart: true
+
+  mailproxy:
+    build: mailproxy
+    env_file:
+      - .mailproxy.env
+      - .mail-server.env
+    volumes:
+      - ./logs:/usr/src/app/logs
+    networks:
+      - default
+      - host_proxy
+    healthcheck:
+      test: curl --fail http://localhost:$$MAILPROXY_PORT || exit 1
+      interval: 60s
+      retries: 5
+      start_period: 20s
+      start_interval: 3s
+      timeout: 10s
+
+networks:
+  host_proxy:
+    enable_ipv6: true

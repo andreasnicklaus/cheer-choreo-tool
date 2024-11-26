@@ -1,5 +1,6 @@
 const User = require("../db/models/user");
 const { logger } = require("../plugins/winston");
+const MailService = require("./MailService");
 
 class UserService {
   async getAll() {
@@ -17,7 +18,12 @@ class UserService {
   }
 
   async create(username, password) {
-    return User.create({ username, password });
+    return User.create({ username, password }).then((user) => {
+      MailService.sendUserRegistrationNotice(user.username, user.id).catch(
+        logger.error
+      );
+      return user;
+    });
   }
 
   async findOrCreate(username, password) {

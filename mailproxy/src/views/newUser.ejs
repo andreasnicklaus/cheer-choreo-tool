@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Neuer Nutzer!</title>
+    <style>
+      .mono {
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Neue Nutzerregistrierung!</h1>
+
+    <p>
+      <b> <%= username %> </b>
+      hat sich eben um <%= timestamp %> registriert!
+      <br />
+      Generierte User-ID: <span class="mono"><%= userId %></span>
+    </p>
+
+    <p>
+      <small
+        >Diese E-Mail wurde automatisch erstellt. Bitte antworte nicht auf diese
+        E-Mail. Schreibe deine Antwort lieber an
+        <a href="mailto:info@choreo-planer.de">info@choreo-planer.de</a>. Vielen
+        Dank!</small
+      >
+    </p>
+
+    <hr />
+
+    <p>Im Auftrag von Choreo Planer</p>
+
+    <img
+      src="https://www.choreo-Planer.de/Icon.png"
+      alt="Cheerleaderin-Icon, das ein Rad schlägt"
+      width="100"
+    />
+
+    <p>
+      <a href="https://www.choreo-planer.de">www.choreo-planer.de</a><br />
+      <a href="mailto:info@choreo-planer.de">info@choreo-planer.de</a>
+    </p>
+  </body>
+</html>

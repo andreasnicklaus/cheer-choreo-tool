@@ -79,7 +79,7 @@ function startServer() {
       logger.info("DB Connection established");
 
       app.listen(port, () => {
-        logger.info(`Example app listening on port ${port}`);
+        logger.info(`App listening on port ${port}`);
       });
     })
     .catch((e) => {

@@ -11,3 +11,11 @@ services:
     image: anicklaus/cheer-tool:dev
     volumes:
       - ./server/src:/usr/src/app/src
+
+  mailproxy:
+    build:
+      context: mailproxy
+      dockerfile: dev.Dockerfile
+    image: anicklaus/cheer-tool:mailproxy
+    volumes:
+      - ./mailproxy/src:/usr/src/app/src
