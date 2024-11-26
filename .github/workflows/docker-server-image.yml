@@ -1,4 +1,4 @@
-name: Build and push docker mailproxy images
+name: Build and push docker server images
 
 on:
   push:
