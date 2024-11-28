@@ -21,6 +21,21 @@ const User = db.define(
         },
       },
     },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      unique: true,
+      validate: {
+        isEmail: {
+          msg: "E-Mail muss im E-Mail-Format sein, z.B. info@choreo-planer.de",
+        },
+      },
+    },
+    emailConfirmed: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
+    },
     password: {
       type: DataTypes.STRING,
       allowNull: false,

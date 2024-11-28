@@ -17,6 +17,8 @@ function logConfig() {
     ? "<redacted>"
     : "not defined";
 
+  const frontendDomain = process.env.FRONTEND_DOMAIN || "not defined";
+
   logger.info("################");
   logger.info("Configuration:");
   logger.info("################");
@@ -31,6 +33,8 @@ function logConfig() {
   logger.info(`  Mailproxy host:     ${mailProxyHost}`);
   logger.info(`  Mailproxy port:     ${mailProxyPort}`);
   logger.info(`  Mailproxy secret:   ${mailProxySecret}`);
+  logger.info();
+  logger.info(`  Frontend Domain:    ${frontendDomain}`);
   logger.info("################");
 }
 

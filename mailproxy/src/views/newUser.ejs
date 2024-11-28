@@ -18,6 +18,12 @@
       hat sich eben um <%= timestamp %> registriert!
       <br />
       Generierte User-ID: <span class="mono"><%= userId %></span>
+      <br />
+      E-Mail-Adresse: <% if (userEmail) { %>
+      <a href="mailto:<%= userEmail %>" class="mono"><%= userEmail %></a>
+      <% } else { %>
+      <span class="mono">nicht angegeben</span>
+      <% } %>
     </p>
 
     <p>

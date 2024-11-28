@@ -1,10 +1,12 @@
 const { mailAx } = require("./RequestService");
 
 class MailService {
-  sendUserRegistrationNotice(username, userId) {
-    return mailAx.post("/newUser", { username, userId }).then((res) => {
-      console.log(res.data);
-    });
+  sendUserRegistrationNotice(username, userId, userEmail) {
+    return mailAx
+      .post("/newUser", { username, userId, userEmail })
+      .then((res) => {
+        console.log(res.data);
+      });
   }
 }
 

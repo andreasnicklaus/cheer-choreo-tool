@@ -9,6 +9,8 @@ services:
       context: server
       dockerfile: dev.Dockerfile
     image: anicklaus/cheer-tool:dev
+    env_file:
+      - .server.dev.env
     volumes:
       - ./server/src:/usr/src/app/src
 

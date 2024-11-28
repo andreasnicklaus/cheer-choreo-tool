@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const User = require("../db/models/user");
 const { logger } = require("../plugins/winston");
 const MailService = require("./MailService");
@@ -11,17 +12,21 @@ class UserService {
     return User.findByPk(id);
   }
 
-  async findByUsername(username, { scope = "defaultScope" }) {
+  async findByUsernameOrEmail(usernameOrEmail, { scope = "defaultScope" }) {
     return User.scope(scope).findOne({
-      where: { username },
+      where: {
+        [Op.or]: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
+      },
     });
   }
 
-  async create(username, password) {
-    return User.create({ username, password }).then((user) => {
-      MailService.sendUserRegistrationNotice(user.username, user.id).catch(
-        logger.error
-      );
+  async create(username, password, email) {
+    return User.create({ username, password, email }).then((user) => {
+      MailService.sendUserRegistrationNotice(
+        user.username,
+        user.id,
+        user.email
+      ).catch(logger.error);
       return user;
     });
   }
@@ -58,7 +63,7 @@ class UserService {
         logger.debug(`UserService.remove ${JSON.stringify({ id })}`);
         return foundUser.destroy();
       } else {
-        throw Error(`Beim Löschen wurde kein Team mit der ID ${id} gefunden`);
+        throw Error(`Beim Löschen wurde kein User mit der ID ${id} gefunden`);
       }
     });
   }

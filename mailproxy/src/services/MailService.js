@@ -5,14 +5,35 @@ class MailService {
     verify();
   }
 
-  sendUserRegistrationNotice(username, userId) {
+  sendUserRegistrationNotice(username, userId, userEmail) {
     return Promise.all(
       process.env.EMAIL_ADMIN_ADDRESSES.split(",").map((recipient) => {
         return sendMail(recipient, "Neuer Nutzer", "newUser.ejs", {
           username,
           userId,
+          userEmail,
         });
       })
+    );
+  }
+  sendWelcomeEmail(username, userId, userEmail) {
+    return sendMail(userEmail, "Willkommen beim Choreo Planer", "welcome.ejs", {
+      username,
+      userId,
+      backendDomain: process.env.BACKEND_DOMAIN,
+    });
+  }
+  sendEmailConfirmationEmail(username, userId, userEmail) {
+    return sendMail(
+      userEmail,
+      "Bitte bestätige deine E-Mail-Adresse",
+      "confirmEmail.ejs",
+      {
+        username,
+        userId,
+        userEmail,
+        backendDomain: process.env.BACKEND_DOMAIN,
+      }
     );
   }
 }

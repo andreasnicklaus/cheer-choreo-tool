@@ -14,6 +14,8 @@ function logConfig() {
     ? "<redacted>"
     : "not defined";
 
+  const backendDomain = process.env.BACKEND_DOMAIN || "not defined";
+
   logger.info("################");
   logger.info("Configuration:");
   logger.info("################");
@@ -26,6 +28,8 @@ function logConfig() {
   logger.info(`  Email admin addresses:  ${emailAdminAddresses}`);
   logger.info();
   logger.info(`  Mailproxy secret:       ${mailProxySecret}`);
+  logger.info();
+  logger.info(`  Backend Domain:         ${backendDomain}`);
   logger.info("################");
 }
 

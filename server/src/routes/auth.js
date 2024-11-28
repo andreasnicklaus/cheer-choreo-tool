@@ -7,8 +7,8 @@ const { ValidationError, UniqueConstraintError } = require("sequelize");
 const router = Router();
 
 router.post("/", (req, res, next) => {
-  const { username, password } = req.body;
-  UserService.create(username, password)
+  const { username, password, email } = req.body;
+  UserService.create(username, password, email)
     .then((user) => {
       const token = AuthService.generateAccessToken(user.id);
       res.send(token);
@@ -19,7 +19,8 @@ router.post("/", (req, res, next) => {
         res
           .status(400)
           .send(
-            Object.keys(e.fields).includes("username")
+            Object.keys(e.fields).includes("username") ||
+              Object.keys(e.fields).includes("email")
               ? "Nutzer existiert bereits"
               : null
           );
@@ -34,7 +35,7 @@ router.post("/", (req, res, next) => {
 
 router.post("/login", (req, res, next) => {
   const { username, password } = req.body;
-  UserService.findByUsername(username, { scope: "withPasswordHash" })
+  UserService.findByUsernameOrEmail(username, { scope: "withPasswordHash" })
     .then((user) => {
       if (!user || !bcrypt.compareSync(password, user.password))
         return res.status(404).send();

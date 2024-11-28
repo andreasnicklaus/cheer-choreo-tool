@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Willkommen beim Choreo Planer</title>
+    <style>
+      h1 {
+        text-align: center;
+      }
+      .mono {
+        font-family: monospace;
+      }
+      a[type="button"] {
+        background-color: #0069d9;
+        color: white;
+        padding: 16px 24px;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Bitte bestätige deine E-Mail-Adresse!</h1>
+
+    <p>Hallo <%= username %>,</p>
+
+    <p>
+      dein Konto beim <b>Choreo Planer</b> wurde mit <%= userEmail %> erstellt.
+      Bitte bestätige jetzt deine E-Mail-Adresse!
+    </p>
+
+    <p style="margin: 32px 0px; text-align: center">
+      <a
+        type="button"
+        href="<%= backendDomain %>/user/confirmEmail/<%= userId %>"
+      >
+        Jetzt bestätigen
+      </a>
+    </p>
+
+    <p>
+      Wenn der obige Link nicht funktioniert, kannst du folgende URL in deinem
+      Browser öffnen:
+      <a href="<%= backendDomain %>/user/confirmEmail/<%= userId %>">
+        <%= backendDomain %>/user/confirmEmail/<%= userId %>
+      </a>
+    </p>
+
+    <p>Wir wünschen dir viel Spaß und Erfolg mit deinem nächsten Projekt!</p>
+
+    <p>
+      Tanzende Grüße,<br />
+      Andreas Nicklaus<br />
+      <b>Choreo Planer Team</b>
+    </p>
+
+    <p>
+      <small
+        >Diese E-Mail wurde automatisch erstellt. Bitte antworte nicht auf diese
+        E-Mail. Schreibe deine Antwort lieber an
+        <a href="mailto:info@choreo-planer.de">info@choreo-planer.de</a>. Vielen
+        Dank!</small
+      >
+    </p>
+
+    <hr />
+
+    <img
+      src="https://www.choreo-Planer.de/Icon.png"
+      alt="Cheerleaderin-Icon, das ein Rad schlägt"
+      width="100"
+    />
+
+    <p>
+      <a href="https://www.choreo-planer.de">www.choreo-planer.de</a><br />
+      <a href="mailto:info@choreo-planer.de">info@choreo-planer.de</a>
+    </p>
+  </body>
+</html>

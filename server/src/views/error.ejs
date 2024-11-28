@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unbekannter Fehler</title>
+    <style>
+      body {
+        text-align: center;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 100vh;
+        padding: 0px 50px;
+      }
+      a[type="button"] {
+        background-color: #0069d9;
+        color: white;
+        padding: 16px 24px;
+        border-radius: 4px;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>😢 Oh nein!</h1>
+    <p>Das hat nicht funktioniert und wir wissen nicht warum...</p>
+    <p>Bitte versuche es noch einmal oder nimm Kontakt zu uns auf!</p>
+
+    <div
+      style="
+        margin: 32px 0px;
+        display: flex;
+        column-gap: 20px;
+        justify-content: center;
+      "
+    >
+      <a type="button" href="#" onclick="window.location.reload()">
+        Neu laden
+      </a>
+      <a
+        type="button"
+        href="mailto:info@choreo-planer.de?cc=admin@choreo-planer.de&subject=Ich möchte einen Fehler melden&body=<%= emailBody %>"
+      >
+        Kontakt aufnehmen
+      </a>
+    </div>
+
+    <details style="text-align: start">
+      <summary style="text-align: center">Fehlerinformationen</summary>
+      <p>Action: <%= action %></p>
+      <p>Data: <%= data %></p>
+      <p>Fehlermeldung: <%= error %></p>
+      <p>Timestamp: <%= timestamp %></p>
+    </details>
+  </body>
+</html>
