@@ -34,6 +34,7 @@ const { userRouter } = require("./routes/user");
 const { authRouter } = require("./routes/auth");
 const { seasonRouter } = require("./routes/season");
 const { seasonTeamRouter } = require("./routes/seasonTeam");
+const logConfig = require("./utils/logConfig");
 
 const app = express();
 const port = 3000;
@@ -74,6 +75,8 @@ app.use(errorLoggingMiddleWare);
 app.use(errorHandlingMiddleWare);
 
 function startServer() {
+  logConfig();
+
   db.authenticate()
     .then(() => {
       logger.info("DB Connection established");

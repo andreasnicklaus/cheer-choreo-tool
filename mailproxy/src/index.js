@@ -16,6 +16,7 @@ const {
 // ROUTERS
 const router = require("./routes");
 const authenticate = require("./auth");
+const logConfig = require("./utils/logConfig");
 
 // APP
 const app = express();
@@ -35,6 +36,8 @@ app.use(errorLoggingMiddleWare);
 app.use(errorHandlingMiddleWare);
 
 function startServer() {
+  logConfig();
+
   app.listen(port, () => {
     console.info(`App listening on port ${port}`);
   });
