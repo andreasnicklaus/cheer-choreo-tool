@@ -15,6 +15,8 @@
 ![Backend mailproxy build status](https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/docker-mailproxy-image.yml?style=for-the-badge&logo=docker&logoColor=white&label=Backend%20Build%20(Mailproxy))
 ![Frontend build status](https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/pages.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=Frontend%20Build)
 
+[![](https://img.shields.io/badge/Follow%20on%20Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/choreoplaner)
+
 `Planning tool for choreographies in cheerleading and dance`
 
 </div>
