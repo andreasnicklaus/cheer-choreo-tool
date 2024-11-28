@@ -2,7 +2,7 @@
   <b-container id="AccountView" class="w-75" data-view>
     <b-row align-v="center" align-h="between">
       <b-col cols="auto">
-        <b-icon-person-circle class="h1" />
+        <b-avatar variant="primary" size="120px" />
       </b-col>
       <b-col>
         <editable-name-heading
@@ -11,8 +11,26 @@
           @input="onNameEdit"
           placeholder="Lädt..."
         />
+        <p class="text-muted">
+          {{ user?.email }}
+          <b-badge
+            v-if="!user?.emailConfirmed"
+            variant="danger"
+            v-b-tooltip.hover
+            title="Bitte schaue in deinem E-Mail-Postfach nach und bestätige deine E-Mail-Adresse mit dem darin enthaltenen Link!"
+            >nicht bestätigt</b-badge
+          >
+          <b-badge
+            v-else
+            variant="success"
+            v-b-tooltip.hover
+            title="Diese E-Mail-Adresse hast du bereits bestätigt."
+            >bestätigt</b-badge
+          >
+        </p>
       </b-col>
     </b-row>
+    <hr />
     <p class="text-muted m-0">
       Erstellt am: {{ new Date(user?.createdAt).toLocaleDateString("de") }},
       {{

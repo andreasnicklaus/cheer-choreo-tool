@@ -68,6 +68,28 @@
             ></b-form-input>
           </b-form-group>
           <b-form-group
+            label="E-Mail-Adresse"
+            :state="emailIsValid"
+            :invalid-feedback="emailError"
+            valid-feedback="Gültig!"
+          >
+            <b-input-group>
+              <b-form-input
+                placeholder="E-Mail-Adresse"
+                :state="emailIsValid"
+                v-model="email"
+              ></b-form-input>
+              <template #append>
+                <b-input-group-text
+                  v-b-tooltip.hover
+                  title="Deine E-Mail-Adresse brauchen wir, um dein Passwort zurücksetzen oder dein Konto wiederherstellen zu können."
+                >
+                  <b-icon-info-circle />
+                </b-input-group-text>
+              </template>
+            </b-input-group>
+          </b-form-group>
+          <b-form-group
             label="Passwort"
             :state="passwordIsValid"
             :invalid-feedback="passwordError"
@@ -102,6 +124,7 @@
               block
               :disabled="
                 !usernameIsValid ||
+                !emailIsValid ||
                 !passwordIsValid ||
                 !passwordRepetitionIsValid
               "
@@ -162,10 +185,13 @@ const failMessages = [
   "~ Traurige Trompete ~",
 ];
 
+const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
+
 export default {
   name: "LoginView",
   data: () => ({
     username: null,
+    email: null,
     password: null,
     passwordRepetition: null,
     tabIndex: 0,
@@ -174,7 +200,7 @@ export default {
     showFailMessage(message) {
       this.$bvToast.toast(message, {
         title: failMessages[Math.floor(Math.random() * failMessages.length)],
-        autoHideDelay: 3000,
+        autoHideDelay: 5000,
         appendToast: true,
         variant: "danger",
         solid: true,
@@ -184,13 +210,14 @@ export default {
     onReset(event) {
       event.preventDefault();
       this.username = null;
+      this.email = null;
       this.password = null;
       this.passwordRepetition = null;
     },
     onLoginSubmit(event) {
       event.preventDefault();
 
-      AuthService.login(this.username, this.password)
+      AuthService.login(this.username, this.password, this.email)
         .then(() => {
           this.$router
             .push(this.$route.query?.redirectUrl || "/start")
@@ -199,21 +226,21 @@ export default {
         .catch((e) => {
           console.warn(e);
           this.showFailMessage(
-            "Bitte kontrolliere, dass du Nutzernamen und Passwort richtig geschrieben hast."
+            "Bitte kontrolliere, dass du Nutzernamen/Email und Passwort richtig geschrieben hast."
           );
         });
     },
     onRegisterSubmit(event) {
       event.preventDefault();
 
-      AuthService.register(this.username, this.password)
+      AuthService.register(this.username, this.password, this.email)
         .then(() => {
           this.$router.push(this.$route.query?.redirectUrl || "/start");
         })
         .catch((e) => {
           console.warn(e);
           this.showFailMessage(
-            "Es scheint so als gäbe es bereits einen Nutzer mit diesem Namen ..."
+            "Es scheint so als gäbe es bereits einen Nutzer mit diesem Namen oder E-Mail-Adresse ..."
           );
         });
     },
@@ -227,6 +254,16 @@ export default {
         return "Bitte angeben";
       else if (this.username.length < 6)
         return "Dein Benutzername muss mindestens 6 Zeichen lang sein.";
+      else return null;
+    },
+    emailIsValid() {
+      return this.email != null && this.email.match(emailRegex)?.length > 0;
+    },
+    emailError() {
+      if (this.email == null || this.email.length == 0) return "Bitte angeben";
+      const emailRegexMatches = this.email.match(emailRegex);
+      if (!emailRegexMatches || emailRegexMatches.length <= 0)
+        return "Deine E-Mail-Adresse muss ein valide E-Mail-Adresse sein.";
       else return null;
     },
     passwordIsValid() {

@@ -150,7 +150,6 @@ export default {
   watch: {
     "$vuetify.breakpoint.smAndDown": {
       handler(value) {
-        console.log(value);
         this.$store.commit("setMobile", value);
       },
       immediate: true,

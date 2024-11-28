@@ -25,9 +25,9 @@ class AuthService {
       });
   }
 
-  async register(username, password) {
+  async register(username, password, email) {
     return ax
-      .post("/auth", { username, password })
+      .post("/auth", { username, password, email })
       .then((res) => {
         const token = res.data;
         if (!token) {
