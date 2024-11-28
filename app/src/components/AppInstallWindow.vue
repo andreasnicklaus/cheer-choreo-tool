@@ -48,8 +48,13 @@ export default {
   mounted() {
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
-      // Stash the event so it can be triggered later.
-      if (!this.$cookie.get(cookieName)) {
+      const cookie = this.$cookie.get(cookieName);
+      console.log(cookie, typeof cookie);
+      if (cookie == null) {
+        this.installationPrompt = null;
+        this.$cookie.set(cookieName, "false", { expires: 30 });
+      }
+      if (cookie == "false") {
         this.installationPrompt = e;
       } else this.installationPrompt = null;
     });
@@ -59,7 +64,7 @@ export default {
   },
   methods: {
     async dismiss() {
-      this.$cookie.set(cookieName, true, { expires: 30 });
+      this.$cookie.set(cookieName, "true", { expires: 30 });
       this.installationPrompt = null;
     },
     async install() {
