@@ -234,6 +234,20 @@ export default {
         });
       }
     },
+    checkEmailConfirmation() {
+      if (this.user?.email && !this.user?.emailConfirmed) {
+        this.$bvToast.toast(
+          "Du solltest den Link zur Bestätigung in deinem Postfach finden. Bitte überprüfe auch deinen Spam-Ordner.",
+          {
+            variant: "warning",
+            title: "Bitte bestätige deine E-Mail-Adresse",
+            appendToast: true,
+            solid: true,
+            autoHideDelay: 10_000,
+          }
+        );
+      }
+    },
     logout() {
       AuthService.logout();
     },
@@ -253,15 +267,18 @@ export default {
       handler() {
         this.load();
       },
+      immediate: true,
     },
     "$store.state.clubId": {
       handler() {
         this.load();
       },
+      immediate: true,
     },
   },
-  mounted() {
+  created() {
     this.load();
+    setTimeout(this.checkEmailConfirmation, 1000);
     setInterval(this.load, 60_000);
   },
 };

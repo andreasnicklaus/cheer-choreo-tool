@@ -49,7 +49,6 @@ export default {
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
       const cookie = this.$cookie.get(cookieName);
-      console.log(cookie, typeof cookie);
       if (cookie == null) {
         this.installationPrompt = null;
         this.$cookie.set(cookieName, "false", { expires: 30 });
