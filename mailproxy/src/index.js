@@ -17,6 +17,7 @@ const {
 const router = require("./routes");
 const authenticate = require("./auth");
 const logConfig = require("./utils/logConfig");
+const { logger } = require("./plugins/winston");
 
 // APP
 const app = express();
@@ -29,6 +30,10 @@ app.get("/", (req, res, next) => {
   res.send(`Server is up and running!`);
   next();
 });
+app.get("/health", (req, res, next) => {
+  res.status(200).send();
+  next();
+});
 
 app.use("/", authenticate, router);
 
@@ -39,7 +44,7 @@ function startServer() {
   logConfig();
 
   app.listen(port, () => {
-    console.info(`App listening on port ${port}`);
+    logger.info(`App listening on port ${port}`);
   });
 }
 
