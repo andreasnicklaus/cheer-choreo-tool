@@ -17,5 +17,7 @@ services:
       context: mailproxy
       dockerfile: dev.Dockerfile
     image: anicklaus/cheer-tool:mailproxy
+    env_file:
+      - .mailproxy.dev.env
     volumes:
       - ./mailproxy/src:/usr/src/app/src
