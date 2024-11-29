@@ -3,7 +3,7 @@
     <AppInstallWindow />
     <HeadNav :onlineStatus="online" :serverVersion="serverVersion" />
     <router-view :style="{ minHeight: 'calc(100vh - 116px)' }" class="mb-2" />
-    <footer class="p-4 px-5 d-flex flex-column align-items-center">
+    <footer class="p-4 px-5 pt-5 d-flex flex-column align-items-center">
       <b-row align-h="around" class="w-75 footer-link" :style="{ gap: '20px' }">
         <b-col cols="auto">
           <h5>
@@ -43,7 +43,7 @@
         </b-col>
       </b-row>
       <hr :style="{ width: '100%', borderColor: '000225' }" class="my-3" />
-      <b-row align-h="center">
+      <b-row align-h="center" class="mt-1">
         <b-col cols="auto">
           <span class="mr-2">
             Andreas Nicklaus @{{ new Date().getFullYear() }}
@@ -158,6 +158,9 @@ export default {
 };
 </script>
 <style lang="scss">
+html {
+  width: 100vw;
+}
 .modal-open {
   padding: 0 !important;
 }

@@ -41,9 +41,8 @@
       </b-col>
     </section>
 
-    <hr />
-
     <section
+      id="sectionB"
       :style="{
         display: 'grid',
         placeItems: 'center',
@@ -51,23 +50,19 @@
     >
       <b-row align-v="center" align-h="center" class="w-100" id="sectionB">
         <b-col cols="12" lg="6" class="mb-lg-0 mb-2">
-          <h2>Choreos erstellen</h2>
-          <b-list-group>
-            <b-list-group-item>
-              1. Gib deiner Choreo einen Namen
-            </b-list-group-item>
-            <b-list-group-item>
-              2. Erstelle Aufstellungen, indem du die Punkte auf der Matte an
-              die richtige Stelle ziehst
-            </b-list-group-item>
-            <b-list-group-item>
-              3. Bestimme, wie lange die Aufstellungen gehalten werden sollen
-              und von wem
-            </b-list-group-item>
-            <b-list-group-item>
-              4. Mache Einträge in dein Countsheet, wer wann was macht
-            </b-list-group-item>
-          </b-list-group>
+          <h2>📝 Choreos erstellen</h2>
+          <ol>
+            <li>Gib deiner Choreo einen Namen</li>
+            <li>
+              Erstelle Aufstellungen, indem du die Punkte auf der Matte an die
+              richtige Stelle ziehst
+            </li>
+            <li>
+              Bestimme, wie lange die Aufstellungen gehalten werden sollen und
+              von wem
+            </li>
+            <li>Mache Einträge in dein Countsheet, wer wann was macht</li>
+          </ol>
         </b-col>
         <b-col cols="auto">
           <Mat
@@ -82,26 +77,62 @@
       </b-row>
     </section>
 
-    <hr />
+    <div
+      v-show="!$store.state.isMobile"
+      id="featureCallouts1"
+      class="featureCallouts"
+    >
+      <div class="featureCallout h3">
+        <b-icon-people-fill /><br />
+        Mitgliederverwaltung
+      </div>
+      <b-col class="featureCallout h3">
+        <b-icon-layout-three-columns /><br />
+        Choreoplanung
+      </b-col>
+      <b-col class="featureCallout h3">
+        <b-icon-file-pdf-fill /><br />
+        Dateigenerierung
+      </b-col>
+      <b-col class="featureCallout h3">
+        <b-icon-film /><br />
+        Video-Export
+      </b-col>
+      <b-col class="featureCallout h3">
+        <b-icon-shield-fill-check /><br />
+        Datensicherung
+      </b-col>
+      <b-col class="featureCallout h3">
+        <b-icon-calendar2-range-fill /><br />
+        Seasonwechsel
+      </b-col>
+      <b-col class="featureCallout h3">
+        <b-icon-trophy-fill /><br />
+        Meisterschaftsvorbereitung
+      </b-col>
+      <b-col class="featureCallout h3">
+        <b-icon-archive-fill /><br />
+        Datenarchivierung
+      </b-col>
+    </div>
 
     <section id="sectionC">
       <b-row align-h="center">
         <b-col cols="12" lg="6" class="mb-lg-0 mb-2">
-          <h2>Countsheets teilen</h2>
-          <b-list-group>
-            <b-list-group-item>
-              1. Mache Einträge ins Countsheet, während du deine Choreo
-              erstellst
-            </b-list-group-item>
-            <b-list-group-item>
-              2. Bestimme für jeden Eintrag, ob er für alle oder nur für
-              bestimmte Teilnehmerinnen und Teilnehmer gilt
-            </b-list-group-item>
-            <b-list-group-item>
-              3. Erstelle Countsheets als Video oder als PDF für alle oder nur
-              für bestimmte Teilnehmerinnen und Teilnehmer
-            </b-list-group-item>
-          </b-list-group>
+          <h2>🫰 Countsheets teilen</h2>
+          <ol>
+            <li>
+              Mache Einträge ins Countsheet, während du deine Choreo erstellst
+            </li>
+            <li>
+              Bestimme für jeden Eintrag, ob er für alle oder nur für bestimmte
+              Teilnehmerinnen und Teilnehmer gilt
+            </li>
+            <li>
+              Erstelle Countsheets als Video oder als PDF für alle oder nur für
+              bestimmte Teilnehmerinnen und Teilnehmer
+            </li>
+          </ol>
         </b-col>
 
         <b-col cols="12" lg="6" :style="{ minHeight: '400px' }">
@@ -122,31 +153,55 @@
             :choreo="choreo"
             :interactive="false"
           />
+          <small class="text-muted text-center">Beispiel-Countsheet</small>
         </b-col>
       </b-row>
     </section>
 
-    <hr />
+    <div
+      v-show="!$store.state.isMobile"
+      id="featureCallouts2"
+      class="featureCallouts row-reverse"
+    >
+      <div class="featureCallout h3">
+        <b-icon-person-plus-fill /><br />
+        1. Anmelden
+      </div>
+      <b-col class="featureCallout h3">
+        <b-icon-people-fill /><br />
+        2. Team anlegen
+      </b-col>
+      <b-col class="featureCallout h3">
+        <b-icon-layout-three-columns /><br />
+        3. Choreos planen
+      </b-col>
+      <b-col class="featureCallout h3">
+        <b-icon-download /><br />
+        4. Videos herunterladen
+      </b-col>
+      <b-col class="featureCallout h3">
+        <b-icon-chat-fill />
+        <b-icon-file-earmark-arrow-up-fill />
+        <br />
+        5. Countsheets teilen
+      </b-col>
+    </div>
 
     <section id="sectionD">
       <b-row align-h="center">
         <b-col cols="12" lg="6">
-          <h2>Videos erstellen</h2>
-          <b-list-group>
-            <b-list-group-item>
-              1. Wenn du zufrieden bist, gehe zu "als Video exportieren"
-            </b-list-group-item>
-            <b-list-group-item>
-              2. Wähle aus, ab du ein Video mit allen auf der Matte oder
+          <h2>🎞️ Videos erstellen</h2>
+          <ol>
+            <li>Wenn du zufrieden bist, gehe zu "als Video exportieren"</li>
+            <li>
+              Wähle aus, ab du ein Video mit allen auf der Matte oder
               ausgewählten Personen haben willst
-            </b-list-group-item>
-            <b-list-group-item>
-              3. Warte, bis dein Video fertig ist
-            </b-list-group-item>
-          </b-list-group>
+            </li>
+            <li>Warte, bis dein Video fertig ist</li>
+          </ol>
         </b-col>
         <b-col cols="12" lg="6">
-          <b-form class="mt-5" id="video-form">
+          <b-form id="video-form">
             <b-form-group
               id="checkbox1"
               description="Wähle aus, wer auf dem Video erscheinen soll"
@@ -193,6 +248,27 @@
         </b-col>
       </b-row>
     </section>
+
+    <div
+      :style="{
+        backgroundColor: 'var(--success)',
+        color: 'white',
+        marginBottom: '10vh',
+        borderRadius: '4px',
+      }"
+      class="text-center py-5 px-3"
+    >
+      <h2 class="mb-1">Interesse geweckt?</h2>
+      <p class="mb-4">
+        Zum loslegen einfach anmelden und das erste Team anlegen:
+      </p>
+      <b-button
+        :style="{ backgroundColor: 'white', color: 'var(--success)' }"
+        class="pulse-button"
+      >
+        Anmelden / Registrieren
+      </b-button>
+    </div>
   </b-container>
 </template>
 
@@ -587,6 +663,35 @@ export default {
       opacity: 0,
     });
 
+    const homeViewWidth = document.getElementById("homeView").clientWidth;
+    const featureCallouts1Width =
+      document.getElementById("featureCallouts1").clientWidth;
+    const featureCallouts2Width =
+      document.getElementById("featureCallouts2").clientWidth;
+
+    gsap.to("#featureCallouts1", {
+      scrollTrigger: {
+        trigger: "#featureCallouts1",
+        start: "center center",
+        end: `+=${featureCallouts1Width - homeViewWidth}`,
+        scrub: -1,
+        pin: true,
+        anticipatePin: 1,
+      },
+      x: homeViewWidth - featureCallouts1Width,
+    });
+    gsap.from("#featureCallouts2", {
+      scrollTrigger: {
+        trigger: "#featureCallouts2",
+        start: "center center",
+        end: `+=${featureCallouts2Width - homeViewWidth}`,
+        scrub: -1,
+        pin: true,
+        anticipatePin: 1,
+      },
+      x: homeViewWidth - featureCallouts2Width,
+    });
+
     const scrollTimeLine = gsap.timeline({
       scrollTrigger: {
         trigger: "#sectionB",
@@ -707,9 +812,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+h1 {
+  font-weight: 800;
+}
+
 h2 {
   text-align: center;
-  color: #0069d9;
+  section > & {
+    color: #0069d9;
+  }
   font-weight: bold;
   margin-bottom: 32px;
 }
@@ -718,5 +829,116 @@ section {
   min-height: 70vh;
   display: grid;
   place-items: center;
+  &:not(#sectionA) {
+    padding: 20vh 0;
+  }
+  & > .row {
+    row-gap: 10vh;
+  }
+}
+
+ol,
+ul {
+  font-size: large;
+  margin-left: 20px;
+  margin-bottom: 0;
+  & > li {
+    margin-bottom: 8px;
+  }
+}
+
+.featureCallouts {
+  display: flex;
+  width: fit-content;
+  margin: 10vh 0;
+
+  &.row-reverse {
+    flex-direction: row-reverse;
+
+    .featureCallout {
+      &:nth-of-type(1) {
+        margin-right: 0;
+        margin-left: 48px;
+      }
+      &:last-of-type {
+        margin-left: 0;
+        margin-right: 48px;
+      }
+    }
+  }
+
+  .featureCallout {
+    display: inline-block;
+    width: max-content;
+    hyphens: manual;
+    font-weight: 800;
+    font-size: 2em;
+    text-align: center;
+    margin: 0 48px;
+
+    & > .b-icon {
+      font-size: 60px;
+      margin-bottom: 16px;
+    }
+
+    &:nth-of-type(1) {
+      margin-left: 0;
+    }
+    &:last-of-type {
+      margin-right: 0;
+    }
+  }
+}
+
+.pulse-button {
+  box-shadow: 0 0 0 0 white;
+  -webkit-animation: pulsing 2s infinite cubic-bezier(0.66, 0, 0, 1);
+  -moz-animation: pulsing 2s infinite cubic-bezier(0.66, 0, 0, 1);
+  -ms-animation: pulsing 2s infinite cubic-bezier(0.66, 0, 0, 1);
+  animation: pulsing 2s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+
+.pulse-button:hover {
+  -webkit-animation: none;
+  -moz-animation: none;
+  -ms-animation: none;
+  animation: none;
+  color: #ffffff;
+}
+
+@-webkit-keyframes pulsing {
+  50% {
+    box-shadow: 0 0 0 20px #6927d300;
+  }
+  100% {
+    box-shadow: 0 0 0 20px #6927d300;
+  }
+}
+
+@-moz-keyframes pulsing {
+  50% {
+    box-shadow: 0 0 0 20px #6927d300;
+  }
+  100% {
+    box-shadow: 0 0 0 20px #6927d300;
+  }
+}
+
+@-ms-keyframes pulsing {
+  50% {
+    box-shadow: 0 0 0 20px #6927d300;
+  }
+  100% {
+    box-shadow: 0 0 0 20px #6927d300;
+  }
+}
+
+@keyframes pulsing {
+  50% {
+    box-shadow: 0 0 0 20px #6927d300;
+  }
+  100% {
+    box-shadow: 0 0 0 20px #6927d300;
+  }
 }
 </style>
