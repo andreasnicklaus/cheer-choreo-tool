@@ -39,4 +39,5 @@ if (!window.__PRERENDER_INJECTED) {
   window._paq.push(["requireConsent"]);
   // Initialize Matomo Tracking
   window._paq.push(["trackPageView"]);
+  window._paq.push(["enableHeartBeatTimer"]);
 }

@@ -220,6 +220,7 @@ export default {
 
       AuthService.login(this.username, this.password, this.email)
         .then(() => {
+          window._paq.push(["trackGoal", 2]);
           this.$router
             .push(this.$route.query?.redirectUrl || "/start")
             .catch(() => {});
@@ -236,6 +237,7 @@ export default {
 
       AuthService.register(this.username, this.password, this.email)
         .then(() => {
+          window._paq.push(["trackGoal", 3]);
           this.$router.push(this.$route.query?.redirectUrl || "/start");
         })
         .catch((e) => {
