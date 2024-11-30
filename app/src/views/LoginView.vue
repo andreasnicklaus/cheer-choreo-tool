@@ -288,34 +288,54 @@ export default {
         return "Die Wiederholung gleicht nicht dem Passwort.";
       else return null;
     },
+    isWelcome() {
+      return this.$route.path == "/willkommen";
+    },
   },
-  metaInfo: {
-    title: "Einloggen",
-    meta: [
-      {
-        name: "description",
-        content:
-          "Logge dich ein und nutze den alle Funktionen des Choreo Planers!",
-      },
-      {
-        name: "twitter:description",
-        content:
-          "Logge dich ein und nutze den alle Funktionen des Choreo Planers!",
-      },
-      {
-        property: "og:description",
-        content:
-          "Logge dich ein und nutze den alle Funktionen des Choreo Planers!",
-      },
-      {
-        property: "og:title",
-        content: "Einloggen - Choreo Planer",
-      },
-      {
-        name: "twitter:title",
-        content: "Einloggen - Choreo Planer",
-      },
-    ],
+  metaInfo() {
+    const meta = {
+      title: "Einloggen",
+      meta: [
+        {
+          name: "description",
+          content:
+            "Logge dich ein und nutze alle Funktionen des Choreo Planers!",
+        },
+        {
+          name: "twitter:description",
+          content:
+            "Logge dich ein und nutze alle Funktionen des Choreo Planers!",
+        },
+        {
+          property: "og:description",
+          content:
+            "Logge dich ein und nutze alle Funktionen des Choreo Planers!",
+        },
+        {
+          property: "og:title",
+          content: "Einloggen - Choreo Planer",
+        },
+        {
+          name: "twitter:title",
+          content: "Einloggen - Choreo Planer",
+        },
+      ],
+    };
+    if (this.isWelcome) {
+      meta.meta.push(
+        {
+          vmid: "og:image",
+          property: "og:image",
+          content: "/Willkommen.png",
+        },
+        {
+          vmid: "twitter:image",
+          name: "twitter:image",
+          content: "/Willkommen.png",
+        }
+      );
+    }
+    return meta;
   },
 };
 </script>

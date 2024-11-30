@@ -100,29 +100,63 @@ export default {
       titleTemplate: "%s - Choreo Planer",
       meta: [
         {
+          vmid: "keywords",
           name: "keywords",
           content:
             "Choreo, Choreographie, Cheer, Cheerleading, Tanz, Planer, Editor",
         },
         {
+          vmid: "author",
           name: "author",
           content: "Andreas Nicklaus",
         },
         {
+          vmid: "description",
+          name: "description",
+          content:
+            "Dein Planungs-Tool für Choreographien im Tanz und Cheerleading",
+        },
+        {
+          vmid: "twitter:description",
+          name: "twitter:description",
+          content:
+            "Dein Planungs-Tool für Choreographien im Tanz und Cheerleading",
+        },
+        {
+          vmid: "og:description",
+          property: "og:description",
+          content:
+            "Dein Planungs-Tool für Choreographien im Tanz und Cheerleading",
+        },
+        {
+          vmid: "og:url",
           property: "og:url",
           content: "https://www.choreo-planer.de" + this.$route.path,
         },
         {
+          vmid: "twitter:url",
           property: "twitter:url",
           content: "https://www.choreo-planer.de" + this.$route.path,
         },
         {
+          vmid: "twitter:domain",
           property: "twitter:domain",
           content: "https://www.choreo-planer.de",
+        },
+        {
+          vmid: "og:image",
+          property: "og:image",
+          content: "/PreviewImage.png",
+        },
+        {
+          vmid: "twitter:image",
+          name: "twitter:image",
+          content: "/PreviewImage.png",
         },
       ],
       link: [
         {
+          vmid: "canonical",
           rel: "canonical",
           href: "https://www.choreo-planer.de" + this.$route.path,
         },

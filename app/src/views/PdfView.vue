@@ -372,18 +372,22 @@ export default {
       title: (this.choreo?.name || "Lädt Choreo") + " - PDF",
       meta: [
         {
+          vmid: "description",
           name: "description",
           content: "Exportiere das Countsheet deiner Choreo als PDF!",
         },
         {
+          vmid: "twitter:description",
           name: "twitter:description",
           content: "Exportiere das Countsheet deiner Choreo als PDF!",
         },
         {
+          vmid: "og:description",
           property: "og:description",
           content: "Exportiere das Countsheet deiner Choreo als PDF!",
         },
         {
+          vmid: "og:title",
           property: "og:title",
           content:
             (this.choreo?.name || "Lädt Choreo") +
@@ -391,6 +395,7 @@ export default {
             " - Choreo Planer",
         },
         {
+          vmid: "twitter:title",
           name: "twitter:title",
           content:
             (this.choreo?.name || "Lädt Choreo") +

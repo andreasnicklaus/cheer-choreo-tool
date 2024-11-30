@@ -571,18 +571,22 @@ export default {
       title: (this.choreo?.name || "Lädt Choreo") + " - Video",
       meta: [
         {
+          vmid: "description",
           name: "description",
           content: "Exportiere die Aufstellungen deiner Choreo als Video!",
         },
         {
+          vmid: "twitter:description",
           name: "twitter:description",
           content: "Exportiere die Aufstellungen deiner Choreo als Video!",
         },
         {
+          vmid: "og:description",
           property: "og:description",
           content: "Exportiere die Aufstellungen deiner Choreo als Video!",
         },
         {
+          vmid: "og:title",
           property: "og:title",
           content:
             (this.choreo?.name || "Lädt Choreo") +
@@ -590,6 +594,7 @@ export default {
             " - Choreo Planer",
         },
         {
+          vmid: "twitter:title",
           name: "twitter:title",
           content:
             (this.choreo?.name || "Lädt Choreo") +

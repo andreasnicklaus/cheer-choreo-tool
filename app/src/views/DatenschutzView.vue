@@ -83,25 +83,30 @@ export default {
     title: "Datenschutz",
     meta: [
       {
+        vmid: "description",
         name: "description",
         content:
           "Die Datenschutzerklärung des Choreo Planer. Angaben und Informationen zur Kontaktaufnahme und Haftung bzgl. der Nutzung des Choreo Planers.",
       },
       {
+        vmid: "twitter:description",
         name: "twitter:description",
         content:
           "Die Datenschutzerklärung des Choreo Planer. Angaben und Informationen zur Kontaktaufnahme und Haftung bzgl. der Nutzung des Choreo Planers.",
       },
       {
+        vmid: "og:description",
         property: "og:description",
         content:
           "Die Datenschutzerklärung des Choreo Planer. Angaben und Informationen zur Kontaktaufnahme und Haftung bzgl. der Nutzung des Choreo Planers.",
       },
       {
+        vmid: "og:title",
         property: "og:title",
         content: "Datenschutz - Choreo Planer",
       },
       {
+        vmid: "twitter:title",
         name: "twitter:title",
         content: "Datenschutz - Choreo Planer",
       },

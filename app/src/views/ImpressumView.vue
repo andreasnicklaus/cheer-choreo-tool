@@ -74,25 +74,30 @@ export default {
     title: "Impressum",
     meta: [
       {
+        vmid: "description",
         name: "description",
         content:
           "Das Impressum des Choreo Planer. Angaben und Informationen zur Kontaktaufnahme und Haftung bzgl. der Nutzung des Choreo Planers.",
       },
       {
+        vmid: "twitter:description",
         name: "twitter:description",
         content:
           "Das Impressum des Choreo Planer. Angaben und Informationen zur Kontaktaufnahme und Haftung bzgl. der Nutzung des Choreo Planers.",
       },
       {
+        vmid: "og:description",
         property: "og:description",
         content:
           "Das Impressum des Choreo Planer. Angaben und Informationen zur Kontaktaufnahme und Haftung bzgl. der Nutzung des Choreo Planers.",
       },
       {
+        vmid: "og:title",
         property: "og:title",
         content: "Impressum - Choreo Planer",
       },
       {
+        vmid: "twitter:title",
         name: "twitter:title",
         content: "Impressum - Choreo Planer",
       },

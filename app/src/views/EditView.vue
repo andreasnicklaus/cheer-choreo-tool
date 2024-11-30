@@ -782,25 +782,30 @@ export default {
       title: this.choreo?.name || "Lädt Choreo",
       meta: [
         {
+          vmid: "description",
           name: "description",
           content:
             "Bearbeite deine Choreo und erstelle Aufstellungen und Countsheets.",
         },
         {
+          vmid: "twitter:description",
           name: "twitter:description",
           content:
             "Bearbeite deine Choreo und erstelle Aufstellungen und Countsheets.",
         },
         {
+          vmid: "og:description",
           property: "og:description",
           content:
             "Bearbeite deine Choreo und erstelle Aufstellungen und Countsheets.",
         },
         {
+          vmid: "og:title",
           property: "og:title",
           content: (this.choreo?.name || "Lädt Choreo") + " - Choreo Planer",
         },
         {
+          vmid: "twitter:title",
           name: "twitter:title",
           content: (this.choreo?.name || "Lädt Choreo") + " - Choreo Planer",
         },

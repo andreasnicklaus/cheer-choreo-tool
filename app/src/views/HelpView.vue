@@ -174,21 +174,25 @@ export default {
     title: "Hilfe",
     meta: [
       {
+        vmid: "description",
         name: "description",
         content:
           "Erhalte Infos über den Choreo Planer und Antworten auf deine Fragen und Probleme. In unserem FAQ beantworten alle häufig gestellten Fragen über die Nutzung und Funktionen des Choreo Planers.",
       },
       {
+        vmid: "twitter:description",
         name: "twitter:description",
         content:
           "Erhalte Infos über den Choreo Planer und Antworten auf deine Fragen und Probleme. In unserem FAQ beantworten alle häufig gestellten Fragen über die Nutzung und Funktionen des Choreo Planers.",
       },
       {
+        vmid: "og:description",
         property: "og:description",
         content:
           "Erhalte Infos über den Choreo Planer und Antworten auf deine Fragen und Probleme. In unserem FAQ beantworten alle häufig gestellten Fragen über die Nutzung und Funktionen des Choreo Planers.",
       },
       {
+        vmid: "og:title",
         property: "og:title",
         content: "Hilfe - Choreo Planer",
       },

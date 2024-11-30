@@ -545,25 +545,30 @@ export default {
     titleTemplate: null,
     meta: [
       {
+        vmid: "description",
         name: "description",
         content:
           "Dein Planungs-Tool für Choreographien im Tanz und Cheerleading",
       },
       {
+        vmid: "twitter:description",
         name: "twitter:description",
         content:
           "Dein Planungs-Tool für Choreographien im Tanz und Cheerleading",
       },
       {
+        vmid: "og:description",
         property: "og:description",
         content:
           "Dein Planungs-Tool für Choreographien im Tanz und Cheerleading",
       },
       {
+        vmid: "og:title",
         property: "og:title",
         content: "Choreo Planer",
       },
       {
+        vmid: "twitter:title",
         name: "twitter:title",
         content: "Choreo Planer",
       },

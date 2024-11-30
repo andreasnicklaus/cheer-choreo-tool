@@ -8,7 +8,11 @@ process.env.VUE_APP_VERSION = require("./package.json").version;
 const productionPlugins = [
   new PrerenderSpaPlugin({
     staticDir: path.join(__dirname, "dist"),
-    routes: routes.filter((r) => r.meta?.prerender).map((r) => r.path),
+    routes: routes
+      .filter((r) => r.meta?.prerender)
+      .map((r) => [r.path, r.alias])
+      .flat(Infinity)
+      .filter((r) => r),
     minify: {
       collapseBooleanAttributes: true,
       collapseWhitespace: true,

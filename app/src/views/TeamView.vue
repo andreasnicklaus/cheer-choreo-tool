@@ -374,22 +374,27 @@ export default {
       title: this.currentTeam?.name || "Team",
       meta: [
         {
+          vmid: "description",
           name: "description",
           content: "Bearbeite deine Teams und deren Mitglieder!",
         },
         {
+          vmid: "twitter:description",
           name: "twitter:description",
           content: "Bearbeite deine Teams und deren Mitglieder!",
         },
         {
+          vmid: "og:description",
           property: "og:description",
           content: "Bearbeite deine Teams und deren Mitglieder!",
         },
         {
+          vmid: "og:title",
           property: "og:title",
           content: (this.currentTeam?.name || "Team") + " - Choreo Planer",
         },
         {
+          vmid: "twitter:title",
           name: "twitter:title",
           content: (this.currentTeam?.name || "Team") + " - Choreo Planer",
         },
