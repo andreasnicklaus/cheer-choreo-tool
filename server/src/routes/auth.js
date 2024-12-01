@@ -10,8 +10,7 @@ router.post("/", (req, res, next) => {
   const { username, password, email } = req.body;
   UserService.create(username, password, email)
     .then((user) => {
-      const token = AuthService.generateAccessToken(user.id);
-      res.send(token);
+      res.send();
       next();
     })
     .catch((e) => {
@@ -39,6 +38,13 @@ router.post("/login", (req, res, next) => {
     .then((user) => {
       if (!user || !bcrypt.compareSync(password, user.password))
         return res.status(404).send();
+
+      if (user.email && !user.emailConfirmed)
+        return res.status(400).send({
+          type: "EmailUnconfirmed",
+          message:
+            "Du musst dein E-Mail-Adresse bestätigen, um dein Konto zu aktivieren",
+        });
       const token = AuthService.generateAccessToken(user.id);
       res.send(token);
       next();

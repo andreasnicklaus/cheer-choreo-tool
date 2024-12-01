@@ -170,10 +170,13 @@
         </b-card>
       </b-tab>
     </b-tabs>
+
+    <ConfirmEmailModal ref="confirmEmailModal" />
   </b-container>
 </template>
 
 <script>
+import ConfirmEmailModal from "@/components/modals/ConfirmEmailModal.vue";
 import AuthService from "@/services/AuthService";
 
 const failMessages = [
@@ -190,6 +193,7 @@ const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 
 export default {
   name: "LoginView",
+  components: { ConfirmEmailModal },
   data: () => ({
     username: null,
     email: null,
@@ -227,9 +231,13 @@ export default {
         })
         .catch((e) => {
           console.warn(e);
-          this.showFailMessage(
-            "Bitte kontrolliere, dass du Nutzernamen/Email und Passwort richtig geschrieben hast."
-          );
+          if (e.status == 400 && e.response.data.type == "EmailUnconfirmed")
+            this.$refs.confirmEmailModal.open(true);
+          else
+            this.showFailMessage(
+              e.response.data ||
+                "Bitte kontrolliere, dass du Nutzernamen/Email und Passwort richtig geschrieben hast."
+            );
         });
     },
     onRegisterSubmit(event) {
@@ -238,7 +246,7 @@ export default {
       AuthService.register(this.username, this.password, this.email)
         .then(() => {
           window._paq.push(["trackGoal", 3]);
-          this.$router.push(this.$route.query?.redirectUrl || "/start");
+          this.$refs.confirmEmailModal.open();
         })
         .catch((e) => {
           console.warn(e);

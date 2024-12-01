@@ -28,17 +28,7 @@ class AuthService {
   async register(username, password, email) {
     return ax
       .post("/auth", { username, password, email })
-      .then((res) => {
-        const token = res.data;
-        if (!token) {
-          store.commit("setLoginState", false);
-          throw Error("No token received");
-        }
-
-        localStorage.setItem(tokenStorageKey, token);
-        store.commit("setLoginState", true);
-        return true;
-      })
+      .then((res) => res.data)
       .catch((e) => {
         store.commit("setLoginState", false);
         throw e;
