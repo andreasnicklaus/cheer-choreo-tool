@@ -31,12 +31,14 @@
           <div class="d-flex">
             <b-button
               type="submit"
+              to="#"
               variant="primary"
               class="mr-2"
               block
               :disabled="!usernameIsValid || !passwordIsValid"
             >
-              Anmelden
+              <b-spinner small v-if="loading" />
+              <span v-else> Anmelden </span>
             </b-button>
             <b-button
               type="reset"
@@ -49,8 +51,8 @@
           </div>
 
           <p class="my-3">
-            Du hast schon kein Konto?
-            <a href="#" @click="() => (tabIndex = 1)"> registrieren </a>
+            Du hast noch kein Konto?
+            <a href="#" @click="() => (tabIndex = 1)"> Registrieren </a>
           </p>
         </b-form>
       </b-tab>
@@ -120,6 +122,7 @@
           <div class="d-flex">
             <b-button
               type="submit"
+              to="#"
               variant="primary"
               class="mr-2"
               block
@@ -130,7 +133,8 @@
                 !passwordRepetitionIsValid
               "
             >
-              Registrieren
+              <b-spinner small v-if="loading" />
+              <span v-else> Registrieren </span>
             </b-button>
             <b-button
               type="reset"
@@ -144,7 +148,7 @@
 
           <p class="my-3">
             Du hast schon ein Konto?
-            <a href="#" @click="() => (tabIndex = 0)"> anmelden </a>
+            <a href="#" @click="() => (tabIndex = 0)"> Anmelden </a>
           </p>
         </b-form>
 
@@ -200,6 +204,7 @@ export default {
     password: null,
     passwordRepetition: null,
     tabIndex: 0,
+    loading: false,
   }),
   methods: {
     showFailMessage(message) {
@@ -218,12 +223,16 @@ export default {
       this.email = null;
       this.password = null;
       this.passwordRepetition = null;
+      this.loading = false;
     },
     onLoginSubmit(event) {
       event.preventDefault();
 
+      this.loading = true;
+
       AuthService.login(this.username, this.password, this.email)
         .then(() => {
+          this.loading = false;
           window._paq.push(["trackGoal", 2]);
           this.$router
             .push(this.$route.query?.redirectUrl || "/start")
@@ -231,6 +240,7 @@ export default {
         })
         .catch((e) => {
           console.warn(e);
+          this.loading = false;
           if (e.status == 400 && e.response.data.type == "EmailUnconfirmed")
             this.$refs.confirmEmailModal.open(true);
           else
@@ -243,13 +253,17 @@ export default {
     onRegisterSubmit(event) {
       event.preventDefault();
 
+      this.loading = true;
+
       AuthService.register(this.username, this.password, this.email)
         .then(() => {
+          this.loading = false;
           window._paq.push(["trackGoal", 3]);
           this.$refs.confirmEmailModal.open();
         })
         .catch((e) => {
           console.warn(e);
+          this.loading = false;
           this.showFailMessage(
             "Es scheint so als gäbe es bereits einen Nutzer mit diesem Namen oder E-Mail-Adresse ..."
           );
