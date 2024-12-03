@@ -10,7 +10,7 @@
       Um dein Konto zu aktivieren, bestätige deine E-Mail-Adresse mit dem Link
       aus der E-Mail, die wir dir geschickt haben.
     </p>
-    <p>Überprüfe auch dein Spam-Postfach, ob die E-Mail zu finden.</p>
+    <p>Überprüfe auch dein Spam-Postfach, um die E-Mail zu finden.</p>
     <template #modal-footer="{ cancel }">
       <b-button
         @click="cancel"
