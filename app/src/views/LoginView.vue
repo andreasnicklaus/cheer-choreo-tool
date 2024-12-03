@@ -31,7 +31,7 @@
           <div class="d-flex">
             <b-button
               type="submit"
-              to="#"
+              :style="{ color: 'white' }"
               variant="primary"
               class="mr-2"
               block
@@ -122,7 +122,7 @@
           <div class="d-flex">
             <b-button
               type="submit"
-              to="#"
+              :style="{ color: 'white' }"
               variant="primary"
               class="mr-2"
               block
