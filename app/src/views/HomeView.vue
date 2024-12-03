@@ -260,7 +260,7 @@
     >
       <h2 class="mb-1">Interesse geweckt?</h2>
       <p class="mb-4">
-        Zum loslegen einfach anmelden und das erste Team anlegen:
+        Zum Loslegen einfach anmelden und das erste Team anlegen:
       </p>
       <b-button
         :style="{ backgroundColor: 'white', color: 'var(--success)' }"
