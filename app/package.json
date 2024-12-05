@@ -6,7 +6,7 @@
     "serve": "npm run icons && vue-cli-service serve",
     "build": "npm run icons && vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "icons": "vue-asset-generate -a ./public/icon.png -b #FFFFFF",
+    "icons": "vue-asset-generate -a ./public/Icon.png -b #FFFFFF",
     "sitemap": "vue-cli-service sitemap"
   },
   "dependencies": {
