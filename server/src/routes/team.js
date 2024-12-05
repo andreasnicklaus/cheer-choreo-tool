@@ -4,7 +4,7 @@ const { authenticateUser } = require("../services/AuthService");
 
 const router = Router();
 
-router.get("/:id?", authenticateUser, (req, res, next) => {
+router.get("/:id?", authenticateUser(), (req, res, next) => {
   if (req.params.id)
     return TeamService.findById(req.params.id, req.UserId)
       .then((team) => {
@@ -33,7 +33,7 @@ router.get("/:id?", authenticateUser, (req, res, next) => {
   }
 });
 
-router.post("/", authenticateUser, (req, res, next) => {
+router.post("/", authenticateUser(), (req, res, next) => {
   const { name, clubId, seasonId } = req.body;
   return TeamService.create(name, clubId, seasonId, req.UserId)
     .then((result) => {
@@ -43,7 +43,7 @@ router.post("/", authenticateUser, (req, res, next) => {
     .catch((e) => next(e));
 });
 
-router.put("/:id", authenticateUser, (req, res, next) => {
+router.put("/:id", authenticateUser(), (req, res, next) => {
   return TeamService.update(req.params.id, req.body, req.UserId)
     .then((result) => {
       res.send(result);
@@ -52,7 +52,7 @@ router.put("/:id", authenticateUser, (req, res, next) => {
     .catch((e) => next(e));
 });
 
-router.delete("/:id", authenticateUser, (req, res, next) => {
+router.delete("/:id", authenticateUser(), (req, res, next) => {
   return TeamService.remove(req.params.id, req.UserId)
     .then((result) => {
       res.send(result);

@@ -4,10 +4,16 @@ const { logger } = require("../plugins/winston");
 
 class SeasonService {
   async getAll(UserId) {
-    return Season.findAll({
-      where: { UserId: { [Op.or]: [UserId, { [Op.eq]: null }] } },
-      order: [["year", "DESC NULLS LAST"], "createdAt"],
-    });
+    if (UserId)
+      return Season.findAll({
+        where: { UserId: { [Op.or]: [UserId, { [Op.eq]: null }] } },
+        order: [["year", "DESC NULLS LAST"], "createdAt"],
+      });
+    else
+      return Season.findAll({
+        where: { UserId: null },
+        order: [["year", "DESC NULLS LAST"], "createdAt"],
+      });
   }
 
   async create(name, year, UserId) {

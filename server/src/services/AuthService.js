@@ -11,32 +11,39 @@ class AuthService {
     return jwt.sign({ UserId }, TOKEN_SECRET, { expiresIn: JWT_EXPIRES_IN });
   }
 
-  authenticateUser(req, res, next) {
-    const authHeader = req.headers?.authorization;
-    const token = authHeader && authHeader.split(" ")[1];
+  authenticateUser(failIfNotLoggedIn = true) {
+    return function (req, res, next) {
+      const authHeader = req.headers?.authorization;
+      const token = authHeader && authHeader.split(" ")[1];
 
-    if (!token) {
-      return res.status(401).send();
-    }
-
-    jwt.verify(token, TOKEN_SECRET, async (err, content) => {
-      if (err) {
-        return res.status(403);
-        // content = { UserId: (await UserService.getAll())[0].id };
+      if (!token) {
+        if (!failIfNotLoggedIn) return next();
+        return res.status(401).send();
       }
 
-      User.findByPk(content.UserId)
-        .then((user) => {
-          if (!user) return res.status(403).send();
+      jwt.verify(token, TOKEN_SECRET, async (err, content) => {
+        if (err) {
+          if (!failIfNotLoggedIn) return next();
+          return res.status(403);
+          // content = { UserId: (await UserService.getAll())[0].id };
+        }
 
-          logger.debug(
-            `User ${user.username} with id ${user.id} used this token: ${token}`
-          );
-          req.UserId = user.id;
-          next();
-        })
-        .catch((e) => next(e));
-    });
+        User.findByPk(content.UserId)
+          .then((user) => {
+            if (!user) {
+              if (!failIfNotLoggedIn) return next();
+              return res.status(403).send();
+            }
+
+            logger.debug(
+              `User ${user.username} with id ${user.id} used this token: ${token}`
+            );
+            req.UserId = user.id;
+            next();
+          })
+          .catch((e) => next(e));
+      });
+    };
   }
 }
 

@@ -27,6 +27,7 @@ const Season = require("./models/season");
 const SeasonTeam = require("./models/seasonTeam");
 const seed = require("./seed");
 const ChoreoParticipation = require("./models/choreoParticipation");
+const Feedback = require("./models/feedback");
 
 Team.hasMany(SeasonTeam, {
   onDelete: "CASCADE",
@@ -127,6 +128,9 @@ User.hasMany(Season, {
   onDelete: "CASCADE",
 });
 Season.belongsTo(User);
+
+Feedback.belongsTo(User);
+User.hasMany(Feedback);
 
 db.sync({
   alter: true,

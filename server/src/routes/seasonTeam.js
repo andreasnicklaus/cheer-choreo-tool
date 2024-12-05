@@ -4,7 +4,7 @@ const SeasonTeamService = require("../services/SeasonTeamService");
 
 const router = Router();
 
-router.post("/", authenticateUser, (req, res, next) => {
+router.post("/", authenticateUser(), (req, res, next) => {
   const { teamId, seasonId, memberIds = [] } = req.body;
   return SeasonTeamService.create(teamId, seasonId, memberIds, req.UserId)
     .then((seasonTeam) => {
@@ -14,7 +14,7 @@ router.post("/", authenticateUser, (req, res, next) => {
     .catch((e) => next(e));
 });
 
-router.put("/:id", authenticateUser, (req, res, next) => {
+router.put("/:id", authenticateUser(), (req, res, next) => {
   const { memberIds } = req.body;
   return SeasonTeamService.copyMembersIntoSeasonTeam(
     req.params.id,
@@ -28,7 +28,7 @@ router.put("/:id", authenticateUser, (req, res, next) => {
     .catch((e) => next(e));
 });
 
-router.delete("/:id", authenticateUser, (req, res, next) => {
+router.delete("/:id", authenticateUser(), (req, res, next) => {
   return SeasonTeamService.remove(req.params.id, req.UserId)
     .then((result) => {
       res.send(result);

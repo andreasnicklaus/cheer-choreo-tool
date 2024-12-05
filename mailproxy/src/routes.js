@@ -14,4 +14,11 @@ router.post("/newUser", (req, res, next) => {
   next();
 });
 
+router.post("/newFeedback", (req, res, next) => {
+  const { username, userEmail, stars, text } = req.body;
+  MailService.sendFeedbackNotice(username, userEmail, stars, text);
+  res.send("Email successfully sent");
+  next();
+});
+
 module.exports = router;

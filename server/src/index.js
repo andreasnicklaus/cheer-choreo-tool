@@ -34,6 +34,7 @@ const { userRouter } = require("./routes/user");
 const { authRouter } = require("./routes/auth");
 const { seasonRouter } = require("./routes/season");
 const { seasonTeamRouter } = require("./routes/seasonTeam");
+const { feedbackRouter } = require("./routes/feedback");
 const logConfig = require("./utils/logConfig");
 
 const app = express();
@@ -70,6 +71,7 @@ app.use("/user", userRouter);
 app.use("/auth", authRouter);
 app.use("/season", seasonRouter);
 app.use("/seasonTeam", seasonTeamRouter);
+app.use("/feedback", feedbackRouter);
 
 app.use(errorLoggingMiddleWare);
 app.use(errorHandlingMiddleWare);

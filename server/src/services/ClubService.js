@@ -3,6 +3,12 @@ const Member = require("../db/models/member");
 const SeasonTeam = require("../db/models/seasonTeam");
 const Team = require("../db/models/team");
 const { logger } = require("../plugins/winston");
+const ChoreoService = require("./ChoreoService");
+const HitService = require("./HitService");
+const MemberService = require("./MemberService");
+const SeasonService = require("./SeasonService");
+const SeasonTeamService = require("./SeasonTeamService");
+const TeamService = require("./TeamService");
 
 const defaultInclude = [
   {
@@ -71,7 +77,76 @@ class ClubService {
 
   async create(name, UserId) {
     logger.debug(`ClubService.create ${JSON.stringify({ name, UserId })}`);
-    return Club.create({ name, UserId });
+    return Club.create({ name, UserId }).then((club) =>
+      Club.count({ where: { UserId } }).then(async (count) => {
+        if (count <= 1) {
+          await this.seedDemo(club, UserId);
+          club = await this.findById(club.id, UserId);
+        }
+        return club;
+      })
+    );
+  }
+
+  async seedDemo(club, UserId) {
+    SeasonService.getAll(null).then((seasons) => {
+      const currentSeason = seasons.find(
+        (s) => s.year == new Date().getFullYear()
+      );
+      TeamService.create("Demo-Team", club.id, currentSeason.id, UserId).then(
+        (team) => {
+          const seasonTeam = team.SeasonTeams[0];
+          Promise.all([
+            MemberService.create(
+              "Tina Turnerin",
+              "Tini",
+              "T",
+              seasonTeam.id,
+              UserId
+            ),
+            MemberService.create(
+              "Zoe Zuverlässig",
+              "Zoe",
+              "Z",
+              seasonTeam.id,
+              UserId
+            ),
+            MemberService.create(
+              "Fenja Flyer",
+              "Fipsi",
+              "F",
+              seasonTeam.id,
+              UserId
+            ),
+          ]).then((members) =>
+            ChoreoService.create(
+              "Demo-Choreo",
+              25,
+              seasonTeam.id,
+              members.map((m) => ({ id: m.id })),
+              UserId
+            ).then((choreo) => {
+              Promise.all([
+                HitService.create(
+                  "Pose",
+                  0,
+                  choreo.id,
+                  members.map((m) => m.id),
+                  UserId
+                ),
+                HitService.create(
+                  "Flick-Flack",
+                  2,
+                  choreo.id,
+                  [members[0].id],
+                  UserId
+                ),
+              ]);
+            })
+          );
+        }
+      );
+    });
   }
 
   async findOrCreate(name, UserId) {

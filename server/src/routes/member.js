@@ -4,7 +4,7 @@ const { authenticateUser } = require("../services/AuthService");
 
 const router = Router();
 
-router.post("/", authenticateUser, (req, res, next) => {
+router.post("/", authenticateUser(), (req, res, next) => {
   const { name, nickname, abbreviation, seasonTeamId } = req.body;
   MemberService.create(name, nickname, abbreviation, seasonTeamId, req.UserId)
     .then((member) => {
@@ -14,7 +14,7 @@ router.post("/", authenticateUser, (req, res, next) => {
     .catch((e) => next(e));
 });
 
-router.put("/:id", authenticateUser, (req, res, next) => {
+router.put("/:id", authenticateUser(), (req, res, next) => {
   MemberService.update(req.params.id, req.body, req.UserId)
     .then((member) => {
       res.send(member);
@@ -23,7 +23,7 @@ router.put("/:id", authenticateUser, (req, res, next) => {
     .catch((e) => next(e));
 });
 
-router.delete("/:id", authenticateUser, (req, res, next) => {
+router.delete("/:id", authenticateUser(), (req, res, next) => {
   MemberService.remove(req.params.id, req.UserId)
     .then((result) => {
       res.send(result);

@@ -19,6 +19,12 @@
           <b-button variant="link" :to="{ name: 'Datenschutz' }">
             Datenschutz </b-button
           ><br />
+          <b-button
+            variant="link"
+            @click="() => this.$refs.feedbackPrompt.open(true)"
+          >
+            Feedback geben </b-button
+          ><br />
         </b-col>
         <b-col cols="auto">
           <h5>
@@ -79,17 +85,19 @@
       </b-row>
     </footer>
     <ConsentWindow />
+    <FeedbackPrompt ref="feedbackPrompt" />
   </div>
 </template>
 
 <script>
 import AppInstallWindow from "./components/AppInstallWindow.vue";
 import ConsentWindow from "./components/ConsentWindow.vue";
+import FeedbackPrompt from "./components/FeedbackPrompt.vue";
 import HeadNav from "./components/HeadNav.vue";
 import ax from "./services/RequestService";
 
 export default {
-  components: { HeadNav, ConsentWindow, AppInstallWindow },
+  components: { HeadNav, ConsentWindow, AppInstallWindow, FeedbackPrompt },
   data: () => ({
     online: true,
     serverVersion: null,
@@ -217,7 +225,8 @@ html {
   color: #2c3e50 !important;
 }
 
-footer a {
+footer a,
+footer .btn-link {
   color: white !important;
   text-decoration: underline;
   &.router-link-active:not(:hover) {

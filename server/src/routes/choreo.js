@@ -4,7 +4,7 @@ const { authenticateUser } = require("../services/AuthService");
 
 const router = Router();
 
-router.get("/:id?", authenticateUser, (req, res, next) => {
+router.get("/:id?", authenticateUser(), (req, res, next) => {
   if (req.params.id)
     ChoreoService.findById(req.params.id, req.UserId)
       .then((foundChoreo) => {
@@ -23,7 +23,7 @@ router.get("/:id?", authenticateUser, (req, res, next) => {
   }
 });
 
-router.post("/", authenticateUser, (req, res, next) => {
+router.post("/", authenticateUser(), (req, res, next) => {
   const { name, counts, seasonTeamId, participants } = req.body;
   return ChoreoService.create(
     name,
@@ -39,7 +39,7 @@ router.post("/", authenticateUser, (req, res, next) => {
     .catch((e) => next(e));
 });
 
-router.put("/:id", authenticateUser, (req, res, next) => {
+router.put("/:id", authenticateUser(), (req, res, next) => {
   return ChoreoService.update(req.params.id, req.body, req.UserId)
     .then((result) => {
       res.send(result);
@@ -48,7 +48,7 @@ router.put("/:id", authenticateUser, (req, res, next) => {
     .catch((e) => next(e));
 });
 
-router.delete("/:id", authenticateUser, (req, res, next) => {
+router.delete("/:id", authenticateUser(), (req, res, next) => {
   return ChoreoService.remove(req.params.id, req.UserId)
     .then((result) => {
       res.send(result);
@@ -57,7 +57,7 @@ router.delete("/:id", authenticateUser, (req, res, next) => {
     .catch((e) => next(e));
 });
 
-router.post("/:id/participants", authenticateUser, (req, res, next) => {
+router.post("/:id/participants", authenticateUser(), (req, res, next) => {
   const { memberId, color } = req.body;
   return ChoreoService.addParticipant(
     req.params.id,
@@ -74,7 +74,7 @@ router.post("/:id/participants", authenticateUser, (req, res, next) => {
 
 router.delete(
   "/:id/participants/:participationId",
-  authenticateUser,
+  authenticateUser(),
   (req, res, next) => {
     return ChoreoService.removeParticipant(
       req.params.id,
@@ -89,7 +89,7 @@ router.delete(
   }
 );
 
-router.patch("/:id/participants", authenticateUser, (req, res, next) => {
+router.patch("/:id/participants", authenticateUser(), (req, res, next) => {
   const { memberToRemoveId, memberToAddId } = req.body;
   return ChoreoService.replaceParticipant(
     req.params.id,
@@ -104,19 +104,23 @@ router.patch("/:id/participants", authenticateUser, (req, res, next) => {
     .catch((e) => next(e));
 });
 
-router.patch("/:id/participants/:participantId", authenticateUser, (req, res, next) => {
-  const { color } = req.body;
-  return ChoreoService.changeParticipationColor(
-    req.params.id,
-    req.params.participantId,
-    color,
-    req.UserId
-  )
-    .then(() => {
-      res.send();
-      return next();
-    })
-    .catch((e) => next(e));
-});
+router.patch(
+  "/:id/participants/:participantId",
+  authenticateUser(),
+  (req, res, next) => {
+    const { color } = req.body;
+    return ChoreoService.changeParticipationColor(
+      req.params.id,
+      req.params.participantId,
+      color,
+      req.UserId
+    )
+      .then(() => {
+        res.send();
+        return next();
+      })
+      .catch((e) => next(e));
+  }
+);
 
 module.exports = { choreoRouter: router };

@@ -4,7 +4,7 @@ const { authenticateUser } = require("../services/AuthService");
 
 const router = Router();
 
-router.get("/:id?", authenticateUser, (req, res, next) => {
+router.get("/:id?", authenticateUser(), (req, res, next) => {
   if (req.params.id)
     return ClubService.findById(req.params.id, req.UserId)
       .then((foundClub) => {
@@ -31,7 +31,7 @@ router.get("/:id?", authenticateUser, (req, res, next) => {
   }
 });
 
-router.post("/", authenticateUser, (req, res, next) => {
+router.post("/", authenticateUser(), (req, res, next) => {
   const { name } = req.body;
   return ClubService.create(name, req.UserId)
     .then((club) => {
@@ -41,7 +41,7 @@ router.post("/", authenticateUser, (req, res, next) => {
     .catch((e) => next(e));
 });
 
-router.put("/:id", authenticateUser, (req, res, next) => {
+router.put("/:id", authenticateUser(), (req, res, next) => {
   return ClubService.update(req.params.id, req.body, req.UserId)
     .then((result) => {
       res.send(result);
@@ -50,7 +50,7 @@ router.put("/:id", authenticateUser, (req, res, next) => {
     .catch((e) => next(e));
 });
 
-router.delete("/:id", authenticateUser, (req, res, next) => {
+router.delete("/:id", authenticateUser(), (req, res, next) => {
   return ClubService.remove(req.params.id, req.UserId)
     .then((result) => {
       res.send(result);

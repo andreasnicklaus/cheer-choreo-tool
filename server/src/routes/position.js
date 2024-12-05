@@ -4,7 +4,7 @@ const { authenticateUser } = require("../services/AuthService");
 
 const router = Router();
 
-router.get("/", authenticateUser, (req, res, next) => {
+router.get("/", authenticateUser(), (req, res, next) => {
   if (req.query.lineupId)
     PositionService.findByLineupId(req.query.lineupId, req.UserId)
       .then((foundPositions) => {
@@ -14,7 +14,7 @@ router.get("/", authenticateUser, (req, res, next) => {
       .catch((e) => next(e));
 });
 
-router.post("/", authenticateUser, (req, res, next) => {
+router.post("/", authenticateUser(), (req, res, next) => {
   const { x, y, memberId, lineupId } = req.body;
 
   PositionService.findOrCreate(x, y, lineupId, memberId, req.UserId)
@@ -34,7 +34,7 @@ router.post("/", authenticateUser, (req, res, next) => {
     .catch((e) => next(e));
 });
 
-router.put("/:id", authenticateUser, (req, res, next) => {
+router.put("/:id", authenticateUser(), (req, res, next) => {
   PositionService.update(req.params.id, req.body, req.UserId)
     .then((position) => {
       res.send(position);
@@ -43,7 +43,7 @@ router.put("/:id", authenticateUser, (req, res, next) => {
     .catch((e) => next(e));
 });
 
-router.delete("/:id", authenticateUser, (req, res, next) => {
+router.delete("/:id", authenticateUser(), (req, res, next) => {
   PositionService.remove(req.params.id, req.UserId)
     .then((result) => {
       res.send(result);

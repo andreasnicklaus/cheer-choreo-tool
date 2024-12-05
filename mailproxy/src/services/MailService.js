@@ -36,6 +36,24 @@ class MailService {
       }
     );
   }
+
+  sendFeedbackNotice(username, userEmail, stars, text) {
+    return Promise.all(
+      process.env.EMAIL_ADMIN_ADDRESSES.split(",").map((recipient) => {
+        return sendMail(
+          recipient,
+          "Feedback ist eingegangen",
+          "newFeedback.ejs",
+          {
+            username,
+            userEmail,
+            stars,
+            text,
+          }
+        );
+      })
+    );
+  }
 }
 
 module.exports = new MailService();

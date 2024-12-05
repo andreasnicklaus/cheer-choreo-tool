@@ -52,7 +52,7 @@ router.post("/login", (req, res, next) => {
     .catch((e) => next(e));
 });
 
-router.get("/me", AuthService.authenticateUser, (req, res, next) => {
+router.get("/me", AuthService.authenticateUser(), (req, res, next) => {
   UserService.findById(req.UserId)
     .then((user) => {
       res.send(user);

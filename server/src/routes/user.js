@@ -5,7 +5,7 @@ let ejs = require("ejs");
 
 const router = Router();
 
-router.put("/", authenticateUser, (req, res, next) => {
+router.put("/", authenticateUser(), (req, res, next) => {
   UserService.update(req.UserId, req.body)
     .then((user) => {
       res.send(user);
@@ -14,7 +14,7 @@ router.put("/", authenticateUser, (req, res, next) => {
     .catch((e) => next(e));
 });
 
-router.delete("/", authenticateUser, (req, res, next) => {
+router.delete("/", authenticateUser(), (req, res, next) => {
   UserService.remove(req.UserId)
     .then((result) => {
       res.send(result);
