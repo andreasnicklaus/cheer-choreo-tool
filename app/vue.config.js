@@ -72,5 +72,9 @@ module.exports = defineConfig({
   pwa: {
     name: "Choreo Planer",
     themeColor: "#007bff",
+    workboxOptions: {
+      skipWaiting: true,
+      clientsClaim: true,
+    },
   },
 });
