@@ -14,7 +14,13 @@
       >
         <img
           id="logoImg"
-          src="/Icon.png"
+          :src="
+            $store.getters.isChristmasTime
+              ? '/Icon-Christmas.png'
+              : $store.getters.isEasterTime
+              ? '/Icon-Easter.png'
+              : '/Icon.png'
+          "
           alt="Cheerleaderin-Icon, das ein Rad schlägt"
           width="200"
         />
