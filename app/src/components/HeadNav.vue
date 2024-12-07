@@ -38,14 +38,14 @@
           </template>
           <b-dropdown-group
             v-for="team in teams.filter((t) =>
-              t.SeasonTeams.some((st) => st.Choreos.length > 0)
+              t.SeasonTeams.some((st) => st.Choreos?.length > 0)
             )"
             :key="team.id"
             :header="team.name"
           >
             <b-dropdown-text
               v-for="seasonTeam in team.SeasonTeams.filter(
-                (st) => st.Choreos.length > 0
+                (st) => st.Choreos?.length > 0
               )"
               :key="seasonTeam.id"
               v-b-toggle="`collapse-${seasonTeam.id}`"
