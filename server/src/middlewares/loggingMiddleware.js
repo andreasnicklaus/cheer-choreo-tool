@@ -11,6 +11,7 @@ const { logger } = require("../plugins/winston");
  * @param {Function} next Next handler function
  */
 function loggerMiddleWare(req, res, next) {
+  if (req.path == "/health") return next();
   const { password, ...requestBody } = req.body;
 
   logger.info(

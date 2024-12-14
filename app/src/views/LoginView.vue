@@ -243,11 +243,18 @@ export default {
           this.loading = false;
           if (e.status == 400 && e.response.data.type == "EmailUnconfirmed")
             this.$refs.confirmEmailModal.open(true);
-          else
+          else {
+            console.warn(e.code);
+            if (e.code == "ERR_NETWORK")
+              return this.showFailMessage(
+                e.response?.data ||
+                  "Die Server scheinen offline zu sein. Bitte versuche es später nochmal!"
+              );
             this.showFailMessage(
               e.response.data ||
                 "Bitte kontrolliere, dass du Nutzernamen/Email und Passwort richtig geschrieben hast."
             );
+          }
         });
     },
     onRegisterSubmit(event) {
@@ -264,6 +271,11 @@ export default {
         .catch((e) => {
           console.warn(e);
           this.loading = false;
+          if (e.code == "ERR_NETWORK")
+            return this.showFailMessage(
+              e.response?.data ||
+                "Die Server scheinen offline zu sein. Bitte versuche es später nochmal!"
+            );
           this.showFailMessage(
             "Es scheint so als gäbe es bereits einen Nutzer mit diesem Namen oder E-Mail-Adresse ..."
           );
