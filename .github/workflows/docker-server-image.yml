@@ -56,7 +56,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-      - name: curl
-        uses: enflo/curl-action@master
-        with:
-          curl: "-H 'Authorization: Bearer mytoken' https://watchtower.home.andreasnicklaus.de/v1/update"
