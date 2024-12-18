@@ -50,4 +50,4 @@ jobs:
       - name: curl
         uses: enflo/curl-action@master
         with:
-          curl: -H "Authorization: Bearer ${{ secrets.WATCHTOWER_TOKEN }}" https://watchtower.home.andreasnicklaus.de/v1/update
+          curl: '-H "Authorization: Bearer mytoken" https://watchtower.home.andreasnicklaus.de/v1/update'
