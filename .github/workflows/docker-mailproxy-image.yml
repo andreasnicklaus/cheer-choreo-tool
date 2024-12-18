@@ -48,20 +48,21 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
       - name: Trigger watchtower
-        uses: indiesdev/curl@v1.1
-        with:
-          # The target URL
-          # Required: true if custom-config is not set
-          url: http://watchtower.home.andreasnicklaus.de/v1/update
+        # uses: indiesdev/curl@v1.1
+        # with:
+        #   # The target URL
+        #   # Required: true if custom-config is not set
+        #   url: http://watchtower.home.andreasnicklaus.de/v1/update
 
-          # Request timeout (milliseconds)
-          # Default: 1000
-          timeout: 60_000
+        #   # Request timeout (milliseconds)
+        #   # Default: 1000
+        #   timeout: 60_000
 
-          # The authentication using token
-          # This will override the Authorization header, for example Authorization: Bearer QWxhZGRpbjpPcGVuU2VzYW1l
-          bearer-token: ${{ secrets.WATCHTOWER_TOKEN }}
+        #   # The authentication using token
+        #   # This will override the Authorization header, for example Authorization: Bearer QWxhZGRpbjpPcGVuU2VzYW1l
+        #   bearer-token: ${{ secrets.WATCHTOWER_TOKEN }}
 
-          # If it is set to true, it will show the response log in the GitHub UI
-          # Default: false
-          log-response: true
+        #   # If it is set to true, it will show the response log in the GitHub UI
+        #   # Default: false
+        #   log-response: true
+        run: "curl -H 'Authorization: Bearer mytoken' https://watchtower.home.andreasnicklaus.de/v1/update"
