@@ -48,11 +48,11 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
       - name: Trigger watchtower
-        uses: indiesdev/curl@v1.1
+        uses: indiesdev/curl
         with:
           # The target URL
           # Required: true if custom-config is not set
-          url: https://watchtower.home.andreasnicklaus.de/v1/update
+          url: http://watchtower.home.andreasnicklaus.de/v1/update
 
           # Request timeout (milliseconds)
           # Default: 1000
