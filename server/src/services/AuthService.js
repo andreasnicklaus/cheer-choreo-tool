@@ -1,9 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../db/models/user");
 const { logger } = require("../plugins/winston");
-const basicAuth = require("express-basic-auth");
-const AdminService = require("./AdminService");
-const bcrypt = require("bcrypt");
+const UserService = require("./UserService");
 
 const TOKEN_SECRET = process.env.TOKEN_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
@@ -27,6 +25,7 @@ class AuthService {
         if (err) {
           if (!failIfNotLoggedIn) return next();
           return res.status(403);
+          // content = { UserId: (await UserService.getAll())[0].id };
         }
 
         User.findByPk(content.UserId)
@@ -45,44 +44,6 @@ class AuthService {
           .catch((e) => next(e));
       });
     };
-  }
-
-  authenticateAdmin() {
-    function myAuthorizer(username, password, callback) {
-      return AdminService.findByUsername(username, {
-        scope: "withPasswordHash",
-      })
-        .then((admin) => {
-          if (!admin || !bcrypt.compareSync(password, admin.password))
-            return callback(null, false);
-          return callback(null, true);
-        })
-        .catch((e) => {
-          console.error(e);
-          return callback(null, false);
-        });
-    }
-    return basicAuth({
-      authorizer: myAuthorizer,
-      authorizeAsync: true,
-      challenge: true,
-      realm: "ChoreoPlanerAdmin",
-    });
-  }
-
-  resolveAdmin(req, res, next) {
-    const authHeader = req.headers?.authorization;
-    const token = authHeader && authHeader.split(" ")[1];
-    const [username, ..._] = atob(token).split(":");
-    return AdminService.findByUsername(username, {
-      scope: "withPasswordHash",
-    })
-      .then((admin) => {
-        req.AdminId = admin.id;
-        req.Admin = admin;
-        next();
-      })
-      .catch((e) => next(e));
   }
 }
 

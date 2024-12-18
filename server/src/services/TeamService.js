@@ -1,4 +1,3 @@
-const { Op } = require("sequelize");
 const Team = require("../db/models/team");
 const { logger } = require("../plugins/winston");
 const SeasonTeamService = require("./SeasonTeamService");
@@ -11,9 +10,9 @@ const defaultInclude = [
 ];
 
 class TeamService {
-  async getAll(UserId, options = { all: false }) {
+  async getAll(UserId) {
     return Team.findAll({
-      where: options.all ? {} : { UserId },
+      where: { UserId },
       include: defaultInclude,
     });
   }
@@ -30,25 +29,6 @@ class TeamService {
       where: { id, UserId },
       include: defaultInclude,
     });
-  }
-
-  getCount() {
-    return Team.count();
-  }
-
-  getTrend() {
-    return Promise.all([
-      Team.count({
-        where: {
-          createdAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
-        },
-      }),
-      Team.count({
-        where: {
-          deletedAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
-        },
-      }),
-    ]).then(([created, deleted]) => created - deleted);
   }
 
   async create(name, ClubId, SeasonId, UserId) {

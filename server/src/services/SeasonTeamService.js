@@ -2,7 +2,6 @@ const SeasonTeam = require("../db/models/seasonTeam");
 const SeasonService = require("./SeasonService");
 const { logger } = require("../plugins/winston");
 const MemberService = require("./MemberService");
-const { Op } = require("sequelize");
 
 class SeasonTeamService {
   async findById(id, UserId) {
@@ -14,25 +13,6 @@ class SeasonTeamService {
         [SeasonTeam.associations.Choreos, "name"],
       ],
     });
-  }
-
-  getCount() {
-    return SeasonTeam.count();
-  }
-
-  getTrend() {
-    return Promise.all([
-      SeasonTeam.count({
-        where: {
-          createdAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
-        },
-      }),
-      SeasonTeam.count({
-        where: {
-          deletedAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
-        },
-      }),
-    ]).then(([created, deleted]) => created - deleted);
   }
 
   async create(TeamId, SeasonId, memberIds, UserId) {

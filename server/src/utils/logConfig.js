@@ -19,11 +19,6 @@ function logConfig() {
 
   const frontendDomain = process.env.FRONTEND_DOMAIN || "not defined";
 
-  const adminUsername = process.env.DEFAULT_ADMIN_USERNAME || "not defined";
-  const adminPassword = process.env.DEFAULT_ADMIN_PASSWORD
-    ? "<redacted>"
-    : "not defined";
-
   logger.info("################");
   logger.info("Configuration:");
   logger.info("################");
@@ -34,9 +29,6 @@ function logConfig() {
   logger.info();
   logger.info(`  JWT token secret:   ${tokenSecret}`);
   logger.info(`  JWT expires in:     ${jwtExpiresIn}`);
-  logger.info();
-  logger.info(`  Default admin:      ${adminUsername}`);
-  logger.info(`  Default admin pass: ${adminPassword}`);
   logger.info();
   logger.info(`  Mailproxy host:     ${mailProxyHost}`);
   logger.info(`  Mailproxy port:     ${mailProxyPort}`);

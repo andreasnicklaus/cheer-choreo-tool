@@ -1,4 +1,3 @@
-const AdminService = require("../services/AdminService");
 const ChoreoService = require("../services/ChoreoService");
 const ClubService = require("../services/ClubService");
 const HitService = require("../services/HitService");
@@ -131,17 +130,6 @@ function seed() {
       )
     )
   );
-  Promise.all([
-    ...(data.admins?.map((a) =>
-      AdminService.findOrCreate(a.username, a.password)
-    ) || []),
-    process.env.DEFAULT_ADMIN_USERNAME &&
-      process.env.DEFAULT_ADMIN_PASSWORD &&
-      AdminService.findOrCreate(
-        process.env.DEFAULT_ADMIN_USERNAME,
-        process.env.DEFAULT_ADMIN_PASSWORD
-      ),
-  ]);
 }
 
 module.exports = seed;

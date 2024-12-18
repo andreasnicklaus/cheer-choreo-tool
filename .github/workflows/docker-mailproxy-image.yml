@@ -12,6 +12,9 @@ on:
 jobs:
   docker-mailproxy:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/catthehacker/ubuntu:full-20.04
+      options: --sysctl net.ipv6.conf.all.disable_ipv6=0
     steps:
       - name: Checkout
         uses: actions/checkout@v4
