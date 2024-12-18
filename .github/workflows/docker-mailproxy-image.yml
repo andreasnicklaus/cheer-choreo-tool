@@ -6,7 +6,7 @@ on:
       - "main"
     paths:
       - "mailproxy/**"
-      - ".github/workflows/**"
+      - ".github/workflows/docker-mailproxy-image.yml"
   workflow_dispatch:
 
 jobs:
@@ -50,4 +50,4 @@ jobs:
       - name: curl
         uses: enflo/curl-action@master
         with:
-          curl: '-H "Authorization: Bearer mytoken" https://watchtower.home.andreasnicklaus.de/v1/update'
+          curl: '-H \"Authorization: Bearer mytoken\" https://watchtower.home.andreasnicklaus.de/v1/update'
