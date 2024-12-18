@@ -12,6 +12,9 @@ on:
 jobs:
   docker-mailproxy:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/catthehacker/ubuntu:full-20.04
+      options: --sysctl net.ipv6.conf.all.disable_ipv6=0
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -65,4 +68,4 @@ jobs:
         #   # If it is set to true, it will show the response log in the GitHub UI
         #   # Default: false
         #   log-response: true
-        run: "curl -H 'Authorization: Bearer mytoken' https://watchtower.home.andreasnicklaus.de/v1/update"
+        run: "curl -6 -H 'Authorization: Bearer mytoken' https://watchtower.home.andreasnicklaus.de/v1/update"
