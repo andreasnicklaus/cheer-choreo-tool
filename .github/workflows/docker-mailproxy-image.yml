@@ -48,7 +48,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
       - name: Trigger watchtower
-        uses: indiesdev/curl
+        uses: indiesdev/curl@v1.1
         with:
           # The target URL
           # Required: true if custom-config is not set
