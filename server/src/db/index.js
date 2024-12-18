@@ -28,6 +28,7 @@ const SeasonTeam = require("./models/seasonTeam");
 const seed = require("./seed");
 const ChoreoParticipation = require("./models/choreoParticipation");
 const Feedback = require("./models/feedback");
+const Admin = require("./models/admin");
 
 Team.hasMany(SeasonTeam, {
   onDelete: "CASCADE",

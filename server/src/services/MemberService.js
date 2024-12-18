@@ -1,13 +1,33 @@
+const { Op } = require("sequelize");
 const Member = require("../db/models/member");
 const { logger } = require("../plugins/winston");
 
 class MemberService {
-  async findAll(UserId) {
-    return Member.getAll({ where: { UserId } });
+  async getAll(UserId, options = { all: false }) {
+    return Member.findAll({ where: options.all ? {} : { UserId } });
   }
 
   async findById(id, UserId) {
     return Member.findOne({ where: { id, UserId } });
+  }
+
+  getCount() {
+    return Member.count();
+  }
+
+  getTrend() {
+    return Promise.all([
+      Member.count({
+        where: {
+          createdAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+        },
+      }),
+      Member.count({
+        where: {
+          deletedAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+        },
+      }),
+    ]).then(([created, deleted]) => created - deleted);
   }
 
   async create(name, nickname, abbreviation, SeasonTeamId, UserId) {

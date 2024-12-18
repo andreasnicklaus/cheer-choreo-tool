@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const Club = require("../db/models/club");
 const Member = require("../db/models/member");
 const SeasonTeam = require("../db/models/seasonTeam");
@@ -21,9 +22,9 @@ const defaultInclude = [
 ];
 
 class ClubService {
-  async getAll(UserId) {
+  async getAll(UserId, options = { all: false }) {
     return Club.findAll({
-      where: { UserId },
+      where: options.all ? {} : { UserId },
       include: defaultInclude,
       order: [
         ["createdAt"],
@@ -43,6 +44,25 @@ class ClubService {
         ],
       ],
     });
+  }
+
+  getCount() {
+    return Club.count();
+  }
+
+  getTrend() {
+    return Promise.all([
+      Club.count({
+        where: {
+          createdAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+        },
+      }),
+      Club.count({
+        where: {
+          deletedAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+        },
+      }),
+    ]).then(([created, deleted]) => created - deleted);
   }
 
   async findById(id, UserId) {

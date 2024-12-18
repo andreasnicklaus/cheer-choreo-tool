@@ -38,7 +38,7 @@ const { seasonTeamRouter } = require("./routes/seasonTeam");
 const { feedbackRouter } = require("./routes/feedback");
 
 // ADMIN ROUTER
-// const { adminRouter } = require("./routes/admin");
+const { adminRouter } = require("./routes/admin");
 
 const app = express();
 const port = 3000;
@@ -85,7 +85,7 @@ app.use("/season", seasonRouter);
 app.use("/seasonTeam", seasonTeamRouter);
 app.use("/feedback", feedbackRouter);
 
-// app.use("/admin", adminRouter);
+app.use("/admin", adminRouter);
 
 app.use(errorLoggingMiddleWare);
 app.use(errorHandlingMiddleWare);

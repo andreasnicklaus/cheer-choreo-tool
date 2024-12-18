@@ -3,17 +3,31 @@ const Season = require("../db/models/season");
 const { logger } = require("../plugins/winston");
 
 class SeasonService {
-  async getAll(UserId) {
+  async getAll(UserId, options = { all: false }) {
     if (UserId)
       return Season.findAll({
-        where: { UserId: { [Op.or]: [UserId, { [Op.eq]: null }] } },
+        where: options.all
+          ? {}
+          : { UserId: { [Op.or]: [UserId, { [Op.eq]: null }] } },
         order: [["year", "DESC NULLS LAST"], "createdAt"],
       });
     else
       return Season.findAll({
-        where: { UserId: null },
+        where: options.all ? {} : { UserId: null },
         order: [["year", "DESC NULLS LAST"], "createdAt"],
       });
+  }
+
+  getCount() {
+    return Season.count();
+  }
+
+  getTrend() {
+    return Season.count({
+      where: {
+        createdAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+      },
+    });
   }
 
   async create(name, year, UserId) {

@@ -6,6 +6,7 @@ const LineupService = require("./LineupService");
 const ChoreoParticipation = require("../db/models/choreoParticipation");
 const Position = require("../db/models/position");
 const Hit = require("../db/models/hit");
+const { Op } = require("sequelize");
 
 const defaultColors = [
   "#FF1493",
@@ -42,9 +43,9 @@ const defaultInclude = [
 ];
 
 class ChoreoService {
-  async getAll(UserId) {
+  async getAll(UserId, options = { all: false }) {
     return Choreo.findAll({
-      where: { UserId },
+      where: options.all ? {} : { UserId },
       include: defaultInclude,
     });
   }
@@ -54,6 +55,25 @@ class ChoreoService {
       where: { TeamId, UserId },
       include: defaultInclude,
     });
+  }
+
+  getCount() {
+    return Choreo.count();
+  }
+
+  getTrend() {
+    return Promise.all([
+      Choreo.count({
+        where: {
+          createdAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+        },
+      }),
+      Choreo.count({
+        where: {
+          deletedAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+        },
+      }),
+    ]).then(([created, deleted]) => created - deleted);
   }
 
   async findById(id, UserId) {

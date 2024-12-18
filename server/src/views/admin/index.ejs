@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./partials/head'); %>
+    <style>
+      .dashboardKPI h2 {
+        font-size: 1rem;
+        font-weight: 400;
+        margin-bottom: 0;
+      }
+      .dashboardKPI .KPI {
+        font-size: xx-large;
+        font-weight: 700;
+        margin-bottom: 0;
+      }
+    </style>
+  </head>
+  <body class="container">
+    <header><%- include('./partials/header'); %></header>
+
+    <main class="container">
+      <h1>Dashboard</h1>
+      <div class="row" style="row-gap: 16px">
+        <% if (locals.newestFeedback) { %>
+        <div class="col-12">
+          <div class="px-5 py-4 bg-success-subtle rounded-3 mb-0">
+            <small class="text-muted">Last Feedback</small>
+            <p>
+              <%= newestFeedback.stars %> <% for( let index = 0; index <
+              parseInt(newestFeedback.stars); index++ ) { %>
+              <i class="bi-star-fill text-success"></i>
+              <% } %>
+            </p>
+            <b><%= newestFeedback.text %></b>
+          </div>
+        </div>
+        <% } %> <% if (locals.userCount) { %>
+        <div class="col-12 col-md-6">
+          <div class="px-5 py-4 bg-body-secondary rounded-3 mb-0">
+            <%- include('./components/dashboardKpis', { trend: userTrend, count:
+            userCount, label: 'Users', icon: 'person' }) %>
+          </div>
+        </div>
+        <% } %> <% if (locals.adminCount) { %>
+        <div class="col-12 col-md-6">
+          <div class="px-5 py-4 bg-body-secondary rounded-3 mb-0">
+            <%- include('./components/dashboardKpis', { trend: adminTrend,
+            count: adminCount, label: 'Admins', icon: 'person-gear' }) %>
+          </div>
+        </div>
+        <% } %> <% if (locals.clubCount) { %>
+        <div class="col-6 col-md-3">
+          <div class="px-5 py-4 bg-body-secondary rounded-3 mb-0">
+            <%- include('./components/dashboardKpis', { trend: clubTrend, count:
+            clubCount, label: 'Clubs', icon: 'house' }) %>
+          </div>
+        </div>
+        <% } %><% if (locals.teamCount) { %>
+        <div class="col-6 col-md-3">
+          <div class="px-5 py-4 bg-body-secondary rounded-3 mb-0">
+            <%- include('./components/dashboardKpis', { trend: teamTrend, count:
+            teamCount, label: 'Teams', icon: 'people' }) %>
+          </div>
+        </div>
+        <% } %><% if (locals.seasonCount) { %>
+        <div class="col-6 col-md-3">
+          <div class="px-5 py-4 bg-body-secondary rounded-3 mb-0">
+            <%- include('./components/dashboardKpis', { trend: seasonTrend,
+            count: seasonCount, label: 'Seasons', icon: 'calendar' }) %>
+          </div>
+        </div>
+        <% } %><% if (locals.seasonTeamCount) { %>
+        <div class="col-6 col-md-3">
+          <div class="px-5 py-4 bg-body-secondary rounded-3 mb-0">
+            <%- include('./components/dashboardKpis', { trend: seasonTeamTrend,
+            count: seasonTeamCount, label: 'SeasonTeams' , icon:
+            'calendar-range'}) %>
+          </div>
+        </div>
+        <% } %> <% if (locals.choreoCount) { %>
+        <div class="col-6 col-md-4">
+          <div class="px-5 py-4 bg-body-secondary rounded-3 mb-0">
+            <%- include('./components/dashboardKpis', { trend: choreoTrend,
+            count: choreoCount, label: 'Choreos', icon: 'layout-three-columns'
+            }) %>
+          </div>
+        </div>
+        <% } %> <% if (locals.memberCount) { %>
+        <div class="col-6 col-md-4">
+          <div class="px-5 py-4 bg-body-secondary rounded-3 mb-0">
+            <%- include('./components/dashboardKpis', { trend: memberTrend,
+            count: memberCount, label: 'Members', icon: 'people' }) %>
+          </div>
+        </div>
+        <% } %> <% if (locals.feedbackAverage) { %>
+        <div class="col-6 col-md-4">
+          <div class="px-5 py-4 bg-body-secondary rounded-3 mb-0">
+            <%- include('./components/dashboardKpis', { trend: feedbackAverage -
+            feedbackAverageOfLastMonth, count: feedbackAverage, label:
+            'Feedback', icon: 'star' }) %>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </main>
+
+    <footer><%- include('./partials/footer'); %></footer>
+  </body>
+</html>
