@@ -266,7 +266,10 @@ export default {
         .then(() => {
           this.loading = false;
           window._paq.push(["trackGoal", 3]);
-          this.$refs.confirmEmailModal.open();
+          // this.$refs.confirmEmailModal.open();
+          this.$router
+            .push(this.$route.query?.redirectUrl || "/start")
+            .catch(() => {});
         })
         .catch((e) => {
           console.warn(e);
