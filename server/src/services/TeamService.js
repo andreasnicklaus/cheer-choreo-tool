@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const Team = require("../db/models/team");
 const { logger } = require("../plugins/winston");
 const SeasonTeamService = require("./SeasonTeamService");
@@ -10,9 +11,9 @@ const defaultInclude = [
 ];
 
 class TeamService {
-  async getAll(UserId) {
+  async getAll(UserId, options = { all: false }) {
     return Team.findAll({
-      where: { UserId },
+      where: options.all ? {} : { UserId },
       include: defaultInclude,
     });
   }
@@ -29,6 +30,25 @@ class TeamService {
       where: { id, UserId },
       include: defaultInclude,
     });
+  }
+
+  getCount() {
+    return Team.count();
+  }
+
+  getTrend() {
+    return Promise.all([
+      Team.count({
+        where: {
+          createdAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+        },
+      }),
+      Team.count({
+        where: {
+          deletedAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+        },
+      }),
+    ]).then(([created, deleted]) => created - deleted);
   }
 
   async create(name, ClubId, SeasonId, UserId) {
@@ -52,32 +72,32 @@ class TeamService {
     return team;
   }
 
-  async update(id, data, UserId) {
-    return Team.findOne({ where: { id, UserId } }).then(async (foundTeam) => {
-      if (foundTeam) {
-        logger.debug(
-          `TeamService.update ${JSON.stringify({ id, data, UserId })}`
-        );
-        await foundTeam.update(data);
-        await foundTeam.save();
-        return Team.findOne({
-          where: { id, UserId },
-          include: { all: true, nested: true },
-        });
-      } else
-        throw Error(`Beim Update wurde kein Team mit der ID ${id} gefunden`);
-    });
+  async update(id, data, UserId, options = { all: false }) {
+    return Team.findOne({ where: options.all ? { id } : { id, UserId } }).then(
+      async (foundTeam) => {
+        if (foundTeam) {
+          logger.debug(
+            `TeamService.update ${JSON.stringify({ id, data, UserId })}`
+          );
+          await foundTeam.update(data);
+          return foundTeam.save();
+        } else
+          throw Error(`Beim Update wurde kein Team mit der ID ${id} gefunden`);
+      }
+    );
   }
 
-  async remove(id, UserId) {
-    return Team.findOne({ where: { id, UserId } }).then((foundTeam) => {
-      if (foundTeam) {
-        logger.debug(`TeamService.remove ${JSON.stringify({ id, UserId })}`);
-        return foundTeam.destroy();
-      } else {
-        throw Error(`Beim Löschen wurde kein Team mit der ID ${id} gefunden`);
+  async remove(id, UserId, options = { all: false }) {
+    return Team.findOne({ where: options.all ? { id } : { id, UserId } }).then(
+      (foundTeam) => {
+        if (foundTeam) {
+          logger.debug(`TeamService.remove ${JSON.stringify({ id, UserId })}`);
+          return foundTeam.destroy();
+        } else {
+          throw Error(`Beim Löschen wurde kein Team mit der ID ${id} gefunden`);
+        }
       }
-    });
+    );
   }
 }
 

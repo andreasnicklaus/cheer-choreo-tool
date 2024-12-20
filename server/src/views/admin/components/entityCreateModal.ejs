@@ -1,0 +1,68 @@
+<div
+  class="modal fade"
+  id="<%= entity.toLowerCase() %>CreateModal"
+  tabindex="-1"
+  aria-labelledby="<%= entity %>CreateModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="<%= entity %>CreateModalLabel">
+          Create <%= entity.substring(0, entity.length -1) %>
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <form action="/admin/db/<%= entity.toLowerCase() %>" method="POST">
+        <div class="modal-body">
+          <% JSON.parse(editColumns).forEach(({column, type, required}) => { %>
+          <div class="mb-3">
+            <label for="<%= column %>" class="form-label"><%= column %></label>
+            <% if (column.endsWith("Id")) { %>
+            <select
+              class="form-select"
+              id="<%= column %>"
+              name="<%= column %>"
+              required="<%= Boolean(required) %>"
+            >
+              <% if (locals[column.substring(0, column.length - 2).toLowerCase()
+              + 'List']) { %> <% locals[column.substring(0, column.length -
+              2).toLowerCase() + 'List'].forEach(option => { %>
+
+              <option value="<%= option.value %>"><%= option.name %></option>
+
+              <% }) %>
+              <option value="null">
+                <i>Keine Auswahl</i>
+              </option>
+
+              <% } %>
+            </select>
+            <% } else { %> <input type="<%= type %>" class="form-control"
+            id="<%= column %>" name="<%= column %>" <%= Boolean(required) &&
+            'required' %> placeholder="<%= column %>" /> <% } %>
+          </div>
+          <% }) %>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-outline-danger"
+            data-bs-dismiss="modal"
+          >
+            <i class="bi bi-arrow-counterclockwise"></i>
+            Close
+          </button>
+          <button type="submit" class="btn btn-success">
+            <i class="bi bi-check2"></i> Create
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

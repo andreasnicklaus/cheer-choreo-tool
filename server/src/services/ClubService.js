@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const Club = require("../db/models/club");
 const Member = require("../db/models/member");
 const SeasonTeam = require("../db/models/seasonTeam");
@@ -21,9 +22,9 @@ const defaultInclude = [
 ];
 
 class ClubService {
-  async getAll(UserId) {
+  async getAll(UserId, options = { all: false }) {
     return Club.findAll({
-      where: { UserId },
+      where: options.all ? {} : { UserId },
       include: defaultInclude,
       order: [
         ["createdAt"],
@@ -43,6 +44,25 @@ class ClubService {
         ],
       ],
     });
+  }
+
+  getCount() {
+    return Club.count();
+  }
+
+  getTrend() {
+    return Promise.all([
+      Club.count({
+        where: {
+          createdAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+        },
+      }),
+      Club.count({
+        where: {
+          deletedAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+        },
+      }),
+    ]).then(([created, deleted]) => created - deleted);
   }
 
   async findById(id, UserId) {
@@ -159,29 +179,33 @@ class ClubService {
     return club;
   }
 
-  async update(id, data, UserId) {
-    return Club.findOne({ where: { id, UserId } }).then(async (foundClub) => {
-      if (foundClub) {
-        logger.debug(
-          `ClubService.update ${JSON.stringify({ id, data, UserId })}`
-        );
-        await foundClub.update(data);
-        return foundClub.save();
-      } else {
-        throw Error(`Beim Update wurde kein Club mit der ID ${id} gefunden`);
+  async update(id, data, UserId, options = { all: false }) {
+    return Club.findOne({ where: options.all ? { id } : { id, UserId } }).then(
+      async (foundClub) => {
+        if (foundClub) {
+          logger.debug(
+            `ClubService.update ${JSON.stringify({ id, data, UserId })}`
+          );
+          await foundClub.update(data);
+          return foundClub.save();
+        } else {
+          throw Error(`Beim Update wurde kein Club mit der ID ${id} gefunden`);
+        }
       }
-    });
+    );
   }
 
-  async remove(id, UserId) {
-    return Club.findOne({ where: { id, UserId } }).then((foundClub) => {
-      if (foundClub) {
-        logger.debug(`ClubService.remove ${JSON.stringify({ id })}`);
-        return foundClub.destroy();
-      } else {
-        throw Error(`Beim Löschen wurde kein Club mit der ID ${id} gefunden`);
+  async remove(id, UserId, options = { all: false }) {
+    return Club.findOne({ where: options.all ? { id } : { id, UserId } }).then(
+      (foundClub) => {
+        if (foundClub) {
+          logger.debug(`ClubService.remove ${JSON.stringify({ id })}`);
+          return foundClub.destroy();
+        } else {
+          throw Error(`Beim Löschen wurde kein Club mit der ID ${id} gefunden`);
+        }
       }
-    });
+    );
   }
 }
 

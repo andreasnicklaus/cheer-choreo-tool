@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./partials/head'); %>
+  </head>
+  <body>
+    <header><%- include('./partials/header'); %></header>
+
+    <main class="container">
+      <div class="row justify-content-between align-items-center">
+        <div class="col col-auto">
+          <h1>Admins</h1>
+        </div>
+        <div class="col col-auto">
+          <button
+            type="button"
+            class="btn btn-success btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#adminCreateModal"
+          >
+            <i class="bi bi-plus-lg"></i>
+            Add
+          </button>
+        </div>
+      </div>
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Username</th>
+            <th scope="col">Created At</th>
+            <th scope="col">Updated At</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="table-group-divider">
+          <% adminList.forEach((admin, i) => { %>
+          <tr>
+            <th scope="row"><%= i + 1 %></th>
+            <td><%= admin.username %></td>
+            <td><%= new Date(admin.createdAt).toLocaleString("en-EN") %></td>
+            <td><%= new Date(admin.updatedAt).toLocaleString("en-EN") %></td>
+            <td>
+              <button
+                type="button"
+                class="btn btn-warning btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#adminUpdateModal"
+                data-bs-username="<%= admin.username %>"
+                data-bs-id="<%= admin.id %>"
+              >
+                <i class="bi bi-pencil-fill"></i>
+              </button>
+              <% if (admin.id !== currentAdminId) { %>
+              <button
+                class="btn btn-danger btn-sm"
+                type="button"
+                onclick="deleteAdmin('<%= admin.id %>')"
+              >
+                <i class="bi bi-trash-fill"></i>
+              </button>
+              <% } %>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+        <tfoot class="table-group-divider">
+          <tr>
+            <td></td>
+            <td>
+              <b> <%= adminList.length %> </b>
+              Admins
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </main>
+
+    <!-- Modal: Create Admin -->
+    <div
+      class="modal fade"
+      id="adminCreateModal"
+      tabindex="-1"
+      aria-labelledby="adminCreateModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="adminCreateModalLabel">
+              Create Admin
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <form action="/admin/admins" method="POST">
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="username"
+                  name="username"
+                  required
+                  placeholder="Username"
+                />
+                <div id="usernameHelp" class="form-text">
+                  Mindestens 6 Zeichen
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password"
+                  name="password"
+                  required
+                  placeholder="Password"
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-outline-danger"
+                data-bs-dismiss="modal"
+              >
+                <i class="bi bi-trash"></i>
+                Close
+              </button>
+              <button type="submit" class="btn btn-success">
+                <i class="bi bi-check2"></i> Save changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!--  Modal: Update Admin -->
+    <div
+      class="modal fade"
+      id="adminUpdateModal"
+      tabindex="-1"
+      aria-labelledby="adminUpdateModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="adminUpdateModalLabel">
+              Update Admin
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <form action="/admin/admins/update" method="POST">
+            <div class="modal-body">
+              <div class="d-none">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="id"
+                  name="id"
+                  required
+                  placeholder="id"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="username"
+                  name="username"
+                  required
+                  placeholder="Username"
+                />
+                <div id="usernameHelp" class="form-text">
+                  Mindestens 6 Zeichen
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-outline-danger"
+                data-bs-dismiss="modal"
+              >
+                <i class="bi bi-arrow-counterclockwise"></i>
+                Close
+              </button>
+              <button type="submit" class="btn btn-success">
+                <i class="bi bi-check2"></i> Save changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <footer><%- include('./partials/footer'); %></footer>
+
+    <script type="text/javascript" defer>
+      const updateModal = document.getElementById("adminUpdateModal");
+      if (updateModal) {
+        updateModal.addEventListener("show.bs.modal", (event) => {
+          const button = event.relatedTarget;
+          const username = button.getAttribute("data-bs-username");
+          const id = button.getAttribute("data-bs-id");
+          const modalUserName = updateModal.querySelector(
+            "input[name='username']"
+          );
+          const modalId = updateModal.querySelector("input[name='id']");
+          modalUserName.value = username;
+          modalId.value = id;
+        });
+      }
+    </script>
+    <script type="text/javascript" defer>
+      function deleteAdmin(id) {
+        if (confirm("Are you sure you want to delete this admin?")) {
+          fetch(`/admin/admins/${id}`, {
+            method: "DELETE",
+          })
+            .then((data) => {
+              window.location.reload();
+            })
+            .catch((err) => {
+              console.error(err);
+              alert("Something went wrong");
+            });
+        }
+      }
+    </script>
+  </body>
+</html>

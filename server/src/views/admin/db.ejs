@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./partials/head'); %>
+  </head>
+  <body>
+    <header><%- include('./partials/header'); %></header>
+
+    <main class="container">
+      <h1>Database</h1>
+      <div class="row justify-content-between align-items-center mb-3">
+        <div class="col-auto">
+          <% [
+            { name: "Clubs", path: "/clubs", variant: "primary" },
+            { name: "Teams", path: "/teams", variant: "danger" },
+            { name: "Seasons", path: "/seasons", variant: "success" },
+            // { name: "SeasonTeams", path: "/seasonTeams", variant: "warning" },
+            { name: "Members", path: "/members", variant: "light" },
+            { name: "Choreos", path: "/choreos", variant: "info" },
+          ].forEach(entity => { %>
+          <a role="button" href="/admin/db<%= entity.path %>" class="btn btn-<%= path.endsWith(entity.path) ? "" : "outline-" %><%= entity.variant || "primary"%> btn-sm">
+            <%= entity.name %>
+          </a>
+          <% }) %>
+        </div>
+        <% if (path.split("/").length > 3) { %>
+        <div class="col col-auto">
+          <%-  include(`./components/entityUpdateModal`, { entity: path.split("/")[path.split("/").length - 1] }) %>
+          <%-  include(`./components/entityCreateModal`, { entity: path.split("/")[path.split("/").length - 1] }) %>
+          <button
+            type="button"
+            class="btn btn-success btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#<%= path.split("/")[path.split("/").length - 1].toLowerCase() %>CreateModal"
+          >
+            <i class="bi bi-plus-circle"></i> Add
+          </button>
+        </div>
+        <% } %>
+      </div>
+
+      <% if (locals.columns && locals.data) { %>
+
+        <form action="<%= path %>" method="get">
+          <div class="row">
+            <div class="col">
+              <input type="text" name="UserId" list="userSearch" placeholder="UserId" value="<%= query?.UserId %>" class="form-control" />
+              <datalist id="userSearch">
+                <% userList.forEach(({value, name}) => { %>
+                <option value="<%= value %>"> <%= name %> </option>
+                <% }) %>
+              </datalist> 
+              <% if (query.UserId) { %>
+              <div id="userIdHelp" class="form-text">
+                Letzte Suche: <%= userList.find(option => option.value == query?.UserId).name %>
+                </div>
+                <% } %>
+            </div>
+            <div class="col col-auto">
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search"></i>
+                </button>
+              </div>
+          </div>
+        </form>
+
+        <hr>
+
+        <table class="table table-striped table-hover mt-4">
+          <thead>
+            <tr >
+              <% columns.forEach(column => { %>
+                <th style="text-transform: capitalize;" scope="col"><%= column %></th>
+                <% }); %>
+              <th scope="col">Created At</th>
+              <th scope="col">Updated At</th>
+              <th scope="col">Actions</th>
+          </tr>
+          </thead>
+          <tbody class="table-group-divider">
+            <% data.forEach((datum) => { %>
+              <tr>
+                <% columns.forEach(column => { %>
+                  <td scope="col"><%= datum[column] %></td>
+                <% }); %>
+                <td><%= new Date(datum.createdAt).toLocaleString("en-EN") %></td>
+                <td><%= new Date(datum.updatedAt).toLocaleString("en-EN") %></td>
+                <td>
+                  <button class="btn btn-outline-light btn-sm" data-bs-toggle="popover" data-bs-title="ID: <%= datum.id %>" data-bs-content="User: <%= userList.find(option => option.value == datum.UserId)?.name %> (<%= datum.UserId || null %>)"  data-bs-placement="top">
+                    <i class="bi bi-info" ></i>
+                    </button>
+                  <button
+                    type="button"
+                    class="btn btn-warning btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#<%= entity.toLowerCase() %>UpdateModal"
+                    data-bs-id="<%= datum.id %>"
+                    data-bs-entity="<%= JSON.stringify(datum) %>"
+                  >
+                    <i class="bi bi-pencil-fill"></i>
+                  </button>
+                  <button
+                    class="btn btn-danger btn-sm"
+                    type="button"
+                    onclick="deleteEntity('<%= datum.id %>')"
+                  >
+                    <i class="bi bi-trash-fill"></i>
+                  </button>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+          <tfoot class="table-group-divider">
+            <tr>
+              <% columns.forEach(column => { %>
+                <th style="text-transform: capitalize;" scope="col"><%= column %></th>
+                <% }); %>
+                <th scope="col">Created At</th>
+                <th scope="col">Updated At</th>
+                <th scope="col">Actions</th>
+            </tr>
+          </tfoot>
+        </table>
+      <% } %>
+    </main>
+    
+
+    <footer><%- include('./partials/footer'); %></footer>
+    <script type="text/javascript" defer>
+      function deleteEntity(id) {
+        if (confirm('Are you sure you want to delete this entity?')) {
+          fetch(`<%= path %>/${id}`, {
+            method: 'DELETE',
+          })
+          .then(response => {
+            if (response.ok) {
+              location.reload();
+            } else {
+              alert('Failed to delete entity.');
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to delete entity.');
+          });
+        }
+      }
+    </script>
+  </body>
+</html>

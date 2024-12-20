@@ -6,6 +6,7 @@ const LineupService = require("./LineupService");
 const ChoreoParticipation = require("../db/models/choreoParticipation");
 const Position = require("../db/models/position");
 const Hit = require("../db/models/hit");
+const { Op } = require("sequelize");
 
 const defaultColors = [
   "#FF1493",
@@ -42,9 +43,9 @@ const defaultInclude = [
 ];
 
 class ChoreoService {
-  async getAll(UserId) {
+  async getAll(UserId, options = { all: false }) {
     return Choreo.findAll({
-      where: { UserId },
+      where: options.all ? {} : { UserId },
       include: defaultInclude,
     });
   }
@@ -56,9 +57,28 @@ class ChoreoService {
     });
   }
 
-  async findById(id, UserId) {
+  getCount() {
+    return Choreo.count();
+  }
+
+  getTrend() {
+    return Promise.all([
+      Choreo.count({
+        where: {
+          createdAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+        },
+      }),
+      Choreo.count({
+        where: {
+          deletedAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+        },
+      }),
+    ]).then(([created, deleted]) => created - deleted);
+  }
+
+  async findById(id, UserId, options = { all: false }) {
     return Choreo.findOne({
-      where: { UserId, id },
+      where: options.all ? { id } : { id, UserId },
       include: defaultInclude,
     }).then(async (choreo) => {
       const lineups = await LineupService.findByChoreoId(choreo.id);
@@ -183,40 +203,38 @@ class ChoreoService {
     });
   }
 
-  async update(id, data, UserId) {
-    return Choreo.findOne({ where: { id, UserId } }).then(
-      async (foundChoreo) => {
-        if (foundChoreo) {
-          logger.debug(
-            `ChoreoService.update ${JSON.stringify({ id, data, UserId })}`
-          );
-          await foundChoreo.update(data);
-          await foundChoreo.save();
-          return this.findById(id, UserId);
-        } else {
-          throw new Error(
-            `Beim Update wurde keine Choreo mit der ID ${id} gefunden`
-          );
-        }
+  async update(id, data, UserId, options = { all: false }) {
+    return Choreo.findOne({
+      where: options.all ? { id } : { id, UserId },
+    }).then(async (foundChoreo) => {
+      if (foundChoreo) {
+        logger.debug(
+          `ChoreoService.update ${JSON.stringify({ id, data, UserId })}`
+        );
+        await foundChoreo.update(data);
+        await foundChoreo.save();
+        return this.findById(id, UserId, options);
+      } else {
+        throw new Error(
+          `Beim Update wurde keine Choreo mit der ID ${id} gefunden`
+        );
       }
-    );
+    });
   }
 
-  async remove(id, UserId) {
-    return Choreo.findOne({ where: { id, UserId } }).then(
-      async (foundChoreo) => {
-        if (foundChoreo) {
-          logger.debug(
-            `ChoreoService.remove ${JSON.stringify({ id, UserId })}`
-          );
-          return foundChoreo.destroy();
-        } else {
-          throw new Error(
-            `Beim Update wurde keine Choreo mit der ID ${id} gefunden`
-          );
-        }
+  async remove(id, UserId, options = { all: false }) {
+    return Choreo.findOne({
+      where: options.all ? { id } : { id, UserId },
+    }).then(async (foundChoreo) => {
+      if (foundChoreo) {
+        logger.debug(`ChoreoService.remove ${JSON.stringify({ id, UserId })}`);
+        return foundChoreo.destroy();
+      } else {
+        throw new Error(
+          `Beim Update wurde keine Choreo mit der ID ${id} gefunden`
+        );
       }
-    );
+    });
   }
 }
 

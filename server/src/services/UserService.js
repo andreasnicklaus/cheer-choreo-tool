@@ -5,7 +5,7 @@ const MailService = require("./MailService");
 
 class UserService {
   async getAll() {
-    return User.findAll({ include: { all: true } });
+    return User.findAll();
   }
 
   async findById(id) {
@@ -18,6 +18,25 @@ class UserService {
         [Op.or]: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
       },
     });
+  }
+
+  getCount() {
+    return User.count();
+  }
+
+  getTrend() {
+    return Promise.all([
+      User.count({
+        where: {
+          createdAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+        },
+      }),
+      User.count({
+        where: {
+          deletedAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+        },
+      }),
+    ]).then(([created, deleted]) => created - deleted);
   }
 
   async create(username, password, email) {

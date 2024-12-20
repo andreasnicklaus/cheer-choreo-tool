@@ -3,17 +3,31 @@ const Season = require("../db/models/season");
 const { logger } = require("../plugins/winston");
 
 class SeasonService {
-  async getAll(UserId) {
+  async getAll(UserId, options = { all: false }) {
     if (UserId)
       return Season.findAll({
-        where: { UserId: { [Op.or]: [UserId, { [Op.eq]: null }] } },
+        where: options.all
+          ? {}
+          : { UserId: { [Op.or]: [UserId, { [Op.eq]: null }] } },
         order: [["year", "DESC NULLS LAST"], "createdAt"],
       });
     else
       return Season.findAll({
-        where: { UserId: null },
+        where: options.all ? {} : { UserId: null },
         order: [["year", "DESC NULLS LAST"], "createdAt"],
       });
+  }
+
+  getCount() {
+    return Season.count();
+  }
+
+  getTrend() {
+    return Season.count({
+      where: {
+        createdAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+      },
+    });
   }
 
   async create(name, year, UserId) {
@@ -27,9 +41,25 @@ class SeasonService {
     return Season.create({ name, year, UserId });
   }
 
-  async remove(id, UserId) {
+  async update(id, data, UserId, options = { all: false }) {
     return Season.findOne({
-      where: { id, UserId },
+      where: options.all ? { id } : { id, UserId },
+    }).then(async (foundSeason) => {
+      if (foundSeason) {
+        logger.debug(
+          `SeasonService.update ${JSON.stringify({ id, data, UserId })}`
+        );
+        await foundSeason.update(data);
+        return foundSeason.save();
+      } else {
+        throw Error(`Beim Update wurde keine Season mit der ID ${id} gefunden`);
+      }
+    });
+  }
+
+  async remove(id, UserId, options = { all: false }) {
+    return Season.findOne({
+      where: options.all ? { id } : { id, UserId },
     }).then((foundSeason) => {
       if (foundSeason) {
         logger.debug(`SeasonService.remove ${JSON.stringify({ id, UserId })}`);
