@@ -23,71 +23,75 @@
           </button>
         </div>
       </div>
-      <table class="table table-striped table-hover">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Username</th>
-            <th scope="col">Email</th>
-            <th scope="col">Created At</th>
-            <th scope="col">Updated At</th>
-            <th scope="col">Actions</th>
-          </tr>
-        </thead>
-        <tbody class="table-group-divider">
-          <% userList.forEach((user, i) => { %>
-          <tr title="<%= user.id %>">
-            <th scope="row"><%= i + 1 %></th>
-            <td><%= user.username %></td>
-            <td>
-              <%= user.email %> <% if (user.email && user.emailConfirmed) { %>
-              <i class="bi-check-circle-fill text-success"></i>
-              <% } else if (user.email && !user.emailConfirmed) { %>
-              <i class="bi-question-circle-fill text-warning"></i>
-              <% } %>
-            </td>
-            <td><%= new Date(user.createdAt).toLocaleString("en-EN") %></td>
-            <td><%= new Date(user.updatedAt).toLocaleString("en-EN") %></td>
-            <td>
-              <button
-                type="button"
-                class="btn btn-warning btn-sm"
-                data-bs-toggle="modal"
-                data-bs-target="#userUpdateModal"
-                data-bs-id="<%= user.id %>"
-                data-bs-username="<%= user.username %>"
-                data-bs-email="<%= user.email %>"
-                data-bs-email-confirmed="<%= user.emailConfirmed %>"
-              >
-                <i class="bi bi-pencil-fill"></i>
-              </button>
-              <button
-                class="btn btn-danger btn-sm"
-                type="button"
-                onclick="deleteUser('<%= user.id %>')"
-              >
-                <i class="bi bi-trash-fill"></i>
-              </button>
-            </td>
-          </tr>
-          <% }) %>
-        </tbody>
-        <tfoot class="table-group-divider">
-          <tr>
-            <td></td>
-            <td>
-              <b> <%= userList.length %> </b>
-              Users
-            </td>
-            <td>
-              <b> <%= userList.filter(u => u.email).length %> </b>
-              Users with Email (<%= userList.filter(u => u.email
-              &&!u.emailConfirmed ).length %>
-              <i class="bi-question-circle-fill text-warning"></i>)
-            </td>
-          </tr>
-        </tfoot>
-      </table>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Username</th>
+              <th scope="col">Email</th>
+              <th scope="col">Created At</th>
+              <th scope="col">Updated At</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="table-group-divider">
+            <% userList.forEach((user, i) => { %>
+            <tr title="<%= user.id %>">
+              <th scope="row"><%= i + 1 %></th>
+              <td><%= user.username %></td>
+              <td>
+                <%= user.email %> <% if (user.email && user.emailConfirmed) { %>
+                <i class="bi-check-circle-fill text-success"></i>
+                <% } else if (user.email && !user.emailConfirmed) { %>
+                <i class="bi-question-circle-fill text-warning"></i>
+                <% } %>
+              </td>
+              <td><%= new Date(user.createdAt).toLocaleString("en-EN") %></td>
+              <td><%= new Date(user.updatedAt).toLocaleString("en-EN") %></td>
+              <td>
+                <div class="btn-group">
+                  <button
+                    type="button"
+                    class="btn btn-warning btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#userUpdateModal"
+                    data-bs-id="<%= user.id %>"
+                    data-bs-username="<%= user.username %>"
+                    data-bs-email="<%= user.email %>"
+                    data-bs-email-confirmed="<%= user.emailConfirmed %>"
+                  >
+                    <i class="bi bi-pencil-fill"></i>
+                  </button>
+                  <button
+                    class="btn btn-danger btn-sm"
+                    type="button"
+                    onclick="deleteUser('<%= user.id %>')"
+                  >
+                    <i class="bi bi-trash-fill"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+          <tfoot class="table-group-divider">
+            <tr>
+              <td></td>
+              <td>
+                <b> <%= userList.length %> </b>
+                Users
+              </td>
+              <td>
+                <b> <%= userList.filter(u => u.email).length %> </b>
+                Users with Email (<%= userList.filter(u => u.email
+                &&!u.emailConfirmed ).length %>
+                <i class="bi-question-circle-fill text-warning"></i>)
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
     </main>
 
     <!-- Modal: Create User -->
