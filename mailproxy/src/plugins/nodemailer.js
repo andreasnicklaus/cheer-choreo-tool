@@ -4,7 +4,6 @@ const { mailLogger } = require("./winston");
 
 const client = nodemailer.createTransport({
   host: process.env.SMTP_SERVER,
-  name: process.env.SMTP_DOMAIN,
   port: process.env.SMTP_PORT,
   secure: true,
   auth: {
@@ -20,8 +19,8 @@ function verify() {
   if (
     !(
       process.env.SMTP_SERVER &&
-      process.env.SMTP_DOMAIN &&
       process.env.SMTP_PORT &&
+      process.env.SMTP_FROM_ADDRESS &&
       process.env.SMTP_USER &&
       process.env.SMTP_PASSWORD &&
       process.env.EMAIL_ADMIN_ADDRESSES &&
@@ -56,7 +55,7 @@ async function sendMail(recipient, subject, templateName, variables = {}) {
       else {
         return client
           .sendMail({
-            from: process.env.SMTP_USER,
+            from: process.env.SMTP_FROM_ADDRESS,
             to: recipient,
             subject,
             html,
