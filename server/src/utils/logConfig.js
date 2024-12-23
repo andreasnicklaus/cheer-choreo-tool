@@ -3,7 +3,7 @@ const { logger } = require("../plugins/winston");
 function logConfig() {
   const dbName = process.env.POSTGRES_DB || "not defined";
   const dbUsername = process.env.POSTGRES_USER || "not defined";
-  const dbHost = process.env.POSTGRES_HOST || "not defined";
+  const dbHost = process.env.DB_HOST || "not defined";
   const dbPassword = process.env.POSTGRES_PASSWORD
     ? "<redacted>"
     : "not defined";
