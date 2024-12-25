@@ -46,6 +46,16 @@ class UserService {
         user.id,
         user.email
       ).catch(logger.error);
+      if (email) {
+        MailService.sendEmailConfirmationEmail(
+          user.username,
+          user.id,
+          user.email
+        ).catch(logger.error);
+        MailService.sendWelcomeEmail(user.username, user.id, user.email).catch(
+          logger.error
+        );
+      }
       return user;
     });
   }

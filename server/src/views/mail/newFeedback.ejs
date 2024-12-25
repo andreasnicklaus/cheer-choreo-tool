@@ -4,27 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Neuer Nutzer!</title>
-    <style>
-      .mono {
-        font-family: monospace;
-      }
-    </style>
   </head>
   <body>
-    <h1>Neue Nutzerregistrierung!</h1>
+    <h1>✅ Jemand hat Feedback gegeben! ✅</h1>
 
     <p>
-      <b> <%= username %> </b>
-      hat sich eben um <%= timestamp %> registriert!
-      <br />
-      Generierte User-ID: <span class="mono"><%= userId %></span>
-      <br />
-      E-Mail-Adresse: <% if (userEmail) { %>
-      <a href="mailto:<%= userEmail %>" class="mono"><%= userEmail %></a>
-      <% } else { %>
-      <span class="mono">nicht angegeben</span>
-      <% } %>
+      <b title="<%= userEmail || 'Unbekannt' %>">
+        <%= username || 'Unbekannter Nutzer' %>
+      </b>
+      hat eben um <%= timestamp %> Ein Feedback geben!
     </p>
+    <p>
+      <% for( let i = 0; i < stars; i++ ) { %> ⭐ <% } %> <%= stars %>/5 Sterne
+    </p>
+    <p><%= text %></p>
 
     <p>
       <small
@@ -40,7 +33,7 @@
     <p>Im Auftrag von Choreo Planer</p>
 
     <img
-      src="https://www.choreo-Planer.de/Icon.png"
+      src="cid:choreo-planer-icon"
       alt="Cheerleaderin-Icon, das ein Rad schlägt"
       width="100"
     />

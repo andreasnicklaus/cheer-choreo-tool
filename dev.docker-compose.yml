@@ -13,15 +13,3 @@ services:
       - .server.dev.env
     volumes:
       - ./server/src:/usr/src/app/src
-
-  mailproxy:
-    build:
-      context: mailproxy
-      dockerfile: dev.Dockerfile
-    image: anicklaus/cheer-tool:mailproxy
-    env_file:
-      - .mailproxy.dev.env
-    ports:
-      - 3001:3000
-    volumes:
-      - ./mailproxy/src:/usr/src/app/src

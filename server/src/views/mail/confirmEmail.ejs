@@ -4,23 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Willkommen beim Choreo Planer</title>
-    <style>
-      h1 {
-        text-align: center;
-      }
-      .mono {
-        font-family: monospace;
-      }
-      a[type="button"] {
-        background-color: #0069d9;
-        color: white;
-        padding: 16px 24px;
-        border-radius: 4px;
-      }
-    </style>
   </head>
   <body>
-    <h1>Bitte bestätige deine E-Mail-Adresse!</h1>
+    <h1 style="text-align: center">Bitte bestätige deine E-Mail-Adresse!</h1>
 
     <p>Hallo <%= username %>,</p>
 
@@ -32,6 +18,12 @@
     <p style="margin: 32px 0px; text-align: center">
       <a
         type="button"
+        style="
+          background-color: #0069d9;
+          color: white;
+          padding: 16px 24px;
+          border-radius: 4px;
+        "
         href="<%= backendDomain %>/user/confirmEmail/<%= userId %>"
       >
         Jetzt bestätigen
@@ -66,7 +58,7 @@
     <hr />
 
     <img
-      src="https://www.choreo-Planer.de/Icon.png"
+      src="cid:choreo-planer-icon"
       alt="Cheerleaderin-Icon, das ein Rad schlägt"
       width="100"
     />

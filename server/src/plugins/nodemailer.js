@@ -24,7 +24,7 @@ function verify() {
       process.env.SMTP_USER &&
       process.env.SMTP_PASSWORD &&
       process.env.EMAIL_ADMIN_ADDRESSES &&
-      process.env.MAILPROXY_SECRET
+      process.env.BACKEND_DOMAIN
     )
   )
     throw new Error("Not all needed environment variables are specified.");
@@ -38,27 +38,38 @@ function verify() {
   });
 }
 
-async function sendMail(recipient, subject, templateName, variables = {}) {
+async function sendMail(
+  recipient,
+  subject,
+  templateName,
+  variables = {},
+  attachments = []
+) {
   mailLogger.info(
     `Sending mail with ${JSON.stringify({
       recipient,
       subject,
       templateName,
       variables,
+      attachments,
     })}`
   );
   ejs.renderFile(
-    "src/views/" + templateName,
+    "src/views/mail/" + templateName,
     { ...variables, timestamp: new Date().toLocaleTimeString("de") },
     (err, html) => {
       if (err) mailLogger.error(err);
       else {
         return client
           .sendMail({
-            from: process.env.SMTP_FROM_ADDRESS,
+            from: {
+              name: "Choreo Planer",
+              address: process.env.SMTP_FROM_ADDRESS,
+            },
             to: recipient,
             subject,
             html,
+            attachments,
           })
           .catch((err) => {
             mailLogger.error(err);
