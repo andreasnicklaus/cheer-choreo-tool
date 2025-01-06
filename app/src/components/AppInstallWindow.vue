@@ -14,8 +14,8 @@
       color: '#2c3e50',
     }"
   >
-    <b-row align-h="end" align-v="center">
-      <b-col>
+    <b-row align-h="end" align-v="center" :style="{ rowGap: '1rem' }">
+      <b-col cols="12" md="">
         <h4>App herunterladen!</h4>
         Die App nimmt keinen Speicherplatz auf deinem Gerät ein und erleichtert
         das Starten der Anwendung!
