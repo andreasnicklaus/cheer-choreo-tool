@@ -18,7 +18,7 @@
   "bugs": {
     "url": "https://github.com/andreasnicklaus/cheer-choreo-tool/issues"
   },
-  "homepage": "https://github.com/andreasnicklaus/cheer-choreo-tool#readme",
+  "homepage": "https://www.choreo-planer.de",
   "dependencies": {
     "@sequelize/postgres": "^7.0.0-alpha.42",
     "bcrypt": "^5.1.1",
