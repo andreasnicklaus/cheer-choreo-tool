@@ -102,6 +102,10 @@
       </b-navbar-nav>
 
       <b-navbar-nav class="ml-auto align-items-sm-center">
+        <b-nav-item @click="share" v-b-tooltip.hover title="Teilen">
+          <b-icon-share />
+          <span class="d-sm-none ml-2">Teilen</span>
+        </b-nav-item>
         <b-nav-item
           class="d-sm-block d-none"
           v-if="onlineStatus != null"
@@ -266,6 +270,11 @@ export default {
     },
     reloadPage() {
       location.reload();
+    },
+    share() {
+      navigator.share({
+        url: window.location.href,
+      });
     },
   },
   watch: {
