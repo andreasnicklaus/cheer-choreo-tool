@@ -619,29 +619,29 @@ export default {
         vmid: "description",
         name: "description",
         content:
-          "Dein Planungs-Tool für Choreographien im Tanz und Cheerleading",
+          "Plane deine Choreografien schnell und einfach mit dem Choreo Planer! Perfekt für Cheerleading, Tanz und Bodenturnen. 100% kostenlos. Jetzt ausprobieren!",
       },
       {
         vmid: "twitter:description",
         name: "twitter:description",
         content:
-          "Dein Planungs-Tool für Choreographien im Tanz und Cheerleading",
+          "Plane deine Choreografien schnell und einfach mit dem Choreo Planer! Perfekt für Cheerleading, Tanz und Bodenturnen. 100% kostenlos. Jetzt ausprobieren!",
       },
       {
         vmid: "og:description",
         property: "og:description",
         content:
-          "Dein Planungs-Tool für Choreographien im Tanz und Cheerleading",
+          "Plane deine Choreografien schnell und einfach mit dem Choreo Planer! Perfekt für Cheerleading, Tanz und Bodenturnen. 100% kostenlos. Jetzt ausprobieren!",
       },
       {
         vmid: "og:title",
         property: "og:title",
-        content: "Start - Choreo Planer",
+        content: "Choreo Planer – Das kostenlose Online-Tool für Choreo-Sport",
       },
       {
         vmid: "twitter:title",
         name: "twitter:title",
-        content: "Start - Choreo Planer",
+        content: "Choreo Planer – Das kostenlose Online-Tool für Choreo-Sport",
       },
     ],
   },

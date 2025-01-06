@@ -28,7 +28,7 @@
 
 [![](https://img.shields.io/badge/Follow%20on%20Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/choreoplaner)
 
-[![](https://img.shields.io/badge/Follow%20on%20Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white)](https://www.facebook.com/profile.php?id=61569374878534)
+[![](https://img.shields.io/badge/Follow%20on%20Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white)](https://www.facebook.com/choreoplaner/)
 
 [![](https://img.shields.io/badge/Visit%20our%20Website-orange?style=for-the-badge&logo=googlechrome&logoColor=white)](https://www.choreo-planer.de)
 

@@ -35,16 +35,21 @@
             href="https://www.instagram.com/choreoplaner/"
             target="_blank"
           >
-            <b-icon-instagram class="mr-2" />
-            Instagram </b-button
+            <b-icon-instagram class="mr-2" />Instagram</b-button
+          ><br />
+          <b-button
+            variant="link"
+            href="https://www.facebook.com/choreoplaner/"
+            target="_blank"
+          >
+            <b-icon-facebook class="mr-2" />Facebook</b-button
           ><br />
           <b-button
             variant="link"
             href="https://github.com/andreasnicklaus/cheer-choreo-tool"
             target="_blank"
           >
-            <b-icon-github class="mr-2" />
-            Github </b-button
+            <b-icon-github class="mr-2" />Github</b-button
           ><br />
         </b-col>
       </b-row>
@@ -111,7 +116,7 @@ export default {
           vmid: "keywords",
           name: "keywords",
           content:
-            "Choreo, Choreographie, Cheer, Cheerleading, Tanz, Planer, Editor",
+            "Choreo, Choreographie, Cheer, Cheerleading, Tanz, Planer, Editor, Video, Anmelden, Registrieren, Countsheet",
         },
         {
           vmid: "author",

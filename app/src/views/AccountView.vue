@@ -136,19 +136,19 @@ export default {
         vmid: "description",
         name: "description",
         content:
-          "Verwalte dein Konto und nehme Aktionen wie Passwortänderungen vor.",
+          "Verwalte dein Konto und nimm Aktionen wie Passwortänderungen vor.",
       },
       {
         vmid: "twitter:description",
         name: "twitter:description",
         content:
-          "Verwalte dein Konto und nehme Aktionen wie Passwortänderungen vor.",
+          "Verwalte dein Konto und nimm Aktionen wie Passwortänderungen vor.",
       },
       {
         vmid: "og:description",
         property: "og:description",
         content:
-          "Verwalte dein Konto und nehme Aktionen wie Passwortänderungen vor.",
+          "Verwalte dein Konto und nimm Aktionen wie Passwortänderungen vor.",
       },
       {
         vmid: "og:title",
