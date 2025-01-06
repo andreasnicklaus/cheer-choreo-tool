@@ -20,7 +20,7 @@ Vue.use(VueMeta, {
 
 if (!window.__PRERENDER_INJECTED)
   Vue.use(vueMatomo, {
-    host: "https://matomo.andreasnicklaus.de",
+    host: "https://matomo.choreo-planer.de",
     siteId: 3,
     router,
   });
