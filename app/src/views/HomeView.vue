@@ -547,36 +547,36 @@ export default {
     selectedTeamMembers: [],
   }),
   metaInfo: {
-    title: "Choreo-Planer – Das kostenlose Online-Tool für Choreo-Sport",
+    title: "Choreo Planer – Das kostenlose Online-Tool für Choreo-Sport",
     titleTemplate: null,
     meta: [
       {
         vmid: "description",
         name: "description",
         content:
-          "Plane deine Choreografien schnell und einfach mit dem Choreo-Planer! Perfekt für Cheerleading, Tanz und Bodenturnen. 100% kostenlos. Jetzt ausprobieren!",
+          "Plane deine Choreografien schnell und einfach mit dem Choreo Planer! Perfekt für Cheerleading, Tanz und Bodenturnen. 100% kostenlos. Jetzt ausprobieren!",
       },
       {
         vmid: "twitter:description",
         name: "twitter:description",
         content:
-          "Plane deine Choreografien schnell und einfach mit dem Choreo-Planer! Perfekt für Cheerleading, Tanz und Bodenturnen. 100% kostenlos. Jetzt ausprobieren!",
+          "Plane deine Choreografien schnell und einfach mit dem Choreo Planer! Perfekt für Cheerleading, Tanz und Bodenturnen. 100% kostenlos. Jetzt ausprobieren!",
       },
       {
         vmid: "og:description",
         property: "og:description",
         content:
-          "Plane deine Choreografien schnell und einfach mit dem Choreo-Planer! Perfekt für Cheerleading, Tanz und Bodenturnen. 100% kostenlos. Jetzt ausprobieren!",
+          "Plane deine Choreografien schnell und einfach mit dem Choreo Planer! Perfekt für Cheerleading, Tanz und Bodenturnen. 100% kostenlos. Jetzt ausprobieren!",
       },
       {
         vmid: "og:title",
         property: "og:title",
-        content: "Choreo-Planer – Das kostenlose Online-Tool für Choreo-Sport",
+        content: "Choreo Planer – Das kostenlose Online-Tool für Choreo-Sport",
       },
       {
         vmid: "twitter:title",
         name: "twitter:title",
-        content: "Choreo-Planer – Das kostenlose Online-Tool für Choreo-Sport",
+        content: "Choreo Planer – Das kostenlose Online-Tool für Choreo-Sport",
       },
     ],
   },
