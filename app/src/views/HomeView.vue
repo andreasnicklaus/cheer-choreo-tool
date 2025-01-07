@@ -87,37 +87,82 @@
       id="featureCallouts1"
       class="featureCallouts"
     >
-      <div class="featureCallout h3">
+      <b-col class="featureCallout h3">
         <b-icon-people-fill /><br />
         Mitgliederverwaltung
-      </div>
+        <ul>
+          <li>Vereine</li>
+          <li>Teams</li>
+          <li>Seasonkader</li>
+          <li>Seasonkader</li>
+        </ul>
+      </b-col>
       <b-col class="featureCallout h3">
         <b-icon-layout-three-columns /><br />
         Choreoplanung
+        <ul>
+          <li>Aufstellungen</li>
+          <li>Countsheets</li>
+          <li>Verwaltung nach Season</li>
+          <li>Teilnehmer</li>
+        </ul>
       </b-col>
       <b-col class="featureCallout h3">
         <b-icon-file-pdf-fill /><br />
         Dateigenerierung
+        <ul>
+          <li>Videos als MP4 und WEBM</li>
+          <li>Countsheet als PDF</li>
+          <li>Aufstellungen als Bild</li>
+        </ul>
       </b-col>
       <b-col class="featureCallout h3">
         <b-icon-film /><br />
         Video-Export
+        <ul>
+          <li>Teile Choreos einfach als Video</li>
+          <li>Generierung lokal im Browser</li>
+          <li>Download als MP4 oder WEBM</li>
+        </ul>
       </b-col>
       <b-col class="featureCallout h3">
         <b-icon-shield-fill-check /><br />
         Datensicherung
+        <ul>
+          <li>Speicherung auf unseren Servern</li>
+          <li>Per Passwort gesicherter Datenzugriff</li>
+          <li>Verschlüsselter Datentransfer</li>
+        </ul>
       </b-col>
       <b-col class="featureCallout h3">
         <b-icon-calendar2-range-fill /><br />
         Seasonwechsel
+        <ul>
+          <li>Starte neue Seasons, wenn du soweit bist</li>
+          <li>Importiere Teilnehmer in neue Seasonkader</li>
+          <li>
+            Definiere eigene Seasons, die sich nicht an das Wettkampfjahr halten
+          </li>
+        </ul>
       </b-col>
       <b-col class="featureCallout h3">
         <b-icon-trophy-fill /><br />
         Meisterschaftsvorbereitung
+        <ul>
+          <li>Bereite Choreos speziell für Meisterschaften vor</li>
+          <li>Gib Videos und Countsheets an deine Teilnehmer mit nach Hause</li>
+          <li>Mache Last-Minute-Auswechslungen ganz einfach mit 2-3 Klicks</li>
+        </ul>
       </b-col>
       <b-col class="featureCallout h3">
         <b-icon-archive-fill /><br />
         Datenarchivierung
+        <ul>
+          <li>Regelmäßige Datensicherung auf unserem Server</li>
+          <li>
+            Deine Daten werden nur für die Darstellung deiner Choreos verwendet
+          </li>
+        </ul>
       </b-col>
     </div>
 
@@ -168,27 +213,54 @@
       id="featureCallouts2"
       class="featureCallouts row-reverse"
     >
-      <div class="featureCallout h3">
+      <b-col class="featureCallout h3">
         <b-icon-person-plus-fill /><br />
         1. Anmelden
-      </div>
+        <ol>
+          <li>Anmelden mit Benutzername und Passwort</li>
+          <li>Gib deinem ersten Verein einen Namen</li>
+        </ol>
+      </b-col>
       <b-col class="featureCallout h3">
         <b-icon-people-fill /><br />
         2. Team anlegen
+        <ol>
+          <li>Name deines Teams</li>
+          <li>Aktuelle Season des Teams</li>
+          <li>Seasonkader füllen</li>
+        </ol>
       </b-col>
       <b-col class="featureCallout h3">
         <b-icon-layout-three-columns /><br />
         3. Choreos planen
+        <ol>
+          <li>Name der Choreo</li>
+          <li>Länge in Counts & Achtern</li>
+          <li>Aufstellungen</li>
+          <li>Einträge im Countsheet</li>
+        </ol>
       </b-col>
       <b-col class="featureCallout h3">
         <b-icon-download /><br />
         4. Videos herunterladen
+        <ol>
+          <li>Generiere das Video</li>
+          <li>Lade das Video runter</li>
+          <li>Teile es in eurem Team-Chat</li>
+        </ol>
       </b-col>
       <b-col class="featureCallout h3">
-        <b-icon-chat-fill />
-        <b-icon-file-earmark-arrow-up-fill />
+        <div>
+          <b-icon-chat-fill />
+          <b-icon-file-earmark-arrow-up-fill />
+        </div>
         <br />
         5. Countsheets teilen
+        <ol>
+          <li>Fülle das Countsheet</li>
+          <li>Lade das PDF herunten</li>
+          <li>Teile es in eurem Team-Chat</li>
+        </ol>
       </b-col>
     </div>
 
@@ -878,7 +950,9 @@ ul {
   }
 
   .featureCallout {
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     width: max-content;
     hyphens: manual;
     font-weight: 800;
@@ -886,7 +960,15 @@ ul {
     text-align: center;
     margin: 0 48px;
 
-    & > .b-icon {
+    & > ul,
+    & > ol {
+      text-align: start;
+      margin-top: 24px;
+      margin-left: 24px;
+      font-weight: initial;
+    }
+
+    & .b-icon {
       font-size: 60px;
       margin-bottom: 16px;
     }
