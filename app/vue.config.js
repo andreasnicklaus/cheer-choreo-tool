@@ -28,7 +28,7 @@ const productionPlugins = [
       renderedRoute.html = renderedRoute.html
         .replace(
           /<link href="(.*?)" rel="stylesheet">/g,
-          `<link rel="preload" href="$1" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="$1"></noscript>`
+          `<link rel="preload" href="$1" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link href="$1" rel="stylesheet"></noscript>`
         )
         .replace(
           /<link rel="stylesheet" (.*?)>/g,
