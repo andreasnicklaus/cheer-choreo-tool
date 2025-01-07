@@ -8,7 +8,7 @@
       class="svgCanvas"
       :height="height"
       :width="width"
-      mlns="http://www.w3.org/2000/svg"
+      xmlns="http://www.w3.org/2000/svg"
       :style="{
         border: '1px solid #000000',
         backgroundColor: '#e5e5f7',

@@ -4,7 +4,6 @@
     striped
     hover
     :sticky-header="stickyHeader && tableHeight"
-    head-variant="light"
     small
     :fixed="fixed"
     :style="{

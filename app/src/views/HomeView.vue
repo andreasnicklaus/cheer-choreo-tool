@@ -9,7 +9,6 @@
       }"
     >
       <b-col
-        id="homeView"
         class="d-flex flex-column justify-content-center align-items-center"
       >
         <img
@@ -54,7 +53,7 @@
         placeItems: 'center',
       }"
     >
-      <b-row align-v="center" align-h="center" class="w-100" id="sectionB">
+      <b-row align-v="center" align-h="center" class="w-100">
         <b-col cols="12" lg="6" class="mb-lg-0 mb-2">
           <h2>📝 Choreos erstellen</h2>
           <ol>

@@ -24,6 +24,7 @@
             $route.name == 'Home' ? 'router-link-active' : ''
           "
         >
+          <b-icon-house-fill class="mr-1" />
           Start
         </b-nav-item>
         <b-nav-item :to="{ name: 'Start' }" :disabled="!$store.state.loggedIn">
@@ -101,7 +102,7 @@
         </b-nav-item-dropdown>
       </b-navbar-nav>
 
-      <b-navbar-nav class="ml-auto align-items-sm-center">
+      <b-navbar-nav class="ml-auto align-items-sm-center" v-if="shareable">
         <b-nav-item @click="share" v-b-tooltip.hover title="Teilen">
           <b-icon-share />
           <span class="d-sm-none ml-2">Teilen</span>
@@ -119,11 +120,14 @@
           <b-icon-check-circle variant="success" v-if="onlineStatus === true" />
           <b-icon-x-circle variant="danger" v-if="onlineStatus === false" />
         </b-nav-item>
-        <b-nav-item :to="{ name: 'Help' }">Hilfe</b-nav-item>
-        <b-nav-item>
+        <b-nav-item :to="{ name: 'Help' }" v-b-tooltip.hover title="Hilfe">
+          <b-icon-question-circle />
+          <span class="d-sm-none ml-2">Hilfe</span>
+        </b-nav-item>
+        <b-nav-item :to="$store.state.loggedIn ? null : { name: 'Login' }">
           <b-button
             variant="primary"
-            :to="{ name: 'Login' }"
+            :style="{ color: 'white' }"
             v-if="!$store.state.loggedIn"
             :block="$vuetify.breakpoint.xs"
           >
@@ -207,6 +211,7 @@ export default {
     choreos: [],
     clubs: [],
     user: null,
+    shareable: Boolean(navigator.share),
   }),
   props: {
     onlineStatus: {
@@ -274,6 +279,8 @@ export default {
     share() {
       navigator.share({
         url: window.location.href,
+        title: document.title,
+        text: "Schau dir das an!",
       });
     },
   },
