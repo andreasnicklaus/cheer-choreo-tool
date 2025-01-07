@@ -102,8 +102,13 @@
         </b-nav-item-dropdown>
       </b-navbar-nav>
 
-      <b-navbar-nav class="ml-auto align-items-sm-center" v-if="shareable">
-        <b-nav-item @click="share" v-b-tooltip.hover title="Teilen">
+      <b-navbar-nav class="ml-auto align-items-sm-center">
+        <b-nav-item
+          @click="share"
+          v-b-tooltip.hover
+          title="Teilen"
+          v-if="shareable"
+        >
           <b-icon-share />
           <span class="d-sm-none ml-2">Teilen</span>
         </b-nav-item>
@@ -300,7 +305,8 @@ export default {
     setInterval(this.load, 60_000);
   },
   mounted() {
-    this.shareable = navigator.canShare(this.shareData);
+    if (navigator.canShare && navigator.share)
+      this.shareable = navigator.canShare(this.shareData);
   },
   computed: {
     shareData() {
