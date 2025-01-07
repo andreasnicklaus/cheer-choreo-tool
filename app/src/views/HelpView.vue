@@ -56,6 +56,27 @@
         und beschreibe dein Problem.
       </p>
     </b-card>
+
+    <script type="application/ld+json">
+      {{ {
+            "@context": "https://schema.org/",
+            "@type": "FAQPage",
+            mainEntity: faqCategories.map((category) => category.faqs.map((item) => ({
+              "@type": "Question",
+              name: item.title,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: item.markdown
+                .replace(/\[(.*)\]\((.*)\)/g, '<a href="$2">$1</a>')
+                .replace(/\n/g, "")
+                .replace(/ +/g, " ")
+                .replace(/\\/g, "")
+                .replace(/\*\*(.*)\*\*/g, "<b>$1</b>"),
+              }
+            }))).flat(Infinity)
+          }
+        }}
+    </script>
   </b-container>
 </template>
 

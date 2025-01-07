@@ -25,7 +25,6 @@ const productionPlugins = [
       renderAfterElementExists: "[data-view]",
     }),
     postProcess: (renderedRoute) => {
-      const [_, ...breadcrumbList] = renderedRoute.route.split("/");
       renderedRoute.html = renderedRoute.html
         .replace(
           /<link href="(.*?)" rel="stylesheet">/g,
@@ -35,24 +34,8 @@ const productionPlugins = [
           /<link rel="stylesheet" (.*?)>/g,
           `<link rel="preload" $1 as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" $1></noscript>`
         )
-        .replace(/<script (((?!defer).)*?)>/g, "< $1 defer>")
-        .replace('id="app"', 'id="app" data-server-rendered="true"')
-        .replace(
-          /(.*?)<\/body><\/html>/g,
-          `$1<script type="application/ld+json">${JSON.stringify({
-            "@context": "https://schema.org/",
-            "@type": "BreadcrumbList",
-            itemListElement: breadcrumbList.map((item, index) => ({
-              "@type": "ListItem",
-              position: index + 1,
-              name: routes.find((r) => r.path === item)?.name || item,
-              item: `https://www.choreo-planer.de/${breadcrumbList
-                .slice(0, index + 1)
-                .join("/")}`,
-            })),
-          })}
-</script></body></html>`
-        );
+        .replace(/<script (((?!defer).)*?)>/g, "<script $1 defer>")
+        .replace('id="app"', 'id="app" data-server-rendered="true"');
 
       return renderedRoute;
     },

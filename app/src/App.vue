@@ -91,6 +91,26 @@
     </footer>
     <ConsentWindow />
     <FeedbackPrompt ref="feedbackPrompt" />
+
+    <script type="application/ld+json">
+      {{
+        {
+          "@context": "https://schema.org/",
+          "@type": "BreadcrumbList",
+          itemListElement: this.$route.path.split("/").filter((route, index) => index > 0).map((route, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            name: this.$route.name || route,
+            item: `https://www.choreo-planer.de/${this.$route.path
+              .split("/")
+              .filter((route, index) => index > 0)
+              .slice(0, index + 1)
+              .join("/")}`,
+          })
+        )
+        }
+      }}
+    </script>
   </div>
 </template>
 
