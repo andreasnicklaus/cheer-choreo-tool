@@ -211,7 +211,7 @@ export default {
     choreos: [],
     clubs: [],
     user: null,
-    shareable: Boolean(navigator.share),
+    shareable: false,
   }),
   props: {
     onlineStatus: {
@@ -277,11 +277,7 @@ export default {
       location.reload();
     },
     share() {
-      navigator.share({
-        url: window.location.href,
-        title: document.title,
-        text: "Schau dir das an!",
-      });
+      navigator.share(this.shareData);
     },
   },
   watch: {
@@ -302,6 +298,18 @@ export default {
     this.load();
     setTimeout(this.checkEmailConfirmation, 1000);
     setInterval(this.load, 60_000);
+  },
+  mounted() {
+    this.shareable = navigator.canShare(this.shareData);
+  },
+  computed: {
+    shareData() {
+      return {
+        url: window.location.href,
+        title: document.title,
+        text: "Schau dir das an!",
+      };
+    },
   },
 };
 </script>
