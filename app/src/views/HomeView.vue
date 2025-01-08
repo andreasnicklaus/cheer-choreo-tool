@@ -90,7 +90,7 @@
           <li>Vereine</li>
           <li>Teams</li>
           <li>Seasonkader</li>
-          <li>Seasonkader</li>
+          <li>Teilnehmer</li>
         </ul>
       </b-col>
       <b-col class="featureCallout h3">
@@ -613,7 +613,7 @@ export default {
     selectedTeamMembers: [],
   }),
   metaInfo: {
-    title: "Choreo Planer – Das kostenlose Online-Tool für Choreo-Sport",
+    title: "Choreo Planer - Das kostenlose Online-Tool für Choreo-Sport",
     titleTemplate: null,
     meta: [
       {

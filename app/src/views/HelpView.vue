@@ -1,5 +1,5 @@
 <template>
-  <b-container id="helpView" data-view class="d-flex justify-content-center">
+  <b-container id="helpView" data-view>
     <b-card title="Hilfe bekommen" border-variant="light" title-tag="h1">
       <b-input
         type="text"
@@ -52,7 +52,11 @@
 
       <p>
         Nicht die richtige Antwort dabei gewesen? Kontaktiere uns unter
-        <a href="mailto:info@choreo-planer.de"> info@choreo-planer.de </a>
+        <a href="mailto:info@choreo-planer.de">info@choreo-planer.de</a>
+        oder auf Instagram
+        <a href="https://www.instagram.com/choreoplaner/" target="_blank"
+          >@choreoplaner</a
+        >
         und beschreibe dein Problem.
       </p>
     </b-card>
@@ -96,6 +100,15 @@ export default {
             title: "Datenschutz",
             markdown: `Bitte ließ dir zu Fragen bzgl. des Datenschutzes die [Datenschutzerklärung](/datenschutz) durch.`,
           },
+          {
+            title: "Werden meine Daten an Dritte weitergegeben?",
+            markdown: `**Nein!** Es gibt für uns keinen Anlass deine Daten an Dritte
+            weiterzugeben. Die Absicherung der persönlichen Daten deiner
+            Teammitglieder, insbesondere Minderjähriger, ist uns sehr wichtig.
+            Daher werden deine Daten nicht an Dritte weitergegeben.
+
+            Bitte ließ dir zu Fragen bzgl. des Datenschutzes die [Datenschutzerklärung](/datenschutz) durch.`,
+          },
         ],
       },
       {
@@ -106,6 +119,8 @@ export default {
             title: "Wie kann ich Probleme melden?",
             markdown: `Probleme können zur Zeit nur per Mail an
             [info@choreo-planer.de](mailto:info@choreo-planer.de)
+            oder als DM auf Instagram an
+            <a href="https://www.instagram.com/choreoplaner/" target="_blank">@choreoplaner</a>
             gemeldet werden. Ein Kontaktformular ist geplant.`,
           },
           {
@@ -125,6 +140,8 @@ export default {
 
             Bitte beschreibe in deiner Kontaktaufnahme per Mail an
             [info@choreo-planer.de](mailto:info@choreo-planer.de)
+            oder als DM auf Instagram an
+            <a href="https://www.instagram.com/choreoplaner/" target="_blank">@choreoplaner</a>
             gleich das Datum und die Uhrzeit der Löschung, damit wir dein
             Problem schnell lösen können.`,
           },
@@ -136,9 +153,70 @@ export default {
         faqs: [
           {
             title: "Für wen ist der Choreo Planer gedacht?",
-            markdown: `Der Choreo Planer ist für Trainerinnen und Trainer für Cheerleading-Teams.
+            markdown: `Der Choreo Planer ist für **Trainerinnen und Trainer von Cheerleading-Teams**.
             Die Endprodukte (Countsheets, Bilder und Videos) sollen an die Teams
             geteilt werden, um das Lernen der Choreos einfacher zu machen.`,
+          },
+          {
+            title: "Was ist der Choreo Planer?",
+            markdown: `Der Choreo Planer ist ein **kostenloses** Projekt, welches für Cheerleader
+            entwickelt wird. Der Choreo Planer soll es ermöglichen, Choreos zu erstellen und
+            diese mit anderen zu teilen.
+            
+            Der Choreo Planer soll es ermöglichen, die Planung von Choreos zu vereinfachen und
+            zu digitalisieren. Vor allem soll es möglich sein, Choreos in einer vereinfachten Version
+            den Teilnehmern beizubringen. Die Endprodukte (Countsheets, Bilder und Videos) sollen an
+            die Teams verteilt werden, um das Lernen der Choreos einfacher zu machen.
+
+            Damit wird dein Team zum **digitalen Team**. Das bedeutet, dass du dein Team nicht mehr
+            mit Zetteln und Stiften arbeiten musst, sondern zu einem der Vorreiter der digitalen
+            Welt wird.
+            `,
+          },
+          {
+            title: "Warum können die Server offline sein?",
+            markdown: `Der Choreo Planer ist ein **kostenloses** Projekt. Daher kann es sein, dass die
+            Server nicht immer erreichbar sind. Wir haben hier eine Liste an Gründen vorbereitet, warum du die Server nicht erreichen kannst:
+
+            <ol class="ml-3">
+              <li>
+                
+                Die Server werden von uns gewartet. In diesem Fall kannst du nichts machen, außer zu
+                warten und hoffen, dass wir schnell fertig sind. Wenn du wissen möchtest, wann die Server
+                wieder erreichbar sind, kannst du uns gerne eine Mail an
+                [info@choreo-planer.de](mailto:info@choreo-planer.de) oder eine DM auf Instagram an
+                <a href="https://www.instagram.com/choreoplaner/" target="_blank">@choreoplaner</a> schreiben.
+                
+              </li>
+              <li>
+            
+                Unsere Internetverbindung ist ausgefallen. Da kein Budget zur Verfügung steht, um eine
+                ausfallsichere Internetverbindung zu versichern, kann es vorkommen, dass unsere
+                Internetverbindung ausfällt. In diesem Fall kannst du nichts machen, außer zu warten
+                und hoffen, dass wir schnell fertig sind. Wenn du wissen möchtest, wann die Server 
+                wieder erreichbar sind, kannst du uns gerne eine Mail an
+                [info@choreo-planer.de](mailto:info@choreo-planer.de) oder eine DM auf Instagram an
+                <a href="https://www.instagram.com/choreoplaner/" target="_blank">@choreoplaner</a> schreiben.
+              
+              </li>
+              <li>
+            
+                Deine Internetverbindung ist ausgefallen. Wenn du unsere Webseite bereits einmal geladen
+                hast, kannst du zwar die Webseite nochmal ohne Internetverbindung laden, aber du kannst keine
+                neuen Daten laden. In diesem Fall kannst du selber versuchen, deine Internetverbindung
+                wiederherzustellen. Wenn du dabei Hilfe brauchst, kannst du uns keine E-Mail schreiben, denn
+                du hast ja kein Internet.
+              
+              </li>
+
+            </ol>
+            
+            Wenn du den Choreo Planer gerne unterstützen möchtest, kannst du uns unterstützen, indem du
+            an der Projektentwicklung mitwirkst oder eine Spende machst. Dafür haben wir noch keine
+            Möglichkeit vorbereitet, aber wir arbeiten daran. Wenn du uns unterstützen möchtest, kannst
+            du uns gerne eine Mail an [info@choreo-planer.de](mailto:info@choreo-planer.de)
+            oder eine DM auf Instagram an
+            <a href="https://www.instagram.com/choreoplaner/" target="_blank">@choreoplaner</a> schreiben.`,
           },
         ],
       },
@@ -146,6 +224,16 @@ export default {
         name: "Funktionen & Features",
         order: 2,
         faqs: [
+          {
+            title: "Kann ich mir Funktionen wünschen?",
+            markdown: `**Ja!** Wir freuen uns über jede Funktion, die wir in den Choreo Planer
+            einbauen können. Wenn du eine Funktion wünschst, kannst du uns gerne eine Mail an
+            [info@choreo-planer.de](mailto:info@choreo-planer.de) oder eine DM auf Instagram an
+            <a href="https://www.instagram.com/choreoplaner/" target="_blank">@choreoplaner</a> schreiben. Wir werden uns dann
+            dann überlegen, ob wir diese Funktion einbauen können. Wenn wir die Funktion einbauen,
+            werden wir dich natürlich darüber informieren.
+            `,
+          },
           {
             title: "Wie viele Teams kann ich verwalten?",
             markdown: `Kurz und knapp: So viele du willst! Es ist möglich, beliebig viele

@@ -133,7 +133,8 @@ export default {
   }),
   metaInfo() {
     return {
-      titleTemplate: "%s - Choreo Planer",
+      titleTemplate:
+        "%s - Choreo Planer - Das kostenlose Online-Tool für Choreo-Sport",
       meta: [
         {
           vmid: "keywords",
