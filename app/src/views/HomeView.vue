@@ -82,11 +82,7 @@
       </b-row>
     </section>
 
-    <div
-      v-show="!$store.state.isMobile"
-      id="featureCallouts1"
-      class="featureCallouts"
-    >
+    <div id="featureCallouts1" class="featureCallouts d-none d-md-flex">
       <b-col class="featureCallout h3">
         <b-icon-people-fill /><br />
         Mitgliederverwaltung
@@ -209,9 +205,8 @@
     </section>
 
     <div
-      v-show="!$store.state.isMobile"
       id="featureCallouts2"
-      class="featureCallouts row-reverse"
+      class="featureCallouts row-reverse d-none d-md-flex"
     >
       <b-col class="featureCallout h3">
         <b-icon-person-plus-fill /><br />
@@ -659,18 +654,10 @@ export default {
       }));
     },
     matWidth() {
-      switch (this.$vuetify.breakpoint.name) {
-        case "xs":
-          return 220;
-        case "sm":
-        case "md":
-          return 350;
-        case "lg":
-        case "xl":
-          return 500;
-        default:
-          return null;
-      }
+      const w = document.getElementById("app")?.clientWidth;
+      if (w < 576) return 300;
+      else if (w < 992) return 400;
+      else return 500;
     },
   },
   mounted() {

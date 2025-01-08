@@ -97,17 +97,18 @@
         {
           "@context": "https://schema.org/",
           "@type": "BreadcrumbList",
-          itemListElement: this.$route.path.split("/").filter((route, index) => index > 0).map((route, index) => ({
-            "@type": "ListItem",
-            position: index + 1,
-            name: this.$route.name || route,
-            item: `https://www.choreo-planer.de/${this.$route.path
-              .split("/")
-              .filter((route, index) => index > 0)
-              .slice(0, index + 1)
-              .join("/")}`,
-          })
-        )
+          itemListElement: this.$route.path.split("/")
+            .filter((route, index) => index > 0)
+            .map((route, index) => ({
+              "@type": "ListItem",
+              position: index + 1,
+              name: this.$route.name || route,
+              item: `https://www.choreo-planer.de/${this.$route.path
+                .split("/")
+                .filter((route, index) => index > 0)
+                .slice(0, index + 1)
+                .join("/")}`,
+            }))
         }
       }}
     </script>
@@ -120,6 +121,7 @@ import ConsentWindow from "./components/ConsentWindow.vue";
 import FeedbackPrompt from "./components/FeedbackPrompt.vue";
 import HeadNav from "./components/HeadNav.vue";
 import ax from "./services/RequestService";
+import breakpoints from "@/utils/breakpoints";
 
 export default {
   components: { HeadNav, ConsentWindow, AppInstallWindow, FeedbackPrompt },
@@ -127,6 +129,7 @@ export default {
     online: true,
     serverVersion: null,
     applicationVersion: process.env.VUE_APP_VERSION,
+    breakpoints,
   }),
   metaInfo() {
     return {
@@ -215,7 +218,7 @@ export default {
         });
   },
   watch: {
-    "$vuetify.breakpoint.smAndDown": {
+    "breakpoints.screen.mobile": {
       handler(value) {
         this.$store.commit("setMobile", value);
       },

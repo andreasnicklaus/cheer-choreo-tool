@@ -136,7 +136,7 @@
             v-if="!$store.state.loggedIn"
             :block="$vuetify.breakpoint.xs"
           >
-            Anmelden / Registrieren
+            Anmelden
           </b-button>
           <b-dropdown
             v-else
