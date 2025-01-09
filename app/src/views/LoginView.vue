@@ -337,25 +337,30 @@ export default {
       titleTemplate: null,
       meta: [
         {
+          vmid: "description",
           name: "description",
           content:
             "Melde dich jetzt an und plane deine Choreografien! Zugriff auf alle Funktionen des kostenlosen Choreo Planers für Cheerleading, Tanz und Turnen.",
         },
         {
+          vmid: "twitter:description",
           name: "twitter:description",
           content:
             "Melde dich jetzt an und plane deine Choreografien! Zugriff auf alle Funktionen des kostenlosen Choreo Planers für Cheerleading, Tanz und Turnen.",
         },
         {
+          vmid: "og:description",
           property: "og:description",
           content:
             "Melde dich jetzt an und plane deine Choreografien! Zugriff auf alle Funktionen des kostenlosen Choreo Planers für Cheerleading, Tanz und Turnen.",
         },
         {
+          vmid: "og:title",
           property: "og:title",
           content: "Login - Choreo Planer | Dein Zugang zu allen Funktionen",
         },
         {
+          vmid: "twitter:title",
           name: "twitter:title",
           content: "Login - Choreo Planer | Dein Zugang zu allen Funktionen",
         },
