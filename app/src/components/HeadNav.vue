@@ -134,19 +134,19 @@
             variant="primary"
             :style="{ color: 'white' }"
             v-if="!$store.state.loggedIn"
-            :block="$vuetify.breakpoint.xs"
+            :block="$store.state.isMobile"
           >
             Anmelden
           </b-button>
           <b-dropdown
             v-else
-            :variant="$vuetify.breakpoint.xs ? 'outline-secondary' : 'light'"
+            :variant="$store.state.isMobile ? 'outline-secondary' : 'light'"
             right
-            :block="$vuetify.breakpoint.xs"
+            :block="$store.state.isMobile"
           >
             <template #button-content>
               <b-icon-person-circle />
-              <span v-if="$vuetify.breakpoint.xs" class="mx-2">{{
+              <span v-if="$store.state.isMobile" class="mx-2">{{
                 user?.username
               }}</span>
             </template>

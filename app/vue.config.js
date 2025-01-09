@@ -19,6 +19,9 @@ const productionPlugins = [
       decodeEntities: true,
       keepClosingSlash: true,
       sortAttributes: true,
+      sortClassName: true,
+      minifyCSS: true,
+      minifyJS: true,
     },
     renderer: new PrerenderSpaPlugin.PuppeteerRenderer({
       inject: {},
@@ -43,7 +46,6 @@ const productionPlugins = [
 ];
 
 module.exports = defineConfig({
-  transpileDependencies: ["vuetify"],
   configureWebpack: (config) => {
     if (process.env.NODE_ENV === "production") {
       config.plugins.push(...productionPlugins);
