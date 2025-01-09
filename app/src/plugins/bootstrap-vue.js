@@ -1,7 +1,64 @@
 import Vue from "vue";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-vue/dist/bootstrap-vue.css";
+import {
+  LayoutPlugin,
+  ModalPlugin,
+  ToastPlugin,
+  AlertPlugin,
+  NavbarPlugin,
+  TooltipPlugin,
+  SkeletonPlugin,
+  CardPlugin,
+  BadgePlugin,
+  TablePlugin,
+  ButtonGroupPlugin,
+  ButtonPlugin,
+  ListGroupPlugin,
+  FormPlugin,
+  FormGroupPlugin,
+  FormCheckboxPlugin,
+  FormInputPlugin,
+  FormSelectPlugin,
+  TabsPlugin,
+  InputGroupPlugin,
+  SpinnerPlugin,
+  PopoverPlugin,
+  OverlayPlugin,
+  ProgressPlugin,
+} from "bootstrap-vue";
+
+const bootstrapPlugins = [
+  LayoutPlugin,
+  ModalPlugin,
+  ToastPlugin,
+  AlertPlugin,
+  NavbarPlugin,
+  TooltipPlugin,
+  SkeletonPlugin,
+  CardPlugin,
+  BadgePlugin,
+  TablePlugin,
+  ButtonGroupPlugin,
+  ButtonPlugin,
+  ListGroupPlugin,
+  FormPlugin,
+  FormGroupPlugin,
+  FormCheckboxPlugin,
+  FormInputPlugin,
+  FormSelectPlugin,
+  TabsPlugin,
+  InputGroupPlugin,
+  SpinnerPlugin,
+  PopoverPlugin,
+  OverlayPlugin,
+  ProgressPlugin,
+];
+bootstrapPlugins.forEach((plugin) => {
+  Vue.use(plugin);
+});
 
 import {
-  BootstrapVue,
   BIconCheckAll,
   BIconSlash,
   BIconArrowRepeat,
@@ -63,10 +120,7 @@ import {
   BIconArrowCounterclockwise,
   BIconPerson,
 } from "bootstrap-vue";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-vue/dist/bootstrap-vue.css";
 
-Vue.use(BootstrapVue);
 const icons = [
   BIconCheckAll,
   BIconSlash,
