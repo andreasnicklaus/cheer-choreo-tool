@@ -591,7 +591,7 @@ export default {
           content:
             (this.choreo?.name || "Lädt Choreo") +
             " - Video" +
-            " - Choreo Planer",
+            " - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
         },
         {
           vmid: "twitter:title",
@@ -599,7 +599,7 @@ export default {
           content:
             (this.choreo?.name || "Lädt Choreo") +
             " - Video" +
-            " - Choreo Planer",
+            " - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
         },
       ],
     };

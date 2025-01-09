@@ -802,12 +802,16 @@ export default {
         {
           vmid: "og:title",
           property: "og:title",
-          content: (this.choreo?.name || "Lädt Choreo") + " - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
+          content:
+            (this.choreo?.name || "Lädt Choreo") +
+            " - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
         },
         {
           vmid: "twitter:title",
           name: "twitter:title",
-          content: (this.choreo?.name || "Lädt Choreo") + " - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
+          content:
+            (this.choreo?.name || "Lädt Choreo") +
+            " - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
         },
       ],
     };
