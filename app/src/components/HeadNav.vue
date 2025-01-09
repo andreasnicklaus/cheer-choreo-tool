@@ -9,8 +9,9 @@
             ? '/Icon-Easter.png'
             : '/Icon.png'
         "
-        alt="Cheerleaderin-Icon, das ein Rad schlägt"
+        alt="Choreo Planer Icon"
         width="50"
+        height="50"
       />
     </b-navbar-brand>
 

@@ -1,5 +1,5 @@
 <div align="center">
-<img src="app/public/Icon.png/" width="200" alt="Cheerleaderin-Icon">
+<img src="app/public/Icon.png/" width="200" height="200" alt="Choreo Planer Icon">
 
 # Choreo Planer
 

@@ -20,8 +20,9 @@
               ? '/Icon-Easter.png'
               : '/Icon.png'
           "
-          alt="Cheerleaderin-Icon, das ein Rad schlägt"
+          alt="Choreo Planer Icon"
           width="200"
+          height="200"
         />
         <h1 id="title" class="text-center display-4">Dein Choreo Planer</h1>
         <b-row

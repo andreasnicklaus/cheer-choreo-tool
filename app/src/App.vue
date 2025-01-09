@@ -66,6 +66,9 @@
             :alt="`Status-Anzeige der Server: Server sind ${
               online ? ' nicht online' : 'online'
             }`"
+            width="80"
+            height="20"
+            loading="lazy"
           />
         </b-col>
         <b-col cols="auto">
@@ -193,11 +196,11 @@ export default {
         {
           vmid: "Content-Security-Policy",
           "http-equiv": "Content-Security-Policy",
-          content: `default-src 'self' https:; script-src 'self' https: 'unsafe-eval' 'unsafe-inline'; style-src 'self' https: 'unsafe-inline'; connect-src 'self' https: ${
+          content: `default-src 'self' https: blob:; script-src 'self' https: blob: 'unsafe-eval' 'unsafe-inline'; style-src 'self' https: blob: 'unsafe-inline'; connect-src 'self' https: blob: ${
             process.env.NODE_ENV == "production"
               ? "https://api.choreo-planer.de/"
               : "ws: http://localhost:3000/"
-          }; img-src 'self' https: data:;`,
+          }; img-src 'self' https: blob: data:;`,
         },
       ],
       link: [
@@ -241,6 +244,7 @@ export default {
 <style lang="scss">
 html {
   width: 100vw;
+  overflow-x: hidden;
 }
 .modal-open {
   padding: 0 !important;
