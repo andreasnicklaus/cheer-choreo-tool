@@ -153,12 +153,14 @@ export default {
       {
         vmid: "og:title",
         property: "og:title",
-        content: "Konto - Choreo Planer",
+        content:
+          "Konto - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
       },
       {
         vmid: "twitter:title",
         name: "twitter:title",
-        content: "Konto - Choreo Planer",
+        content:
+          "Konto - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
       },
     ],
   },

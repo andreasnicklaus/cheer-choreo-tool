@@ -333,30 +333,31 @@ export default {
   },
   metaInfo() {
     const meta = {
-      title: "Einloggen",
+      title: "Login - Choreo-Planer | Dein Zugang zu allen Funktionen",
+      titleTemplate: null,
       meta: [
         {
           name: "description",
           content:
-            "Logge dich ein und nutze alle Funktionen des Choreo Planers!",
+            "Melde dich jetzt an und plane deine Choreografien! Zugriff auf alle Funktionen des kostenlosen Choreo Planers für Cheerleading, Tanz und Turnen.",
         },
         {
           name: "twitter:description",
           content:
-            "Logge dich ein und nutze alle Funktionen des Choreo Planers!",
+            "Melde dich jetzt an und plane deine Choreografien! Zugriff auf alle Funktionen des kostenlosen Choreo Planers für Cheerleading, Tanz und Turnen.",
         },
         {
           property: "og:description",
           content:
-            "Logge dich ein und nutze alle Funktionen des Choreo Planers!",
+            "Melde dich jetzt an und plane deine Choreografien! Zugriff auf alle Funktionen des kostenlosen Choreo Planers für Cheerleading, Tanz und Turnen.",
         },
         {
           property: "og:title",
-          content: "Einloggen - Choreo Planer",
+          content: "Login - Choreo Planer | Dein Zugang zu allen Funktionen",
         },
         {
           name: "twitter:title",
-          content: "Einloggen - Choreo Planer",
+          content: "Login - Choreo Planer | Dein Zugang zu allen Funktionen",
         },
       ],
     };

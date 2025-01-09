@@ -303,7 +303,14 @@ export default {
       {
         vmid: "og:title",
         property: "og:title",
-        content: "Hilfe - Choreo Planer",
+        content:
+          "Hilfe - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
+      },
+      {
+        vmid: "twitter:title",
+        property: "twitter:title",
+        content:
+          "Hilfe - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
       },
     ],
   },

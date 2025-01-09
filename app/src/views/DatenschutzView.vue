@@ -103,12 +103,14 @@ export default {
       {
         vmid: "og:title",
         property: "og:title",
-        content: "Datenschutz - Choreo Planer",
+        content:
+          "Datenschutz - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
       },
       {
         vmid: "twitter:title",
         name: "twitter:title",
-        content: "Datenschutz - Choreo Planer",
+        content:
+          "Datenschutz - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
       },
     ],
   },

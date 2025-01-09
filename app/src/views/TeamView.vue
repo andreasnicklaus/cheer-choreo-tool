@@ -391,12 +391,12 @@ export default {
         {
           vmid: "og:title",
           property: "og:title",
-          content: (this.currentTeam?.name || "Team") + " - Choreo Planer",
+          content: (this.currentTeam?.name || "Team") + " - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
         },
         {
           vmid: "twitter:title",
           name: "twitter:title",
-          content: (this.currentTeam?.name || "Team") + " - Choreo Planer",
+          content: (this.currentTeam?.name || "Team") + " - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
         },
       ],
     };

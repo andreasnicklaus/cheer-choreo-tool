@@ -392,7 +392,7 @@ export default {
           content:
             (this.choreo?.name || "Lädt Choreo") +
             " - PDF" +
-            " - Choreo Planer",
+            " - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
         },
         {
           vmid: "twitter:title",
@@ -400,7 +400,7 @@ export default {
           content:
             (this.choreo?.name || "Lädt Choreo") +
             " - PDF" +
-            " - Choreo Planer",
+            " - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
         },
       ],
     };

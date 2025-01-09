@@ -614,7 +614,7 @@ export default {
     selectedTeamMembers: [],
   }),
   metaInfo: {
-    title: "Choreo Planer - Das kostenlose Online-Tool für Choreo-Sport",
+    title: "Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
     titleTemplate: null,
     meta: [
       {
@@ -638,12 +638,12 @@ export default {
       {
         vmid: "og:title",
         property: "og:title",
-        content: "Choreo Planer – Das kostenlose Online-Tool für Choreo-Sport",
+        content: "Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
       },
       {
         vmid: "twitter:title",
         name: "twitter:title",
-        content: "Choreo Planer – Das kostenlose Online-Tool für Choreo-Sport",
+        content: "Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
       },
     ],
   },
