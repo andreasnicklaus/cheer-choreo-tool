@@ -190,6 +190,15 @@ export default {
           name: "twitter:image",
           content: "/PreviewImage.png",
         },
+        {
+          vmid: "Content-Security-Policy",
+          "http-equiv": "Content-Security-Policy",
+          content: `default-src 'self' https:; script-src 'self' https: 'unsafe-eval' 'unsafe-inline'; style-src 'self' https: 'unsafe-inline'; connect-src 'self' https: ${
+            process.env.NODE_ENV == "production"
+              ? "https://api.choreo-planer.de/"
+              : "ws: http://localhost:3000/"
+          }; img-src 'self' https: data:;`,
+        },
       ],
       link: [
         {
