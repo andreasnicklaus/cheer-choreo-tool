@@ -26,6 +26,7 @@ import {
   PopoverPlugin,
   OverlayPlugin,
   ProgressPlugin,
+  AvatarPlugin,
 } from "bootstrap-vue";
 
 const bootstrapPlugins = [
@@ -53,6 +54,7 @@ const bootstrapPlugins = [
   PopoverPlugin,
   OverlayPlugin,
   ProgressPlugin,
+  AvatarPlugin,
 ];
 bootstrapPlugins.forEach((plugin) => {
   Vue.use(plugin);

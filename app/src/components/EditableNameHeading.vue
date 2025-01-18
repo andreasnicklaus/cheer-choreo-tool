@@ -1,7 +1,7 @@
 <template>
   <h1>
     <b-row align-h="start" align-v="center" no-gutters>
-      <b-col cols="auto" class="mr-2">
+      <b-col cols="auto" class="mr-2" v-if="name">
         <em>{{ name }}</em>
       </b-col>
       <b-col>

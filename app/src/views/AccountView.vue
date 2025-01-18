@@ -13,8 +13,11 @@
         />
         <p class="text-muted">
           {{ user?.email }}
+          <b-badge v-if="!user?.email" variant="secondary">
+            keine E-Mail bekannt
+          </b-badge>
           <b-badge
-            v-if="!user?.emailConfirmed"
+            v-else-if="!user?.emailConfirmed"
             variant="danger"
             v-b-tooltip.hover
             title="Bitte schaue in deinem E-Mail-Postfach nach und bestätige deine E-Mail-Adresse mit dem darin enthaltenen Link!"
