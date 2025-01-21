@@ -333,7 +333,7 @@ export default {
   },
   metaInfo() {
     const meta = {
-      title: "Login - Choreo-Planer | Dein Zugang zu allen Funktionen",
+      title: "Login - Choreo Planer | Dein Zugang zu allen Funktionen",
       titleTemplate: null,
       meta: [
         {
