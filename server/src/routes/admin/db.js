@@ -14,6 +14,7 @@ const Club = require("../../db/models/club");
 const Member = require("../../db/models/member");
 const UserService = require("../../services/UserService");
 const SeasonTeamService = require("../../services/SeasonTeamService");
+const { logger } = require("../../plugins/winston");
 
 const router = Router();
 
@@ -58,31 +59,31 @@ router.get("/:entity", async (req, res, next) => {
       extraData.teamList = (await TeamService.getAll(null, { all: true })).map(
         (team) => ({ value: team.id, name: team.name })
       );
-      extraData.seasonteamList = (
-        await SeasonTeamService.getAll(null, { all: true })
-      ).map((seasonTeam) => {
-        return {
-          value: seasonTeam.id,
-          name: `${seasonTeam.User.username} - ${seasonTeam.Team.name} (${
-            seasonTeam.Season?.name
-          }${seasonTeam.Season?.year ? `, ${seasonTeam.Season?.year}` : ""})`,
-        };
-      });
+      extraData.seasonteamList = (await SeasonTeamService.getAll())
+        .filter((seasonTeam) => seasonTeam.User)
+        .map((seasonTeam) => {
+          return {
+            value: seasonTeam.id,
+            name: `${seasonTeam.User.username} - ${seasonTeam.Team.name} (${
+              seasonTeam.Season?.name
+            }${seasonTeam.Season?.year ? `, ${seasonTeam.Season?.year}` : ""})`,
+          };
+        });
       break;
     case "choreos":
       columns = ["name", "counts"];
       data = await ChoreoService.getAll(UserId, { all: !UserId });
       model = Choreo;
-      extraData.seasonteamList = (
-        await SeasonTeamService.getAll(null, { all: true })
-      ).map((seasonTeam) => {
-        return {
-          value: seasonTeam.id,
-          name: `${seasonTeam.User.username} - ${seasonTeam.Team.name} (${
-            seasonTeam.Season?.name
-          }${seasonTeam.Season?.year ? `, ${seasonTeam.Season?.year}` : ""})`,
-        };
-      });
+      extraData.seasonteamList = (await SeasonTeamService.getAll())
+        .filter((seasonTeam) => seasonTeam.User)
+        .map((seasonTeam) => {
+          return {
+            value: seasonTeam.id,
+            name: `${seasonTeam.User.username} - ${seasonTeam.Team.name} (${
+              seasonTeam.Season?.name
+            }${seasonTeam.Season?.year ? `, ${seasonTeam.Season?.year}` : ""})`,
+          };
+        });
       break;
   }
   res.render("../src/views/admin/db.ejs", {
