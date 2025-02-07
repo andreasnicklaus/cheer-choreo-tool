@@ -14,7 +14,7 @@
     "@babel/plugin-proposal-optional-chaining": "^7.21.0",
     "@babel/polyfill": "^7.11.5",
     "@dreysolano/prerender-spa-plugin": "^1.0.3",
-    "@ffmpeg/ffmpeg": "^0.12.10",
+    "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.1",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
