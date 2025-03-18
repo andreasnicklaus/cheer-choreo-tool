@@ -1,7 +1,7 @@
 <template>
   <b-container id="teamView" data-view>
     <EditableNameHeading
-      name="Team"
+      :name="$t('team', 1)"
       :value="teams?.find((t) => t.id == teamId)?.name"
       class="mb-3"
       @input="onNameEdit"
@@ -10,13 +10,19 @@
     <b-row align-h="between" class="px-3 mb-4">
       <b-col>
         <b-dropdown
-          :text="teams.find((t) => t.id == teamId)?.name || 'Wähle ein Team'"
+          :text="
+            teams.find((t) => t.id == teamId)?.name ||
+            $t('teamView.waehle-ein-team')
+          "
           variant="outline-primary"
         >
           <b-dropdown-item
             v-for="team in teams"
             :key="team.id"
-            :to="{ name: 'Team', params: { teamId: team.id } }"
+            :to="{
+              name: 'Team',
+              params: { teamId: team.id, locale: $root.$i18n.locale },
+            }"
             :variant="team.id == teamId ? 'primary' : 'outline-primary'"
           >
             {{ team.name }}
@@ -29,7 +35,7 @@
             :variant="presentation == 'table' ? 'primary' : 'outline-primary'"
             @click="() => (presentation = 'table')"
             v-b-tooltip.hover
-            title="Tabelle"
+            v-bind:key="$t('teamView.tabelle')"
           >
             <b-icon-table />
           </b-button>
@@ -37,7 +43,7 @@
             :variant="presentation == 'list' ? 'primary' : 'outline-primary'"
             @click="() => (presentation = 'list')"
             v-b-tooltip.hover
-            title="Liste"
+            :title="$t('teamView.liste')"
           >
             <b-icon-list-ul />
           </b-button>
@@ -48,7 +54,7 @@
           no-caret
           variant="light"
           v-b-tooltip.hover
-          title="Optionen"
+          :title="$t('optionen')"
           class="ml-2"
         >
           <template #button-content>
@@ -64,7 +70,7 @@
             :disabled="!currentTeam"
           >
             <b-icon-trash class="mr-2" />
-            Season löschen
+            {{ $t("teamView.season-loeschen") }}
           </b-dropdown-item>
           <b-dropdown-item
             @click="() => $refs.deleteTeamModal.open(teamId)"
@@ -72,7 +78,7 @@
             variant="danger"
           >
             <b-icon-trash class="mr-2" />
-            Team löschen
+            {{ $t("teamView.team-loeschen") }}
           </b-dropdown-item>
         </b-dropdown>
       </b-col>
@@ -156,7 +162,7 @@
           class="text-muted text-center"
           v-if="sortedMembersOfCurrentTeam.length == 0"
         >
-          Dieses Team hat noch keine Mitglieder...
+          {{ $t("teamView.dieses-team-hat-noch-keine-mitglieder") }}
         </p>
 
         <b-button
@@ -171,7 +177,7 @@
           "
         >
           <b-icon-plus />
-          Hinzufügen
+          {{ $t("teamView.hinzufuegen") }}
         </b-button>
 
         <b-button
@@ -185,13 +191,13 @@
           "
         >
           <b-icon-box-arrow-in-right />
-          Importieren
+          {{ $t("teamView.importieren") }}
         </b-button>
       </b-tab>
       <template #tabs-end>
         <b-button
           v-b-tooltip.hover
-          title="Neue Season anfangen"
+          :title="$t('teamView.neue-season-anfangen')"
           variant="success"
           @click="() => $refs.createSeasonModal.open(currentTeam.id)"
         >
@@ -258,19 +264,21 @@ export default {
     DeleteSeasonTeamModal,
     ImportMemberModal,
   },
-  data: () => ({
-    presentation: "table",
-    teamId: null,
-    teams: [],
-    seasonTabIndex: 0,
-    tableFields: [
-      { key: "name", sortable: true },
-      { key: "nickname", label: "Spitzname", sortable: true },
-      { key: "abbreviation", label: "Abkürzung", sortable: true },
-      { key: "actions", label: "", class: "text-right" },
-    ],
-    editMemberId: null,
-  }),
+  data: function () {
+    return {
+      presentation: "table",
+      teamId: null,
+      teams: [],
+      seasonTabIndex: 0,
+      tableFields: [
+        { key: "name", sortable: true },
+        { key: "nickname", label: this.$t("spitzname"), sortable: true },
+        { key: "abbreviation", label: this.$t("abkuerzung"), sortable: true },
+        { key: "actions", label: "", class: "text-right" },
+      ],
+      editMemberId: null,
+    };
+  },
   mounted() {
     this.load();
   },
@@ -343,10 +351,19 @@ export default {
         this.$router
           .push({
             name: "Team",
-            params: { teamId: this.teams[0].id },
+            params: {
+              teamId: this.teams[0].id,
+              locale: this.$root.$i18n.locale,
+            },
           })
           .catch(() => {});
-      else this.$router.push({ name: "Start" }).catch(() => {});
+      else
+        this.$router
+          .push({
+            name: "Start",
+            params: { locale: this.$root.$i18n.locale },
+          })
+          .catch(() => {});
     },
     onSeasonTeamCreation() {
       this.load();
@@ -371,36 +388,36 @@ export default {
   },
   metaInfo() {
     return {
-      title: this.currentTeam?.name || "Team",
+      title: this.currentTeam?.name || this.$t("team", 1),
       meta: [
         {
           vmid: "description",
           name: "description",
-          content: "Bearbeite deine Teams und deren Mitglieder!",
+          content: this.$t("meta.teamView.description"),
         },
         {
           vmid: "twitter:description",
           name: "twitter:description",
-          content: "Bearbeite deine Teams und deren Mitglieder!",
+          content: this.$t("meta.teamView.description"),
         },
         {
           vmid: "og:description",
           property: "og:description",
-          content: "Bearbeite deine Teams und deren Mitglieder!",
+          content: this.$t("meta.teamView.description"),
         },
         {
           vmid: "og:title",
           property: "og:title",
-          content:
-            (this.currentTeam?.name || "Team") +
-            " - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
+          content: `${this.currentTeam?.name || "Team"} - ${this.$t(
+            "general.ChoreoPlaner"
+          )} | ${this.$t("meta.defaults.title")}`,
         },
         {
           vmid: "twitter:title",
           name: "twitter:title",
-          content:
-            (this.currentTeam?.name || "Team") +
-            " - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
+          content: `${this.currentTeam?.name || "Team"} - ${this.$t(
+            "general.ChoreoPlaner"
+          )} | ${this.$t("meta.defaults.title")}`,
         },
       ],
     };

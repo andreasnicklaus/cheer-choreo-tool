@@ -6,7 +6,7 @@
       </b-col>
       <b-col>
         <b v-if="!edit" class="mt-2">
-          {{ value || placeholder || "Neu" }}
+          {{ value || placeholder || $t("neu") }}
         </b>
         <b-button
           v-if="!edit"

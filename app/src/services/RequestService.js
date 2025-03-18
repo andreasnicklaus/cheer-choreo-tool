@@ -27,12 +27,22 @@ ax.interceptors.response.use(
       case 401:
         AuthService.removeToken();
         store.commit("setLoginState", false);
-        router.push({ name: "Login" }).catch(() => {});
+        router
+          .push({
+            name: "Login",
+            params: { locale: this.$root.$i18n.locale },
+          })
+          .catch(() => {});
         break;
       case 403:
         AuthService.removeToken();
         store.commit("setLoginState", false);
-        router.push({ name: "Login" }).catch(() => {});
+        router
+          .push({
+            name: "Login",
+            params: { locale: this.$root.$i18n.locale },
+          })
+          .catch(() => {});
         break;
       default:
         console.warn(error);

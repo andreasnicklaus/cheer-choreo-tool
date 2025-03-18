@@ -12,14 +12,16 @@
     v-show="showConsentWindow"
   >
     <p>
-      🍪 Diese Webseite verwendet Matomo, um den Datenverkehr zu analysieren und
-      uns dabei zu helfen, Ihr Nutzererlebnis zu verbessern. Wir verarbeiten
-      Browser- und Geräteinformationen, und Cookies werden in Ihrem Browser
-      gespeichert. Diese Daten werden nur von uns und unserer
-      Webhosting-Plattform verarbeitet. Mehr Informationen finden Sie in der
-      <router-link :to="{ name: 'Datenschutz' }"
-        >Datenschutzerklärung</router-link
-      >.
+      🍪
+      <i18n path="consent.info-text">
+        <router-link
+          :to="{
+            name: 'Datenschutz',
+            params: { locale: $root.$i18n.locale },
+          }"
+          >{{ $t("datenschutz.datenschutzerklaerung") }}</router-link
+        >
+      </i18n>
     </p>
     <b-row align-v="center">
       <b-col>
@@ -29,12 +31,12 @@
           block
           :style="{ color: 'white' }"
         >
-          Einwilligen
+          {{ $t("consent.einwilligen") }}
         </b-button>
       </b-col>
       <b-col cols="12" md="auto" class="text-center">
         <b-button variant="link" @click="closeWithoutConsent">
-          Ablehnen
+          {{ $t("consent.ablehnen") }}
         </b-button>
       </b-col>
     </b-row>

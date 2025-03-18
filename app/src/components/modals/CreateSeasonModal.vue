@@ -1,16 +1,18 @@
 <template>
   <b-modal
     :id="`modal-newSeason-${id}`"
-    title="Neue Season"
+    :title="$t('modals.create-season.neue-season')"
     size="xl"
     scrollable
     @show="reset"
     @ok="create"
   >
-    <p class="text-muted">Team: {{ team?.name }}</p>
+    <p class="text-muted">
+      {{ $t("modals.create-season.team-team-name", [team?.name]) }}
+    </p>
     <b-tabs fill v-model="tabIndex">
       <b-tab
-        title="Reguläre Season"
+        :title="$t('modals.create-season.regulaere-season')"
         class="pt-2"
         :disabled="this.seasonSelectOptions.length == 0"
       >
@@ -29,26 +31,26 @@
           </b-form-group>
         </b-form>
       </b-tab>
-      <b-tab title="Extra Events" class="pt-2">
+      <b-tab :title="$t('modals.create-season.extra-events')" class="pt-2">
         <b-form>
           <b-form-group
-            label="Name der Event-Gruppe:"
+            :label="$t('modals.create-season.name-der-event-gruppe')"
             :state="newSeasonNameIsValid"
             :invalid-feedback="newSeasonNameStateFeedback"
-            valid-feedback="Gültig!"
+            :valid-feedback="$t('login.gueltig')"
           >
             <b-form-input
               v-model="newSeasonName"
               required
-              placeholder="Sommer-Auftritte, ..."
+              :placeholder="$t('modals.create-season.example-event-name')"
               :state="newSeasonNameIsValid"
             />
           </b-form-group>
           <b-form-group
-            label="Jahr:"
+            :label="$t('jahr')"
             :state="newSeasonYearIsValid"
             :invalid-feedback="newSeasonYearStateFeedback"
-            valid-feedback="Gültig!"
+            :valid-feedback="$t('login.gueltig')"
           >
             <b-form-input
               v-model="newSeasonYear"
@@ -61,14 +63,12 @@
         <hr />
         <div class="text-muted">
           <p>
-            <b>Name:</b>
-            Der Name einer Extra-Season beschreibt für welchen Zweck oder
-            Zeitraum ein Kader und Choreos bestehen.
+            <b>{{ $t("name") }}:</b>
+            {{ $t("modals.create-season.name-info") }}
           </p>
           <p class="mb-0">
-            <b>Jahr:</b>
-            Das Jahr einer Extra-Season hilft beim Sortieren. Lass das Feld
-            leer, wenn der Kader keinem Jahr zuzuordnen ist.
+            <b>{{ $t("jahr") }}:</b>
+            {{ $t("modals.create-season.jahr-info") }}
           </p>
         </div>
       </b-tab>
@@ -77,14 +77,17 @@
     <hr />
 
     <b-form-group
-      label="Team-Mitglieder:"
+      :label="$t('modals.create-season.team-mitglieder')"
       :state="newSeasonMembersIsValid"
       :invalid-feedback="newSeasonMembersStateFeedback"
     >
       <b-form-select
         v-model="seasonToCopyMembersFromId"
         :options="[
-          { text: 'Keine Mitglieder kopieren', value: null },
+          {
+            text: $t('modals.create-season.keine-mitglieder-kopieren'),
+            value: null,
+          },
           ...seasonToCopySelectOptions,
         ]"
         :state="newSeasonMembersIsValid"
@@ -101,9 +104,11 @@
 
     <template #modal-footer="{ ok, cancel }">
       <b-button @click="ok" variant="success" :disabled="!inputIsValid">
-        Erstellen
+        {{ $t("erstellen") }}
       </b-button>
-      <b-button @click="cancel" variant="danger">Abbrechen</b-button>
+      <b-button @click="cancel" variant="danger">{{
+        $t("abbrechen")
+      }}</b-button>
     </template>
   </b-modal>
 </template>
@@ -199,7 +204,7 @@ export default {
     seasonSelectOptions() {
       const years = Array.from(new Set(this.seasons.map((s) => s.year)));
       return years.map((y) => ({
-        label: y || "Extra Events",
+        label: y || this.$t("modals.create-season.extra-events"),
         options: this.seasons
           .filter((s) => s.year == y)
           .map((s) => ({
@@ -211,7 +216,7 @@ export default {
     seasonToCopySelectOptions() {
       const years = Array.from(new Set(this.seasonsToCopy.map((s) => s.year)));
       return years.map((y) => ({
-        label: y || "Extra Events",
+        label: y || this.$t("modals.create-season.extra-events"),
         options: this.seasonsToCopy
           .filter((s) => s.year == y)
           .map((s) => ({
@@ -251,7 +256,7 @@ export default {
         !this.seasonId ||
         !this.seasons.map((s) => s.id).includes(this.seasonId)
       )
-        return "Erforderlich";
+        return this.$t("erforderlich");
       return null;
     },
     newSeasonIsValid() {
@@ -264,7 +269,7 @@ export default {
     },
     newSeasonNameStateFeedback() {
       if (!this.newSeasonName || this.newSeasonName.trim().length == 0)
-        return "Erforderlich";
+        return this.$t("erforderlich");
       return null;
     },
     newSeasonYearIsValid() {
@@ -277,11 +282,11 @@ export default {
     },
     newSeasonYearStateFeedback() {
       if (this.newSeasonYear == "" || this.newSeasonYear == null)
-        return "Erforderlich";
+        return this.$t("erforderlich");
       if (parseInt(this.newSeasonYear) <= 1990)
-        return "Choreos vor 1990 sind nicht erlaubt.";
+        return this.$t("modals.create-season.choreos-vor-1990");
       if (parseInt(this.newSeasonYear) >= 2200)
-        return "Choreos nach 2200 sind nicht erlaubt.";
+        return this.$t("modals.create-season.choreos-nach-2200");
       return null;
     },
     newSeasonMembersIsValid() {
@@ -292,7 +297,7 @@ export default {
     },
     newSeasonMembersStateFeedback() {
       if (this.newSeasonMemberIds.length == 0)
-        return "Min. 1 Team-Mitglied erforderlich";
+        return this.$t("modals.create-season.min-team-mitglied");
       return null;
     },
   },

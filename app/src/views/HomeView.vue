@@ -20,30 +20,44 @@
               ? '/Icon-Easter.png'
               : '/Icon.png'
           "
-          alt="Choreo Planer Icon"
+          :alt="$t('choreo-planer-icon')"
           width="200"
           height="200"
         />
-        <h1 id="title" class="text-center display-4">Dein Choreo Planer</h1>
+        <h1 id="title" class="text-center display-4">
+          {{ $t("Home.dein") }}
+          {{ $t("general.ChoreoPlaner") }}
+        </h1>
         <b-row
           class="w-75 my-4"
           align-h="around"
           :style="{ fontWeight: 'bold' }"
         >
-          <b-col cols="auto" id="callout1"> 1. Choreos erstellen </b-col>
-          <b-col cols="auto" id="callout2"> 2. Countsheets teilen </b-col>
-          <b-col cols="auto" id="callout3"> 3. Videos erstellen </b-col>
+          <b-col cols="auto" id="callout1">
+            1. {{ $t("Home.choreos-erstellen") }}
+          </b-col>
+          <b-col cols="auto" id="callout2">
+            2. {{ $t("Home.countsheets-teilen") }}
+          </b-col>
+          <b-col cols="auto" id="callout3">
+            3. {{ $t("Home.videos-erstellen") }}
+          </b-col>
         </b-row>
         <b-button
           id="registerButton"
           variant="primary"
-          :to="{ name: 'Login' }"
+          :to="{ name: 'Login', params: { locale: $root.$i18n.locale } }"
           class="my-4"
           :style="{ textWrap: 'no-wrap' }"
         >
-          Anmelden / Registrieren
+          {{ $t("anmelden") }} / {{ $t("registrieren") }}
         </b-button>
-        <router-link id="helpLink" :to="{ name: 'Help' }"> Hilfe </router-link>
+        <router-link
+          id="helpLink"
+          :to="{ name: 'Help', params: { locale: $root.$i18n.locale } }"
+        >
+          {{ $t("general.help") }}
+        </router-link>
       </b-col>
     </section>
 
@@ -56,18 +70,16 @@
     >
       <b-row align-v="center" align-h="center" class="w-100">
         <b-col cols="12" lg="6" class="mb-lg-0 mb-2">
-          <h2>📝 Choreos erstellen</h2>
+          <h2>📝 {{ $t("Home.choreos-erstellen") }}</h2>
           <ol>
-            <li>Gib deiner Choreo einen Namen</li>
+            <li>{{ $t("Home.choreo-benennen") }}</li>
             <li>
-              Erstelle Aufstellungen, indem du die Punkte auf der Matte an die
-              richtige Stelle ziehst
+              {{ $t("Home.aufstellungen-erstellen") }}
             </li>
             <li>
-              Bestimme, wie lange die Aufstellungen gehalten werden sollen und
-              von wem
+              {{ $t("Home.laenge-bestimmen") }}
             </li>
-            <li>Mache Einträge in dein Countsheet, wer wann was macht</li>
+            <li>{{ $t("Home.eintraege-machen") }}</li>
           </ol>
         </b-col>
         <b-col cols="auto">
@@ -86,78 +98,78 @@
     <div id="featureCallouts1" class="featureCallouts d-none d-md-flex">
       <b-col class="featureCallout h3">
         <b-icon-people-fill /><br />
-        Mitgliederverwaltung
+        {{ $t("Home.mitgliederverwaltung") }}
         <ul>
-          <li>Vereine</li>
-          <li>Teams</li>
-          <li>Seasonkader</li>
-          <li>Teilnehmer</li>
+          <li>{{ $tc("verein", 2) }}</li>
+          <li>{{ $tc("team", 2) }}</li>
+          <li>{{ $t("seasonkader") }}</li>
+          <li>{{ $t("teilnehmer") }}</li>
         </ul>
       </b-col>
       <b-col class="featureCallout h3">
         <b-icon-layout-three-columns /><br />
-        Choreoplanung
+        {{ $t("Home.choreoplanung") }}
         <ul>
-          <li>Aufstellungen</li>
-          <li>Countsheets</li>
-          <li>Verwaltung nach Season</li>
-          <li>Teilnehmer</li>
+          <li>{{ $tc("lineup", 2) }}</li>
+          <li>{{ $tc("countsheet", 2) }}</li>
+          <li>{{ $t("Home.verwaltung-nach-season") }}</li>
+          <li>{{ $t("teilnehmer") }}</li>
         </ul>
       </b-col>
       <b-col class="featureCallout h3">
         <b-icon-file-pdf-fill /><br />
-        Dateigenerierung
+        {{ $t("Home.dateigenerierung") }}
         <ul>
-          <li>Videos als MP4 und WEBM</li>
-          <li>Countsheet als PDF</li>
-          <li>Aufstellungen als Bild</li>
+          <li>{{ $t("Home.videos-als-mp4-und-webm") }}</li>
+          <li>{{ $t("Home.countsheet-als-pdf") }}</li>
+          <li>{{ $t("Home.aufstellungen-als-bild") }}</li>
         </ul>
       </b-col>
       <b-col class="featureCallout h3">
         <b-icon-film /><br />
-        Video-Export
+        {{ $t("Home.video-export") }}
         <ul>
-          <li>Teile Choreos einfach als Video</li>
-          <li>Generierung lokal im Browser</li>
-          <li>Download als MP4 oder WEBM</li>
+          <li>{{ $t("Home.teile-choreos-einfach-als-video") }}</li>
+          <li>{{ $t("Home.generierung-lokal-im-browser") }}</li>
+          <li>{{ $t("Home.download-als-mp4-oder-webm") }}</li>
         </ul>
       </b-col>
       <b-col class="featureCallout h3">
         <b-icon-shield-fill-check /><br />
-        Datensicherung
+        {{ $t("Home.datensicherung") }}
         <ul>
-          <li>Speicherung auf unseren Servern</li>
-          <li>Per Passwort gesicherter Datenzugriff</li>
-          <li>Verschlüsselter Datentransfer</li>
+          <li>{{ $t("Home.speicherung-auf-unseren-servern") }}</li>
+          <li>{{ $t("Home.per-passwort-gesicherter-datenzugriff") }}</li>
+          <li>{{ $t("Home.verschluesselter-datentransfer") }}</li>
         </ul>
       </b-col>
       <b-col class="featureCallout h3">
         <b-icon-calendar2-range-fill /><br />
-        Seasonwechsel
+        {{ $t("Home.seasonwechsel") }}
         <ul>
-          <li>Starte neue Seasons, wenn du soweit bist</li>
-          <li>Importiere Teilnehmer in neue Seasonkader</li>
+          <li>{{ $t("Home.starte-neue-seasons-wenn-du-soweit-bist") }}</li>
+          <li>{{ $t("Home.importiere-teilnehmer-in-neue-seasonkader") }}</li>
           <li>
-            Definiere eigene Seasons, die sich nicht an das Wettkampfjahr halten
+            {{ $t("Home.definiere-eigene-seasons") }}
           </li>
         </ul>
       </b-col>
       <b-col class="featureCallout h3">
         <b-icon-trophy-fill /><br />
-        Meisterschaftsvorbereitung
+        {{ $t("Home.meisterschaftsvorbereitung") }}
         <ul>
-          <li>Bereite Choreos speziell für Meisterschaften vor</li>
-          <li>Gib Videos und Countsheets an deine Teilnehmer mit nach Hause</li>
-          <li>Mache Last-Minute-Auswechslungen ganz einfach mit 2-3 Klicks</li>
+          <li>{{ $t("Home.bereite-choreos-vor") }}</li>
+          <li>{{ $t("Home.gib-videos-und-countsheets") }}</li>
+          <li>{{ $t("Home.mache-last-minute-auswechslungen") }}</li>
         </ul>
       </b-col>
       <b-col class="featureCallout h3">
         <b-icon-archive-fill /><br />
-        Datenarchivierung
+        {{ $t("Home.datenarchivierung") }}
         <ul>
-          <li>Regelmäßige Datensicherung auf unserem Server</li>
+          <li>{{ $t("Home.regelmaessige-datensicherung") }}</li>
           <li>
-            Deine Daten werden nur für die Darstellung deiner Choreos verwendet
+            {{ $t("Home.deine-daten-werden-verwendet") }}
           </li>
         </ul>
       </b-col>
@@ -166,18 +178,16 @@
     <section id="sectionC">
       <b-row align-h="center">
         <b-col cols="12" lg="6" class="mb-lg-0 mb-2">
-          <h2>🫰 Countsheets teilen</h2>
+          <h2>🫰 {{ $t("Home.countsheets-teilen") }}</h2>
           <ol>
             <li>
-              Mache Einträge ins Countsheet, während du deine Choreo erstellst
+              {{ $t("Home.mache-eintraege") }}
             </li>
             <li>
-              Bestimme für jeden Eintrag, ob er für alle oder nur für bestimmte
-              Teilnehmerinnen und Teilnehmer gilt
+              {{ $t("Home.bestimme-fuer-jeden-eintrag") }}
             </li>
             <li>
-              Erstelle Countsheets als Video oder als PDF für alle oder nur für
-              bestimmte Teilnehmerinnen und Teilnehmer
+              {{ $t("Home.erstelle-countsheets-als-video") }}
             </li>
           </ol>
         </b-col>
@@ -200,7 +210,9 @@
             :choreo="choreo"
             :interactive="false"
           />
-          <small class="text-muted text-center">Beispiel-Countsheet</small>
+          <small class="text-muted text-center">{{
+            $t("Home.beispiel-countsheet")
+          }}</small>
         </b-col>
       </b-row>
     </section>
@@ -211,38 +223,38 @@
     >
       <b-col class="featureCallout h3">
         <b-icon-person-plus-fill /><br />
-        1. Anmelden
+        1. {{ $t("anmelden") }}
         <ol>
-          <li>Anmelden mit Benutzername und Passwort</li>
-          <li>Gib deinem ersten Verein einen Namen</li>
+          <li>{{ $t("Home.anmelden-mit-benutzername-und-passwort") }}</li>
+          <li>{{ $t("Home.gib-deinem-ersten-verein-einen-namen") }}</li>
         </ol>
       </b-col>
       <b-col class="featureCallout h3">
         <b-icon-people-fill /><br />
-        2. Team anlegen
+        2. {{ $t("Home.team-anlegen") }}
         <ol>
-          <li>Name deines Teams</li>
-          <li>Aktuelle Season des Teams</li>
-          <li>Seasonkader füllen</li>
+          <li>{{ $t("Home.name-deines-teams") }}</li>
+          <li>{{ $t("Home.aktuelle-season-des-teams") }}</li>
+          <li>{{ $t("Home.seasonkader-fuellen") }}</li>
         </ol>
       </b-col>
       <b-col class="featureCallout h3">
         <b-icon-layout-three-columns /><br />
-        3. Choreos planen
+        3. {{ $t("Home.choreos-planen") }}
         <ol>
-          <li>Name der Choreo</li>
-          <li>Länge in Counts & Achtern</li>
-          <li>Aufstellungen</li>
-          <li>Einträge im Countsheet</li>
+          <li>{{ $t("Home.name-der-choreo") }}</li>
+          <li>{{ $t("Home.laenge-in-counts-and-achtern") }}</li>
+          <li>{{ $tc("lineup", 2) }}</li>
+          <li>{{ $t("Home.eintraege-im-countsheet") }}</li>
         </ol>
       </b-col>
       <b-col class="featureCallout h3">
         <b-icon-download /><br />
-        4. Videos herunterladen
+        4. {{ $t("Home.videos-herunterladen") }}
         <ol>
-          <li>Generiere das Video</li>
-          <li>Lade das Video runter</li>
-          <li>Teile es in eurem Team-Chat</li>
+          <li>{{ $t("Home.generiere-das-video") }}</li>
+          <li>{{ $t("Home.lade-das-video-runter") }}</li>
+          <li>{{ $t("Home.teile-es-in-eurem-team-chat") }}</li>
         </ol>
       </b-col>
       <b-col class="featureCallout h3">
@@ -251,11 +263,11 @@
           <b-icon-file-earmark-arrow-up-fill />
         </div>
         <br />
-        5. Countsheets teilen
+        5. {{ $t("Home.countsheets-teilen") }}
         <ol>
-          <li>Fülle das Countsheet</li>
-          <li>Lade das PDF herunten</li>
-          <li>Teile es in eurem Team-Chat</li>
+          <li>{{ $t("Home.fuelle-das-countsheet") }}</li>
+          <li>{{ $t("Home.lade-das-pdf-herunter") }}</li>
+          <li>{{ $t("Home.teile-es-in-eurem-team-chat") }}</li>
         </ol>
       </b-col>
     </div>
@@ -263,21 +275,20 @@
     <section id="sectionD">
       <b-row align-h="center">
         <b-col cols="12" lg="6">
-          <h2>🎞️ Videos erstellen</h2>
+          <h2>🎞️ {{ $t("Home.videos-erstellen") }}</h2>
           <ol>
-            <li>Wenn du zufrieden bist, gehe zu "als Video exportieren"</li>
+            <li>{{ $t("Home.gehe-zu-als-video-exportieren") }}</li>
             <li>
-              Wähle aus, ab du ein Video mit allen auf der Matte oder
-              ausgewählten Personen haben willst
+              {{ $t("Home.waehle-mit-allen-aus") }}
             </li>
-            <li>Warte, bis dein Video fertig ist</li>
+            <li>{{ $t("Home.warte-bis-video") }}</li>
           </ol>
         </b-col>
         <b-col cols="12" lg="6">
           <b-form id="video-form">
             <b-form-group
               id="checkbox1"
-              description="Wähle aus, wer auf dem Video erscheinen soll"
+              :description="$t('Home.waehle-aus-wer-soll')"
             >
               <b-form-checkbox-group
                 id="selectMembers"
@@ -293,28 +304,34 @@
             </b-form-group>
             <b-form-group
               id="checkbox2"
-              description="Soll das Video mit deinem Logo erstellt werden?"
+              :description="$t('Home.soll-dein-logo')"
             >
-              <b-form-checkbox :checked="true">Mit Logo</b-form-checkbox>
+              <b-form-checkbox :checked="true">{{
+                $t("Home.mit-logo")
+              }}</b-form-checkbox>
             </b-form-group>
             <b-form-group
               id="checkbox3"
-              description="Soll das Video mit deinem Vereins- und Mannschaftsnamen erstellt werden?"
+              :description="$t('Home.soll-mit-deinem-verein')"
             >
-              <b-form-checkbox :checked="true">Mit Namen</b-form-checkbox>
+              <b-form-checkbox :checked="true">{{
+                $t("Home.mit-namen")
+              }}</b-form-checkbox>
             </b-form-group>
             <b-form-group
               id="checkbox4"
-              description="Soll das Video einen durchlaufendem Count haben?"
+              :description="$t('Home.soll-durchlaufendem-count')"
             >
-              <b-form-checkbox :checked="true">Mit Count</b-form-checkbox>
+              <b-form-checkbox :checked="true">{{
+                $t("Home.mit-count")
+              }}</b-form-checkbox>
             </b-form-group>
             <b-form-group
               id="checkbox5"
-              description="Soll das Video Einträge aus dem Countsheet zeigen?"
+              :description="$t('Home.soll-mit-eintraegen')"
             >
               <b-form-checkbox :checked="true">
-                Mit Countsheet-Einträgen
+                {{ $t("Home.mit-countsheet-eintraegen") }}
               </b-form-checkbox>
             </b-form-group>
           </b-form>
@@ -331,15 +348,15 @@
       }"
       class="text-center py-5 px-3"
     >
-      <h2 class="mb-1">Interesse geweckt?</h2>
+      <h2 class="mb-1">{{ $t("Home.interesse-geweckt") }}</h2>
       <p class="mb-4">
-        Zum Loslegen einfach anmelden und das erste Team anlegen:
+        {{ $t("Home.zum-loslegen") }}
       </p>
       <b-button
         :style="{ backgroundColor: 'white', color: 'var(--success)' }"
         class="pulse-button"
       >
-        Anmelden / Registrieren
+        {{ $t("anmelden") }} / {{ $t("registrieren") }}
       </b-button>
     </div>
   </b-container>
@@ -359,293 +376,300 @@ export default {
     CountSheet,
     CountOverview,
   },
-  data: () => ({
-    count: 0,
-    teamMembers: [
-      {
-        id: "a",
-        name: "Anna Unersetzlich",
-        abbreviation: "AU",
-        nickname: "Anni",
-        ChoreoParticipation: {
-          color: "#dd45a8",
-        },
-      },
-      {
-        id: "m",
-        name: "Maxi Supidupi",
-        abbreviation: "MS",
-        nickname: "Maxi",
-        ChoreoParticipation: {
-          color: "#00ee8a",
-        },
-      },
-      {
-        id: "t",
-        name: "Theresa Toll",
-        abbreviation: "TT",
-        nickname: "Theresa",
-        ChoreoParticipation: {
-          color: "#0000aa",
-        },
-      },
-      {
-        id: "p",
-        name: "Paulina Flickflack",
-        abbreviation: "PF",
-        nickname: "Pauli",
-        ChoreoParticipation: {
-          color: "#FFFF22",
-        },
-      },
-    ],
-    choreo: {
-      counts: 40,
-      Hits: [
+  data: function () {
+    return {
+      count: 0,
+      teamMembers: [
         {
-          name: "Umdrehen",
-          count: 0,
-          Members: [
-            {
-              id: "a",
-              name: "Anna Unersetzlich",
-              abbreviation: "AU",
-              nickname: "Anni",
-              ChoreoParticipation: {
-                color: "#dd45a8",
-              },
-            },
-          ],
-        },
-        {
-          name: "Dip 1",
-          count: 0,
-          Members: [
-            {
-              id: "m",
-              name: "Maxi Supidupi",
-              abbreviation: "MS",
-              nickname: "Maxi",
-              ChoreoParticipation: {
-                color: "#00ee8a",
-              },
-            },
-          ],
-        },
-        {
-          name: "Schultern zu",
-          count: 2,
-        },
-        {
-          name: "Low v",
-          count: 4,
-        },
-        {
-          name: "Schritt",
-          count: 6,
-        },
-        {
-          name: "Flick Flack",
-          count: 8,
-          Members: [
-            {
-              id: "m",
-              name: "Maxi Supidupi",
-              abbreviation: "MS",
-              nickname: "Maxi",
-              ChoreoParticipation: {
-                color: "#00ee8a",
-              },
-            },
-          ],
-        },
-        {
-          name: "Flugrolle",
-          count: 8,
-          Members: [
-            {
-              id: "a",
-              name: "Anna Unersetzlich",
-              abbreviation: "AU",
-              nickname: "Anni",
-              ChoreoParticipation: {
-                color: "#dd45a8",
-              },
-            },
-          ],
-        },
-        {
-          name: "Flick Flack",
-          count: 10,
-        },
-        {
-          name: "Aufstehen 1",
-          count: 12,
-        },
-        {
-          name: "Rauslaufen",
-          count: 12,
-        },
-        {
-          name: "Aufstehen 2",
-          count: 14,
-        },
-        {
-          name: "Rolle 1",
-          count: 14,
-        },
-        {
-          name: "Arme einst.",
-          count: 16,
-        },
-        {
-          name: "Flugrolle",
-          count: 16,
-        },
-        {
-          name: "1 n. unten re.",
-          count: 18,
-        },
-        {
-          name: "1 n. unten li.",
-          count: 19,
-        },
-        {
-          name: "Arme Bogen über Seite in 7",
-          count: 20,
-        },
-        {
-          name: "Beginn Motions",
-          count: 22,
-        },
-        {
-          name: "Clap",
-          count: 26,
-        },
-        {
-          name: "High Clap",
-          count: 27,
-        },
-        {
-          name: "Hurdler",
-          count: 29,
-        },
-        {
-          name: "Toe-Touch",
-          count: 31,
-        },
-        {
-          name: "Aufstehen",
-          count: 34,
-        },
-        {
-          name: "clean",
-          count: 36,
-        },
-        {
-          name: "Clap",
-          count: 37,
-        },
-        {
-          name: "High Clap",
-          count: 38,
-        },
-      ],
-      Lineups: [],
-    },
-    currentPositions: [
-      {
-        MemberId: "a",
-        Member: {
           id: "a",
-          name: "Anna Unersetzlich",
-          abbreviation: "AU",
-          nickname: "Anni",
+          name: this.$t("personas.anna-unersetzlich"),
+          abbreviation: this.$t("personas.anna-unersetzlich-abk"),
+          nickname: this.$t("personas.anna-unersetzlich-nick"),
           ChoreoParticipation: {
             color: "#dd45a8",
           },
         },
-        x: 40,
-        y: 50,
-      },
-      {
-        MemberId: "m",
-        Member: {
+        {
           id: "m",
-          name: "Maxi Supidupi",
-          abbreviation: "MS",
-          nickname: "Maxi",
+          name: this.$t("personas.maxi-supidupi"),
+          abbreviation: this.$t("personas.maxi-supidupi-abk"),
+          nickname: this.$t("personas.maxi-supidupi-nick"),
           ChoreoParticipation: {
             color: "#00ee8a",
           },
         },
-        x: 60,
-        y: 50,
-      },
-      {
-        MemberId: "t",
-        Member: {
+        {
           id: "t",
-          name: "Theresa Toll",
-          abbreviation: "TT",
-          nickname: "Theresa",
+          name: this.$t("personas.theresa-toll"),
+          abbreviation: this.$t("personas.theresa-toll-abk"),
+          nickname: this.$t("personas.theresa-toll-nick"),
           ChoreoParticipation: {
             color: "#0000aa",
           },
         },
-        x: 45,
-        y: 10,
-      },
-      {
-        MemberId: "p",
-        Member: {
+        {
           id: "p",
-          name: "Paulina Flickflack",
-          abbreviation: "PF",
-          nickname: "Pauli",
+          name: this.$t("personas.paulina-flickflack"),
+          abbreviation: this.$t("personas.paulina-flickflack-abk"),
+          nickname: this.$t("personas.paulina-flickflack-nick"),
           ChoreoParticipation: {
             color: "#FFFF22",
           },
         },
-        x: 55,
-        y: 10,
+      ],
+      choreo: {
+        counts: 40,
+        Hits: [
+          {
+            name: this.$t("Home.Umdrehen"),
+            count: 0,
+            Members: [
+              {
+                id: "a",
+                name: this.$t("personas.anna-unersetzlich"),
+                abbreviation: this.$t("personas.anna-unersetzlich-abk"),
+                nickname: this.$t("personas.anna-unersetzlich-nick"),
+                ChoreoParticipation: {
+                  color: "#dd45a8",
+                },
+              },
+            ],
+          },
+          {
+            name: "Dip 1",
+            count: 0,
+            Members: [
+              {
+                id: "m",
+                name: this.$t("personas.maxi-supidupi"),
+                abbreviation: this.$t("personas.maxi-supidupi-abk"),
+                nickname: this.$t("personas.maxi-supidupi-nick"),
+                ChoreoParticipation: {
+                  color: "#00ee8a",
+                },
+              },
+            ],
+          },
+          {
+            name: "Schultern zu",
+            count: 2,
+          },
+          {
+            name: "Low v",
+            count: 4,
+          },
+          {
+            name: "Schritt",
+            count: 6,
+          },
+          {
+            name: "Flick Flack",
+            count: 8,
+            Members: [
+              {
+                id: "m",
+                name: this.$t("personas.maxi-supidupi"),
+                abbreviation: this.$t("personas.maxi-supidupi-abk"),
+                nickname: this.$t("personas.maxi-supidupi-abk"),
+                ChoreoParticipation: {
+                  color: "#00ee8a",
+                },
+              },
+            ],
+          },
+          {
+            name: "Flugrolle",
+            count: 8,
+            Members: [
+              {
+                id: "a",
+                name: this.$t("personas.anna-unersetzlich"),
+                abbreviation: this.$t("personas.anna-unersetzlich-abk"),
+                nickname: this.$t("personas.anna-unersetzlich-nick"),
+                ChoreoParticipation: {
+                  color: "#dd45a8",
+                },
+              },
+            ],
+          },
+          {
+            name: "Flick Flack",
+            count: 10,
+          },
+          {
+            name: "Aufstehen 1",
+            count: 12,
+          },
+          {
+            name: "Rauslaufen",
+            count: 12,
+          },
+          {
+            name: "Aufstehen 2",
+            count: 14,
+          },
+          {
+            name: "Rolle 1",
+            count: 14,
+          },
+          {
+            name: "Arme einst.",
+            count: 16,
+          },
+          {
+            name: "Flugrolle",
+            count: 16,
+          },
+          {
+            name: "1 n. unten re.",
+            count: 18,
+          },
+          {
+            name: "1 n. unten li.",
+            count: 19,
+          },
+          {
+            name: "Arme Bogen über Seite in 7",
+            count: 20,
+          },
+          {
+            name: "Beginn Motions",
+            count: 22,
+          },
+          {
+            name: "Clap",
+            count: 26,
+          },
+          {
+            name: "High Clap",
+            count: 27,
+          },
+          {
+            name: "Hurdler",
+            count: 29,
+          },
+          {
+            name: "Toe-Touch",
+            count: 31,
+          },
+          {
+            name: "Aufstehen",
+            count: 34,
+          },
+          {
+            name: "clean",
+            count: 36,
+          },
+          {
+            name: "Clap",
+            count: 37,
+          },
+          {
+            name: "High Clap",
+            count: 38,
+          },
+        ],
+        Lineups: [],
       },
-    ],
-    selectedTeamMembers: [],
-  }),
-  metaInfo: {
-    title: "Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
-    titleTemplate: null,
-    meta: [
-      {
-        vmid: "description",
-        name: "description",
-        content:
-          "Plane deine Choreografien schnell und einfach mit dem Choreo Planer! Perfekt für Cheerleading, Tanz und Bodenturnen. 100% kostenlos. Jetzt ausprobieren!",
-      },
-      {
-        vmid: "twitter:description",
-        name: "twitter:description",
-        content:
-          "Plane deine Choreografien schnell und einfach mit dem Choreo Planer! Perfekt für Cheerleading, Tanz und Bodenturnen. 100% kostenlos. Jetzt ausprobieren!",
-      },
-      {
-        vmid: "og:description",
-        property: "og:description",
-        content:
-          "Plane deine Choreografien schnell und einfach mit dem Choreo Planer! Perfekt für Cheerleading, Tanz und Bodenturnen. 100% kostenlos. Jetzt ausprobieren!",
-      },
-      {
-        vmid: "og:title",
-        property: "og:title",
-        content: "Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
-      },
-      {
-        vmid: "twitter:title",
-        name: "twitter:title",
-        content: "Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
-      },
-    ],
+      currentPositions: [
+        {
+          MemberId: "a",
+          Member: {
+            id: "a",
+            name: this.$t("personas.anna-unersetzlich"),
+            abbreviation: this.$t("personas.anna-unersetzlich-abk"),
+            nickname: this.$t("personas.anna-unersetzlich-nick"),
+            ChoreoParticipation: {
+              color: "#dd45a8",
+            },
+          },
+          x: 40,
+          y: 50,
+        },
+        {
+          MemberId: "m",
+          Member: {
+            id: "m",
+            name: this.$t("personas.maxi-supidupi"),
+            abbreviation: this.$t("personas.maxi-supidupi-abk"),
+            nickname: this.$t("personas.maxi-supidupi-nick"),
+            ChoreoParticipation: {
+              color: "#00ee8a",
+            },
+          },
+          x: 60,
+          y: 50,
+        },
+        {
+          MemberId: "t",
+          Member: {
+            id: "t",
+            name: this.$t("personas.theresa-toll"),
+            abbreviation: this.$t("personas.theresa-toll-abk"),
+            nickname: this.$t("personas.theresa-toll-nick"),
+            ChoreoParticipation: {
+              color: "#0000aa",
+            },
+          },
+          x: 45,
+          y: 10,
+        },
+        {
+          MemberId: "p",
+          Member: {
+            id: "p",
+            name: this.$t("personas.paulina-flickflack"),
+            abbreviation: this.$t("personas.paulina-flickflack-abk"),
+            nickname: this.$t("personas.paulina-flickflack-nick"),
+            ChoreoParticipation: {
+              color: "#FFFF22",
+            },
+          },
+          x: 55,
+          y: 10,
+        },
+      ],
+      selectedTeamMembers: [],
+    };
+  },
+  metaInfo() {
+    return {
+      title: `${this.$t("general.ChoreoPlaner")} | ${this.$t(
+        "meta.defaults.title"
+      )}`,
+      titleTemplate: null,
+      meta: [
+        {
+          vmid: "description",
+          name: "description",
+          content: this.$t("meta.defaults.description"),
+        },
+        {
+          vmid: "twitter:description",
+          name: "twitter:description",
+          content: this.$t("meta.defaults.description"),
+        },
+        {
+          vmid: "og:description",
+          property: "og:description",
+          content: this.$t("meta.defaults.description"),
+        },
+        {
+          vmid: "og:title",
+          property: "og:title",
+          content: `${this.$t("general.ChoreoPlaner")} | ${this.$t(
+            "meta.defaults.title"
+          )}`,
+        },
+        {
+          vmid: "twitter:title",
+          name: "twitter:title",
+          content: `${this.$t("general.ChoreoPlaner")} | ${this.$t(
+            "meta.defaults.title"
+          )}`,
+        },
+      ],
+    };
   },
   computed: {
     hitsForCurrentCount() {

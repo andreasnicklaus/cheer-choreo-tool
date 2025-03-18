@@ -1,7 +1,7 @@
 <template>
   <b-modal
     :id="`modal-newClub-${id}`"
-    title="Neuer Verein"
+    :title="$t('modals.create-club.neuer-verein')"
     centered
     @show="resetClubModal"
     @ok="createAndSelectClub"
@@ -16,26 +16,26 @@
   >
     <b-form>
       <b-form-group
-        label="Vereinsname"
+        :label="$t('modals.create-club.vereinsname')"
         :state="newClubNameIsValid"
         :invalid-feedback="newClubNameStateFeedback"
-        valid-feedback="Gültig!"
+        :valid-feedback="$t('login.gueltig')"
       >
         <b-form-input
           v-model="newClubName"
           :state="newClubNameIsValid"
           required
-          placeholder="TSG Salach e.V., Glamorous Cheerleader, ..."
+          :placeholder="$t('modals.create-club.example-team-names')"
           autofocus
         />
       </b-form-group>
     </b-form>
     <template #modal-footer="{ ok, cancel }">
       <b-button @click="ok" variant="success" :disabled="!newClubNameIsValid">
-        Erstellen
+        {{ $t("erstellen") }}
       </b-button>
       <b-button v-if="!preventClosing" @click="cancel" variant="danger">
-        Abbrechen
+        {{ $t("abbrechen") }}
       </b-button>
     </template>
   </b-modal>
@@ -78,8 +78,9 @@ export default {
       return this.newClubName != null && this.newClubName.length >= 3;
     },
     newClubNameStateFeedback() {
-      if (!this.newClubName) return "Erforderlich";
-      if (this.newClubName.length < 3) return "Min. 3 Zeichen";
+      if (!this.newClubName) return this.$t("erforderlich");
+      if (this.newClubName.length < 3)
+        return this.$t("modals.create-club.min-vereinsname-length");
       return null;
     },
   },

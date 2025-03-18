@@ -48,7 +48,9 @@ class AuthService {
     this.removeToken();
     store.commit("setLoginState", false);
     if (router.currentRoute.meta.private)
-      router.push({ name: "Login" }).catch(() => {});
+      router
+        .push({ name: "Login", params: { locale: this.$root.$i18n.locale } })
+        .catch(() => {});
   }
 
   changeUsername(username) {

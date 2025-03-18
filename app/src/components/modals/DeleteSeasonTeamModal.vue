@@ -1,16 +1,16 @@
 <template>
   <b-modal
     :id="`modal-deleteSeasonTeam-${id}`"
-    title="Season löschen?"
+    :title="$t('modals.delete-season.season-loeschen')"
     centered
     @show="reset"
     @ok="deleteSeasonTeam"
   >
-    <p class="m-0">Du kannst das nicht rückgängig machen.</p>
+    <p class="m-0">{{ $t("du-kannst-das-nicht-rueckgaengig-machen") }}</p>
     <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="danger"> Löschen </b-button>
+      <b-button @click="ok" variant="danger">{{ $t("loeschen") }}</b-button>
       <b-button @click="cancel" variant="outline-secondary">
-        Abbrechen
+        {{ $t("abbrechen") }}
       </b-button>
     </template>
   </b-modal>
@@ -34,7 +34,6 @@ export default {
       this.deleteSeasonTeamId = null;
     },
     deleteSeasonTeam() {
-      console.log("Deleting", this.deleteSeasonTeamId);
       SeasonTeamService.remove(this.deleteSeasonTeamId).then(() => {
         this.$emit("seasonTeamDeleted", this.deleteSeasonTeamId);
       });

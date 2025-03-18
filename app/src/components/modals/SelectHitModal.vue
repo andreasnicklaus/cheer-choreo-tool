@@ -4,7 +4,7 @@
     centered
     @ok="() => selectHit()"
     @hidden="() => (hitIdToUpdate = null)"
-    title="Welchen Eintrag willst du ändern?"
+    :title="$t('modals.selectHit.welchen-eintrag-willst-du-aendern')"
   >
     <b-form-radio-group
       id="hitToUpdateSelectGroup"
@@ -15,8 +15,10 @@
       autofocus
     />
     <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="success"> Auswählen </b-button>
-      <b-button @click="cancel" variant="outline-danger"> Abbrechen </b-button>
+      <b-button @click="ok" variant="success">{{ $t("auswaehlen") }}</b-button>
+      <b-button @click="cancel" variant="outline-danger">{{
+        $t("abbrechen")
+      }}</b-button>
     </template>
   </b-modal>
 </template>

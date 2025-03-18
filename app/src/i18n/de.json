@@ -1,0 +1,678 @@
+{
+  "abbrechen": "Abbrechen",
+  "abkuerzung": "Abkürzung",
+  "accountView": {
+    "bereits-bestaetigt": "Diese E-Mail-Adresse hast du bereits bestätigt.",
+    "bestaetigt": "bestätigt",
+    "check-email": "Bitte schaue in deinem E-Mail-Postfach nach und bestätige deine E-Mail-Adresse mit dem darin enthaltenen Link!",
+    "das-hat-nicht-funktioniert": "Das hat nicht funktioniert",
+    "erstellt-am": "Erstellt am",
+    "konto-loeschen": "Konto löschen",
+    "nicht-bestaetigt": "nicht bestätigt",
+    "no-email": "keine E-Mail bekannt",
+    "nutzername-nicht-erlaubt": "Dein neuer Nutzername ist nicht erlaubt. Entweder ist der Nutzername leer oder es gibt schon einen Nutzer mit dem Namen.",
+    "passwort-aendern": "Passwort ändern",
+    "unbekannter-fehler": "Ein unbekannter Fehler ist aufgetreten. Lade die Seite neu oder logge dich erneut ein, um die Seite anzuzeigen.",
+    "zuletzt-geaendert-am": "Zuletzt geändert am"
+  },
+  "achter": "Achter",
+  "alle-auswaehlen": "Alle auswählen",
+  "anmelden": "Anmelden",
+  "app-install": {
+    "app-herunterladen": "App herunterladen!",
+    "install-info": "Die App nimmt keinen Speicherplatz auf deinem Gerät ein und erleichtert das Starten der Anwendung!",
+    "installieren": "INSTALLIEREN",
+    "nein-danke": "Nein, danke!"
+  },
+  "auswaehlen": "Auswählen",
+  "auswahl-wechseln": "Auswahl wechseln",
+  "bist-du-sicher": "Bist du sicher?",
+  "choreo": "Choreo | Choreos",
+  "choreo-planer-icon": "Choreo Planer Icon",
+  "consent": {
+    "ablehnen": "Ablehnen",
+    "einwilligen": "Einwilligen",
+    "info-text": "Diese Webseite verwendet Matomo, um den Datenverkehr zu analysieren und uns dabei zu helfen, Ihr Nutzererlebnis zu verbessern. Wir verarbeiten Browser- und Geräteinformationen, und Cookies werden in Ihrem Browser gespeichert. Diese Daten werden nur von uns und unserer Webhosting-Plattform verarbeitet. Mehr Informationen finden Sie in der {0}."
+  },
+  "count": "Count | Counts",
+  "countOverview": {
+    "alle": "Alle",
+    "alle-teilnehmer-in-der-aufstellung-speichern": "Alle Teilnehmer in der Aufstellung speichern",
+    "aufstellung-hinzufuegen": "Aufstellung hinzufügen",
+    "bearbeiten": "bearbeiten",
+    "count-eintrag-hinzufuegen": "Count-Eintrag hinzufügen",
+    "dieser-count": "Dieser Count",
+    "fuer-diesen-count-hast-du-noch-nichts-geplant": "Für diesen Count hast du noch nichts geplant",
+    "hit-name-min-laenge": "Min. 3 Zeichen",
+    "loeschen": "löschen",
+    "name-des-hits": "Name des Hits",
+    "start-vor-ende": "Der Start deiner Aufstellung muss vor dem Ende liegen!",
+    "zum-naechsten-count-verschieben": "Zum nächsten Count verschieben",
+    "zum-vorigen-count-verschieben": "Zum vorigen Count verschieben"
+  },
+  "countsheet": "Countsheet | Countsheets",
+  "datenschutz": {
+    "aenderungen-der-datenschutzerklaerung": "Änderungen der Datenschutzerklärung",
+    "aenderungen-der-datenschutzerklaerung-text": "Ich behalte mir vor, diese Datenschutzerklärung bei Bedarf anzupassen, um den rechtlichen Anforderungen zu entsprechen oder Änderungen meines Online-Tools umzusetzen. Die jeweils aktuelle Version ist auf dieser Website abrufbar.",
+    "allgemeine-hinweise": "Allgemeine Hinweise",
+    "allgemeine-hinweise-text": "Der Schutz Ihrer persönlichen Daten ist mir ein besonderes Anliegen. Ich verarbeite Ihre Daten ausschließlich auf Grundlage der gesetzlichen Bestimmungen (DSGVO, TMG). In dieser Datenschutzerklärung informiere ich Sie über die wichtigsten Aspekte der Datenverarbeitung im Zusammenhang mit der Nutzung meines Online-Tools „Choreo Planer“.",
+    "datenschutzerklaerung": "Datenschutzerklärung",
+    "ihre-rechte": "Ihre Rechte",
+    "ihre-rechte-text": "Sie haben jederzeit das Recht auf Auskunft über die über Sie gespeicherten Daten, deren Herkunft und Empfänger sowie den Zweck der Datenverarbeitung. Zusätzlich haben Sie das Recht auf Berichtigung, Sperrung oder Löschung dieser Daten, sofern zutreffend. Wenden Sie sich dazu bitte an:",
+    "kontakt": "Kontakt",
+    "kontakt-text": "Für Fragen zur Verarbeitung Ihrer Daten oder zu dieser Datenschutzerklärung kontaktieren Sie mich bitte unter:",
+    "sicherheit-der-datenverarbeitung": "Sicherheit der Datenverarbeitung",
+    "sicherheit-der-datenverarbeitung-text": "Ich setze angemessene technische und organisatorische Maßnahmen ein, um sicherzustellen, dass Ihre Daten vor Verlust, Missbrauch oder unberechtigtem Zugriff geschützt sind.",
+    "verantwortlich-fuer-die-datenverarbeitung": "Verantwortlich für die Datenverarbeitung",
+    "verantwortlicher": "Verantwortlicher",
+    "verarbeitung-personenbezogener-daten": "Verarbeitung personenbezogener Daten",
+    "verarbeitung-personenbezogener-daten-text-1": "Speicherung von Daten: Das Online-Tool „Choreo Planer“ ist vollständig kostenlos nutzbar. Es werden keine personenbezogenen Daten der Nutzer erhoben, gespeichert oder verarbeitet, die zur Identifikation von Personen verwendet werden könnten.",
+    "verarbeitung-personenbezogener-daten-text-2": "Verwendung von Cookies: Die Website verwendet keine Cookies, um Nutzerdaten zu speichern oder zu verfolgen.",
+    "verarbeitung-personenbezogener-daten-text-3": "Server-Logfiles: Beim Besuch der Website werden technische Daten automatisch durch den Webserver erfasst (z. B. IP-Adresse, Datum und Uhrzeit des Zugriffs, aufgerufene Seiten). Diese Daten werden anonymisiert gespeichert und dienen ausschließlich der technischen Überwachung und Verbesserung des Betriebs. Eine Zuordnung zu bestimmten Personen erfolgt nicht.",
+    "weitergabe-von-daten-an-dritte": "Weitergabe von Daten an Dritte",
+    "weitergabe-von-daten-an-dritte-text": "Ihre Daten werden nicht verkauft, vermietet oder anderweitig an Dritte weitergegeben. Es erfolgt keinerlei Weitergabe von Daten zu kommerziellen oder nicht kommerziellen Zwecken."
+  },
+  "download": "Download",
+  "du-kannst-das-nicht-rueckgaengig-machen": "Du kannst das nicht rückgängig machen.",
+  "du-kannst-diese-aktion-nicht-rueckgaengig-machen": "Du kannst diese Aktion nicht rückgängig machen.",
+  "e-mail-adresse": "E-Mail-Adresse",
+  "editView": {
+    "alle-mitglieder-deines-teams-stehen-schon-auf-der-matte": "Alle Mitglieder deines Teams stehen schon auf der Matte.",
+    "anleitung": "Anleitung",
+    "auf-die-matte-stellen": "{name} auf die Matte stellen",
+    "auswechseln": "{name} auswechseln",
+    "beim-bearbeiten-den-count-mitwechseln": "Beim Bearbeiten den Count mitwechseln",
+    "bisher-steht-noch-kein-teammitglied-auf-der-matte": "Bisher steht noch kein Teammitglied auf der Matte.",
+    "choreo-loeschen": "Choreo löschen",
+    "deine-choreo-wurde-gespeichert": "Deine Choreo wurde gespeichert",
+    "einwechseln": "{name} einwechseln",
+    "farbe": "Farbe",
+    "gespeichert": "Gespeichert",
+    "laenge-anpassen": "Länge anpassen",
+    "nicht-teilnehmende-mitglieder-des-teams": "Nicht teilnehmende Mitglieder des Teams",
+    "positionen-horizontal-und-vertikal-ausrichten": "Positionen horizontal und vertikal ausrichten",
+    "video-exportieren": "Video exportieren",
+    "von-der-matte-nehmen": "{name} von der Matte nehmen",
+    "wurde-gespeichert": "wurde gespeichert",
+    "zum-anfang-springen": "Zum Anfang springen",
+    "zum-ende-springen": "Zum Ende springen",
+    "zum-naechsten-count-springen": "Zum nächsten Count springen",
+    "zum-vorigen-count-springen": "Zum vorigen Count springen"
+  },
+  "erfolgreich": "Erfolgreich",
+  "erforderlich": "Erforderlich",
+  "errors": {
+    "offline": "Die Server sind zurzeit offline. Bitte versuche es später nochmal!",
+    "unerwarteter-fehler": "Unerwarteter Fehler. Bitte kontaktiere uns."
+  },
+  "erstellen": "Erstellen",
+  "failMessages": {
+    "check-ich-nicht": "Check ich nicht :/",
+    "computer-sagt-nein": "Computer sagt Nein!",
+    "da-dumm": "Da-dumm...",
+    "oh-oh": "Oh, oh!",
+    "probiers-nochmal": "Probier's nochmal!",
+    "satz-mit-x": "Satz mit X",
+    "traurige-trompete": "~ Traurige Trompete ~"
+  },
+  "faq": {
+    "allgemeines": "Allgemeines",
+    "datenschutz": {
+      "answer": "Bitte ließ dir zu Fragen bzgl. des Datenschutzes die [Datenschutzerklärung](/datenschutz) durch."
+    },
+    "funktionen-and-features": "Funktionen & Features",
+    "funktionen-wuenschen": {
+      "answer": "**Ja!** Wir freuen uns über jede Funktion, die wir in den Choreo Planer einbauen können. Wenn du eine Funktion wünschst, kannst du uns gerne eine Mail an [info@choreo-planer.de](mailto:info@choreo-planer.de) oder eine DM auf Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner</a> schreiben. Wir werden uns dann dann überlegen, ob wir diese Funktion einbauen können. Wenn wir die Funktion einbauen, werden wir dich natürlich darüber informieren.",
+      "question": "Kann ich mir Funktionen wünschen?"
+    },
+    "neue-season": {
+      "answer": "Nein! Du kannst ganz einfach mit deinem bestehenden Team eine neue Season anfangen und den Kader neu aufstellen. Dabei kannst du sogar Teilnehmer aus anderen Seasons oder sogar anderen Teams in die neue Season mitnehmen.",
+      "question": "Muss ich für jede Season ein neues Team anlegen?"
+    },
+    "probleme-loesen": "Probleme lösen",
+    "probleme-melden": {
+      "answer": "Probleme können zur Zeit nur per Mail an [info@choreo-planer.de](mailto:info@choreo-planer.de) oder als DM auf Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner</a> gemeldet werden. Ein Kontaktformular ist geplant.",
+      "question": "Wie kann ich Probleme melden?"
+    },
+    "versehentlich-geloescht": {
+      "answer": "Ja, aber nicht du selber! Du kannst dich jeder Zeit dazu an uns wenden. Dann können folgende Daten wiederhergestellt werden: <ul class=\"ml-3\"> <li>Nutzerkonten</li> <li>Vereine</li> <li>Teams</li> <li>Seasons</li> <li>Choreos</li> <li>Kader</li> </ul> Bitte beschreibe in deiner Kontaktaufnahme per Mail an [info@choreo-planer.de](mailto:info@choreo-planer.de) oder als DM auf Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner</a> gleich das Datum und die Uhrzeit der Löschung, damit wir dein Problem schnell lösen können.",
+      "question": "Ich habe aus Versehen etwas gelöscht. Kann ich das rückgängig machen?"
+    },
+    "warum-offline": {
+      "answer": "Der Choreo Planer ist ein **kostenloses** Projekt. Daher kann es sein, dass die Server nicht immer erreichbar sind. Wir haben hier eine Liste an Gründen vorbereitet, warum du die Server nicht erreichen kannst: <ol class=\"ml-3\"> <li> Die Server werden von uns gewartet. In diesem Fall kannst du nichts machen, außer zu warten und hoffen, dass wir schnell fertig sind. Wenn du wissen möchtest, wann die Server wieder erreichbar sind, kannst du uns gerne eine Mail an [info@choreo-planer.de](mailto:info@choreo-planer.de) oder eine DM auf Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner</a> schreiben. </li> <li> Unsere Internetverbindung ist ausgefallen. Da kein Budget zur Verfügung steht, um eine ausfallsichere Internetverbindung zu versichern, kann es vorkommen, dass unsere Internetverbindung ausfällt. In diesem Fall kannst du nichts machen, außer zu warten und hoffen, dass wir schnell fertig sind. Wenn du wissen möchtest, wann die Server wieder erreichbar sind, kannst du uns gerne eine Mail an [info@choreo-planer.de](mailto:info@choreo-planer.de) oder eine DM auf Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner</a> schreiben. </li> <li> Deine Internetverbindung ist ausgefallen. Wenn du unsere Webseite bereits einmal geladen hast, kannst du zwar die Webseite nochmal ohne Internetverbindung laden, aber du kannst keine neuen Daten laden. In diesem Fall kannst du selber versuchen, deine Internetverbindung wiederherzustellen. Wenn du dabei Hilfe brauchst, kannst du uns keine E-Mail schreiben, denn du hast ja kein Internet. </li> </ol> Wenn du den Choreo Planer gerne unterstützen möchtest, kannst du uns unterstützen, indem du an der Projektentwicklung mitwirkst oder eine Spende machst. Dafür haben wir noch keine Möglichkeit vorbereitet, aber wir arbeiten daran. Wenn du uns unterstützen möchtest, kannst du uns gerne eine Mail an [info@choreo-planer.de](mailto:info@choreo-planer.de) oder eine DM auf Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner</a> schreiben.",
+      "question": "Warum können die Server offline sein?"
+    },
+    "was-ist-choreo-planer": {
+      "answer": "Der Choreo Planer ist ein **kostenloses** Projekt, welches für Cheerleader entwickelt wird. Der Choreo Planer soll es ermöglichen, Choreos zu erstellen und diese mit anderen zu teilen. Der Choreo Planer soll es ermöglichen, die Planung von Choreos zu vereinfachen und zu digitalisieren. Vor allem soll es möglich sein, Choreos in einer vereinfachten Version den Teilnehmern beizubringen. Die Endprodukte (Countsheets, Bilder und Videos) sollen an die Teams verteilt werden, um das Lernen der Choreos einfacher zu machen. Damit wird dein Team zum **digitalen Team**. Das bedeutet, dass du dein Team nicht mehr mit Zetteln und Stiften arbeiten musst, sondern zu einem der Vorreiter der digitalen Welt wird.",
+      "question": "Was ist der Choreo Planer?"
+    },
+    "weitergabe-an-dritte": {
+      "answer": "**Nein!** Es gibt für uns keinen Anlass deine Daten an Dritte weiterzugeben. Die Absicherung der persönlichen Daten deiner Teammitglieder, insbesondere Minderjähriger, ist uns sehr wichtig. Daher werden deine Daten nicht an Dritte weitergegeben. Bitte ließ dir zu Fragen bzgl. des Datenschutzes die [Datenschutzerklärung](/datenschutz) durch.",
+      "question": "Werden meine Daten an Dritte weitergegeben?"
+    },
+    "wie-viele-teams": {
+      "answer": "Kurz und knapp: So viele du willst! Es ist möglich, beliebig viele Vereine, Teams, Season, Choreos und Teilnehmer anzulegen.",
+      "question": "Wie viele Teams kann ich verwalten?"
+    },
+    "zielgruppe": {
+      "answer": "Der Choreo Planer ist für **Trainerinnen und Trainer von Cheerleading-Teams**. Die Endprodukte (Countsheets, Bilder und Videos) sollen an die Teams geteilt werden, um das Lernen der Choreos einfacher zu machen.",
+      "question": "Für wen ist der Choreo Planer gedacht?"
+    },
+    "zusammenarbeiten": {
+      "answer": "Ein \"Live-Sharing\" wie es aus Google Docs oder ähnlichen Online-Tools bekannt ist, ist nicht geplant. Stattdessen ist es vorgesehen, dass Trainerinnen und Trainer eines Vereins sich **einen Zugang teilen**. Damit soll es dann auch einfach sein, Teilnehmer zwischen Teams zu verschieben. Ein mögliches \"Extrazugang anlegen\" für ein Konto ist geplant.",
+      "question": "Kann ich mit anderen zusammenarbeiten?"
+    }
+  },
+  "feedback": {
+    "abschicken": "Abschicken",
+    "dankeschoen": "Dankeschön!",
+    "hilf-uns-besser-zu-werden": "Hilf uns, besser zu werden! Gib uns ein kurzes Feedback, um deine Erfahrung mit dem Choreo Planer noch besser zu machen.",
+    "nicht-mehr-fragen": "Nicht mehr fragen",
+    "sag-uns-deine-meinung": "Sag uns deine Meinung",
+    "schliessen": "Schließen",
+    "vielen-dank": "Vielen Dank! Wir haben dein Feedback gespeichert und werden gleich anfangen, an deinen Verbesserungsvorschlägen zu arbeiten.",
+    "was-gefaellt-dir-am-choreo-planer": "Was gefällt dir am Choreo Planer? Was nicht?"
+  },
+  "general": {
+    "ChoreoPlaner": "Choreo Planer",
+    "help": "Hilfe"
+  },
+  "HelpView": {
+    "fuer-deine-suche-gibt-es-keine-ergebnisse": "Für deine Suche \"{searchTerm}\" gibt es keine Ergebnisse",
+    "hilfe-bekommen": "Hilfe bekommen",
+    "nicht-die-richtige-antwort-dabei": "Nicht die richtige Antwort dabei gewesen? Kontaktiere uns unter",
+    "oder-auf-instagram": "oder auf Instagram",
+    "und-beschreibe-dein-problem": "und beschreibe dein Problem."
+  },
+  "hits": {
+    "arabesque": "Arabesque",
+    "basket": "Basket",
+    "bogengang": "Bogengang",
+    "clap": "Clap",
+    "clean": "Clean",
+    "cradle": "Cradle",
+    "dip": "Dip",
+    "elevator": "Elevator",
+    "ende": "Ende",
+    "flick-flack": "Flick Flack",
+    "full-around": "Full around",
+    "go": "Go",
+    "greifen": "Greifen",
+    "half-around": "Half around",
+    "half-up": "Half Up",
+    "high": "High",
+    "hinten": "hinten",
+    "kneel": "Kneel",
+    "knien": "Knien",
+    "lib": "Lib",
+    "links": "links",
+    "log-roll": "Log roll",
+    "loslaufen": "Loslaufen",
+    "low": "Low",
+    "nach-hinten": "nach hinten",
+    "nach-links": "nach links",
+    "nach-rechts": "nach rechts",
+    "nach-vorne": "nach vorne",
+    "pinguin": "Pinguin",
+    "playmobil": "Playmobil",
+    "pyra": "Pyra",
+    "rad": "Rad",
+    "radwende": "Radwende",
+    "raussetzen": "Raussetzen",
+    "rechts": "rechts",
+    "scale": "Scale",
+    "set": "Set",
+    "spagat": "Spagat",
+    "start": "Start",
+    "stretch": "Stretch",
+    "tick-tock": "Tick Tock",
+    "toetouch": "Toetouch",
+    "trophy": "Trophy",
+    "umgreifen": "Umgreifen",
+    "vorne": "vorne",
+    "wurf": "Wurf"
+  },
+  "Home": {
+    "aktuelle-season-des-teams": "Aktuelle Season des Teams",
+    "anmelden-mit-benutzername-und-passwort": "Anmelden mit Benutzername und Passwort",
+    "aufstellungen-als-bild": "Aufstellungen als Bild",
+    "aufstellungen-erstellen": "Erstelle Aufstellungen, indem du die Punkte auf der Matte an die richtige Stelle ziehst",
+    "beispiel-countsheet": "Beispiel-Countsheet",
+    "bereite-choreos-vor": "Bereite Choreos speziell für Meisterschaften vor",
+    "bestimme-fuer-jeden-eintrag": "Bestimme für jeden Eintrag, ob er für alle oder nur für bestimmte Teilnehmerinnen und Teilnehmer gilt",
+    "choreo-benennen": "Gib deiner Choreo einen Namen",
+    "choreoplanung": "Choreoplanung",
+    "choreos-erstellen": "Choreos erstellen",
+    "choreos-planen": "Choreos planen",
+    "countsheet-als-pdf": "Countsheet als PDF",
+    "countsheets-teilen": "Countsheets teilen",
+    "dateigenerierung": "Dateigenerierung",
+    "datenarchivierung": "Datenarchivierung",
+    "datensicherung": "Datensicherung",
+    "definiere-eigene-seasons": "Definiere eigene Seasons, die sich nicht an das Wettkampfjahr halten",
+    "dein": "Dein",
+    "deine-daten-werden-verwendet": "Deine Daten werden nur für die Darstellung deiner Choreos verwendet",
+    "download-als-mp4-oder-webm": "Download als MP4 oder WEBM",
+    "eintraege-im-countsheet": "Einträge im Countsheet",
+    "eintraege-machen": "Mache Einträge in dein Countsheet, wer wann was macht",
+    "erstelle-countsheets-als-video": "Erstelle Countsheets als Video oder als PDF für alle oder nur für bestimmte Teilnehmerinnen und Teilnehmer",
+    "fuelle-das-countsheet": "Fülle das Countsheet",
+    "gehe-zu-als-video-exportieren": "Wenn du zufrieden bist, gehe zu \"als Video exportieren\"",
+    "generiere-das-video": "Generiere das Video",
+    "generierung-lokal-im-browser": "Generierung lokal im Browser",
+    "gib-deinem-ersten-verein-einen-namen": "Gib deinem Verein einen Namen",
+    "gib-videos-und-countsheets": "Gib Videos und Countsheets an deine Teilnehmer mit nach Hause",
+    "importiere-teilnehmer-in-neue-seasonkader": "Importiere Teilnehmer in neue Seasonkader",
+    "interesse-geweckt": "Interesse geweckt?",
+    "lade-das-pdf-herunter": "Lade das PDF herunter",
+    "lade-das-video-runter": "Lade das Video runter",
+    "laenge-bestimmen": "Bestimme, wie lange die Aufstellungen gehalten werden sollen und von wem",
+    "laenge-in-counts-and-achtern": "Länge in Counts & Achtern",
+    "mache-eintraege": "Mache Einträge ins Countsheet, während du deine Choreo erstellst",
+    "mache-last-minute-auswechslungen": "Mache Last-Minute-Auswechslungen ganz einfach mit 2-3 Klicks",
+    "meisterschaftsvorbereitung": "Meisterschaftsvorbereitung",
+    "mit-count": "Mit Count",
+    "mit-countsheet-eintraegen": "Mit Countsheet-Einträgen",
+    "mit-logo": "Mit Logo",
+    "mit-namen": "Mit Namen",
+    "mitgliederverwaltung": "Mitgliederverwaltung",
+    "name-deines-teams": "Name deines Teams",
+    "name-der-choreo": "Name der Choreo",
+    "per-passwort-gesicherter-datenzugriff": "Per Passwort gesicherter Datenzugriff",
+    "regelmaessige-datensicherung": "Regelmäßige Datensicherung auf unserem Server",
+    "seasonkader-fuellen": "Seasonkader füllen",
+    "seasonwechsel": "Seasonwechsel",
+    "soll-dein-logo": "Soll das Video mit deinem Logo erstellt werden?",
+    "soll-durchlaufendem-count": "Soll das Video einen durchlaufendem Count haben?",
+    "soll-mit-deinem-verein": "Soll das Video mit deinem Vereins- und Mannschaftsnamen erstellt werden?",
+    "soll-mit-eintraegen": "Soll das Video Einträge aus dem Countsheet zeigen?",
+    "speicherung-auf-unseren-servern": "Speicherung auf unseren Servern",
+    "starte-neue-seasons-wenn-du-soweit-bist": "Starte neue Seasons, wenn du soweit bist",
+    "team-anlegen": "Team anlegen",
+    "teile-choreos-einfach-als-video": "Teile Choreos einfach als Video",
+    "teile-es-in-eurem-team-chat": "Teile es in eurem Team-Chat",
+    "Umdrehen": "Umdrehen",
+    "verschluesselter-datentransfer": "Verschlüsselter Datentransfer",
+    "verwaltung-nach-season": "Verwaltung nach Season",
+    "video-export": "Video-Export",
+    "videos-als-mp4-und-webm": "Videos als MP4 und WEBM",
+    "videos-erstellen": "Videos erstellen",
+    "videos-herunterladen": "Videos herunterladen",
+    "waehle-aus-wer-soll": "Wähle aus, wer auf dem Video erscheinen soll",
+    "waehle-mit-allen-aus": "Wähle aus, ab du ein Video mit allen auf der Matte oder ausgewählten Personen haben willst",
+    "warte-bis-video": "Warte, bis dein Video fertig ist",
+    "zum-loslegen": "Zum Loslegen einfach anmelden und das erste Team anlegen:"
+  },
+  "impressumView": {
+    "angaben-gemaess-5-tmg": "Angaben gemäß § 5 TMG",
+    "haftung-fuer-inhalte": "Haftung für Inhalte",
+    "haftung-fuer-inhalte-text-1": "Als Diensteanbieter bin ich gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG bin ich als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen.",
+    "haftung-fuer-inhalte-text-2": "Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unberührt. Eine diesbezügliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei Bekanntwerden von entsprechenden Rechtsverletzungen werde ich diese Inhalte umgehend entfernen.",
+    "haftung-fuer-links": "Haftung für Links",
+    "haftung-fuer-links-text": "Mein Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte ich keinen Einfluss habe. Deshalb kann ich für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar. Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werde ich derartige Links umgehend entfernen.",
+    "impressum": "Impressum",
+    "online-streitbeilegung": "Online-Streitbeilegung",
+    "online-streitbeilegung-text-1": "Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:",
+    "online-streitbeilegung-text-2": "Ich bin nicht verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen und nehme daran auch nicht teil.",
+    "urheberrecht": "Urheberrecht",
+    "urheberrecht-text": "Die durch den Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers. Downloads und Kopien dieser Seite sind nur für den privaten, nicht kommerziellen Gebrauch gestattet. Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden, werden die Urheberrechte Dritter beachtet. Insbesondere werden Inhalte Dritter als solche gekennzeichnet. Sollten Sie trotzdem auf eine Urheberrechtsverletzung aufmerksam werden, bitte ich um einen entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen werde ich derartige Inhalte umgehend entfernen.",
+    "verantwortlich-fuer-den-inhalt": "Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:"
+  },
+  "jahr": "Jahr",
+  "jetzt-loeschen": "Jetzt löschen",
+  "keine-auswaehlen": "Keine auswählen",
+  "konto": "Konto",
+  "lineup": "Aufstellung | Aufstellungen",
+  "loading": "Lädt",
+  "loading-slogans": {
+    "1-3-5-7": "1 - 3 - 5 - 7!",
+    "aufstellungen-werden-gemalt": "Aufstellungen werden gemalt...",
+    "dehnen": "Dehnen...",
+    "eintraege-werden-geschrieben": "Einträge werden geschrieben...",
+    "go-team": "Go, {team}!",
+    "haare-werden-geflochten": "Haare werden geflochten...",
+    "maskottchen-wird-hingelegt": "Maskottchen wird hingelegt...",
+    "matte-wird-aufgezeichnet": "Matte wird aufgezeichnet...",
+    "schleifen-werden-gerichtet": "Schleifen werden gerichtet...",
+    "schminke-wird-aufgetragen": "Schminke wird aufgetragen...",
+    "schuhe-werden-gebunden": "Schuhe werden gebunden...",
+    "sprungboden-wird-aufgebaut": "Sprungboden wird aufgebaut...",
+    "tabelle-wird-gemalt": "Tabelle wird gemalt...",
+    "uniformen-werden-sortiert": "Uniformen werden sortiert...",
+    "zopf-wird-gebunden": "Zöpfe werden gebunden..."
+  },
+  "loeschen": "Löschen",
+  "login": {
+    "benutzername-mindestens-laenge": "Dein Benutzername muss mindestens 6 Zeichen lang sein.",
+    "bitte-angeben": "Bitte angeben",
+    "dein-online-zugang": "Dein Online-Zugang",
+    "du-hast-noch-kein-konto": "Du hast noch kein Konto?",
+    "du-hast-schon-ein-konto": "Du hast schon ein Konto?",
+    "echte-email": "Deine E-Mail-Adresse muss ein valide E-Mail-Adresse sein.",
+    "formular-zuruecksetzen": "Formular zurücksetzen",
+    "gueltig": "Gültig!",
+    "information": "Information",
+    "information-text-1": "Dein Konto ist der {0}. Wähle Nutzername und Passwort frei nach Lust und Laune und teile es anschließend mit deinem Verein.",
+    "information-text-1-highlight": "Zugang für das gesamte Trainerteam",
+    "information-text-2": "{0} Nach der Erstellung deines Kontos wirst du aufgefordert, deinem Verein einen Namen zu geben.",
+    "information-text-2-highlight": "Dein Nutzername muss nicht der Vereinsname sein!",
+    "information-text-3": "Du kannst mit einem Konto {0}! Es ist möglich, mehrere Vereine in einem Benutzerkonto zusammenzufassen, aber du kannst immer nur einen Verein gleichzeitig bearbeiten.",
+    "information-text-3-highlight": "mehrere Verein verwalten",
+    "meta": {
+      "dein-zugang-zu-allen-funktionen": "Dein Zugang zu allen Funktionen"
+    },
+    "passwort-mindest-laenge": "Dein Passwort muss mindestens 6 Zeichen lang sein.",
+    "passwort-wiederholen": "Passwort wiederholen",
+    "warum-email": "Deine E-Mail-Adresse brauchen wir, um dein Passwort zurücksetzen oder dein Konto wiederherstellen zu können.",
+    "wiederholung-gleicht-nicht-passwort": "Die Wiederholung gleicht nicht dem Passwort."
+  },
+  "meta": {
+    "account": {
+      "description": "Verwalte dein Konto und nimm Aktionen wie Passwortänderungen vor."
+    },
+    "datenschutz": {
+      "description": "Die Datenschutzerklärung des Choreo Planer. Angaben und Informationen zur Kontaktaufnahme und Haftung bzgl. der Nutzung des Choreo Planers."
+    },
+    "defaults": {
+      "description": "Plane deine Choreografien schnell und einfach mit dem Choreo Planer! Perfekt für Cheerleading, Tanz und Bodenturnen. 100% kostenlos. Jetzt ausprobieren!",
+      "keywords": "Choreo, Choreographie, Cheer, Cheerleading, Tanz, Planer, Editor, Video, Anmelden, Registrieren, Countsheet",
+      "title": "Das kostenlose Online-Tool für Choreo-Sport"
+    },
+    "editView": {
+      "description": "Bearbeite deine Choreo und erstelle Aufstellungen und Countsheets."
+    },
+    "helpView": {
+      "description": "Erhalte Infos über den Choreo Planer und Antworten auf deine Fragen und Probleme. In unserem FAQ beantworten alle häufig gestellten Fragen über die Nutzung und Funktionen des Choreo Planers."
+    },
+    "impressum": {
+      "description": "Das Impressum des Choreo Planer. Angaben und Informationen zur Kontaktaufnahme und Haftung bzgl. der Nutzung des Choreo Planers."
+    },
+    "loginView": {
+      "description": "Melde dich jetzt an und plane deine Choreografien! Zugriff auf alle Funktionen des kostenlosen Choreo Planers für Cheerleading, Tanz und Turnen."
+    },
+    "pdfView": {
+      "description": "Exportiere das Countsheet deiner Choreo als PDF!"
+    },
+    "teamView": {
+      "description": "Bearbeite deine Teams und deren Mitglieder!"
+    },
+    "video": {
+      "description": "Exportiere die Aufstellungen deiner Choreo als Video!"
+    }
+  },
+  "modals": {
+    "change-length": {
+      "choreo-min-length": "Du kannst keine Choreo mit 0 Counts haben.",
+      "counts-zusaetzliche-counts-nach-den-achtern": "Counts (Zusätzliche Counts nach den Achtern)",
+      "geschaetzte-zeit": "Geschätzte Zeit:",
+      "laenge-aendern": "Länge ändern",
+      "laenge-der-choreo-aendern": "Länge der Choreo ändern"
+    },
+    "change-password": {
+      "dein-neues-passwort-ist-nicht-erlaubt": "Dein neues Passwort ist nicht erlaubt.",
+      "dein-passwort-ist-gueltig": "Dein Passwort ist gültig!",
+      "dein-passwort-wurde-geaendert": "Dein Passwort wurde geändert",
+      "die-wiederholung-entspricht-deinem-neuen-passwort": "Die Wiederholung entspricht deinem neuen Passwort!",
+      "die-wiederholung-entspricht-nicht-dem-ersten-passwort": "Die Wiederholung entspricht nicht dem ersten Passwort",
+      "min-password-length": "Min. 6 Zeichen",
+      "neues-passwort": "Neues Passwort",
+      "password-aendern": "Password ändern",
+      "passwort-geaendert": "Passwort geändert",
+      "wiederholung": "Wiederholung"
+    },
+    "confirm-email": {
+      "bestaetige-deine-e-mail-adresse": "Bestätige deine E-Mail-Adresse",
+      "info-1": "Um dein Konto zu aktivieren, bestätige deine E-Mail-Adresse mit dem Link aus der E-Mail, die wir dir geschickt haben.",
+      "info-2": "Überprüfe auch dein Spam-Postfach, um die E-Mail zu finden."
+    },
+    "create-choreo": {
+      "example-name": "Landesmeisterschaft, RM {0}, ...",
+      "extra-count-muss-zwischen-0-und-7-liegen": "Extra-Count muss zwischen 0 und 7 liegen",
+      "geschaetzte-zeit-timeestimationstring": "Geschätzte Zeit: {0}",
+      "laenge": "Länge:",
+      "min-achter": "Achter muss größer als 0 sein",
+      "min-choreoname-length": "Min. 2 Zeichen"
+    },
+    "create-club": {
+      "example-team-names": "TSG Salach e.V., Glamorous Cheerleader, ...",
+      "min-vereinsname-length": "Min. 3 Zeichen",
+      "neuer-verein": "Neuer Verein",
+      "vereinsname": "Vereinsname"
+    },
+    "create-hit": {
+      "wie-heisst-der-neue-eintrag": "Wie heißt der neue Eintrag?"
+    },
+    "create-lineup": {
+      "ende": "Ende",
+      "ist-in-anderer-aufstellung": "(Ist in anderer Aufstellung)",
+      "neue-aufstellung": "Neue Aufstellung",
+      "start": "Start"
+    },
+    "create-member": {
+      "es-existiert-bereits-ein-mitglied-mit-dieser-abkuerzung": "Es existiert bereits ein Mitglied mit dieser Abkürzung.",
+      "es-konnte-keine-abkuerzung-automatisch-erstellt-werden": "Es konnte keine Abkürzung automatisch erstellt werden.",
+      "mitglied-bearbeiten": "Mitglied bearbeiten",
+      "neues-mitglied": "Neues Mitglied"
+    },
+    "create-season": {
+      "choreos-nach-2200": "Choreos nach 2200 sind nicht erlaubt.",
+      "choreos-vor-1990": "Choreos vor 1990 sind nicht erlaubt.",
+      "example-event-name": "Sommer-Auftritte, ...",
+      "extra-events": "Extra Events",
+      "jahr-info": "Das Jahr einer Extra-Season hilft beim Sortieren. Lass das Feld leer, wenn der Kader keinem Jahr zuzuordnen ist.",
+      "keine-mitglieder-kopieren": "Keine Mitglieder kopieren",
+      "min-team-mitglied": "Min. 1 Team-Mitglied erforderlich",
+      "name-der-event-gruppe": "Name der Event-Gruppe:",
+      "name-info": "Der Name einer Extra-Season beschreibt für welchen Zweck oder Zeitraum ein Kader und Choreos bestehen.",
+      "neue-season": "Neue Season",
+      "regulaere-season": "Reguläre Season",
+      "team-mitglieder": "Team-Mitglieder",
+      "team-team-name": "Team: {0}"
+    },
+    "create-team": {
+      "example-team-names": "Phoenix, Glamorous Blush, ...",
+      "min-team-name-laenge": "Min. 3 Zeichen"
+    },
+    "delete-account": {
+      "account-loeschen": "Account löschen",
+      "info": "Wenn du dein Konto löscht, werden alle damit verbundenen Informationen gelöscht. Dazu gehören Vereine, Teams, Mitglieder, Choreos, Aufstellungen und Countsheets.",
+      "verstanden": "Ich habe verstanden und möchte fortfahren."
+    },
+    "delete-hit": {
+      "countsheet-eintrag-loeschen": "Countsheet-Eintrag löschen?"
+    },
+    "delete-lineup": {
+      "aufstellung-loeschen": "Aufstellung löschen?"
+    },
+    "delete-member": {
+      "teilnehmer-loeschen": "Teilnehmer löschen?"
+    },
+    "delete-season": {
+      "season-loeschen": "Season löschen?"
+    },
+    "delete-team": {
+      "team-loeschen": "Team löschen?"
+    },
+    "howto": {
+      "anleitung": "Anleitung",
+      "aufstellung-hinzufuegen": "Aufstellung hinzufügen",
+      "aufstellungen-als-video-downloaden": "Aufstellungen als Video downloaden",
+      "aufstellungen-anlegen": "Aufstellungen anlegen",
+      "aufstellungen-aufteilen": "Aufstellungen aufteilen",
+      "countsheet-als-pdf-downloaden": "Countsheet als PDF downloaden",
+      "countsheet-info-1": "Einträge im Countsheet werden durch den Count, an dem sie passieren, einem Namen und durch eine Liste an Teilnehmern definiert.",
+      "countsheet-info-2": "{0} Klicke auf {1} oder nutze den Shortcuts {2} oder {3} oder mache einen {4} im Countsheet, um einen Neuen Eintrag anzulegen. Dabei kannst du den Namen festlegen und wählen, für wen dieser Eintrag gilt. Standardmäßig wird der Eintrag für den aktuellen Count angelegt.",
+      "countsheet-info-3": "{0} Angelegte Einträge findest in der Liste an Aufstellung und Countsheet-Einträgen. Klicke auf {1} neben dem Eintrag, den du bearbeiten willst oder nutze den Shortcut {2} und klicke nach dem Bearbeiten auf {3}, um deine Änderungen zu speichern.",
+      "countsheet-info-box": "Wenn du dir die Mühe machst anzugeben, für wen der Eintrag gilt, kannst du später persönliche Countsheets austeilen.",
+      "doppelklick-auf-die-zelle": "Doppelklick auf die Zelle",
+      "download-info-1": "{0} Klicke im Menü oben rechts auf {1} und wähle {2} aus, um das Countsheet zusammenzustellen und herunterzuladen.",
+      "download-info-2": "{0} Klicke im Menü oben rechts auf {1} und wähle {2} aus, um dein Video zusammenzustellen und herunterzuladen.",
+      "eintraege-bearbeiten": "Einträge bearbeiten",
+      "eintraege-hinzufuegen": "Einträge hinzufügen",
+      "eintrag-hinzufuegen": "Eintrag hinzufügen",
+      "lineup-text-1": "Aufstellungen definieren, wo sich die Teilnehmer deiner Choreo auf der Matte befinden. Jede Aufstellung besteht aus den Positionen für die Teilnehmer und einer Dauer, wie lange die Aufstellung gehalten wird.",
+      "lineup-text-2": "{0} Um deine erste Aufstellung anzulegen, klicke einfach einen Teilnehmer auf der Matte an und platziere den Marker {1} an die gewünschte Stelle. Es wird automatisch eine neue Aufstellung angelegt oder der Teilnehmer zu einer bestehenden Aufstellung hinzugefügt.",
+      "lineup-text-3": "{0} Wenn Aufstellungen nicht für alle gleich lang gelten, brauchst du auf denselben Count mehrere Aufstellungen. Entferne dafür ggf. Teilnehmer aus der Aufstellung, indem du in der Liste an Aufstellung und Countsheet-Einträgen auf {1} klickst und die Häkchen bei den Teilnehmern entfernst. Klicke dann auf {2}, wähle die Teilnehmer für die zweite Gruppe aus und ziehe die Marker dann auf der Matte an die richtige Stelle.",
+      "steuerung": "Steuerung",
+      "ueberschneidung-warnung": "Wenn du Aufstellungen definierst, die sich für einen Teilnehmer überschneiden, werden Animationen nicht richtig angezeigt!",
+      "video-und-countsheet-downloaden": "Video und Countsheet downloaden"
+    },
+    "import-member": {
+      "fuer-das-team-this-selectedteam-name-gibt-es-bisher-keine-andere-season": "Für das Team {0} gibt es bisher keine andere Season",
+      "team-mitglied": "Team-Mitglied",
+      "team-mitglied-importieren": "Team-Mitglied importieren"
+    },
+    "loading": {
+      "wird-geladen": "Wird geladen"
+    },
+    "mobile-choreo-edit": {
+      "am-handy-nicht-moeglich": "Am Handy nicht möglich",
+      "info-1": "Du kannst aktuell nicht alle Funktionen am Handy nutzen. Choreos zu bearbeiten gehört dazu.",
+      "info-2": "Bitte logge dich an einem Gerät mit größerem Display an, um deine Choreo zu bearbeiten."
+    },
+    "selectHit": {
+      "welchen-eintrag-willst-du-aendern": "Welchen Eintrag willst du ändern?"
+    },
+    "substitution": {
+      "auswechseln": "Auswechseln",
+      "einwechseln": "Einwechseln",
+      "teilnehmer-auswechseln": "Teilnehmer auswechseln"
+    },
+    "video-download": {
+      "format": "Format",
+      "video-herunterladen": "Video herunterladen"
+    }
+  },
+  "name": "Name",
+  "nav": {
+    "ausloggen": "Ausloggen",
+    "checkEmail": {
+      "text": "Du solltest den Link zur Bestätigung in deinem Postfach finden. Bitte überprüfe auch deinen Spam-Ordner.",
+      "title": "Bitte bestätige deine E-Mail-Adresse"
+    },
+    "neue-choreo": "Neue Choreo",
+    "neuer-verein": "Neuer Verein",
+    "neues-team": "Neues Team",
+    "schau-dir-das-an": "Schau dir das an!",
+    "server-sind-offline": "Server sind offline",
+    "server-sind-online": "Server sind online",
+    "start": "Start",
+    "teilen": "Teilen",
+    "uebersicht": "Übersicht",
+    "vereine": "Vereine"
+  },
+  "navigation": {
+    "datenschutz": "Datenschutz",
+    "externe-links": "Externe Links",
+    "facebook": "Facebook",
+    "feedback-geben": "Feedback geben",
+    "github": "Github",
+    "impressum": "Impressum",
+    "instagram": "Instagram",
+    "internalLinks": "Interne Links",
+    "StartPage": "Startseite"
+  },
+  "neu": "Neu",
+  "optionen": "Optionen",
+  "passwort": "Passwort",
+  "pdf": {
+    "alle-namen-warnung": "Wenn du alle Teilnehmer auswählst, werden die Namen nicht auf das Countsheet geschrieben, um Platz zu sparen.",
+    "choreo-laedt": "Choreo lädt",
+    "choreo-name-anzeigen": "Choreo-Name anzeigen",
+    "choreo-wird-geladen": "Choreo wird geladen...",
+    "countsheet-zusammenstellen": "Countsheet zusammenstellen",
+    "das-datum-auf-das-countsheet-schreiben": "Das Datum auf das Countsheet schreiben",
+    "datum-anzeigen": "Datum anzeigen",
+    "den-choreo-namen-auf-das-countsheet-schreiben": "Den Choreo-Namen auf das Countsheet schreiben",
+    "den-team-namen-auf-das-countsheet-schreiben": "Den Team-Namen auf das Countsheet schreiben",
+    "die-namen-der-teilnehmer-auf-das-countsheet-schreiben": "Die Namen der Teilnehmer auf das Countsheet schreiben",
+    "fuer-wen-ist-das-countsheet": "Für wen ist das Countsheet?",
+    "laedt-choreo": "Lädt Choreo",
+    "min-teilnehmer-erforderlich": "Min. 1 Teilnehmer erforderlich",
+    "PDF": "PDF",
+    "pdf-wird-generiert": "PDF wird generiert",
+    "team-name-anzeigen": "Team-Name anzeigen",
+    "teilnehmer-namen-anzeigen": "Teilnehmer-Namen anzeigen"
+  },
+  "personas": {
+    "anna-unersetzlich": "Anna Unersetzlich",
+    "anna-unersetzlich-abk": "AU",
+    "anna-unersetzlich-nick": "Anni",
+    "maxi-supidupi": "Maxi Supidupi",
+    "maxi-supidupi-abk": "MS",
+    "maxi-supidupi-nick": "Maxi",
+    "paulina-flickflack": "Paulina Flickflack",
+    "paulina-flickflack-abk": "PF",
+    "paulina-flickflack-nick": "Pauli",
+    "theresa-toll": "Theresa Toll",
+    "theresa-toll-abk": "TT",
+    "theresa-toll-nick": "Theresa"
+  },
+  "registrieren": "Registrieren",
+  "season": "Season | Seasons",
+  "seasonkader": "Seasonkader",
+  "shortcut-tutorial": {
+    "doppelklick-auf-countsheet-zelle": "Doppelklick auf Countsheet-Zelle",
+    "eintrag-aendern": "Eintrag ändern",
+    "leerzeichen": "Leerzeichen",
+    "naechster-achter": "Nächster Achter",
+    "naechster-count": "Nächster Count",
+    "neuer-eintrag": "Neuer Eintrag",
+    "pfeil-links": "Pfeil links",
+    "pfeil-oben": "Pfeil oben",
+    "pfeil-rechts": "Pfeil rechts",
+    "pfeil-unten": "Pfeil unten",
+    "play-pause": "Play/Pause",
+    "voriger-achter": "Voriger Achter",
+    "voriger-count": "Voriger Count"
+  },
+  "speichern": "Speichern",
+  "spitzname": "Spitzname",
+  "start": {
+    "aktiver-verein": "Aktiver Verein",
+    "choreo-hinzufuegen": "Choreo hinzufügen",
+    "filter": "Filter",
+    "filtere-die-choreo-nach-ihrer-laenge": "Filtere die Choreo nach ihrer Länge",
+    "filtere-die-choreos-nach-season": "Filtere die Choreos nach Season",
+    "filtere-die-choreos-nach-teams": "Filtere die Choreos nach Teams",
+    "hier-kannst-du-noch-nichts-finden": "Hier kannst du noch nichts finden...",
+    "max-laenge": "Max. Länge:",
+    "min-laenge": "Min. Länge:",
+    "noch-kein-team-angelegt": "Du hast aktuell hier nichts zu sehen, weil du noch keine Teams angelegt hast.",
+    "pdf-erstellen": "PDF erstellen",
+    "saison-anfangen": "Saison anfangen",
+    "suche-nach-einem-team-oder-einer-choreo": "Suche nach einem Team oder einer Choreo",
+    "team-hinzufuegen": "Team hinzufügen",
+    "video-erstellen": "Video erstellen"
+  },
+  "suchen": "Suchen",
+  "team": "Team | Teams",
+  "teamView": {
+    "dieses-team-hat-noch-keine-mitglieder": "Dieses Team hat noch keine Mitglieder...",
+    "hinzufuegen": "Hinzufügen",
+    "importieren": "Importieren",
+    "liste": "Liste",
+    "neue-season-anfangen": "Neue Season anfangen",
+    "season-loeschen": "Season löschen",
+    "tabelle": "Tabelle",
+    "team-loeschen": "Team löschen",
+    "waehle-ein-team": "Wähle ein Team"
+  },
+  "teilnehmer": "Teilnehmer",
+  "username": "Nutzername",
+  "verein": "Verein | Vereine",
+  "video": "Video",
+  "video-export-comp": {
+    "ausgewaehlte-choreo": "Ausgewählte Choreo",
+    "count-anzeigen": "Count anzeigen",
+    "den-count-im-video-anzeigen": "Den Count im Video anzeigen",
+    "den-namen-deiner-choreo-im-video-anzeigen": "Den Namen deiner Choreo im Video anzeigen",
+    "den-namen-deines-teams-im-video-anzeigen": "Den Namen deines Teams im Video anzeigen",
+    "herunterladen": "Herunterladen",
+    "teilnehmer-die-im-video-angezeigt-werden-sollen": "Teilnehmer, die im Video angezeigt werden sollen",
+    "video-generieren": "Video generieren",
+    "video-zusammenstellen": "Video zusammenstellen"
+  },
+  "zur-startseite": "Zur Startseite",
+  "zuruecksetzen": "Zurücksetzen"
+}

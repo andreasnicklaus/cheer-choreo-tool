@@ -1,7 +1,11 @@
 <template>
   <b-modal
     :id="`modal-newMember-${id}`"
-    :title="editMemberId ? 'Mitglied bearbeiten' : 'Neues Mitglied'"
+    :title="
+      editMemberId
+        ? $t('modals.create-member.mitglied-bearbeiten')
+        : $t('modals.create-member.neues-mitglied')
+    "
     centered
     @show="resetMemberModal"
     @hidden="resetMemberModal"
@@ -11,13 +15,13 @@
       <b-row>
         <b-col cols="7">
           <b-form-group
-            label="Name:"
+            :label="$t('name')"
             :state="newMemberNameIsValid"
             :invalid-feedback="newMemberNameStateFeedback"
           >
             <b-form-input
               v-model="newMemberName"
-              placeholder="Name"
+              :placeholder="$t('name')"
               autofocus
               required
               :state="newMemberNameIsValid"
@@ -26,7 +30,7 @@
         </b-col>
         <b-col>
           <b-form-group
-            label="Abkürzung:"
+            :label="$t('abkuerzung')"
             :state="abbreviationIsValid"
             :invalid-feedback="abbreviationStateFeedback"
           >
@@ -34,7 +38,7 @@
               v-model="newMemberAbbreviation"
               :placeholder="
                 proposedAbbreviation == -1 || !proposedAbbreviation
-                  ? 'Abkürzung'
+                  ? $t('abkuerzung')
                   : proposedAbbreviation
               "
               :state="abbreviationIsValid"
@@ -42,10 +46,10 @@
           </b-form-group>
         </b-col>
       </b-row>
-      <b-form-group label="Spitzname:" :state="true">
+      <b-form-group :label="$t('spitzname')" :state="true">
         <b-form-input
           v-model="newMemberNickname"
-          placeholder="Spitzname"
+          :placeholder="$t('spitzname')"
           :state="true"
         />
       </b-form-group>
@@ -57,9 +61,11 @@
         variant="success"
         :disabled="!newMemberName || !abbreviationIsValid"
       >
-        Speichern
+        {{ $t("speichern") }}
       </b-button>
-      <b-button @click="cancel" variant="danger"> Abbrechen </b-button>
+      <b-button @click="cancel" variant="danger">{{
+        $t("abbrechen")
+      }}</b-button>
     </template>
   </b-modal>
 </template>
@@ -136,7 +142,7 @@ export default {
     },
     newMemberNameStateFeedback() {
       if (!this.newMemberName || this.newMemberName.trim().length <= 0)
-        return "Erforderlich";
+        return this.$t("erforderlich");
       return null;
     },
     proposedAbbreviation() {
@@ -177,7 +183,9 @@ export default {
     },
     abbreviationStateFeedback() {
       if (!this.newMemberAbbreviation && this.proposedAbbreviation == -1)
-        return "Es konnte keine Abkürzung automatisch erstellt werden.";
+        return this.$t(
+          "modals.create-member.es-konnte-keine-abkuerzung-automatisch-erstellt-werden"
+        );
       if (
         this.newMemberAbbreviation &&
         this.currentTeam.SeasonTeams[this.seasonTabIndex].Members.filter(
@@ -186,7 +194,9 @@ export default {
           .map((m) => m.abbreviation)
           .includes(this.newMemberAbbreviation)
       )
-        return "Es existiert bereits ein Mitglied mit dieser Abkürzung.";
+        return this.$t(
+          "modals.create-member.es-existiert-bereits-ein-mitglied-mit-dieser-abkuerzung"
+        );
       return null;
     },
   },

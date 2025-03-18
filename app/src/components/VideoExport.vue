@@ -1,46 +1,56 @@
 <template>
   <div>
-    <b-card class="mb-3" title="Video zusammenstellen">
+    <b-card class="mb-3" :title="$t('video-export-comp.video-zusammenstellen')">
       <b-card-sub-title v-if="choreo">
-        <p class="m-0">Ausgewählte Choreo: {{ choreo.name }}</p>
         <p class="m-0">
-          Team: {{ choreo.SeasonTeam.Team.name }} ({{
+          {{ $t("video-export-comp.ausgewaehlte-choreo") }}: {{ choreo.name }}
+        </p>
+        <p class="m-0">
+          {{ $tc("team", 1) }}: {{ choreo.SeasonTeam.Team.name }} ({{
             choreo.SeasonTeam.Season.name
           }})
         </p>
       </b-card-sub-title>
       <b-card-sub-title v-else :style="{ height: '38.38px' }">
-        Choreo lädt
+        {{ $t("pdf.choreo-laedt") }}
       </b-card-sub-title>
       <b-card-body>
         <b-row class="mb-3" :style="{ rowGap: '16px' }">
           <b-col md="6" cols="12">
-            <b-form-group description="Den Count im Video anzeigen">
+            <b-form-group
+              :description="$t('video-export-comp.den-count-im-video-anzeigen')"
+            >
               <b-form-checkbox
                 v-model="includeCount"
                 :disabled="recordingIsRunning"
               >
-                Count anzeigen
+                {{ $t("video-export-comp.count-anzeigen") }}
               </b-form-checkbox>
             </b-form-group>
             <b-form-group
-              description="Den Namen deines Teams im Video anzeigen"
+              :description="
+                $t('video-export-comp.den-namen-deines-teams-im-video-anzeigen')
+              "
             >
               <b-form-checkbox
                 v-model="includeTeamName"
                 :disabled="recordingIsRunning"
               >
-                Team-Name anzeigen
+                {{ $t("pdf.team-name-anzeigen") }}
               </b-form-checkbox>
             </b-form-group>
             <b-form-group
-              description="Den Namen deiner Choreo im Video anzeigen"
+              :description="
+                $t(
+                  'video-export-comp.den-namen-deiner-choreo-im-video-anzeigen'
+                )
+              "
             >
               <b-form-checkbox
                 v-model="includeChoreoName"
                 :disabled="recordingIsRunning"
               >
-                Choreo-Name anzeigen
+                {{ $t("pdf.choreo-name-anzeigen") }}
               </b-form-checkbox>
             </b-form-group>
           </b-col>
@@ -50,9 +60,13 @@
                 <b-skeleton v-for="(_, i) in Array(3)" :key="i"></b-skeleton>
               </template>
               <b-form-group
-                description="Teilnehmer, die im Video angezeigt werden sollen"
+                :description="
+                  $t(
+                    'video-export-comp.teilnehmer-die-im-video-angezeigt-werden-sollen'
+                  )
+                "
                 :state="includedMembers.length > 0"
-                invalid-feedback="Min. 1 Teilnehmer erforderlich"
+                :invalid-feedback="$t('pdf.min-teilnehmer-erforderlich')"
               >
                 <b-button-group class="mb-2">
                   <b-button
@@ -66,7 +80,7 @@
                     "
                   >
                     <b-icon-check-all />
-                    Alle auswählen
+                    {{ $t("alle-auswaehlen") }}
                   </b-button>
                   <b-button
                     variant="light"
@@ -76,7 +90,7 @@
                     "
                   >
                     <b-icon-slash />
-                    Keine auswählen
+                    {{ $t("keine-auswaehlen") }}
                   </b-button>
                 </b-button-group>
                 <b-checkbox-group
@@ -129,7 +143,7 @@
               "
             >
               <b-icon-film class="mr-2" />
-              Video generieren
+              {{ $t("video-export-comp.video-generieren") }}
             </b-button>
           </b-col>
           <b-col md="auto" cols="12" v-if="downloadUrl">
@@ -139,7 +153,7 @@
               block
             >
               <b-icon-download />
-              Herunterladen
+              {{ $t("video-export-comp.herunterladen") }}
             </b-button>
           </b-col>
         </b-row>
@@ -171,7 +185,7 @@
                   class="mb-3"
                 />
                 <b-button variant="outline-danger" @click="stopRecording">
-                  Abbrechen
+                  {{ $t("abbrechen") }}
                 </b-button>
               </div>
             </template>
@@ -549,57 +563,66 @@ export default {
   computed: {
     waitingSlogan() {
       const slogans = [
-        "Schuhe werden gebunden...",
-        "Haare werden geflochten...",
-        "Schleifen werden gerichtet...",
-        "Maskottchen wird hingelegt...",
-        "1 - 3 - 5 - 7",
-        "Dehnen...",
-        "Aufstellungen werden gemalt...",
-        "Matte wird aufgezeichnet...",
-        "Sprungboden wird aufgebaut...",
-        "Schminke wird aufgetragen...",
-        "Zopf wird gebunden...",
+        this.$t("loading-slogans.schuhe-werden-gebunden"),
+        this.$t("loading-slogans.haare-werden-geflochten"),
+        this.$t("loading-slogans.schleifen-werden-gerichtet"),
+        this.$t("loading-slogans.maskottchen-wird-hingelegt"),
+        this.$t("loading-slogans.1-3-5-7"),
+        this.$t("loading-slogans.dehnen"),
+        this.$t("loading-slogans.aufstellungen-werden-gemalt"),
+        this.$t("loading-slogans.matte-wird-aufgezeichnet"),
+        this.$t("loading-slogans.sprungboden-wird-aufgebaut"),
+        this.$t("loading-slogans.schminke-wird-aufgetragen"),
+        this.$t("loading-slogans.zopf-wird-gebunden"),
       ];
       if (this.choreo.SeasonTeam.Team.name)
-        slogans.push(`Go, ${this.choreo.SeasonTeam.Team.name}!`);
+        slogans.push(
+          this.$t("loading-slogans.go-team", {
+            name: this.choreo.SeasonTeam.Team.name,
+          })
+        );
       return slogans[Math.floor(this.count / 10) % slogans.length];
     },
   },
   metaInfo() {
     return {
-      title: (this.choreo?.name || "Lädt Choreo") + " - Video",
+      title:
+        (this.choreo?.name || this.$t("pdf.laedt-choreo")) +
+        " - " +
+        this.$t("video"),
       meta: [
         {
           vmid: "description",
           name: "description",
-          content: "Exportiere die Aufstellungen deiner Choreo als Video!",
+          content: this.$t("meta.video.description"),
         },
         {
           vmid: "twitter:description",
           name: "twitter:description",
-          content: "Exportiere die Aufstellungen deiner Choreo als Video!",
+          content: this.$t("meta.video.description"),
         },
         {
           vmid: "og:description",
           property: "og:description",
-          content: "Exportiere die Aufstellungen deiner Choreo als Video!",
+          content: this.$t("meta.video.description"),
         },
         {
           vmid: "og:title",
           property: "og:title",
-          content:
-            (this.choreo?.name || "Lädt Choreo") +
-            " - Video" +
-            " - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
+          content: `${this.choreo?.name || "Lädt Choreo"} - ${this.$t(
+            "video"
+          )} - ${this.$t("general.ChoreoPlaner")} | ${this.$t(
+            "meta.defaults.title"
+          )}`,
         },
         {
           vmid: "twitter:title",
           name: "twitter:title",
-          content:
-            (this.choreo?.name || "Lädt Choreo") +
-            " - Video" +
-            " - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
+          content: `${this.choreo?.name || "Lädt Choreo"} - ${this.$t(
+            "video"
+          )} - ${this.$t("general.ChoreoPlaner")} | ${this.$t(
+            "meta.defaults.title"
+          )}`,
         },
       ],
     };

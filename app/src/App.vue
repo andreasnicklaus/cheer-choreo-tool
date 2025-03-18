@@ -7,49 +7,75 @@
       <b-row align-h="around" class="w-75 footer-link" :style="{ gap: '20px' }">
         <b-col cols="auto">
           <h5>
-            <b>Interne Links</b>
+            <b>{{ $tc("navigation.internalLinks") }}</b>
           </h5>
-          <b-button variant="link" :to="{ name: 'Home' }"> Startseite </b-button
+          <b-button
+            variant="link"
+            :to="{ name: 'Home', params: { locale: $root.$i18n.locale } }"
+          >
+            {{ $tc("navigation.StartPage") }} </b-button
           ><br />
-          <b-button variant="link" :to="{ name: 'Help' }"> Hilfe </b-button
+          <b-button
+            variant="link"
+            :to="{ name: 'Help', params: { locale: $root.$i18n.locale } }"
+          >
+            {{ $tc("general.help") }} </b-button
           ><br />
-          <b-button variant="link" :to="{ name: 'Impressum' }">
-            Impressum </b-button
+          <b-button
+            variant="link"
+            :to="{
+              name: 'Impressum',
+              params: { locale: $root.$i18n.locale },
+            }"
+          >
+            {{ $tc("navigation.impressum") }} </b-button
           ><br />
-          <b-button variant="link" :to="{ name: 'Datenschutz' }">
-            Datenschutz </b-button
+          <b-button
+            variant="link"
+            :to="{
+              name: 'Datenschutz',
+              params: { locale: $root.$i18n.locale },
+            }"
+          >
+            {{ $tc("navigation.datenschutz") }} </b-button
           ><br />
           <b-button
             variant="link"
             @click="() => this.$refs.feedbackPrompt.open(true)"
           >
-            Feedback geben </b-button
+            {{ $tc("navigation.feedback-geben") }} </b-button
           ><br />
         </b-col>
         <b-col cols="auto">
           <h5>
-            <b>Externe Links</b>
+            <b>{{ $tc("navigation.externe-links") }}</b>
           </h5>
           <b-button
             variant="link"
             href="https://www.instagram.com/choreoplaner/"
             target="_blank"
           >
-            <b-icon-instagram class="mr-2" />Instagram</b-button
+            <b-icon-instagram class="mr-2" />{{
+              $tc("navigation.instagram")
+            }}</b-button
           ><br />
           <b-button
             variant="link"
             href="https://www.facebook.com/choreoplaner/"
             target="_blank"
           >
-            <b-icon-facebook class="mr-2" />Facebook</b-button
+            <b-icon-facebook class="mr-2" />{{
+              $tc("navigation.facebook")
+            }}</b-button
           ><br />
           <b-button
             variant="link"
             href="https://github.com/andreasnicklaus/cheer-choreo-tool"
             target="_blank"
           >
-            <b-icon-github class="mr-2" />Github</b-button
+            <b-icon-github class="mr-2" />{{
+              $tc("navigation.github")
+            }}</b-button
           ><br />
         </b-col>
       </b-row>
@@ -136,14 +162,14 @@ export default {
   }),
   metaInfo() {
     return {
-      titleTemplate:
-        "%s - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
+      titleTemplate: `%s - ${this.$t("general.ChoreoPlaner")} | ${this.$t(
+        "meta.defaults.title"
+      )}`,
       meta: [
         {
           vmid: "keywords",
           name: "keywords",
-          content:
-            "Choreo, Choreographie, Cheer, Cheerleading, Tanz, Planer, Editor, Video, Anmelden, Registrieren, Countsheet",
+          content: this.$t("meta.defaults.keywords"),
         },
         {
           vmid: "author",
@@ -153,20 +179,17 @@ export default {
         {
           vmid: "description",
           name: "description",
-          content:
-            "Plane deine Choreografien schnell und einfach mit dem Choreo Planer! Perfekt für Cheerleading, Tanz und Bodenturnen. 100% kostenlos. Jetzt ausprobieren!",
+          content: this.$t("meta.defaults.description"),
         },
         {
           vmid: "twitter:description",
           name: "twitter:description",
-          content:
-            "Plane deine Choreografien schnell und einfach mit dem Choreo Planer! Perfekt für Cheerleading, Tanz und Bodenturnen. 100% kostenlos. Jetzt ausprobieren!",
+          content: this.$t("meta.defaults.description"),
         },
         {
           vmid: "og:description",
           property: "og:description",
-          content:
-            "Plane deine Choreografien schnell und einfach mit dem Choreo Planer! Perfekt für Cheerleading, Tanz und Bodenturnen. 100% kostenlos. Jetzt ausprobieren!",
+          content: this.$t("meta.defaults.description"),
         },
         {
           vmid: "og:url",
@@ -176,14 +199,16 @@ export default {
         {
           vmid: "og:title",
           property: "og:title",
-          content:
-            "Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
+          content: `${this.$t("general.ChoreoPlaner")} | ${this.$t(
+            "meta.defaults.title"
+          )}`,
         },
         {
           vmid: "twitter:title",
           name: "twitter:title",
-          content:
-            "Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
+          content: `${this.$t("general.ChoreoPlaner")} | ${this.$t(
+            "meta.defaults.title"
+          )}`,
         },
         {
           vmid: "twitter:url",
@@ -233,13 +258,10 @@ export default {
         })
         .catch(() => {
           this.online = false;
-          this.$bvToast.toast(
-            "Die Server sind zurzeit offline. Bitte versuche es später nochmal!",
-            {
-              title: "Offline",
-              variant: "danger",
-            }
-          );
+          this.$bvToast.toast(this.$t("errors.offline"), {
+            title: "Offline",
+            variant: "danger",
+          });
         });
   },
   watch: {

@@ -5,7 +5,7 @@
       :value="choreo?.name"
       class="mb-4"
       @input="onNameEdit"
-      placeholder="lädt..."
+      :placeholder="`${$t('loading')}...`"
       v-if="!$store.state.isMobile"
     />
 
@@ -42,14 +42,14 @@
               target="tooltip-target-previousCount"
               triggers="hover"
             >
-              Zum vorigen Count springen
+              {{ $t("editView.zum-vorigen-count-springen") }}
             </b-tooltip>
             <b-tooltip
               v-if="count > 0 && countStartButtonHasNeverBeenUsed"
               target="tooltip-target-skipToStart"
               triggers="hover"
             >
-              Zum Anfang springen
+              {{ $t("editView.zum-anfang-springen") }}
             </b-tooltip>
           </b-col>
           <b-col cols="auto">
@@ -64,10 +64,11 @@
               </b-button>
               <div>
                 <p class="mb-0">
-                  Achter: <b>{{ Math.floor(count / 8) + 1 }}</b>
+                  {{ $t("achter") }}:
+                  <b>{{ Math.floor(count / 8) + 1 }}</b>
                 </p>
                 <p class="mb-0">
-                  Count: <b>{{ (count % 8) + 1 }}</b>
+                  {{ $t("count", 1) }}: <b>{{ (count % 8) + 1 }}</b>
                 </p>
               </div>
             </b-row>
@@ -100,7 +101,7 @@
               target="tooltip-target-nextCount"
               triggers="hover"
             >
-              Zum nächsten Count springen
+              {{ $t("editView.zum-naechsten-count-springen") }}
             </b-tooltip>
             <b-tooltip
               v-if="
@@ -111,7 +112,7 @@
               target="tooltip-target-endCount"
               triggers="hover"
             >
-              Zum Ende springen
+              {{ $t("editView.zum-ende-springen") }}
             </b-tooltip>
           </b-col>
         </b-row>
@@ -121,7 +122,7 @@
           <b-button
             variant="light"
             v-b-tooltip.hover
-            title="Anleitung"
+            :title="$t('editView.anleitung')"
             @click="() => $refs.howToModal.open()"
           >
             <b-icon-question />
@@ -131,18 +132,28 @@
             no-caret
             variant="light"
             v-b-tooltip.hover
-            title="Optionen"
+            :title="$t('optionen')"
           >
             <template #button-content>
               <b-icon-three-dots-vertical />
             </template>
-            <b-dropdown-item :to="{ name: 'PDF', params: { choreoId } }">
+            <b-dropdown-item
+              :to="{
+                name: 'PDF',
+                params: { choreoId, locale: $root.$i18n.localele },
+              }"
+            >
               <b-icon-file-pdf class="mr-2" />
-              Countsheet als PDF
+              {{ $t("Home.countsheet-als-pdf") }}
             </b-dropdown-item>
-            <b-dropdown-item :to="{ name: 'Video', params: { choreoId } }">
+            <b-dropdown-item
+              :to="{
+                name: 'Video',
+                params: { choreoId, locale: $root.$i18n.locale },
+              }"
+            >
               <b-icon-film class="mr-2" />
-              Video exportieren
+              {{ $t("editView.video-exportieren") }}
             </b-dropdown-item>
             <b-dropdown-divider />
             <b-dropdown-item
@@ -150,16 +161,18 @@
               :disabled="!choreo"
             >
               <b-icon-hash class="mr-2" />
-              Länge anpassen
+              {{ $t("editView.laenge-anpassen") }}
             </b-dropdown-item>
             <b-dropdown-text>
               <b-checkbox switch v-model="snapping">
-                Positionen horizontal und vertikal ausrichten
+                {{
+                  $t("editView.positionen-horizontal-und-vertikal-ausrichten")
+                }}
               </b-checkbox>
             </b-dropdown-text>
             <b-dropdown-text>
               <b-checkbox switch v-model="moveWithCountEdit">
-                Beim Bearbeiten den Count mitwechseln
+                {{ $t("editView.beim-bearbeiten-den-count-mitwechseln") }}
               </b-checkbox>
             </b-dropdown-text>
             <b-dropdown-divider />
@@ -169,7 +182,7 @@
               variant="danger"
             >
               <b-icon-trash class="mr-2" />
-              Choreo löschen
+              {{ $t("editView.choreo-loeschen") }}
             </b-dropdown-item>
           </b-dropdown>
         </b-button-group>
@@ -212,7 +225,7 @@
       fill
       v-if="!$store.state.isMobile"
     >
-      <b-tab title="Countsheet" active>
+      <b-tab :title="$tc('countsheet', 1)" active>
         <CountSheet
           v-if="choreo && choreo.Hits"
           :count="count"
@@ -221,7 +234,7 @@
           @openCreateHitModal="openCreateHitModal"
         />
       </b-tab>
-      <b-tab title="Team">
+      <b-tab :title="$tc('team', 1)">
         <b-table
           striped
           hover
@@ -242,9 +255,11 @@
               <b-button
                 variant="light"
                 v-b-tooltip.hover
-                :title="`${
-                  data.item.nickname || data.item.name.split(' ')[0]
-                } auswechseln`"
+                :title="
+                  $t('editView.auswechseln', {
+                    name: data.item.nickname || data.item.name.split(' ')[0],
+                  })
+                "
                 @click="subOutParticipant(data.item.id)"
               >
                 <b-icon-arrow-repeat />
@@ -252,9 +267,11 @@
               <b-button
                 variant="outline-danger"
                 v-b-tooltip.hover
-                :title="`${
-                  data.item.nickname || data.item.name.split(' ')[0]
-                } von der Matte nehmen`"
+                :title="
+                  $t('editView.von-der-matte-nehmen', {
+                    name: data.item.nickname || data.item.name.split(' ')[0],
+                  })
+                "
                 @click="removeParticipant(data.item.id)"
               >
                 <b-icon-box-arrow-right />
@@ -263,13 +280,13 @@
           </template>
         </b-table>
         <p class="text-muted" v-if="teamMembers.length == 0">
-          Bisher steht noch kein Teammitglied auf der Matte.
+          {{ $t("editView.bisher-steht-noch-kein-teammitglied-auf-der-matte") }}
         </p>
 
         <hr class="my-5" />
 
         <p class="text-muted">
-          <b>Nicht teilnehmende Mitglieder des Teams:</b>
+          <b>{{ $t("editView.nicht-teilnehmende-mitglieder-des-teams") }}:</b>
           {{ choreo?.SeasonTeam.Team.name }} ({{
             choreo?.SeasonTeam.Season.name
           }})
@@ -287,9 +304,11 @@
               <b-button
                 variant="light"
                 v-b-tooltip.hover
-                :title="`${
-                  data.item.nickname || data.item.name.split(' ')[0]
-                } einwechseln`"
+                :title="
+                  $t('editView.einwechseln', {
+                    name: data.item.nickname || data.item.name.split(' ')[0],
+                  })
+                "
                 @click="subInMember(data.item.id)"
               >
                 <b-icon-arrow-repeat />
@@ -297,9 +316,11 @@
               <b-button
                 variant="outline-success"
                 v-b-tooltip.hover
-                :title="`${
-                  data.item.nickname || data.item.name.split(' ')[0]
-                } auf die Matte stellen`"
+                :title="
+                  $t('editView.auf-die-matte-stellen', {
+                    name: data.item.nickname || data.item.name.split(' ')[0],
+                  })
+                "
                 @click="addParticipant(data.item.id)"
               >
                 <b-icon-box-arrow-in-right />
@@ -308,7 +329,11 @@
           </template>
         </b-table>
         <p class="text-muted" v-if="notParticipatingMembers.length == 0">
-          Alle Mitglieder deines Teams stehen schon auf der Matte.
+          {{
+            $t(
+              "editView.alle-mitglieder-deines-teams-stehen-schon-auf-der-matte"
+            )
+          }}
         </p>
       </b-tab>
     </b-tabs>
@@ -379,37 +404,39 @@ export default {
     ParticipantSubstitutionModal,
     MobileChoreoEditModal,
   },
-  data: () => ({
-    choreoId: null,
-    matHeight: 500,
-    matWidth: 500,
-    snapping: true,
-    moveWithCountEdit: true,
-    count: 0,
-    team_table_fields: [
-      { key: "name", sortable: true, class: "text-left" },
-      { key: "nickname", label: "Spitzname" },
-      { key: "abbreviation", label: "Abkürzung" },
-      { key: "actions", label: "", class: "text-right" },
-    ],
-    participants_table_fields: [
-      { key: "name", sortable: true, class: "text-left" },
-      { key: "nickname", label: "Spitzname" },
-      { key: "abbreviation", label: "Abkürzung" },
-      { key: "color", label: "Farbe" },
-      { key: "actions", label: "", class: "text-right" },
-    ],
-    choreo: null,
-    lastKeyEvent: null,
-    transitionMs: 800,
-    positionUpdates: {},
-    lineupCreationInProgress: false,
-    playInterval: null,
-    countBackButtonHasNeverBeenUsed: true,
-    countStartButtonHasNeverBeenUsed: true,
-    countNextButtonHasNeverBeenUsed: true,
-    countEndButtonHasNeverBeenUsed: true,
-  }),
+  data: function () {
+    return {
+      choreoId: null,
+      matHeight: 500,
+      matWidth: 500,
+      snapping: true,
+      moveWithCountEdit: true,
+      count: 0,
+      team_table_fields: [
+        { key: "name", sortable: true, class: "text-left" },
+        { key: "nickname", label: this.$t("spitzname") },
+        { key: "abbreviation", label: this.$t("abkuerzung") },
+        { key: "actions", label: "", class: "text-right" },
+      ],
+      participants_table_fields: [
+        { key: "name", sortable: true, class: "text-left" },
+        { key: "nickname", label: this.$t("spitzname") },
+        { key: "abbreviation", label: this.$t("abkuerzung") },
+        { key: "color", label: this.$t("editView.farbe") },
+        { key: "actions", label: "", class: "text-right" },
+      ],
+      choreo: null,
+      lastKeyEvent: null,
+      transitionMs: 800,
+      positionUpdates: {},
+      lineupCreationInProgress: false,
+      playInterval: null,
+      countBackButtonHasNeverBeenUsed: true,
+      countStartButtonHasNeverBeenUsed: true,
+      countNextButtonHasNeverBeenUsed: true,
+      countEndButtonHasNeverBeenUsed: true,
+    };
+  },
   mounted() {
     if (this.$store.state.isMobile) {
       if (this.$refs.mobileChoreoEditModal)
@@ -440,7 +467,12 @@ export default {
             this.$refs.howToModal.open();
         })
         .catch(() => {
-          this.$router.push({ name: "Start" }).catch(() => {});
+          this.$router
+            .push({
+              name: "Start",
+              params: { locale: this.$root.$i18n.locale },
+            })
+            .catch(() => {});
         });
     },
     onPositionChange(memberId, x, y) {
@@ -474,7 +506,7 @@ export default {
               this.choreo.Lineups = lineupCopy;
               this.positionUpdates[memberId] = null;
 
-              this.showSuccessMessage("Aufstellung");
+              this.showSuccessMessage(this.$tc("lineup", 1));
             });
         }, 1000);
       } else {
@@ -501,7 +533,7 @@ export default {
               this.choreo.Lineups = lineupCopy;
               this.lineupCreationInProgress = false;
 
-              this.showSuccessMessage("Aufstellung");
+              this.showSuccessMessage(this.$tc("lineup", 1));
             }
           );
         } else {
@@ -539,7 +571,7 @@ export default {
                   positionsCopy;
                 this.choreo.Lineups = lineupCopy;
                 this.positionUpdates[memberId] = null;
-                this.showSuccessMessage("Aufstellung");
+                this.showSuccessMessage(this.$tc("lineup", 1));
               }
             );
           }, 0);
@@ -631,11 +663,11 @@ export default {
     },
     onUpdateHits(hits) {
       this.choreo.Hits = hits;
-      this.showSuccessMessage("Countsheet");
+      this.showSuccessMessage(this.$tc("countsheet", 1));
     },
     onUpdateLineups(lineups) {
       this.choreo.Lineups = lineups;
-      this.showSuccessMessage("Aufstellung");
+      this.showSuccessMessage(this.$tc("lineup", 1));
     },
     onUpdateCount(count) {
       if (this.moveWithCountEdit) this.setCounter(count);
@@ -651,7 +683,7 @@ export default {
       let hitsCopy = this.choreo.Hits;
       hitsCopy.push(hit);
       this.choreo.Hits = hitsCopy;
-      this.showSuccessMessage("Countsheet");
+      this.showSuccessMessage(this.$tc("countsheet", 1));
     },
     initiateHitUpdate() {
       if (this.hitsForCurrentCount.length == 0) return;
@@ -673,11 +705,11 @@ export default {
       this.$bvToast.hide(toastId);
       this.$bvToast.toast(
         savedType
-          ? `${savedType} wurde gespeichert`
-          : "Deine Choreo wurde gespeichert",
+          ? `${savedType} ${this.$t("editView.wurde-gespeichert")}`
+          : this.$t("editView.deine-choreo-wurde-gespeichert"),
         {
           variant: "success",
-          title: "Gespeichert",
+          title: this.$t("editView.gespeichert"),
           autoHideDelay: 1500,
           appendToast: false,
           solid: true,
@@ -779,39 +811,40 @@ export default {
   },
   metaInfo() {
     return {
-      title: this.choreo?.name || "Lädt Choreo",
+      title: this.choreo?.name || this.$t("pdf.laedt-choreo"),
       meta: [
         {
           vmid: "description",
           name: "description",
-          content:
-            "Bearbeite deine Choreo und erstelle Aufstellungen und Countsheets.",
+          content: this.$t("meta.editView.description"),
         },
         {
           vmid: "twitter:description",
           name: "twitter:description",
-          content:
-            "Bearbeite deine Choreo und erstelle Aufstellungen und Countsheets.",
+          content: this.$t("meta.editView.description"),
         },
         {
           vmid: "og:description",
           property: "og:description",
-          content:
-            "Bearbeite deine Choreo und erstelle Aufstellungen und Countsheets.",
+          content: this.$t("meta.editView.description"),
         },
         {
           vmid: "og:title",
           property: "og:title",
           content:
-            (this.choreo?.name || "Lädt Choreo") +
-            " - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
+            (this.choreo?.name || this.$t("pdf.laedt-choreo")) +
+            ` - ${this.$t("general.ChoreoPlaner")} | ${this.$t(
+              "meta.defaults.title"
+            )}`,
         },
         {
           vmid: "twitter:title",
           name: "twitter:title",
           content:
-            (this.choreo?.name || "Lädt Choreo") +
-            " - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
+            (this.choreo?.name || this.$t("pdf.laedt-choreo")) +
+            ` - ${this.$t("general.ChoreoPlaner")} | ${this.$t(
+              "meta.defaults.title"
+            )}`,
         },
       ],
     };

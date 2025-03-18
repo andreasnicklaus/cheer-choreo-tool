@@ -1,0 +1,678 @@
+{
+  "abbrechen": "Cancel",
+  "abkuerzung": "Abbreviation",
+  "accountView": {
+    "bereits-bestaetigt": "You have already confirmed this email address.",
+    "bestaetigt": "confirmed",
+    "check-email": "Please check your email inbox and confirm your email address with the link contained therein!",
+    "das-hat-nicht-funktioniert": "That didn't work",
+    "erstellt-am": "Created on",
+    "konto-loeschen": "Delete account",
+    "nicht-bestaetigt": "not confirmed",
+    "no-email": "no known email address",
+    "nutzername-nicht-erlaubt": "Your new username is not allowed. Either the username is empty or there is already a user with the name.",
+    "passwort-aendern": "Change Password",
+    "unbekannter-fehler": "An unknown error occurred. Reload the page or log in again to display the page.",
+    "zuletzt-geaendert-am": "Last changed on"
+  },
+  "achter": "Eight",
+  "alle-auswaehlen": "Select all",
+  "anmelden": "Log in",
+  "app-install": {
+    "app-herunterladen": "Download the app!",
+    "install-info": "The app does not occupy a storage space on your device and makes it easier to start the application!",
+    "installieren": "INSTALL",
+    "nein-danke": "No thanks!"
+  },
+  "auswaehlen": "Select",
+  "auswahl-wechseln": "Invert selection",
+  "bist-du-sicher": "Are you sure?",
+  "choreo": "Choreo | Choreos",
+  "choreo-planer-icon": "Choreo planner icon",
+  "consent": {
+    "ablehnen": "Refuse",
+    "einwilligen": "Consent",
+    "info-text": "This website uses Matomo to analyze data traffic and help us to improve your user experience. We process browser and device information, and cookies are saved in your browser. This data is only processed by us and our web hosting platform. You can find more information in the {0}."
+  },
+  "count": "Count | Counts",
+  "countOverview": {
+    "alle": "All",
+    "alle-teilnehmer-in-der-aufstellung-speichern": "Save all participants in the lineup",
+    "aufstellung-hinzufuegen": "Add a lineup",
+    "bearbeiten": "edit",
+    "count-eintrag-hinzufuegen": "Add count entry",
+    "dieser-count": "This count",
+    "fuer-diesen-count-hast-du-noch-nichts-geplant": "You haven't planned anything for this count yet",
+    "hit-name-min-laenge": "Min. 3 characters",
+    "loeschen": "delete",
+    "name-des-hits": "Name of the hits",
+    "start-vor-ende": "The start count of your lineup must be before its end count!",
+    "zum-naechsten-count-verschieben": "Move to the next count",
+    "zum-vorigen-count-verschieben": "Move to the previous count"
+  },
+  "countsheet": "Countsheet | Countsheets",
+  "datenschutz": {
+    "aenderungen-der-datenschutzerklaerung": "Changes to the data protection declaration",
+    "aenderungen-der-datenschutzerklaerung-text": "I reserve the right to adjust this data protection declaration if necessary to meet the legal requirements or to implement changes of my online tool. The current version is available on this website.",
+    "allgemeine-hinweise": "General information",
+    "allgemeine-hinweise-text": "The protection of your personal data is particularly important to me. I process your data exclusively on the basis of the legal provisions (GDPR, TMG). In this data protection declaration, I will inform you about the most important aspects of data processing in connection with the use of my online tool \"Choreo Planner\".",
+    "datenschutzerklaerung": "Data protection declaration",
+    "ihre-rechte": "Your rights",
+    "ihre-rechte-text": "You always have the right to information about the data stored about you, its origin and recipient as well as the purpose of data processing. In addition, you have the right to correct, block or delete this data, if applicable. Please contact:",
+    "kontakt": "Contact",
+    "kontakt-text": "If you have any questions about processing your data or this data protection declaration, please contact me at:",
+    "sicherheit-der-datenverarbeitung": "Security of data processing",
+    "sicherheit-der-datenverarbeitung-text": "I use adequate technical and organizational measures to ensure that your data is protected against loss, abuse or unauthorized access.",
+    "verantwortlich-fuer-die-datenverarbeitung": "Responsible for data processing",
+    "verantwortlicher": "Responsible person",
+    "verarbeitung-personenbezogener-daten": "Processing of personal data",
+    "verarbeitung-personenbezogener-daten-text-1": "Storage of data: The online tool \"Choreo Planner\" can be used completely free of charge. No personal data from users are collected, saved or processed that could be used to identify people.",
+    "verarbeitung-personenbezogener-daten-text-2": "Use of cookies: The website does not use cookies to save or track user data.",
+    "verarbeitung-personenbezogener-daten-text-3": "Server log files: When visiting the website, technical data is automatically recorded by the web server (e.g. IP address, date and time of access, accessed pages). This data is stored anonymously and serve exclusively for technical monitoring and improvement in operation. There is no assignment to certain people.",
+    "weitergabe-von-daten-an-dritte": "Delivery of data to third parties",
+    "weitergabe-von-daten-an-dritte-text": "Your data will not be sold, rented or otherwise passed on to third parties. There is no disclosure of data for commercial or non-commercial purposes."
+  },
+  "download": "Download",
+  "du-kannst-das-nicht-rueckgaengig-machen": "You can't undo that.",
+  "du-kannst-diese-aktion-nicht-rueckgaengig-machen": "You cannot undo this action.",
+  "e-mail-adresse": "E-mail address",
+  "editView": {
+    "alle-mitglieder-deines-teams-stehen-schon-auf-der-matte": "All members of your team are already on the mat.",
+    "anleitung": "Instructions",
+    "auf-die-matte-stellen": "Put {name} on the mat",
+    "auswechseln": "Sub out {name}",
+    "beim-bearbeiten-den-count-mitwechseln": "Change the count when editing",
+    "bisher-steht-noch-kein-teammitglied-auf-der-matte": "So far, no team member is on the mat.",
+    "choreo-loeschen": "Delete choreo",
+    "deine-choreo-wurde-gespeichert": "Your choreo was saved",
+    "einwechseln": "Sub in {name}",
+    "farbe": "Color",
+    "gespeichert": "Saved",
+    "laenge-anpassen": "Adjust length",
+    "nicht-teilnehmende-mitglieder-des-teams": "Non-participating members of the team",
+    "positionen-horizontal-und-vertikal-ausrichten": "Snap positions horizontally and vertically",
+    "video-exportieren": "Export video",
+    "von-der-matte-nehmen": "Take {name} off the mat",
+    "wurde-gespeichert": "was saved",
+    "zum-anfang-springen": "Jump at the beginning",
+    "zum-ende-springen": "Skip to the end",
+    "zum-naechsten-count-springen": "Jump to the next count",
+    "zum-vorigen-count-springen": "Jump to the previous count"
+  },
+  "erfolgreich": "Successful",
+  "erforderlich": "Required",
+  "errors": {
+    "offline": "The servers are currently offline. Please try again later!",
+    "unerwarteter-fehler": "Unexpected error. Please contact us."
+  },
+  "erstellen": "Create",
+  "failMessages": {
+    "check-ich-nicht": "I don't get it :/",
+    "computer-sagt-nein": "Computer says no!",
+    "da-dumm": "Da dumm...",
+    "oh-oh": "Oh, Oh!",
+    "probiers-nochmal": "Try again!",
+    "satz-mit-x": "Nuh-uh!",
+    "traurige-trompete": "~ Sad trumpet ~"
+  },
+  "faq": {
+    "allgemeines": "General",
+    "datenschutz": {
+      "answer": "Please read about data protection in our [data protection declaration](/datenschutz)."
+    },
+    "funktionen-and-features": "Features",
+    "funktionen-wuenschen": {
+      "answer": "**Yes!** We look forward to any features that we can incorporate into the choreo planner. If you wish for a feature, please feel free to send us an email to [info@choreoplaner.de](mailto:info@choreo-planer.de) or a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner</a>. We will then consider whether we can implement this feature. If do, we will of course inform you about it.",
+      "question": "Can I request features?"
+    },
+    "neue-season": {
+      "answer": "No! You can easily start a new season with your existing team and set up the squad. You can even take participants from other seasons or even other teams to the new season.",
+      "question": "Do I have to create a new team for every season?"
+    },
+    "probleme-loesen": "Solving problems",
+    "probleme-melden": {
+      "answer": "Problems can currently only be reported by email to [info@choreoplaner.de] (mailto: info@choreoplaner.de) or as a DM on Instagram to <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_ blank\">@choreoplaner</a>. A contact form is planned.",
+      "question": "How can I report problems?"
+    },
+    "versehentlich-geloescht": {
+      "answer": "Yes, but not yourself! You can contact us at any time. Then the following data can be restored: <ul class = \"ml-3\"> <li>User accounts</li> <li>Clubs</li> <li>Teams</li> <li>Seasons</li> <li>Choreos</li> <li>Rosters</li> </ul> Please describe in your contact by email to [info@choreoplaner.de](mailto: info@choreoplaner.de) or as a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_ blank\">@choreoplaner</a> the date and the time of deletion so that we can quickly solve your problem.",
+      "question": "I accidentally deleted something. Can I undo that?"
+    },
+    "warum-offline": {
+      "answer": "The choreo planner is a **free** project. Therefore, the servers may not always be reached. We have prepared a list of reasons why you cannot reach the servers:<ol class = \"ml-3\"><li> The servers are serviced by us. In this case you can't do anything except to wait and hope that we are finished quickly. If you would like to know when the servers can be reached again, you are welcome to send us an email to [info@choreoplaner.de](mailto:info@choreo-planer.de) or a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner</a>. </li><li> Our internet connection failed. Since there is no budget available to insure a fail-safe internet connection, it can happen that our internet connection fails. In this case you can't do anything except to wait and hope that we are finished quickly. If you would like to know when the servers can be reached again, you are welcome to send us an email to [info@choreoplaner.de](mailto:info@choreo-planer.de) or a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner</a>. </li><li> Your internet connection has failed. If you have already loaded our website, you can charge the website again without an internet connection, but you cannot charge new data. In this case, you can try to restore your internet connection. If you need help, you can't write us email, because you have no internet. </li></ol>If you would like to support the choreo planner, you can support us by articipating in project development or making a donation. We have not yet prepared a way for that, but we are working on it. If you would like to support us, you are welcome to send us an email to [info@choreoplaner.de](mailto:info@choreo-planer.de) or a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner </a>.",
+      "question": "Why can the server be offline?"
+    },
+    "was-ist-choreo-planer": {
+      "answer": "The choreo planner is a **free** project that is developed for cheerleaders. The choreo planner should make it possible to create choreos and share them with others. The choreo planner should make it possible to simplify and digitize the planning of choreos. Above all, it should be possible to teach the participants in a simplified manner. The end products (countsheets, pictures and videos) are to be distributed to the teams in order to make the learning of the choreos faster. This will make your team a **digital team**. This means that you no longer have to work your team with notes and pens, but become one of the pioneers of the digital world.",
+      "question": "What is the choreo planner?"
+    },
+    "weitergabe-an-dritte": {
+      "answer": "**No!** For us there is no reason to pass on your data to third parties. Protecting the personal data of your team members, especially minors, is very important to us. Therefore, your data will not be passed on to third parties. Please read about data protection in our [data protection declaration](/datenschutz).",
+      "question": "Are my data passed on to third parties?"
+    },
+    "wie-viele-teams": {
+      "answer": "In a nutshell: as many you want! It is possible to create any number of clubs, teams, season, choreos and participants.",
+      "question": "How many teams can I manage?"
+    },
+    "zielgruppe": {
+      "answer": "The choreo planner is for **coaches of cheerleading teams**. The end products (countsheets, pictures and videos) should be shared to the teams in order to make the learning of the choreos easier.",
+      "question": "Who is the choreo planner for?"
+    },
+    "zusammenarbeiten": {
+      "answer": "A \"live sharing\" as is known from Google Docs or similar online tools is not planned. Instead, it is planned that coaches of an association **share access**. This should also make it easy to move participants between teams. A possible \"create extra access\" for an account is planned.",
+      "question": "Can I work with others?"
+    }
+  },
+  "feedback": {
+    "abschicken": "Send",
+    "dankeschoen": "Thank you very much!",
+    "hilf-uns-besser-zu-werden": "Help us to get better! Give us a short feedback to make your experience with the choreo planner even better.",
+    "nicht-mehr-fragen": "Don't ask again",
+    "sag-uns-deine-meinung": "Tell us what you think",
+    "schliessen": "Close",
+    "vielen-dank": "Thank you! We have saved your feedback and will start working on your suggestions for improvement.",
+    "was-gefaellt-dir-am-choreo-planer": "What do you like about the choreo planner? What not?"
+  },
+  "general": {
+    "ChoreoPlaner": "Choreo Planner",
+    "help": "Help"
+  },
+  "HelpView": {
+    "fuer-deine-suche-gibt-es-keine-ergebnisse": "There are no results for your search \"{searchTerm}\"",
+    "hilfe-bekommen": "Get help",
+    "nicht-die-richtige-antwort-dabei": "Not the correct answer? Contact us at",
+    "oder-auf-instagram": "or on Instagram",
+    "und-beschreibe-dein-problem": "and describe your problem."
+  },
+  "hits": {
+    "arabesque": "Arabesque",
+    "basket": "Basket",
+    "bogengang": "arch walk",
+    "clap": "Clap",
+    "clean": "Clean",
+    "cradle": "Cradle",
+    "dip": "Dip",
+    "elevator": "Elevator",
+    "ende": "End",
+    "flick-flack": "Flick Flack",
+    "full-around": "Full around",
+    "go": "Go",
+    "greifen": "Grab",
+    "half-around": "Half Around",
+    "half-up": "Half up",
+    "high": "High",
+    "hinten": "back",
+    "kneel": "Kneel",
+    "knien": "Kneeling",
+    "lib": "Lib",
+    "links": "left",
+    "log-roll": "Log roll",
+    "loslaufen": "Run",
+    "low": "Low",
+    "nach-hinten": "to the back",
+    "nach-links": "to the left",
+    "nach-rechts": "to the right",
+    "nach-vorne": "forward",
+    "pinguin": "Penguin",
+    "playmobil": "Playmobile",
+    "pyra": "Pyra",
+    "rad": "Bike turn",
+    "radwende": "Bike turn",
+    "raussetzen": "Set down",
+    "rechts": "right",
+    "scale": "Scale",
+    "set": "Set",
+    "spagat": "Split",
+    "start": "Start",
+    "stretch": "Stretch",
+    "tick-tock": "Tick Tock",
+    "toetouch": "Toetouch",
+    "trophy": "Trophy",
+    "umgreifen": "Switch grip",
+    "vorne": "front",
+    "wurf": "Throw"
+  },
+  "Home": {
+    "aktuelle-season-des-teams": "Current season of the team",
+    "anmelden-mit-benutzername-und-passwort": "Log in with the username and password",
+    "aufstellungen-als-bild": "Lineups as pictures",
+    "aufstellungen-erstellen": "Create lineups by pulling the dots on the mat to the right place",
+    "beispiel-countsheet": "Example countsheet",
+    "bereite-choreos-vor": "Prepare choreos especially for championships",
+    "bestimme-fuer-jeden-eintrag": "Determine for each entry, whether it applies to everyone or only to certain participants",
+    "choreo-benennen": "Give your choreo a name",
+    "choreoplanung": "Planning choreos",
+    "choreos-erstellen": "Create choreos",
+    "choreos-planen": "Plan choreos",
+    "countsheet-als-pdf": "Countsheet as PDF",
+    "countsheets-teilen": "Share countsheets",
+    "dateigenerierung": "File generation",
+    "datenarchivierung": "Data archiving",
+    "datensicherung": "Data backup",
+    "definiere-eigene-seasons": "Define your own seasons that do not stick to the competition schedule",
+    "dein": "Your",
+    "deine-daten-werden-verwendet": "Your data will only be used to display your choreos",
+    "download-als-mp4-oder-webm": "Download as MP4 or WebM",
+    "eintraege-im-countsheet": "Entries in the countsheet",
+    "eintraege-machen": "Make entries in your countsheet: Who does what and when?",
+    "erstelle-countsheets-als-video": "Create Countsheets as a video or PDF for everyone or only for certain participants",
+    "fuelle-das-countsheet": "Fill the countsheet",
+    "gehe-zu-als-video-exportieren": "When you're satisfied, go to \"Export as a video\"",
+    "generiere-das-video": "Generate the video",
+    "generierung-lokal-im-browser": "Generation locally in the browser",
+    "gib-deinem-ersten-verein-einen-namen": "Give your club a name",
+    "gib-videos-und-countsheets": "Let participants take videos and countsheets home ",
+    "importiere-teilnehmer-in-neue-seasonkader": "Import participants into new season squad",
+    "interesse-geweckt": "Interested?",
+    "lade-das-pdf-herunter": "Download the PDF",
+    "lade-das-video-runter": "Download the video",
+    "laenge-bestimmen": "Determine how long the lineups should be kept and by whom",
+    "laenge-in-counts-and-achtern": "Length in counts",
+    "mache-eintraege": "Make entries in the countsheet while creating your choreo",
+    "mache-last-minute-auswechslungen": "Simply make last-minute changes with 2-3 clicks",
+    "meisterschaftsvorbereitung": "Championship preparation",
+    "mit-count": "With a count",
+    "mit-countsheet-eintraegen": "With countsheet entries",
+    "mit-logo": "With logo",
+    "mit-namen": "With Names",
+    "mitgliederverwaltung": "Member management",
+    "name-deines-teams": "Name of your team",
+    "name-der-choreo": "Name of the choreo",
+    "per-passwort-gesicherter-datenzugriff": "Data access secured by password",
+    "regelmaessige-datensicherung": "Regular data backup on our server",
+    "seasonkader-fuellen": "Fill the season squad",
+    "seasonwechsel": "Season changes",
+    "soll-dein-logo": "Should the video be created with your logo?",
+    "soll-durchlaufendem-count": "Should the video have a continuous count?",
+    "soll-mit-deinem-verein": "Should the video be created with your club and team names?",
+    "soll-mit-eintraegen": "Should the video show entries from the countsheet?",
+    "speicherung-auf-unseren-servern": "Storage on our servers",
+    "starte-neue-seasons-wenn-du-soweit-bist": "Start new seasons when you are ready",
+    "team-anlegen": "Create a team",
+    "teile-choreos-einfach-als-video": "Simply share choreos as a video",
+    "teile-es-in-eurem-team-chat": "Share it in your team chat",
+    "Umdrehen": "Turn around",
+    "verschluesselter-datentransfer": "Encrypted data transfer",
+    "verwaltung-nach-season": "Administration by Season",
+    "video-export": "Video export",
+    "videos-als-mp4-und-webm": "Videos as MP4 and WebM",
+    "videos-erstellen": "Create videos",
+    "videos-herunterladen": "Download videos",
+    "waehle-aus-wer-soll": "Select who should appear on the video",
+    "waehle-mit-allen-aus": "Choose whether you want to have a video with everybody on the mat or selected people",
+    "warte-bis-video": "Wait until your video is finished",
+    "zum-loslegen": "Just register to get started and create the first team:"
+  },
+  "impressumView": {
+    "angaben-gemaess-5-tmg": "Information according to § 5 TMG",
+    "haftung-fuer-inhalte": "Liability for content",
+    "haftung-fuer-inhalte-text-1": "As a service provider, I am responsible for my own content in accordance with the general laws in accordance with Section 7 (1) TMG. According to §§ 8 to 10 TMG, as a service provider, I am not obliged to monitor transmitted or stored foreign information or to research circumstances that indicate illegal activity.",
+    "haftung-fuer-inhalte-text-2": "Obligations to remove or block the use of information according to the general laws remain unaffected. However, liability in this regard is only possible from the date of knowledge of a specific violation. If the corresponding legal violations become known, I will remove this content immediately.",
+    "haftung-fuer-links": "Liability for links",
+    "haftung-fuer-links-text": "My offer contains links to external third-party websites, the content of which I have no influence. Therefore, I cannot guarantee this foreign content. The respective provider or operator of the pages is always responsible for the content of the linked pages. The linked pages were checked for possible legal violations at the time of the link. Illegal content was not recognizable at the time of the link. However, permanent content control of the linked pages is not reasonable without specific indications of a violation of the law. If violations of the law become known, I will remove such links immediately.",
+    "impressum": "Imprint",
+    "online-streitbeilegung": "Online dispute resolution",
+    "online-streitbeilegung-text-1": "The European Commission provides a platform for online dispute resolution (ODR):",
+    "online-streitbeilegung-text-2": "I am not obliged to participate in dispute settlement procedures in front of a consumer arbitration board and do not take part.",
+    "urheberrecht": "Copyright",
+    "urheberrecht-text": "The content and works created by the site operator on these pages are subject to German copyright law. The duplication, processing, distribution and any kind of utilization outside the limits of copyright law require the written consent of the respective author or creator. Downloads and copies of this page are only permitted for private, non-commercial use. Insofar as the content on this page has not been created by the operator, the copyrights of third parties are observed. In particular, third-party content is identified as such. If you still become aware of a copyright infringement, I ask for a corresponding note. If violations of the law become known, I will remove such content immediately.",
+    "verantwortlich-fuer-den-inhalt": "Responsible for the content in accordance with Section 55 (2) RStV:"
+  },
+  "jahr": "Year",
+  "jetzt-loeschen": "Delete now",
+  "keine-auswaehlen": "Select none",
+  "konto": "Account",
+  "lineup": "Lineup | Lineups",
+  "loading": "Loading",
+  "loading-slogans": {
+    "1-3-5-7": "1 - 3 - 5 - 7!",
+    "aufstellungen-werden-gemalt": "Lineups are painted...",
+    "dehnen": "Stretching...",
+    "eintraege-werden-geschrieben": "Entries are written...",
+    "go-team": "Go, {team}!",
+    "haare-werden-geflochten": "Braiding hair...",
+    "maskottchen-wird-hingelegt": "Mascot is layed down...",
+    "matte-wird-aufgezeichnet": "Mat is recorded...",
+    "schleifen-werden-gerichtet": "Bows are being fixed...",
+    "schminke-wird-aufgetragen": "Make-up is applied...",
+    "schuhe-werden-gebunden": "Shoes are being tied...",
+    "sprungboden-wird-aufgebaut": "Spring floor is built up...",
+    "tabelle-wird-gemalt": "Table is painted...",
+    "uniformen-werden-sortiert": "Uniforms are being sorted...",
+    "zopf-wird-gebunden": "Braids are bound..."
+  },
+  "loeschen": "Delete",
+  "login": {
+    "benutzername-mindestens-laenge": "Your username must be at least 6 characters long.",
+    "bitte-angeben": "Please enter",
+    "dein-online-zugang": "Your online access",
+    "du-hast-noch-kein-konto": "You don't have an account yet?",
+    "du-hast-schon-ein-konto": "You already have an account?",
+    "echte-email": "Your email address must be a valid email address.",
+    "formular-zuruecksetzen": "Reset form",
+    "gueltig": "Valid!",
+    "information": "Information",
+    "information-text-1": "Your account is the {0}. Choose the username and password free to your mood and then share it with your club.",
+    "information-text-1-highlight": "access point for the entire coaching team",
+    "information-text-2": "Your username {0}! After creating your account, you will be asked to give your club a name.",
+    "information-text-2-highlight": "does not have to be the club name",
+    "information-text-3": "You can manage {0}! It is possible to summarize several clubs in a user account, but you can only edit one club at a time.",
+    "information-text-3-highlight": "several clubs with one account",
+    "meta": {
+      "dein-zugang-zu-allen-funktionen": "Your access to all functions"
+    },
+    "passwort-mindest-laenge": "Your password must be at least 6 characters long.",
+    "passwort-wiederholen": "Repeat password",
+    "warum-email": "We need your email address to reset your password or restore your account.",
+    "wiederholung-gleicht-nicht-passwort": "The repetition is not identical to the password."
+  },
+  "meta": {
+    "account": {
+      "description": "Manage your account and make actions such as password changes."
+    },
+    "datenschutz": {
+      "description": "The data protection declaration of the choreo planner. Information on contact and liability regarding the use of the choreo planner."
+    },
+    "defaults": {
+      "description": "Plan your choreographies quickly and easily with the choreo planner! Perfect for cheerleading, dance and floor gymnastics. 100% free. Try now!",
+      "keywords": "choreo, choreography, cheer, cheerleading, dance, planner, editor, video, log in, register, countsheet",
+      "title": "The best free online tool for choreo sport"
+    },
+    "editView": {
+      "description": "Edit your choreo and create lineups and countsheets."
+    },
+    "helpView": {
+      "description": "Receive information about the choreo planner and answers to your questions and problems. In our FAQ, all frequently asked questions about the use and functions of the choreo planner answer."
+    },
+    "impressum": {
+      "description": "The imprint of the choreo planner. Information on contact and liability regarding the use of the choreo planner."
+    },
+    "loginView": {
+      "description": "Register now and plan your choreographies! Access to all functions of the free choreo planner for cheerleading, dance and gymnastics."
+    },
+    "pdfView": {
+      "description": "Export your choreo countsheet as a PDF!"
+    },
+    "teamView": {
+      "description": "Edit your teams and their members!"
+    },
+    "video": {
+      "description": "Export the lineups of your choreo as a video!"
+    }
+  },
+  "modals": {
+    "change-length": {
+      "choreo-min-length": "You can't have a choreo with 0 counts.",
+      "counts-zusaetzliche-counts-nach-den-achtern": "Counts (additional counts after the eights)",
+      "geschaetzte-zeit": "Estimated time:",
+      "laenge-aendern": "Change length",
+      "laenge-der-choreo-aendern": "Change length of the choreo"
+    },
+    "change-password": {
+      "dein-neues-passwort-ist-nicht-erlaubt": "Your new password is not allowed.",
+      "dein-passwort-ist-gueltig": "Your password is valid!",
+      "dein-passwort-wurde-geaendert": "Your password has been changed",
+      "die-wiederholung-entspricht-deinem-neuen-passwort": "The repetition corresponds to your new password!",
+      "die-wiederholung-entspricht-nicht-dem-ersten-passwort": "The repetition does not correspond to the first password",
+      "min-password-length": "Min. 6 characters",
+      "neues-passwort": "New password",
+      "password-aendern": "Change password",
+      "passwort-geaendert": "Password changed",
+      "wiederholung": "Repetition"
+    },
+    "confirm-email": {
+      "bestaetige-deine-e-mail-adresse": "Confirm your email address",
+      "info-1": "To activate your account, confirm your email address with the link from the email we sent you.",
+      "info-2": "Also check your spam mailbox to find the email."
+    },
+    "create-choreo": {
+      "example-name": "State Championship, Regionals {0}, ...",
+      "extra-count-muss-zwischen-0-und-7-liegen": "Extra count must be between 0 and 7",
+      "geschaetzte-zeit-timeestimationstring": "Estimated time: {0}",
+      "laenge": "Length:",
+      "min-achter": "Eight must be larger than 0",
+      "min-choreoname-length": "Min. 2 characters"
+    },
+    "create-club": {
+      "example-team-names": "TSG Salach e.V., Glamorous cheerleaders, ...",
+      "min-vereinsname-length": "Min. 3 characters",
+      "neuer-verein": "New club",
+      "vereinsname": "Club name"
+    },
+    "create-hit": {
+      "wie-heisst-der-neue-eintrag": "What is the name of the new entry?"
+    },
+    "create-lineup": {
+      "ende": "End",
+      "ist-in-anderer-aufstellung": "(Is in a different lineup)",
+      "neue-aufstellung": "New lineup",
+      "start": "Start"
+    },
+    "create-member": {
+      "es-existiert-bereits-ein-mitglied-mit-dieser-abkuerzung": "There is already a member with this abbreviation.",
+      "es-konnte-keine-abkuerzung-automatisch-erstellt-werden": "No abbreviation could be created automatically.",
+      "mitglied-bearbeiten": "Edit member",
+      "neues-mitglied": "New member"
+    },
+    "create-season": {
+      "choreos-nach-2200": "Choreos after 2200 are not allowed.",
+      "choreos-vor-1990": "Choreos before 1990 are not allowed.",
+      "example-event-name": "Summer appearances, ...",
+      "extra-events": "Extra events",
+      "jahr-info": "The year of an extra season helps to sort. Leave the field empty if the squad cannot be assigned to a specific year.",
+      "keine-mitglieder-kopieren": "Copy no members",
+      "min-team-mitglied": "Min. 1 team member required",
+      "name-der-event-gruppe": "Name of the event group:",
+      "name-info": "The name of an extra season describes a squad and choreos for which purpose or period.",
+      "neue-season": "New season",
+      "regulaere-season": "Regular season",
+      "team-mitglieder": "Team members",
+      "team-team-name": "Team: {0}"
+    },
+    "create-team": {
+      "example-team-names": "Phoenix, Glamorous Blush, ...",
+      "min-team-name-laenge": "Min. 3 characters"
+    },
+    "delete-account": {
+      "account-loeschen": "Delete account",
+      "info": "If you delete your account, all information associated with it will be deleted. This includes clubs, teams, members, choreos, lineups and counts.",
+      "verstanden": "I understand and want to continue."
+    },
+    "delete-hit": {
+      "countsheet-eintrag-loeschen": "Delete countsheet entry?"
+    },
+    "delete-lineup": {
+      "aufstellung-loeschen": "Delete lineup?"
+    },
+    "delete-member": {
+      "teilnehmer-loeschen": "Delete member?"
+    },
+    "delete-season": {
+      "season-loeschen": "Delete season?"
+    },
+    "delete-team": {
+      "team-loeschen": "Delete team?"
+    },
+    "howto": {
+      "anleitung": "Instructions",
+      "aufstellung-hinzufuegen": "Add a lineup",
+      "aufstellungen-als-video-downloaden": "Download the lineups as a video",
+      "aufstellungen-anlegen": "Create lineup",
+      "aufstellungen-aufteilen": "Split lineups",
+      "countsheet-als-pdf-downloaden": "Download countsheet as a PDF",
+      "countsheet-info-1": "Entries in the countsheet are defined by the count that you pass, a name and a list of participants.",
+      "countsheet-info-2": "{0} click on {1} or use the shortcuts {2} or {3} or make a {4} in the countsheet to create a new entry. You can set the name and choose who this entry applies. By default, the entry is created on the current count.",
+      "countsheet-info-3": "{0} Entries can be found in the list of list and countsheet entries. Click on {1} next to the entry you want to edit or use the shortcut {2} and click on {3} after editing to save your changes.",
+      "countsheet-info-box": "If you make the trouble to indicate who the entry applies, you can later hand out personal countsheets.",
+      "doppelklick-auf-die-zelle": "Double click on the cell",
+      "download-info-1": "{0} Click in the menu at the top right on {1} and select {2} to put together and download the countsheet.",
+      "download-info-2": "{0} Click in the menu at the top right on {1} and select {2} to create and download your video.",
+      "eintraege-bearbeiten": "Edit entries",
+      "eintraege-hinzufuegen": "Add entries",
+      "eintrag-hinzufuegen": "Add entry",
+      "lineup-text-1": "Define in lineups where the participants of your choreo are on the mat. Each lineup consists of the positions for the participants and a period of how long the lineup is kept.",
+      "lineup-text-2": "{0} To create your first lineup, simply click on a participant on the mat and place the marker {1} to the desired area. A new lineup is automatically created or the participant is added to an existing lineup.",
+      "lineup-text-3": "{0} If lineups do not apply equally for everyone, you need several lists on the same count. If necessary, remove participants from the lineup by clicking on the list of lineups and countsheet entries on {1} and removing the ticks at the participants. Then click on {2}, select the participants for the second group and then pull the markers to the right place on the mat.",
+      "steuerung": "Controls",
+      "ueberschneidung-warnung": "If you define lineups that overlap for a participant, animations are not displayed correctly!",
+      "video-und-countsheet-downloaden": "Download video and countsheet"
+    },
+    "import-member": {
+      "fuer-das-team-this-selectedteam-name-gibt-es-bisher-keine-andere-season": "So far there is no other season for the team {0}",
+      "team-mitglied": "Team member",
+      "team-mitglied-importieren": "Import a team member"
+    },
+    "loading": {
+      "wird-geladen": "Loading"
+    },
+    "mobile-choreo-edit": {
+      "am-handy-nicht-moeglich": "Not possible on a small screen",
+      "info-1": "You cannot currently use all functions on a small screen. Editing choreos is part of it.",
+      "info-2": "Please log in to a device with a larger display to edit your choreo."
+    },
+    "selectHit": {
+      "welchen-eintrag-willst-du-aendern": "What entry do you want to change?"
+    },
+    "substitution": {
+      "auswechseln": "Change",
+      "einwechseln": "Sub in",
+      "teilnehmer-auswechseln": "Replace participants"
+    },
+    "video-download": {
+      "format": "Format",
+      "video-herunterladen": "Download video"
+    }
+  },
+  "name": "Name",
+  "nav": {
+    "ausloggen": "Log out",
+    "checkEmail": {
+      "text": "You should find the link to confirm your mailbox. Please also check your spam folder.",
+      "title": "Please confirm your email address"
+    },
+    "neue-choreo": "New choreo",
+    "neuer-verein": "New club",
+    "neues-team": "New team",
+    "schau-dir-das-an": "Take a look at this!",
+    "server-sind-offline": "Servers are offline",
+    "server-sind-online": "Servers are online",
+    "start": "Start",
+    "teilen": "Share",
+    "uebersicht": "Overview",
+    "vereine": "Clubs"
+  },
+  "navigation": {
+    "datenschutz": "Data protection",
+    "externe-links": "External links",
+    "facebook": "Facebook",
+    "feedback-geben": "Give feedback",
+    "github": "Github",
+    "impressum": "Imprint",
+    "instagram": "Instagram",
+    "internalLinks": "Internal Links",
+    "StartPage": "Start"
+  },
+  "neu": "New",
+  "optionen": "Options",
+  "passwort": "Password",
+  "pdf": {
+    "alle-namen-warnung": "If you select all participants, the names are not written on the countsheet to save space.",
+    "choreo-laedt": "Choreo loads",
+    "choreo-name-anzeigen": "Show choreo name",
+    "choreo-wird-geladen": "Choreo is loading...",
+    "countsheet-zusammenstellen": "Generate countsheet",
+    "das-datum-auf-das-countsheet-schreiben": "Write the date on the countsheet",
+    "datum-anzeigen": "Show date",
+    "den-choreo-namen-auf-das-countsheet-schreiben": "Write the choreo name on the countsheet",
+    "den-team-namen-auf-das-countsheet-schreiben": "Write the team name on the countsheet",
+    "die-namen-der-teilnehmer-auf-das-countsheet-schreiben": "Write the names of the participants on the countsheet",
+    "fuer-wen-ist-das-countsheet": "Who is the countsheet for?",
+    "laedt-choreo": "Loading choreo",
+    "min-teilnehmer-erforderlich": "Min. 1 participant required",
+    "PDF": "PDF",
+    "pdf-wird-generiert": "PDF is generated",
+    "team-name-anzeigen": "Show team name",
+    "teilnehmer-namen-anzeigen": "Show participant names"
+  },
+  "personas": {
+    "anna-unersetzlich": "Anna Awesome",
+    "anna-unersetzlich-abk": "AA",
+    "anna-unersetzlich-nick": "Anny",
+    "maxi-supidupi": "Max Magnificent",
+    "maxi-supidupi-abk": "MM",
+    "maxi-supidupi-nick": "Maxi",
+    "paulina-flickflack": "Pauline Flickflack",
+    "paulina-flickflack-abk": "PF",
+    "paulina-flickflack-nick": "Pauli",
+    "theresa-toll": "Teresa Terrific",
+    "theresa-toll-abk": "TT",
+    "theresa-toll-nick": "Therri"
+  },
+  "registrieren": "Register",
+  "season": "Season | Seasons",
+  "seasonkader": "Season squad",
+  "shortcut-tutorial": {
+    "doppelklick-auf-countsheet-zelle": "Double-click on countsheet cell",
+    "eintrag-aendern": "Change entry",
+    "leerzeichen": "Spacebar",
+    "naechster-achter": "Next eight",
+    "naechster-count": "Next count",
+    "neuer-eintrag": "New entry",
+    "pfeil-links": "Arrow left",
+    "pfeil-oben": "Arrow up",
+    "pfeil-rechts": "Arrow right",
+    "pfeil-unten": "Arrow down",
+    "play-pause": "Play/Pause",
+    "voriger-achter": "Previous eight",
+    "voriger-count": "Previous count"
+  },
+  "speichern": "Save",
+  "spitzname": "Nickname",
+  "start": {
+    "aktiver-verein": "Active club",
+    "choreo-hinzufuegen": "Add choreo",
+    "filter": "Filter",
+    "filtere-die-choreo-nach-ihrer-laenge": "Filter the choreo by length",
+    "filtere-die-choreos-nach-season": "Filter the choreos by season",
+    "filtere-die-choreos-nach-teams": "Filter the choreos by teams",
+    "hier-kannst-du-noch-nichts-finden": "You can't find anything here yet...",
+    "max-laenge": "Max. Length:",
+    "min-laenge": "Min. Length:",
+    "noch-kein-team-angelegt": "You currently have nothing to see here because you have not yet created any teams.",
+    "pdf-erstellen": "Create PDF",
+    "saison-anfangen": "Start season",
+    "suche-nach-einem-team-oder-einer-choreo": "Search for a team or a choreo",
+    "team-hinzufuegen": "Add team",
+    "video-erstellen": "Create video"
+  },
+  "suchen": "Search",
+  "team": "Team | Teams",
+  "teamView": {
+    "dieses-team-hat-noch-keine-mitglieder": "This team has no members yet...",
+    "hinzufuegen": "Add",
+    "importieren": "Import",
+    "liste": "List",
+    "neue-season-anfangen": "Start new season",
+    "season-loeschen": "Delete season",
+    "tabelle": "Table",
+    "team-loeschen": "Delete team",
+    "waehle-ein-team": "Choose a team"
+  },
+  "teilnehmer": "Participant",
+  "username": "Username",
+  "verein": "Club | Clubs",
+  "video": "Video",
+  "video-export-comp": {
+    "ausgewaehlte-choreo": "Selected choreo",
+    "count-anzeigen": "Show count",
+    "den-count-im-video-anzeigen": "Show the count in the video",
+    "den-namen-deiner-choreo-im-video-anzeigen": "Show the name of your choreo in the video",
+    "den-namen-deines-teams-im-video-anzeigen": "Show the name of your team in the video",
+    "herunterladen": "Download",
+    "teilnehmer-die-im-video-angezeigt-werden-sollen": "Participants who are to be displayed in the video",
+    "video-generieren": "Generate video",
+    "video-zusammenstellen": "Create video"
+  },
+  "zur-startseite": "To the landing page",
+  "zuruecksetzen": "Reset"
+}

@@ -5,14 +5,30 @@ const path = require("path");
 
 process.env.VUE_APP_VERSION = require("./package.json").version;
 
+const langPrefixes = ["de", "en"];
+
+const prerenderRoutes = [
+  routes.filter((r) => r.meta?.prerender),
+  ...routes
+    .filter((r) => r.path.match(/\/:[a-zA-Z]*/) && r.children)
+    .map((r) =>
+      r.children
+        .filter((c) => c.meta?.prerender)
+        .map((c) =>
+          (r.meta.sitemap.slugs || langPrefixes).map((param) => ({
+            ...c,
+            path: `/${param}/${c.path}`,
+          }))
+        )
+    ),
+]
+  .flat(Infinity)
+  .map((r) => r.path);
+
 const productionPlugins = [
   new PrerenderSpaPlugin({
     staticDir: path.join(__dirname, "dist"),
-    routes: routes
-      .filter((r) => r.meta?.prerender)
-      .map((r) => [r.path, r.alias])
-      .flat(Infinity)
-      .filter((r) => r),
+    routes: prerenderRoutes,
     minify: {
       collapseBooleanAttributes: true,
       collapseWhitespace: true,

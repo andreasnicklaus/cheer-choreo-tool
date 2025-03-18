@@ -16,13 +16,12 @@
   >
     <b-row align-h="end" align-v="center" :style="{ rowGap: '1rem' }">
       <b-col cols="12" md="">
-        <h4>App herunterladen!</h4>
-        Die App nimmt keinen Speicherplatz auf deinem Gerät ein und erleichtert
-        das Starten der Anwendung!
+        <h4>{{ $t("app-install.app-herunterladen") }}</h4>
+        {{ $t("app-install.install-info") }}
       </b-col>
       <b-col cols="auto">
         <b-button @click="dismiss" variant="link" class="mr-2">
-          <u> Nein, danke! </u>
+          <u>{{ $t("app-install.nein-danke") }}</u>
         </b-button>
         <b-button
           @click="install"
@@ -30,7 +29,7 @@
           :style="{ color: 'white' }"
         >
           <b-icon-download class="mr-2" />
-          INSTALLIEREN
+          {{ $t("app-install.installieren") }}
         </b-button>
       </b-col>
     </b-row>

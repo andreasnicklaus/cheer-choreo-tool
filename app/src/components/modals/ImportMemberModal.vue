@@ -4,10 +4,10 @@
     centered
     @show="reset"
     @ok="importMembers"
-    title="Team-Mitglied importieren"
+    :title="$t('modals.import-member.team-mitglied-importieren')"
   >
     <b-form-group
-      label="Team:"
+      :label="$tc('team', 1)"
       :state="teamIdIsValid"
       :invalid-feedback="teamIdStateFeedback"
     >
@@ -18,7 +18,7 @@
       />
     </b-form-group>
     <b-form-group
-      label="Season:"
+      :label="$tc('season', 1)"
       :state="seasonIdIsValid"
       :invalid-feedback="seasonIdStateFeedback"
     >
@@ -29,7 +29,7 @@
       />
     </b-form-group>
     <b-form-group
-      label="Team-Mitglied:"
+      :label="$t('modals.import-member.team-mitglied')"
       :state="memberIdsIsValid"
       :invalid-feedback="memberIdsStateFeedback"
     >
@@ -42,8 +42,12 @@
       />
     </b-form-group>
     <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="success"> Importieren </b-button>
-      <b-button @click="cancel" variant="outline-danger"> Abbrechen </b-button>
+      <b-button @click="ok" variant="success">{{
+        $t("teamView.importieren")
+      }}</b-button>
+      <b-button @click="cancel" variant="outline-danger">{{
+        $t("abbrechen")
+      }}</b-button>
     </template>
   </b-modal>
 </template>
@@ -146,22 +150,26 @@ export default {
     },
     teamIdStateFeedback() {
       if (this.seasonOptions.length == 0)
-        return `Für das Team ${this.selectedTeam?.name} gibt es bisher keine andere Season`;
-      if (!this.teamId) return "Erforderlich";
+        return this.$t(
+          "modals.import-member.fuer-das-team-this-selectedteam-name-gibt-es-bisher-keine-andere-season",
+          [this.selectedTeam?.name]
+        );
+      if (!this.teamId) return this.$t("erforderlich");
       return null;
     },
     seasonIdIsValid() {
       return Boolean(this.seasonId);
     },
     seasonIdStateFeedback() {
-      if (!this.seasonId) return "Erforderlich";
+      if (!this.seasonId) return this.$t("erforderlich");
       return null;
     },
     memberIdsIsValid() {
       return Boolean(this.memberIds) && this.memberIds.length > 0;
     },
     memberIdsStateFeedback() {
-      if (!this.memberIds || this.memberIds.length == 0) return "Erforderlich";
+      if (!this.memberIds || this.memberIds.length == 0)
+        return this.$t("erforderlich");
       return null;
     },
   },

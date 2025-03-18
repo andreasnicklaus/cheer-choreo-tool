@@ -1,7 +1,7 @@
 <template>
   <b-modal
     :id="`modal-newHit-${id}`"
-    title="Neuer Eintrag"
+    :title="$t('shortcut-tutorial.neuer-eintrag')"
     centered
     size="lg"
     @show="resetModal"
@@ -17,7 +17,7 @@
       >
         <b-form-input
           v-model="newHitName"
-          placeholder="Wie heißt der neue Eintrag?"
+          :placeholder="$t('modals.create-hit.wie-heisst-der-neue-eintrag')"
           autofocus
           required
           :state="newHitNameIsValid"
@@ -40,10 +40,10 @@
       <b-row>
         <b-col cols="6">
           <b-form-group
-            description="Achter"
+            :description="$t('achter')"
             :state="newHitAchterIsValid"
             :invalid-feedback="newHitAchterStateFeedback"
-            valid-feedback="Gültig!"
+            :valid-feedback="$t('login.gueltig')"
           >
             <b-form-input
               v-model="newHitAchter"
@@ -56,10 +56,10 @@
         </b-col>
         <b-col cols="6">
           <b-form-group
-            description="Count:"
+            :description="$tc('count', 1)"
             :state="newHitCountIsValid"
             :invalid-feedback="newHitCountStateFeedback"
-            valid-feedback="Gültig!"
+            :valid-feedback="$t('login.gueltig')"
           >
             <b-form-input
               v-model="newHitCount"
@@ -75,10 +75,10 @@
       <hr />
 
       <b-form-group
-        label="Teilnehmer:"
+        :label="$t('teilnehmer')"
         :state="newHitMembersIsValid"
         :invalid-feedback="newHitMembersStateFeedback"
-        valid-feedback="Gültig!"
+        :valid-feedback="$t('login.gueltig')"
       >
         <b-button-group>
           <b-button
@@ -87,14 +87,14 @@
             :disabled="newHitMembers?.length == teamMembers?.length"
           >
             <b-icon-check-all />
-            Alle auswählen
+            {{ $t("alle-auswaehlen") }}
           </b-button>
           <b-button
             variant="light"
             @click="() => (this.newHitMembers = [])"
             :disabled="newHitMembers?.length == 0"
           >
-            <b-icon-slash /> Keine auswählen
+            <b-icon-slash /> {{ $t("keine-auswaehlen") }}
           </b-button>
           <b-button
             variant="light"
@@ -110,7 +110,7 @@
             "
           >
             <b-icon-arrow-repeat />
-            Auswahl wechseln
+            {{ $t("auswahl-wechseln") }}
           </b-button>
         </b-button-group>
         <b-form-checkbox-group
@@ -153,9 +153,11 @@
           !newHitMembersIsValid
         "
       >
-        Speichern
+        {{ $t("speichern") }}
       </b-button>
-      <b-button @click="cancel" variant="danger">Abbrechen</b-button>
+      <b-button @click="cancel" variant="danger">{{
+        $t("abbrechen")
+      }}</b-button>
     </template>
   </b-modal>
 </template>
@@ -164,48 +166,55 @@
 import HitService from "@/services/HitService";
 
 function generateHitNameProposals() {
-  const preDirections = [null, "High", "Low"];
+  const preDirections = [null, "this.$t('hits.high')", "this.$t('hits.low')"];
   const postDirections = [
     null,
-    "nach rechts",
-    "rechts",
-    "nach links",
-    "links",
-    "nach hinten",
-    "hinten",
-    "nach vorne",
-    "vorne",
+    "this.$t('hits.nach-rechts')",
+    "this.$t('hits.rechts')",
+    "this.$t('hits.nach-links')",
+    "this.$t('hits.links')",
+    "this.$t('hits.nach-hinten')",
+    "this.$t('hits.hinten')",
+    "this.$t('hits.nach-vorne')",
+    "this.$t('hits.vorne')",
   ];
 
-  const preActions = [null, "Set", "Go", "Start", "Dip", "Half Up"];
+  const preActions = [
+    null,
+    "this.$t('hits.set')",
+    "this.$t('hits.go')",
+    "this.$t('hits.start')",
+    "this.$t('hits.dip')",
+    "this.$t('hits.half-up')",
+  ];
 
   const actions = [
     null,
     "V",
-    "Elevator",
-    "Stretch",
-    "Lib",
-    "Tick Tock",
-    "Scale",
-    "Arabesque",
-    "Rad",
-    "Bogengang",
-    "Flick Flack",
-    "Pinguin",
-    "Playmobil",
-    "Clap",
-    "Toetouch",
-    "Pyra",
-    "Randwende",
-    "Spagat",
-    "Kneel",
-    "Knien",
-    "Full around",
-    "Half around",
-    "Trophy",
-    "Basket",
-    "Log roll",
-    "Cradle",
+    "this.$t('hits.elevator')",
+    "this.$t('hits.stretch')",
+    "this.$t('hits.lib')",
+    "this.$t('hits.tick-tock')",
+    "this.$t('hits.scale')",
+    "this.$t('hits.arabesque')",
+    "this.$t('hits.rad')",
+    "this.$t('hits.bogengang')",
+    "this.$t('hits.flick-flack')",
+    "this.$t('hits.pinguin')",
+    "this.$t('hits.playmobil')",
+    "this.$t('hits.clap')",
+    "this.$t('hits.toetouch')",
+    "this.$t('hits.pyra')",
+    "this.$t('hits.radwende')",
+    "this.$t('hits.spagat')",
+    "this.$t('hits.kneel')",
+    "this.$t('hits.knien')",
+    "this.$t('hits.full-around')",
+    "this.$t('hits.half-around')",
+    "this.$t('hits.trophy')",
+    "this.$t('hits.basket')",
+    "this.$t('hits.log-roll')",
+    "this.$t('hits.cradle')",
     "1",
     "2",
     "3",
@@ -215,16 +224,16 @@ function generateHitNameProposals() {
     "7",
     "8",
     "9",
-    "Wurf",
+    "this.$t('hits.wurf')",
   ];
 
   const standAlones = [
-    "Clean",
-    "Raussetzen",
-    "Loslaufen",
-    "Umgreifen",
-    "Greifen",
-    "Ende",
+    "this.$t('hits.clean')",
+    "this.$t('hits.raussetzen')",
+    "this.$t('hits.loslaufen')",
+    "this.$t('hits.umgreifen')",
+    "this.$t('hits.greifen')",
+    "this.$t('hits.ende')",
   ];
 
   const combinations = preDirections
@@ -313,22 +322,23 @@ export default {
       return Boolean(this.newHitName) && this.newHitName.trim().length >= 3;
     },
     newHitNameStateFeedback() {
-      if (!this.newHitName) return "Erforderlich";
-      if (this.newHitName.trim().length < 3) return "Min. 3 Zeichen";
+      if (!this.newHitName) return this.$t("erforderlich");
+      if (this.newHitName.trim().length < 3)
+        return this.$t("countOverview.hit-name-min-laenge");
       return null;
     },
     newHitAchterIsValid() {
       return Boolean(this.newHitAchter);
     },
     newHitAchterStateFeedback() {
-      if (!this.newHitAchter) return "Erforderlich";
+      if (!this.newHitAchter) return this.$t("erforderlich");
       return null;
     },
     newHitCountIsValid() {
       return Boolean(this.newHitCount);
     },
     newHitCountStateFeedback() {
-      if (!this.newHitCount) return "Erforderlich";
+      if (!this.newHitCount) return this.$t("erforderlich");
       return null;
     },
     newHitMembersIsValid() {
@@ -336,7 +346,7 @@ export default {
     },
     newHitMembersStateFeedback() {
       if (!this.newHitMembers || this.newHitMembers.length == 0)
-        return "Erforderlich";
+        return this.$t("erforderlich");
       return null;
     },
   },

@@ -2,7 +2,7 @@
   <b-modal
     hide-footer
     :id="`video-download-modal-${id}`"
-    title="Video herunterladen"
+    :title="$t('modals.video-download.video-herunterladen')"
     size="xl"
   >
     <b-row align-v="end">
@@ -30,14 +30,17 @@
               "
             >
               <b-icon-download />
-              Download {{ selectedDownloadOption.name }}
+              {{ $t("download") }} {{ selectedDownloadOption.name }}
             </b-button>
           </b-col>
           <b-col cols="auto">
             <b-dropdown variant="light">
               <template #button-content>
                 <b-icon-film />
-                {{ selectedDownloadOption.name || "Format" }}
+                {{
+                  selectedDownloadOption.name ||
+                  this.$t("modals.video-download.format")
+                }}
               </template>
               <b-dropdown-item
                 v-for="option in downloadOptions"

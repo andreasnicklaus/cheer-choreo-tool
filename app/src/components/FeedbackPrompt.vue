@@ -1,13 +1,12 @@
 <template>
   <b-modal
     :id="`feedback-modal-${id}`"
-    title="Sag uns deine Meinung"
+    :title="$t('feedback.sag-uns-deine-meinung')"
     centered
     @ok="send"
   >
     <p>
-      Hilf uns, besser zu werden! Gib uns ein kurzes Feedback, um deine
-      Erfahrung mit dem Choreo Planer noch besser zu machen.
+      {{ $t("feedback.hilf-uns-besser-zu-werden") }}
     </p>
     <b-row align-h="center">
       <b-col cols="auto">
@@ -40,7 +39,7 @@
       rows="5"
       v-model="feedbackText"
       class="p-2 mt-3"
-      placeholder="Was gefällt dir am Choreo Planer? Was nicht?"
+      :placeholder="$t('feedback.was-gefaellt-dir-am-choreo-planer')"
     />
     <template #modal-footer="{ ok, cancel }">
       <b-row align-h="between" class="w-100 mr-2" no-gutters>
@@ -51,7 +50,7 @@
             variant="link"
             class="text-muted"
           >
-            Nicht mehr fragen
+            {{ $t("feedback.nicht-mehr-fragen") }}
           </b-button>
         </b-col>
         <b-col cols="auto">
@@ -64,12 +63,12 @@
                 to="#"
               >
                 <b-spinner small v-if="sending" />
-                <span v-else> Abschicken </span>
+                <span v-else> {{ $t("feedback.abschicken") }} </span>
               </b-button>
             </b-col>
             <b-col cols="auto">
               <b-button @click="cancel" variant="outline-danger">
-                Schließen
+                {{ $t("feedback.schliessen") }}
               </b-button>
             </b-col>
           </b-row>
@@ -79,7 +78,7 @@
 
     <b-modal
       :id="`feedback-thankyou-modal-${id}`"
-      title="Dankeschön!"
+      :title="$t('feedback.dankeschoen')"
       centered
       @ok="close"
       @hide="close"
@@ -87,12 +86,11 @@
       header-text-variant="light"
     >
       <p>
-        Vielen Dank! Wir haben dein Feedback gespeichert und werden gleich
-        anfangen, an deinen Verbesserungsvorschlägen zu arbeiten.
+        {{ $t("feedback.vielen-dank") }}
       </p>
       <template #modal-footer="{ cancel }">
         <b-button variant="success" @click="cancel" :style="{ color: 'white' }">
-          Schließen
+          {{ $t("feedback.schliessen") }}
         </b-button>
       </template>
     </b-modal>

@@ -7,16 +7,28 @@
           <b-card-title
             class="d-flex justify-content-between align-items-center"
           >
-            Filter
+            {{ $t("start.filter") }}
             <b-icon-info id="popover-info-target" variant="secondary" />
             <b-popover target="popover-info-target" triggers="hover, focus">
-              <p><b>Suchen:</b> Suche nach einem Team oder einer Choreo</p>
-              <p><b>Team:</b> Filtere die Choreos nach Teams</p>
-              <p><b>Season:</b> Filtere die Choreos nach Season</p>
-              <p><b>Counts:</b> Filtere die Choreo nach ihrer Länge</p>
+              <p>
+                <b>{{ $t("suchen") }}:</b>
+                {{ $t("start.suche-nach-einem-team-oder-einer-choreo") }}
+              </p>
+              <p>
+                <b>{{ $tc("team", 1) }}:</b>
+                {{ $t("start.filtere-die-choreos-nach-teams") }}
+              </p>
+              <p>
+                <b>{{ $tc("season", 1) }}:</b>
+                {{ $t("start.filtere-die-choreos-nach-season") }}
+              </p>
+              <p>
+                <b>{{ $tc("count", 2) }}:</b>
+                {{ $t("start.filtere-die-choreo-nach-ihrer-laenge") }}
+              </p>
               <hr />
               <p class="text-muted">
-                Aktiver Verein: <b>{{ club?.name }}</b>
+                {{ $t("start.aktiver-verein") }}: <b>{{ club?.name }}</b>
               </p>
             </b-popover>
           </b-card-title>
@@ -28,7 +40,7 @@
           >
             <b-input-group class="mb-4 mt-2">
               <b-form-input
-                placeholder="Suchen"
+                :placeholder="$t('suchen')"
                 v-model="searchTerm"
                 type="search"
               />
@@ -43,7 +55,9 @@
             </b-input-group>
 
             <div v-if="teams.length > 0">
-              <p class="mb-0 font-weight-bold font-italic text-muted">Team</p>
+              <p class="mb-0 font-weight-bold font-italic text-muted">
+                {{ $tc("team", 1) }}
+              </p>
               <b-skeleton-wrapper :loading="loading">
                 <template #loading>
                   <b-list-group flush class="mb-2">
@@ -94,7 +108,9 @@
             </div>
 
             <div v-if="seasons.length > 0">
-              <p class="mb-0 font-weight-bold font-italic text-muted">Season</p>
+              <p class="mb-0 font-weight-bold font-italic text-muted">
+                {{ $tc("season", 1) }}
+              </p>
               <b-skeleton-wrapper :loading="loading">
                 <template #loading>
                   <b-list-group flush class="mb-2">
@@ -154,7 +170,9 @@
                   Math.max(...choreos.map((c) => c.counts))
               "
             >
-              <p class="mb-0 font-weight-bold font-italic text-muted">Counts</p>
+              <p class="mb-0 font-weight-bold font-italic text-muted">
+                {{ $tc("count", 2) }}
+              </p>
               <b-skeleton-wrapper :loading="loading">
                 <template #loading>
                   <b-skeleton type="input" />
@@ -162,10 +180,10 @@
                 </template>
                 <template #default>
                   <b-form-group
-                    label="Min. Länge:"
-                    :description="`${Math.floor(minCount / 8)} Achter + ${
-                      minCount % 8
-                    }`"
+                    :label="$t('start.min-laenge')"
+                    :description="`${Math.floor(minCount / 8)} ${$t(
+                      'achter'
+                    )} + ${minCount % 8}`"
                   >
                     <b-form-input
                       v-model="minCount"
@@ -176,10 +194,10 @@
                   </b-form-group>
                   <hr />
                   <b-form-group
-                    label="Max. Länge:"
-                    :description="`${Math.floor(maxCount / 8)} Achter + ${
-                      maxCount % 8
-                    }`"
+                    :label="$t('start.max-laenge')"
+                    :description="`${Math.floor(maxCount / 8)} ${$t(
+                      'achter'
+                    )} + ${maxCount % 8}`"
                   >
                     <b-form-input
                       v-model="maxCount"
@@ -209,7 +227,7 @@
               "
               @click="resetFilters"
             >
-              Zurücksetzen
+              {{ $t("zuruecksetzen") }}
             </b-button>
           </b-collapse>
 
@@ -300,6 +318,7 @@
                               name: 'Choreo',
                               params: {
                                 choreoId: choreo.id,
+                                locale: $root.$i18n.locale,
                               },
                             }"
                           >
@@ -314,10 +333,13 @@
                                       variant="light"
                                       :to="{
                                         name: 'Video',
-                                        params: { choreoId: choreo.id },
+                                        params: {
+                                          choreoId: choreo.id,
+                                          locale: $root.$i18n.locale,
+                                        },
                                       }"
                                       v-b-tooltip.hover
-                                      title="Video erstellen"
+                                      :title="$t('start.video-erstellen')"
                                     >
                                       <b-icon-film />
                                     </b-button>
@@ -325,10 +347,13 @@
                                       variant="light"
                                       :to="{
                                         name: 'PDF',
-                                        params: { choreoId: choreo.id },
+                                        params: {
+                                          choreoId: choreo.id,
+                                          locale: $root.$i18n.locale,
+                                        },
                                       }"
                                       v-b-tooltip.hover
-                                      title="PDF erstellen"
+                                      :title="$t('start.pdf-erstellen')"
                                     >
                                       <b-icon-file-pdf />
                                     </b-button>
@@ -341,6 +366,7 @@
                                 name: 'Team',
                                 params: {
                                   teamId: team.id,
+                                  locale: $root.$i18n.locale,
                                 },
                               }"
                               :style="{
@@ -354,7 +380,8 @@
                               {{ seasonTeam.Season.name }}
                             </p>
                             <p class="m-0">
-                              {{ Math.floor(choreo.counts / 8) }} Achter
+                              {{ Math.floor(choreo.counts / 8) }}
+                              {{ $t("achter") }}
                               {{
                                 choreo.counts % 8 > 0
                                   ? `+ ${choreo.counts % 8}`
@@ -375,7 +402,7 @@
                             href="#"
                           >
                             <b-icon-plus-square class="mr-1" />
-                            <u>Choreo hinzufügen</u>
+                            <u>{{ $t("start.choreo-hinzufuegen") }}</u>
                           </b-list-group-item>
                         </b-list-group>
                       </b-collapse>
@@ -387,7 +414,7 @@
                       href="#"
                     >
                       <b-icon-plus-square class="mr-1" />
-                      <u>Saison anfangen</u>
+                      <u>{{ $t("start.saison-anfangen") }}</u>
                     </b-list-group-item>
                   </b-list-group>
                 </b-collapse>
@@ -399,18 +426,17 @@
                 href="#"
               >
                 <b-icon-plus-square class="mr-1" />
-                <u>Team hinzufügen</u>
+                <u>{{ $t("start.team-hinzufuegen") }}</u>
               </b-list-group-item>
             </b-list-group>
 
             <b-card
               v-if="teams.length == 0"
-              title="Hier kannst du noch nichts finden..."
+              :title="$t('start.hier-kannst-du-noch-nichts-finden')"
               class="mt-5"
             >
               <b-card-text>
-                Du hast aktuell hier nichts zu sehen, weil du noch keine Teams
-                angelegt hast.
+                {{ $t("start.noch-kein-team-angelegt") }}
               </b-card-text>
             </b-card>
           </template>
@@ -568,14 +594,18 @@ export default {
     },
     onTeamCreated(team) {
       this.$router
-        .push({ name: "Team", params: { teamId: team.id } })
+        .push({
+          name: "Team",
+          params: { teamId: team.id, locale: this.$root.$i18n.locale },
+        })
         .catch(() => {});
     },
     choreoCountStringBySeasonTeam(seasonTeam) {
       const count = seasonTeam.Choreos.filter(
         (c) => c.counts >= this.minCount && c.counts <= this.maxCount
       ).length;
-      const choreoDeclination = count == 1 ? "Choreo" : "Choreos";
+      const choreoDeclination =
+        count == 1 ? this.$tc("choreo", 1) : this.$t("choreo", 2);
       return `${count} ${choreoDeclination}`;
     },
     seasonCountStringByTeam(team) {
@@ -584,7 +614,8 @@ export default {
           this.seasonFilterIds.length == 0 ||
           this.seasonFilterIds.includes(st.Season.id)
       ).flat(Infinity).length;
-      const seasonDeclination = count == 1 ? "Season" : "Seasons";
+      const seasonDeclination =
+        count == 1 ? this.$tc("season", 1) : this.$tc("season", 2);
       return `${count} ${seasonDeclination}`;
     },
     onSeasonTeamCreation() {
@@ -612,38 +643,41 @@ export default {
       },
     },
   },
-  metaInfo: {
-    title: "Start",
-    meta: [
-      {
-        vmid: "description",
-        name: "description",
-        content:
-          "Plane deine Choreografien schnell und einfach mit dem Choreo Planer! Perfekt für Cheerleading, Tanz und Bodenturnen. 100% kostenlos. Jetzt ausprobieren!",
-      },
-      {
-        vmid: "twitter:description",
-        name: "twitter:description",
-        content:
-          "Plane deine Choreografien schnell und einfach mit dem Choreo Planer! Perfekt für Cheerleading, Tanz und Bodenturnen. 100% kostenlos. Jetzt ausprobieren!",
-      },
-      {
-        vmid: "og:description",
-        property: "og:description",
-        content:
-          "Plane deine Choreografien schnell und einfach mit dem Choreo Planer! Perfekt für Cheerleading, Tanz und Bodenturnen. 100% kostenlos. Jetzt ausprobieren!",
-      },
-      {
-        vmid: "og:title",
-        property: "og:title",
-        content: "Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
-      },
-      {
-        vmid: "twitter:title",
-        name: "twitter:title",
-        content: "Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
-      },
-    ],
+  metaInfo() {
+    return {
+      title: this.$t("nav.start"),
+      meta: [
+        {
+          vmid: "description",
+          name: "description",
+          content: this.$t("meta.defaults.description"),
+        },
+        {
+          vmid: "twitter:description",
+          name: "twitter:description",
+          content: this.$t("meta.defaults.description"),
+        },
+        {
+          vmid: "og:description",
+          property: "og:description",
+          content: this.$t("meta.defaults.description"),
+        },
+        {
+          vmid: "og:title",
+          property: "og:title",
+          content: `${this.$t("general.ChoreoPlaner")} | ${this.$t(
+            "meta.defaults.title"
+          )}`,
+        },
+        {
+          vmid: "twitter:title",
+          name: "twitter:title",
+          content: `${this.$t("general.ChoreoPlaner")} | ${this.$t(
+            "meta.defaults.title"
+          )}`,
+        },
+      ],
+    };
   },
 };
 </script>

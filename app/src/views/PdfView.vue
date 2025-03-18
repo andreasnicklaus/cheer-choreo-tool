@@ -84,28 +84,31 @@
       </section>
     </vue-html2pdf>
 
-    <b-card class="text-left mb-4" title="Countsheet zusammenstellen">
+    <b-card
+      class="text-left mb-4"
+      :title="$t('pdf.countsheet-zusammenstellen')"
+    >
       <b-card-sub-title v-if="choreo">
         <p class="m-0">Ausgewählte Choreo: {{ choreo.name }}</p>
         <p class="m-0">
-          Team: {{ choreo.SeasonTeam.Team.name }} ({{
+          {{ $tc("team", 1) }}: {{ choreo.SeasonTeam.Team.name }} ({{
             choreo.SeasonTeam.Season.name
           }})
         </p>
       </b-card-sub-title>
       <b-card-sub-title v-else :style="{ height: '38.38px' }">
-        Choreo lädt
+        {{ $t("pdf.choreo-laedt") }}
       </b-card-sub-title>
       <b-card-body>
         <b-row :style="{ rowGap: '16px' }">
           <b-col md="6" cols="12">
             <b-form-group
-              description="Das Datum auf das Countsheet schreiben"
+              :description="$t('pdf.das-datum-auf-das-countsheet-schreiben')"
               :state="dateIsValid"
               :invalid-feedback="dateStateFeedback"
             >
               <b-form-checkbox v-model="includeDate">
-                Datum anzeigen
+                {{ $t("pdf.datum-anzeigen") }}
               </b-form-checkbox>
               <b-form-input
                 type="date"
@@ -115,24 +118,30 @@
               />
             </b-form-group>
             <b-form-group
-              description="Den Team-Namen auf das Countsheet schreiben"
+              :description="
+                $t('pdf.den-team-namen-auf-das-countsheet-schreiben')
+              "
             >
               <b-form-checkbox v-model="includeTeamName">
-                Team-Name anzeigen
+                {{ $t("pdf.team-name-anzeigen") }}
               </b-form-checkbox>
             </b-form-group>
             <b-form-group
-              description="Den Choreo-Namen auf das Countsheet schreiben"
+              :description="
+                $t('pdf.den-choreo-namen-auf-das-countsheet-schreiben')
+              "
             >
               <b-form-checkbox v-model="includeChoreoName">
-                Choreo-Name anzeigen
+                {{ $t("pdf.choreo-name-anzeigen") }}
               </b-form-checkbox>
             </b-form-group>
             <b-form-group
-              description="Die Namen der Teilnehmer auf das Countsheet schreiben"
+              :description="
+                $t('pdf.die-namen-der-teilnehmer-auf-das-countsheet-schreiben')
+              "
             >
               <b-form-checkbox v-model="includeMemberNames">
-                Teilnehmer-Namen anzeigen
+                {{ $t("pdf.teilnehmer-namen-anzeigen") }}
               </b-form-checkbox>
             </b-form-group>
           </b-col>
@@ -146,7 +155,7 @@
                 <b-skeleton v-for="(_, i) in Array(3)" :key="i"></b-skeleton>
               </template>
               <b-form-group
-                description="Für wen ist das Countsheet?"
+                :description="$t('pdf.fuer-wen-ist-das-countsheet')"
                 :state="includedMembersIsValid"
                 :invalid-feedback="includedMembersStateFeedback"
               >
@@ -159,7 +168,7 @@
                     :disabled="includedMembers.length == teamMembers.length"
                   >
                     <b-icon-check-all />
-                    Alle auswählen
+                    {{ $t("alle-auswaehlen") }}
                   </b-button>
                   <b-button
                     variant="light"
@@ -167,7 +176,7 @@
                     :disabled="includedMembers.length == 0"
                   >
                     <b-icon-slash />
-                    Keine auswählen
+                    {{ $t("keine-auswaehlen") }}
                   </b-button>
                 </b-button-group>
                 <b-checkbox-group
@@ -193,8 +202,7 @@
                 includedMembers.length >= teamMembers.length
               "
             >
-              Wenn du alle Teilnehmer auswählst, werden die Namen nicht auf das
-              Countsheet geschrieben, um Platz zu sparen.
+              {{ $t("pdf.alle-namen-warnung") }}
             </b-alert>
           </b-col>
         </b-row>
@@ -202,7 +210,7 @@
       <template #footer>
         <div v-if="loading" class="text-center">
           <b-spinner />
-          <p>{{ slogan || "Choreo wird geladen..." }}</p>
+          <p>{{ slogan || $t("pdf.choreo-wird-geladen") }}</p>
         </div>
         <b-button
           block
@@ -217,7 +225,10 @@
       </template>
     </b-card>
 
-    <LoadingModal ref="loadingModal" description="PDF wird generiert" />
+    <LoadingModal
+      ref="loadingModal"
+      :description="$t('pdf.pdf-wird-generiert')"
+    />
   </b-container>
 </template>
 
@@ -226,20 +237,6 @@ import CountSheet from "@/components/CountSheet.vue";
 import LoadingModal from "@/components/modals/LoadingModal.vue";
 import ChoreoService from "@/services/ChoreoService";
 import VueHtml2pdf from "vue-html2pdf";
-
-const slogans = [
-  "Schuhe werden gebunden...",
-  "Haare werden geflochten...",
-  "Schleifen werden gerichtet...",
-  "Maskottchen wird hingelegt...",
-  "1 - 3 - 5 - 7!",
-  "Dehnen...",
-  "Uniformen werden sortiert...",
-  "Tabelle wird gemalt...",
-  "Einträge werden geschrieben...",
-  "Schminke wird aufgetragen...",
-  "Zopf wird gebunden...",
-];
 
 export default {
   name: "PdfView",
@@ -274,7 +271,7 @@ export default {
       });
     },
     generatePdf() {
-      this.sloganIndex = Math.floor(Math.random() * slogans.length);
+      this.sloganIndex = Math.floor(Math.random() * this.slogans.length);
 
       this.$refs.loadingModal.open();
 
@@ -339,12 +336,27 @@ export default {
     this.choreoId = this.$route.params.choreoId;
     this.loadChoreo();
     this.sloganInterval = setInterval(() => {
-      this.sloganIndex = Math.floor(Math.random() * slogans.length);
+      this.sloganIndex = Math.floor(Math.random() * this.slogans.length);
     }, 3000);
   },
   computed: {
+    slogans() {
+      return [
+        this.$t("loading-slogans.schuhe-werden-gebunden"),
+        this.$t("loading-slogans.haare-werden-geflochten"),
+        this.$t("loading-slogans.schleifen-werden-gerichtet"),
+        this.$t("loading-slogans.maskottchen-wird-hingelegt"),
+        this.$t("loading-slogans.1-3-5-7"),
+        this.$t("loading-slogans.dehnen"),
+        this.$t("loading-slogans.uniformen-werden-sortiert"),
+        this.$t("loading-slogans.tabelle-wird-gemalt"),
+        this.$t("loading-slogans.eintraege-werden-geschrieben"),
+        this.$t("loading-slogans.schminke-wird-aufgetragen"),
+        this.$t("loading-slogans.zopf-wird-gebunden"),
+      ];
+    },
     slogan() {
-      return slogans[this.sloganIndex];
+      return this.slogans[this.sloganIndex];
     },
     dateIsValid() {
       return (
@@ -355,7 +367,7 @@ export default {
     dateStateFeedback() {
       if (!this.includeDate) return null;
       if (Boolean(this.date) && Boolean(new Date(this.date)))
-        return "Erforderlich";
+        return this.$t("erforderlich");
       return null;
     },
     includedMembersIsValid() {
@@ -363,44 +375,50 @@ export default {
     },
     includedMembersStateFeedback() {
       if (this.includedMembers.length <= 0)
-        return "Min. 1 Teilnehmer erforderlich";
+        return this.$t("pdf.min-teilnehmer-erforderlich");
       return null;
     },
   },
   metaInfo() {
     return {
-      title: (this.choreo?.name || "Lädt Choreo") + " - PDF",
+      title: `${this.choreo?.name || this.$t("pdf.laedt-choreo")} - ${this.$t(
+        "pdf.PDF"
+      )} - ${this.$t("general.ChoreoPlaner")} | ${this.$t(
+        "meta.defaults.title"
+      )}`,
       meta: [
         {
           vmid: "description",
           name: "description",
-          content: "Exportiere das Countsheet deiner Choreo als PDF!",
+          content: this.$t("meta.pdfView.description"),
         },
         {
           vmid: "twitter:description",
           name: "twitter:description",
-          content: "Exportiere das Countsheet deiner Choreo als PDF!",
+          content: this.$t("meta.pdfView.description"),
         },
         {
           vmid: "og:description",
           property: "og:description",
-          content: "Exportiere das Countsheet deiner Choreo als PDF!",
+          content: this.$t("meta.pdfView.description"),
         },
         {
           vmid: "og:title",
           property: "og:title",
-          content:
-            (this.choreo?.name || "Lädt Choreo") +
-            " - PDF" +
-            " - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
+          content: `${
+            this.choreo?.name || this.$t("pdf.laedt-choreo")
+          } - ${this.$t("pdf.PDF")} - ${this.$t(
+            "general.ChoreoPlaner"
+          )} | ${this.$t("meta.defaults.title")}`,
         },
         {
           vmid: "twitter:title",
           name: "twitter:title",
-          content:
-            (this.choreo?.name || "Lädt Choreo") +
-            " - PDF" +
-            " - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
+          content: `${
+            this.choreo?.name || this.$t("pdf.laedt-choreo")
+          } - ${this.$t("pdf.PDF")} - ${this.$t(
+            "general.ChoreoPlaner"
+          )} | ${this.$t("meta.defaults.title")}`,
         },
       ],
     };

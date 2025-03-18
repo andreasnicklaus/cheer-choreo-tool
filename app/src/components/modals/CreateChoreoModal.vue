@@ -1,7 +1,7 @@
 <template>
   <b-modal
     :id="`modal-newChoreo-${id}`"
-    title="Neue Choreo"
+    :title="$t('nav.neue-choreo')"
     centered
     scrollable
     size="xl"
@@ -13,21 +13,23 @@
         label="Name:"
         :state="newChoreoNameIsValid"
         :invalid-feedback="newChoreoNameStateFeedback"
-        valid-feedback="Gültig!"
+        :valid-feedback="$t('login.gueltig')"
       >
         <b-form-input
           v-model="newChoreoName"
           :state="newChoreoNameIsValid"
           required
           autofocus
-          :placeholder="`Landesmeisterschaft, RM ${new Date().getFullYear()}, ...`"
+          :placeholder="
+            $t('modals.create-choreo.example-name', [new Date().getFullYear()])
+          "
         />
       </b-form-group>
-      <b-form-group label="Länge:">
+      <b-form-group :label="$t('modals.create-choreo.laenge')">
         <b-row>
           <b-col>
             <b-form-group
-              description="Achter"
+              :description="$t('achter')"
               :state="newChoreoAchterIsValid"
               :invalid-feedback="newChoreoAchterStateFeedback"
             >
@@ -41,7 +43,11 @@
           </b-col>
           <b-col>
             <b-form-group
-              description="Counts (Zusätzliche Counts nach den Achtern)"
+              :description="
+                $t(
+                  'modals.change-length.counts-zusaetzliche-counts-nach-den-achtern'
+                )
+              "
               :state="newChoreoCountIsValid"
               :invalid-feedback="newChoreoCountStateFeedback"
             >
@@ -55,7 +61,13 @@
             </b-form-group>
           </b-col>
         </b-row>
-        <p class="text-muted">Geschätzte Zeit: {{ timeEstimationString }}</p>
+        <p class="text-muted">
+          {{
+            $t("modals.create-choreo.geschaetzte-zeit-timeestimationstring", [
+              timeEstimationString,
+            ])
+          }}
+        </p>
       </b-form-group>
       <b-form-group
         label="Team:"
@@ -73,7 +85,7 @@
         label="Season:"
         :state="newChoreoSeasonIsValid"
         :invalid-feedback="newChoreoSeasonStateFeedback"
-        valid-feedback="Gültig"
+        :valid-feedback="$t('login.gueltig')"
       >
         <b-form-select
           v-model="newChoreoSeasonId"
@@ -90,7 +102,7 @@
           "
         />
       </b-form-group>
-      <b-form-group label="Teilnehmer:">
+      <b-form-group :label="$t('teilnehmer')">
         <b-skeleton-wrapper
           :loading="!newChoreoTeamIsValid || !newChoreoSeasonIsValid"
         >
@@ -111,14 +123,14 @@
               "
             >
               <b-icon-check-all />
-              Alle auswählen
+              {{ $t("alle-auswaehlen") }}
             </b-button>
             <b-button
               variant="light"
               @click="() => (this.newChoreoParticipantIds = [])"
               :disabled="newChoreoParticipantIds?.length == 0"
             >
-              <b-icon-slash /> Keine auswählen
+              <b-icon-slash /> {{ $t("keine-auswaehlen") }}
             </b-button>
             <b-button
               variant="light"
@@ -134,7 +146,7 @@
               "
             >
               <b-icon-arrow-repeat />
-              Auswahl wechseln
+              {{ $t("auswahl-wechseln") }}
             </b-button>
           </b-button-group>
           <b-checkbox-group
@@ -183,9 +195,11 @@
           newChoreoParticipantIds.length == 0
         "
       >
-        Erstellen
+        {{ $t("erstellen") }}
       </b-button>
-      <b-button @click="cancel" variant="danger">Abbrechen</b-button>
+      <b-button @click="cancel" variant="danger">{{
+        $t("abbrechen")
+      }}</b-button>
     </template>
   </b-modal>
 </template>
@@ -309,8 +323,9 @@ export default {
       return this.newChoreoName != null && this.newChoreoName.length >= 2;
     },
     newChoreoNameStateFeedback() {
-      if (!this.newChoreoName) return "Erforderlich";
-      if (this.newChoreoName.length < 2) return "Min. 2 Zeichen";
+      if (!this.newChoreoName) return this.$t("erforderlich");
+      if (this.newChoreoName.length < 2)
+        return this.$t("modals.create-choreo.min-choreoname-length");
       return null;
     },
     newChoreoCountIsValid() {
@@ -323,12 +338,14 @@ export default {
     },
     newChoreoCountStateFeedback() {
       if (!this.newChoreoCount || this.newChoreoCount == "")
-        return "Erforderlich";
+        return this.$t("erforderlich");
       if (
         parseInt(this.newChoreoCount) < 0 ||
         parseInt(this.newChoreoCount) > 7
       )
-        return "Extra-Count muss zwischen 0 und 7 liegen";
+        return this.$t(
+          "modals.create-choreo.extra-count-muss-zwischen-0-und-7-liegen"
+        );
       return null;
     },
     newChoreoAchterIsValid() {
@@ -340,9 +357,9 @@ export default {
     },
     newChoreoAchterStateFeedback() {
       if (!this.newChoreoAchter || this.newChoreoAchter == "")
-        return "Erforderlich";
+        return this.$t("erforderlich");
       if (parseInt(this.newChoreoAchter) <= 0)
-        return "Achter muss größer als 0 sein";
+        return this.$t("modals.create-choreo.min-achter");
       return null;
     },
     newChoreoTeamIsValid() {
@@ -352,9 +369,9 @@ export default {
       );
     },
     newChoreoTeamStateFeedback() {
-      if (!this.newChoreoTeamId) return "Erforderlich";
+      if (!this.newChoreoTeamId) return this.$t("erforderlich");
       if (!this.teams.map((t) => t.id).includes(this.newChoreoTeamId))
-        return "Unerwarteter Fehler. Bitte kontaktiere uns.";
+        return this.$t("errors.unerwarteter-fehler");
       return null;
     },
     newChoreoSeasonIsValid() {
@@ -366,13 +383,13 @@ export default {
       );
     },
     newChoreoSeasonStateFeedback() {
-      if (!this.newChoreoSeasonId) return "Erforderlich";
+      if (!this.newChoreoSeasonId) return this.$t("erforderlich");
       if (
         !this.selectedTeam?.SeasonTeams.map((st) => st.Season.id)
           .flat(Infinity)
           .includes(this.newChoreoSeasonId)
       )
-        return "Unerwarteter Fehler. Bitte kontaktiere uns.";
+        return this.$t("errors.unerwarteter-fehler");
       return null;
     },
   },

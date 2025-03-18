@@ -1,7 +1,7 @@
 <template>
   <b-modal
     :id="`modal-newLineup-${id}`"
-    title="Neue Aufstellung"
+    :title="$t('modals.create-lineup.neue-aufstellung')"
     @show="resetLineupModal"
     @hidden="resetLineupModal"
     @ok="createLineup"
@@ -22,11 +22,11 @@
         }
       "
     >
-      <b-form-group label="Start:" label-cols="2">
+      <b-form-group :label="$t('modals.create-lineup.start')" label-cols="2">
         <b-row>
           <b-col>
             <b-form-group
-              description="Achter"
+              :description="$t('achter')"
               :state="editLineupStartAchterIsValid"
               :invalid-feedback="editLineupStartAchterStateFeedback"
             >
@@ -41,7 +41,7 @@
           </b-col>
           <b-col>
             <b-form-group
-              description="Count"
+              :description="$tc('count', 2)"
               :state="editLineupStartCountIsValid"
               :invalid-feedback="editLineupStartCountStateFeedback"
             >
@@ -57,7 +57,7 @@
         </b-row>
       </b-form-group>
       <b-form-group
-        label="Ende:"
+        :label="$t('modals.create-lineup.ende')"
         label-cols="2"
         :state="startIsBeforeEnd"
         :invalid-feedback="startIsBeforeEndStateFeedback"
@@ -65,7 +65,7 @@
         <b-row>
           <b-col>
             <b-form-group
-              description="Achter"
+              :description="$t('achter')"
               :state="editLineupEndAchterIsValid"
               :invalid-feedback="editLineupEndAchterStateFeedback"
             >
@@ -80,7 +80,7 @@
           </b-col>
           <b-col>
             <b-form-group
-              description="Count"
+              :description="$tc('count', 2)"
               :state="editLineupEndCountIsValid"
               :invalid-feedback="editLineupEndCountStateFeedback"
             >
@@ -96,7 +96,7 @@
         </b-row>
       </b-form-group>
       <b-form-group
-        label="Teilnehmer:"
+        :label="$t('teilnehmer')"
         :state="editLineupMembersIsValid"
         :invalid-feedback="editLineupMembersStateFeedback"
       >
@@ -109,14 +109,14 @@
             :disabled="editLineupMembers?.length == teamMembers?.length"
           >
             <b-icon-check-all />
-            Alle auswählen
+            {{ $t("alle-auswaehlen") }}
           </b-button>
           <b-button
             variant="light"
             @click="() => (this.editLineupMembers = [])"
             :disabled="editLineupMembers?.length == 0"
           >
-            <b-icon-slash /> Keine auswählen
+            <b-icon-slash /> {{ $t("keine-auswaehlen") }}
           </b-button>
           <b-button
             variant="light"
@@ -132,7 +132,7 @@
             "
           >
             <b-icon-arrow-repeat />
-            Auswahl wechseln
+            {{ $t("auswahl-wechseln") }}
           </b-button>
         </b-button-group>
         <b-form-checkbox-group
@@ -169,7 +169,7 @@
                   .map((l) => l.Positions.map((p) => p.MemberId))
                   .flat()
                   .includes(member.id)
-                  ? "(Ist in anderer Aufstellung)"
+                  ? $t("modals.create-lineup.ist-in-anderer-aufstellung")
                   : null
               }}
             </b-row>
@@ -190,9 +190,11 @@
           editLineupMembers.length == 0
         "
       >
-        Speichern
+        {{ $t("speichern") }}
       </b-button>
-      <b-button @click="cancel" variant="danger">Abbrechen</b-button>
+      <b-button @click="cancel" variant="danger">{{
+        $t("abbrechen")
+      }}</b-button>
     </template>
   </b-modal>
 </template>
@@ -302,35 +304,35 @@ export default {
     },
     startIsBeforeEndStateFeedback() {
       if (!this.startIsBeforeEnd)
-        return "Der Start deiner Aufstellung muss vor dem Ende liegen!";
+        return this.$t("countOverview.start-vor-ende");
       return null;
     },
     editLineupEndAchterIsValid() {
       return Boolean(this.editLineupEndAchter) && this.startIsBeforeEnd;
     },
     editLineupEndAchterStateFeedback() {
-      if (!this.editLineupEndAchter) return "Erforderlich";
+      if (!this.editLineupEndAchter) return this.$t("erforderlich");
       return null;
     },
     editLineupStartAchterIsValid() {
       return Boolean(this.editLineupStartAchter) && this.startIsBeforeEnd;
     },
     editLineupStartAchterStateFeedback() {
-      if (!this.editLineupStartAchter) return "Erforderlich";
+      if (!this.editLineupStartAchter) return this.$t("erforderlich");
       return null;
     },
     editLineupStartCountIsValid() {
       return Boolean(this.editLineupStartCount) && this.startIsBeforeEnd;
     },
     editLineupStartCountStateFeedback() {
-      if (!this.editLineupStartCount) return "Erforderlich";
+      if (!this.editLineupStartCount) return this.$t("erforderlich");
       return null;
     },
     editLineupEndCountIsValid() {
       return Boolean(this.editLineupEndCount) && this.startIsBeforeEnd;
     },
     editLineupEndCountStateFeedback() {
-      if (!this.editLineupEndCount) return "Erforderlich";
+      if (!this.editLineupEndCount) return this.$t("erforderlich");
       return null;
     },
     editLineupMembersIsValid() {
@@ -340,7 +342,7 @@ export default {
     },
     editLineupMembersStateFeedback() {
       if (!this.editLineupMembers || this.editLineupMembers.length == 0)
-        return "Erforderlich";
+        return this.$t("erforderlich");
       return null;
     },
   },

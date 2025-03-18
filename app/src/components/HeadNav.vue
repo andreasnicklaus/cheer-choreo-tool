@@ -1,6 +1,8 @@
 <template>
   <b-navbar toggleable="sm">
-    <b-navbar-brand :to="{ name: 'Home' }">
+    <b-navbar-brand
+      :to="{ name: 'Home', params: { locale: $root.$i18n.locale } }"
+    >
       <img
         :src="
           $store.getters.isChristmasTime
@@ -9,7 +11,7 @@
             ? '/Icon-Easter.png'
             : '/Icon.png'
         "
-        alt="Choreo Planer Icon"
+        :alt="$t('choreo-planer-icon')"
         width="50"
         height="50"
       />
@@ -20,22 +22,25 @@
     <b-collapse id="nav-collapse" is-nav>
       <b-navbar-nav>
         <b-nav-item
-          :to="{ name: 'Home' }"
+          :to="{ name: 'Home', params: { locale: $root.$i18n.locale } }"
           v-bind:active-class="
             $route.name == 'Home' ? 'router-link-active' : ''
           "
         >
           <b-icon-house-fill class="mr-1" />
-          Start
+          {{ $t("nav.start") }}
         </b-nav-item>
-        <b-nav-item :to="{ name: 'Start' }" :disabled="!$store.state.loggedIn">
-          Übersicht
+        <b-nav-item
+          :to="{ name: 'Start', params: { locale: $root.$i18n.locale } }"
+          :disabled="!$store.state.loggedIn"
+        >
+          {{ $t("nav.uebersicht") }}
         </b-nav-item>
 
         <b-nav-item-dropdown text="Choreos" :disabled="!$store.state.loggedIn">
           <template #button-content>
             <span :class="{ 'router-link-active': $route.name == 'Choreo' }">
-              Choreos
+              {{ $tc("choreo", 2) }}
             </span>
           </template>
           <b-dropdown-group
@@ -61,7 +66,13 @@
                 <b-dropdown-item
                   v-for="choreo in seasonTeam.Choreos"
                   :key="choreo.id"
-                  :to="{ name: 'Choreo', params: { choreoId: choreo.id } }"
+                  :to="{
+                    name: 'Choreo',
+                    params: {
+                      choreoId: choreo.id,
+                      locale: $root.$i18n.locale,
+                    },
+                  }"
                 >
                   {{ choreo.name }}
                 </b-dropdown-item>
@@ -75,19 +86,23 @@
             v-if="$store.state.clubId"
           >
             <b-icon-plus />
-            Neue Choreo
+            {{ $t("nav.neue-choreo") }}
           </b-dropdown-item>
         </b-nav-item-dropdown>
         <b-nav-item-dropdown :disabled="!$store.state.loggedIn">
           <template #button-content>
             <span :class="{ 'router-link-active': $route.name == 'Team' }">
-              Teams
+              {{ $tc("team", 2) }}
             </span>
           </template>
           <b-dropdown-item
             v-for="team in teams"
             :key="team.id"
-            :to="{ name: 'Team', params: { teamId: team.id } }"
+            $root.$i18n.locale
+            :to="{
+              name: 'Team',
+              params: { teamId: team.id, locale: $root.$i18n.locale },
+            }"
           >
             {{ team.name }}
           </b-dropdown-item>
@@ -98,20 +113,41 @@
             v-if="$store.state.clubId"
           >
             <b-icon-plus />
-            Neues Team
+            {{ $t("nav.neues-team") }}
           </b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
 
       <b-navbar-nav class="ml-auto align-items-sm-center">
+        <b-nav-item-dropdown variant="link" no-caret>
+          <template #button-content>
+            <flag
+              :squared="false"
+              :iso="flags.find((f) => f.lang == $root.$i18n.locale)?.flag"
+            />
+            <span v-if="$store.state.isMobile">
+              {{ flags.find((f) => f.lang == $root.$i18n.locale)?.localName }}
+            </span>
+          </template>
+          <b-dropdown-item
+            v-for="({ lang, flag, localName }, i) in flags"
+            :key="`lang${i}`"
+            :value="lang"
+            @click="() => LanguageService.setLanguage(lang)"
+          >
+            <flag :squared="false" :iso="flag" class="mr-1" />
+            <span>{{ localName }}</span>
+          </b-dropdown-item>
+        </b-nav-item-dropdown>
+
         <b-nav-item
           @click="share"
           v-b-tooltip.hover
-          title="Teilen"
+          :title="$t('nav.teilen')"
           v-if="shareable"
         >
           <b-icon-share />
-          <span class="d-sm-none ml-2">Teilen</span>
+          <span class="d-sm-none ml-2">{{ $t("nav.teilen") }}</span>
         </b-nav-item>
         <b-nav-item
           class="d-sm-block d-none"
@@ -119,25 +155,36 @@
           v-b-tooltip.hover
           :title="
             onlineStatus
-              ? 'Server sind online' + (serverVersion && ` (${serverVersion})`)
-              : 'Server sind offline'
+              ? $t('nav.server-sind-online') +
+                (serverVersion && ` (${serverVersion})`)
+              : $t('nav.server-sind-offline')
           "
         >
           <b-icon-check-circle variant="success" v-if="onlineStatus === true" />
           <b-icon-x-circle variant="danger" v-if="onlineStatus === false" />
         </b-nav-item>
-        <b-nav-item :to="{ name: 'Help' }" v-b-tooltip.hover title="Hilfe">
+        <b-nav-item
+          :to="{ name: 'Help', params: { locale: $root.$i18n.locale } }"
+          v-b-tooltip.hover
+          :title="$t('general.help')"
+        >
           <b-icon-question-circle />
-          <span class="d-sm-none ml-2">Hilfe</span>
+          <span class="d-sm-none ml-2">{{ $t("general.help") }}</span>
         </b-nav-item>
-        <b-nav-item :to="$store.state.loggedIn ? null : { name: 'Login' }">
+        <b-nav-item
+          :to="
+            $store.state.loggedIn
+              ? null
+              : { name: 'Login', params: { locale: $root.$i18n.locale } }
+          "
+        >
           <b-button
             variant="primary"
             :style="{ color: 'white' }"
             v-if="!$store.state.loggedIn"
             :block="$store.state.isMobile"
           >
-            Anmelden
+            {{ $t("anmelden") }}
           </b-button>
           <b-dropdown
             v-else
@@ -151,15 +198,20 @@
                 user?.username
               }}</span>
             </template>
-            <b-dropdown-group header="Konto">
-              <b-dropdown-item :to="{ name: 'Account' }">
+            <b-dropdown-group :header="$t('konto')">
+              <b-dropdown-item
+                :to="{
+                  name: 'Account',
+                  params: { locale: $root.$i18n.locale },
+                }"
+              >
                 <b-icon-person-circle class="mr-2" />{{ user?.username }}
               </b-dropdown-item>
             </b-dropdown-group>
 
             <b-dropdown-divider />
 
-            <b-dropdown-group header="Vereine">
+            <b-dropdown-group :header="$t('nav.vereine')">
               <b-dropdown-item
                 v-for="club in clubs"
                 :key="club.id"
@@ -174,12 +226,12 @@
               @click="() => $refs.createClubModal.open()"
             >
               <b-icon-plus />
-              Neuer Verein
+              {{ $t("nav.neuer-verein") }}
             </b-dropdown-item>
             <b-dropdown-divider />
             <b-dropdown-item variant="danger" @click="logout">
               <b-icon-door-open class="mr-2" />
-              Ausloggen
+              {{ $t("nav.ausloggen") }}
             </b-dropdown-item>
           </b-dropdown>
         </b-nav-item>
@@ -208,6 +260,7 @@ import ClubService from "@/services/ClubService";
 import CreateChoreoModal from "./modals/CreateChoreoModal.vue";
 import CreateClubModal from "./modals/CreateClubModal.vue";
 import CreateTeamModal from "./modals/CreateTeamModal.vue";
+import LanguageService from "@/services/LanguageService";
 
 export default {
   name: "HeadNav",
@@ -218,6 +271,15 @@ export default {
     clubs: [],
     user: null,
     shareable: false,
+    flags: [
+      {
+        flag: "de",
+        lang: "de",
+        localName: "Deutsch",
+      },
+      { flag: "us", lang: "en", localName: "English" },
+    ],
+    LanguageService,
   }),
   props: {
     onlineStatus: {
@@ -257,16 +319,13 @@ export default {
     },
     checkEmailConfirmation() {
       if (this.user?.email && !this.user?.emailConfirmed) {
-        this.$bvToast.toast(
-          "Du solltest den Link zur Bestätigung in deinem Postfach finden. Bitte überprüfe auch deinen Spam-Ordner.",
-          {
-            variant: "warning",
-            title: "Bitte bestätige deine E-Mail-Adresse",
-            appendToast: true,
-            solid: true,
-            autoHideDelay: 10_000,
-          }
-        );
+        this.$bvToast.toast(this.$t("nav.checkEmail.text"), {
+          variant: "warning",
+          title: this.$t("nav.checkEmail.title"),
+          appendToast: true,
+          solid: true,
+          autoHideDelay: 10_000,
+        });
       }
     },
     logout() {
@@ -277,7 +336,10 @@ export default {
     },
     onTeamCreated(team) {
       this.teams.push(team);
-      this.$router.push({ name: "Team", params: { teamId: team.id } });
+      this.$router.push({
+        name: "Team",
+        params: { teamId: team.id, locale: this.$root.$i18n.locale },
+      });
     },
     reloadPage() {
       location.reload();
@@ -314,7 +376,7 @@ export default {
       return {
         url: window.location.href,
         title: document.title,
-        text: "Schau dir das an!",
+        text: this.$t("nav.schau-dir-das-an"),
       };
     },
   },

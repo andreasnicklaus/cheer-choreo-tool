@@ -6,40 +6,47 @@
     no-close-on-esc
     hide-header-close
     @close="(event) => event.preventDefault()"
-    title="Am Handy nicht möglich"
+    :title="$t('modals.mobile-choreo-edit.am-handy-nicht-moeglich')"
   >
     <p class="text-muted">
-      Du kannst aktuell nicht alle Funktionen am Handy nutzen. Choreos zu
-      bearbeiten gehört dazu.
+      {{ $t("modals.mobile-choreo-edit.info-1") }}
     </p>
     <p class="text-muted">
-      Bitte logge dich an einem Gerät mit größerem Display an, um deine Choreo
-      zu bearbeiten.
+      {{ $t("modals.mobile-choreo-edit.info-2") }}
     </p>
     <b-row :style="{ gap: '10px' }">
       <b-col>
-        <b-button :to="{ name: 'PDF', params: { choreoId } }" variant="success">
+        <b-button
+          :to="{
+            name: 'PDF',
+            params: { choreoId, locale: $root.$i18n.locale },
+          }"
+          variant="success"
+        >
           <b-icon-file-pdf class="mr-2" />
-          Countsheet als PDF
+          {{ $t("Home.countsheet-als-pdf") }}
         </b-button>
       </b-col>
       <b-col>
         <b-button
-          :to="{ name: 'Video', params: { choreoId } }"
+          :to="{
+            name: 'Video',
+            params: { choreoId, locale: $root.$i18n.locale },
+          }"
           variant="success"
         >
           <b-icon-film class="mr-2" />
-          Video exportieren
+          {{ $t("editView.video-exportieren") }}
         </b-button>
       </b-col>
     </b-row>
     <template #modal-footer="{ cancel }">
       <b-button
         @click="cancel"
-        :to="{ name: 'Start' }"
+        :to="{ name: 'Start', params: { locale: $root.$i18n.locale } }"
         variant="outline-secondary"
       >
-        Zur Startseite
+        {{ $t("zur-startseite") }}
       </b-button>
     </template>
   </b-modal>

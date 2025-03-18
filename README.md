@@ -12,13 +12,12 @@
 ![Website status](https://img.shields.io/website?url=https%3A%2F%2Fwww.choreo-planer.de&style=for-the-badge)
 ![Backend status](https://img.shields.io/website?url=https%3A%2F%2Fapi.choreo-planer.de&style=for-the-badge&label=Backend)
 
-![Backend server build status](https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/docker-server-image.yml?style=for-the-badge&logo=docker&logoColor=white&label=Backend%20Build%20(Server))
+![Backend server build status](<https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/docker-server-image.yml?style=for-the-badge&logo=docker&logoColor=white&label=Backend%20Build%20(Server)>)
 ![Frontend build status](https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/pages.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=Frontend%20Build)
 
 ![Last commit](https://img.shields.io/github/last-commit/andreasnicklaus/cheer-choreo-tool?style=for-the-badge)
 ![Top languages](https://img.shields.io/github/languages/top/andreasnicklaus/cheer-choreo-tool?style=for-the-badge)
 ![Language count](https://img.shields.io/github/languages/count/andreasnicklaus/cheer-choreo-tool?style=for-the-badge)
-
 
 `Planning tool for choreographies in cheerleading and dance`
 
@@ -42,6 +41,10 @@ See [LICENSE](LICENSE) for the license of this project.
 
 ## :sparkles: Version history
 
+### 0.9.9 - 2025-03-18
+
+- Added internationalization for English and German
+
 ### 0.9.8 - 2025-01-08
 
 - Fixed issues with mobile UI
@@ -58,7 +61,7 @@ See [LICENSE](LICENSE) for the license of this project.
 ### 0.9.6 - 2024-12-05
 
 - Added feedback option
-- Fixed spelling errors 
+- Fixed spelling errors
 
 ### 0.9.5 - 2024-11-29
 

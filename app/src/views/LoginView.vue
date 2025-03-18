@@ -1,27 +1,27 @@
 <template>
   <b-container id="loginView" data-view>
-    <h1>Dein Online-Zugang</h1>
+    <h1>{{ $t("login.dein-online-zugang") }}</h1>
     <b-tabs fill v-model="tabIndex">
-      <b-tab title="Anmelden" class="mt-4">
+      <b-tab :title="$t('anmelden')" class="mt-4">
         <b-form @submit="onLoginSubmit" @reset="onReset">
           <b-form-group
-            label="Nutzername"
+            :label="$t('username')"
             :state="usernameIsValid"
             :invalid-feedback="usernameError"
           >
             <b-form-input
-              placeholder="Nutzername"
+              :placeholder="$t('username')"
               :state="usernameIsValid"
               v-model="username"
             ></b-form-input>
           </b-form-group>
           <b-form-group
-            label="Passwort"
+            :label="$t('passwort')"
             :state="passwordIsValid"
             :invalid-feedback="passwordError"
           >
             <b-form-input
-              placeholder="Passwort"
+              :placeholder="$t('passwort')"
               type="password"
               :state="passwordIsValid"
               v-model="password"
@@ -38,54 +38,56 @@
               :disabled="!usernameIsValid || !passwordIsValid"
             >
               <b-spinner small v-if="loading" />
-              <span v-else> Anmelden </span>
+              <span v-else> {{ $t("anmelden") }} </span>
             </b-button>
             <b-button
               type="reset"
               variant="light"
               v-b-tooltip.hover
-              title="Formular zurücksetzen"
+              :title="$t('login.formular-zuruecksetzen')"
             >
               <b-icon-arrow-counterclockwise />
             </b-button>
           </div>
 
           <p class="my-3">
-            Du hast noch kein Konto?
-            <a href="#" @click="() => (tabIndex = 1)"> Registrieren </a>
+            {{ $t("login.du-hast-noch-kein-konto") }}
+            <a href="#" @click="() => (tabIndex = 1)">
+              {{ $t("registrieren") }}
+            </a>
           </p>
         </b-form>
       </b-tab>
-      <b-tab title="Registrieren" class="mt-4">
+      <b-tab :title="$t('registrieren')" class="mt-4">
         <b-form @submit="onRegisterSubmit" @reset="onReset">
           <b-form-group
-            label="Nutzername"
+            :label="$t('username')"
             :state="usernameIsValid"
             :invalid-feedback="usernameError"
-            valid-feedback="Gültig!"
+            :valid-feedback="$t('login.gueltig')"
           >
             <b-form-input
-              placeholder="Nutzername"
+              :placeholder="$t('username')"
               :state="usernameIsValid"
               v-model="username"
             ></b-form-input>
           </b-form-group>
           <b-form-group
-            label="E-Mail-Adresse"
+            :label="$t('e-mail-adresse')"
             :state="emailIsValid"
             :invalid-feedback="emailError"
-            valid-feedback="Gültig!"
+            :valid-feedback="$t('login.gueltig')"
           >
             <b-input-group>
               <b-form-input
-                placeholder="E-Mail-Adresse"
+                :placeholder="$t('e-mail-adresse')"
                 :state="emailIsValid"
                 v-model="email"
               ></b-form-input>
               <template #append>
                 <b-input-group-text
                   v-b-tooltip.hover
-                  title="Deine E-Mail-Adresse brauchen wir, um dein Passwort zurücksetzen oder dein Konto wiederherstellen zu können."
+                  :title="$t('login.warum-email')"
                 >
                   <b-icon-info-circle />
                 </b-input-group-text>
@@ -93,26 +95,26 @@
             </b-input-group>
           </b-form-group>
           <b-form-group
-            label="Passwort"
+            :label="$t('passwort')"
             :state="passwordIsValid"
             :invalid-feedback="passwordError"
-            valid-feedback="Gültig!"
+            :valid-feedback="$t('login.gueltig')"
           >
             <b-form-input
-              placeholder="Passwort"
+              :placeholder="$t('passwort')"
               type="password"
               :state="passwordIsValid"
               v-model="password"
             ></b-form-input>
           </b-form-group>
           <b-form-group
-            label="Passwort"
+            :label="$t('passwort')"
             :state="passwordRepetitionIsValid"
             :invalid-feedback="passwordRepetitionError"
-            valid-feedback="Gültig!"
+            :valid-feedback="$t('login.gueltig')"
           >
             <b-form-input
-              placeholder="Passwort wiederholen"
+              :placeholder="$t('login.passwort-wiederholen')"
               type="password"
               :state="passwordRepetitionIsValid"
               v-model="passwordRepetition"
@@ -134,42 +136,35 @@
               "
             >
               <b-spinner small v-if="loading" />
-              <span v-else> Registrieren </span>
+              <span v-else>{{ $t("registrieren") }}</span>
             </b-button>
             <b-button
               type="reset"
               variant="light"
               v-b-tooltip.hover
-              title="Formular zurücksetzen"
+              :title="$t('login.formular-zuruecksetzen')"
             >
               <b-icon-arrow-counterclockwise />
             </b-button>
           </div>
 
           <p class="my-3">
-            Du hast schon ein Konto?
-            <a href="#" @click="() => (tabIndex = 0)"> Anmelden </a>
+            {{ $t("login.du-hast-schon-ein-konto") }}
+            <a href="#" @click="() => (tabIndex = 0)">{{ $t("anmelden") }}</a>
           </p>
         </b-form>
 
-        <b-card title="Information" class="mb-3">
+        <b-card :title="$t('login.information')" class="mb-3">
           <b-card-text>
-            <p>
-              Dein Konto ist der
-              <b>Zugang für das gesamte Trainerteam</b>. Wähle Nutzername und
-              Passwort frei nach Lust und Laune und teile es anschließend mit
-              deinem Verein.
-            </p>
-            <p>
-              <b>Dein Nutzername muss nicht der Vereinsname sein!</b> Nach der
-              Erstellung deines Kontos wirst du aufgefordert, deinem Verein
-              einen Namen zu geben.
-            </p>
-            <p>
-              Du kannst mit einem Konto <b>mehrere Verein verwalten!</b> Es ist
-              möglich, mehrere Vereine in einem Benutzerkonto zusammenzufassen,
-              aber du kannst immer nur einen Verein gleichzeitig bearbeiten.
-            </p>
+            <i18n path="login.information-text-1" tag="p">
+              <b>{{ $t("login.information-text-1-highlight") }}</b>
+            </i18n>
+            <i18n path="login.information-text-2" tag="p">
+              <b>{{ $t("login.information-text-2-highlight") }}</b>
+            </i18n>
+            <i18n path="login.information-text-3" tag="p">
+              <b>{{ $t("login.information-text-3-highlight") }}</b>
+            </i18n>
           </b-card-text>
         </b-card>
       </b-tab>
@@ -182,16 +177,6 @@
 <script>
 import ConfirmEmailModal from "@/components/modals/ConfirmEmailModal.vue";
 import AuthService from "@/services/AuthService";
-
-const failMessages = [
-  "Oh, oh!",
-  "Satz mit X",
-  "Da-dumm...",
-  "Check ich nicht :/",
-  "Probier's nochmal!",
-  "Computer sagt Nein!",
-  "~ Traurige Trompete ~",
-];
 
 const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 
@@ -209,7 +194,10 @@ export default {
   methods: {
     showFailMessage(message) {
       this.$bvToast.toast(message, {
-        title: failMessages[Math.floor(Math.random() * failMessages.length)],
+        title:
+          this.failMessages[
+            Math.floor(Math.random() * this.failMessages.length)
+          ],
         autoHideDelay: 5000,
         appendToast: true,
         variant: "danger",
@@ -235,7 +223,10 @@ export default {
           this.loading = false;
           window._paq.push(["trackGoal", 2]);
           this.$router
-            .push(this.$route.query?.redirectUrl || "/start")
+            .push(
+              this.$route.query?.redirectUrl ||
+                `/${this.$root.$i18n.locale}/start`
+            )
             .catch(() => {});
         })
         .catch((e) => {
@@ -268,7 +259,10 @@ export default {
           window._paq.push(["trackGoal", 3]);
           // this.$refs.confirmEmailModal.open();
           this.$router
-            .push(this.$route.query?.redirectUrl || "/start")
+            .push(
+              this.$route.query?.redirectUrl ||
+                `/${this.$root.$i18n.locale}/start`
+            )
             .catch(() => {});
         })
         .catch((e) => {
@@ -286,24 +280,36 @@ export default {
     },
   },
   computed: {
+    failMessages() {
+      return [
+        this.$t("failMessages.oh-oh"),
+        this.$t("failMessages.satz-mit-x"),
+        this.$t("failMessages.da-dumm"),
+        this.$t("failMessages.check-ich-nicht"),
+        this.$t("failMessages.probiers-nochmal"),
+        this.$t("failMessages.computer-sagt-nein"),
+        this.$t("failMessages.traurige-trompete"),
+      ];
+    },
     usernameIsValid() {
       return this.username != null && this.username.length >= 6;
     },
     usernameError() {
       if (this.username == null || this.username.length == 0)
-        return "Bitte angeben";
+        return this.$t("login.bitte-angeben");
       else if (this.username.length < 6)
-        return "Dein Benutzername muss mindestens 6 Zeichen lang sein.";
+        return this.$t("login.benutzername-mindestens-laenge");
       else return null;
     },
     emailIsValid() {
       return this.email != null && this.email.match(emailRegex)?.length > 0;
     },
     emailError() {
-      if (this.email == null || this.email.length == 0) return "Bitte angeben";
+      if (this.email == null || this.email.length == 0)
+        return this.$t("login.bitte-angeben");
       const emailRegexMatches = this.email.match(emailRegex);
       if (!emailRegexMatches || emailRegexMatches.length <= 0)
-        return "Deine E-Mail-Adresse muss ein valide E-Mail-Adresse sein.";
+        return this.$t("login.echte-email");
       else return null;
     },
     passwordIsValid() {
@@ -311,9 +317,9 @@ export default {
     },
     passwordError() {
       if (this.password == null || this.password.length == 0)
-        return "Bitte angeben";
+        return this.$t("login.bitte-angeben");
       else if (this.password.length < 6)
-        return "Dein Passwort muss mindestens 6 Zeichen lang sein.";
+        return this.$t("login.passwort-mindest-laenge");
       else return null;
     },
     passwordRepetitionIsValid() {
@@ -324,7 +330,7 @@ export default {
     },
     passwordRepetitionError() {
       if (this.passwordRepetition != this.password)
-        return "Die Wiederholung gleicht nicht dem Passwort.";
+        return this.$t("login.wiederholung-gleicht-nicht-passwort");
       else return null;
     },
     isWelcome() {
@@ -333,36 +339,39 @@ export default {
   },
   metaInfo() {
     const meta = {
-      title: "Login - Choreo Planer | Dein Zugang zu allen Funktionen",
+      title: `${this.$t("anmelden")} - ${this.$t(
+        "general.ChoreoPlaner"
+      )} | ${this.$t("login.meta.dein-zugang-zu-allen-funktionen")}`,
       titleTemplate: null,
       meta: [
         {
           vmid: "description",
           name: "description",
-          content:
-            "Melde dich jetzt an und plane deine Choreografien! Zugriff auf alle Funktionen des kostenlosen Choreo Planers für Cheerleading, Tanz und Turnen.",
+          content: this.$t("meta.loginView.description"),
         },
         {
           vmid: "twitter:description",
           name: "twitter:description",
-          content:
-            "Melde dich jetzt an und plane deine Choreografien! Zugriff auf alle Funktionen des kostenlosen Choreo Planers für Cheerleading, Tanz und Turnen.",
+          content: this.$t("meta.loginView.description"),
         },
         {
           vmid: "og:description",
           property: "og:description",
-          content:
-            "Melde dich jetzt an und plane deine Choreografien! Zugriff auf alle Funktionen des kostenlosen Choreo Planers für Cheerleading, Tanz und Turnen.",
+          content: this.$t("meta.loginView.description"),
         },
         {
           vmid: "og:title",
           property: "og:title",
-          content: "Login - Choreo Planer | Dein Zugang zu allen Funktionen",
+          content: `${this.$t("anmelden")} - ${this.$t(
+            "general.ChoreoPlaner"
+          )} | ${this.$t("login.meta.dein-zugang-zu-allen-funktionen")}`,
         },
         {
           vmid: "twitter:title",
           name: "twitter:title",
-          content: "Login - Choreo Planer | Dein Zugang zu allen Funktionen",
+          content: `${this.$t("anmelden")} - ${this.$t(
+            "general.ChoreoPlaner"
+          )} | ${this.$t("login.meta.dein-zugang-zu-allen-funktionen")}`,
         },
       ],
     };

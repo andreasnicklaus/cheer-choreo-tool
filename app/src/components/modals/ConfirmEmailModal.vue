@@ -1,22 +1,21 @@
 <template>
   <b-modal
     :id="`comfirmEmailModal-${id}`"
-    title="Bestätige deine E-Mail-Adresse"
+    :title="$t('modals.confirm-email.bestaetige-deine-e-mail-adresse')"
     centered
     :header-bg-variant="isError ? 'danger' : 'success'"
     header-text-variant="light"
   >
     <p>
-      Um dein Konto zu aktivieren, bestätige deine E-Mail-Adresse mit dem Link
-      aus der E-Mail, die wir dir geschickt haben.
+      {{ $t("modals.confirm-email.info-1") }}
     </p>
-    <p>Überprüfe auch dein Spam-Postfach, um die E-Mail zu finden.</p>
+    <p>{{ $t("modals.confirm-email.info-2") }}</p>
     <template #modal-footer="{ cancel }">
       <b-button
         @click="cancel"
         :variant="isError ? 'outline-danger' : 'outline-success'"
       >
-        Schließen
+        {{ $t("feedback.schliessen") }}
       </b-button>
     </template>
   </b-modal>

@@ -1,28 +1,28 @@
 <template>
   <b-modal
     :id="`modal-newTeam-${id}`"
-    title="Neues Team"
+    :title="$t('nav.neues-team')"
     centered
     @show="resetTeamModal"
     @ok="createTeam"
   >
     <b-form>
       <b-form-group
-        label="Name"
+        :label="$t('name')"
         :state="newTeamNameIsValid"
         :invalid-feedback="newTeamNameStateFeedback"
-        valid-feedback="Gültig!"
+        :valid-feedback="$t('login.gueltig')"
       >
         <b-form-input
           v-model="newTeamName"
           :state="newTeamNameIsValid"
           required
-          placeholder="Phoenix, Glamorous Blush, ..."
+          :placeholder="$t('modals.create-team.example-team-names')"
           autofocus
         />
       </b-form-group>
       <b-form-group
-        label="Season:"
+        :label="$t('season', 1)"
         :state="seasonIsValid"
         :invalid-feedback="seasonStateFeedback"
       >
@@ -40,9 +40,11 @@
         variant="success"
         :disabled="!newTeamNameIsValid || !seasonIsValid"
       >
-        Erstellen
+        {{ $t("erstellen") }}
       </b-button>
-      <b-button @click="cancel" variant="danger">Abbrechen</b-button>
+      <b-button @click="cancel" variant="danger">{{
+        $t("abbrechen")
+      }}</b-button>
     </template>
   </b-modal>
 </template>
@@ -97,14 +99,17 @@ export default {
       return this.newTeamName != null && this.newTeamName.length >= 3;
     },
     newTeamNameStateFeedback() {
-      if (!this.newTeamName) return "Erforderlich";
-      if (this.newTeamName.length < 3) return "Min. 3 Zeichen";
+      if (!this.newTeamName) return this.$t("erforderlich");
+      if (this.newTeamName.length < 3)
+        return this.$t("modals.create-team.min-team-name-laenge");
       return null;
     },
     seasonSelectOptions() {
       const years = Array.from(new Set(this.seasons.map((s) => s.year)));
       return years.map((y) => ({
-        label: y ? `Start ${y}` : "Extra Events",
+        label: y
+          ? `${this.$t("modals.create-lineup.start")} ${y}`
+          : this.$t("modals.create-season.extra-events"),
         options: this.seasons
           .filter((s) => s.year == y)
           .map((s) => ({
@@ -121,9 +126,10 @@ export default {
       );
     },
     seasonStateFeedback() {
-      if (!this.seasonId || this.seasons.length <= 0) return "Erforderlich";
+      if (!this.seasonId || this.seasons.length <= 0)
+        return this.$t("erforderlich");
       if (!this.seasons.map((s) => s.id).includes(this.seasonId))
-        return "Unbekannter Fehler. Bitte kontaktiere uns.";
+        return this.$t("errors.unerwarteter-fehler");
       return null;
     },
   },

@@ -3,13 +3,13 @@
     :id="`deleteModal-${id}`"
     centered
     @ok="removeChoreo"
-    title="Bist du sicher?"
+    :title="$t('bist-du-sicher')"
   >
-    Du kannst das nicht rückgängig machen.
+    {{ $t("du-kannst-das-nicht-rueckgaengig-machen") }}
     <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="danger"> Löschen </b-button>
+      <b-button @click="ok" variant="danger">{{ $t("loeschen") }}</b-button>
       <b-button @click="cancel" variant="outline-secondary">
-        Abbrechen
+        {{ $t("abbrechen") }}
       </b-button>
     </template>
   </b-modal>
@@ -34,7 +34,12 @@ export default {
     },
     removeChoreo() {
       ChoreoService.remove(this.choreoId).then(() => {
-        this.$router.push({ name: "Start" }).catch(() => {});
+        this.$router
+          .push({
+            name: "Start",
+            params: { locale: this.$root.$i18n.locale },
+          })
+          .catch(() => {});
       });
     },
   },

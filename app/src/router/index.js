@@ -2,6 +2,8 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import store from "@/store";
 import routes from "./routes";
+import i18n from "@/plugins/vue-i18n";
+import LanguageService from "@/services/LanguageService";
 
 Vue.use(VueRouter);
 
@@ -15,6 +17,18 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  const newLocale = to.params.locale;
+  const prevLocale = from.params.locale;
+
+  // If the locale hasn't changed, do nothing
+  if (newLocale != prevLocale) {
+    if (i18n.availableLocales.includes(newLocale)) {
+      LanguageService.setLanguage(newLocale, {
+        routeAfterChange: false,
+      });
+    } else router.replace({ ...to, params: { locale: i18n.locale } });
+  }
+
   const isPrivate = to.meta.private;
 
   if (from.name == to.name && from.params == to.params) return false;

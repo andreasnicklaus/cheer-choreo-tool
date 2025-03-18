@@ -2,6 +2,8 @@ import "@babel/polyfill";
 import "mutationobserver-shim";
 import Vue from "vue";
 import "./plugins/bootstrap-vue";
+import "./plugins/vue-flag-icon";
+import i18n from "./plugins/vue-i18n";
 import "./plugins/vue-meta";
 import App from "./App.vue";
 import "./registerServiceWorker";
@@ -10,6 +12,7 @@ import store from "./store";
 import vueMatomo from "vue-matomo";
 import VueCookie from "vue-cookie";
 import VueMeta from "vue-meta";
+import VueFlagIcon from "vue-flag-icon";
 
 Vue.config.productionTip = false;
 
@@ -29,6 +32,8 @@ Vue.use(VueCookie);
 new Vue({
   router,
   store,
+  i18n,
+  VueFlagIcon,
   render: (h) => h(App),
 }).$mount("#app");
 

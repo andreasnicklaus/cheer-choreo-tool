@@ -1,7 +1,9 @@
 <template>
   <b-card>
     <b-card-header class="d-flex justify-content-between align-items-center">
-      <b-card-title class="mb-0"> Dieser Count </b-card-title>
+      <b-card-title class="mb-0">{{
+        $t("countOverview.dieser-count")
+      }}</b-card-title>
       <b-badge>
         {{ countToString(count) }}
       </b-badge>
@@ -34,7 +36,7 @@
                     <b-button
                       variant="outline-primary"
                       v-b-tooltip.hover
-                      title="Zum vorigen Count verschieben"
+                      :title="$t('countOverview.zum-vorigen-count-verschieben')"
                       :disabled="count <= 0 || !interactive"
                       @click="() => moveHitToPreviousCount(hit.id)"
                     >
@@ -43,7 +45,9 @@
                     <b-button
                       variant="outline-primary"
                       v-b-tooltip.hover
-                      title="Zum nächsten Count verschieben"
+                      :title="
+                        $t('countOverview.zum-naechsten-count-verschieben')
+                      "
                       :disabled="count >= choreo.counts - 1 || !interactive"
                       @click="() => moveHitToNextCount(hit.id)"
                     >
@@ -53,7 +57,7 @@
                       variant="outline-success"
                       @click="() => editHit(hit.id)"
                       v-b-tooltip.hover
-                      title="bearbeiten"
+                      :title="$t('countOverview.bearbeiten')"
                       :disabled="!interactive"
                     >
                       <b-icon-pen />
@@ -62,7 +66,7 @@
                       variant="outline-danger"
                       @click="() => $refs.deleteHitModal.open(hit.id)"
                       v-b-tooltip.hover
-                      title="löschen"
+                      :title="$t('countOverview.loeschen')"
                       :disabled="!interactive"
                     >
                       <b-icon-trash />
@@ -100,7 +104,7 @@
               </b-row>
             </b-col>
             <p v-else>
-              <b-badge variant="info">Alle</b-badge>
+              <b-badge variant="info">{{ $t("countOverview.alle") }}</b-badge>
             </p>
           </div>
 
@@ -131,7 +135,7 @@
                       @keydown.esc="() => (editHitId = null)"
                       class="p-0"
                       autofocus
-                      placeholder="Name des Hits"
+                      :placeholder="$t('countOverview.name-des-hits')"
                       :state="editHitNameIsValid"
                     />
                   </b-form-group>
@@ -141,7 +145,7 @@
                     <b-button
                       variant="success"
                       v-b-tooltip.hover
-                      title="Speichern"
+                      :title="$t('speichern')"
                       :disabled="
                         !editHitName ||
                         !editHitAchterIsValid ||
@@ -155,7 +159,7 @@
                     <b-button
                       variant="danger"
                       v-b-tooltip.hover
-                      title="Abbrechen"
+                      :title="$t('abbrechen')"
                       @click="() => (editHitId = null)"
                     >
                       <b-icon-x />
@@ -214,14 +218,14 @@
                     "
                   >
                     <b-icon-check-all />
-                    Alle auswählen
+                    {{ $t("alle-auswaehlen") }}
                   </b-button>
                   <b-button
                     variant="light"
                     @click="() => (editHitMembers = [])"
                   >
                     <b-icon-slash />
-                    Keine auswählen
+                    {{ $t("keine-auswaehlen") }}
                   </b-button>
                   <b-button
                     variant="light"
@@ -237,7 +241,7 @@
                     "
                   >
                     <b-icon-arrow-repeat />
-                    Auswahl wechseln
+                    {{ $t("auswahl-wechseln") }}
                   </b-button>
                 </b-button-group>
                 <b-form-checkbox-group
@@ -291,14 +295,18 @@
           <div v-if="lineup.id != editLineupId">
             <h5>
               <b-row align-h="between" align-v="center">
-                <b-col> Aufstellung </b-col>
+                <b-col>{{ $tc("lineup", 1) }}</b-col>
                 <b-col cols="auto">
                   <b-button-group class="mr-2">
                     <b-button
                       v-if="lineup.Positions.length != teamMembers.length"
                       variant="outline-primary"
                       v-b-tooltip.hover
-                      title="Alle Teilnehmer in der Aufstellung speichern"
+                      :title="
+                        $t(
+                          'countOverview.alle-teilnehmer-in-der-aufstellung-speichern'
+                        )
+                      "
                       @click="() => addAllMembersToLineup(lineup.id)"
                       :disabled="!interactive"
                     >
@@ -309,7 +317,7 @@
                     <b-button
                       variant="outline-success"
                       v-b-tooltip.hover
-                      title="bearbeiten"
+                      :title="$t('countOverview.bearbeiten')"
                       @click="() => editLineup(lineup.id)"
                       :disabled="!interactive"
                     >
@@ -318,7 +326,7 @@
                     <b-button
                       variant="outline-danger"
                       v-b-tooltip.hover
-                      title="löschen"
+                      :title="$t('countOverview.loeschen')"
                       @click="() => $refs.deleteLineupModal.open(lineup.id)"
                       :disabled="!interactive"
                     >
@@ -377,20 +385,20 @@
               </b-row>
             </b-col>
             <p v-else>
-              <b-badge variant="info">Alle</b-badge>
+              <b-badge variant="info">{{ $t("countOverview.alle") }}</b-badge>
             </p>
           </div>
 
           <div v-else>
             <h5>
               <b-row align-h="between" align-v="center">
-                <b-col> Aufstellung </b-col>
+                <b-col> {{ $tc("lineup", 1) }} </b-col>
                 <b-col cols="auto">
                   <b-button-group>
                     <b-button
                       variant="success"
                       v-b-tooltip.hover
-                      title="Speichern"
+                      :title="$t('speichern')"
                       @click="() => saveLineup()"
                       :disabled="
                         !editLineupStartAchterIsValid ||
@@ -405,7 +413,7 @@
                     <b-button
                       variant="danger"
                       v-b-tooltip.hover
-                      title="Abbrechen"
+                      :title="$t('abbrechen')"
                       @click="() => (editLineupId = null)"
                     >
                       <b-icon-x />
@@ -504,7 +512,7 @@
                     :disabled="editLineupMembers.length == teamMembers.length"
                   >
                     <b-icon-check-all />
-                    Alle auswählen
+                    {{ $t("alle-auswaehlen") }}
                   </b-button>
                   <b-button
                     variant="light"
@@ -512,7 +520,7 @@
                     :disabled="editLineupMembers.length == 0"
                   >
                     <b-icon-slash />
-                    Keine auswählen
+                    {{ $t("keine-auswaehlen") }}
                   </b-button>
                   <b-button
                     variant="light"
@@ -528,7 +536,7 @@
                     "
                   >
                     <b-icon-arrow-repeat />
-                    Auswahl wechseln
+                    {{ $t("auswahl-wechseln") }}
                   </b-button>
                 </b-button-group>
 
@@ -580,7 +588,11 @@
             lineupsForCurrentCount.length == 0
           "
         >
-          <p class="text-muted">Für diesen Count hast du noch nichts geplant</p>
+          <p class="text-muted">
+            {{
+              $t("countOverview.fuer-diesen-count-hast-du-noch-nichts-geplant")
+            }}
+          </p>
         </b-list-group-item>
       </b-skeleton-wrapper>
     </b-list-group>
@@ -593,7 +605,7 @@
       :disabled="!interactive"
     >
       <b-icon-plus />
-      Count-Eintrag hinzufügen
+      {{ $t("countOverview.count-eintrag-hinzufuegen") }}
     </b-button>
     <b-button
       variant="light"
@@ -603,7 +615,7 @@
       :disabled="!interactive"
     >
       <b-icon-plus />
-      Aufstellung hinzufügen
+      {{ $t("countOverview.aufstellung-hinzufuegen") }}
     </b-button>
 
     <CreateLineupModal
@@ -862,22 +874,23 @@ export default {
       return Boolean(this.editHitName) && this.editHitName.trim().length >= 3;
     },
     editHitNameStateFeedback() {
-      if (!this.editHitName) return "Erforderlich";
-      if (this.editHitName.trim().length < 3) return "Min. 3 Zeichen";
+      if (!this.editHitName) return this.$t("erforderlich");
+      if (this.editHitName.trim().length < 3)
+        return this.$t("countOverview.hit-name-min-laenge");
       return null;
     },
     editHitAchterIsValid() {
       return Boolean(this.editHitAchter);
     },
     editHitAchterStateFeedback() {
-      if (!this.editHitAchter) return "Erforderlich";
+      if (!this.editHitAchter) return this.$t("erforderlich");
       return null;
     },
     editHitCountIsValid() {
       return Boolean(this.editHitCount);
     },
     editHitCountStateFeedback() {
-      if (!this.editHitCount) return "Erforderlich";
+      if (!this.editHitCount) return this.$t("erforderlich");
       return null;
     },
     editHitMembersIsValid() {
@@ -885,7 +898,7 @@ export default {
     },
     editHitMembersStateFeedback() {
       if (!this.editHitMembers || this.editHitMembers.length == 0)
-        return "Erforderlich";
+        return this.$t("erforderlich");
       return null;
     },
     editLineupStartIsBeforeEnd() {
@@ -901,7 +914,7 @@ export default {
     },
     editLineupStartIsBeforeEndStateFeedback() {
       if (!this.editLineupStartIsBeforeEnd)
-        return "Der Start deiner Aufstellung muss vor dem Ende liegen!";
+        return this.$t("countOverview.start-vor-ende");
       return null;
     },
     editLineupEndAchterIsValid() {
@@ -910,7 +923,7 @@ export default {
       );
     },
     editLineupEndAchterStateFeedback() {
-      if (!this.editLineupEndAchter) return "Erforderlich";
+      if (!this.editLineupEndAchter) return this.$t("erforderlich");
       return null;
     },
     editLineupStartAchterIsValid() {
@@ -919,7 +932,7 @@ export default {
       );
     },
     editLineupStartAchterStateFeedback() {
-      if (!this.editLineupStartAchter) return "Erforderlich";
+      if (!this.editLineupStartAchter) return this.$t("erforderlich");
       return null;
     },
     editLineupStartCountIsValid() {
@@ -928,7 +941,7 @@ export default {
       );
     },
     editLineupStartCountStateFeedback() {
-      if (!this.editLineupStartCount) return "Erforderlich";
+      if (!this.editLineupStartCount) return this.$t("erforderlich");
       return null;
     },
     editLineupEndCountIsValid() {
@@ -937,7 +950,7 @@ export default {
       );
     },
     editLineupEndCountStateFeedback() {
-      if (!this.editLineupEndCount) return "Erforderlich";
+      if (!this.editLineupEndCount) return this.$t("erforderlich");
       return null;
     },
     editLineupMembersIsValid() {
@@ -947,7 +960,7 @@ export default {
     },
     editLineupMembersStateFeedback() {
       if (!this.editLineupMembers || this.editLineupMembers.length == 0)
-        return "Erforderlich";
+        return this.$t("erforderlich");
       return null;
     },
   },

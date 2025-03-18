@@ -4,14 +4,15 @@
     centered
     @show="reset"
     @ok="substituteParticipants"
-    title="Teilnehmer auswechseln"
+    :title="$t('modals.substitution.teilnehmer-auswechseln')"
   >
     <p class="text-muted">
-      Choreo: {{ choreo?.name }} ({{ choreo?.SeasonTeam.Team.name }},
-      {{ choreo?.SeasonTeam.Season.name }})
+      {{ $tc("choreo", 1) }}: {{ choreo?.name }} ({{
+        choreo?.SeasonTeam.Team.name
+      }}, {{ choreo?.SeasonTeam.Season.name }})
     </p>
     <b-form-group
-      label="Auswechseln:"
+      :label="$t('modals.substitution.auswechseln')"
       :state="memberToReplaceIdIsValid"
       :invalid-feedback="memberToReplaceIdStateFeedback"
     >
@@ -24,7 +25,7 @@
       />
     </b-form-group>
     <b-form-group
-      label="Einwechseln:"
+      :label="$t('modals.substitution.einwechseln')"
       :state="memberToSubInIdIsValid"
       :invalid-feedback="memberToSubInIdStateFeedback"
     >
@@ -37,8 +38,12 @@
       />
     </b-form-group>
     <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="success"> Auswechseln </b-button>
-      <b-button @click="cancel" variant="outline-danger"> Abbrechen </b-button>
+      <b-button @click="ok" variant="success">{{
+        $t("modals.substitution.auswechseln")
+      }}</b-button>
+      <b-button @click="cancel" variant="outline-danger">{{
+        $t("abbrechen")
+      }}</b-button>
     </template>
   </b-modal>
 </template>
@@ -102,14 +107,14 @@ export default {
       return Boolean(this.memberToReplaceId);
     },
     memberToReplaceIdStateFeedback() {
-      if (!this.memberToReplaceId) return "Erforderlich";
+      if (!this.memberToReplaceId) return this.$t("erforderlich");
       return null;
     },
     memberToSubInIdIsValid() {
       return Boolean(this.memberToSubInId);
     },
     memberToSubInIdStateFeedback() {
-      if (!this.memberToSubInId) return "Erfolgreich";
+      if (!this.memberToSubInId) return this.$t("erfolgreich");
       return null;
     },
   },

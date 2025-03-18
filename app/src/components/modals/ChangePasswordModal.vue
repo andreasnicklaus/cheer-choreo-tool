@@ -1,7 +1,7 @@
 <template>
   <b-modal
     :id="`changePasswordModal-${id}`"
-    title="Passwort ändern"
+    :title="$t('accountView.passwort-aendern')"
     centered
     @ok="changePassword"
     @show="
@@ -15,12 +15,12 @@
       <b-form-group
         :state="newPasswordIsValid"
         :invalid-feedback="newPasswordStateFeedback"
-        valid-feedback="Dein Passwort ist gültig!"
-        label="Neues Passwort:"
+        :valid-feedback="$t('modals.change-password.dein-passwort-ist-gueltig')"
+        :label="$t('modals.change-password.neues-passwort')"
       >
         <b-form-input
           v-model="newPassword"
-          placeholder="Neues Passwort"
+          :placeholder="$t('modals.change-password.neues-passwort')"
           autofocus
           required
           :state="newPasswordIsValid"
@@ -29,12 +29,16 @@
       <b-form-group
         :state="passwordRepetitionIsValid"
         :invalid-feedback="passwordRepetitionStateFeedback"
-        valid-feedback="Die Wiederholung entspricht deinem neuen Passwort!"
-        label="Wiederholung:"
+        :valid-feedback="
+          $t(
+            'modals.change-password.die-wiederholung-entspricht-deinem-neuen-passwort'
+          )
+        "
+        :label="$t('modals.change-password.wiederholung')"
       >
         <b-form-input
           v-model="passwordRepetition"
-          placeholder="Neues Passwort"
+          :placeholder="$t('modals.change-password.neues-passwort')"
           required
           :state="passwordRepetitionIsValid"
         />
@@ -46,9 +50,11 @@
         variant="success"
         :disabled="!newPasswordIsValid || !passwordRepetitionIsValid"
       >
-        Password ändern
+        {{ $t("modals.change-password.password-aendern") }}
       </b-button>
-      <b-button @click="cancel" variant="danger"> Abbrechen </b-button>
+      <b-button @click="cancel" variant="danger">{{
+        $t("abbrechen")
+      }}</b-button>
     </template>
   </b-modal>
 </template>
@@ -70,22 +76,30 @@ export default {
     changePassword() {
       AuthService.changePassword(this.newPassword)
         .then(() => {
-          this.$bvToast.toast("Dein Passwort wurde geändert", {
-            variant: "success",
-            title: "Passwort geändert",
-            autoHideDelay: 3000,
-            appendToast: true,
-            solid: true,
-          });
+          this.$bvToast.toast(
+            this.$t("modals.change-password.dein-passwort-wurde-geaendert"),
+            {
+              variant: "success",
+              title: this.$t("modals.change-password.passwort-geaendert"),
+              autoHideDelay: 3000,
+              appendToast: true,
+              solid: true,
+            }
+          );
         })
         .catch(() => {
-          this.$bvToast.toast("Dein neues Passwort ist nicht erlaubt.", {
-            variant: "danger",
-            title: "Das hat nicht funktioniert",
-            autoHideDelay: 3000,
-            appendToast: true,
-            solid: true,
-          });
+          this.$bvToast.toast(
+            this.$t(
+              "modals.change-password.dein-neues-passwort-ist-nicht-erlaubt"
+            ),
+            {
+              variant: "danger",
+              title: this.$t("accountView.das-hat-nicht-funktioniert"),
+              autoHideDelay: 3000,
+              appendToast: true,
+              solid: true,
+            }
+          );
         });
     },
   },
@@ -95,7 +109,7 @@ export default {
     },
     newPasswordStateFeedback() {
       if (!this.newPassword || this.newPassword.length < 6)
-        return "Min. 6 Zeichen";
+        return this.$t("modals.change-password.min-password-length");
       return null;
     },
     passwordRepetitionIsValid() {
@@ -105,9 +119,11 @@ export default {
       );
     },
     passwordRepetitionStateFeedback() {
-      if (!this.passwordRepetition) return "Erforderlich";
+      if (!this.passwordRepetition) return this.$t("erforderlich");
       if (this.newPassword != this.passwordRepetition)
-        return "Die Wiederholung entspricht nicht dem ersten Passwort";
+        return this.$t(
+          "modals.change-password.die-wiederholung-entspricht-nicht-dem-ersten-passwort"
+        );
       return null;
     },
   },

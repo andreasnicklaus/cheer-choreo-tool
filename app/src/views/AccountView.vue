@@ -9,51 +9,40 @@
           :name="''"
           :value="user?.username"
           @input="onNameEdit"
-          placeholder="Lädt..."
+          :placeholder="`${$t('loading')}...`"
         />
         <p class="text-muted">
           {{ user?.email }}
           <b-badge v-if="!user?.email" variant="secondary">
-            keine E-Mail bekannt
+            {{ $t("accountView.no-email") }}
           </b-badge>
           <b-badge
             v-else-if="!user?.emailConfirmed"
             variant="danger"
             v-b-tooltip.hover
-            title="Bitte schaue in deinem E-Mail-Postfach nach und bestätige deine E-Mail-Adresse mit dem darin enthaltenen Link!"
-            >nicht bestätigt</b-badge
+            :title="$t('accountView.check-email')"
+            >{{ $t("accountView.nicht-bestaetigt") }}</b-badge
           >
           <b-badge
             v-else
             variant="success"
             v-b-tooltip.hover
-            title="Diese E-Mail-Adresse hast du bereits bestätigt."
-            >bestätigt</b-badge
+            :title="$t('accountView.bereits-bestaetigt')"
+            >{{ $t("accountView.bestaetigt") }}</b-badge
           >
         </p>
       </b-col>
     </b-row>
     <hr />
     <p class="text-muted m-0">
-      Erstellt am: {{ new Date(user?.createdAt).toLocaleDateString("de") }},
-      {{
-        new Date(user?.createdAt).toLocaleTimeString("de", {
-          hour: "numeric",
-          minute: "numeric",
-        })
-      }}
-      Uhr
+      {{ $t("accountView.erstellt-am") }}:
+      {{ $d(new Date(user?.createdAt), "date") }},
+      {{ $d(new Date(user?.createdAt), "time") }}
     </p>
     <p class="text-muted">
-      Zuletzt geändert am:
-      {{ new Date(user?.updatedAt).toLocaleDateString("de") }},
-      {{
-        new Date(user?.updatedAt).toLocaleTimeString("de", {
-          hour: "numeric",
-          minute: "numeric",
-        })
-      }}
-      Uhr
+      {{ $t("accountView.zuletzt-geaendert-am") }}:
+      {{ $d(new Date(user?.updatedAt), "date") }},
+      {{ $d(new Date(user?.updatedAt), "time") }}
     </p>
     <b-row align-v="center" align-h="between" class="mt-3">
       <b-col cols="auto">
@@ -63,14 +52,14 @@
             @click="() => $refs.changePasswordModal.open()"
           >
             <b-icon-key />
-            Passwort ändern
+            {{ $t("accountView.passwort-aendern") }}
           </b-button>
           <b-button
             variant="danger"
             @click="() => $refs.deleteAccountModal.open()"
           >
             <b-icon-trash />
-            Konto löschen
+            {{ $t("accountView.konto-loeschen") }}
           </b-button>
         </b-button-group>
       </b-col>
@@ -100,16 +89,13 @@ export default {
         this.user = user;
       })
       .catch(() => {
-        this.$bvToast.toast(
-          "Ein unbekannter Fehler ist aufgetreten. Lade die Seite neu oder logge dich erneut ein, um die Seite anzuzeigen.",
-          {
-            variant: "danger",
-            title: "Das hat nicht funktioniert",
-            autoHideDelay: 3000,
-            appendToast: true,
-            solid: true,
-          }
-        );
+        this.$bvToast.toast(this.$t("accountView.unbekannter-fehler"), {
+          variant: "danger",
+          title: this.$t("accountView.das-hat-nicht-funktioniert"),
+          autoHideDelay: 3000,
+          appendToast: true,
+          solid: true,
+        });
       });
   },
   methods: {
@@ -119,53 +105,51 @@ export default {
           this.user = user;
         })
         .catch(() => {
-          this.$bvToast.toast(
-            "Dein neuer Nutzername ist nicht erlaubt. Entweder ist der Nutzername leer oder es gibt schon einen Nutzer mit dem Namen.",
-            {
-              variant: "danger",
-              title: "Das hat nicht funktioniert",
-              autoHideDelay: 3000,
-              appendToast: true,
-              solid: true,
-            }
-          );
+          this.$bvToast.toast(this.$t("accountView.nutzername-nicht-erlaubt"), {
+            variant: "danger",
+            title: this.$t("accountView.das-hat-nicht-funktioniert"),
+            autoHideDelay: 3000,
+            appendToast: true,
+            solid: true,
+          });
         });
     },
   },
-  metaInfo: {
-    title: "Konto",
-    meta: [
-      {
-        vmid: "description",
-        name: "description",
-        content:
-          "Verwalte dein Konto und nimm Aktionen wie Passwortänderungen vor.",
-      },
-      {
-        vmid: "twitter:description",
-        name: "twitter:description",
-        content:
-          "Verwalte dein Konto und nimm Aktionen wie Passwortänderungen vor.",
-      },
-      {
-        vmid: "og:description",
-        property: "og:description",
-        content:
-          "Verwalte dein Konto und nimm Aktionen wie Passwortänderungen vor.",
-      },
-      {
-        vmid: "og:title",
-        property: "og:title",
-        content:
-          "Konto - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
-      },
-      {
-        vmid: "twitter:title",
-        name: "twitter:title",
-        content:
-          "Konto - Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
-      },
-    ],
+  metaInfo() {
+    return {
+      title: this.$t("konto"),
+      meta: [
+        {
+          vmid: "description",
+          name: "description",
+          content: this.$t("meta.account.description"),
+        },
+        {
+          vmid: "twitter:description",
+          name: "twitter:description",
+          content: this.$t("meta.account.description"),
+        },
+        {
+          vmid: "og:description",
+          property: "og:description",
+          content: this.$t("meta.account.description"),
+        },
+        {
+          vmid: "og:title",
+          property: "og:title",
+          content: `${this.$t("konto")} - ${this.$t(
+            "general.ChoreoPlaner"
+          )} | ${this.$t("meta.defaults.title")}`,
+        },
+        {
+          vmid: "twitter:title",
+          name: "twitter:title",
+          content: `${this.$t("konto")} - ${this.$t(
+            "general.ChoreoPlaner"
+          )} | ${this.$t("meta.defaults.title")}`,
+        },
+      ],
+    };
   },
 };
 </script>

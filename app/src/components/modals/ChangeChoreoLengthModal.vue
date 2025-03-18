@@ -2,7 +2,7 @@
   <b-modal
     :id="`changeLengthModal-${id}`"
     centered
-    title="Länge der Choreo ändern"
+    :title="$t('modals.change-length.laenge-der-choreo-aendern')"
     @show="
       () => {
         if (this.choreo) {
@@ -28,7 +28,9 @@
         />
       </b-form-group>
       <b-form-group
-        description="Counts (Zusätzliche Counts nach den Achtern)"
+        :description="
+          $t('modals.change-length.counts-zusaetzliche-counts-nach-den-achtern')
+        "
         :state="countIsValid"
         :invalid-feedback="lengthStateFeedback"
       >
@@ -40,13 +42,18 @@
           :state="countIsValid"
         />
       </b-form-group>
-      <p class="text-muted">Geschätzte Zeit: {{ timeEstimationString }}</p>
+      <p class="text-muted">
+        {{ $t("modals.change-length.geschaetzte-zeit") }}
+        {{ timeEstimationString }}
+      </p>
     </b-form>
     <template #modal-footer="{ ok, cancel }">
       <b-button @click="ok" variant="success" :disabled="!newCountIsValid">
-        Länge ändern
+        {{ $t("modals.change-length.laenge-aendern") }}
       </b-button>
-      <b-button @click="cancel" variant="danger"> Abbrechen </b-button>
+      <b-button @click="cancel" variant="danger">{{
+        $t("abbrechen")
+      }}</b-button>
     </template>
   </b-modal>
 </template>
@@ -106,7 +113,7 @@ export default {
     lengthStateFeedback() {
       const counts =
         parseInt(this.newChoreoAchter) * 8 + parseInt(this.newChoreoCount);
-      if (counts == 0) return "Du kannst keine Choreo mit 0 Counts haben.";
+      if (counts == 0) return this.$t("modals.change-length.choreo-min-length");
       return null;
     },
   },

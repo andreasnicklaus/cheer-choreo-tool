@@ -1,21 +1,19 @@
 <template>
   <b-modal
     :id="`deleteAccountModal-${id}`"
-    title="Konto löschen"
+    :title="$t('accountView.konto-loeschen')"
     centered
     @show="() => (this.accountDeletionApproval = false)"
   >
     <p>
-      Wenn du dein Konto löscht, werden alle damit verbundenen Informationen
-      gelöscht. Dazu gehören Vereine, Teams, Mitglieder, Choreos, Aufstellungen
-      und Countsheets.
+      {{ $t("modals.delete-account.info") }}
     </p>
     <b-form-checkbox
       v-model="accountDeletionApproval"
       :state="accountDeletionApproval"
       autofocus
     >
-      Ich habe verstanden und möchte fortfahren.
+      {{ $t("modals.delete-account.verstanden") }}
     </b-form-checkbox>
     <template #modal-footer="{ cancel }">
       <b-button
@@ -23,24 +21,26 @@
         variant="danger"
         :disabled="!accountDeletionApproval"
       >
-        Account löschen
+        {{ $t("modals.delete-account.account-loeschen") }}
       </b-button>
       <b-button @click="cancel" variant="outline-secondary">
-        Abbrechen
+        {{ $t("abbrechen") }}
       </b-button>
     </template>
 
     <b-modal
       :id="`confirmDeletionModal-${id}`"
-      title="Bist du sicher?"
+      :title="$t('bist-du-sicher')"
       centered
       @ok="deleteMember"
     >
-      <p>Du kannst diese Aktion nicht rückgängig machen.</p>
+      <p>{{ $t("du-kannst-diese-aktion-nicht-rueckgaengig-machen") }}</p>
       <template #modal-footer="{ ok, cancel }">
-        <b-button @click="ok" variant="danger"> Jetzt löschen </b-button>
+        <b-button @click="ok" variant="danger">{{
+          $t("jetzt-loeschen")
+        }}</b-button>
         <b-button @click="cancel" variant="outline-secondary">
-          Abbrechen
+          {{ $t("abbrechen") }}
         </b-button>
       </template>
     </b-modal>
