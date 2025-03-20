@@ -60,6 +60,7 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         "script-src": ["'self'", "https:", "'unsafe-inline'"],
+        "worker-src": ["'self'", "https:", "blob:"],
       },
     },
     referrerPolicy: {

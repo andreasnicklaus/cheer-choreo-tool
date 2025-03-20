@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Server Status</title>
@@ -60,5 +61,13 @@
     </div>
     <a href="mailto:info@choreo-planer.de"> Kontakt aufnehmen </a>
     <a href="/admin" id="adminLink"> <i class="bi bi-person-fill-gear"></i></a>
+
+    <script defer>
+      confetti({
+        particleCount: 200,
+        spread: 100,
+        origin: { y: 0.8 },
+      });
+    </script>
   </body>
 </html>
