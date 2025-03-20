@@ -13,6 +13,10 @@
         font-weight: 700;
         margin-bottom: 0;
       }
+      a.dashboardTile {
+        display: block;
+        text-decoration: none;
+      }
     </style>
   </head>
   <body>
@@ -36,38 +40,53 @@
         </div>
         <% } %> <% if (locals.userCount) { %>
         <div class="col-12 col-md-6">
-          <div class="px-5 py-4 bg-body-secondary rounded-3 mb-0">
+          <a
+            href="/admin/users"
+            class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
+          >
             <%- include('./components/dashboardKpis', { trend: userTrend, count:
             userCount, label: 'Users', icon: 'person' }) %>
-          </div>
+          </a>
         </div>
         <% } %> <% if (locals.adminCount) { %>
         <div class="col-12 col-md-6">
-          <div class="px-5 py-4 bg-body-secondary rounded-3 mb-0">
+          <a
+            href="/admin/admins"
+            class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
+          >
             <%- include('./components/dashboardKpis', { trend: adminTrend,
             count: adminCount, label: 'Admins', icon: 'person-gear' }) %>
-          </div>
+          </a>
         </div>
         <% } %> <% if (locals.clubCount) { %>
         <div class="col-6 col-md-3">
-          <div class="px-5 py-4 bg-body-secondary rounded-3 mb-0">
+          <a
+            href="/admin/db/clubs"
+            class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
+          >
             <%- include('./components/dashboardKpis', { trend: clubTrend, count:
             clubCount, label: 'Clubs', icon: 'house' }) %>
-          </div>
+          </a>
         </div>
         <% } %><% if (locals.teamCount) { %>
         <div class="col-6 col-md-3">
-          <div class="px-5 py-4 bg-body-secondary rounded-3 mb-0">
+          <a
+            href="/admin/db/teams"
+            class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
+          >
             <%- include('./components/dashboardKpis', { trend: teamTrend, count:
             teamCount, label: 'Teams', icon: 'people' }) %>
-          </div>
+          </a>
         </div>
         <% } %><% if (locals.seasonCount) { %>
         <div class="col-6 col-md-3">
-          <div class="px-5 py-4 bg-body-secondary rounded-3 mb-0">
+          <a
+            href="/admin/db/seasons"
+            class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
+          >
             <%- include('./components/dashboardKpis', { trend: seasonTrend,
             count: seasonCount, label: 'Seasons', icon: 'calendar' }) %>
-          </div>
+          </a>
         </div>
         <% } %><% if (locals.seasonTeamCount) { %>
         <div class="col-6 col-md-3">
@@ -79,18 +98,24 @@
         </div>
         <% } %> <% if (locals.choreoCount) { %>
         <div class="col-6 col-md-4">
-          <div class="px-5 py-4 bg-body-secondary rounded-3 mb-0">
+          <a
+            href="/admin/db/choreos"
+            class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
+          >
             <%- include('./components/dashboardKpis', { trend: choreoTrend,
             count: choreoCount, label: 'Choreos', icon: 'layout-three-columns'
             }) %>
-          </div>
+          </a>
         </div>
         <% } %> <% if (locals.memberCount) { %>
         <div class="col-6 col-md-4">
-          <div class="px-5 py-4 bg-body-secondary rounded-3 mb-0">
+          <a
+            href="/admin/db/members"
+            class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
+          >
             <%- include('./components/dashboardKpis', { trend: memberTrend,
             count: memberCount, label: 'Members', icon: 'people' }) %>
-          </div>
+          </a>
         </div>
         <% } %> <% if (locals.feedbackAverage) { %>
         <div class="col-6 col-md-4">
