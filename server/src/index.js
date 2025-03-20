@@ -5,6 +5,7 @@ const { version } = require("../package.json");
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const helmet = require("helmet");
 
 // DATABASE
 const db = require("./db");
@@ -45,6 +46,21 @@ const port = 3000;
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+
+// TODO: configure CSP
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+    contentSecurityPolicy: {
+      directives: {
+        "script-src": ["'self'", "https:", "'unsafe-inline'"],
+      },
+    },
+    referrerPolicy: {
+      policy: ["strict-origin-when-cross-origin"],
+    },
+  })
+);
 
 app.use(loggerMiddleWare);
 
