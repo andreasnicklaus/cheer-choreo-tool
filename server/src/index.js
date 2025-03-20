@@ -6,6 +6,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const helmet = require("helmet");
+const { rateLimit } = require("express-rate-limit");
 
 // DATABASE
 const db = require("./db");
@@ -46,8 +47,13 @@ const port = 3000;
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(
+  rateLimit({
+    windowMs: 3 * 60 * 1000, // 3 minutes
+    max: 100,
+  })
+);
 
-// TODO: configure CSP
 app.use(
   helmet({
     crossOriginResourcePolicy: false,
