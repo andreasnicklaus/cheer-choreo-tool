@@ -41,9 +41,12 @@ See [LICENSE](LICENSE) for the license of this project.
 
 ## :sparkles: Version history
 
-### 0.9.9 - 2025-03-18
+### 0.9.9 - 2025-03-20
 
 - Added internationalization for English and German
+- Added security best practices for backend server (security headers, rate limiting)
+- Minor UI improvements
+- Implemented fuzzy search and created links in admin dashboard
 
 ### 0.9.8 - 2025-01-08
 
