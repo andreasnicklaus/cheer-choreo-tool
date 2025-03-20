@@ -15,6 +15,7 @@ const Member = require("../../db/models/member");
 const UserService = require("../../services/UserService");
 const SeasonTeamService = require("../../services/SeasonTeamService");
 const { logger } = require("../../plugins/winston");
+const search = require("../../utils/fuzzySearch");
 
 const router = Router();
 
@@ -27,6 +28,8 @@ router.get("/", (req, res, next) => {
 
 router.get("/:entity", async (req, res, next) => {
   const UserId = req.query.UserId || null;
+  const searchTerm = req.query.s || null;
+
   let columns, data, model;
   let extraData = {
     userList: (await UserService.getAll(null, { all: true })).map(
@@ -86,6 +89,9 @@ router.get("/:entity", async (req, res, next) => {
         });
       break;
   }
+
+  if (searchTerm) data = search(data, { keys: columns }, searchTerm);
+
   res.render("../src/views/admin/db.ejs", {
     username: req.Admin.username,
     columns,
