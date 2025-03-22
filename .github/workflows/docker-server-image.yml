@@ -56,3 +56,9 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+      - name: Trigger server deployment
+        uses: tyrrrz/action-http-request@master
+        with:
+          url: https://watchtower.andreasnicklaus.de/v1/update
+          headers: |
+            Authorization: Bearer ${{ secrets.WATCHTOWER_TOKEN }}
