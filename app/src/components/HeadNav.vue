@@ -98,7 +98,6 @@
           <b-dropdown-item
             v-for="team in teams"
             :key="team.id"
-            $root.$i18n.locale
             :to="{
               name: 'Team',
               params: { teamId: team.id, locale: $root.$i18n.locale },

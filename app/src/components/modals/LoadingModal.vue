@@ -30,7 +30,9 @@ export default {
   props: {
     description: {
       type: String,
-      default: this.$t("modals.loading.wird-geladen"),
+      default: function () {
+        return this.$t("modals.loading.wird-geladen");
+      },
     },
   },
   methods: {

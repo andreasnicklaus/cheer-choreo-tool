@@ -475,6 +475,25 @@ export default {
         this.$bvModal.show("video-download-modal");
       };
     },
+    initializeFfmpeg() {
+      const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
+      this.ffmpeg.on("log", ({ message }) => {
+        console.debug(message);
+      });
+      this.ffmpeg.on("progress", ({ progress, time }) => {
+        console.debug({ progress, time });
+      });
+
+      return Promise.all([
+        toBlobURL(`${baseURL}/ffmpeg-core.js`, "text/javascript"),
+        toBlobURL(`${baseURL}/ffmpeg-core.wasm`, "application/wasm"),
+      ]).then(([coreURL, wasmURL]) => {
+        this.ffmpeg.load({
+          coreURL,
+          wasmURL,
+        });
+      });
+    },
     selectDownloadOption(optionId) {
       switch (optionId) {
         case "mp4":
@@ -491,21 +510,23 @@ export default {
       if (this.mp4Url) this.downloadUrl = this.mp4Url;
       const name = "record.webm";
 
-      fetchFile(this.downloadUrl).then((vid) => {
-        this.ffmpeg.writeFile(name, vid).then(() => {
-          this.ffmpeg.exec(["-i", name, "output.mp4"]).then(() => {
-            this.ffmpeg.readFile("output.mp4").then((data) => {
-              const url = URL.createObjectURL(
-                new Blob([data.buffer], { type: "video/mp4" })
-              );
+      fetchFile(this.downloadUrl).then(async (vid) => {
+        this.initializeFfmpeg().then(() => {
+          this.ffmpeg.writeFile(name, vid).then(() => {
+            this.ffmpeg.exec(["-i", name, "output.mp4"]).then(() => {
+              this.ffmpeg.readFile("output.mp4").then((data) => {
+                const url = URL.createObjectURL(
+                  new Blob([data.buffer], { type: "video/mp4" })
+                );
 
-              this.mp4Url = url;
-              this.downloadUrl = url;
+                this.mp4Url = url;
+                this.downloadUrl = url;
 
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = "video.mp4";
-              a.click();
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "video.mp4";
+                a.click();
+              });
             });
           });
         });
@@ -542,23 +563,7 @@ export default {
   mounted() {
     this.loadChoreo();
     this.ffmpeg = new FFmpeg();
-    const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
-    this.ffmpeg.on("log", ({ message }) => {
-      console.debug(message);
-    });
-    this.ffmpeg.on("progress", ({ progress, time }) => {
-      console.debug({ progress, time });
-    });
-
-    Promise.all([
-      toBlobURL(`${baseURL}/ffmpeg-core.js`, "text/javascript"),
-      toBlobURL(`${baseURL}/ffmpeg-core.wasm`, "application/wasm"),
-    ]).then(([coreURL, wasmURL]) => {
-      this.ffmpeg.load({
-        coreURL,
-        wasmURL,
-      });
-    });
+    this.initializeFfmpeg();
   },
   computed: {
     waitingSlogan() {
