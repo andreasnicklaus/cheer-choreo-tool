@@ -49,14 +49,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(
   rateLimit({
-    windowMs: 3 * 60 * 1000, // 3 minutes
+    windowMs: 1 * 60 * 1000, // 1 minutes
     max: 100,
   })
 );
 
 app.use(
   helmet({
-    crossOriginResourcePolicy: false,
+    crossOriginResourcePolicy: { policy: "same-site" },
     contentSecurityPolicy: {
       directives: {
         "script-src": ["'self'", "https:", "'unsafe-inline'"],
