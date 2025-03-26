@@ -47,6 +47,8 @@ const port = 3000;
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+
+app.set("trust proxy", 1);
 app.use(
   rateLimit({
     windowMs: 1 * 60 * 1000, // 1 minutes
@@ -93,6 +95,11 @@ app.get("/version", (req, res) => {
 });
 app.get("/health", (req, res, next) => {
   res.status(200).send();
+  next();
+});
+// TODO: Remove this route once rate limiting is set up correctly
+app.get("/ip", (req, res, next) => {
+  res.send(req.ip);
   next();
 });
 
