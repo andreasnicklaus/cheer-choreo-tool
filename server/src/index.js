@@ -97,11 +97,6 @@ app.get("/health", (req, res, next) => {
   res.status(200).send();
   next();
 });
-// TODO: Remove this route once rate limiting is set up correctly
-app.get("/ip", (req, res, next) => {
-  res.send(req.ip);
-  next();
-});
 
 app.use("/choreo", choreoRouter);
 app.use("/team", teamRouter);
