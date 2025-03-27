@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const helmet = require("helmet");
 const { rateLimit } = require("express-rate-limit");
+const robots = require("express-robots-txt");
 
 // DATABASE
 const db = require("./db");
@@ -47,6 +48,7 @@ const port = 3000;
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(robots(__dirname + "/public/robots.txt"));
 
 app.set("trust proxy", 1);
 app.use(
