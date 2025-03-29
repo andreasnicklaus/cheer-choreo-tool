@@ -26,7 +26,7 @@
         text-decoration: none;
       }
     </style>
-    <script>
+    <script nonce="<%= cspNonce %>">
       setTimeout(() => {
         window.location.replace("<%= frontendDomain %>/login");
       }, 5_000);

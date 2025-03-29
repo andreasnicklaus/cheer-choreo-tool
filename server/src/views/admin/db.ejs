@@ -139,7 +139,7 @@
     
 
     <footer><%- include('./partials/footer'); %></footer>
-    <script type="text/javascript" defer>
+    <script type="text/javascript" defer nonce="<%= cspNonce %>">
       function deleteEntity(id) {
         if (confirm('Are you sure you want to delete this entity?')) {
           fetch(`<%= path %>/${id}`, {

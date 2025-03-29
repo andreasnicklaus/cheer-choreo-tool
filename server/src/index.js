@@ -1,6 +1,8 @@
 const path = require("path");
 const { version } = require("../package.json");
 
+const crypto = require("crypto");
+
 // EXPRESS REQUIREMENTS
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -48,7 +50,11 @@ const app = express();
 const port = 3000;
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_DOMAIN,
+  })
+);
 app.use(robots(__dirname + "/public/robots.txt"));
 
 app.set("trust proxy", 1);
@@ -59,12 +65,20 @@ app.use(
   })
 );
 
+app.use((req, res, next) => {
+  res.locals.cspNonce = crypto.randomBytes(32).toString("hex");
+  next();
+});
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: "same-site" },
     contentSecurityPolicy: {
       directives: {
-        "script-src": ["'self'", "https:", "'unsafe-inline'"],
+        "script-src": [
+          "'self'",
+          "https:",
+          (req, res) => `'nonce-${res.locals.cspNonce}'`,
+        ],
         "worker-src": ["'self'", "https:", "blob:"],
       },
     },

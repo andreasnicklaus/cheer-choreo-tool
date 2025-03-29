@@ -215,7 +215,7 @@
 
     <footer><%- include('./partials/footer'); %></footer>
 
-    <script type="text/javascript" defer>
+    <script type="text/javascript" defer nonce="<%= cspNonce %>">
       const updateModal = document.getElementById("adminUpdateModal");
       if (updateModal) {
         updateModal.addEventListener("show.bs.modal", (event) => {
@@ -231,7 +231,7 @@
         });
       }
     </script>
-    <script type="text/javascript" defer>
+    <script type="text/javascript" defer nonce="<%= cspNonce %>">
       function deleteAdmin(id) {
         if (confirm("Are you sure you want to delete this admin?")) {
           fetch(`/admin/admins/${id}`, {

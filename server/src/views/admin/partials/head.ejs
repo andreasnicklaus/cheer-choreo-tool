@@ -27,7 +27,7 @@
   integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
   crossorigin="anonymous"
 ></script>
-<script type="importmap">
+<script type="importmap" nonce="<%= cspNonce %>">
   {
     "imports": {
       "@popperjs/core": "https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/esm/popper.min.js",
@@ -35,13 +35,13 @@
     }
   }
 </script>
-<script>
+<script nonce="<%= cspNonce %>">
   document.documentElement.setAttribute(
     "data-bs-theme",
     window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
   );
 </script>
-<script type="module">
+<script type="module" nonce="<%= cspNonce %>">
   import * as bootstrap from "bootstrap";
 
   const tooltipTriggerList = document.querySelectorAll(
