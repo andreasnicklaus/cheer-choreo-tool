@@ -146,9 +146,20 @@ app.use(loggerMiddleWare);
 app.set("view engine", "ejs");
 
 app.use(
+  "/status",
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        "script-src": ["'self'", "https:", "'unsafe-inline'"],
+      },
+    },
+  })
+);
+app.use(
   require("express-status-monitor")({
     title: "Choreo Planer Server",
     path: "/status",
+    ignoreStartsWith: "/admin",
   })
 );
 
