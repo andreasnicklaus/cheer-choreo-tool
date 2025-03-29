@@ -120,7 +120,7 @@ app.use(
       verticalScroll: permPolicy,
       vibrate: permPolicy,
       vr: permPolicy,
-      wakelock: permPolicy,
+      wakeLock: permPolicy,
       xr: permPolicy,
       xrSpatialTracking: permPolicy,
     },
