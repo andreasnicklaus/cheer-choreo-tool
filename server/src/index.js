@@ -8,6 +8,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const { rateLimit } = require("express-rate-limit");
 const robots = require("express-robots-txt");
+const permissionsPolicy = require("permissions-policy");
 
 // DATABASE
 const db = require("./db");
@@ -69,6 +70,59 @@ app.use(
     },
     referrerPolicy: {
       policy: ["strict-origin-when-cross-origin"],
+    },
+  })
+);
+
+const permPolicy = ["self", `"${process.env.FRONTEND_DOMAIN}"`];
+console.log({ permPolicy });
+app.use(
+  permissionsPolicy({
+    features: {
+      accelerometer: permPolicy,
+      ambientLightSensor: permPolicy,
+      autoplay: permPolicy,
+      battery: permPolicy,
+      camera: permPolicy,
+      displayCapture: permPolicy,
+      documentDomain: permPolicy,
+      documentWrite: permPolicy,
+      encryptedMedia: permPolicy,
+      executionWhileNotRendered: permPolicy,
+      executionWhileOutOfViewport: permPolicy,
+      fontDisplayLateSwap: permPolicy,
+      fullscreen: permPolicy,
+      geolocation: permPolicy,
+      gyroscope: permPolicy,
+      interestCohort: permPolicy,
+      layoutAnimations: permPolicy,
+      legacyImageFormats: permPolicy,
+      loadingFrameDefaultEager: permPolicy,
+      magnetometer: permPolicy,
+      microphone: permPolicy,
+      midi: permPolicy,
+      navigationOverride: permPolicy,
+      notifications: permPolicy,
+      oversizedImages: permPolicy,
+      payment: permPolicy,
+      pictureInPicture: permPolicy,
+      publickeyCredentials: permPolicy,
+      push: permPolicy,
+      serial: permPolicy,
+      speaker: permPolicy,
+      syncScript: permPolicy,
+      syncXhr: permPolicy,
+      unoptimizedImages: permPolicy,
+      unoptimizedLosslessImages: permPolicy,
+      unoptimizedLossyImages: permPolicy,
+      unsizedMedia: permPolicy,
+      usb: permPolicy,
+      verticalScroll: permPolicy,
+      vibrate: permPolicy,
+      vr: permPolicy,
+      wakelock: permPolicy,
+      xr: permPolicy,
+      xrSpatialTracking: permPolicy,
     },
   })
 );
