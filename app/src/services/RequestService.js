@@ -3,13 +3,11 @@ import { setupCache } from "axios-cache-interceptor";
 import AuthService from "./AuthService";
 import store from "@/store";
 import router from "@/router";
+import i18n from "@/plugins/vue-i18n";
 
 const ax = setupCache(
   axios.create({
-    baseURL:
-      process.env.NODE_ENV == "production"
-        ? "https://api.choreo-planer.de/"
-        : "http://localhost:3000/",
+    baseURL: getApiDomain(),
   }),
   { headerInterpreter: () => 50 }
 );
@@ -30,7 +28,7 @@ ax.interceptors.response.use(
         router
           .push({
             name: "Login",
-            params: { locale: this.$root.$i18n.locale },
+            params: { locale: i18n.locale },
           })
           .catch(() => {});
         break;
@@ -40,7 +38,7 @@ ax.interceptors.response.use(
         router
           .push({
             name: "Login",
-            params: { locale: this.$root.$i18n.locale },
+            params: { locale: i18n.locale },
           })
           .catch(() => {});
         break;
@@ -63,5 +61,11 @@ ax.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+export function getApiDomain() {
+  return process.env.NODE_ENV == "production"
+    ? "https://api.choreo-planer.de/"
+    : "http://localhost:3000/";
+}
 
 export default ax;

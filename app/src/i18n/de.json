@@ -6,14 +6,16 @@
     "bestaetigt": "bestätigt",
     "check-email": "Bitte schaue in deinem E-Mail-Postfach nach und bestätige deine E-Mail-Adresse mit dem darin enthaltenen Link!",
     "das-hat-nicht-funktioniert": "Das hat nicht funktioniert",
-    "erstellt-am": "Erstellt am",
+    "erstellt-am": "Erstellt",
     "konto-loeschen": "Konto löschen",
     "nicht-bestaetigt": "nicht bestätigt",
     "no-email": "keine E-Mail bekannt",
     "nutzername-nicht-erlaubt": "Dein neuer Nutzername ist nicht erlaubt. Entweder ist der Nutzername leer oder es gibt schon einen Nutzer mit dem Namen.",
     "passwort-aendern": "Passwort ändern",
     "unbekannter-fehler": "Ein unbekannter Fehler ist aufgetreten. Lade die Seite neu oder logge dich erneut ein, um die Seite anzuzeigen.",
-    "zuletzt-geaendert-am": "Zuletzt geändert am"
+    "zuletzt-geaendert-am": "Zuletzt geändert",
+    "konto-loeschen-descriptions": "Lösche dein Konto nur, wenn du die App nicht mehr verwenden möchtest. Deine Daten werden als inaktiv markiert.",
+    "gefahrenbereich": "Gefahrenbereich"
   },
   "achter": "Achter",
   "alle-auswaehlen": "Alle auswählen",
@@ -364,7 +366,10 @@
     "passwort-mindest-laenge": "Dein Passwort muss mindestens 6 Zeichen lang sein.",
     "passwort-wiederholen": "Passwort wiederholen",
     "warum-email": "Deine E-Mail-Adresse brauchen wir, um dein Passwort zurücksetzen oder dein Konto wiederherstellen zu können.",
-    "wiederholung-gleicht-nicht-passwort": "Die Wiederholung gleicht nicht dem Passwort."
+    "wiederholung-gleicht-nicht-passwort": "Die Wiederholung gleicht nicht dem Passwort.",
+    "bitte-kontrolliere-nutzernamen-email-und-passwort": "Bitte kontrolliere, dass du Nutzernamen/Email und Passwort richtig geschrieben hast.",
+    "server-offline": "Die Server scheinen offline zu sein. Bitte versuche es später nochmal!",
+    "clubName-mindestens-laenge": "Der Name des Vereins muss mindestens 6 Zeichen lang sein."
   },
   "meta": {
     "account": {
@@ -674,5 +679,18 @@
     "video-zusammenstellen": "Video zusammenstellen"
   },
   "zur-startseite": "Zur Startseite",
-  "zuruecksetzen": "Zurücksetzen"
+  "zuruecksetzen": "Zurücksetzen",
+  "account": {
+    "email-confirmation-warning": "Du hast deine E-Mail-Adresse noch nicht bestätigt. Bitte klicke auf den Link in der E-Mail, die wir dir geschickt haben, um deine E-Mail-Adresse zu bestätigen.",
+    "link-nochmal-senden": "Link nochmal senden",
+    "settings": "Einstellungen",
+    "tracking-opt-out": "Tracking (Opt-out):",
+    "tracking-info": "Wir verwenden deine Daten anonymisiert, um die Nutzung der App zu analysieren und zu verbessern.",
+    "tracking-description": "Ich möchte nicht, dass meine Daten anonymisiert und aggregiert werden, um die Nutzung der App zu analysieren und zu verbessern.",
+    "tracking-warning": "Indem du dem Tracking widersprichst, können wir nicht einsehen, welche Seiten aufgerufen werden und ggf. Fehler aufweisen!",
+    "achtung": "Achtung!",
+    "rueckgaengig-machen": "Rückgängig machen",
+    "reset-password": "Passwort zurücksetzen",
+    "reset-password-description": "Setze dein Passwort zurück, um dein Konto zu schützen. Ändere dein Passwort, wenn du den Verdacht hast, dass jemand anderes Zugriff auf dein Konto hat."
+  }
 }

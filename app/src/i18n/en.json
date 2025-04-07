@@ -6,14 +6,16 @@
     "bestaetigt": "confirmed",
     "check-email": "Please check your email inbox and confirm your email address with the link contained therein!",
     "das-hat-nicht-funktioniert": "That didn't work",
-    "erstellt-am": "Created on",
+    "erstellt-am": "Created",
     "konto-loeschen": "Delete account",
     "nicht-bestaetigt": "not confirmed",
     "no-email": "no known email address",
     "nutzername-nicht-erlaubt": "Your new username is not allowed. Either the username is empty or there is already a user with the name.",
     "passwort-aendern": "Change Password",
     "unbekannter-fehler": "An unknown error occurred. Reload the page or log in again to display the page.",
-    "zuletzt-geaendert-am": "Last changed on"
+    "zuletzt-geaendert-am": "Last updated",
+    "konto-loeschen-descriptions": "Only delete your account if you no longer want to use the app. Your data will be marked as inactive.",
+    "gefahrenbereich": "Danger zone"
   },
   "achter": "Eight",
   "alle-auswaehlen": "Select all",
@@ -364,7 +366,10 @@
     "passwort-mindest-laenge": "Your password must be at least 6 characters long.",
     "passwort-wiederholen": "Repeat password",
     "warum-email": "We need your email address to reset your password or restore your account.",
-    "wiederholung-gleicht-nicht-passwort": "The repetition is not identical to the password."
+    "wiederholung-gleicht-nicht-passwort": "The repetition is not identical to the password.",
+    "server-offline": "The servers seem to be offline. Please try again later!",
+    "bitte-kontrolliere-nutzernamen-email-und-passwort": "Please check that you spelled username/email and password correctly.",
+    "clubName-mindestens-laenge": "The name of the club must be at least 6 characters long."
   },
   "meta": {
     "account": {
@@ -674,5 +679,18 @@
     "video-zusammenstellen": "Create video"
   },
   "zur-startseite": "To the landing page",
-  "zuruecksetzen": "Reset"
+  "zuruecksetzen": "Reset",
+  "account": {
+    "email-confirmation-warning": "You have not yet confirmed your email address. Please click on the link in the email we sent you to confirm your email address.",
+    "link-nochmal-senden": "Send link again",
+    "settings": "Settings",
+    "tracking-opt-out": "Tracking (Opt-out):",
+    "tracking-info": "We use your data anonymously to analyze and improve the use of the app.",
+    "tracking-description": "I don't want my data to be anonymized and aggregated to analyze and improve the use of the app.",
+    "achtung": "Watch out!",
+    "tracking-warning": "By disabling tracking, we cannot see which pages are called up and may have errors!",
+    "rueckgaengig-machen": "Undo",
+    "reset-password": "Reset password",
+    "reset-password-description": "Reset your password to protect your account. Change your password if you suspect that someone else has access to your account."
+  }
 }

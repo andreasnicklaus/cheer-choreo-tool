@@ -9,7 +9,7 @@ class UserService {
   }
 
   async findById(id) {
-    return User.findByPk(id);
+    return User.findByPk(id, { include: ["Clubs"] });
   }
 
   async findByUsernameOrEmail(usernameOrEmail, { scope = "defaultScope" }) {

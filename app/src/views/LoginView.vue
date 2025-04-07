@@ -238,12 +238,13 @@ export default {
             console.warn(e.code);
             if (e.code == "ERR_NETWORK")
               return this.showFailMessage(
-                e.response?.data ||
-                  "Die Server scheinen offline zu sein. Bitte versuche es später nochmal!"
+                e.response?.data || "{{ $t('login.server-offline') }}"
               );
             this.showFailMessage(
               e.response.data ||
-                "Bitte kontrolliere, dass du Nutzernamen/Email und Passwort richtig geschrieben hast."
+                this.$t(
+                  "login.bitte-kontrolliere-nutzernamen-email-und-passwort"
+                )
             );
           }
         });
