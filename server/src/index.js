@@ -89,7 +89,6 @@ app.use(
 );
 
 const permPolicy = ["self", `"${process.env.FRONTEND_DOMAIN}"`];
-console.log({ permPolicy });
 app.use(
   permissionsPolicy({
     features: {
