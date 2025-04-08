@@ -41,6 +41,10 @@ class ClubService {
   deleteClubLogo(clubId) {
     return ax.delete(`/club/${clubId}/clubLogo`).then((res) => res.data);
   }
+
+  remove(clubId) {
+    return ax.delete(`/club/${clubId}`).then((res) => res.data);
+  }
 }
 
 export default new ClubService();

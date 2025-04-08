@@ -2,52 +2,65 @@
   <b-container id="AccountView" class="w-75" data-view>
     <b-row align-v="center" align-h="between" class="mb-4">
       <b-col cols="auto">
-        <b-avatar
-          variant="primary"
-          size="120px"
-          :src="currentProfilePictureBlob"
-        />
+        <b-skeleton-wrapper :loading="loading">
+          <template #loading>
+            <b-skeleton type="avatar" height="120px" width="120px" />
+          </template>
+          <b-avatar
+            variant="primary"
+            size="120px"
+            :src="currentProfilePictureBlob"
+          />
+        </b-skeleton-wrapper>
       </b-col>
       <b-col>
-        <h1>{{ user?.username }}</h1>
-        <p class="text-muted">
-          {{ user?.email }}
-          <b-badge v-if="!user?.email" variant="secondary">
-            {{ $t("accountView.no-email") }}
-          </b-badge>
-          <b-badge
-            v-else-if="!user?.emailConfirmed"
-            variant="danger"
-            v-b-tooltip.hover
-            :title="$t('accountView.check-email')"
-            class="d-inline-flex align-items-center px-2"
-          >
-            <b-icon-exclamation-triangle class="mr-2" font-scale="1.2" />
-            {{ $t("accountView.nicht-bestaetigt") }}</b-badge
-          >
-          <b-badge
-            v-else
-            variant="success"
-            v-b-tooltip.hover
-            :title="$t('accountView.bereits-bestaetigt')"
-            class="d-inline-flex align-items-center px-2"
-          >
-            <b-icon-check-circle class="mr-2" font-scale="1.2" />
-            {{ $t("accountView.bestaetigt") }}
-          </b-badge>
-        </p>
-        <b-row v-show="user" class="text-muted">
-          <b-col cols="4"> {{ $t("accountView.erstellt-am") }}: </b-col>
-          <b-col v-if="user" cols="8">
-            {{ toTimeAgo(user?.createdAt) }}
-          </b-col>
-          <b-col cols="4">
-            {{ $t("accountView.zuletzt-geaendert-am") }}:
-          </b-col>
-          <b-col v-if="user" cols="8">
-            {{ toTimeAgo(user?.createdAt) }}
-          </b-col>
-        </b-row>
+        <b-skeleton-wrapper :loading="loading">
+          <template #loading>
+            <b-skeleton width="35%" height="40px" class="mb-2"></b-skeleton>
+            <b-skeleton width="85%" height="24px" class="mb-3"></b-skeleton>
+            <b-skeleton width="50%" height="24px" />
+            <b-skeleton width="50%" height="24px" />
+          </template>
+          <h1>{{ user?.username }}</h1>
+          <p class="text-muted">
+            {{ user?.email }}
+            <b-badge v-if="!user?.email" variant="secondary">
+              {{ $t("accountView.no-email") }}
+            </b-badge>
+            <b-badge
+              v-else-if="!user?.emailConfirmed"
+              variant="danger"
+              v-b-tooltip.hover
+              :title="$t('accountView.check-email')"
+              class="d-inline-flex align-items-center px-2"
+            >
+              <b-icon-exclamation-triangle class="mr-2" font-scale="1.2" />
+              {{ $t("accountView.nicht-bestaetigt") }}</b-badge
+            >
+            <b-badge
+              v-else
+              variant="success"
+              v-b-tooltip.hover
+              :title="$t('accountView.bereits-bestaetigt')"
+              class="d-inline-flex align-items-center px-2"
+            >
+              <b-icon-check-circle class="mr-2" font-scale="1.2" />
+              {{ $t("accountView.bestaetigt") }}
+            </b-badge>
+          </p>
+          <b-row v-show="user" class="text-muted">
+            <b-col cols="4"> {{ $t("accountView.erstellt-am") }}: </b-col>
+            <b-col v-if="user" cols="8">
+              {{ toTimeAgo(user?.createdAt) }}
+            </b-col>
+            <b-col cols="4">
+              {{ $t("accountView.zuletzt-geaendert-am") }}:
+            </b-col>
+            <b-col v-if="user" cols="8">
+              {{ toTimeAgo(user?.createdAt) }}
+            </b-col>
+          </b-row>
+        </b-skeleton-wrapper>
       </b-col>
     </b-row>
 
@@ -67,37 +80,45 @@
             }
           "
         >
-          <b-form-group label-cols="4" label-cols-lg="2" label="Profilbild:">
+          <b-form-group label-cols="4" label-cols-lg="2" label="Profilbild">
             <b-row align-v="center">
               <b-col cols="auto">
-                <div id="profilePictureUpload" v-b-hover="hoverProfilePicture">
-                  <b-overlay
-                    :show="profilePictureIsHovered"
-                    rounded="circle"
-                    variant="dark"
+                <b-skeleton-wrapper :loading="loading">
+                  <template #loading>
+                    <b-skeleton type="avatar" width="80px" height="80px" />
+                  </template>
+                  <div
+                    id="profilePictureUpload"
+                    v-b-hover="hoverProfilePicture"
                   >
-                    <b-avatar
-                      variant="primary"
-                      size="80px"
-                      :src="
-                        profilePictureDeletion
-                          ? null
-                          : newProfilePictureBlob || currentProfilePictureBlob
-                      "
-                    />
-                    <template #overlay>
-                      <input
-                        :style="{ width: '80px', height: '80px' }"
-                        type="file"
-                        @change="submitProfilePicture"
-                        accept="image/*"
-                        class="input-file"
-                        ref="profilePictureFile"
+                    <b-overlay
+                      :show="profilePictureIsHovered"
+                      rounded="circle"
+                      variant="dark"
+                    >
+                      <b-avatar
+                        variant="primary"
+                        size="80px"
+                        :src="
+                          profilePictureDeletion
+                            ? null
+                            : newProfilePictureBlob || currentProfilePictureBlob
+                        "
                       />
-                      <b-icon-cloud-upload variant="light" font-scale="2" />
-                    </template>
-                  </b-overlay>
-                </div>
+                      <template #overlay>
+                        <input
+                          :style="{ width: '80px', height: '80px' }"
+                          type="file"
+                          @change="submitProfilePicture"
+                          accept="image/*"
+                          class="input-file"
+                          ref="profilePictureFile"
+                        />
+                        <b-icon-cloud-upload variant="light" font-scale="2" />
+                      </template>
+                    </b-overlay>
+                  </div>
+                </b-skeleton-wrapper>
               </b-col>
               <b-col>
                 <b-button
@@ -122,83 +143,95 @@
             label-cols="4"
             label-cols-lg="2"
             :label="$t('username')"
-            :state="usernameIsValid"
+            :state="loading || usernameIsValid"
             :invalid-feedback="usernameError"
           >
-            <b-form-input
-              v-model="username"
-              :placeholder="$t('username')"
-              :state="usernameIsValid"
-            />
+            <b-skeleton-wrapper :loading="loading">
+              <template #loading>
+                <b-skeleton type="input" />
+              </template>
+              <b-form-input
+                v-model="username"
+                :placeholder="$t('username')"
+                :state="usernameIsValid"
+              />
+            </b-skeleton-wrapper>
           </b-form-group>
           <b-form-group
             label-cols="4"
             label-cols-lg="2"
             label="E-Mail-Adresse:"
-            :state="emailIsValid"
+            :state="loading || emailIsValid"
             :invalid-feedback="emailError"
           >
-            <b-input-group>
-              <b-form-input
-                v-model="email"
-                :placeholder="$t('e-mail-adresse')"
-                :state="emailIsValid"
-              />
-              <b-input-group-append>
-                <b-input-group-text
-                  v-if="user?.email && !user?.emailConfirmed"
-                  v-b-tooltip.hover
-                  :title="$t('accountView.check-email')"
-                >
-                  <b-icon-exclamation-triangle-fill
-                    variant="danger"
-                    font-scale="1.2"
-                  />
-                </b-input-group-text>
-                <b-input-group-text
-                  v-else-if="
-                    user?.email && user?.emailConfirmed && email == user?.email
-                  "
-                  v-b-tooltip.hover
-                  :title="$t('accountView.bereits-bestaetigt')"
-                >
-                  <b-icon-check-circle-fill
-                    variant="success"
-                    font-scale="1.2"
-                  />
-                </b-input-group-text>
-                <b-input-group-text
-                  v-else-if="email && email != user?.email"
-                  v-b-tooltip.hover
-                  title="Nach dem Speichern musst du deine E-Mail-Adresse noch bestätigen!"
-                >
-                  <b-icon-exclamation-triangle-fill
-                    variant="warning"
-                    font-scale="1.2"
-                  />
-                </b-input-group-text>
-                <b-input-group-text
-                  v-else-if="!user?.email"
-                  v-b-tooltip.hover
-                  title="Du hast noch keine E-Mail-Adresse gespeichert."
-                >
-                  <b-icon-info font-scale="1.2" />
-                </b-input-group-text>
-              </b-input-group-append>
-            </b-input-group>
+            <b-skeleton-wrapper :loading="loading">
+              <template #loading>
+                <b-skeleton type="input" />
+              </template>
+              <b-input-group>
+                <b-form-input
+                  v-model="email"
+                  :placeholder="$t('e-mail-adresse')"
+                  :state="emailIsValid"
+                />
+                <b-input-group-append>
+                  <b-input-group-text
+                    v-if="user?.email && !user?.emailConfirmed"
+                    v-b-tooltip.hover
+                    :title="$t('accountView.check-email')"
+                  >
+                    <b-icon-exclamation-triangle-fill
+                      variant="danger"
+                      font-scale="1.2"
+                    />
+                  </b-input-group-text>
+                  <b-input-group-text
+                    v-else-if="
+                      user?.email &&
+                      user?.emailConfirmed &&
+                      email == user?.email
+                    "
+                    v-b-tooltip.hover
+                    :title="$t('accountView.bereits-bestaetigt')"
+                  >
+                    <b-icon-check-circle-fill
+                      variant="success"
+                      font-scale="1.2"
+                    />
+                  </b-input-group-text>
+                  <b-input-group-text
+                    v-else-if="email && email != user?.email"
+                    v-b-tooltip.hover
+                    title="Nach dem Speichern musst du deine E-Mail-Adresse noch bestätigen!"
+                  >
+                    <b-icon-exclamation-triangle-fill
+                      variant="warning"
+                      font-scale="1.2"
+                    />
+                  </b-input-group-text>
+                  <b-input-group-text
+                    v-else-if="!user?.email"
+                    v-b-tooltip.hover
+                    title="Du hast noch keine E-Mail-Adresse gespeichert."
+                  >
+                    <b-icon-info font-scale="1.2" />
+                  </b-input-group-text>
+                </b-input-group-append>
+              </b-input-group>
 
-            <b-alert
-              show
-              variant="warning"
-              v-if="user?.email && !user?.emailConfirmed"
-            >
-              <p>
-                {{ $t("account.email-confirmation-warning") }}
-              </p>
-              <b-button variant="link">{{
-                $t("account.link-nochmal-senden")
-              }}</b-button>
-            </b-alert>
+              <b-alert
+                show
+                variant="warning"
+                v-if="user?.email && !user?.emailConfirmed"
+              >
+                <p>
+                  {{ $t("account.email-confirmation-warning") }}
+                </p>
+                <b-button variant="link">{{
+                  $t("account.link-nochmal-senden")
+                }}</b-button>
+              </b-alert>
+            </b-skeleton-wrapper>
           </b-form-group>
 
           <b-row>
@@ -252,7 +285,7 @@
               <b-form-group
                 label-cols="4"
                 label-cols-lg="2"
-                label="Vereinslogo:"
+                label="Vereinslogo"
               >
                 <b-row align-v="center">
                   <b-col cols="auto">
@@ -315,8 +348,8 @@
               <b-form-group
                 label-cols="4"
                 label-cols-lg="2"
-                label="Vereinsname:"
-                :state="clubNameIsValid"
+                label="Vereinsname"
+                :state="loading || clubNameIsValid"
                 :invalid-feedback="clubNameError"
               >
                 <b-form-input
@@ -326,18 +359,24 @@
                 />
               </b-form-group>
 
-              <b-row class="text-muted mb-2">
-                <b-col cols="4"> {{ $t("accountView.erstellt-am") }}: </b-col>
-                <b-col cols="8">
-                  {{ toTimeAgo(club?.createdAt) }}
-                </b-col>
-                <b-col cols="4">
-                  {{ $t("accountView.zuletzt-geaendert-am") }}:
-                </b-col>
-                <b-col cols="8">
-                  {{ toTimeAgo(club?.updatedAt) }}
-                </b-col>
-              </b-row>
+              <b-skeleton-wrapper :loading="loading">
+                <template #loading>
+                  <b-skeleton />
+                  <b-skeleton />
+                </template>
+                <b-row class="text-muted mb-2">
+                  <b-col cols="4"> {{ $t("accountView.erstellt-am") }}: </b-col>
+                  <b-col cols="8">
+                    {{ toTimeAgo(club?.createdAt) }}
+                  </b-col>
+                  <b-col cols="4">
+                    {{ $t("accountView.zuletzt-geaendert-am") }}:
+                  </b-col>
+                  <b-col cols="8">
+                    {{ toTimeAgo(club?.updatedAt) }}
+                  </b-col>
+                </b-row>
+              </b-skeleton-wrapper>
 
               <b-row>
                 <b-col>
@@ -387,8 +426,34 @@
                 </small>
               </p>
             </b-form>
+
+            <span
+              v-b-tooltip.hover
+              :title="
+                user?.Clubs.length <= 1
+                  ? 'Du kannst nicht deinen einzigen Verein entfernen! Erstelle zuerst einen anderen Verein.'
+                  : $store.state.clubId == club.id
+                  ? 'Du kannst nicht deinen aktiven Verein löschen! Wähle zuerst einen anderen Verein als aktiv aus.'
+                  : null
+              "
+            >
+              <b-button
+                variant="outline-danger"
+                :disabled="
+                  user?.Clubs.length <= 1 || $store.state.clubId == club.id
+                "
+                block
+                class="mt-2"
+                @click="() => $refs.deleteClubMOdal.open(currentClub.id)"
+              >
+                <b-icon-exclamation-triangle-fill />
+                Verein löschen
+              </b-button>
+            </span>
           </b-tab>
           <template #tabs-end>
+            <b-skeleton v-if="loading" type="input" />
+
             <b-button
               variant="link"
               class="text-success"
@@ -500,6 +565,7 @@
     </b-tabs>
 
     <CreateClubModal ref="createClubModal" @clubCreated="init" />
+    <DeleteClubModal ref="deleteClubMOdal" @clubDeleted="init" />
 
     <ChangePasswordModal ref="changePasswordModal" />
 
@@ -511,6 +577,7 @@
 import AuthService from "@/services/AuthService";
 import ChangePasswordModal from "@/components/modals/ChangePasswordModal.vue";
 import DeleteAccountModal from "@/components/modals/DeleteAccountModal.vue";
+import DeleteClubModal from "@/components/modals/DeleteClubModal.vue";
 import toTimeAgo from "@/utils/time";
 import ClubService from "@/services/ClubService";
 import CreateClubModal from "@/components/modals/CreateClubModal.vue";
@@ -518,10 +585,16 @@ import CreateClubModal from "@/components/modals/CreateClubModal.vue";
 const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 
 export default {
-  components: { ChangePasswordModal, DeleteAccountModal, CreateClubModal },
+  components: {
+    ChangePasswordModal,
+    DeleteAccountModal,
+    CreateClubModal,
+    DeleteClubModal,
+  },
   name: "AccountView",
   data: function () {
     return {
+      loading: true,
       user: null,
       newProfilePicture: null,
       currentProfilePictureBlob: null,
@@ -539,7 +612,9 @@ export default {
     };
   },
   mounted() {
+    this.loading = true;
     this.init().then(() => {
+      this.loading = false;
       if (this.$store.state.clubId) {
         this.clubTabIndex = this.user.Clubs.indexOf(
           this.user.Clubs.find((club) => club.id == this.$store.state.clubId)
