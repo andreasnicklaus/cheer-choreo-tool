@@ -15,7 +15,19 @@
     "unbekannter-fehler": "Ein unbekannter Fehler ist aufgetreten. Lade die Seite neu oder logge dich erneut ein, um die Seite anzuzeigen.",
     "zuletzt-geaendert-am": "Zuletzt geändert",
     "konto-loeschen-descriptions": "Lösche dein Konto nur, wenn du die App nicht mehr verwenden möchtest. Deine Daten werden als inaktiv markiert.",
-    "gefahrenbereich": "Gefahrenbereich"
+    "gefahrenbereich": "Gefahrenbereich",
+    "profilbild": "Profilbild",
+    "bild-entfernen": "Bild entfernen",
+    "save-new-email-info": "Nach dem Speichern musst du deine E-Mail-Adresse noch bestätigen!",
+    "no-email-info": "Du hast noch keine E-Mail-Adresse gespeichert.",
+    "vereinslogo": "Vereinslogo",
+    "als-aktiven-verein-auswaehlen": "Als aktiven Verein auswählen",
+    "du-hast-diesen-verein-als-aktiven-verein-ausgewaehlt": "Du hast diesen Verein als aktiven Verein ausgewählt.",
+    "verein-loeschen": "Verein löschen",
+    "deine-nutzerinformationen-wurden-gespeichert": "Deine Nutzerinformationen wurden gespeichert!",
+    "deine-vereinsinformationen-wurden-gespeichert": "Deine Vereinsinformationen wurden gespeichert!",
+    "cant-delete-only-club": "Du kannst nicht deinen einzigen Verein entfernen! Erstelle zuerst einen anderen Verein.",
+    "cant-delete-active-club": "Du kannst nicht deinen aktiven Verein löschen! Wähle zuerst einen anderen Verein als aktiv aus."
   },
   "achter": "Achter",
   "alle-auswaehlen": "Alle auswählen",
@@ -546,6 +558,9 @@
     "video-download": {
       "format": "Format",
       "video-herunterladen": "Video herunterladen"
+    },
+    "delete-club": {
+      "verein-loeschen": "Verein löschen?"
     }
   },
   "name": "Name",

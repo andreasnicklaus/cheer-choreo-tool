@@ -15,7 +15,19 @@
     "unbekannter-fehler": "An unknown error occurred. Reload the page or log in again to display the page.",
     "zuletzt-geaendert-am": "Last updated",
     "konto-loeschen-descriptions": "Only delete your account if you no longer want to use the app. Your data will be marked as inactive.",
-    "gefahrenbereich": "Danger zone"
+    "gefahrenbereich": "Danger zone",
+    "profilbild": "Profile picture",
+    "bild-entfernen": "Remove image",
+    "save-new-email-info": "After saving you have to confirm your email address!",
+    "no-email-info": "You haven't saved an email address yet.",
+    "vereinslogo": "Club logo",
+    "als-aktiven-verein-auswaehlen": "Select as active club",
+    "du-hast-diesen-verein-als-aktiven-verein-ausgewaehlt": "You selected this club as the active club.",
+    "cant-delete-only-club": "You can't remove your only club! \nCreate another club first.",
+    "cant-delete-active-club": "You cannot delete your active club! \nFirst select another one first.",
+    "verein-loeschen": "Delete club",
+    "deine-nutzerinformationen-wurden-gespeichert": "Your user information was saved!",
+    "deine-vereinsinformationen-wurden-gespeichert": "Your club information was saved!"
   },
   "achter": "Eight",
   "alle-auswaehlen": "Select all",
@@ -546,6 +558,9 @@
     "video-download": {
       "format": "Format",
       "video-herunterladen": "Download video"
+    },
+    "delete-club": {
+      "verein-loeschen": "Delete club?"
     }
   },
   "name": "Name",

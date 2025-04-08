@@ -80,7 +80,11 @@
             }
           "
         >
-          <b-form-group label-cols="4" label-cols-lg="2" label="Profilbild">
+          <b-form-group
+            label-cols="4"
+            label-cols-lg="2"
+            :label="$t('accountView.profilbild')"
+          >
             <b-row align-v="center">
               <b-col cols="auto">
                 <b-skeleton-wrapper :loading="loading">
@@ -134,7 +138,7 @@
                   "
                 >
                   <b-icon-x />
-                  Remove image
+                  {{ $t("accountView.bild-entfernen") }}
                 </b-button>
               </b-col>
             </b-row>
@@ -202,7 +206,7 @@
                   <b-input-group-text
                     v-else-if="email && email != user?.email"
                     v-b-tooltip.hover
-                    title="Nach dem Speichern musst du deine E-Mail-Adresse noch bestätigen!"
+                    :title="$t('accountView.save-new-email-info')"
                   >
                     <b-icon-exclamation-triangle-fill
                       variant="warning"
@@ -212,7 +216,7 @@
                   <b-input-group-text
                     v-else-if="!user?.email"
                     v-b-tooltip.hover
-                    title="Du hast noch keine E-Mail-Adresse gespeichert."
+                    :title="$t('accountView.no-email-info')"
                   >
                     <b-icon-info font-scale="1.2" />
                   </b-input-group-text>
@@ -278,14 +282,14 @@
                   'text-success': club.id != currentClub.id,
                 }"
                 v-b-tooltip.hover
-                title="Aktiver Verein"
+                :title="$t('start.aktiver-verein')"
               />
             </template>
             <b-form @submit="onClubSave" @reset="onClubReset">
               <b-form-group
                 label-cols="4"
                 label-cols-lg="2"
-                label="Vereinslogo"
+                :label="$t('accountView.vereinslogo')"
               >
                 <b-row align-v="center">
                   <b-col cols="auto">
@@ -340,7 +344,7 @@
                       "
                     >
                       <b-icon-x />
-                      Remove image
+                      {{ $t("accountView.bild-entfernen") }}
                     </b-button>
                   </b-col>
                 </b-row>
@@ -348,7 +352,7 @@
               <b-form-group
                 label-cols="4"
                 label-cols-lg="2"
-                label="Vereinsname"
+                :label="$t('modals.create-club.vereinsname')"
                 :state="loading || clubNameIsValid"
                 :invalid-feedback="clubNameError"
               >
@@ -415,14 +419,18 @@
                 @click="selectCurrentClub(club.id)"
               >
                 <b-icon-check />
-                Als aktiven Verein auswählen
+                {{ $t("accountView.als-aktiven-verein-auswaehlen") }}
               </b-button>
               <p
                 class="text-muted text-center"
                 v-show="$store.state.clubId == club.id"
               >
                 <small>
-                  Du hast diesen Verein als aktiven Verein ausgewählt.
+                  {{
+                    $t(
+                      "accountView.du-hast-diesen-verein-als-aktiven-verein-ausgewaehlt"
+                    )
+                  }}
                 </small>
               </p>
             </b-form>
@@ -431,9 +439,9 @@
               v-b-tooltip.hover
               :title="
                 user?.Clubs.length <= 1
-                  ? 'Du kannst nicht deinen einzigen Verein entfernen! Erstelle zuerst einen anderen Verein.'
+                  ? this.$t('accountView.cant-delete-only-club')
                   : $store.state.clubId == club.id
-                  ? 'Du kannst nicht deinen aktiven Verein löschen! Wähle zuerst einen anderen Verein als aktiv aus.'
+                  ? this.$t('accountView.cant-delete-active-club')
                   : null
               "
             >
@@ -447,7 +455,7 @@
                 @click="() => $refs.deleteClubMOdal.open(currentClub.id)"
               >
                 <b-icon-exclamation-triangle-fill />
-                Verein löschen
+                {{ $t("accountView.verein-loeschen") }}
               </b-button>
             </span>
           </b-tab>
@@ -459,7 +467,7 @@
               class="text-success"
               @click="() => $refs.createClubModal.open()"
             >
-              <b-icon-plus /> Neuer Verein
+              <b-icon-plus /> {{ $t("modals.create-club.neuer-verein") }}
             </b-button>
           </template>
         </b-tabs>
@@ -711,13 +719,16 @@ export default {
         .then(() => {
           this.init();
 
-          this.$bvToast.toast("Deine Nutzerinformationen wurden gespeichert!", {
-            variant: "success",
-            title: this.$t("editView.gespeichert"),
-            autoHideDelay: 3000,
-            appendToast: true,
-            solid: true,
-          });
+          this.$bvToast.toast(
+            this.$t("accountView.deine-nutzerinformationen-wurden-gespeichert"),
+            {
+              variant: "success",
+              title: this.$t("editView.gespeichert"),
+              autoHideDelay: 3000,
+              appendToast: true,
+              solid: true,
+            }
+          );
         })
         .catch(() => {
           this.$bvToast.toast(this.$t("accountView.unbekannter-fehler"), {
@@ -754,7 +765,9 @@ export default {
         .then(() => {
           this.init();
           this.$bvToast.toast(
-            "Deine Vereinsinformationen wurden gespeichert!",
+            this.$t(
+              "accountView.deine-vereinsinformationen-wurden-gespeichert"
+            ),
             {
               variant: "success",
               title: this.$t("editView.gespeichert"),
