@@ -63,7 +63,6 @@ class FileService {
           });
       })
       .catch((e) => console.error(e));
-    // TODO: better error handling
   }
 
   clearClubLogoFolder(clubId, fileExtension) {
@@ -78,7 +77,6 @@ class FileService {
           });
       })
       .catch((e) => console.error(e));
-    // TODO: better error handling
   }
 }
 
