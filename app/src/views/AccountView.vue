@@ -439,9 +439,9 @@
               v-b-tooltip.hover
               :title="
                 user?.Clubs.length <= 1
-                  ? this.$t('accountView.cant-delete-only-club')
+                  ? $t('accountView.cant-delete-only-club')
                   : $store.state.clubId == club.id
-                  ? this.$t('accountView.cant-delete-active-club')
+                  ? $t('accountView.cant-delete-active-club')
                   : null
               "
             >
