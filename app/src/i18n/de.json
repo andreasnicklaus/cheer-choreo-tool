@@ -381,7 +381,11 @@
     "wiederholung-gleicht-nicht-passwort": "Die Wiederholung gleicht nicht dem Passwort.",
     "bitte-kontrolliere-nutzernamen-email-und-passwort": "Bitte kontrolliere, dass du Nutzernamen/Email und Passwort richtig geschrieben hast.",
     "server-offline": "Die Server scheinen offline zu sein. Bitte versuche es später nochmal!",
-    "clubName-mindestens-laenge": "Der Name des Vereins muss mindestens 6 Zeichen lang sein."
+    "clubName-mindestens-laenge": "Der Name des Vereins muss mindestens 6 Zeichen lang sein.",
+    "passwort-vergessen": "Passwort vergessen?",
+    "account-exists": "Es scheint so als gäbe es bereits einen Nutzer mit diesem Namen oder E-Mail-Adresse ...",
+    "login-link-was-sent": "Ein Passwort-Link wurde an deine E-Mail-Adresse geschickt. Check dein Postfach!",
+    "erfolg": "Erfolg"
   },
   "meta": {
     "account": {
@@ -561,6 +565,12 @@
     },
     "delete-club": {
       "verein-loeschen": "Verein löschen?"
+    },
+    "reset-password": {
+      "lost-password": "Login-Link beantragen",
+      "no-email-info": "Konten ohne E-Mail-Adresse können nur händisch zurückgesetzt werden. Schicke eine E-Mail an info@choreo-planer.de!",
+      "email-info": "Wenn dein Konto mit einer E-Mail-Adresse verbunden ist, kannst du dir einen Login-Link zusenden lassen. Mit dem Link in der E-Mail kannst du dich einmalig einloggen. Auf der Profilseite kannst du dann dein Passwort selbst ändern.",
+      "login-link-schicken": "Login-Link schicken"
     }
   },
   "name": "Name",

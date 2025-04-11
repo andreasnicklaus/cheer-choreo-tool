@@ -94,6 +94,26 @@ class MailService {
       })
     );
   }
+
+  sendSsoEmail(userEmail, username, ssoToken) {
+    return sendMail(
+      userEmail,
+      "Dein Login-Link",
+      "ssoLogin.ejs",
+      {
+        username,
+        ssoToken,
+        frontendDomain: process.env.FRONTEND_DOMAIN,
+      },
+      [
+        {
+          filename: "logo.png",
+          path: "https://www.choreo-Planer.de/Icon.png",
+          cid: "choreo-planer-icon",
+        },
+      ]
+    );
+  }
 }
 
 module.exports = new MailService();

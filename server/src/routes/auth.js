@@ -55,6 +55,38 @@ router.post("/login", (req, res, next) => {
     .catch((e) => next(e));
 });
 
+router.post("/ssoRequest", (req, res, next) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).send("An email address is required.");
+
+  AuthService.generateSsoToken(email)
+    .then(() => {
+      res.send("Single-Sign-On link was sent to your email inbox.");
+      next();
+    })
+    .catch((e) => next(e));
+});
+
+router.post("/sso", (req, res, next) => {
+  const { ssoToken } = req.body;
+  if (!ssoToken)
+    return res
+      .status(400)
+      .send("A SSO token is required. Please contact admin@choreo-planer.de");
+
+  AuthService.resolveSsoToken(ssoToken)
+    .then((user) => {
+      console.log({ user });
+      const token = AuthService.generateAccessToken(user.id);
+      res.send(token);
+      next();
+    })
+    .catch((e) => {
+      res.status(400).send(e.message);
+      next();
+    });
+});
+
 router.get("/me", AuthService.authenticateUser(), (req, res, next) => {
   UserService.findById(req.UserId)
     .then((user) => {

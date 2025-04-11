@@ -381,7 +381,11 @@
     "wiederholung-gleicht-nicht-passwort": "The repetition is not identical to the password.",
     "server-offline": "The servers seem to be offline. Please try again later!",
     "bitte-kontrolliere-nutzernamen-email-und-passwort": "Please check that you spelled username/email and password correctly.",
-    "clubName-mindestens-laenge": "The name of the club must be at least 6 characters long."
+    "clubName-mindestens-laenge": "The name of the club must be at least 6 characters long.",
+    "passwort-vergessen": "Forgot your password?",
+    "account-exists": "It seems that there is already a user with this name or email address ...",
+    "login-link-was-sent": "A password link was sent to your email address. Check your mailbox!",
+    "erfolg": "Success"
   },
   "meta": {
     "account": {
@@ -561,6 +565,12 @@
     },
     "delete-club": {
       "verein-loeschen": "Delete club?"
+    },
+    "reset-password": {
+      "lost-password": "Request a login link",
+      "no-email-info": "Accounts without an email address can only be reset manually. Send an email to info@choreoplaner.de!",
+      "email-info": "If your account is connected to an email address, you can have a login link sent to you. With the link in the email you can log in once. You can then change your password on the profile page.",
+      "login-link-schicken": "Send login link"
     }
   },
   "name": "Name",

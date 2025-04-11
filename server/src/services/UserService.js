@@ -12,7 +12,10 @@ class UserService {
     return User.findByPk(id, { include: ["Clubs"] });
   }
 
-  async findByUsernameOrEmail(usernameOrEmail, { scope = "defaultScope" }) {
+  async findByUsernameOrEmail(
+    usernameOrEmail,
+    { scope = "defaultScope" } = {}
+  ) {
     return User.scope(scope).findOne({
       where: {
         [Op.or]: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
