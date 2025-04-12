@@ -624,9 +624,10 @@
     "laedt-choreo": "Loading choreo",
     "min-teilnehmer-erforderlich": "Min. 1 participant required",
     "PDF": "PDF",
-    "pdf-wird-generiert": "PDF is generated",
+    "pdf-wird-generiert": "PDF is being generated",
     "team-name-anzeigen": "Show team name",
-    "teilnehmer-namen-anzeigen": "Show participant names"
+    "teilnehmer-namen-anzeigen": "Show participant names",
+    "pdf-generieren": "Generate PDF"
   },
   "personas": {
     "anna-unersetzlich": "Anna Awesome",
