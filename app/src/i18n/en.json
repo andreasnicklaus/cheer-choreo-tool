@@ -27,7 +27,9 @@
     "cant-delete-active-club": "You cannot delete your active club! \nFirst select another one first.",
     "verein-loeschen": "Delete club",
     "deine-nutzerinformationen-wurden-gespeichert": "Your user information was saved!",
-    "deine-vereinsinformationen-wurden-gespeichert": "Your club information was saved!"
+    "deine-vereinsinformationen-wurden-gespeichert": "Your club information was saved!",
+    "lade-ein-bild-hoch-max-mb": "Upload a picture: max. {0} MB",
+    "es-ist-nicht-moeglich-bilder-hochzuladen-die-groesser-al-mb-gross-sind": "It is not possible to upload images that are larger than {0} MB. Select a smaller file!"
   },
   "achter": "Eight",
   "alle-auswaehlen": "Select all",

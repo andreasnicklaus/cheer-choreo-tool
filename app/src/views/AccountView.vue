@@ -54,13 +54,13 @@
             <b-col cols="6" md="4">
               {{ $t("accountView.erstellt-am") }}:
             </b-col>
-            <b-col v-if="user" cols="auto">
+            <b-col v-if="user" cols="6" md="8">
               {{ toTimeAgo(user?.createdAt) }}
             </b-col>
             <b-col cols="6" md="4">
               {{ $t("accountView.zuletzt-geaendert-am") }}:
             </b-col>
-            <b-col v-if="user" cols="auto">
+            <b-col v-if="user" cols="6" md="8">
               {{ toTimeAgo(user?.createdAt) }}
             </b-col>
           </b-row>
@@ -95,9 +95,12 @@
             label-cols-lg="2"
             :label="$t('accountView.profilbild')"
             label-class="label-with-colon"
+            :description="
+              $t('accountView.lade-ein-bild-hoch-max-mb', [MAX_IMAGE_MB])
+            "
           >
-            <b-row align-v="center">
-              <b-col cols="12" md="auto" class="text-center mb-2 mb-md-0">
+            <b-row align-v="center" align-h="around">
+              <b-col cols="auto" class="text-center mb-2 mb-md-0">
                 <b-skeleton-wrapper :loading="loading">
                   <template #loading>
                     <b-skeleton type="avatar" width="80px" height="80px" />
@@ -135,7 +138,7 @@
                   </div>
                 </b-skeleton-wrapper>
               </b-col>
-              <b-col>
+              <b-col cols="12" md="9">
                 <b-button
                   variant="outline-secondary"
                   block
@@ -153,7 +156,15 @@
                 </b-button>
               </b-col>
             </b-row>
+            <b-alert
+              :show="!newProfilePictureIsValid"
+              class="my-1"
+              variant="danger"
+            >
+              {{ newProfilePictureError }}
+            </b-alert>
           </b-form-group>
+
           <b-form-group
             label-cols="12"
             label-cols-md="4"
@@ -246,6 +257,7 @@
                 <p>
                   {{ $t("account.email-confirmation-warning") }}
                 </p>
+                <!-- TODO: resend confirmation link -->
                 <b-button variant="link">{{
                   $t("account.link-nochmal-senden")
                 }}</b-button>
@@ -262,6 +274,7 @@
                 :disabled="
                   !usernameIsValid ||
                   !emailIsValid ||
+                  !newProfilePictureIsValid ||
                   (username == user?.username &&
                     email == user?.email &&
                     !profilePictureDeletion &&
@@ -314,9 +327,12 @@
                 label-cols-lg="2"
                 :label="$t('accountView.vereinslogo')"
                 label-class="label-with-colon"
+                :description="
+                  $t('accountView.lade-ein-bild-hoch-max-mb', [MAX_IMAGE_MB])
+                "
               >
-                <b-row align-v="center">
-                  <b-col cols="12" md="auto" class="text-center mb-2 mb-md-0">
+                <b-row align-v="center" align-h="around">
+                  <b-col cols="auto" class="text-center mb-2 mb-md-0">
                     <div id="profilePictureUpload" v-b-hover="hoverClubLogo">
                       <b-overlay
                         :show="clubLogoIsHovered"
@@ -354,7 +370,7 @@
                       </b-overlay>
                     </div>
                   </b-col>
-                  <b-col>
+                  <b-col cols="12" md="8">
                     <b-button
                       block
                       variant="outline-secondary"
@@ -372,6 +388,13 @@
                     </b-button>
                   </b-col>
                 </b-row>
+                <b-alert
+                  :show="!newClubLogoIsValid"
+                  variant="danger"
+                  class="my-1"
+                >
+                  {{ newClubLogoError }}
+                </b-alert>
               </b-form-group>
               <b-form-group
                 label-cols="12"
@@ -398,13 +421,13 @@
                   <b-col cols="6" md="4">
                     {{ $t("accountView.erstellt-am") }}:
                   </b-col>
-                  <b-col cols="auto">
+                  <b-col cols="6" md="8">
                     {{ toTimeAgo(club?.createdAt) }}
                   </b-col>
                   <b-col cols="6" md="4">
                     {{ $t("accountView.zuletzt-geaendert-am") }}:
                   </b-col>
-                  <b-col cols="auto">
+                  <b-col cols="6" md="8">
                     {{ toTimeAgo(club?.updatedAt) }}
                   </b-col>
                 </b-row>
@@ -418,6 +441,7 @@
                     block
                     :disabled="
                       !clubNameIsValid ||
+                      !newClubLogoIsValid ||
                       (clubName == club.name &&
                         !clubLogoDeletion &&
                         newClubLogo == null)
@@ -627,6 +651,8 @@ import ClubService from "@/services/ClubService";
 import CreateClubModal from "@/components/modals/CreateClubModal.vue";
 
 const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
+const MB = 1_048_576;
+const MAX_IMAGE_MB = 2;
 
 export default {
   components: {
@@ -638,6 +664,7 @@ export default {
   name: "AccountView",
   data: function () {
     return {
+      MAX_IMAGE_MB,
       loading: true,
       user: null,
       newProfilePicture: null,
@@ -892,6 +919,42 @@ export default {
       else if (this.clubName.length < 3)
         return this.$t("modals.create-club.min-vereinsname-length");
       else return null;
+    },
+    newProfilePictureIsValid() {
+      if (!this.newProfilePicture) return true;
+      else {
+        if (this.newProfilePicture.size > MAX_IMAGE_MB * MB) return false;
+      }
+      return true;
+    },
+    newProfilePictureError() {
+      if (!this.newProfilePicture) return null;
+      else {
+        if (this.newProfilePicture.size > MAX_IMAGE_MB * MB)
+          return this.$t(
+            "accountView.es-ist-nicht-moeglich-bilder-hochzuladen-die-groesser-al-mb-gross-sind",
+            [MAX_IMAGE_MB]
+          );
+      }
+      return null;
+    },
+    newClubLogoIsValid() {
+      if (!this.newClubLogo) return true;
+      else {
+        if (this.newClubLogo.size > MAX_IMAGE_MB * MB) return false;
+      }
+      return true;
+    },
+    newClubLogoError() {
+      if (!this.newClubLogo) return null;
+      else {
+        if (this.newClubLogo.size > MAX_IMAGE_MB * MB)
+          return this.$t(
+            "accountView.es-ist-nicht-moeglich-bilder-hochzuladen-die-groesser-al-mb-gross-sind",
+            [MAX_IMAGE_MB]
+          );
+      }
+      return null;
     },
   },
   metaInfo() {

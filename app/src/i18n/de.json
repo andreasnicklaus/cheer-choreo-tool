@@ -27,7 +27,9 @@
     "deine-nutzerinformationen-wurden-gespeichert": "Deine Nutzerinformationen wurden gespeichert!",
     "deine-vereinsinformationen-wurden-gespeichert": "Deine Vereinsinformationen wurden gespeichert!",
     "cant-delete-only-club": "Du kannst nicht deinen einzigen Verein entfernen! Erstelle zuerst einen anderen Verein.",
-    "cant-delete-active-club": "Du kannst nicht deinen aktiven Verein löschen! Wähle zuerst einen anderen Verein als aktiv aus."
+    "cant-delete-active-club": "Du kannst nicht deinen aktiven Verein löschen! Wähle zuerst einen anderen Verein als aktiv aus.",
+    "lade-ein-bild-hoch-max-mb": "Lade ein Bild hoch: max. {0} MB",
+    "es-ist-nicht-moeglich-bilder-hochzuladen-die-groesser-al-mb-gross-sind": "Es ist nicht möglich, Bilder hochzuladen, die größer als {0} MB groß sind. Wähle eine kleinere Datei aus!"
   },
   "achter": "Achter",
   "alle-auswaehlen": "Alle auswählen",
