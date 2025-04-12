@@ -2,7 +2,13 @@ name: SAST NodeJsScan code scanning
 
 on:
   push:
+    paths:
+      - "server/**"
+      - "app/**"
   pull_request:
+    paths:
+      - "server/**"
+      - "app/**"
   workflow_dispatch:
 
 permissions:
