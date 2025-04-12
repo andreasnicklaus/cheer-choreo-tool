@@ -627,7 +627,9 @@
     "pdf-wird-generiert": "PDF is being generated",
     "team-name-anzeigen": "Show team name",
     "teilnehmer-namen-anzeigen": "Show participant names",
-    "pdf-generieren": "Generate PDF"
+    "pdf-generieren": "Generate PDF",
+    "vereinslogo-anzeigen": "Show club logo",
+    "zeige-das-logo-deines-vereins-auf-dem-countsheet-an": "Show the logo of your club on the countsheet"
   },
   "personas": {
     "anna-unersetzlich": "Anna Awesome",
@@ -706,7 +708,8 @@
     "herunterladen": "Download",
     "teilnehmer-die-im-video-angezeigt-werden-sollen": "Participants who are to be displayed in the video",
     "video-generieren": "Generate video",
-    "video-zusammenstellen": "Create video"
+    "video-zusammenstellen": "Create video",
+    "dein-vereinslogo-als-wasserzeichen-im-video-anzeigen": "Show your club logo as a watermark in the video"
   },
   "zur-startseite": "To the landing page",
   "zuruecksetzen": "Reset",

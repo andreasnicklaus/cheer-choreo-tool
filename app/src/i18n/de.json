@@ -627,7 +627,9 @@
     "pdf-wird-generiert": "PDF wird generiert",
     "team-name-anzeigen": "Team-Name anzeigen",
     "teilnehmer-namen-anzeigen": "Teilnehmer-Namen anzeigen",
-    "pdf-generieren": "PDF generieren"
+    "pdf-generieren": "PDF generieren",
+    "zeige-das-logo-deines-vereins-auf-dem-countsheet-an": "Zeige das Logo deines Vereins auf dem Countsheet an",
+    "vereinslogo-anzeigen": "Vereinslogo anzeigen"
   },
   "personas": {
     "anna-unersetzlich": "Anna Unersetzlich",
@@ -706,7 +708,8 @@
     "herunterladen": "Herunterladen",
     "teilnehmer-die-im-video-angezeigt-werden-sollen": "Teilnehmer, die im Video angezeigt werden sollen",
     "video-generieren": "Video generieren",
-    "video-zusammenstellen": "Video zusammenstellen"
+    "video-zusammenstellen": "Video zusammenstellen",
+    "dein-vereinslogo-als-wasserzeichen-im-video-anzeigen": "Dein Vereinslogo als Wasserzeichen im Video anzeigen"
   },
   "zur-startseite": "Zur Startseite",
   "zuruecksetzen": "Zurücksetzen",

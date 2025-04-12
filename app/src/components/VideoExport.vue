@@ -55,13 +55,17 @@
             </b-form-group>
             <b-form-group
               :disabled="!currentClub?.logoExtension"
-              description="Dein Vereinslogo als Wasserzeichen im Video anzeigen"
+              :description="
+                $t(
+                  'video-export-comp.dein-vereinslogo-als-wasserzeichen-im-video-anzeigen'
+                )
+              "
             >
               <b-form-checkbox
                 v-model="includeClubLogo"
                 :disabled="recordingIsRunning"
               >
-                Vereinslogo anzeigen
+                {{ $t("pdf.vereinslogo-anzeigen") }}
               </b-form-checkbox>
             </b-form-group>
             <b-avatar
@@ -698,20 +702,20 @@ export default {
         {
           vmid: "og:title",
           property: "og:title",
-          content: `${this.choreo?.name || "Lädt Choreo"} - ${this.$t(
-            "video"
-          )} - ${this.$t("general.ChoreoPlaner")} | ${this.$t(
-            "meta.defaults.title"
-          )}`,
+          content: `${
+            this.choreo?.name || this.$t("pdf.laedt-choreo")
+          } - ${this.$t("video")} - ${this.$t(
+            "general.ChoreoPlaner"
+          )} | ${this.$t("meta.defaults.title")}`,
         },
         {
           vmid: "twitter:title",
           name: "twitter:title",
-          content: `${this.choreo?.name || "Lädt Choreo"} - ${this.$t(
-            "video"
-          )} - ${this.$t("general.ChoreoPlaner")} | ${this.$t(
-            "meta.defaults.title"
-          )}`,
+          content: `${
+            this.choreo?.name || this.$t("pdf.laedt-choreo")
+          } - ${this.$t("video")} - ${this.$t(
+            "general.ChoreoPlaner"
+          )} | ${this.$t("meta.defaults.title")}`,
         },
       ],
     };

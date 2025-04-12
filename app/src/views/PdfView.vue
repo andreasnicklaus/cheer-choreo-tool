@@ -154,10 +154,12 @@
             </b-form-group>
             <b-form-group
               :disabled="!currentClub?.logoExtension"
-              description="Zeige das Logo deines Vereins auf dem Countsheet an"
+              :description="
+                $t('pdf.zeige-das-logo-deines-vereins-auf-dem-countsheet-an')
+              "
             >
               <b-form-checkbox v-model="includeLogo">
-                Vereinslogo anzeigen
+                {{ $t("pdf.vereinslogo-anzeigen") }}
               </b-form-checkbox>
             </b-form-group>
             <b-avatar
