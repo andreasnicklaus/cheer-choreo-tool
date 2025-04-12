@@ -281,6 +281,12 @@ html {
 }
 </style>
 
+<style lang="scss">
+.label-with-colon::after {
+  content: ":";
+}
+</style>
+
 <style lang="scss" scoped>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

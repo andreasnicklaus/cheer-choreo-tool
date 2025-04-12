@@ -1,7 +1,7 @@
 <template>
-  <b-container id="AccountView" class="w-75" data-view>
+  <b-container id="AccountView" data-view>
     <b-row align-v="center" align-h="between" class="mb-4">
-      <b-col cols="auto">
+      <b-col cols="12" md="auto" class="text-center">
         <b-skeleton-wrapper :loading="loading">
           <template #loading>
             <b-skeleton type="avatar" height="120px" width="120px" />
@@ -13,7 +13,7 @@
           />
         </b-skeleton-wrapper>
       </b-col>
-      <b-col>
+      <b-col class="text-center text-md-left">
         <b-skeleton-wrapper :loading="loading">
           <template #loading>
             <b-skeleton width="35%" height="40px" class="mb-2"></b-skeleton>
@@ -23,7 +23,9 @@
           </template>
           <h1>{{ user?.username }}</h1>
           <p class="text-muted">
-            {{ user?.email }}
+            <span class="d-block d-md-inline">
+              {{ user?.email }}
+            </span>
             <b-badge v-if="!user?.email" variant="secondary">
               {{ $t("accountView.no-email") }}
             </b-badge>
@@ -48,15 +50,17 @@
               {{ $t("accountView.bestaetigt") }}
             </b-badge>
           </p>
-          <b-row v-show="user" class="text-muted">
-            <b-col cols="4"> {{ $t("accountView.erstellt-am") }}: </b-col>
-            <b-col v-if="user" cols="8">
+          <b-row v-show="user" class="text-muted text-left">
+            <b-col cols="6" md="4">
+              {{ $t("accountView.erstellt-am") }}:
+            </b-col>
+            <b-col v-if="user" cols="auto">
               {{ toTimeAgo(user?.createdAt) }}
             </b-col>
-            <b-col cols="4">
+            <b-col cols="6" md="4">
               {{ $t("accountView.zuletzt-geaendert-am") }}:
             </b-col>
-            <b-col v-if="user" cols="8">
+            <b-col v-if="user" cols="auto">
               {{ toTimeAgo(user?.createdAt) }}
             </b-col>
           </b-row>
@@ -64,7 +68,12 @@
       </b-col>
     </b-row>
 
-    <b-tabs content-class="my-3" class="my-3" lazy>
+    <b-tabs
+      content-class="my-3"
+      class="my-3"
+      lazy
+      :small="$store.state.isMobile"
+    >
       <b-tab :title="$t('konto')">
         <b-form
           @submit="
@@ -81,12 +90,14 @@
           "
         >
           <b-form-group
-            label-cols="4"
+            label-cols="12"
+            label-cols-md="4"
             label-cols-lg="2"
             :label="$t('accountView.profilbild')"
+            label-class="label-with-colon"
           >
             <b-row align-v="center">
-              <b-col cols="auto">
+              <b-col cols="12" md="auto" class="text-center mb-2 mb-md-0">
                 <b-skeleton-wrapper :loading="loading">
                   <template #loading>
                     <b-skeleton type="avatar" width="80px" height="80px" />
@@ -144,9 +155,11 @@
             </b-row>
           </b-form-group>
           <b-form-group
-            label-cols="4"
+            label-cols="12"
+            label-cols-md="4"
             label-cols-lg="2"
             :label="$t('username')"
+            label-class="label-with-colon"
             :state="loading || usernameIsValid"
             :invalid-feedback="usernameError"
           >
@@ -162,9 +175,11 @@
             </b-skeleton-wrapper>
           </b-form-group>
           <b-form-group
-            label-cols="4"
+            label-cols="12"
+            label-cols-md="4"
             label-cols-lg="2"
-            label="E-Mail-Adresse:"
+            :label="$t('e-mail-adresse')"
+            label-class="label-with-colon"
             :state="loading || emailIsValid"
             :invalid-feedback="emailError"
           >
@@ -239,7 +254,7 @@
           </b-form-group>
 
           <b-row>
-            <b-col>
+            <b-col class="mb-2 mb-md-0">
               <b-button
                 type="submit"
                 variant="success"
@@ -255,7 +270,7 @@
                 >{{ $t("speichern") }}</b-button
               >
             </b-col>
-            <b-col cols="auto">
+            <b-col cols="12" md="auto">
               <b-button
                 type="reset"
                 variant="outline-secondary"
@@ -265,6 +280,7 @@
                   !profilePictureDeletion &&
                   newProfilePicture == null
                 "
+                block
                 >{{ $t("zuruecksetzen") }}</b-button
               >
             </b-col>
@@ -272,7 +288,13 @@
         </b-form>
       </b-tab>
       <b-tab :title="$tc('verein', 2)">
-        <b-tabs v-model="clubTabIndex" content-class="ml-3" vertical pills>
+        <b-tabs
+          v-model="clubTabIndex"
+          content-class="ml-3 mt-3 mt-md-0"
+          :vertical="!$store.state.isMobile"
+          :small="$store.state.isMobile"
+          pills
+        >
           <b-tab v-for="club in user?.Clubs" :key="club.id" :title="club.name">
             <template #title>
               {{ club.name }}
@@ -287,12 +309,14 @@
             </template>
             <b-form @submit="onClubSave" @reset="onClubReset">
               <b-form-group
-                label-cols="4"
+                label-cols="12"
+                label-cols-md="4"
                 label-cols-lg="2"
                 :label="$t('accountView.vereinslogo')"
+                label-class="label-with-colon"
               >
                 <b-row align-v="center">
-                  <b-col cols="auto">
+                  <b-col cols="12" md="auto" class="text-center mb-2 mb-md-0">
                     <div id="profilePictureUpload" v-b-hover="hoverClubLogo">
                       <b-overlay
                         :show="clubLogoIsHovered"
@@ -350,9 +374,11 @@
                 </b-row>
               </b-form-group>
               <b-form-group
-                label-cols="4"
+                label-cols="12"
+                label-cols-md="4"
                 label-cols-lg="2"
                 :label="$t('modals.create-club.vereinsname')"
+                label-class="label-with-colon"
                 :state="loading || clubNameIsValid"
                 :invalid-feedback="clubNameError"
               >
@@ -369,21 +395,23 @@
                   <b-skeleton />
                 </template>
                 <b-row class="text-muted mb-2">
-                  <b-col cols="4"> {{ $t("accountView.erstellt-am") }}: </b-col>
-                  <b-col cols="8">
+                  <b-col cols="6" md="4">
+                    {{ $t("accountView.erstellt-am") }}:
+                  </b-col>
+                  <b-col cols="auto">
                     {{ toTimeAgo(club?.createdAt) }}
                   </b-col>
-                  <b-col cols="4">
+                  <b-col cols="6" md="4">
                     {{ $t("accountView.zuletzt-geaendert-am") }}:
                   </b-col>
-                  <b-col cols="8">
+                  <b-col cols="auto">
                     {{ toTimeAgo(club?.updatedAt) }}
                   </b-col>
                 </b-row>
               </b-skeleton-wrapper>
 
               <b-row>
-                <b-col>
+                <b-col class="mb-2 mb-md-0">
                   <b-button
                     type="submit"
                     variant="success"
@@ -397,7 +425,7 @@
                     >{{ $t("speichern") }}</b-button
                   >
                 </b-col>
-                <b-col cols="auto">
+                <b-col cols="12" md="auto">
                   <b-button
                     type="reset"
                     variant="outline-secondary"
@@ -406,6 +434,7 @@
                       !clubLogoDeletion &&
                       newClubLogo == null
                     "
+                    block
                     >{{ $t("zuruecksetzen") }}</b-button
                   >
                 </b-col>
@@ -488,9 +517,11 @@
           "
         >
           <b-form-group
-            label-cols="4"
+            label-cols="12"
+            label-cols-md="4"
             label-cols-lg="2"
             :label="$t('account.tracking-opt-out')"
+            label-class="label-with-colon"
             :description="$t('account.tracking-info')"
           >
             <b-form-checkbox
@@ -515,7 +546,7 @@
           </b-alert>
 
           <b-row>
-            <b-col>
+            <b-col class="mb-2 mb-md-0">
               <b-button
                 type="submit"
                 variant="success"
@@ -524,11 +555,12 @@
                 >{{ $t("speichern") }}</b-button
               >
             </b-col>
-            <b-col cols="auto">
+            <b-col cols="12" md="auto">
               <b-button
                 type="reset"
                 variant="outline-secondary"
                 :disabled="tracking == Boolean($cookie.get('mtm_consent'))"
+                block
                 >{{ $t("zuruecksetzen") }}</b-button
               >
             </b-col>
@@ -542,9 +574,11 @@
           }}</span>
         </template>
         <b-form-group
-          label-cols="4"
+          label-cols="12"
+          label-cols-md="4"
           label-cols-lg="2"
-          :label="$t('account.reset-password')"
+          :label="$t('accountView.passwort-aendern')"
+          label-class="label-with-colon"
           :description="$t('account.reset-password-description')"
         >
           <b-button
@@ -556,9 +590,11 @@
           </b-button>
         </b-form-group>
         <b-form-group
-          label-cols="4"
+          label-cols="12"
+          label-cols-md="4"
           label-cols-lg="2"
           :label="$t('accountView.konto-loeschen')"
+          label-class="label-with-colon"
           :description="$t('accountView.konto-loeschen-descriptions')"
         >
           <b-button
