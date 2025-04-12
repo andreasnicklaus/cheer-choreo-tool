@@ -6,6 +6,7 @@
         <b-form @submit="onLoginSubmit" @reset="onReset">
           <b-form-group
             :label="$t('username')"
+            label-class="label-with-colon"
             :state="usernameIsValid"
             :invalid-feedback="usernameError"
           >
@@ -17,6 +18,7 @@
           </b-form-group>
           <b-form-group
             :label="$t('passwort')"
+            label-class="label-with-colon"
             :state="passwordIsValid"
             :invalid-feedback="passwordError"
           >
@@ -56,12 +58,17 @@
               {{ $t("registrieren") }}
             </a>
           </p>
+
+          <a href="#" @click="() => $refs.passwordResetModal.open()">{{
+            $t("login.passwort-vergessen")
+          }}</a>
         </b-form>
       </b-tab>
       <b-tab :title="$t('registrieren')" class="mt-4">
         <b-form @submit="onRegisterSubmit" @reset="onReset">
           <b-form-group
             :label="$t('username')"
+            label-class="label-with-colon"
             :state="usernameIsValid"
             :invalid-feedback="usernameError"
             :valid-feedback="$t('login.gueltig')"
@@ -74,6 +81,7 @@
           </b-form-group>
           <b-form-group
             :label="$t('e-mail-adresse')"
+            label-class="label-with-colon"
             :state="emailIsValid"
             :invalid-feedback="emailError"
             :valid-feedback="$t('login.gueltig')"
@@ -96,6 +104,7 @@
           </b-form-group>
           <b-form-group
             :label="$t('passwort')"
+            label-class="label-with-colon"
             :state="passwordIsValid"
             :invalid-feedback="passwordError"
             :valid-feedback="$t('login.gueltig')"
@@ -109,6 +118,7 @@
           </b-form-group>
           <b-form-group
             :label="$t('passwort')"
+            label-class="label-with-colon"
             :state="passwordRepetitionIsValid"
             :invalid-feedback="passwordRepetitionError"
             :valid-feedback="$t('login.gueltig')"
@@ -171,18 +181,24 @@
     </b-tabs>
 
     <ConfirmEmailModal ref="confirmEmailModal" />
+
+    <PasswordResetModal
+      ref="passwordResetModal"
+      @passwordResetRequested="onPasswordReset"
+    />
   </b-container>
 </template>
 
 <script>
 import ConfirmEmailModal from "@/components/modals/ConfirmEmailModal.vue";
+import PasswordResetModal from "@/components/modals/PasswordResetModal.vue";
 import AuthService from "@/services/AuthService";
 
 const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 
 export default {
   name: "LoginView",
-  components: { ConfirmEmailModal },
+  components: { ConfirmEmailModal, PasswordResetModal },
   data: () => ({
     username: null,
     email: null,
@@ -191,10 +207,28 @@ export default {
     tabIndex: 0,
     loading: false,
   }),
+  mounted() {
+    const query = this.$route.query;
+    if (query?.sso)
+      AuthService.ssoLogin(query.sso)
+        .then(() => {
+          window._paq.push(["trackGoal", 2]);
+          this.$router
+            .push(
+              this.$route.query?.redirectUrl ||
+                `/${this.$root.$i18n.locale}/start`
+            )
+            .catch(() => {});
+        })
+        .catch((e) => {
+          this.showFailMessage(e.response.data);
+        });
+  },
   methods: {
-    showFailMessage(message) {
+    showFailMessage(message, title = null) {
       this.$bvToast.toast(message, {
         title:
+          title ||
           this.failMessages[
             Math.floor(Math.random() * this.failMessages.length)
           ],
@@ -238,12 +272,13 @@ export default {
             console.warn(e.code);
             if (e.code == "ERR_NETWORK")
               return this.showFailMessage(
-                e.response?.data ||
-                  "Die Server scheinen offline zu sein. Bitte versuche es später nochmal!"
+                e.response?.data || "{{ $t('login.server-offline') }}"
               );
             this.showFailMessage(
               e.response.data ||
-                "Bitte kontrolliere, dass du Nutzernamen/Email und Passwort richtig geschrieben hast."
+                this.$t(
+                  "login.bitte-kontrolliere-nutzernamen-email-und-passwort"
+                )
             );
           }
         });
@@ -270,13 +305,20 @@ export default {
           this.loading = false;
           if (e.code == "ERR_NETWORK")
             return this.showFailMessage(
-              e.response?.data ||
-                "Die Server scheinen offline zu sein. Bitte versuche es später nochmal!"
+              e.response?.data || this.$t("login.server-offline")
             );
-          this.showFailMessage(
-            "Es scheint so als gäbe es bereits einen Nutzer mit diesem Namen oder E-Mail-Adresse ..."
-          );
+          this.showFailMessage(this.$t("login.account-exists"));
         });
+    },
+    onPasswordReset() {
+      this.$bvToast.toast(this.$t("login.login-link-was-sent"), {
+        title: this.$t("login.erfolg"),
+        autoHideDelay: 5000,
+        appendToast: true,
+        variant: "success",
+        solid: true,
+        // toaster: "b-toaster-top-center",
+      });
     },
   },
   computed: {

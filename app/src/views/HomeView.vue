@@ -126,6 +126,15 @@
         </ul>
       </b-col>
       <b-col class="featureCallout h3">
+        <b-icon-stars /><br />
+        {{ $t("Home.personalisierung") }}
+        <ul>
+          <li>{{ $t("Home.branding-deines-vereins") }}</li>
+          <li>{{ $t("Home.lade-das-logo-deines-vereins-hoch") }}</li>
+          <li>{{ $t("Home.mach-werbung-fuer-dein-team") }}</li>
+        </ul>
+      </b-col>
+      <b-col class="featureCallout h3">
         <b-icon-film /><br />
         {{ $t("Home.video-export") }}
         <ul>

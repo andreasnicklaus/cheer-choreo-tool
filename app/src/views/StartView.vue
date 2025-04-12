@@ -181,6 +181,7 @@
                 <template #default>
                   <b-form-group
                     :label="$t('start.min-laenge')"
+                    label-class="label-with-colon"
                     :description="`${Math.floor(minCount / 8)} ${$t(
                       'achter'
                     )} + ${minCount % 8}`"
@@ -195,6 +196,7 @@
                   <hr />
                   <b-form-group
                     :label="$t('start.max-laenge')"
+                    label-class="label-with-colon"
                     :description="`${Math.floor(maxCount / 8)} ${$t(
                       'achter'
                     )} + ${maxCount % 8}`"

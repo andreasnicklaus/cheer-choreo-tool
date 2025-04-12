@@ -192,7 +192,11 @@
             :block="$store.state.isMobile"
           >
             <template #button-content>
-              <b-icon-person-circle />
+              <b-avatar
+                size="25px"
+                variant="light"
+                :src="currentProfilePictureBlob"
+              />
               <span v-if="$store.state.isMobile" class="mx-2">{{
                 user?.username
               }}</span>
@@ -204,7 +208,13 @@
                   params: { locale: $root.$i18n.locale },
                 }"
               >
-                <b-icon-person-circle class="mr-2" />{{ user?.username }}
+                <b-avatar
+                  size="25px"
+                  class="mr-2"
+                  variant="primary"
+                  :src="currentProfilePictureBlob"
+                />
+                {{ user?.username }}
               </b-dropdown-item>
             </b-dropdown-group>
 
@@ -279,6 +289,7 @@ export default {
       { flag: "us", lang: "en", localName: "English" },
     ],
     LanguageService,
+    currentProfilePictureBlob: null,
   }),
   props: {
     onlineStatus: {
@@ -294,6 +305,7 @@ export default {
       if (this.$store.state.loggedIn) {
         AuthService.getUserInfo().then((user) => {
           this.user = user;
+          this.loadProfileImage();
         });
 
         if (this.$store.state.clubId) {
@@ -345,6 +357,17 @@ export default {
     },
     share() {
       navigator.share(this.shareData);
+    },
+    loadProfileImage() {
+      if (this.user?.profilePictureExtension == null)
+        this.currentProfilePictureBlob = null;
+      else
+        AuthService.getProfileImage(
+          this.user.id,
+          this.user.profilePictureExtension
+        ).then((response) => {
+          this.currentProfilePictureBlob = URL.createObjectURL(response.data);
+        });
     },
   },
   watch: {

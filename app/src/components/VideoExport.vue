@@ -53,6 +53,29 @@
                 {{ $t("pdf.choreo-name-anzeigen") }}
               </b-form-checkbox>
             </b-form-group>
+            <b-form-group
+              :disabled="!currentClub?.logoExtension"
+              :description="
+                $t(
+                  'video-export-comp.dein-vereinslogo-als-wasserzeichen-im-video-anzeigen'
+                )
+              "
+            >
+              <b-form-checkbox
+                v-model="includeClubLogo"
+                :disabled="recordingIsRunning"
+              >
+                {{ $t("pdf.vereinslogo-anzeigen") }}
+              </b-form-checkbox>
+            </b-form-group>
+            <b-avatar
+              size="60px"
+              :src="currentClubLogoBlob"
+              v-if="currentClub?.logoExtension"
+              :disabled="!includeClubLogo"
+            >
+              <b-icon-house-fill v-if="!currentClubLogoBlob" font-scale="1.5" />
+            </b-avatar>
           </b-col>
           <b-col md="6" cols="12" class="mb-3">
             <b-skeleton-wrapper :loading="!choreo || !choreo.Participants">
@@ -172,7 +195,7 @@
               ref="videoCanvas"
               :width="width"
               :height="height"
-              :style="{ width: '100%' }"
+              :style="{ width: '75%' }"
             ></canvas>
             <template #overlay>
               <div class="text-center" :style="{ minWidth: '70vw' }">
@@ -194,6 +217,14 @@
       </b-card-body>
     </b-card>
 
+    <img
+      ref="clubLogo"
+      :src="currentClubLogoBlob"
+      alt=""
+      height="200"
+      :style="{ maxWidth: '200px', display: 'none' }"
+    />
+
     <VideoDownloadModal
       ref="videoDownloadModal"
       :choreo="choreo"
@@ -211,6 +242,8 @@ import gsap from "gsap";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
 import VideoDownloadModal from "./modals/VideoDownloadModal.vue";
+import AuthService from "@/services/AuthService";
+import ClubService from "@/services/ClubService";
 
 export default {
   name: "VideoExport",
@@ -224,6 +257,7 @@ export default {
     count: null,
     animationTimeline: null,
     bps: 2.51,
+    user: null,
     choreo: null,
     teamMembers: [],
     animationIsRunning: false,
@@ -232,6 +266,8 @@ export default {
     includeTeamName: true,
     includeChoreoName: true,
     includedMembers: [],
+    includeClubLogo: false,
+    currentClubLogoBlob: null,
     downloadOptions: [
       {
         id: "webm",
@@ -281,7 +317,7 @@ export default {
       this.animationTimeline?.pause();
     },
     loadChoreo() {
-      ChoreoService.getById(this.$route.params.choreoId)
+      return ChoreoService.getById(this.$route.params.choreoId)
         .then((choreo) => {
           this.choreo = choreo;
           this.teamMembers = choreo.Participants.sort((a, b) =>
@@ -292,6 +328,24 @@ export default {
           this.initializeRecorder();
         })
         .catch((e) => console.warn(e));
+    },
+    loadUserInfo() {
+      return AuthService.getUserInfo().then((user) => {
+        this.user = user;
+        this.includeClubLogo = Boolean(this.currentClub?.logoExtension);
+        return this.loadClubLogo().then(() => user);
+      });
+    },
+    async loadClubLogo() {
+      if (this.currentClub?.logoExtension == null)
+        return (this.currentClubLogoBlob = null);
+      else
+        return ClubService.getClubLogo(
+          this.currentClub.id,
+          this.currentClub.logoExtension
+        ).then((response) => {
+          this.currentClubLogoBlob = URL.createObjectURL(response.data);
+        });
     },
     drawBackground() {
       const canvas = this.$refs.videoCanvas;
@@ -411,6 +465,23 @@ export default {
         canvas.height - (20 / 500) * this.width
       );
     },
+    drawClubLogo() {
+      const canvas = this.$refs.videoCanvas;
+      const context = canvas?.getContext("2d");
+
+      if (!context) return;
+
+      const clubLogo = this.$refs.clubLogo;
+      context.globalAlpha = 0.1;
+      context.drawImage(
+        clubLogo,
+        canvas.width / 4,
+        canvas.height / 4,
+        canvas.width / 2,
+        canvas.height / 2
+      );
+      context.globalAlpha = 1;
+    },
     drawCanvas() {
       const positions = this.getPositions();
       this.drawPositions(
@@ -423,9 +494,10 @@ export default {
             y: p.y,
           }))
       );
-      if (this.includeCount) this.drawCount();
-      if (this.includeChoreoName) this.drawChoreoName();
-      if (this.includeTeamName) this.drawTeamName();
+      // if (this.includeCount) this.drawCount();
+      // if (this.includeChoreoName) this.drawChoreoName();
+      // if (this.includeTeamName) this.drawTeamName();
+      if (this.includeClubLogo && this.currentClubLogoBlob) this.drawClubLogo();
     },
     addAnimationsFromChoreo() {
       const counts = this.choreo.counts;
@@ -448,6 +520,7 @@ export default {
       }, 50);
     },
     getPositions() {
+      if (!this.choreo) return [];
       return ChoreoService.getPositionsFromChoreoAndCount(
         this.choreo,
         this.count,
@@ -559,13 +632,28 @@ export default {
         this.drawCanvas();
       },
     },
+    includeClubLogo: {
+      handler() {
+        this.drawCanvas();
+      },
+    },
+    currentClubLogoBlob: {
+      handler() {
+        setTimeout(this.drawCanvas, 100);
+      },
+    },
   },
   mounted() {
-    this.loadChoreo();
+    Promise.all([this.loadUserInfo(), this.loadChoreo()]).then(
+      this.drawCanvas()
+    );
     this.ffmpeg = new FFmpeg();
     this.initializeFfmpeg();
   },
   computed: {
+    currentClub() {
+      return this.user?.Clubs.find((c) => c.id == this.$store.state.clubId);
+    },
     waitingSlogan() {
       const slogans = [
         this.$t("loading-slogans.schuhe-werden-gebunden"),
@@ -614,20 +702,20 @@ export default {
         {
           vmid: "og:title",
           property: "og:title",
-          content: `${this.choreo?.name || "Lädt Choreo"} - ${this.$t(
-            "video"
-          )} - ${this.$t("general.ChoreoPlaner")} | ${this.$t(
-            "meta.defaults.title"
-          )}`,
+          content: `${
+            this.choreo?.name || this.$t("pdf.laedt-choreo")
+          } - ${this.$t("video")} - ${this.$t(
+            "general.ChoreoPlaner"
+          )} | ${this.$t("meta.defaults.title")}`,
         },
         {
           vmid: "twitter:title",
           name: "twitter:title",
-          content: `${this.choreo?.name || "Lädt Choreo"} - ${this.$t(
-            "video"
-          )} - ${this.$t("general.ChoreoPlaner")} | ${this.$t(
-            "meta.defaults.title"
-          )}`,
+          content: `${
+            this.choreo?.name || this.$t("pdf.laedt-choreo")
+          } - ${this.$t("video")} - ${this.$t(
+            "general.ChoreoPlaner"
+          )} | ${this.$t("meta.defaults.title")}`,
         },
       ],
     };

@@ -13,6 +13,7 @@
     </p>
     <b-form-group
       :label="$t('modals.substitution.auswechseln')"
+      label-class="label-with-colon"
       :state="memberToReplaceIdIsValid"
       :invalid-feedback="memberToReplaceIdStateFeedback"
     >
@@ -26,6 +27,7 @@
     </b-form-group>
     <b-form-group
       :label="$t('modals.substitution.einwechseln')"
+      label-class="label-with-colon"
       :state="memberToSubInIdIsValid"
       :invalid-feedback="memberToSubInIdStateFeedback"
     >

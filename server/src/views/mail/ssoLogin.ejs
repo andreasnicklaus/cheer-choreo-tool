@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dein Login-Link</title>
+  </head>
+  <body>
+    <h1 style="text-align: center">Hier ist dein Login-Link!</h1>
+
+    <p>Hallo <%= username %>,</p>
+
+    <p>
+      du bekommst diese E-Mail, weil du einen Login-Link angefordert hast. Über
+      diesen Link kannst du dich jetzt einloggen:
+    </p>
+
+    <p style="margin: 32px 0px; text-align: center">
+      <a
+        type="button"
+        style="
+          background-color: #0069d9;
+          color: white;
+          padding: 16px 24px;
+          border-radius: 4px;
+        "
+        href="<%= frontendDomain %>/login/?sso=<%= ssoToken %>"
+      >
+        Jetzt einloggen
+      </a>
+    </p>
+
+    <p>
+      Wenn der obige Link nicht funktioniert, kannst du folgende URL in deinem
+      Browser öffnen:
+      <a href="<%= frontendDomain %>/login/?sso=<%= ssoToken %>">
+        <%= frontendDomain %>/login/?sso=<%= ssoToken %>
+      </a>
+    </p>
+
+    <p style="text-align: center">
+      Dieser Link ist gültig bis: <%= expirationDate %>
+    </p>
+
+    <p>
+      Wenn du den Link nicht angefordert hast, kannst du diese E-Mail getrost
+      ignorieren. Falls du E-Mails wie diese gehäuft bekommst, kann das ein
+      Anzeichen dafür sein, dass jemand versucht, in dein Konto zu gelangen.
+      Bitte kontaktiere in diesem Fall sofort unsere Administratoren unter
+      <a href="mailto:admin@choreo-planer.de">admin@choreo-planer.de</a>, auch
+      wenn du dir nicht sicher bist.
+    </p>
+
+    <p>Wir wünschen dir viel Spaß und Erfolg mit dem Choreo Planer!</p>
+
+    <p>
+      Tanzende Grüße,<br />
+      Andreas Nicklaus<br />
+      <b>Choreo Planer Team</b>
+    </p>
+
+    <p>
+      <small
+        >Diese E-Mail wurde automatisch erstellt. Bitte antworte nicht auf diese
+        E-Mail. Schreibe deine Antwort lieber an
+        <a href="mailto:info@choreo-planer.de">info@choreo-planer.de</a>. Vielen
+        Dank!</small
+      >
+    </p>
+
+    <hr />
+
+    <img
+      src="cid:choreo-planer-icon"
+      alt="Choreo Planer Icon"
+      width="100"
+      height="100"
+    />
+
+    <p>
+      <a href="https://www.choreo-planer.de">www.choreo-planer.de</a><br />
+      <a href="mailto:info@choreo-planer.de">info@choreo-planer.de</a>
+    </p>
+  </body>
+</html>

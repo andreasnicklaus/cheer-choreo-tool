@@ -149,7 +149,7 @@ import AppInstallWindow from "./components/AppInstallWindow.vue";
 import ConsentWindow from "./components/ConsentWindow.vue";
 import FeedbackPrompt from "./components/FeedbackPrompt.vue";
 import HeadNav from "./components/HeadNav.vue";
-import ax from "./services/RequestService";
+import ax, { getApiDomain } from "./services/RequestService";
 import breakpoints from "@/utils/breakpoints";
 
 export default {
@@ -233,11 +233,7 @@ export default {
         {
           vmid: "Content-Security-Policy",
           "http-equiv": "Content-Security-Policy",
-          content: `default-src 'self' https: blob:; script-src 'self' https: blob: 'unsafe-eval' 'unsafe-inline'; style-src 'self' https: blob: 'unsafe-inline'; connect-src 'self' https: blob: ${
-            process.env.NODE_ENV == "production"
-              ? "https://api.choreo-planer.de/"
-              : "ws: http://localhost:3000/"
-          }; img-src 'self' https: blob: data:;`,
+          content: `default-src 'self' https: blob:; script-src 'self' https: blob: 'unsafe-eval' 'unsafe-inline'; style-src 'self' https: blob: 'unsafe-inline'; connect-src 'self' https: blob: ${getApiDomain()}; img-src 'self' https: blob: data: ${getApiDomain()};`,
         },
       ],
       link: [
@@ -282,6 +278,12 @@ html {
 }
 .modal-open {
   padding: 0 !important;
+}
+</style>
+
+<style lang="scss">
+.label-with-colon::after {
+  content: ":";
 }
 </style>
 

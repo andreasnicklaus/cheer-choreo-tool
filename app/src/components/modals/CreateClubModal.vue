@@ -17,6 +17,7 @@
     <b-form>
       <b-form-group
         :label="$t('modals.create-club.vereinsname')"
+        label-class="label-with-colon"
         :state="newClubNameIsValid"
         :invalid-feedback="newClubNameStateFeedback"
         :valid-feedback="$t('login.gueltig')"

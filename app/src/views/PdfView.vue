@@ -34,6 +34,14 @@
             <b-col cols="auto" v-if="includeDate">
               {{ new Date(date).toLocaleDateString("de-de") }}
             </b-col>
+            <b-col cols="auto" v-if="includeLogo">
+              <img
+                :src="currentClubLogoBlob"
+                alt=""
+                height="60"
+                :style="{ maxWidth: '200px' }"
+              />
+            </b-col>
             <b-col
               cols="auto"
               v-if="
@@ -144,6 +152,24 @@
                 {{ $t("pdf.teilnehmer-namen-anzeigen") }}
               </b-form-checkbox>
             </b-form-group>
+            <b-form-group
+              :disabled="!currentClub?.logoExtension"
+              :description="
+                $t('pdf.zeige-das-logo-deines-vereins-auf-dem-countsheet-an')
+              "
+            >
+              <b-form-checkbox v-model="includeLogo">
+                {{ $t("pdf.vereinslogo-anzeigen") }}
+              </b-form-checkbox>
+            </b-form-group>
+            <b-avatar
+              size="60px"
+              :src="currentClubLogoBlob"
+              v-if="currentClub?.logoExtension"
+              :disabled="!includeLogo"
+            >
+              <b-icon-house-fill v-if="!currentClubLogoBlob" font-scale="1.5" />
+            </b-avatar>
           </b-col>
           <b-col md="6" cols="12" class="mb-3">
             <b-skeleton-wrapper
@@ -220,7 +246,7 @@
           :disabled="includedMembers.length == 0"
         >
           <b-icon-file-pdf />
-          PDF generieren
+          {{ $t("pdf.pdf-generieren") }}
         </b-button>
       </template>
     </b-card>
@@ -235,13 +261,16 @@
 <script>
 import CountSheet from "@/components/CountSheet.vue";
 import LoadingModal from "@/components/modals/LoadingModal.vue";
+import AuthService from "@/services/AuthService";
 import ChoreoService from "@/services/ChoreoService";
+import ClubService from "@/services/ClubService";
 import VueHtml2pdf from "vue-html2pdf";
 
 export default {
   name: "PdfView",
   components: { CountSheet, VueHtml2pdf, LoadingModal },
   data: () => ({
+    user: null,
     choreoId: null,
     choreo: null,
     teamMembers: [],
@@ -253,8 +282,10 @@ export default {
     includeChoreoName: true,
     includeMemberNames: false,
     includedMembers: [],
+    includeLogo: true,
     loading: true,
     date: new Date().toISOString().split("T")[0],
+    currentClubLogoBlob: null,
   }),
   methods: {
     loadChoreo() {
@@ -268,6 +299,13 @@ export default {
           if (this.sloganInterval) clearInterval(this.sloganInterval);
           this.loading = false;
         });
+      });
+    },
+    loadUserInfo() {
+      return AuthService.getUserInfo().then((user) => {
+        this.user = user;
+        this.includeLogo = Boolean(this.currentClub?.logoExtension);
+        this.loadClubLogo();
       });
     },
     generatePdf() {
@@ -331,8 +369,20 @@ export default {
         (a, b) => a.startIndex - b.startIndex
       );
     },
+    loadClubLogo() {
+      if (this.currentClub?.logoExtension == null)
+        this.currentClubLogoBlob = null;
+      else
+        ClubService.getClubLogo(
+          this.currentClub.id,
+          this.currentClub.logoExtension
+        ).then((response) => {
+          this.currentClubLogoBlob = URL.createObjectURL(response.data);
+        });
+    },
   },
   mounted() {
+    this.loadUserInfo();
     this.choreoId = this.$route.params.choreoId;
     this.loadChoreo();
     this.sloganInterval = setInterval(() => {
@@ -340,6 +390,9 @@ export default {
     }, 3000);
   },
   computed: {
+    currentClub() {
+      return this.user?.Clubs.find((c) => c.id == this.$store.state.clubId);
+    },
     slogans() {
       return [
         this.$t("loading-slogans.schuhe-werden-gebunden"),

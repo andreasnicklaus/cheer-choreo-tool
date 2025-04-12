@@ -4,13 +4,17 @@ const { logger } = require("../plugins/winston");
 const basicAuth = require("express-basic-auth");
 const AdminService = require("./AdminService");
 const bcrypt = require("bcrypt");
+const UserService = require("./UserService");
+const MailService = require("./MailService");
 
 const TOKEN_SECRET = process.env.TOKEN_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
 
 class AuthService {
-  generateAccessToken(UserId) {
-    return jwt.sign({ UserId }, TOKEN_SECRET, { expiresIn: JWT_EXPIRES_IN });
+  generateAccessToken(UserId, { expiresIn = null } = {}) {
+    return jwt.sign({ UserId }, TOKEN_SECRET, {
+      expiresIn: expiresIn || JWT_EXPIRES_IN,
+    });
   }
 
   authenticateUser(failIfNotLoggedIn = true) {
@@ -45,6 +49,43 @@ class AuthService {
           .catch((e) => next(e));
       });
     };
+  }
+
+  resolveSsoToken(token) {
+    return new Promise((resolve, reject) => {
+      jwt.verify(token, TOKEN_SECRET, async (err, content) => {
+        if (err) {
+          return reject(new Error("SSO Token was not valid"));
+        }
+
+        return User.findByPk(content.UserId).then((user) => {
+          if (!user) {
+            return reject(
+              new Error(
+                "SSO Token was valid, but the user it references does no longer exist."
+              )
+            );
+          }
+
+          logger.debug(
+            `User ${user.username} with id ${user.id} used this SSO token: ${token}`
+          );
+          resolve(user);
+        });
+      });
+    });
+  }
+
+  generateSsoToken(email) {
+    return UserService.findByUsernameOrEmail(email).then((user) => {
+      if (!user) throw new Error("No user with this information was found.");
+      if (!user.email) throw new Error("This user has no email address.");
+
+      const token = this.generateAccessToken(user.id, {
+        expiresIn: process.env.SSO_TOKEN_EXPIRES_IN,
+      });
+      return MailService.sendSsoEmail(user.email, user.username, token);
+    });
   }
 
   authenticateAdmin() {

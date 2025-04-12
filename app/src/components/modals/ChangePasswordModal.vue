@@ -17,6 +17,7 @@
         :invalid-feedback="newPasswordStateFeedback"
         :valid-feedback="$t('modals.change-password.dein-passwort-ist-gueltig')"
         :label="$t('modals.change-password.neues-passwort')"
+        label-class="label-with-colon"
       >
         <b-form-input
           v-model="newPassword"
@@ -35,6 +36,7 @@
           )
         "
         :label="$t('modals.change-password.wiederholung')"
+        label-class="label-with-colon"
       >
         <b-form-input
           v-model="passwordRepetition"

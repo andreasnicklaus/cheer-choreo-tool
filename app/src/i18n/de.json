@@ -6,14 +6,32 @@
     "bestaetigt": "bestätigt",
     "check-email": "Bitte schaue in deinem E-Mail-Postfach nach und bestätige deine E-Mail-Adresse mit dem darin enthaltenen Link!",
     "das-hat-nicht-funktioniert": "Das hat nicht funktioniert",
-    "erstellt-am": "Erstellt am",
+    "erstellt-am": "Erstellt",
     "konto-loeschen": "Konto löschen",
     "nicht-bestaetigt": "nicht bestätigt",
     "no-email": "keine E-Mail bekannt",
     "nutzername-nicht-erlaubt": "Dein neuer Nutzername ist nicht erlaubt. Entweder ist der Nutzername leer oder es gibt schon einen Nutzer mit dem Namen.",
     "passwort-aendern": "Passwort ändern",
     "unbekannter-fehler": "Ein unbekannter Fehler ist aufgetreten. Lade die Seite neu oder logge dich erneut ein, um die Seite anzuzeigen.",
-    "zuletzt-geaendert-am": "Zuletzt geändert am"
+    "zuletzt-geaendert-am": "Zuletzt geändert",
+    "konto-loeschen-descriptions": "Lösche dein Konto nur, wenn du die App nicht mehr verwenden möchtest. Deine Daten werden als inaktiv markiert.",
+    "gefahrenbereich": "Gefahrenbereich",
+    "profilbild": "Profilbild",
+    "bild-entfernen": "Bild entfernen",
+    "save-new-email-info": "Nach dem Speichern musst du deine E-Mail-Adresse noch bestätigen!",
+    "no-email-info": "Du hast noch keine E-Mail-Adresse gespeichert.",
+    "vereinslogo": "Vereinslogo",
+    "als-aktiven-verein-auswaehlen": "Als aktiven Verein auswählen",
+    "du-hast-diesen-verein-als-aktiven-verein-ausgewaehlt": "Du hast diesen Verein als aktiven Verein ausgewählt.",
+    "verein-loeschen": "Verein löschen",
+    "deine-nutzerinformationen-wurden-gespeichert": "Deine Nutzerinformationen wurden gespeichert!",
+    "deine-vereinsinformationen-wurden-gespeichert": "Deine Vereinsinformationen wurden gespeichert!",
+    "cant-delete-only-club": "Du kannst nicht deinen einzigen Verein entfernen! Erstelle zuerst einen anderen Verein.",
+    "cant-delete-active-club": "Du kannst nicht deinen aktiven Verein löschen! Wähle zuerst einen anderen Verein als aktiv aus.",
+    "lade-ein-bild-hoch-max-mb": "Lade ein Bild hoch: max. {0} MB",
+    "es-ist-nicht-moeglich-bilder-hochzuladen-die-groesser-al-mb-gross-sind": "Es ist nicht möglich, Bilder hochzuladen, die größer als {0} MB groß sind. Wähle eine kleinere Datei aus!",
+    "die-e-mail-zur-bestaetigung-deiner-e-mail-adresse-wurde-erneut-verschickt-check-dein-postfach": "Die E-Mail zur Bestätigung deiner E-Mail-Adresse wurde erneut verschickt. Check dein Postfach!",
+    "e-mail-versandt": "E-Mail versandt"
   },
   "achter": "Achter",
   "alle-auswaehlen": "Alle auswählen",
@@ -301,7 +319,11 @@
     "waehle-aus-wer-soll": "Wähle aus, wer auf dem Video erscheinen soll",
     "waehle-mit-allen-aus": "Wähle aus, ab du ein Video mit allen auf der Matte oder ausgewählten Personen haben willst",
     "warte-bis-video": "Warte, bis dein Video fertig ist",
-    "zum-loslegen": "Zum Loslegen einfach anmelden und das erste Team anlegen:"
+    "zum-loslegen": "Zum Loslegen einfach anmelden und das erste Team anlegen:",
+    "personalisierung": "Personalisierung",
+    "branding-deines-vereins": "Branding deines Vereins",
+    "lade-das-logo-deines-vereins-hoch": "Lade das Logo deines Vereins hoch",
+    "mach-werbung-fuer-dein-team": "Mach Werbung für dein Team"
   },
   "impressumView": {
     "angaben-gemaess-5-tmg": "Angaben gemäß § 5 TMG",
@@ -364,7 +386,14 @@
     "passwort-mindest-laenge": "Dein Passwort muss mindestens 6 Zeichen lang sein.",
     "passwort-wiederholen": "Passwort wiederholen",
     "warum-email": "Deine E-Mail-Adresse brauchen wir, um dein Passwort zurücksetzen oder dein Konto wiederherstellen zu können.",
-    "wiederholung-gleicht-nicht-passwort": "Die Wiederholung gleicht nicht dem Passwort."
+    "wiederholung-gleicht-nicht-passwort": "Die Wiederholung gleicht nicht dem Passwort.",
+    "bitte-kontrolliere-nutzernamen-email-und-passwort": "Bitte kontrolliere, dass du Nutzernamen/Email und Passwort richtig geschrieben hast.",
+    "server-offline": "Die Server scheinen offline zu sein. Bitte versuche es später nochmal!",
+    "clubName-mindestens-laenge": "Der Name des Vereins muss mindestens 6 Zeichen lang sein.",
+    "passwort-vergessen": "Passwort vergessen?",
+    "account-exists": "Es scheint so als gäbe es bereits einen Nutzer mit diesem Namen oder E-Mail-Adresse ...",
+    "login-link-was-sent": "Ein Passwort-Link wurde an deine E-Mail-Adresse geschickt. Check dein Postfach!",
+    "erfolg": "Erfolg"
   },
   "meta": {
     "account": {
@@ -429,7 +458,7 @@
       "example-name": "Landesmeisterschaft, RM {0}, ...",
       "extra-count-muss-zwischen-0-und-7-liegen": "Extra-Count muss zwischen 0 und 7 liegen",
       "geschaetzte-zeit-timeestimationstring": "Geschätzte Zeit: {0}",
-      "laenge": "Länge:",
+      "laenge": "Länge",
       "min-achter": "Achter muss größer als 0 sein",
       "min-choreoname-length": "Min. 2 Zeichen"
     },
@@ -541,6 +570,15 @@
     "video-download": {
       "format": "Format",
       "video-herunterladen": "Video herunterladen"
+    },
+    "delete-club": {
+      "verein-loeschen": "Verein löschen?"
+    },
+    "reset-password": {
+      "lost-password": "Login-Link beantragen",
+      "no-email-info": "Konten ohne E-Mail-Adresse können nur händisch zurückgesetzt werden. Schicke eine E-Mail an info@choreo-planer.de!",
+      "email-info": "Wenn dein Konto mit einer E-Mail-Adresse verbunden ist, kannst du dir einen Login-Link zusenden lassen, mit dem du dich für 24 Stunden einloggen kannst. Auf der Profilseite kannst du dann dein Passwort selbst ändern.",
+      "login-link-schicken": "Login-Link schicken"
     }
   },
   "name": "Name",
@@ -592,7 +630,10 @@
     "PDF": "PDF",
     "pdf-wird-generiert": "PDF wird generiert",
     "team-name-anzeigen": "Team-Name anzeigen",
-    "teilnehmer-namen-anzeigen": "Teilnehmer-Namen anzeigen"
+    "teilnehmer-namen-anzeigen": "Teilnehmer-Namen anzeigen",
+    "pdf-generieren": "PDF generieren",
+    "zeige-das-logo-deines-vereins-auf-dem-countsheet-an": "Zeige das Logo deines Vereins auf dem Countsheet an",
+    "vereinslogo-anzeigen": "Vereinslogo anzeigen"
   },
   "personas": {
     "anna-unersetzlich": "Anna Unersetzlich",
@@ -636,8 +677,8 @@
     "filtere-die-choreos-nach-season": "Filtere die Choreos nach Season",
     "filtere-die-choreos-nach-teams": "Filtere die Choreos nach Teams",
     "hier-kannst-du-noch-nichts-finden": "Hier kannst du noch nichts finden...",
-    "max-laenge": "Max. Länge:",
-    "min-laenge": "Min. Länge:",
+    "max-laenge": "Max. Länge",
+    "min-laenge": "Min. Länge",
     "noch-kein-team-angelegt": "Du hast aktuell hier nichts zu sehen, weil du noch keine Teams angelegt hast.",
     "pdf-erstellen": "PDF erstellen",
     "saison-anfangen": "Saison anfangen",
@@ -671,8 +712,22 @@
     "herunterladen": "Herunterladen",
     "teilnehmer-die-im-video-angezeigt-werden-sollen": "Teilnehmer, die im Video angezeigt werden sollen",
     "video-generieren": "Video generieren",
-    "video-zusammenstellen": "Video zusammenstellen"
+    "video-zusammenstellen": "Video zusammenstellen",
+    "dein-vereinslogo-als-wasserzeichen-im-video-anzeigen": "Dein Vereinslogo als Wasserzeichen im Video anzeigen"
   },
   "zur-startseite": "Zur Startseite",
-  "zuruecksetzen": "Zurücksetzen"
+  "zuruecksetzen": "Zurücksetzen",
+  "account": {
+    "email-confirmation-warning": "Du hast deine E-Mail-Adresse noch nicht bestätigt. Bitte klicke auf den Link in der E-Mail, die wir dir geschickt haben, um deine E-Mail-Adresse zu bestätigen.",
+    "link-nochmal-senden": "Link nochmal senden",
+    "settings": "Einstellungen",
+    "tracking-opt-out": "Tracking (Opt-out)",
+    "tracking-info": "Wir verwenden deine Daten anonymisiert, um die Nutzung der App zu analysieren und zu verbessern.",
+    "tracking-description": "Ich möchte nicht, dass meine Daten anonymisiert und aggregiert werden, um die Nutzung der App zu analysieren und zu verbessern.",
+    "tracking-warning": "Indem du dem Tracking widersprichst, können wir nicht einsehen, welche Seiten aufgerufen werden und ggf. Fehler aufweisen!",
+    "achtung": "Achtung!",
+    "rueckgaengig-machen": "Rückgängig machen",
+    "reset-password": "Passwort zurücksetzen",
+    "reset-password-description": "Setze dein Passwort zurück, um dein Konto zu schützen. Ändere dein Passwort, wenn du den Verdacht hast, dass jemand anderes Zugriff auf dein Konto hat."
+  }
 }

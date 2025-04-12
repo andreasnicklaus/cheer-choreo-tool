@@ -16,6 +16,7 @@
         <b-col cols="7">
           <b-form-group
             :label="$t('name')"
+            label-class="label-with-colon"
             :state="newMemberNameIsValid"
             :invalid-feedback="newMemberNameStateFeedback"
           >
@@ -31,6 +32,7 @@
         <b-col>
           <b-form-group
             :label="$t('abkuerzung')"
+            label-class="label-with-colon"
             :state="abbreviationIsValid"
             :invalid-feedback="abbreviationStateFeedback"
           >
@@ -46,7 +48,11 @@
           </b-form-group>
         </b-col>
       </b-row>
-      <b-form-group :label="$t('spitzname')" :state="true">
+      <b-form-group
+        :label="$t('spitzname')"
+        label-class="label-with-colon"
+        :state="true"
+      >
         <b-form-input
           v-model="newMemberNickname"
           :placeholder="$t('spitzname')"

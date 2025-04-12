@@ -1,4 +1,5 @@
 const { verify, sendMail } = require("../plugins/nodemailer");
+const { timeStringToMillis } = require("../utils/time");
 
 class MailService {
   constructor() {
@@ -92,6 +93,36 @@ class MailService {
           ]
         );
       })
+    );
+  }
+
+  sendSsoEmail(userEmail, username, ssoToken) {
+    return sendMail(
+      userEmail,
+      "Dein Login-Link",
+      "ssoLogin.ejs",
+      {
+        username,
+        ssoToken,
+        frontendDomain: process.env.FRONTEND_DOMAIN,
+        expirationDate: new Date(
+          new Date() + timeStringToMillis(process.env.SSO_TOKEN_EXPIRES_IN)
+        ).toLocaleString("de", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+        }),
+      },
+      [
+        {
+          filename: "logo.png",
+          path: "https://www.choreo-Planer.de/Icon.png",
+          cid: "choreo-planer-icon",
+        },
+      ]
     );
   }
 }

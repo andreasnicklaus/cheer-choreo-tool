@@ -10,7 +10,8 @@
   >
     <b-form>
       <b-form-group
-        label="Name:"
+        :label="$t('name')"
+        label-class="label-with-colon"
         :state="newChoreoNameIsValid"
         :invalid-feedback="newChoreoNameStateFeedback"
         :valid-feedback="$t('login.gueltig')"
@@ -25,7 +26,10 @@
           "
         />
       </b-form-group>
-      <b-form-group :label="$t('modals.create-choreo.laenge')">
+      <b-form-group
+        :label="$t('modals.create-choreo.laenge')"
+        label-class="label-with-colon"
+      >
         <b-row>
           <b-col>
             <b-form-group
@@ -70,7 +74,8 @@
         </p>
       </b-form-group>
       <b-form-group
-        label="Team:"
+        :label="this.$tc('team', 1)"
+        label-class="label-with-colon"
         :state="newChoreoTeamIsValid"
         :invalid-feedback="newChoreoTeamStateFeedback"
       >
@@ -82,7 +87,8 @@
         />
       </b-form-group>
       <b-form-group
-        label="Season:"
+        :label="$tc('season', 1)"
+        label-class="label-with-colon"
         :state="newChoreoSeasonIsValid"
         :invalid-feedback="newChoreoSeasonStateFeedback"
         :valid-feedback="$t('login.gueltig')"
@@ -102,7 +108,7 @@
           "
         />
       </b-form-group>
-      <b-form-group :label="$t('teilnehmer')">
+      <b-form-group :label="$t('teilnehmer')" label-class="label-with-colon">
         <b-skeleton-wrapper
           :loading="!newChoreoTeamIsValid || !newChoreoSeasonIsValid"
         >
