@@ -1,15 +1,8 @@
-name: njsscan sarif
+name: SAST NodeJsScan code scanning
 
 on:
   push:
-    branches:
-      #     - "main"
-      - "feat/build-and-test-in-non-main-branches"
-  # pull_request:
-  #   # The branches below must be a subset of the branches above
-  #   branches:
-  #     - "main"
-  #     - "dev"
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -35,7 +28,3 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: results.sarif
-      # - name: Upload Built files
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     path: results.sarif
