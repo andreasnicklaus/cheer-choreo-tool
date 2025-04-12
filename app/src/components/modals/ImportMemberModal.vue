@@ -8,6 +8,7 @@
   >
     <b-form-group
       :label="$tc('team', 1)"
+      label-class="label-with-colon"
       :state="teamIdIsValid"
       :invalid-feedback="teamIdStateFeedback"
     >
@@ -19,6 +20,7 @@
     </b-form-group>
     <b-form-group
       :label="$tc('season', 1)"
+      label-class="label-with-colon"
       :state="seasonIdIsValid"
       :invalid-feedback="seasonIdStateFeedback"
     >
@@ -30,6 +32,7 @@
     </b-form-group>
     <b-form-group
       :label="$t('modals.import-member.team-mitglied')"
+      label-class="label-with-colon"
       :state="memberIdsIsValid"
       :invalid-feedback="memberIdsStateFeedback"
     >

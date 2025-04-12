@@ -429,7 +429,7 @@
     "change-length": {
       "choreo-min-length": "You can't have a choreo with 0 counts.",
       "counts-zusaetzliche-counts-nach-den-achtern": "Counts (additional counts after the eights)",
-      "geschaetzte-zeit": "Estimated time:",
+      "geschaetzte-zeit": "Estimated time;",
       "laenge-aendern": "Change length",
       "laenge-der-choreo-aendern": "Change length of the choreo"
     },
@@ -454,7 +454,7 @@
       "example-name": "State Championship, Regionals {0}, ...",
       "extra-count-muss-zwischen-0-und-7-liegen": "Extra count must be between 0 and 7",
       "geschaetzte-zeit-timeestimationstring": "Estimated time: {0}",
-      "laenge": "Length:",
+      "laenge": "Length",
       "min-achter": "Eight must be larger than 0",
       "min-choreoname-length": "Min. 2 characters"
     },
@@ -713,7 +713,7 @@
     "email-confirmation-warning": "You have not yet confirmed your email address. Please click on the link in the email we sent you to confirm your email address.",
     "link-nochmal-senden": "Send link again",
     "settings": "Settings",
-    "tracking-opt-out": "Tracking (Opt-out):",
+    "tracking-opt-out": "Tracking (Opt-out)",
     "tracking-info": "We use your data anonymously to analyze and improve the use of the app.",
     "tracking-description": "I don't want my data to be anonymized and aggregated to analyze and improve the use of the app.",
     "achtung": "Watch out!",

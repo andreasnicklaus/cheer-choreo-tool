@@ -10,7 +10,8 @@
   >
     <b-form>
       <b-form-group
-        label="Name:"
+        :label="$t('name')"
+        label-class="label-with-colon"
         :state="newHitNameIsValid"
         :invalid-feedback="newHitNameStateFeedback"
         valid-feedback="Gültig!"
@@ -76,6 +77,7 @@
 
       <b-form-group
         :label="$t('teilnehmer')"
+        label-class="label-with-colon"
         :state="newHitMembersIsValid"
         :invalid-feedback="newHitMembersStateFeedback"
         :valid-feedback="$t('login.gueltig')"

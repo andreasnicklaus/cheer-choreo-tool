@@ -6,6 +6,7 @@
         <b-form @submit="onLoginSubmit" @reset="onReset">
           <b-form-group
             :label="$t('username')"
+            label-class="label-with-colon"
             :state="usernameIsValid"
             :invalid-feedback="usernameError"
           >
@@ -17,6 +18,7 @@
           </b-form-group>
           <b-form-group
             :label="$t('passwort')"
+            label-class="label-with-colon"
             :state="passwordIsValid"
             :invalid-feedback="passwordError"
           >
@@ -66,6 +68,7 @@
         <b-form @submit="onRegisterSubmit" @reset="onReset">
           <b-form-group
             :label="$t('username')"
+            label-class="label-with-colon"
             :state="usernameIsValid"
             :invalid-feedback="usernameError"
             :valid-feedback="$t('login.gueltig')"
@@ -78,6 +81,7 @@
           </b-form-group>
           <b-form-group
             :label="$t('e-mail-adresse')"
+            label-class="label-with-colon"
             :state="emailIsValid"
             :invalid-feedback="emailError"
             :valid-feedback="$t('login.gueltig')"
@@ -100,6 +104,7 @@
           </b-form-group>
           <b-form-group
             :label="$t('passwort')"
+            label-class="label-with-colon"
             :state="passwordIsValid"
             :invalid-feedback="passwordError"
             :valid-feedback="$t('login.gueltig')"
@@ -113,6 +118,7 @@
           </b-form-group>
           <b-form-group
             :label="$t('passwort')"
+            label-class="label-with-colon"
             :state="passwordRepetitionIsValid"
             :invalid-feedback="passwordRepetitionError"
             :valid-feedback="$t('login.gueltig')"

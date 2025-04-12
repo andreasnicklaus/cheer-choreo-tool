@@ -9,6 +9,7 @@
   >
     <b-form-group
       :label="$t('e-mail-adresse')"
+      label-class="label-with-colon"
       :description="$t('modals.reset-password.no-email-info')"
       :state="emailIsValid"
       :invalid-feedback="emailError"
