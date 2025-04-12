@@ -41,6 +41,12 @@ See [LICENSE](LICENSE) for the license of this project.
 
 ## :sparkles: Version history
 
+### 0.10.1 - 2025-04-12
+
+- Enhanced user settings on profile page
+- SSO for "forgot password" function
+- Personalization through profile pictures and club logos
+
 ### 0.10.0 - 2025-03-25
 
 - Added internationalization for English and German
