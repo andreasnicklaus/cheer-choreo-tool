@@ -577,7 +577,7 @@
     "reset-password": {
       "lost-password": "Login-Link beantragen",
       "no-email-info": "Konten ohne E-Mail-Adresse können nur händisch zurückgesetzt werden. Schicke eine E-Mail an info@choreo-planer.de!",
-      "email-info": "Wenn dein Konto mit einer E-Mail-Adresse verbunden ist, kannst du dir einen Login-Link zusenden lassen. Mit dem Link in der E-Mail kannst du dich einmalig einloggen. Auf der Profilseite kannst du dann dein Passwort selbst ändern.",
+      "email-info": "Wenn dein Konto mit einer E-Mail-Adresse verbunden ist, kannst du dir einen Login-Link zusenden lassen, mit dem du dich für 24 Stunden einloggen kannst. Auf der Profilseite kannst du dann dein Passwort selbst ändern.",
       "login-link-schicken": "Login-Link schicken"
     }
   },

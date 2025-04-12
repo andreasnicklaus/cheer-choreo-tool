@@ -81,7 +81,9 @@ class AuthService {
       if (!user) throw new Error("No user with this information was found.");
       if (!user.email) throw new Error("This user has no email address.");
 
-      const token = this.generateAccessToken(user.id);
+      const token = this.generateAccessToken(user.id, {
+        expiresIn: process.env.SSO_TOKEN_EXPIRES_IN,
+      });
       return MailService.sendSsoEmail(user.email, user.username, token);
     });
   }

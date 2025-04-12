@@ -577,7 +577,7 @@
     "reset-password": {
       "lost-password": "Request a login link",
       "no-email-info": "Accounts without an email address can only be reset manually. Send an email to info@choreoplaner.de!",
-      "email-info": "If your account is connected to an email address, you can have a login link sent to you. With the link in the email you can log in once. You can then change your password on the profile page.",
+      "email-info": "If your account is connected to an email address, you can have a login link sent to you via email, with which you can log in for 24 hours. You can then change your password on the profile page.",
       "login-link-schicken": "Send login link"
     }
   },

@@ -1,4 +1,5 @@
 const { verify, sendMail } = require("../plugins/nodemailer");
+const { timeStringToMillis } = require("../utils/time");
 
 class MailService {
   constructor() {
@@ -104,6 +105,16 @@ class MailService {
         username,
         ssoToken,
         frontendDomain: process.env.FRONTEND_DOMAIN,
+        expirationDate: new Date(
+          new Date() + timeStringToMillis(process.env.SSO_TOKEN_EXPIRES_IN)
+        ).toLocaleString("de", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+        }),
       },
       [
         {
