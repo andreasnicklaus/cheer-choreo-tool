@@ -206,7 +206,11 @@
                 />
                 <b-input-group-append>
                   <b-input-group-text
-                    v-if="user?.email && !user?.emailConfirmed"
+                    v-if="
+                      user?.email &&
+                      !user?.emailConfirmed &&
+                      email == user?.email
+                    "
                     v-b-tooltip.hover
                     :title="$t('accountView.check-email')"
                   >
@@ -252,13 +256,14 @@
               <b-alert
                 show
                 variant="warning"
-                v-if="user?.email && !user?.emailConfirmed"
+                v-if="
+                  user?.email && !user?.emailConfirmed && email == user?.email
+                "
               >
                 <p>
                   {{ $t("account.email-confirmation-warning") }}
                 </p>
-                <!-- TODO: resend confirmation link -->
-                <b-button variant="link">{{
+                <b-button variant="link" @click="resendEmailConfirmationLink">{{
                   $t("account.link-nochmal-senden")
                 }}</b-button>
               </b-alert>
@@ -698,7 +703,6 @@ export default {
     init() {
       return AuthService.getUserInfo()
         .then((user) => {
-          user.emailConfirmed = true;
           this.user = user;
           this.loadUserSettings();
           this.loadProfileImage();
@@ -863,6 +867,22 @@ export default {
     onClubSave(event) {
       event.preventDefault();
       this.saveClubInfo();
+    },
+    resendEmailConfirmationLink() {
+      return AuthService.resendEmailConfirmationLink().then(() => {
+        this.$bvToast.toast(
+          this.$t(
+            "accountView.die-e-mail-zur-bestaetigung-deiner-e-mail-adresse-wurde-erneut-verschickt-check-dein-postfach"
+          ),
+          {
+            variant: "success",
+            title: this.$t("accountView.e-mail-versandt"),
+            autoHideDelay: 3000,
+            appendToast: true,
+            solid: true,
+          }
+        );
+      });
     },
   },
   watch: {

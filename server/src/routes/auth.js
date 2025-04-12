@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const { ValidationError, UniqueConstraintError } = require("sequelize");
 const FileService = require("../services/FileService");
 const path = require("node:path");
+const MailService = require("../services/MailService");
 
 const router = Router();
 
@@ -98,8 +99,19 @@ router.get("/me", AuthService.authenticateUser(), (req, res, next) => {
 
 router.put("/me", AuthService.authenticateUser(), (req, res, next) => {
   const { username, email } = req.body;
-  UserService.update(req.UserId, { username, email })
+  const data = { username, email };
+  if (email) data.emailConfirmed = false;
+  UserService.update(req.UserId, data)
     .then((user) => {
+      if (email)
+        return MailService.sendEmailConfirmationEmail(
+          user.username,
+          user.id,
+          user.email
+        ).then(() => {
+          res.send();
+          return next();
+        });
       res.send(user);
       return next();
     })
@@ -151,6 +163,25 @@ router.delete(
         FileService.clearProfilePictureFolder(req.UserId);
         res.send();
         return next();
+      })
+      .catch((e) => next(e));
+  }
+);
+
+router.get(
+  "/me/resendEmailConfirmationLink",
+  AuthService.authenticateUser(),
+  (req, res, next) => {
+    UserService.findById(req.UserId)
+      .then((user) => {
+        return MailService.sendEmailConfirmationEmail(
+          user.username,
+          user.id,
+          user.email
+        ).then(() => {
+          res.send();
+          return next();
+        });
       })
       .catch((e) => next(e));
   }

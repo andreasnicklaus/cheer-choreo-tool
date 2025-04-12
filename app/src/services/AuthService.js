@@ -127,6 +127,12 @@ class AuthService {
   deleteProfilePicture() {
     return ax.delete("/auth/me/profilePicture").then((res) => res.data);
   }
+
+  resendEmailConfirmationLink() {
+    return ax
+      .get("/auth/me/resendEmailConfirmationLink")
+      .then((res) => res.data);
+  }
 }
 
 export default new AuthService();

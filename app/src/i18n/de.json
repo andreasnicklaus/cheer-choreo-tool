@@ -29,7 +29,9 @@
     "cant-delete-only-club": "Du kannst nicht deinen einzigen Verein entfernen! Erstelle zuerst einen anderen Verein.",
     "cant-delete-active-club": "Du kannst nicht deinen aktiven Verein löschen! Wähle zuerst einen anderen Verein als aktiv aus.",
     "lade-ein-bild-hoch-max-mb": "Lade ein Bild hoch: max. {0} MB",
-    "es-ist-nicht-moeglich-bilder-hochzuladen-die-groesser-al-mb-gross-sind": "Es ist nicht möglich, Bilder hochzuladen, die größer als {0} MB groß sind. Wähle eine kleinere Datei aus!"
+    "es-ist-nicht-moeglich-bilder-hochzuladen-die-groesser-al-mb-gross-sind": "Es ist nicht möglich, Bilder hochzuladen, die größer als {0} MB groß sind. Wähle eine kleinere Datei aus!",
+    "die-e-mail-zur-bestaetigung-deiner-e-mail-adresse-wurde-erneut-verschickt-check-dein-postfach": "Die E-Mail zur Bestätigung deiner E-Mail-Adresse wurde erneut verschickt. Check dein Postfach!",
+    "e-mail-versandt": "E-Mail versandt"
   },
   "achter": "Achter",
   "alle-auswaehlen": "Alle auswählen",
