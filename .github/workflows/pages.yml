@@ -71,8 +71,6 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - name: adfaf
-        run: "echo Hello World"
-      # - name: Deploy to GitHub Pages
-      #   id: deployment
-      #   uses: actions/deploy-pages@v4
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
