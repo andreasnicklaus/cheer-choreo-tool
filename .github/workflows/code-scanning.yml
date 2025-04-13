@@ -5,10 +5,7 @@ on:
     paths:
       - "server/**"
       - "app/**"
-  pull_request:
-    paths:
-      - "server/**"
-      - "app/**"
+      - ".github/workflows/code-scanning.yml"
   workflow_dispatch:
 
 permissions:
