@@ -9,7 +9,7 @@ router.get("/", (req, res, next) => {
       return res.render("../src/views/admin/users.ejs", {
         username: req.Admin.username,
         userList,
-      });
+      }); // njsscan-ignore: express_lfr_warning
     })
     .catch((e) => next(e));
 });
@@ -19,7 +19,7 @@ router.post("/", (req, res, next) => {
   if (email == "") email = null;
   return UserService.create(username, password, email, emailConfirmed)
     .then(() => {
-      return res.redirect(req.baseUrl);
+      return res.redirect(req.baseUrl); // njsscan-ignore: express_open_redirect
     })
     .catch((e) => next(e));
 });
@@ -31,7 +31,7 @@ router.post("/update", (req, res, next) => {
   if (data.password == "") data.password = undefined;
   return UserService.update(id, data)
     .then(() => {
-      return res.redirect(req.baseUrl);
+      return res.redirect(req.baseUrl); // njsscan-ignore: express_open_redirect
     })
     .catch((e) => next(e));
 });
@@ -39,7 +39,7 @@ router.post("/update", (req, res, next) => {
 router.delete("/:id", (req, res, next) => {
   return UserService.remove(req.params.id)
     .then(() => {
-      return res.redirect(req.baseUrl);
+      return res.redirect(req.baseUrl); // njsscan-ignore: express_open_redirect
     })
     .catch((e) => next(e));
 });

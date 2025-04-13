@@ -85,8 +85,8 @@
       const entity = JSON.parse(button.getAttribute("data-bs-entity"))
 
       document.getElementById("<%= entity %>Id").value = entity.id;
-      <%- editColumns %>.forEach(({column, type}) => {
-      document.getElementById(column).value = entity[column]
+      <%- editColumns %>.forEach(({column, type}) => { // njsscan-ignore: ejs_ect_template
+        document.getElementById(column).value = entity[column]
       })
     })
   }

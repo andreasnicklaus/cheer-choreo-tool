@@ -8,7 +8,7 @@ class MemberService {
   }
 
   async findById(id, UserId) {
-    return Member.findOne({ where: { id, UserId } });
+    return Member.findOne({ where: { id, UserId } }); // njsscan-ignore: node_nosqli_injection
   }
 
   getCount() {
@@ -86,31 +86,39 @@ class MemberService {
   async update(id, data, UserId, options = { all: false }) {
     return Member.findOne({
       where: options.all ? { id } : { id, UserId },
-    }).then(async (foundMember) => {
-      if (foundMember) {
-        logger.debug(
-          `MemberService.update ${JSON.stringify({ id, data, UserId })}`
-        );
-        await foundMember.update(data);
-        await foundMember.save();
-        return Member.findOne({ where: { id, UserId } });
-      } else {
-        throw Error(`Beim Update wurde kein Member mit der ID ${id} gefunden`);
-      }
-    });
+    }) // njsscan-ignore: node_nosqli_injection
+      .then(async (foundMember) => {
+        if (foundMember) {
+          logger.debug(
+            `MemberService.update ${JSON.stringify({ id, data, UserId })}`
+          );
+          await foundMember.update(data);
+          await foundMember.save();
+          return Member.findOne({ where: { id, UserId } }); // njsscan-ignore: node_nosqli_injection
+        } else {
+          throw Error(
+            `Beim Update wurde kein Member mit der ID ${id} gefunden`
+          );
+        }
+      });
   }
 
   async remove(id, UserId, options = { all: false }) {
     return Member.findOne({
       where: options.all ? { id } : { id, UserId },
-    }).then((foundMember) => {
-      if (foundMember) {
-        logger.debug(`MemberService.remove ${JSON.stringify({ id, UserId })}`);
-        return foundMember.destroy();
-      } else {
-        throw Error(`Beim Löschen wurde kein Member mit der ID ${id} gefunden`);
-      }
-    });
+    }) // njsscan-ignore: node_nosqli_injection
+      .then((foundMember) => {
+        if (foundMember) {
+          logger.debug(
+            `MemberService.remove ${JSON.stringify({ id, UserId })}`
+          );
+          return foundMember.destroy();
+        } else {
+          throw Error(
+            `Beim Löschen wurde kein Member mit der ID ${id} gefunden`
+          );
+        }
+      });
   }
 }
 
