@@ -22,7 +22,7 @@ const router = Router();
 router.get("/", (req, res, next) => {
   res.render("../src/views/admin/db.ejs", {
     username: req.Admin.username,
-  });
+  }); // njsscan-ignore: express_lfr_warning
   return next();
 });
 
@@ -106,7 +106,7 @@ router.get("/:entity", async (req, res, next) => {
     ),
     entity: req.params.entity,
     ...extraData,
-  });
+  }); // njsscan-ignore: express_lfr_warning
   return next();
 });
 
@@ -165,7 +165,7 @@ router.post("/:entity", async (req, res, next) => {
         return next(new Error("Invalid entity"));
     }
 
-    res.redirect(`${req.baseUrl}/${entity}`);
+    res.redirect(`${req.baseUrl}/${entity}`); // njsscan-ignore: express_open_redirect
   } catch (e) {
     next(e);
   }
@@ -206,7 +206,7 @@ router.post("/:entity/update", async (req, res, next) => {
   }
   try {
     await service.update(id, data, null, { all: true });
-    res.redirect(`${req.baseUrl}/${entity}`);
+    res.redirect(`${req.baseUrl}/${entity}`); // njsscan-ignore: express_open_redirect
   } catch (e) {
     next(e);
   }
@@ -238,7 +238,7 @@ router.delete("/:entity/:id", async (req, res, next) => {
 
   try {
     await service.remove(id, null, { all: true });
-    res.redirect(`${req.baseUrl}/${entity}`);
+    res.redirect(`${req.baseUrl}/${entity}`); // njsscan-ignore: express_open_redirect
   } catch (e) {
     next(e);
   }

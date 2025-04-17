@@ -2,8 +2,6 @@ name: Build Vue and Deploy to Pages
 
 on:
   push:
-    branches:
-      - "main"
     paths:
       - "app/**"
       - ".github/workflows/pages.yml"
@@ -61,6 +59,7 @@ jobs:
 
   deploy:
     needs: build
+    if: github.ref == 'refs/heads/main'
 
     permissions:
       pages: write

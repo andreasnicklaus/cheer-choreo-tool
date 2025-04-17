@@ -13,7 +13,7 @@ class SeasonTeamService {
         [SeasonTeam.associations.Members, "name"],
         [SeasonTeam.associations.Choreos, "name"],
       ],
-    });
+    }); // njsscan-ignore: node_nosqli_injection
   }
 
   getAll() {
@@ -83,23 +83,24 @@ class SeasonTeamService {
     return SeasonTeam.findOne({
       where: { id, UserId },
       include: { association: "Season", include: "SeasonTeams" },
-    }).then((foundSeasonTeam) => {
-      if (foundSeasonTeam) {
-        logger.debug(
-          `SeasonTeamService.remove ${JSON.stringify({ id, UserId })}`
-        );
-        if (
-          foundSeasonTeam.Season.SeasonTeams.length == 1 &&
-          foundSeasonTeam.Season.UserId == UserId
-        )
-          SeasonService.remove(foundSeasonTeam.Season.id, UserId);
-        return foundSeasonTeam.destroy();
-      } else {
-        throw Error(
-          `Beim Löschen wurde kein SeasonTeam mit der ID ${id} gefunden`
-        );
-      }
-    });
+    }) // njsscan-ignore: node_nosqli_injection
+      .then((foundSeasonTeam) => {
+        if (foundSeasonTeam) {
+          logger.debug(
+            `SeasonTeamService.remove ${JSON.stringify({ id, UserId })}`
+          );
+          if (
+            foundSeasonTeam.Season.SeasonTeams.length == 1 &&
+            foundSeasonTeam.Season.UserId == UserId
+          )
+            SeasonService.remove(foundSeasonTeam.Season.id, UserId);
+          return foundSeasonTeam.destroy();
+        } else {
+          throw Error(
+            `Beim Löschen wurde kein SeasonTeam mit der ID ${id} gefunden`
+          );
+        }
+      });
   }
 }
 

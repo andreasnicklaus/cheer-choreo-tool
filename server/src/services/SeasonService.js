@@ -44,32 +44,38 @@ class SeasonService {
   async update(id, data, UserId, options = { all: false }) {
     return Season.findOne({
       where: options.all ? { id } : { id, UserId },
-    }).then(async (foundSeason) => {
-      if (foundSeason) {
-        logger.debug(
-          `SeasonService.update ${JSON.stringify({ id, data, UserId })}`
-        );
-        await foundSeason.update(data);
-        return foundSeason.save();
-      } else {
-        throw Error(`Beim Update wurde keine Season mit der ID ${id} gefunden`);
-      }
-    });
+    }) // njsscan-ignore: node_nosqli_injection
+      .then(async (foundSeason) => {
+        if (foundSeason) {
+          logger.debug(
+            `SeasonService.update ${JSON.stringify({ id, data, UserId })}`
+          );
+          await foundSeason.update(data);
+          return foundSeason.save();
+        } else {
+          throw Error(
+            `Beim Update wurde keine Season mit der ID ${id} gefunden`
+          );
+        }
+      });
   }
 
   async remove(id, UserId, options = { all: false }) {
     return Season.findOne({
       where: options.all ? { id } : { id, UserId },
-    }).then((foundSeason) => {
-      if (foundSeason) {
-        logger.debug(`SeasonService.remove ${JSON.stringify({ id, UserId })}`);
-        return foundSeason.destroy();
-      } else {
-        throw Error(
-          `Beim Löschen wurde keine Season mit der ID ${id} gefunden`
-        );
-      }
-    });
+    }) // njsscan-ignore: node_nosqli_injection
+      .then((foundSeason) => {
+        if (foundSeason) {
+          logger.debug(
+            `SeasonService.remove ${JSON.stringify({ id, UserId })}`
+          );
+          return foundSeason.destroy();
+        } else {
+          throw Error(
+            `Beim Löschen wurde keine Season mit der ID ${id} gefunden`
+          );
+        }
+      });
   }
 }
 

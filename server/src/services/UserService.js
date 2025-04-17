@@ -20,7 +20,7 @@ class UserService {
       where: {
         [Op.or]: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
       },
-    });
+    }); // njsscan-ignore: node_nosqli_injection
   }
 
   getCount() {

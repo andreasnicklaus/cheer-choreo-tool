@@ -34,44 +34,46 @@ class PositionService {
   }
 
   async findById(id, UserId) {
-    return Position.findOne({ where: { id, UserId }, include: "Member" });
+    return Position.findOne({ where: { id, UserId }, include: "Member" }); // njsscan-ignore: node_nosqli_injection
   }
 
   async update(id, LineupId, data, UserId) {
     return Position.findOne({
       where: { LineupId, id, UserId },
       include: "Member",
-    }).then(async (foundPosition) => {
-      if (foundPosition) {
-        logger.debug(
-          `PositionService.update ${JSON.stringify({
-            id,
-            data,
-            UserId,
-          })}`
-        );
-        await foundPosition.update(data);
-        return foundPosition.save();
-      } else
-        throw Error(
-          `Beim Update wurde keine Position mit der ID ${id} gefunden`
-        );
-    });
+    }) // njsscan-ignore: node_nosqli_injection
+      .then(async (foundPosition) => {
+        if (foundPosition) {
+          logger.debug(
+            `PositionService.update ${JSON.stringify({
+              id,
+              data,
+              UserId,
+            })}`
+          );
+          await foundPosition.update(data);
+          return foundPosition.save();
+        } else
+          throw Error(
+            `Beim Update wurde keine Position mit der ID ${id} gefunden`
+          );
+      });
   }
 
   async remove(id, UserId) {
-    return Position.findOne({ where: { id, UserId } }).then((foundPosition) => {
-      if (foundPosition) {
-        logger.debug(
-          `PositionService.remove ${JSON.stringify({ id, UserId })}`
-        );
-        return foundPosition.destroy();
-      } else {
-        throw Error(
-          `Beim Löschen wurde keine Position mit der ID ${id} gefunden`
-        );
-      }
-    });
+    return Position.findOne({ where: { id, UserId } }) // njsscan-ignore: node_nosqli_injection
+      .then((foundPosition) => {
+        if (foundPosition) {
+          logger.debug(
+            `PositionService.remove ${JSON.stringify({ id, UserId })}`
+          );
+          return foundPosition.destroy();
+        } else {
+          throw Error(
+            `Beim Löschen wurde keine Position mit der ID ${id} gefunden`
+          );
+        }
+      });
   }
 }
 

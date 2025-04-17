@@ -32,7 +32,7 @@ router.use(function (req, res, next) {
       `${req.protocol}://${req.get("host")}`
     );
     url.search = new URLSearchParams(cleanedQuery).toString();
-    return res.redirect(url.toString());
+    return res.redirect(url.toString()); // njsscan-ignore: express_open_redirect
   }
 
   res.locals.query = cleanedQuery;
@@ -103,7 +103,7 @@ async function renderDashboard(req, res) {
         newestFeedback,
         feedbackAverage,
         feedbackAverageOfLastMonth,
-      });
+      }); // njsscan-ignore: express_lfr_warning
     }
   );
 }

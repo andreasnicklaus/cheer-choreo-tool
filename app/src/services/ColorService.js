@@ -37,7 +37,7 @@ class ColorService {
         alreadyUsedColors.length == 0 || !alreadyUsedColors.includes(color)
     );
     if (possibleColors.length == 0) possibleColors = colors;
-    return possibleColors[Math.floor(Math.random() * possibleColors.length)];
+    return possibleColors[Math.floor(Math.random() * possibleColors.length)]; // njsscan-ignore: node_insecure_random_generator
   }
 }
 

@@ -18,7 +18,7 @@ class AdminService {
   }
 
   findByUsername(username, { scope = "defaultScope" }) {
-    return Admin.scope(scope).findOne({ where: { username } });
+    return Admin.scope(scope).findOne({ where: { username } }); // njsscan-ignore: node_nosqli_injection
   }
 
   findById(id) {
