@@ -49,7 +49,7 @@ class MessagingService {
 
   showError(message, title = null, options = {}) {
     if (!title)
-      title = ERROR_MESSAGES[Math.floor(Math.random() * ERROR_MESSAGES.length)];
+      title = ERROR_MESSAGES[Math.floor(Math.random() * ERROR_MESSAGES.length)]; // njsscan-ignore: node_insecure_random_generator
     return this._showMessage(message, { title, variant: "danger", ...options });
   }
 
