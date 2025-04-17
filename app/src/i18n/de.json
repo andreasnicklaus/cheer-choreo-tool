@@ -729,5 +729,8 @@
     "rueckgaengig-machen": "Rückgängig machen",
     "reset-password": "Passwort zurücksetzen",
     "reset-password-description": "Setze dein Passwort zurück, um dein Konto zu schützen. Ändere dein Passwort, wenn du den Verdacht hast, dass jemand anderes Zugriff auf dein Konto hat."
-  }
+  },
+  "fehler": "Fehler",
+  "warnung": "Warnung",
+  "info": "Info"
 }

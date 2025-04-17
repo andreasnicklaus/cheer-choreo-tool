@@ -259,10 +259,7 @@ export default {
         })
         .catch(() => {
           this.online = false;
-          this.$bvToast.toast(this.$t("errors.offline"), {
-            title: "Offline",
-            variant: "danger",
-          });
+          MessagingService.showError(this.$t("errors.offline"), "Offline");
         });
   },
   watch: {

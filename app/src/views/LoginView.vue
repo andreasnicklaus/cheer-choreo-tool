@@ -193,6 +193,7 @@
 import ConfirmEmailModal from "@/components/modals/ConfirmEmailModal.vue";
 import PasswordResetModal from "@/components/modals/PasswordResetModal.vue";
 import AuthService from "@/services/AuthService";
+import MessagingService from "@/services/MessagingService";
 
 const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 
@@ -226,18 +227,7 @@ export default {
   },
   methods: {
     showFailMessage(message, title = null) {
-      this.$bvToast.toast(message, {
-        title:
-          title ||
-          this.failMessages[
-            Math.floor(Math.random() * this.failMessages.length)
-          ],
-        autoHideDelay: 5000,
-        appendToast: true,
-        variant: "danger",
-        solid: true,
-        toaster: "b-toaster-top-center",
-      });
+      MessagingService.showError(message, title);
     },
     onReset(event) {
       event.preventDefault();
@@ -311,14 +301,13 @@ export default {
         });
     },
     onPasswordReset() {
-      this.$bvToast.toast(this.$t("login.login-link-was-sent"), {
-        title: this.$t("login.erfolg"),
-        autoHideDelay: 5000,
-        appendToast: true,
-        variant: "success",
-        solid: true,
-        // toaster: "b-toaster-top-center",
-      });
+      MessagingService.showSuccess(
+        this.$t("login.login-link-was-sent"),
+        this.$t("login.erfolg"),
+        {
+          autoHideDelay: 5_000,
+        }
+      );
     },
   },
   computed: {

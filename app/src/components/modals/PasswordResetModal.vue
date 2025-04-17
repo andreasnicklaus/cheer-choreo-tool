@@ -52,6 +52,7 @@
 
 <script>
 import AuthService from "@/services/AuthService";
+import MessagingService from "@/services/MessagingService";
 
 const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 
@@ -84,13 +85,8 @@ export default {
         })
         .catch((e) => {
           this.loading = false;
-          this.$bvToast.toast(e.response.data, {
-            title: "Fehler",
-            autoHideDelay: 5000,
-            appendToast: true,
-            variant: "danger",
-            solid: true,
-            toaster: "b-toaster-top-center",
+          MessagingService.showError(e.response.data, this.$t("fehler"), {
+            autoHideDelay: 5_000,
           });
         });
     },
