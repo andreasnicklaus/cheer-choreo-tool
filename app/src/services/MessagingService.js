@@ -3,8 +3,8 @@ import i18n from "@/plugins/vue-i18n";
 const DEFAULT_OPTIONS = {
   variant: "info",
   title: "Info",
-  autoHideDelay: 3000,
-  appendToast: true,
+  // autoHideDelay: 5_000,
+  // appendToast: false,
   solid: true,
 };
 
