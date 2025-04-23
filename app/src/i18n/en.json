@@ -729,5 +729,8 @@
     "rueckgaengig-machen": "Undo",
     "reset-password": "Reset password",
     "reset-password-description": "Reset your password to protect your account. Change your password if you suspect that someone else has access to your account."
-  }
+  },
+  "fehler": "Error",
+  "warnung": "Warning",
+  "info": "Info"
 }

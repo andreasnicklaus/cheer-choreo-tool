@@ -270,6 +270,7 @@ import CreateChoreoModal from "./modals/CreateChoreoModal.vue";
 import CreateClubModal from "./modals/CreateClubModal.vue";
 import CreateTeamModal from "./modals/CreateTeamModal.vue";
 import LanguageService from "@/services/LanguageService";
+import MessagingService from "@/services/MessagingService";
 
 export default {
   name: "HeadNav",
@@ -330,13 +331,11 @@ export default {
     },
     checkEmailConfirmation() {
       if (this.user?.email && !this.user?.emailConfirmed) {
-        this.$bvToast.toast(this.$t("nav.checkEmail.text"), {
-          variant: "warning",
-          title: this.$t("nav.checkEmail.title"),
-          appendToast: true,
-          solid: true,
-          autoHideDelay: 10_000,
-        });
+        MessagingService.showWarning(
+          this.$t("nav.checkEmail.text"),
+          this.$t("nav.checkEmail.title"),
+          { autoHideDelay: 10_000 }
+        );
       }
     },
     logout() {

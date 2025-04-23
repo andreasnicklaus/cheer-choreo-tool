@@ -654,6 +654,7 @@ import DeleteClubModal from "@/components/modals/DeleteClubModal.vue";
 import toTimeAgo from "@/utils/time";
 import ClubService from "@/services/ClubService";
 import CreateClubModal from "@/components/modals/CreateClubModal.vue";
+import MessagingService from "@/services/MessagingService";
 
 const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 const MB = 1_048_576;
@@ -708,13 +709,10 @@ export default {
           this.loadProfileImage();
         })
         .catch(() => {
-          this.$bvToast.toast(this.$t("accountView.unbekannter-fehler"), {
-            variant: "danger",
-            title: this.$t("accountView.das-hat-nicht-funktioniert"),
-            autoHideDelay: 3000,
-            appendToast: true,
-            solid: true,
-          });
+          MessagingService.showError(
+            this.$t("accountView.unbekannter-fehler"),
+            this.$t("accountView.das-hat-nicht-funktioniert")
+          );
         });
     },
     loadProfileImage() {
@@ -786,25 +784,16 @@ export default {
         .then(() => {
           this.init();
 
-          this.$bvToast.toast(
+          MessagingService.showSuccess(
             this.$t("accountView.deine-nutzerinformationen-wurden-gespeichert"),
-            {
-              variant: "success",
-              title: this.$t("editView.gespeichert"),
-              autoHideDelay: 3000,
-              appendToast: true,
-              solid: true,
-            }
+            this.$t("editView.gespeichert")
           );
         })
         .catch(() => {
-          this.$bvToast.toast(this.$t("accountView.unbekannter-fehler"), {
-            variant: "danger",
-            title: this.$t("accountView.das-hat-nicht-funktioniert"),
-            autoHideDelay: 3000,
-            appendToast: true,
-            solid: true,
-          });
+          MessagingService.showError(
+            this.$t("accountView.unbekannter-fehler"),
+            this.$t("accountView.das-hat-nicht-funktioniert")
+          );
         });
     },
     resetUserInfo() {
@@ -831,27 +820,19 @@ export default {
       Promise.all(queries)
         .then(() => {
           this.init();
-          this.$bvToast.toast(
+
+          MessagingService.showSuccess(
             this.$t(
               "accountView.deine-vereinsinformationen-wurden-gespeichert"
             ),
-            {
-              variant: "success",
-              title: this.$t("editView.gespeichert"),
-              autoHideDelay: 3000,
-              appendToast: true,
-              solid: true,
-            }
+            this.$t("editView.gespeichert")
           );
         })
         .catch(() => {
-          this.$bvToast.toast(this.$t("accountView.unbekannter-fehler"), {
-            variant: "danger",
-            title: this.$t("accountView.das-hat-nicht-funktioniert"),
-            autoHideDelay: 3000,
-            appendToast: true,
-            solid: true,
-          });
+          MessagingService.showError(
+            this.$t("accountView.unbekannter-fehler"),
+            this.$t("accountView.das-hat-nicht-funktioniert")
+          );
         });
     },
     resetClubInfo() {
@@ -870,17 +851,11 @@ export default {
     },
     resendEmailConfirmationLink() {
       return AuthService.resendEmailConfirmationLink().then(() => {
-        this.$bvToast.toast(
+        MessagingService.showSuccess(
           this.$t(
             "accountView.die-e-mail-zur-bestaetigung-deiner-e-mail-adresse-wurde-erneut-verschickt-check-dein-postfach"
           ),
-          {
-            variant: "success",
-            title: this.$t("accountView.e-mail-versandt"),
-            autoHideDelay: 3000,
-            appendToast: true,
-            solid: true,
-          }
+          this.$t("accountView.e-mail-versandt")
         );
       });
     },

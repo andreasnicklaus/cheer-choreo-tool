@@ -388,6 +388,7 @@ import SelectHitModal from "@/components/modals/SelectHitModal.vue";
 import ColorService from "@/services/ColorService";
 import ParticipantSubstitutionModal from "@/components/modals/ParticipantSubstitutionModal.vue";
 import MobileChoreoEditModal from "@/components/modals/MobileChoreoEditModal.vue";
+import MessagingService from "@/services/MessagingService";
 
 export default {
   name: "EditView",
@@ -701,19 +702,13 @@ export default {
       this.$refs.countOverview.$el.scrollIntoView({ behavior: "smooth" });
     },
     showSuccessMessage(savedType) {
-      const toastId = "toastId";
-      this.$bvToast.hide(toastId);
-      this.$bvToast.toast(
+      MessagingService.showSuccess(
         savedType
           ? `${savedType} ${this.$t("editView.wurde-gespeichert")}`
           : this.$t("editView.deine-choreo-wurde-gespeichert"),
+        this.$t("editView.gespeichert"),
         {
-          variant: "success",
-          title: this.$t("editView.gespeichert"),
-          autoHideDelay: 1500,
-          appendToast: false,
-          solid: true,
-          id: toastId,
+          autoHideDelay: 1_500,
         }
       );
     },

@@ -151,6 +151,7 @@ import FeedbackPrompt from "./components/FeedbackPrompt.vue";
 import HeadNav from "./components/HeadNav.vue";
 import ax, { getApiDomain } from "./services/RequestService";
 import breakpoints from "@/utils/breakpoints";
+import MessagingService from "./services/MessagingService";
 
 export default {
   components: { HeadNav, ConsentWindow, AppInstallWindow, FeedbackPrompt },
@@ -246,6 +247,10 @@ export default {
     };
   },
   mounted() {
+    MessagingService.subscribe("App", (message, options) =>
+      this.$bvToast.toast(message, options)
+    );
+
     if (!window.__PRERENDER_INJECTED)
       ax.get("/version")
         .then((res) => {
@@ -254,10 +259,7 @@ export default {
         })
         .catch(() => {
           this.online = false;
-          this.$bvToast.toast(this.$t("errors.offline"), {
-            title: "Offline",
-            variant: "danger",
-          });
+          MessagingService.showError(this.$t("errors.offline"), "Offline");
         });
   },
   watch: {
