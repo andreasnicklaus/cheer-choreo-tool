@@ -17,7 +17,7 @@ const User = db.define(
       validate: {
         len: {
           args: [6, 999],
-          msg: "Nutzername muss mindestens 6 Zeichen haben",
+          msg: "Username has to be at least 6 characters",
         },
       },
     },
@@ -27,7 +27,7 @@ const User = db.define(
       unique: true,
       validate: {
         isEmail: {
-          msg: "E-Mail muss im E-Mail-Format sein, z.B. info@choreo-planer.de",
+          msg: "Email has to be correct email format, e.g. info@choreo-planer.de",
         },
       },
     },

@@ -16,6 +16,7 @@ const FeedbackService = require("../../services/FeedbackService");
 const { dbRouter } = require("./db");
 const { adminRouter } = require("./admins");
 const { userRouter } = require("./users");
+const { notificationRouter } = require("./notification");
 
 const router = Router();
 router.use(function (req, res, next) {
@@ -117,5 +118,11 @@ router.get("/", authenticateAdmin(), resolveAdmin, (req, res, next) => {
 router.use("/db", authenticateAdmin(), resolveAdmin, dbRouter);
 router.use("/users", authenticateAdmin(), resolveAdmin, userRouter);
 router.use("/admins", authenticateAdmin(), resolveAdmin, adminRouter);
+router.use(
+  "/notifications",
+  authenticateAdmin(),
+  resolveAdmin,
+  notificationRouter
+);
 
 module.exports = { adminRouter: router };

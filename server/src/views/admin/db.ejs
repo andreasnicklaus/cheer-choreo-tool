@@ -113,7 +113,7 @@
                   <button
                     class="btn btn-danger btn-sm"
                     type="button"
-                    onclick="deleteEntity('<%= datum.id %>')"
+                    data-delete-id="<%= datum.id %>"
                   >
                     <i class="bi bi-trash-fill"></i>
                   </button>
@@ -140,6 +140,14 @@
 
     <footer><%- include('./partials/footer'); %></footer>
     <script type="text/javascript" defer nonce="<%= cspNonce %>">
+      const deleteButtons = document.querySelectorAll('[data-delete-id]')
+      deleteButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const id = button.getAttribute('data-delete-id');
+          deleteEntity(id);
+        });
+      })
+
       function deleteEntity(id) {
         if (confirm('Are you sure you want to delete this entity?')) {
           fetch(`<%= path %>/${id}`, {

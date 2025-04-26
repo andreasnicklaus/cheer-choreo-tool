@@ -80,6 +80,7 @@ app.use(
           (req, res) => `'nonce-${res.locals.cspNonce}'`,
         ],
         "worker-src": ["'self'", "https:", "blob:"],
+        upgradeInsecureRequests: null,
       },
     },
     referrerPolicy: {

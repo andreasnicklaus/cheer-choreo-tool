@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./partials/head'); %>
+  </head>
+  <body>
+    <header><%- include('./partials/header'); %></header>
+
+    <main class="container">
+      <div class="row justify-content-between align-items-center">
+        <div class="col col-auto">
+          <h1>Notifications</h1>
+        </div>
+        <div class="col col-auto">
+          <button
+            type="button"
+            class="btn btn-success btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#notificationCreateModal"
+          >
+            <i class="bi bi-send-fill"></i>
+            Send Notifications
+          </button>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Title</th>
+              <th scope="col">Message</th>
+              <th scope="col">Created At</th>
+              <th scope="col">Updated At</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="table-group-divider">
+            <% notificationList.forEach((notification, i) => { %>
+            <tr title="<%= notification.id %>">
+              <th scope="row"><%= i + 1 %></th>
+              <td><%= notification.title %></td>
+              <td>
+                <%= notification.message.length > 30 ?
+                notification.message.slice(0, 27) + "..." : notification.message
+                %>
+              </td>
+              <td>
+                <%= new Date(notification.createdAt).toLocaleString("en-EN") %>
+              </td>
+              <td>
+                <%= new Date(notification.updatedAt).toLocaleString("en-EN") %>
+              </td>
+              <td>
+                <div class="btn-group">
+                  <button
+                    class="btn btn-danger btn-sm"
+                    type="button"
+                    data-delete-id="<%= notification.id %>"
+                  >
+                    <i class="bi bi-trash-fill"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+          <tfoot class="table-group-divider">
+            <tr>
+              <td></td>
+              <td>
+                <b> <%= notificationList.length %> </b>
+                Notifications
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </main>
+
+    <!-- Modal: Create Notification -->
+    <div
+      class="modal fade"
+      id="notificationCreateModal"
+      tabindex="-1"
+      aria-labelledby="notificationCreateModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="notificationCreateModalLabel">
+              Send a notification
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <!-- TODO: modify submit action to for API -->
+          <form
+            action="/admin/notifications"
+            method="POST"
+            id="notificationCreateForm"
+          >
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="title"
+                  name="title"
+                  placeholder="Title"
+                  autofocus="true"
+                />
+                <div id="titleHelp" class="form-text">Optional</div>
+              </div>
+              <div class="mb-3">
+                <label for="message" class="form-label">Message</label>
+                <textarea
+                  class="form-control"
+                  id="message"
+                  name="message"
+                  placeholder="Message"
+                  required
+                  rows="3"
+                ></textarea>
+                <div id="messageHelp" class="form-text">Required</div>
+              </div>
+              <div class="mb-3">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="notifyViaEmail"
+                  name="notifyViaEmail"
+                />
+                <label for="notifyViaEmail" class="form-label">
+                  Notify user via email
+                </label>
+              </div>
+              <div class="mb-3">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="notifyAll"
+                  name="notifyAll"
+                />
+                <label for="notifyAll" class="form-label">
+                  Send to all users
+                </label>
+              </div>
+              <div class="input-group mb-3">
+                <input
+                  type="text"
+                  id="userSearchInput"
+                  list="userSearch"
+                  placeholder="User"
+                  class="form-control"
+                />
+                <button
+                  class="btn btn-primary"
+                  type="button"
+                  id="button-selectUser"
+                >
+                  <i class="bi bi-plus"></i>
+                </button>
+                <datalist id="userSearch">
+                  <% userList.forEach(({id, username}) => { %>
+                  <option value="<%= id %>"><%= username %></option>
+                  <% }) %>
+                </datalist>
+              </div>
+              <div class="mb-3">
+                <label for="targetUser" class="form-label">
+                  Users to notify
+                </label>
+                <ul class="list-group" id="targetUserList"></ul>
+              </div>
+              <select
+                id="targetUsers"
+                name="targetUsers"
+                multiple
+                style="display: none"
+              >
+                <% userList.forEach(({id, username}) => { %>
+                <option value="<%= id %>"><%= username %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-outline-danger"
+                data-bs-dismiss="modal"
+              >
+                <i class="bi bi-trash"></i>
+                Close
+              </button>
+              <button type="submit" class="btn btn-success">
+                <i class="bi bi-send-fill"></i> Send
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <footer><%- include('./partials/footer'); %></footer>
+
+    <script type="text/javascript" defer nonce="<%= cspNonce %>">
+      const notifyAllCheckbox = document.getElementById("notifyAll");
+      notifyAllCheckbox.addEventListener("change", (event) => {
+        const userInput = document.querySelector("input[name='UserId']");
+        const selectedUserList = document.getElementById("targetUserList");
+        if (event.target.checked) {
+          userInput.setAttribute("disabled", "true");
+          Array.from(selectedUserList.children).forEach((li) => {
+            li.className = li.className + " disabled";
+          });
+        } else {
+          userInput.removeAttribute("disabled");
+          Array.from(selectedUserList.children).forEach((li) => {
+            if (li.className.split(" ").includes("disabled"))
+              li.className = li.className.replace("disabled", "");
+          });
+        }
+      });
+    </script>
+
+    <script type="text/javascript" defer nonce="<%= cspNonce %>">
+      const selectedUsers = new Set();
+
+      function renderSelectedUsers() {
+        const selectedUserList = document.getElementById("targetUserList");
+        selectedUserList.innerHTML = ""; // Clear the list before rendering
+
+        Array.from(selectedUsers)
+          .sort((uA, uB) => {
+            return uA.username.localeCompare(uB.username);
+          })
+          .forEach((user) => {
+            const li = document.createElement("li");
+            li.className =
+              "list-group-item d-flex justify-content-between align-items-center";
+
+            const username = document.createElement("span");
+            username.textContent = user.username;
+            li.appendChild(username);
+
+            const removeButton = document.createElement("button");
+            removeButton.className = "btn-close btn-close-sm";
+            removeButton.setAttribute("aria-label", "Close");
+            removeButton.setAttribute("data-user-id", user.id);
+            removeButton.addEventListener("click", () => {
+              selectedUsers.delete(user);
+              renderSelectedUsers();
+            });
+            li.appendChild(removeButton);
+
+            selectedUserList.appendChild(li);
+          });
+      }
+
+      const selectUserButton = document.getElementById("button-selectUser");
+      const userInput = document.getElementById("userSearchInput");
+      const userOptions = Array.from(
+        document.getElementById("userSearch").options
+      );
+      selectUserButton.addEventListener("click", selectUser);
+
+      function selectUser() {
+        const userId = userInput.value;
+        const username = userOptions.find((o) => {
+          return o.value == userId;
+        })?.textContent;
+
+        if (userId && username) {
+          selectedUsers.add({ id: userId, username });
+          userInput.value = "";
+          renderSelectedUsers();
+        } else {
+          alert("Please select a valid user.");
+        }
+      }
+
+      renderSelectedUsers();
+    </script>
+
+    <script type="text/javascript" defer nonce="<%= cspNonce %>">
+      const deleteButtons = document.querySelectorAll("[data-delete-id]");
+      deleteButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const id = button.getAttribute("data-delete-id");
+          deleteNotification(id);
+        });
+      });
+
+      function deleteNotification(id) {
+        if (confirm("Are you sure you want to delete this notification?")) {
+          fetch(`/admin/notifications/${id}`, {
+            method: "DELETE",
+          })
+            .then((data) => {
+              window.location.reload();
+            })
+            .catch((err) => {
+              console.error(err);
+              alert("Something went wrong");
+            });
+        }
+      }
+    </script>
+
+    <script type="text/javascript" defer nonce="<%= cspNonce %>">
+      const notificationCreateForm = document.getElementById(
+        "notificationCreateForm"
+      );
+      notificationCreateForm.addEventListener("submit", (event) => {
+        let title = document.getElementById("title").value;
+        if (title.length == 0) document.getElementById("title").value = null;
+        const message = document.getElementById("message").value;
+        if (!title && !message) {
+          event.preventDefault(); // Prevent form submission for validation
+          return alert("Please provide a title or message.");
+        }
+
+        const notifyViaEmail =
+          document.getElementById("notifyViaEmail").checked;
+
+        const notifyAll = document.getElementById("notifyAll").checked;
+        if (!notifyAll & (selectedUsers.size == 0)) {
+          event.preventDefault(); // Prevent form submission for validation
+          return alert("Please select at least one user to notify.");
+        }
+
+        const targetUsers = document.getElementById("targetUsers");
+        const selectedUserIdArray = Array.from(selectedUsers).map(
+          (user) => user.id
+        );
+        Array.from(targetUsers.options).forEach((option) => {
+          option.selected = selectedUserIdArray.some(
+            (uId) => uId == option.value
+          );
+        });
+      });
+    </script>
+  </body>
+</html>

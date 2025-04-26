@@ -1418,6 +1418,16 @@
             }
           ]
         }
+      ],
+      "notifications": [
+        {
+          "title": "Willkommen",
+          "message": "Willkommen beim Choreo Planer! Wir wünschen dir viel Spaß beim Planen deiner Choreos!"
+        },
+        {
+          "title": "Willkommen2",
+          "message": "Willkommen beim Choreo Planer! Wir wünschen dir viel Spaß beim Planen deiner Choreos!"
+        }
       ]
     }
   ]
