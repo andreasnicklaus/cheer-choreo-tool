@@ -103,6 +103,7 @@ class NotificationService {
         },
       }),
     ]).then(([readNoticationsCount, allNoticiationsCount]) => {
+      if (allNoticiationsCount == 0) return 100;
       return roundToDecimals(
         (readNoticationsCount / allNoticiationsCount) * 100,
         1
@@ -141,6 +142,12 @@ class NotificationService {
         readNoticationsCountBeforeLastMonth,
         allNoticationsCountBeforeLastMonth,
       ]) => {
+        if (
+          allNoticationsCountBeforeLastMonth == 0 ||
+          allNoticiationsCountLastMonth ||
+          0
+        )
+          return 0;
         return roundToDecimals(
           (readNoticationsCountBeforeLastMonth /
             allNoticationsCountBeforeLastMonth -

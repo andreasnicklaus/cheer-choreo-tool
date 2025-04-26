@@ -1426,7 +1426,8 @@
         },
         {
           "title": "Willkommen2",
-          "message": "Willkommen beim Choreo Planer! Wir wünschen dir viel Spaß beim Planen deiner Choreos!"
+          "message": "Willkommen beim Choreo Planer! Wir wünschen dir viel Spaß beim Planen deiner Choreos!",
+          "read": true
         }
       ]
     }

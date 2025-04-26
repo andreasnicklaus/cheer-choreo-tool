@@ -31,7 +31,14 @@ function seed() {
           ),
           Promise.all(
             u.notifications.map((n) =>
-              NotificationService.findOrCreate(n.title, n.message, user.id)
+              NotificationService.findOrCreate(
+                n.title,
+                n.message,
+                user.id
+              ).then((notification) => {
+                if (n.read)
+                  NotificationService.markRead(notification.id, user.id);
+              })
             )
           ),
         ]).then(([seasons, notifications]) =>
