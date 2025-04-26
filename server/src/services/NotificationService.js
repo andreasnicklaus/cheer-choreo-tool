@@ -1,5 +1,7 @@
+const { Op } = require("sequelize");
 const Notification = require("../db/models/notification");
 const { logger } = require("../plugins/winston");
+const roundToDecimals = require("../utils/numbers");
 const UserService = require("./UserService");
 
 class NotificationService {
@@ -85,6 +87,69 @@ class NotificationService {
         );
       }
     });
+  }
+
+  getReadPercentage() {
+    return Promise.all([
+      Notification.count({
+        where: {
+          read: true,
+          createdAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+        },
+      }),
+      Notification.count({
+        where: {
+          createdAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+        },
+      }),
+    ]).then(([readNoticationsCount, allNoticiationsCount]) => {
+      return roundToDecimals(
+        (readNoticationsCount / allNoticiationsCount) * 100,
+        1
+      );
+    });
+  }
+
+  getReadTrend() {
+    return Promise.all([
+      Notification.count({
+        where: {
+          read: true,
+          createdAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+        },
+      }),
+      Notification.count({
+        where: {
+          createdAt: { [Op.gt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+        },
+      }),
+      Notification.count({
+        where: {
+          read: true,
+          createdAt: { [Op.lt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+        },
+      }),
+      Notification.count({
+        where: {
+          createdAt: { [Op.lt]: new Date() - 1000 * 60 * 60 * 24 * 30 },
+        },
+      }),
+    ]).then(
+      ([
+        readNoticationsCountLastMonth,
+        allNoticiationsCountLastMonth,
+        readNoticationsCountBeforeLastMonth,
+        allNoticationsCountBeforeLastMonth,
+      ]) => {
+        return roundToDecimals(
+          (readNoticationsCountBeforeLastMonth /
+            allNoticationsCountBeforeLastMonth -
+            readNoticationsCountLastMonth / allNoticiationsCountLastMonth) *
+            100,
+          1
+        );
+      }
+    );
   }
 }
 

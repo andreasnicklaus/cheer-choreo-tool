@@ -125,6 +125,42 @@ class MailService {
       ]
     );
   }
+
+  sendNotificationNotice(
+    userEmail,
+    username,
+    ssoToken,
+    notificationTitle = null
+  ) {
+    return sendMail(
+      userEmail,
+      "Neue Benachrichtigung!",
+      "newNotification.ejs",
+      {
+        username,
+        ssoToken,
+        notificationTitle,
+        frontendDomain: process.env.FRONTEND_DOMAIN,
+        expirationDate: new Date(
+          new Date() + timeStringToMillis(process.env.SSO_TOKEN_EXPIRES_IN)
+        ).toLocaleString("de", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+        }),
+      },
+      [
+        {
+          filename: "logo.png",
+          path: "https://www.choreo-Planer.de/Icon.png",
+          cid: "choreo-planer-icon",
+        },
+      ]
+    );
+  }
 }
 
 module.exports = new MailService();

@@ -17,20 +17,24 @@ function seed() {
     data.users.map((u) =>
       UserService.findOrCreate(u.username, u.password).then((user) =>
         Promise.all([
-          ...data.seasons.map(async (s) => {
-            const [season, created] = await Season.findOrCreate({
-              where: {
-                year: s.year,
-                name: s.name,
-                UserId: s.usersSpecific ? user.id : null,
-              },
-            });
-            return season;
-          }),
-          ...u.notifications.map((n) =>
-            NotificationService.findOrCreate(n.title, n.message, user.id)
+          Promise.all(
+            data.seasons.map(async (s) => {
+              const [season, created] = await Season.findOrCreate({
+                where: {
+                  year: s.year,
+                  name: s.name,
+                  UserId: s.usersSpecific ? user.id : null,
+                },
+              });
+              return season;
+            })
           ),
-        ]).then(([seasons, _]) =>
+          Promise.all(
+            u.notifications.map((n) =>
+              NotificationService.findOrCreate(n.title, n.message, user.id)
+            )
+          ),
+        ]).then(([seasons, notifications]) =>
           Promise.all(
             u.clubs.map((c) =>
               ClubService.findOrCreate(c.name, user.id).then((club) =>

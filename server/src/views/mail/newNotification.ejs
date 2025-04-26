@@ -3,16 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bitte bestätige deine E-Mail-Adresse</title>
+    <title>Neue Benachrichtigung!</title>
   </head>
   <body>
-    <h1 style="text-align: center">Bitte bestätige deine E-Mail-Adresse!</h1>
+    <h1 style="text-align: center">🔔Du hast eine neue Benachrichtigung!🔔</h1>
 
     <p>Hallo <%= username %>,</p>
 
     <p>
-      dein Konto beim <b>Choreo Planer</b> wurde mit <%= userEmail %> erstellt.
-      Bitte bestätige jetzt deine E-Mail-Adresse!
+      du hast eine neue Benachrichtigung <% if (locals.notificationTitle) { %>
+      mit dem Titel <b><%= notificationTitle %></b>
+      <% } %> in deinem Choreo Planer erhalten. Um sie zu lesen, klicke bitte
+      auf den folgenden Link:
     </p>
 
     <p style="margin: 32px 0px; text-align: center">
@@ -24,21 +26,38 @@
           padding: 16px 24px;
           border-radius: 4px;
         "
-        href="<%= backendDomain %>/user/confirmEmail/<%= userId %>"
+        href="<%= frontendDomain %>/login/?sso=<%= ssoToken %>"
       >
-        Jetzt bestätigen
+        Jetzt einloggen und Nachricht lesen
       </a>
     </p>
 
     <p>
       Wenn der obige Link nicht funktioniert, kannst du folgende URL in deinem
       Browser öffnen:
-      <a href="<%= backendDomain %>/user/confirmEmail/<%= userId %>">
-        <%= backendDomain %>/user/confirmEmail/<%= userId %>
+      <a href="<%= frontendDomain %>/login/?sso=<%= ssoToken %>">
+        <%= frontendDomain %>/login/?sso=<%= ssoToken %>
       </a>
     </p>
 
-    <p>Wir wünschen dir viel Spaß und Erfolg mit deinem nächsten Projekt!</p>
+    <p style="text-align: center">
+      Dieser Link ist gültig bis: <%= expirationDate %>
+    </p>
+
+    <p>
+      Du erhälst diese E-Mail, weil du dich bei Choreo Planer registriert hast.
+      In der Regel bekommst du Benachrichtigungen, wenn ein Administrator dir
+      ein Nachricht schicken möchte.
+    </p>
+    <p>
+      Wenn du dir nicht sicher bist, ob diese E-Mail wirklich von uns stammt,
+      wende dich gerne an uns unter
+      <a href="mailto:admin@choreo-planer.de">admin@choreo-planer.de</a> oder
+      über Instagram an
+      <a href="https://www.instagram.com/choreoplaner">@choreoplaner</a>.
+    </p>
+
+    <p>Wir wünschen dir viel Spaß und Erfolg mit dem Choreo Planer!</p>
 
     <p>
       Tanzende Grüße,<br />

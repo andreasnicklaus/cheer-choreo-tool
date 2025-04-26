@@ -117,6 +117,20 @@
             count: memberCount, label: 'Members', icon: 'people' }) %>
           </a>
         </div>
+        <% } %><% if (locals.notificationPercentage != null) { %>
+        <div class="col-6 col-md-4">
+          <a
+            href="/admin/notifications"
+            class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
+          >
+            <%- include('./components/dashboardKpis', { trend:
+            notificationTrend, count: notificationPercentage + "%", label:
+            'Notifications opened', icon: 'bell', trendText: "%",
+            kpiTextVariant: notificationPercentage >= 30 ?
+            (notificationPercentage >= 50 ? (notificationPercentage >= 90 ?
+            'success' : null) : 'warning') : 'danger' }) %>
+          </a>
+        </div>
         <% } %> <% if (locals.feedbackAverage) { %>
         <div class="col-6 col-md-4">
           <div class="px-5 py-4 bg-body-secondary rounded-3 mb-0">

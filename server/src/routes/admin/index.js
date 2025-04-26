@@ -17,6 +17,7 @@ const { dbRouter } = require("./db");
 const { adminRouter } = require("./admins");
 const { userRouter } = require("./users");
 const { notificationRouter } = require("./notification");
+const NotificationService = require("../../services/NotificationService");
 
 const router = Router();
 router.use(function (req, res, next) {
@@ -61,6 +62,8 @@ async function renderDashboard(req, res) {
     FeedbackService.getNewest(),
     FeedbackService.getTotalAverage(),
     FeedbackService.getAverageOfLastMonth(),
+    NotificationService.getReadPercentage(),
+    NotificationService.getReadTrend(),
   ]).then(
     ([
       adminCount,
@@ -82,6 +85,8 @@ async function renderDashboard(req, res) {
       newestFeedback,
       feedbackAverage,
       feedbackAverageOfLastMonth,
+      notificationPercentage,
+      notificationTrend,
     ]) => {
       return res.render("../src/views/admin/index.ejs", {
         username: req.Admin.username,
@@ -104,6 +109,8 @@ async function renderDashboard(req, res) {
         newestFeedback,
         feedbackAverage,
         feedbackAverageOfLastMonth,
+        notificationPercentage,
+        notificationTrend,
       }); // njsscan-ignore: express_lfr_warning
     }
   );

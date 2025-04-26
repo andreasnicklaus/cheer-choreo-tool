@@ -1,6 +1,8 @@
 const { Router } = require("express");
 const NotificationService = require("../../services/NotificationService");
 const UserService = require("../../services/UserService");
+const MailService = require("../../services/MailService");
+const AuthService = require("../../services/AuthService");
 
 const router = Router();
 
@@ -37,19 +39,30 @@ router.post("/", (req, res, next) => {
   }
 
   return notificationSendPromise.then(async () => {
-    // if (notifyViaEmail) {
-    //   if (sendToAllUsers) {
-    //     await UserService.getAll().then((users) => {
-    //       targetUsers = users.map((u) => u.id);
-    //     });
-    //   }
-    //   Promise.all(
-    //     targetUsers.map((userId) => {
-    //       // TODO: send email about new notification
-    //       // return MailService.sendNotificationNotice()
-    //     })
-    //   );
-    // }
+    if (notifyViaEmail) {
+      if (sendToAllUsers) {
+        await UserService.getAll().then((users) => {
+          targetUsers = users.map((u) => u.id);
+        });
+      }
+      Promise.all(
+        targetUsers.map((userId) => {
+          return UserService.findById(userId).then((user) => {
+            if (user.email && user.emailConfirmed) {
+              const token = AuthService.generateAccessToken(user.id, {
+                expiresIn: process.env.SSO_TOKEN_EXPIRES_IN,
+              });
+              return MailService.sendNotificationNotice(
+                user.email,
+                user.username,
+                token,
+                title
+              );
+            }
+          });
+        })
+      );
+    }
 
     res.redirect(req.baseUrl); // njsscan-ignore: express_open_redirect
     return next();

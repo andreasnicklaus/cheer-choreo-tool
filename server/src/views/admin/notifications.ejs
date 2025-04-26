@@ -99,7 +99,6 @@
               aria-label="Close"
             ></button>
           </div>
-          <!-- TODO: modify submit action to for API -->
           <form
             action="/admin/notifications"
             method="POST"
@@ -168,8 +167,14 @@
                   <i class="bi bi-plus"></i>
                 </button>
                 <datalist id="userSearch">
-                  <% userList.forEach(({id, username}) => { %>
-                  <option value="<%= id %>"><%= username %></option>
+                  <% userList.forEach(({id, username, email, emailConfirmed}) =>
+                  { %>
+                  <option
+                    data-item-email="<%= emailConfirmed && email %>"
+                    value="<%= id %>"
+                  >
+                    <%= username %>
+                  </option>
                   <% }) %>
                 </datalist>
               </div>
@@ -246,9 +251,22 @@
             li.className =
               "list-group-item d-flex justify-content-between align-items-center";
 
+            const userInfoDiv = document.createElement("div");
+            userInfoDiv.className = "d-flex flex-column flex-grow-1";
             const username = document.createElement("span");
             username.textContent = user.username;
-            li.appendChild(username);
+            userInfoDiv.appendChild(username);
+
+            console.log(user);
+
+            if (user.email != null && user.email != "false" && user.email) {
+              const userEmail = document.createElement("small");
+              userEmail.className = "text-muted";
+              userEmail.textContent = user.email;
+              userInfoDiv.appendChild(userEmail);
+            }
+
+            li.appendChild(userInfoDiv);
 
             const removeButton = document.createElement("button");
             removeButton.className = "btn-close btn-close-sm";
@@ -276,9 +294,14 @@
         const username = userOptions.find((o) => {
           return o.value == userId;
         })?.textContent;
+        const email = userOptions
+          .find((o) => {
+            return o.value == userId;
+          })
+          ?.getAttribute("data-item-email");
 
         if (userId && username) {
-          selectedUsers.add({ id: userId, username });
+          selectedUsers.add({ id: userId, username, email });
           userInput.value = "";
           renderSelectedUsers();
         } else {
