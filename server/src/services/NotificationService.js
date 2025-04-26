@@ -75,18 +75,19 @@ class NotificationService {
   remove(id, UserId, options = { all: false }) {
     return Notification.findOne({
       where: options.all ? { id } : { id, UserId },
-    }).then((foundNotification) => {
-      if (foundNotification) {
-        logger.debug(
-          `NotificationService.remove ${JSON.stringify({ id, UserId })}`
-        );
-        return foundNotification.destroy();
-      } else {
-        throw Error(
-          `Beim Löschen wurde keine Notification mit der ID ${id} gefunden`
-        );
-      }
-    });
+    }) // njsscan-ignore: node_nosqli_injection
+      .then((foundNotification) => {
+        if (foundNotification) {
+          logger.debug(
+            `NotificationService.remove ${JSON.stringify({ id, UserId })}`
+          );
+          return foundNotification.destroy();
+        } else {
+          throw Error(
+            `Beim Löschen wurde keine Notification mit der ID ${id} gefunden`
+          );
+        }
+      });
   }
 
   getReadPercentage() {

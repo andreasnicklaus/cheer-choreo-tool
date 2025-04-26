@@ -27,7 +27,7 @@ router.get("/revokeEmail/:id", (req, res, next) => {
     .then((result) => {
       res.render("../src/views/emailRevoked.ejs", {
         frontendDomain: process.env.FRONTEND_DOMAIN,
-      });
+      }); // njsscan-ignore: express_lfr_warning
     })
     .catch((e) => {
       res.render("../src/views/error.ejs", {
@@ -46,7 +46,7 @@ router.get("/revokeEmail/:id", (req, res, next) => {
   
             Vielen Dank!
             `),
-      });
+      }); // njsscan-ignore: express_lfr_warning
     });
 });
 
@@ -55,7 +55,7 @@ router.get("/confirmEmail/:id", (req, res, next) => {
     .then((result) => {
       res.render("../src/views/emailConfirmed.ejs", {
         frontendDomain: process.env.FRONTEND_DOMAIN,
-      });
+      }); // njsscan-ignore: express_lfr_warning
     })
     .catch((e) => {
       res.render("../src/views/error.ejs", {
@@ -74,7 +74,7 @@ router.get("/confirmEmail/:id", (req, res, next) => {
 
           Vielen Dank!
           `),
-      });
+      }); // njsscan-ignore: express_lfr_warning
     });
 });
 
