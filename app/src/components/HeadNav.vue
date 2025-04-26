@@ -117,7 +117,6 @@
         </b-nav-item-dropdown>
       </b-navbar-nav>
 
-      <!-- TODO: translate -->
       <b-navbar-nav class="ml-auto align-items-sm-center">
         <b-nav-item-dropdown
           no-caret
@@ -127,9 +126,9 @@
         >
           <template #button-content>
             <b-icon-bell />
-            <span v-if="$store.state.isMobile" class="ml-2"
-              >Benachrichtigungen</span
-            >
+            <span v-if="$store.state.isMobile" class="ml-2">{{
+              $t("nav.benachrichtigungen")
+            }}</span>
             <b-badge
               pill
               variant="danger"
@@ -151,7 +150,7 @@
             "
           >
             <b-icon-bell />
-            Du hast noch keine Benachrichtigungen erhalten.
+            {{ $t("nav.du-hast-noch-keine-benachrichtigungen-erhalten") }}
           </b-dropdown-text>
           <b-dropdown-text
             style="width: 400px"
@@ -170,7 +169,7 @@
                       variant="success"
                       class="mr-1"
                       v-if="!notification.read"
-                      >Neu!</b-badge
+                      >{{ $t("nav.neu-0") }}</b-badge
                     >
                     <b-badge pill variant="primary">{{
                       toTimeAgo(notification.createdAt)
@@ -215,7 +214,8 @@
               block
               @click="() => (showAllNotifications = true)"
               variant="link"
-              >Alte Nachrichten anzeigen</b-button
+              :disabled="notifications.filter((n) => !n.read).length == 0"
+              >{{ $t("nav.alte-nachrichten-anzeigen") }}</b-button
             ></b-dropdown-text
           >
           <b-dropdown-text v-else>
@@ -223,7 +223,8 @@
               block
               @click="() => (showAllNotifications = false)"
               variant="link"
-              >Alte Nachrichten ausblenden</b-button
+              :disabled="notifications.length == 0"
+              >{{ $t("nav.alte-nachrichten-ausblenden") }}</b-button
             >
           </b-dropdown-text>
         </b-nav-item-dropdown>

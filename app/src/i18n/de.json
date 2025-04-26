@@ -597,7 +597,12 @@
     "start": "Start",
     "teilen": "Teilen",
     "uebersicht": "Übersicht",
-    "vereine": "Vereine"
+    "vereine": "Vereine",
+    "benachrichtigungen": "Benachrichtigungen",
+    "du-hast-noch-keine-benachrichtigungen-erhalten": "Du hast noch keine Benachrichtigungen erhalten.",
+    "neu-0": "Neu!",
+    "alte-nachrichten-anzeigen": "Alte Nachrichten anzeigen",
+    "alte-nachrichten-ausblenden": "Alte Nachrichten ausblenden"
   },
   "navigation": {
     "datenschutz": "Datenschutz",

@@ -597,7 +597,12 @@
     "start": "Start",
     "teilen": "Share",
     "uebersicht": "Overview",
-    "vereine": "Clubs"
+    "vereine": "Clubs",
+    "benachrichtigungen": "Notifications",
+    "du-hast-noch-keine-benachrichtigungen-erhalten": "You have not received any notifications yet.",
+    "neu-0": "New!",
+    "alte-nachrichten-anzeigen": "Show old messages",
+    "alte-nachrichten-ausblenden": "Hide old messages"
   },
   "navigation": {
     "datenschutz": "Data protection",
