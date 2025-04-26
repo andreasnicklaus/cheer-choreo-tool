@@ -37,7 +37,7 @@
           {{ $t("nav.uebersicht") }}
         </b-nav-item>
 
-        <b-nav-item-dropdown text="Choreos" :disabled="!$store.state.loggedIn">
+        <b-nav-item-dropdown :disabled="!$store.state.loggedIn">
           <template #button-content>
             <span :class="{ 'router-link-active': $route.name == 'Choreo' }">
               {{ $tc("choreo", 2) }}
@@ -117,7 +117,117 @@
         </b-nav-item-dropdown>
       </b-navbar-nav>
 
+      <!-- TODO: translate -->
       <b-navbar-nav class="ml-auto align-items-sm-center">
+        <b-nav-item-dropdown
+          no-caret
+          right
+          :class="{ 'mr-3': $store.state.isMobile }"
+          v-if="$store.state.loggedIn"
+        >
+          <template #button-content>
+            <b-icon-bell />
+            <span v-if="$store.state.isMobile" class="ml-2"
+              >Benachrichtigungen</span
+            >
+            <b-badge
+              pill
+              variant="danger"
+              v-if="notifications.filter((n) => !n.read).length > 0"
+              :style="{
+                position: 'absolute',
+                right: 0,
+                top: $store.state.isMobile ? null : 0,
+              }"
+              >{{ notifications.filter((n) => !n.read).length }}</b-badge
+            >
+          </template>
+          <b-dropdown-text
+            style="width: 400px"
+            class="text-center"
+            v-if="
+              notifications.filter((n) => showAllNotifications || !n.read)
+                .length == 0
+            "
+          >
+            <b-icon-bell />
+            Du hast noch keine Benachrichtigungen erhalten.
+          </b-dropdown-text>
+          <b-dropdown-text
+            style="width: 400px"
+            text-class="p-0"
+            v-for="notification in notifications.filter(
+              (n) => showAllNotifications || !n.read
+            )"
+            :key="notification.id"
+          >
+            <b-card border-variant="light" class="notification-card">
+              <b-row>
+                <b-col>
+                  <b-card-sub-title>
+                    <b-badge
+                      pill
+                      variant="success"
+                      class="mr-1"
+                      v-if="!notification.read"
+                      >Neu!</b-badge
+                    >
+                    <b-badge pill variant="primary">{{
+                      toTimeAgo(notification.createdAt)
+                    }}</b-badge>
+                  </b-card-sub-title>
+                  <b-card-title class="mt-1 mb-2">{{
+                    notification.title
+                  }}</b-card-title>
+                </b-col>
+                <b-col cols="auto">
+                  <b-button
+                    variant="link"
+                    @click="
+                      () =>
+                        notification.read
+                          ? markNotificationAsNotRead(notification.id)
+                          : markNotificationAsRead(notification.id)
+                    "
+                  >
+                    <b-icon-envelope v-if="notification.read" />
+                    <b-icon-envelope-open v-else />
+                  </b-button>
+                  <b-button
+                    variant="link"
+                    @click="() => deleteNotification(notification.id)"
+                  >
+                    <b-icon-trash variant="danger" />
+                  </b-button>
+                </b-col>
+              </b-row>
+              <vue-markdown
+                :breaks="false"
+                class="notification-card-text"
+                :anchorAttributes="{ target: '_blank' }"
+              >
+                {{ notification.message.replace(/  +/g, " ") }}
+              </vue-markdown>
+            </b-card>
+          </b-dropdown-text>
+          <b-dropdown-text v-if="!showAllNotifications">
+            <b-button
+              block
+              @click="() => (showAllNotifications = true)"
+              variant="link"
+              >Alte Nachrichten anzeigen</b-button
+            ></b-dropdown-text
+          >
+          <b-dropdown-text v-else>
+            <b-button
+              block
+              @click="() => (showAllNotifications = false)"
+              variant="link"
+              >Alte Nachrichten ausblenden</b-button
+            >
+          </b-dropdown-text>
+        </b-nav-item-dropdown>
+
         <b-nav-item-dropdown variant="link" no-caret>
           <template #button-content>
             <flag
@@ -271,10 +381,18 @@ import CreateClubModal from "./modals/CreateClubModal.vue";
 import CreateTeamModal from "./modals/CreateTeamModal.vue";
 import LanguageService from "@/services/LanguageService";
 import MessagingService from "@/services/MessagingService";
+import NotificationService from "@/services/NotificationService";
+import VueMarkdown from "vue-markdown-v2";
+import toTimeAgo from "@/utils/time";
 
 export default {
   name: "HeadNav",
-  components: { CreateChoreoModal, CreateClubModal, CreateTeamModal },
+  components: {
+    CreateChoreoModal,
+    CreateClubModal,
+    CreateTeamModal,
+    VueMarkdown,
+  },
   data: () => ({
     teams: [],
     choreos: [],
@@ -291,6 +409,9 @@ export default {
     ],
     LanguageService,
     currentProfilePictureBlob: null,
+    notifications: [],
+    showAllNotifications: false,
+    showNotificationsDropdown: false,
   }),
   props: {
     onlineStatus: {
@@ -326,6 +447,10 @@ export default {
             this.$store.commit("setClubId", club.id);
           this.teams = club?.Teams || [];
           this.choreos = this.teams.map((t) => t.Choreos).flat();
+        });
+
+        NotificationService.getAll().then((notifications) => {
+          this.notifications = notifications;
         });
       }
     },
@@ -368,6 +493,22 @@ export default {
           this.currentProfilePictureBlob = URL.createObjectURL(response.data);
         });
     },
+    toTimeAgo,
+    markNotificationAsNotRead(notificationId) {
+      NotificationService.markAsNotRead(notificationId).then(() => {
+        this.load();
+      });
+    },
+    markNotificationAsRead(notificationId) {
+      NotificationService.markAsRead(notificationId).then(() => {
+        this.load();
+      });
+    },
+    deleteNotification(notificationId) {
+      NotificationService.delete(notificationId).then(() => {
+        this.load();
+      });
+    },
   },
   watch: {
     "$store.state.loggedIn": {
@@ -408,5 +549,15 @@ export default {
 .dropdown-submenu:hover:not(:has(div.collapse:hover)) {
   color: #16181b;
   background-color: #e9ecef;
+}
+
+.b-dropdown-text {
+  font-weight: initial;
+}
+</style>
+
+<style lang="scss">
+.notification-card-text > p {
+  margin: 0;
 }
 </style>

@@ -42,6 +42,7 @@ const { authRouter } = require("./routes/auth");
 const { seasonRouter } = require("./routes/season");
 const { seasonTeamRouter } = require("./routes/seasonTeam");
 const { feedbackRouter } = require("./routes/feedback");
+const { notificationRouter } = require("./routes/notification");
 
 // ADMIN ROUTER
 const { adminRouter } = require("./routes/admin");
@@ -191,6 +192,7 @@ app.use("/auth", authRouter);
 app.use("/season", seasonRouter);
 app.use("/seasonTeam", seasonTeamRouter);
 app.use("/feedback", feedbackRouter);
+app.use("/notifications", notificationRouter);
 
 app.use("/admin", adminRouter);
 

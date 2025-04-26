@@ -158,14 +158,7 @@
                   list="userSearch"
                   placeholder="User"
                   class="form-control"
-                />
-                <button
-                  class="btn btn-primary"
-                  type="button"
-                  id="button-selectUser"
                 >
-                  <i class="bi bi-plus"></i>
-                </button>
                 <datalist id="userSearch">
                   <% userList.forEach(({id, username, email, emailConfirmed}) =>
                   { %>
@@ -177,6 +170,14 @@
                   </option>
                   <% }) %>
                 </datalist>
+                </input>
+                <button
+                  class="btn btn-primary"
+                  type="button"
+                  id="button-selectUser"
+                >
+                  <i class="bi bi-plus"></i>
+                </button>
               </div>
               <div class="mb-3">
                 <label for="targetUser" class="form-label">
@@ -217,9 +218,11 @@
 
     <script type="text/javascript" defer nonce="<%= cspNonce %>">
       const notifyAllCheckbox = document.getElementById("notifyAll");
+
       notifyAllCheckbox.addEventListener("change", (event) => {
-        const userInput = document.querySelector("input[name='UserId']");
+        const userInput = document.getElementById("userSearchInput");
         const selectedUserList = document.getElementById("targetUserList");
+
         if (event.target.checked) {
           userInput.setAttribute("disabled", "true");
           Array.from(selectedUserList.children).forEach((li) => {
@@ -256,8 +259,6 @@
             const username = document.createElement("span");
             username.textContent = user.username;
             userInfoDiv.appendChild(username);
-
-            console.log(user);
 
             if (user.email != null && user.email != "false" && user.email) {
               const userEmail = document.createElement("small");

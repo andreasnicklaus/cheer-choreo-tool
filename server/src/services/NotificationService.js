@@ -48,7 +48,7 @@ class NotificationService {
   }
 
   markUnread(id, UserId) {
-    return this.update(id, UserId, { read: true });
+    return this.update(id, UserId, { read: false });
   }
 
   update(id, UserId, data) {

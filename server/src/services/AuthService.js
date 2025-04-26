@@ -44,6 +44,7 @@ class AuthService {
               `User ${user.username} with id ${user.id} used this token: ${token}`
             );
             req.UserId = user.id;
+            req.User = user;
             next();
           })
           .catch((e) => next(e));

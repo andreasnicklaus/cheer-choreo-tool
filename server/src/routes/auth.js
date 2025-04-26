@@ -100,10 +100,10 @@ router.get("/me", AuthService.authenticateUser(), (req, res, next) => {
 router.put("/me", AuthService.authenticateUser(), (req, res, next) => {
   const { username, email } = req.body;
   const data = { username, email };
-  if (email) data.emailConfirmed = false;
+  if (email && email != req.User.email) data.emailConfirmed = false;
   UserService.update(req.UserId, data)
     .then((user) => {
-      if (email)
+      if (email != req.User.email)
         return MailService.sendEmailConfirmationEmail(
           user.username,
           user.id,

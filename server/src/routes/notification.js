@@ -21,7 +21,7 @@ router.post("/:id/read", authenticateUser(), (req, res, next) => {
     })
     .catch((e) => next(e));
 });
-router.post("/:id/read", authenticateUser(), (req, res, next) => {
+router.post("/:id/unread", authenticateUser(), (req, res, next) => {
   return NotificationService.markUnread(req.params.id, req.UserId)
     .then((result) => {
       res.send(result);
