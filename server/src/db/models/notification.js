@@ -12,10 +12,16 @@ const Notification = db.define(
     title: {
       type: DataTypes.STRING,
       allowNull: true,
+      validate: {
+        len: [5, 40],
+      },
     },
     message: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        len: [5, 300],
+      },
     },
     read: {
       type: DataTypes.BOOLEAN,

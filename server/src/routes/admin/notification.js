@@ -26,6 +26,7 @@ router.post("/", (req, res, next) => {
     req.body;
 
   if (typeof targetUsers == "string") targetUsers = [targetUsers];
+  if (!title || title.length == 0) title = null;
 
   let notificationSendPromise = null;
   if (sendToAllUsers)
@@ -38,35 +39,37 @@ router.post("/", (req, res, next) => {
     );
   }
 
-  return notificationSendPromise.then(async () => {
-    if (notifyViaEmail) {
-      if (sendToAllUsers) {
-        await UserService.getAll().then((users) => {
-          targetUsers = users.map((u) => u.id);
-        });
-      }
-      Promise.all(
-        targetUsers.map((userId) => {
-          return UserService.findById(userId).then((user) => {
-            if (user.email && user.emailConfirmed) {
-              const token = AuthService.generateAccessToken(user.id, {
-                expiresIn: process.env.SSO_TOKEN_EXPIRES_IN,
-              });
-              return MailService.sendNotificationNotice(
-                user.email,
-                user.username,
-                token,
-                title
-              );
-            }
+  return notificationSendPromise
+    .then(async () => {
+      if (notifyViaEmail) {
+        if (sendToAllUsers) {
+          await UserService.getAll().then((users) => {
+            targetUsers = users.map((u) => u.id);
           });
-        })
-      );
-    }
+        }
+        Promise.all(
+          targetUsers.map((userId) => {
+            return UserService.findById(userId).then((user) => {
+              if (user.email && user.emailConfirmed) {
+                const token = AuthService.generateAccessToken(user.id, {
+                  expiresIn: process.env.SSO_TOKEN_EXPIRES_IN,
+                });
+                return MailService.sendNotificationNotice(
+                  user.email,
+                  user.username,
+                  token,
+                  title
+                );
+              }
+            });
+          })
+        );
+      }
 
-    res.redirect(req.baseUrl); // njsscan-ignore: express_open_redirect
-    return next();
-  });
+      res.redirect(req.baseUrl); // njsscan-ignore: express_open_redirect
+      return next();
+    })
+    .catch((e) => next(e));
 });
 
 // router.post("/update", (req, res, next) => {

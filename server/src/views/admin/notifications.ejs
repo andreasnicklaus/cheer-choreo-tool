@@ -30,6 +30,7 @@
               <th scope="col">#</th>
               <th scope="col">Title</th>
               <th scope="col">Message</th>
+              <th scope="col">Opened</th>
               <th scope="col">Created At</th>
               <th scope="col">Updated At</th>
               <th scope="col">Actions</th>
@@ -44,6 +45,9 @@
                 <%= notification.message.length > 30 ?
                 notification.message.slice(0, 27) + "..." : notification.message
                 %>
+              </td>
+              <td>
+                <%= notification.read ? '✅' : '❌' %>
               </td>
               <td>
                 <%= new Date(notification.createdAt).toLocaleString("en-EN") %>
@@ -72,6 +76,14 @@
                 <b> <%= notificationList.length %> </b>
                 Notifications
               </td>
+              <td></td>
+              <td>
+                <%= Math.round(notificationList.filter(n => n.read).length / notificationList.length *1000 ) / 10 %>%
+                ✅
+              </td>
+              <td></td>
+              <td></td>
+              <td></td>
             </tr>
           </tfoot>
         </table>
@@ -114,8 +126,9 @@
                   name="title"
                   placeholder="Title"
                   autofocus="true"
+                  maxlength="40"
                 />
-                <div id="titleHelp" class="form-text">Optional</div>
+                <div id="titleHelp" class="form-text">Optional (<span id="titleLength">0</span>/40)</div>
               </div>
               <div class="mb-3">
                 <label for="message" class="form-label">Message</label>
@@ -126,8 +139,10 @@
                   placeholder="Message"
                   required
                   rows="3"
+                  maxlength="300"
+                  minlength="5"
                 ></textarea>
-                <div id="messageHelp" class="form-text">Required</div>
+                <div id="messageHelp" class="form-text">Required (<span id="messageLength">0</span>/300)</div>
               </div>
               <div class="mb-3">
                 <input
@@ -215,6 +230,24 @@
     </div>
 
     <footer><%- include('./partials/footer'); %></footer>
+
+    <script type="text/javascript" defer nonce="<%= cspNonce %>">
+      const titleInput = document.getElementById("title");
+      const messageInput = document.getElementById("message");
+      const titleLengthDisplay = document.getElementById("titleLength");
+      const messageLengthDisplay = document.getElementById("messageLength");
+
+      titleInput.addEventListener("input", updateTitleLengthDisplay);
+      messageInput.addEventListener("input", updateMessageLengthDisplay);
+
+      function updateTitleLengthDisplay()  {
+        titleLengthDisplay.textContent = titleInput.value.length;
+      }
+
+      function updateMessageLengthDisplay()  {
+        messageLengthDisplay.textContent = messageInput.value.length;
+      }
+    </script>
 
     <script type="text/javascript" defer nonce="<%= cspNonce %>">
       const notifyAllCheckbox = document.getElementById("notifyAll");
