@@ -6,6 +6,7 @@ const AdminService = require("./AdminService");
 const bcrypt = require("bcrypt");
 const UserService = require("./UserService");
 const MailService = require("./MailService");
+const NotificationService = require("./NotificationService");
 
 const TOKEN_SECRET = process.env.TOKEN_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
@@ -85,7 +86,16 @@ class AuthService {
       const token = this.generateAccessToken(user.id, {
         expiresIn: process.env.SSO_TOKEN_EXPIRES_IN,
       });
-      return MailService.sendSsoEmail(user.email, user.username, token);
+      return MailService.sendSsoEmail(user.email, user.username, token).then(
+        () =>
+          NotificationService.createOne(
+            "Single Sign-On wurde verschickt",
+            `Eine E-Mail mit einem Single Sign-On Link wurde versandt. Wenn du das nicht veranlasst hast, kontaktiere uns bitte sofort.
+            
+            [Administratoren kontaktieren](mailto:admin@choreo-planer.de)`,
+            user.id
+          )
+      );
     });
   }
 

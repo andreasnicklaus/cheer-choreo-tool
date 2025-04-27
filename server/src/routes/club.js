@@ -3,6 +3,7 @@ const ClubService = require("../services/ClubService");
 const { authenticateUser } = require("../services/AuthService");
 const FileService = require("../services/FileService");
 const path = require("node:path");
+const NotificationService = require("../services/NotificationService");
 
 const router = Router();
 
@@ -37,6 +38,11 @@ router.post("/", authenticateUser(), (req, res, next) => {
   const { name } = req.body;
   return ClubService.create(name, req.UserId)
     .then((club) => {
+      NotificationService.createOne(
+        "Verein erstellt!",
+        `Dein Verein **${name}** wurde erstellt.`,
+        req.UserId
+      );
       res.send(club);
       return next();
     })

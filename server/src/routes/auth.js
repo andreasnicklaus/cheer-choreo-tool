@@ -6,6 +6,7 @@ const { ValidationError, UniqueConstraintError } = require("sequelize");
 const FileService = require("../services/FileService");
 const path = require("node:path");
 const MailService = require("../services/MailService");
+const NotificationService = require("../services/NotificationService");
 
 const router = Router();
 
@@ -179,6 +180,11 @@ router.get(
           user.id,
           user.email
         ).then(() => {
+          NotificationService.createOne(
+            "E-Mail wurde versandt!",
+            `Eine E-Mail mit dem Link zum Bestätigen deiner E-Mail-Adresse wurde verschickt.`,
+            user.id
+          );
           res.send();
           return next();
         });

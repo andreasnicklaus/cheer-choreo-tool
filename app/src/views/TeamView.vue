@@ -1,7 +1,7 @@
 <template>
   <b-container id="teamView" data-view>
     <EditableNameHeading
-      :name="$t('team', 1)"
+      :name="$tc('team', 1)"
       :value="teams?.find((t) => t.id == teamId)?.name"
       class="mb-3"
       @input="onNameEdit"
@@ -388,7 +388,7 @@ export default {
   },
   metaInfo() {
     return {
-      title: this.currentTeam?.name || this.$t("team", 1),
+      title: this.currentTeam?.name || this.$tc("team", 1),
       meta: [
         {
           vmid: "description",

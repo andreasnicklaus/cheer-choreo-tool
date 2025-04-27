@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const TeamService = require("../services/TeamService");
 const { authenticateUser } = require("../services/AuthService");
+const NotificationService = require("../services/NotificationService");
 
 const router = Router();
 
@@ -37,6 +38,13 @@ router.post("/", authenticateUser(), (req, res, next) => {
   const { name, clubId, seasonId } = req.body;
   return TeamService.create(name, clubId, seasonId, req.UserId)
     .then((result) => {
+      NotificationService.createOne(
+        "Team erstellt!",
+        `Dein Team **${name}** wurde erstellt!
+        
+        [Checke es jetzt aus!](/team/${result.id})`,
+        req.UserId
+      );
       res.send(result);
       return next();
     })

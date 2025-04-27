@@ -175,9 +175,15 @@
                       toTimeAgo(notification.createdAt)
                     }}</b-badge>
                   </b-card-sub-title>
-                  <b-card-title class="mt-1 mb-2">{{
-                    notification.title
-                  }}</b-card-title>
+                  <b-card-title class="mt-1 mb-2"
+                    ><vue-markdown
+                      :breaks="false"
+                      class="notification-card-text"
+                      :anchorAttributes="{ target: '_blank' }"
+                    >
+                      {{ notification.title.replace(/  +/g, " ") }}
+                    </vue-markdown>
+                  </b-card-title>
                 </b-col>
                 <b-col cols="auto">
                   <b-button
@@ -214,7 +220,7 @@
               block
               @click="() => (showAllNotifications = true)"
               variant="link"
-              :disabled="notifications.filter((n) => !n.read).length == 0"
+              :disabled="notifications.length == 0"
               >{{ $t("nav.alte-nachrichten-anzeigen") }}</b-button
             ></b-dropdown-text
           >
@@ -410,6 +416,8 @@ export default {
     ],
     LanguageService,
     currentProfilePictureBlob: null,
+    loadInterval: null,
+    loadNotificationsInterval: null,
     notifications: [],
     showAllNotifications: false,
     showNotificationsDropdown: false,
@@ -450,10 +458,13 @@ export default {
           this.choreos = this.teams.map((t) => t.Choreos).flat();
         });
 
-        NotificationService.getAll().then((notifications) => {
-          this.notifications = notifications;
-        });
+        this.loadNotifications();
       }
+    },
+    loadNotifications() {
+      NotificationService.getAll().then((notifications) => {
+        this.notifications = notifications;
+      });
     },
     checkEmailConfirmation() {
       if (this.user?.email && !this.user?.emailConfirmed) {
@@ -497,17 +508,17 @@ export default {
     toTimeAgo,
     markNotificationAsNotRead(notificationId) {
       NotificationService.markAsNotRead(notificationId).then(() => {
-        this.load();
+        this.loadNotifications();
       });
     },
     markNotificationAsRead(notificationId) {
       NotificationService.markAsRead(notificationId).then(() => {
-        this.load();
+        this.loadNotifications();
       });
     },
     deleteNotification(notificationId) {
       NotificationService.delete(notificationId).then(() => {
-        this.load();
+        this.loadNotifications();
       });
     },
   },
@@ -529,10 +540,16 @@ export default {
     this.load();
     setTimeout(this.checkEmailConfirmation, 1000);
     setInterval(this.load, 60_000);
+    setInterval(this.loadNotifications, 5_000);
   },
   mounted() {
     if (navigator.canShare && navigator.share)
       this.shareable = navigator.canShare(this.shareData);
+  },
+  beforeUnmount() {
+    if (this.loadInterval) clearInterval(this.loadInterval);
+    if (this.loadNotificationsInterval)
+      clearInterval(this.loadNotificationsInterval);
   },
   computed: {
     shareData() {

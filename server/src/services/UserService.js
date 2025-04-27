@@ -2,6 +2,7 @@ const { Op } = require("sequelize");
 const User = require("../db/models/user");
 const { logger } = require("../plugins/winston");
 const MailService = require("./MailService");
+const NotificationService = require("./NotificationService");
 
 class UserService {
   async getAll() {
@@ -49,6 +50,17 @@ class UserService {
         user.id,
         user.email
       ).catch(logger.error);
+
+      NotificationService.createOne(
+        "Herzlich Willkommen!",
+        `Willkommen beim Choreo Planer! Viel Spaß beim Erstellen deiner Teams und Choreos!
+        
+        [Hilfe bekommen](/hilfe)
+        
+        [Kontakt](mailto:info@choreo-planer.de)`,
+        user.id
+      );
+
       if (email) {
         MailService.sendEmailConfirmationEmail(
           user.username,
