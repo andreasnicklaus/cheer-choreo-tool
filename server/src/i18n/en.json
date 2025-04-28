@@ -1,0 +1,27 @@
+{
+  "test": "askfladsfj",
+  "admin": {
+    "notifications": {
+      "notifications": "Notifications",
+      "send-notifications": "Send Notifications",
+      "title": "Title",
+      "message": "Message",
+      "opened": "Opened",
+      "send-a-notification": "Send a notification",
+      "notify-user-via-email": "Notify user via email",
+      "send-to-all-users": "Send to all users",
+      "users-to-notify": "Users to notify"
+    }
+  },
+  "entities": {
+    "created-at": "Created At",
+    "updated-at": "Updated At",
+    "actions": "Actions"
+  },
+  "general": {
+    "optional": "Optional",
+    "required": "Required",
+    "close": "Close",
+    "send": "Send"
+  }
+}

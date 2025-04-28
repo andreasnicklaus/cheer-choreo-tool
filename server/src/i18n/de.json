@@ -1,0 +1,17 @@
+{
+  "test": "test",
+  "admin": {
+    "notifications": {
+      "notifications": "Benachrichtigungen",
+      "send-notifications": "Benachrichtigungen senden",
+      "title": "Titel",
+      "message": "Nachricht",
+      "opened": "Geöffnet"
+    }
+  },
+  "entities": {
+    "created-at": "Erstellt at",
+    "updated-at": "Aktualisiert",
+    "actions": "Aktionen"
+  }
+}

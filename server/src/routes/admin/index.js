@@ -117,7 +117,7 @@ async function renderDashboard(req, res) {
 }
 
 router.get("/", authenticateAdmin(), resolveAdmin, (req, res, next) => {
-  renderDashboard(req, res)
+  return renderDashboard(req, res)
     .then(() => next())
     .catch((e) => next(e));
 });

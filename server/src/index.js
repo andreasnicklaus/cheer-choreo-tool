@@ -180,6 +180,11 @@ app.get("/health", (req, res, next) => {
   next();
 });
 
+// INTERNATIONALIZATION
+require("./plugins/i18n");
+const i18n = require("i18n");
+app.use(i18n.init);
+
 app.use("/choreo", choreoRouter);
 app.use("/team", teamRouter);
 app.use("/club", clubRouter);
