@@ -9,7 +9,7 @@
     <main class="container">
       <div class="row justify-content-between align-items-center">
         <div class="col col-auto">
-          <h1>Users</h1>
+          <h1><%= tn('entities.user', 2) %></h1>
         </div>
         <div class="col col-auto">
           <button
@@ -19,7 +19,7 @@
             data-bs-target="#userCreateModal"
           >
             <i class="bi bi-plus-lg"></i>
-            Add
+            <%= t('general.add') %>
           </button>
         </div>
       </div>
@@ -28,11 +28,11 @@
           <thead>
             <tr>
               <th scope="col">#</th>
-              <th scope="col">Username</th>
-              <th scope="col">Email</th>
-              <th scope="col">Created At</th>
-              <th scope="col">Updated At</th>
-              <th scope="col">Actions</th>
+              <th scope="col"><%= t('admin.users.username') %></th>
+              <th scope="col"><%= t('admin.users.email') %></th>
+              <th scope="col"><%= t('entities.created-at') %></th>
+              <th scope="col"><%= t('entities.updated-at') %></th>
+              <th scope="col"><%= t('entities.actions') %></th>
             </tr>
           </thead>
           <tbody class="table-group-divider">
@@ -80,12 +80,12 @@
               <td></td>
               <td>
                 <b> <%= userList.length %> </b>
-                Users
+                <%= tn('entities.user', 2) %>
               </td>
               <td>
                 <b> <%= userList.filter(u => u.email).length %> </b>
-                Users with Email (<%= userList.filter(u => u.email
-                &&!u.emailConfirmed ).length %>
+                <%= t('admin.users.users-with-email') %> (<%=
+                userList.filter(u=> u.email &&!u.emailConfirmed ).length %>
                 <i class="bi-question-circle-fill text-warning"></i>)
               </td>
             </tr>
@@ -106,7 +106,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="userCreateModalLabel">
-              Create User
+              t('admin.users.create-user')
             </h1>
             <button
               type="button"
@@ -118,19 +118,25 @@
           <form action="/admin/users" method="POST">
             <div class="modal-body">
               <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
+                <label for="username" class="form-label"
+                  ><%= t('(admin.users.username)') %></label
+                >
                 <input
                   type="text"
                   class="form-control"
                   id="username"
                   name="username"
                   required
-                  placeholder="Username"
+                  placeholder="<%= t('(admin.users.username)') %>"
                 />
-                <div id="usernameHelp" class="form-text">Min. 6 characters</div>
+                <div id="usernameHelp" class="form-text">
+                  <%= t('(admin.users.min-6-characters)') %>
+                </div>
               </div>
               <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
+                <label for="email" class="form-label"
+                  ><%= t('(admin.users.email)') %></label
+                >
                 <input
                   type="email"
                   class="form-control"
@@ -147,18 +153,20 @@
                   name="emailConfirmed"
                 />
                 <label for="emailConfirmed" class="form-label"
-                  >Email confirmed</label
+                  ><%= t('(admin.users.email-confirmed)') %></label
                 >
               </div>
               <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
+                <label for="password" class="form-label"
+                  ><%= t('(admin.users.password)') %></label
+                >
                 <input
                   type="password"
                   class="form-control"
                   id="password"
                   name="password"
                   required
-                  placeholder="Password"
+                  placeholder="<%= t('(admin.users.password)') %>"
                 />
               </div>
             </div>
@@ -169,10 +177,10 @@
                 data-bs-dismiss="modal"
               >
                 <i class="bi bi-trash"></i>
-                Close
+                <%= t('(general.close)') %>
               </button>
               <button type="submit" class="btn btn-success">
-                <i class="bi bi-check2"></i> Save changes
+                <i class="bi bi-check2"></i> <%= t('(general.save-changes)') %>
               </button>
             </div>
           </form>
@@ -192,7 +200,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="userUpdateModalLabel">
-              Update User
+              <%= t('(admin.users.update-user)') %>
             </h1>
             <button
               type="button"
@@ -213,24 +221,28 @@
                 />
               </div>
               <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
+                <label for="username" class="form-label"
+                  ><%= t('(admin.users.username)') %></label
+                >
                 <input
                   type="text"
                   class="form-control"
                   id="username"
                   name="username"
                   required
-                  placeholder="Username"
+                  placeholder="<%= t('(admin.users.username)') %>"
                 />
               </div>
               <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
+                <label for="email" class="form-label"
+                  ><%= t('(admin.users.email)') %></label
+                >
                 <input
                   type="email"
                   class="form-control"
                   id="email"
                   name="email"
-                  placeholder="Email"
+                  placeholder="<%= t('(admin.users.email)') %>"
                 />
               </div>
               <div class="mb-3">
@@ -241,17 +253,19 @@
                   name="emailConfirmed"
                 />
                 <label for="emailConfirmed" class="form-label">
-                  Email confirmed
+                  <%= t('(admin.users.email-confirmed)') %>
                 </label>
               </div>
               <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
+                <label for="password" class="form-label"
+                  ><%= t('(admin.users.password)') %></label
+                >
                 <input
                   type="password"
                   class="form-control"
                   id="password"
                   name="password"
-                  placeholder="Password"
+                  placeholder="<%= t('(admin.users.password)') %>"
                 />
               </div>
             </div>
@@ -262,10 +276,10 @@
                 data-bs-dismiss="modal"
               >
                 <i class="bi bi-arrow-counterclockwise"></i>
-                Close
+                <%= t('(general.close)') %>
               </button>
               <button type="submit" class="btn btn-success">
-                <i class="bi bi-check2"></i> Save changes
+                <i class="bi bi-check2"></i> <%= t('(general.save-changes)') %>
               </button>
             </div>
           </form>
@@ -309,7 +323,11 @@
       });
 
       function deleteUser(id) {
-        if (confirm("Are you sure you want to delete this user?")) {
+        if (
+          confirm(
+            "<%= t('(admin.users.are-you-sure-you-want-to-delete-this-user)') %>"
+          )
+        ) {
           fetch(`/admin/users/${id}`, {
             method: "DELETE",
           })
@@ -318,7 +336,7 @@
             })
             .catch((err) => {
               console.error(err);
-              alert("Something went wrong");
+              alert("<%= t('(errors.something-went-wrong)') %>");
             });
         }
       }

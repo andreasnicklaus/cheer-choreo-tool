@@ -10,4 +10,7 @@ i18n.configure({
   },
   updateFiles: false,
   objectNotation: true,
+  // logDebugFn: console.debug,
+  // logWarnFn: console.warm,
+  // logErrorFn: console.error,
 });
