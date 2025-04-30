@@ -52,6 +52,17 @@
       "entityUpdateModal": {
         "update-something": "Update %s"
       }
+    },
+    "partials": {
+      "head": {
+        "choreo-planer-admin-panel": "Choreo Planer Admin Panel"
+      },
+      "header": {
+        "home": "Home",
+        "db": "DB",
+        "homepage": "Homepage",
+        "unknown-user": "Unknown User"
+      }
     }
   },
   "entities": {

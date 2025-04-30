@@ -1,6 +1,6 @@
 <nav class="navbar border-bottom border-body navbar-expand-lg mb-0 mb-lg-2 px-3 py-2">
   <div class="container-fluid container">
-    <a class="navbar-brand" href="/admin">Choreo Planer Admin Panel</a>
+    <a class="navbar-brand" href="/admin"><%= t('admin.partials.head.choreo-planer-admin-panel') %></a>
     <button
       class="navbar-toggler"
       type="button"
@@ -17,31 +17,31 @@
         <li class="nav-item">
           <a class="nav-link <%= path == "/admin/" ? 'active' : '' %>" href="/admin">
             <i class="bi-house-fill"></i>
-            Home
+            <%= t('admin.partials.header.home') %>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link <%= path.startsWith("/admin/users") ? 'active' : '' %>" href="/admin/users">
             <i class="bi-people-fill"></i>
-            Users
+            <%= tn('entities.user', 2) %>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link <%= path.startsWith("/admin/admins") ? 'active' : '' %>" href="/admin/admins">
             <i class="bi-person-fill-gear"></i>
-            Admins
+            <%= tn('entities.admin') %>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link <%= path.startsWith("/admin/db") ? 'active' : '' %>" href="/admin/db">
             <i class="bi-database-fill"></i>
-            DB
+            <%= t('admin.partials.header.db') %>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link <%= path.startsWith("/admin/notifications") ? 'active' : '' %>" href="/admin/notifications">
             <i class="bi-bell-fill"></i>
-            Notifications
+            <%= t('admin.notifications.notifications') %>
           </a>
         </li>
       </ul>
@@ -49,12 +49,12 @@
         <li class="nav-item">
           <a class="nav-link" href="<%= frontendDomain %>" target="_blank">
             <i class="bi-box-arrow-up-right"></i>
-            Homepage
+            <%= t('admin.partials.header.homepage') %>
           </a>
         </li>
         <li class="nav-item nav-link">
           <i class="bi-person-circle"></i>
-          <%= username || 'unbekannter Nutzer' %>
+          <%= locals.username ? username : t('admin.partials.header.unknown-user') %>
         </li>
       </ul>
     </div>
