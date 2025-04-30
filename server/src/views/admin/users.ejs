@@ -47,8 +47,8 @@
                 <i class="bi-question-circle-fill text-warning"></i>
                 <% } %>
               </td>
-              <td><%= new Date(user.createdAt).toLocaleString("en-EN") %></td>
-              <td><%= new Date(user.updatedAt).toLocaleString("en-EN") %></td>
+              <td><%= new Date(user.createdAt).toLocaleString(locale) %></td>
+              <td><%= new Date(user.updatedAt).toLocaleString(locale) %></td>
               <td>
                 <div class="btn-group">
                   <button

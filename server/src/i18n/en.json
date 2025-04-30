@@ -30,6 +30,18 @@
       "password": "Password",
       "update-user": "Update User",
       "are-you-sure-you-want-to-delete-this-user": "Are you sure you want to delete this user?"
+    },
+    "db": {
+      "last-search": "Letzte Suche:",
+      "are-you-sure-you-want-to-delete-this-entity": "Are you sure you want to delete this entity?",
+      "failed-to-delete-entity": "Failed to delete entity.",
+      "search": "Search"
+    },
+    "admins": {
+      "create-admin": "Create Admin",
+      "min-6-characters": "Min. 6 characters",
+      "update-admin": "Update Admin",
+      "are-you-sure-you-want-to-delete-this-admin": "Are you sure you want to delete this admin?"
     }
   },
   "entities": {
@@ -55,6 +67,7 @@
     "save-changes": "Save changes"
   },
   "errors": {
-    "something-went-wrong": "Something went wrong"
+    "something-went-wrong": "Something went wrong",
+    "error": "Error:"
   }
 }

@@ -30,6 +30,18 @@
       "update-user": "Benutzer aktualisieren",
       "username": "Benutzername",
       "users-with-email": "Benutzer mit E-Mail"
+    },
+    "admins": {
+      "create-admin": "Admin erstellen",
+      "min-6-characters": "Min. 6 Zeichen",
+      "update-admin": "Admin aktualisieren",
+      "are-you-sure-you-want-to-delete-this-admin": "Sind Sie sicher, dass Sie diesen Administrator löschen möchten?"
+    },
+    "db": {
+      "are-you-sure-you-want-to-delete-this-entity": "Sind Sie sicher, dass Sie diese Entität löschen möchten?",
+      "failed-to-delete-entity": "Entität nicht löschen.",
+      "last-search": "Letzte Suche:",
+      "search": "Suchen"
     }
   },
   "entities": {
@@ -42,7 +54,7 @@
     "club": "[1] Club | Clubs",
     "feedback": "Rückmeldung",
     "member": "[1] Mitglied | Mitglieder",
-    "season": "[1] Saison | Jahreszeiten",
+    "season": "[1] Season | Seasons",
     "seasonteam": "[1] Seasonteam | Seasontams",
     "team": "[1] Team | Teams"
   },
@@ -55,6 +67,7 @@
     "save-changes": "Änderungen speichern"
   },
   "errors": {
-    "something-went-wrong": "Etwas ist schiefgelaufen"
+    "something-went-wrong": "Etwas ist schiefgelaufen",
+    "error": "Fehler:"
   }
 }
