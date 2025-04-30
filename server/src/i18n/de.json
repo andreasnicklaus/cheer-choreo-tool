@@ -42,6 +42,16 @@
       "failed-to-delete-entity": "Entität nicht löschen.",
       "last-search": "Letzte Suche:",
       "search": "Suchen"
+    },
+    "components": {
+      "entityCreateModal": {
+        "Create": "Erstellen",
+        "Create-something": "%s erstellen",
+        "keine-auswahl": "Keine Auswahl"
+      },
+      "entityUpdateModal": {
+        "update-something": "%s aktualisieren"
+      }
     }
   },
   "entities": {

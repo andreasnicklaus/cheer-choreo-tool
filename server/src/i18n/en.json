@@ -42,6 +42,16 @@
       "min-6-characters": "Min. 6 characters",
       "update-admin": "Update Admin",
       "are-you-sure-you-want-to-delete-this-admin": "Are you sure you want to delete this admin?"
+    },
+    "components": {
+      "entityCreateModal": {
+        "Create": "Create",
+        "Create-something": "Create %s",
+        "keine-auswahl": "Keine Auswahl"
+      },
+      "entityUpdateModal": {
+        "update-something": "Update %s"
+      }
     }
   },
   "entities": {
