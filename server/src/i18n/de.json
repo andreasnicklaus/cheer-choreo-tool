@@ -90,5 +90,12 @@
   "errors": {
     "something-went-wrong": "Etwas ist schiefgelaufen",
     "error": "Fehler:"
+  },
+  "status": {
+    "server-sind-online": "Server sind online!",
+    "aktuelle-version": "Aktuelle version",
+    "zum-choreo-planer": "Zum Choreo Planer",
+    "kontakt-aufnehmen": "Kontakt aufnehmen",
+    "server-status": "Server Status"
   }
 }

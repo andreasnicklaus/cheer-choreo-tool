@@ -166,6 +166,11 @@ app.use(
 
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 
+// INTERNATIONALIZATION
+require("./plugins/i18n");
+const i18n = require("i18n");
+app.use(i18n.init);
+
 app.get("/", (req, res) => {
   res.render("../src/views/status", {
     version,
@@ -179,11 +184,6 @@ app.get("/health", (req, res, next) => {
   res.status(200).send();
   next();
 });
-
-// INTERNATIONALIZATION
-require("./plugins/i18n");
-const i18n = require("i18n");
-app.use(i18n.init);
 
 app.use("/choreo", choreoRouter);
 app.use("/team", teamRouter);
