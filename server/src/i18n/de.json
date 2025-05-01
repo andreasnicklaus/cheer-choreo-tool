@@ -89,7 +89,8 @@
   },
   "errors": {
     "something-went-wrong": "Etwas ist schiefgelaufen",
-    "error": "Fehler:"
+    "error": "Fehler:",
+    "unknown-error": "Unbekannter Fehler"
   },
   "status": {
     "server-sind-online": "Server sind online!",
@@ -97,5 +98,30 @@
     "zum-choreo-planer": "Zum Choreo Planer",
     "kontakt-aufnehmen": "Kontakt aufnehmen",
     "server-status": "Server Status"
+  },
+  "error": {
+    "oh-no": "Oh nein!",
+    "info-text-1": "Das hat nicht funktioniert und wir wissen nicht warum...",
+    "info-text-2": "Bitte versuche es noch einmal oder nimm Kontakt zu uns auf!",
+    "reload": "Neu laden",
+    "error-info": "Fehlerinformationen",
+    "action": "Action:",
+    "data": "Data:",
+    "message": "Fehlermeldung:",
+    "timestamp": "Timestamp:"
+  },
+  "emailRevoked": {
+    "account-deleted": "Konto gelöscht",
+    "account-successfully-deleted": "Konto erfolgreich gelöscht!",
+    "info-text-1": "Schade, dass du gehst! Wir wären gerne länger zusammen geblieben, aber wir verstehen deine Entscheidung.",
+    "info-text-2": "Wenn du es dir doch nochmal anders überlegst, kannst du uns immer eine E-Mail an {{{contactLink}}} schreiben, damit wir dein Konto wieder herstellen können.",
+    "back-to-the-homepage": "Kehre jetzt zur Homepage zurück"
+  },
+  "emailConfirmed": {
+    "e-mail-bestaetigt": "E-Mail bestätigt",
+    "e-mail-adresse-bestaetigt": "E-Mail-Adresse bestätigt!",
+    "info-text-1": "Du hast dein E-Mail-Adresse erfolgreich bestätigt!",
+    "info-text-2": "In 5 Sekunden wirst du automatisch weitergeleitet...",
+    "login-now": "Jetzt einloggen"
   }
 }

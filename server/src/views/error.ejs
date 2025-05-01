@@ -3,7 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Unbekannter Fehler</title>
+    <title><%= t('errors.unknown-error') %></title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
     <style>
       body {
         text-align: center;
@@ -26,9 +30,9 @@
     </style>
   </head>
   <body>
-    <h1>😢 Oh nein!</h1>
-    <p>Das hat nicht funktioniert und wir wissen nicht warum...</p>
-    <p>Bitte versuche es noch einmal oder nimm Kontakt zu uns auf!</p>
+    <h1>😢 <%= t('error.oh-no') %></h1>
+    <p style="margin-bottom: 0"><%= t('error.info-text-1') %></p>
+    <p style="margin-top: 0"><%= t('error.info-text-2') %></p>
 
     <div
       style="
@@ -39,22 +43,24 @@
       "
     >
       <a type="button" href="#" onclick="window.location.reload()">
-        Neu laden
+        <i class="bi bi-arrow-counterclockwise"></i>
+        <%= t('error.reload') %>
       </a>
       <a
         type="button"
         href="mailto:info@choreo-planer.de?cc=admin@choreo-planer.de&subject=Ich möchte einen Fehler melden&body=<%= emailBody %>"
       >
-        Kontakt aufnehmen
+        <i style="margin-right: 8px" class="bi bi-send"></i>
+        <%= t('status.kontakt-aufnehmen') %>
       </a>
     </div>
 
     <details style="text-align: start">
-      <summary style="text-align: center">Fehlerinformationen</summary>
-      <p>Action: <%= action %></p>
-      <p>Data: <%= data %></p>
-      <p>Fehlermeldung: <%= error %></p>
-      <p>Timestamp: <%= timestamp %></p>
+      <summary style="text-align: center"><%= t('error.error-info') %></summary>
+      <p><%= t('error.action') %> <%= action %></p>
+      <p><%= t('error.data') %> <%= data %></p>
+      <p><%= t('error.message') %> <%= error %></p>
+      <p><%= t('error.timestamp') %> <%= timestamp %></p>
     </details>
   </body>
 </html>

@@ -13,4 +13,7 @@ i18n.configure({
   // logDebugFn: console.debug,
   // logWarnFn: console.warm,
   // logErrorFn: console.error,
+  mustacheConfig: {
+    disable: false,
+  },
 });

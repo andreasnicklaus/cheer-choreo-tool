@@ -89,7 +89,8 @@
   },
   "errors": {
     "something-went-wrong": "Something went wrong",
-    "error": "Error:"
+    "error": "Error:",
+    "unknown-error": "Unknown mistake"
   },
   "status": {
     "server-status": "Server Status",
@@ -97,5 +98,30 @@
     "kontakt-aufnehmen": "make contact",
     "server-sind-online": "Servers are online!",
     "zum-choreo-planer": "To the choreo planner"
+  },
+  "error": {
+    "action": "Action:",
+    "data": "Data:",
+    "error-info": "Error information",
+    "info-text-1": "Something didn't work and we don't know why...",
+    "info-text-2": "Please try again or contact us!",
+    "message": "Error message:",
+    "oh-no": "Oh no!",
+    "reload": "Reload",
+    "timestamp": "Timestamp:"
+  },
+  "emailRevoked": {
+    "account-deleted": "Account deleted",
+    "account-successfully-deleted": "Account successfully deleted!",
+    "back-to-the-homepage": "Return to the homepage now",
+    "info-text-1": "Too bad you go! We would have liked to stay together longer, but we understand your decision.",
+    "info-text-2": "If you change your mind, you can always write us an email to {{{contactlink}}} so that we can restore your account."
+  },
+  "emailConfirmed": {
+    "e-mail-adresse-bestaetigt": "Email address confirmed!",
+    "e-mail-bestaetigt": "Email confirmed",
+    "info-text-1": "You have successfully confirmed your email address!",
+    "info-text-2": "You will be forwarded automatically in 5 seconds...",
+    "login-now": "Log in now"
   }
 }
