@@ -85,7 +85,8 @@
     "required": "Erforderlich",
     "send": "Abschicken",
     "add": "Hinzufügen",
-    "save-changes": "Änderungen speichern"
+    "save-changes": "Änderungen speichern",
+    "unknown": "Unbekannt"
   },
   "errors": {
     "something-went-wrong": "Etwas ist schiefgelaufen",
@@ -123,5 +124,54 @@
     "info-text-1": "Du hast dein E-Mail-Adresse erfolgreich bestätigt!",
     "info-text-2": "In 5 Sekunden wirst du automatisch weitergeleitet...",
     "login-now": "Jetzt einloggen"
+  },
+  "mail": {
+    "confirmEmail": {
+      "bitte-bestaetige-deine-e-mail-adresse": "Bitte bestätige deine E-Mail-Adresse",
+      "bitte-bestaetige-deine-e-mail-adresse-2": "Bitte bestätige deine E-Mail-Adresse!",
+      "info-text-1": "dein Konto beim <b>Choreo Planer</b> wurde mit {{userEmail}} erstellt. Bitte bestätige jetzt deine E-Mail-Adresse!",
+      "info-text-2": "Wenn der obige Link nicht funktioniert, kannst du folgende URL in deinem Browser öffnen:",
+      "jetzt-bestaetigen": "Jetzt bestätigen"
+    },
+    "general": {
+      "hallo-username": "Hallo {{username}},",
+      "goodbye": "Wir wünschen dir viel Spaß und Erfolg mit deinem nächsten Projekt!",
+      "sender": "Tanzende Grüße,<br /> Andreas Nicklaus<br /> <b>Choreo Planer Team</b>",
+      "auto-email-info": "Diese E-Mail wurde automatisch erstellt. Bitte antworte nicht auf diese E-Mail. Schreibe deine Antwort lieber an <a href=\"mailto:info@choreo-planer.de\">info@choreo-planer.de</a>. Vielen Dank!",
+      "im-auftrag-von-choreo-planer": "Im Auftrag von Choreo Planer"
+    },
+    "newFeedback": {
+      "new-feedback": "Neues Feedback!",
+      "jemand-hat-feedback-gegeben": "Jemand hat Feedback gegeben!",
+      "info-text-1": "<b title=\"{{userEmail}}\">{{username}}</b> hat eben um {{timestamp}} ein Feedback geben!",
+      "sterne": "Sterne"
+    },
+    "newNotification": {
+      "neue-benachrichtigung": "Neue Benachrichtigung!",
+      "du-hast-eine-neue-benachrichtigung": "Du hast eine neue Benachrichtigung!",
+      "info-text-1": "du hast eine neue Benachrichtigung in deinem Choreo Planer erhalten. Um sie zu lesen, klicke bitte auf den folgenden Link:",
+      "jetzt-einloggen-und-nachricht-lesen": "Jetzt einloggen und Nachricht lesen",
+      "dieser-link-ist-gueltig-bis": "Dieser Link ist gültig bis:",
+      "info-text-2": "Du erhälst diese E-Mail, weil du dich bei Choreo Planer registriert hast. In der Regel bekommst du Benachrichtigungen, wenn ein Administrator dir ein Nachricht schicken möchte.",
+      "info-text-3": "Wenn du dir nicht sicher bist, ob diese E-Mail wirklich von uns stammt, wende dich gerne an uns unter <a href=\"mailto:admin@choreo-planer.de\">admin@choreo-planer.de</a> oder über Instagram an <a href=\"https://www.instagram.com/choreoplaner\">@choreoplaner</a>."
+    },
+    "ssoLogin": {
+      "dein-login-link": "Dein Login-Link",
+      "hier-ist-dein-login-link": "Hier ist dein Login-Link!",
+      "info-text-1": "du bekommst diese E-Mail, weil du einen Login-Link angefordert hast. Über diesen Link kannst du dich jetzt einloggen:",
+      "info-text-2": "Wenn du den Link nicht angefordert hast, kannst du diese E-Mail getrost ignorieren. Falls du E-Mails wie diese gehäuft bekommst, kann das ein Anzeichen dafür sein, dass jemand versucht, in dein Konto zu gelangen. Bitte kontaktiere in diesem Fall sofort unsere Administratoren unter <a href=\"mailto:admin@choreo-planer.de\">admin@choreo-planer.de</a>, auch wenn du dir nicht sicher bist."
+    },
+    "welcome": {
+      "willkommen-beim-choreo-planer": "Willkommen beim Choreo Planer",
+      "willkommen-beim-choreo-planer-1": "Willkommen beim Choreo Planer!",
+      "info-text-1": "herzlich willkommen beim <b>Choreo Planer</b> - deinem kostenlosen Online-Tool für Tanz, Cheerleading, Bodenturnen und vieles mehr!",
+      "info-text-2": "Wir freuen uns, dich an Bord zu haben! Mit unserem Tool kannst du einfach und kreativ deine Choreografien planen, organisieren und visualisieren.",
+      "erste-schritte": "Erste Schritte",
+      "erste-schritte-step-1": "<b>Loslegen:</b> Besuche unsere Webseite und starte direkt mit deiner ersten Choreografie. Es ist alles intuitiv und unkompliziert gestaltet.",
+      "erste-schritte-step-2": "<b>Entdecke die Möglichkeiten:</b> Ob für kleine Gruppen oder große Performances - der Choreo Planer bietet dir alles, was du brauchst.",
+      "info-text-3": "Unser Tool ist nicht nur kostenlos, sondern wir legen auch Wert auf Datenschutz: Deine Daten gehören dir, und wir verkaufen oder teilen sie nicht. Falls du dein Konto versehentlich erstellt hast oder die Registrierung rückgängig machen möchtest, klicke einfach hier:",
+      "konto-loeschen": "Konto löschen",
+      "wenn-du-fragen-hast-oder-unterstuetzung-benoetigst-schreib-uns-einfach-unter": "Wenn du Fragen hast oder Unterstützung benötigst, schreib uns einfach unter:"
+    }
   }
 }

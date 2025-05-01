@@ -34,7 +34,7 @@ router.get("/revokeEmail/:id", (req, res, next) => {
         action: "email-revocation",
         data: JSON.stringify({ userId: req.params.id }),
         error: e,
-        timestamp: new Date().toLocaleString("de"),
+        timestamp: new Date().toLocaleString(req.locale),
         emailBody: encodeURIComponent(`Hallo,
 
             ich möchte einen Fehler melden:
@@ -42,7 +42,7 @@ router.get("/revokeEmail/:id", (req, res, next) => {
             Action: email-confirmation
             Data: ${JSON.stringify({ userId: req.params.id })}
             Fehlermeldung: ${e}
-            Timestamp: ${new Date().toLocaleString("de")}
+            Timestamp: ${new Date().toLocaleString(req.locale)}
   
             Vielen Dank!
             `),
@@ -62,7 +62,7 @@ router.get("/confirmEmail/:id", (req, res, next) => {
         action: "email-confirmation",
         data: JSON.stringify({ userId: req.params.id }),
         error: e,
-        timestamp: new Date().toLocaleString("de"),
+        timestamp: new Date().toLocaleString(req.locale),
         emailBody: encodeURIComponent(`Hallo,
 
           ich möchte einen Fehler melden:
@@ -70,7 +70,7 @@ router.get("/confirmEmail/:id", (req, res, next) => {
           Action: email-confirmation
           Data: ${JSON.stringify({ userId: req.params.id })}
           Fehlermeldung: ${e}
-          Timestamp: ${new Date().toLocaleString("de")}
+          Timestamp: ${new Date().toLocaleString(req.locale)}
 
           Vielen Dank!
           `),

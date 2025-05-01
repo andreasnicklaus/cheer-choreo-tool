@@ -78,7 +78,7 @@ class AuthService {
     });
   }
 
-  generateSsoToken(email) {
+  generateSsoToken(email, locale) {
     return UserService.findByUsernameOrEmail(email).then((user) => {
       if (!user) throw new Error("No user with this information was found.");
       if (!user.email) throw new Error("This user has no email address.");
@@ -86,15 +86,19 @@ class AuthService {
       const token = this.generateAccessToken(user.id, {
         expiresIn: process.env.SSO_TOKEN_EXPIRES_IN,
       });
-      return MailService.sendSsoEmail(user.email, user.username, token).then(
-        () =>
-          NotificationService.createOne(
-            "Single Sign-On wurde verschickt",
-            `Eine E-Mail mit einem Single Sign-On Link wurde versandt. Wenn du das nicht veranlasst hast, kontaktiere uns bitte sofort.
+      return MailService.sendSsoEmail(
+        user.email,
+        user.username,
+        token,
+        locale
+      ).then(() =>
+        NotificationService.createOne(
+          "Single Sign-On wurde verschickt",
+          `Eine E-Mail mit einem Single Sign-On Link wurde versandt. Wenn du das nicht veranlasst hast, kontaktiere uns bitte sofort.
             
             [Administratoren kontaktieren](mailto:admin@choreo-planer.de)`,
-            user.id
-          )
+          user.id
+        )
       );
     });
   }

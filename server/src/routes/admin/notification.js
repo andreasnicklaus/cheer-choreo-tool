@@ -58,7 +58,8 @@ router.post("/", (req, res, next) => {
                   user.email,
                   user.username,
                   token,
-                  title
+                  title,
+                  req.locale
                 );
               }
             });

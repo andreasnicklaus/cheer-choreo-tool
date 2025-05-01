@@ -43,36 +43,41 @@ class UserService {
     ]).then(([created, deleted]) => created - deleted);
   }
 
-  async create(username, password, email) {
-    return User.create({ username, password, email }).then((user) => {
-      MailService.sendUserRegistrationNotice(
-        user.username,
-        user.id,
-        user.email
-      ).catch(logger.error);
-
-      NotificationService.createOne(
-        "Herzlich Willkommen!",
-        `Willkommen beim Choreo Planer! Viel Spaß beim Erstellen deiner Teams und Choreos!
-        
-        [Hilfe bekommen](/hilfe)
-        
-        [Kontakt](mailto:info@choreo-planer.de)`,
-        user.id
-      );
-
-      if (email) {
-        MailService.sendEmailConfirmationEmail(
+  async create(username, password, email, emailConfirmed, locale) {
+    return User.create({ username, password, email, emailConfirmed }).then(
+      (user) => {
+        MailService.sendUserRegistrationNotice(
           user.username,
           user.id,
           user.email
         ).catch(logger.error);
-        MailService.sendWelcomeEmail(user.username, user.id, user.email).catch(
-          logger.error
+
+        NotificationService.createOne(
+          "Herzlich Willkommen!",
+          `Willkommen beim Choreo Planer! Viel Spaß beim Erstellen deiner Teams und Choreos!
+        
+        [Hilfe bekommen](/hilfe)
+        
+        [Kontakt](mailto:info@choreo-planer.de)`,
+          user.id
         );
+
+        if (email) {
+          MailService.sendEmailConfirmationEmail(
+            user.username,
+            user.id,
+            user.email
+          ).catch(logger.error);
+          MailService.sendWelcomeEmail(
+            user.username,
+            user.id,
+            user.email,
+            locale
+          ).catch(logger.error);
+        }
+        return user;
       }
-      return user;
-    });
+    );
   }
 
   async findOrCreate(username, password) {

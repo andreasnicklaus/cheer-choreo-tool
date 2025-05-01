@@ -1,19 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%- locals.locale? locale : 'en' %>">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bitte bestätige deine E-Mail-Adresse</title>
+    <title>
+      <%- t('mail.confirmEmail.bitte-bestaetige-deine-e-mail-adresse') %>
+    </title>
   </head>
   <body>
-    <h1 style="text-align: center">Bitte bestätige deine E-Mail-Adresse!</h1>
+    <h1 style="text-align: center">
+      <%- t('mail.confirmEmail.bitte-bestaetige-deine-e-mail-adresse-2') %>
+    </h1>
 
-    <p>Hallo <%= username %>,</p>
+    <p><%= t('mail.general.hallo-username', {username}) %></p>
 
-    <p>
-      dein Konto beim <b>Choreo Planer</b> wurde mit <%= userEmail %> erstellt.
-      Bitte bestätige jetzt deine E-Mail-Adresse!
-    </p>
+    <p><%- t('mail.confirmEmail.info-text-1', {userEmail}) %></p>
 
     <p style="margin: 32px 0px; text-align: center">
       <a
@@ -26,33 +27,23 @@
         "
         href="<%= backendDomain %>/user/confirmEmail/<%= userId %>"
       >
-        Jetzt bestätigen
+        <%- t('mail.confirmEmail.jetzt-bestaetigen') %>
       </a>
     </p>
 
     <p>
-      Wenn der obige Link nicht funktioniert, kannst du folgende URL in deinem
-      Browser öffnen:
+      <%- t('mail.confirmEmail.info-text-2') %>
       <a href="<%= backendDomain %>/user/confirmEmail/<%= userId %>">
         <%= backendDomain %>/user/confirmEmail/<%= userId %>
       </a>
     </p>
 
-    <p>Wir wünschen dir viel Spaß und Erfolg mit deinem nächsten Projekt!</p>
+    <p><%- t('mail.general.goodbye') %></p>
+
+    <p><%- t('mail.general.sender') %></p>
 
     <p>
-      Tanzende Grüße,<br />
-      Andreas Nicklaus<br />
-      <b>Choreo Planer Team</b>
-    </p>
-
-    <p>
-      <small
-        >Diese E-Mail wurde automatisch erstellt. Bitte antworte nicht auf diese
-        E-Mail. Schreibe deine Antwort lieber an
-        <a href="mailto:info@choreo-planer.de">info@choreo-planer.de</a>. Vielen
-        Dank!</small
-      >
+      <small><%- t('mail.general.auto-email-info') %></small>
     </p>
 
     <hr />

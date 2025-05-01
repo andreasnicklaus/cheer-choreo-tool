@@ -12,7 +12,7 @@ const router = Router();
 
 router.post("/", (req, res, next) => {
   const { username, password, email } = req.body;
-  UserService.create(username, password, email)
+  UserService.create(username, password, email, false, req.locale)
     .then((user) => {
       const token = AuthService.generateAccessToken(user.id);
       res.send(token);
@@ -61,7 +61,7 @@ router.post("/ssoRequest", (req, res, next) => {
   const { email } = req.body;
   if (!email) return res.status(400).send("An email address is required.");
 
-  AuthService.generateSsoToken(email)
+  AuthService.generateSsoToken(email, req.locale)
     .then(() => {
       res.send("Single-Sign-On link was sent to your email inbox.");
       next();
@@ -108,7 +108,8 @@ router.put("/me", AuthService.authenticateUser(), (req, res, next) => {
         return MailService.sendEmailConfirmationEmail(
           user.username,
           user.id,
-          user.email
+          user.email,
+          req.locale
         ).then(() => {
           res.send();
           return next();
@@ -178,7 +179,8 @@ router.get(
         return MailService.sendEmailConfirmationEmail(
           user.username,
           user.id,
-          user.email
+          user.email,
+          req.locale
         ).then(() => {
           NotificationService.createOne(
             "E-Mail wurde versandt!",

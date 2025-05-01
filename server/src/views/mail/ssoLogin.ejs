@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%- locals.locale? locale : 'en' %>">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dein Login-Link</title>
+    <title><%- t('mail.ssoLogin.dein-login-link') %></title>
   </head>
   <body>
-    <h1 style="text-align: center">Hier ist dein Login-Link!</h1>
+    <h1 style="text-align: center">
+      <%- t('mail.ssoLogin.hier-ist-dein-login-link') %>
+    </h1>
 
-    <p>Hallo <%= username %>,</p>
+    <p><%- t('mail.general.hallo-username', {username}) %></p>
 
-    <p>
-      du bekommst diese E-Mail, weil du einen Login-Link angefordert hast. Über
-      diesen Link kannst du dich jetzt einloggen:
-    </p>
+    <p><%- t('mail.ssoLogin.info-text-1') %></p>
 
     <p style="margin: 32px 0px; text-align: center">
       <a
@@ -26,46 +25,30 @@
         "
         href="<%= frontendDomain %>/login/?sso=<%= ssoToken %>"
       >
-        Jetzt einloggen
+        <%- t('emailConfirmed.login-now') %>
       </a>
     </p>
 
     <p>
-      Wenn der obige Link nicht funktioniert, kannst du folgende URL in deinem
-      Browser öffnen:
+      <%- t('mail.confirmEmail.info-text-2') %>
       <a href="<%= frontendDomain %>/login/?sso=<%= ssoToken %>">
         <%= frontendDomain %>/login/?sso=<%= ssoToken %>
       </a>
     </p>
 
     <p style="text-align: center">
-      Dieser Link ist gültig bis: <%= expirationDate %>
+      <%- t('mail.newNotification.dieser-link-ist-gueltig-bis') %> <%=
+      expirationDate %>
     </p>
 
-    <p>
-      Wenn du den Link nicht angefordert hast, kannst du diese E-Mail getrost
-      ignorieren. Falls du E-Mails wie diese gehäuft bekommst, kann das ein
-      Anzeichen dafür sein, dass jemand versucht, in dein Konto zu gelangen.
-      Bitte kontaktiere in diesem Fall sofort unsere Administratoren unter
-      <a href="mailto:admin@choreo-planer.de">admin@choreo-planer.de</a>, auch
-      wenn du dir nicht sicher bist.
-    </p>
+    <p><%- t('mail.ssoLogin.info-text-2') %></p>
 
-    <p>Wir wünschen dir viel Spaß und Erfolg mit dem Choreo Planer!</p>
+    <p><%- t('mail.general.goodbye') %></p>
+
+    <p><%- t('mail.general.sender') %></p>
 
     <p>
-      Tanzende Grüße,<br />
-      Andreas Nicklaus<br />
-      <b>Choreo Planer Team</b>
-    </p>
-
-    <p>
-      <small
-        >Diese E-Mail wurde automatisch erstellt. Bitte antworte nicht auf diese
-        E-Mail. Schreibe deine Antwort lieber an
-        <a href="mailto:info@choreo-planer.de">info@choreo-planer.de</a>. Vielen
-        Dank!</small
-      >
+      <small><%- t('mail.general.auto-email-info') %></small>
     </p>
 
     <hr />
