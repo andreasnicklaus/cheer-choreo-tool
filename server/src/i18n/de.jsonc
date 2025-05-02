@@ -116,7 +116,7 @@
     "account-deleted": "Konto gelöscht",
     "account-successfully-deleted": "Konto erfolgreich gelöscht!",
     "info-text-1": "Schade, dass du gehst! Wir wären gerne länger zusammen geblieben, aber wir verstehen deine Entscheidung.",
-    "info-text-2": "Wenn du es dir doch nochmal anders überlegst, kannst du uns immer eine E-Mail an {{{contactLink}}} schreiben, damit wir dein Konto wieder herstellen können.",
+    "info-text-2": "Wenn du es dir doch nochmal anders überlegst, kannst du uns immer eine E-Mail an {{{contactLink}}} schreiben, damit wir dein Konto wieder herstellen können.", // njsscan-ignore: handlebar_mustache_template
     "back-to-the-homepage": "Kehre jetzt zur Homepage zurück"
   },
   "emailConfirmed": {

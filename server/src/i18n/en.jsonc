@@ -117,7 +117,7 @@
     "account-successfully-deleted": "Account successfully deleted!",
     "back-to-the-homepage": "Return to the homepage now",
     "info-text-1": "Too bad you go! We would have liked to stay together longer, but we understand your decision.",
-    "info-text-2": "If you change your mind, you can always write us an email to {{{contactlink}}} so that we can restore your account."
+    "info-text-2": "If you change your mind, you can always write us an email to {{{contactlink}}} so that we can restore your account." // njsscan-ignore: handlebar_mustache_template
   },
   "emailConfirmed": {
     "e-mail-adresse-bestaetigt": "Email address confirmed!",
