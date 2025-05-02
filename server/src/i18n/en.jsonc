@@ -94,6 +94,7 @@
     "unknown-error": "Unknown error",
     "invalid-entity": "Invalid entity",
     "invalid-sso-token": "SSO Token was not valid",
+    "sso-token-user-missing": "SSO Token was valid, but the user it references does no longer exist.",
     "entity-not-found": "No {{entity}} with this information was found.",
     "user-has-no-email": "This user has no email address.",
     "user-already-exists": "User already exists",

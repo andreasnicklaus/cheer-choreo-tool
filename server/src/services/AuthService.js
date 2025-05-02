@@ -67,7 +67,7 @@ class AuthService {
           if (!user) {
             return reject(
               new Error(
-                "SSO Token was valid, but the user it references does no longer exist."
+                i18n.__({ phrase: "errors.sso-token-user-missing", locale })
               )
             );
           }
