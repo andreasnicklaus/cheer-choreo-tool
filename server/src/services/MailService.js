@@ -27,7 +27,7 @@ class MailService {
               cid: "choreo-planer-icon",
             },
           ],
-          "en"
+          "de"
         );
       })
     );
@@ -36,7 +36,7 @@ class MailService {
   sendWelcomeEmail(username, userId, userEmail, locale) {
     return sendMail(
       userEmail,
-      "Willkommen beim Choreo Planer",
+      i18n.__({ phrase: "mail.welcome.willkommen-beim-choreo-planer", locale }),
       "welcome.ejs",
       {
         username,
@@ -57,7 +57,10 @@ class MailService {
   sendEmailConfirmationEmail(username, userId, userEmail, locale) {
     return sendMail(
       userEmail,
-      "Bitte bestätige deine E-Mail-Adresse",
+      i18n.__({
+        phrase: "mail.confirmEmail.bitte-bestaetige-deine-e-mail-adresse",
+        locale,
+      }),
       "confirmEmail.ejs",
       {
         username,
@@ -105,7 +108,7 @@ class MailService {
   sendSsoEmail(userEmail, username, ssoToken, locale) {
     return sendMail(
       userEmail,
-      "Dein Login-Link",
+      i18n.__({ phrase: "mail.ssoLogin.dein-login-link", locale }),
       "ssoLogin.ejs",
       {
         username,
@@ -143,7 +146,7 @@ class MailService {
   ) {
     return sendMail(
       userEmail,
-      "Neue Benachrichtigung!",
+      i18n.__({ phrase: "mail.newNotification.neue-benachrichtigung", locale }),
       "newNotification.ejs",
       {
         username,

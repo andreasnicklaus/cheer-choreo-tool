@@ -462,9 +462,10 @@ export default {
       }
     },
     loadNotifications() {
-      NotificationService.getAll().then((notifications) => {
-        this.notifications = notifications;
-      });
+      if (this.$store.state.loggedIn)
+        NotificationService.getAll().then((notifications) => {
+          this.notifications = notifications;
+        });
     },
     checkEmailConfirmation() {
       if (this.user?.email && !this.user?.emailConfirmed) {
@@ -539,8 +540,11 @@ export default {
   created() {
     this.load();
     setTimeout(this.checkEmailConfirmation, 1000);
-    setInterval(this.load, 60_000);
-    setInterval(this.loadNotifications, 5_000);
+    this.loadInterval = setInterval(this.load, 60_000);
+    this.loadNotificationsInterval = setInterval(
+      this.loadNotifications,
+      10_000
+    );
   },
   mounted() {
     if (navigator.canShare && navigator.share)

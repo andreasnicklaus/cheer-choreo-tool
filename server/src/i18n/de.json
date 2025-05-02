@@ -109,7 +109,8 @@
     "action": "Action:",
     "data": "Data:",
     "message": "Fehlermeldung:",
-    "timestamp": "Timestamp:"
+    "timestamp": "Timestamp:",
+    "ich-moechte-einen-fehler-melden": "Ich möchte einen Fehler melden"
   },
   "emailRevoked": {
     "account-deleted": "Konto gelöscht",
@@ -172,6 +173,28 @@
       "info-text-3": "Unser Tool ist nicht nur kostenlos, sondern wir legen auch Wert auf Datenschutz: Deine Daten gehören dir, und wir verkaufen oder teilen sie nicht. Falls du dein Konto versehentlich erstellt hast oder die Registrierung rückgängig machen möchtest, klicke einfach hier:",
       "konto-loeschen": "Konto löschen",
       "wenn-du-fragen-hast-oder-unterstuetzung-benoetigst-schreib-uns-einfach-unter": "Wenn du Fragen hast oder Unterstützung benötigst, schreib uns einfach unter:"
+    }
+  },
+  "notifications": {
+    "confirm-email": {
+      "title": "E-Mail wurde versandt!",
+      "message": "Eine E-Mail mit dem Link zum Bestätigen deiner E-Mail-Adresse wurde verschickt."
+    },
+    "club-created": {
+      "title": "Verein erstellt!",
+      "message": "Dein Verein **{{name}}** wurde erstellt."
+    },
+    "team-created": {
+      "title": "Team erstellt!",
+      "message": "Dein Team **{{name}}** wurde erstellt! [Checke es jetzt aus!](/team/{{teamId}})"
+    },
+    "sso-link-was-sent": {
+      "title": "Single Sign-On wurde verschickt",
+      "message": "Eine E-Mail mit einem Single Sign-On Link wurde versandt. Wenn du das nicht veranlasst hast, kontaktiere uns bitte sofort.\n\n[Administratoren kontaktieren](mailto:admin@choreo-planer.de)"
+    },
+    "welcome": {
+      "title": "Herzlich Willkommen!",
+      "message": "Willkommen beim Choreo Planer! Viel Spaß beim Erstellen deiner Teams und Choreos!\n\n[Hilfe bekommen](/hilfe)\n\n[Kontakt](mailto:info@choreo-planer.de)"
     }
   }
 }

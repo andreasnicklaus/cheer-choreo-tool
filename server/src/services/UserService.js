@@ -51,14 +51,9 @@ class UserService {
           user.id,
           user.email
         ).catch(logger.error);
-
         NotificationService.createOne(
-          "Herzlich Willkommen!",
-          `Willkommen beim Choreo Planer! Viel Spaß beim Erstellen deiner Teams und Choreos!
-        
-        [Hilfe bekommen](/hilfe)
-        
-        [Kontakt](mailto:info@choreo-planer.de)`,
+          i18n.__({ phrase: "notifications.welcome.title", locale }),
+          i18n.__({ phrase: "notifications.welcome.message", locale }),
           user.id
         );
 

@@ -55,7 +55,7 @@
     },
     "partials": {
       "head": {
-        "choreo-planer-admin-panel": "Choreo Planer Admin Panel"
+        "choreo-planer-admin-panel": "Choreo Planner Admin Panel"
       },
       "header": {
         "home": "Home",
@@ -109,7 +109,8 @@
     "message": "Error message:",
     "oh-no": "Oh no!",
     "reload": "Reload",
-    "timestamp": "Timestamp:"
+    "timestamp": "Timestamp:",
+    "ich-moechte-einen-fehler-melden": "I want to report an error"
   },
   "emailRevoked": {
     "account-deleted": "Account deleted",
@@ -134,7 +135,7 @@
       "jetzt-bestaetigen": "Confirm now"
     },
     "general": {
-      "auto-email-info": "This email was created automatically. Please do not respond to this email. Better write your answer to <a href=\"mailto:info@choreo-planer.de\">info@choreoplaner.de</a>. Thank you!",
+      "auto-email-info": "This email was created automatically. Please do not respond to this email. Better write your answer to <a href=\"mailto:info@choreo-planer.de\">info@choreo-planer.de</a>. Thank you!",
       "goodbye": "We wish you a lot of fun and success with your next project!",
       "hallo-username": "Hello {{username}},",
       "sender": "Dancing greetings,<br /> Andreas Nicklaus <br /> <b>Choreo Planner Team </b>",
@@ -151,7 +152,7 @@
       "du-hast-eine-neue-benachrichtigung": "You have a new notification!",
       "info-text-1": "You have received a new notification in your Choreo Planner. To read it, please click on the following link:",
       "info-text-2": "You have received this email because you have registered with Choreo Planner. As a rule, you will get notifications if an administrator wants to send you a message.",
-      "info-text-3": "If you are not sure whether this email really comes from us, please contact us at <a href=\"mailto:admin@choreoplaner.de\">admin@choreoplaner.de</a> or via Instagram an <a href=\"https://www.instagram.com/choreoplaner\">@choreoplaner</a>.",
+      "info-text-3": "If you are not sure whether this email really comes from us, please contact us at <a href=\"mailto:admin@choreo-planer.de\">admin@choreo-planer.de</a> or via Instagram an <a href=\"https://www.instagram.com/choreoplaner\">@choreoplaner</a>.",
       "jetzt-einloggen-und-nachricht-lesen": "Now log in and read the message",
       "neue-benachrichtigung": "New notification!"
     },
@@ -159,19 +160,41 @@
       "dein-login-link": "Your login link",
       "hier-ist-dein-login-link": "Here is your login link!",
       "info-text-1": "You get this email because you have requested a login link. You can now log in via this link:",
-      "info-text-2": "If you have not requested the link, you can confidently ignore this email. If you get emails like this very often, it can be a sign that someone is trying to get into your account. In this case, please contact our administrators immediately at <a href=\"mailto: admin@choreoplaner.de\">admin@choreoplaner.de</a>, even if you are not sure."
+      "info-text-2": "If you have not requested the link, you can confidently ignore this email. If you get emails like this very often, it can be a sign that someone is trying to get into your account. In this case, please contact our administrators immediately at <a href=\"mailto:admin@choreo-planer.de\">admin@choreo-planer.de</a>, even if you are not sure."
     },
     "welcome": {
       "erste-schritte": "First steps",
       "erste-schritte-step-1": "<b>GettingStarted:</b> Visit our website and start directly with your first choreography. Everything is designed intuitively and uncomplicated.",
-      "erste-schritte-step-2": "<b>Discover the possibilities:</b> whether for small groups or large performances - the Choreo Planer offers you everything you need.",
+      "erste-schritte-step-2": "<b>Discover the possibilities:</b> whether for small groups or large performances - the Choreo Planner offers you everything you need.",
       "info-text-1": "Welcome to the <b>Choreo Planner</b> - your free online tool for dance, cheerleading, floor gymnastics and much more!",
       "info-text-2": "We look forward to having you on board! With our tool you can easily and creatively plan, organize and visualize your choreographies.",
       "info-text-3": "Our tool is not only free of charge, we also value data protection: your data is yours and we do not sell or share. If you accidentally created your account or want to undo the registration, just click here:",
       "konto-loeschen": "Delete account",
       "wenn-du-fragen-hast-oder-unterstuetzung-benoetigst-schreib-uns-einfach-unter": "If you have any questions or need support, just write us at:",
-      "willkommen-beim-choreo-planer": "Welcome to the Choreo Planer",
-      "willkommen-beim-choreo-planer-1": "Welcome to the Choreo Planer!"
+      "willkommen-beim-choreo-planer": "Welcome to the Choreo Planner",
+      "willkommen-beim-choreo-planer-1": "Welcome to the Choreo Planner!"
+    }
+  },
+  "notifications": {
+    "club-created": {
+      "message": "Your club **{{name}}** was created.",
+      "title": "Club created!"
+    },
+    "confirm-email": {
+      "message": "An email with the link to confirm your email address was sent.",
+      "title": "Email was sent!"
+    },
+    "sso-link-was-sent": {
+      "message": "An email with a single sign-on link was sent. If you have not prompted this, please contact us immediately.\n\n[Contact Administrators](mailto:admin@choreoplaner.de)",
+      "title": "Single Sign-on was sent"
+    },
+    "team-created": {
+      "message": "Your team **{{name}}** was created! [Check it out now!](/Team/{{teamId}})",
+      "title": "Team created!"
+    },
+    "welcome": {
+      "message": "Welcome to the choreo planner! Have fun creating your teams and choreos!\n\n[Get help](/help)\n\n[Contact](mailto:info@choreo-planer.de)",
+      "title": "Welcome!"
     }
   }
 }

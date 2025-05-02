@@ -39,10 +39,11 @@ router.post("/", authenticateUser(), (req, res, next) => {
   return TeamService.create(name, clubId, seasonId, req.UserId)
     .then((result) => {
       NotificationService.createOne(
-        "Team erstellt!",
-        `Dein Team **${name}** wurde erstellt!
-        
-        [Checke es jetzt aus!](/team/${result.id})`,
+        req.t("notifications.team-created.title"),
+        req.t("notifications.team-created.message", {
+          name,
+          teamId: result.id,
+        }),
         req.UserId
       );
       res.send(result);

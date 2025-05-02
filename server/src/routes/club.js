@@ -39,8 +39,8 @@ router.post("/", authenticateUser(), (req, res, next) => {
   return ClubService.create(name, req.UserId)
     .then((club) => {
       NotificationService.createOne(
-        "Verein erstellt!",
-        `Dein Verein **${name}** wurde erstellt.`,
+        req.t("notifications.club-created.title"),
+        req.t("notifications.club-created.message", { name }),
         req.UserId
       );
       res.send(club);

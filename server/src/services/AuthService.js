@@ -93,10 +93,8 @@ class AuthService {
         locale
       ).then(() =>
         NotificationService.createOne(
-          "Single Sign-On wurde verschickt",
-          `Eine E-Mail mit einem Single Sign-On Link wurde versandt. Wenn du das nicht veranlasst hast, kontaktiere uns bitte sofort.
-            
-            [Administratoren kontaktieren](mailto:admin@choreo-planer.de)`,
+          req.t("notifications.sso-link-was-sent.title"),
+          req.t("notifications.sso-link-was-sent.message"),
           user.id
         )
       );

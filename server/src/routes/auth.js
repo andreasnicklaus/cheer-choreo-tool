@@ -183,8 +183,8 @@ router.get(
           req.locale
         ).then(() => {
           NotificationService.createOne(
-            "E-Mail wurde versandt!",
-            `Eine E-Mail mit dem Link zum Bestätigen deiner E-Mail-Adresse wurde verschickt.`,
+            req.t("notifications.confirm-email.title"),
+            req.t("notifications.confirm-email.message"),
             user.id
           );
           res.send();
