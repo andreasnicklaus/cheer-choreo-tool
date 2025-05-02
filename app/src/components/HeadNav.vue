@@ -434,38 +434,46 @@ export default {
   methods: {
     load() {
       if (this.$store.state.loggedIn) {
-        AuthService.getUserInfo().then((user) => {
-          this.user = user;
-          this.loadProfileImage();
-        });
+        AuthService.getUserInfo()
+          .then((user) => {
+            this.user = user;
+            this.loadProfileImage();
+          })
+          .catch(() => {});
 
         if (this.$store.state.clubId) {
-          ClubService.getById(this.$store.state.clubId).then((club) => {
-            this.teams = club?.Teams || [];
-            this.choreos = this.teams
-              .map((t) => t.SeasonTeams.map((st) => st.Choreos))
-              .flat(Infinity);
-          });
+          ClubService.getById(this.$store.state.clubId)
+            .then((club) => {
+              this.teams = club?.Teams || [];
+              this.choreos = this.teams
+                .map((t) => t.SeasonTeams.map((st) => st.Choreos))
+                .flat(Infinity);
+            })
+            .catch(() => {});
         }
 
-        ClubService.getAll().then((clubList) => {
-          this.clubs = clubList;
-          const club = clubList[0];
-          if (!club) return;
-          if (!this.$store.state.clubId)
-            this.$store.commit("setClubId", club.id);
-          this.teams = club?.Teams || [];
-          this.choreos = this.teams.map((t) => t.Choreos).flat();
-        });
+        ClubService.getAll()
+          .then((clubList) => {
+            this.clubs = clubList;
+            const club = clubList[0];
+            if (!club) return;
+            if (!this.$store.state.clubId)
+              this.$store.commit("setClubId", club.id);
+            this.teams = club?.Teams || [];
+            this.choreos = this.teams.map((t) => t.Choreos).flat();
+          })
+          .catch(() => {});
 
         this.loadNotifications();
       }
     },
     loadNotifications() {
       if (this.$store.state.loggedIn)
-        NotificationService.getAll().then((notifications) => {
-          this.notifications = notifications;
-        });
+        NotificationService.getAll()
+          .then((notifications) => {
+            this.notifications = notifications;
+          })
+          .catch(() => {});
     },
     checkEmailConfirmation() {
       if (this.user?.email && !this.user?.emailConfirmed) {
