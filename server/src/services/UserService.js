@@ -3,6 +3,7 @@ const User = require("../db/models/user");
 const { logger } = require("../plugins/winston");
 const MailService = require("./MailService");
 const NotificationService = require("./NotificationService");
+const i18n = require("i18n");
 
 class UserService {
   async getAll() {
@@ -61,7 +62,8 @@ class UserService {
           MailService.sendEmailConfirmationEmail(
             user.username,
             user.id,
-            user.email
+            user.email,
+            locale
           ).catch(logger.error);
           MailService.sendWelcomeEmail(
             user.username,

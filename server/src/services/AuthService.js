@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const UserService = require("./UserService");
 const MailService = require("./MailService");
 const NotificationService = require("./NotificationService");
+const i18n = require("i18n");
 
 const TOKEN_SECRET = process.env.TOKEN_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
@@ -93,8 +94,11 @@ class AuthService {
         locale
       ).then(() =>
         NotificationService.createOne(
-          req.t("notifications.sso-link-was-sent.title"),
-          req.t("notifications.sso-link-was-sent.message"),
+          i18n.__({ phrase: "notifications.sso-link-was-sent.title", locale }),
+          i18n.__({
+            phrase: "notifications.sso-link-was-sent.message",
+            locale,
+          }),
           user.id
         )
       );
