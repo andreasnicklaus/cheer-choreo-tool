@@ -48,7 +48,7 @@
       </a>
       <a
         type="button"
-        href="mailto:info@choreo-planer.de?cc=admin@choreo-planer.de&subject=<%= t('error.ich-moechte-einen-fehler-melden') %>&body=<%= emailBody %>"
+        href="mailto:info@choreo-planer.de?cc=admin@choreo-planer.de&subject=<%= t('error.ich-moechte-einen-fehler-melden') %>&body=<%= encodeURIComponent(t('errors.error-email-body', {action, data, error, timestamp})) %>"
       >
         <i style="margin-right: 8px" class="bi bi-send"></i>
         <%= t('status.kontakt-aufnehmen') %>

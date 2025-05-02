@@ -11,7 +11,7 @@ router.get("/:id?", authenticateUser(), (req, res, next) => {
   if (req.params.id)
     return ClubService.findById(req.params.id, req.UserId)
       .then((foundClub) => {
-        if (!foundClub) res.status(404).send("Not found");
+        if (!foundClub) res.status(404).send(req.t("responses.not-found"));
         else res.send(foundClub);
         return next();
       })
@@ -73,7 +73,7 @@ router.put(
   FileService.singleFileMiddleware("clubLogo"),
   (req, res, next) => {
     const clubId = req.params.id;
-    if (!req.file) res.status(400).send("No file uploaded");
+    if (!req.file) res.status(400).send(req.t("responses.no-file-uploaded"));
     else {
       const logoExtension = req.file.filename.split(".").pop();
       ClubService.update(
@@ -96,7 +96,7 @@ router.get("/:id/clubLogo", authenticateUser(), (req, res, next) => {
   ClubService.findById(clubId, req.UserId)
     .then((foundClub) => {
       if (!foundClub.logoExtension) {
-        res.status(400).send("No logo uploaded");
+        res.status(400).send(req.t("responses.no-file-uploaded"));
         return next();
       }
       const filename = foundClub.id + "." + foundClub.logoExtension;

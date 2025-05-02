@@ -249,7 +249,7 @@
       function deleteAdmin(id) {
         if (
           confirm(
-            "<%= t('admin.adminsare-you-sure-you-want-to-delete-this-admin') %>"
+            "<%= t('admin.admins.are-you-sure-you-want-to-delete-this-admin') %>"
           )
         ) {
           fetch(`/admin/admins/${id}`, {

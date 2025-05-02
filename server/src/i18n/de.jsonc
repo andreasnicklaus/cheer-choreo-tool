@@ -91,7 +91,13 @@
   "errors": {
     "something-went-wrong": "Etwas ist schiefgelaufen",
     "error": "Fehler:",
-    "unknown-error": "Unbekannter Fehler"
+    "unknown-error": "Unbekannter Fehler",
+    "invalid-entity": "Unbekannte Entity",
+    "invalid-sso-token": "SSO Token war nicht gültig",
+    "entity-not-found": "Kein {{entity}} mit dieser Information wurde gefunden.",
+    "user-has-no-email": "Dieser Nutzer hat keine E-Mail-Adresse.",
+    "user-already-exists": "Nutzer existiert bereits",
+    "error-email-body": "Hallo,\n\nich möchte einen Fehler melden:\n\nAction: {{action}}\nData: {{data}}}\nFehlermeldung: {{error}}\nTimestamp: {{timestamp}}\n\nVielen Dank!"
   },
   "status": {
     "server-sind-online": "Server sind online!",
@@ -196,5 +202,12 @@
       "title": "Herzlich Willkommen!",
       "message": "Willkommen beim Choreo Planer! Viel Spaß beim Erstellen deiner Teams und Choreos!\n\n[Hilfe bekommen](/hilfe)\n\n[Kontakt](mailto:info@choreo-planer.de)"
     }
+  },
+  "responses": {
+    "email-required": "Eine E-Mail-Adresse ist erforderlich.",
+    "sso-link-sent": "Single-Sign-On-Link wurde an Ihren E-Mail-Posteingang gesendet.",
+    "sso-token-required": "Ein SSO-Token ist erforderlich. Bitte kontaktieren Sie admin@choreo-planer.de",
+    "no-file-uploaded": "Keine Datei hochgeladen.",
+    "not-found": "Nicht gefunden"
   }
 }

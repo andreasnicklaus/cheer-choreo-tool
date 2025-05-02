@@ -35,17 +35,6 @@ router.get("/revokeEmail/:id", (req, res, next) => {
         data: JSON.stringify({ userId: req.params.id }),
         error: e,
         timestamp: new Date().toLocaleString(req.locale),
-        emailBody: encodeURIComponent(`Hallo,
-
-            ich möchte einen Fehler melden:
-  
-            Action: email-confirmation
-            Data: ${JSON.stringify({ userId: req.params.id })}
-            Fehlermeldung: ${e}
-            Timestamp: ${new Date().toLocaleString(req.locale)}
-  
-            Vielen Dank!
-            `),
       }); // njsscan-ignore: express_lfr_warning
     });
 });
@@ -63,17 +52,6 @@ router.get("/confirmEmail/:id", (req, res, next) => {
         data: JSON.stringify({ userId: req.params.id }),
         error: e,
         timestamp: new Date().toLocaleString(req.locale),
-        emailBody: encodeURIComponent(`Hallo,
-
-          ich möchte einen Fehler melden:
-
-          Action: email-confirmation
-          Data: ${JSON.stringify({ userId: req.params.id })}
-          Fehlermeldung: ${e}
-          Timestamp: ${new Date().toLocaleString(req.locale)}
-
-          Vielen Dank!
-          `),
       }); // njsscan-ignore: express_lfr_warning
     });
 });

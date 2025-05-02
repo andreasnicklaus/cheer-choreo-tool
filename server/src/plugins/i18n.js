@@ -11,22 +11,12 @@ i18n.configure({
   },
   updateFiles: false,
   objectNotation: true,
-  logDebugFn: console.debug,
-  logWarnFn: console.warn,
-  logErrorFn: console.error,
+  // logDebugFn: console.debug,
+  // logWarnFn: console.warn,
+  // logErrorFn: console.error,
   mustacheConfig: {
     disable: false,
   },
   extension: ".jsonc",
-  // parser: {
-  //   parse: (msg) => {
-  //     console.log("PARSER.parse", msg);
-  //     return JSON.parse(msg);
-  //   },
-  //   stringify: (msg) => {
-  //     console.log("PARSER.stringify", msg);
-  //     return JSON.stringify(msg);
-  //   },
-  // },
   parser: JSONC,
 });

@@ -19,7 +19,7 @@ router.get("/:id?", authenticateUser(), (req, res, next) => {
     if (req.query.name)
       return TeamService.findByName(req.query.name, req.UserId)
         .then((foundTeam) => {
-          if (!foundTeam) res.status(404).send("Not found");
+          if (!foundTeam) res.status(404).send(req.t("responses.not-found"));
           else res.send(foundTeam);
           return next();
         })

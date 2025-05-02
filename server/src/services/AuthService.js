@@ -54,11 +54,13 @@ class AuthService {
     };
   }
 
-  resolveSsoToken(token) {
+  resolveSsoToken(token, locale = "en") {
     return new Promise((resolve, reject) => {
       jwt.verify(token, TOKEN_SECRET, async (err, content) => {
         if (err) {
-          return reject(new Error("SSO Token was not valid"));
+          return reject(
+            new Error(i18n.__({ phrase: "errors.invalid-sso-token", locale }))
+          );
         }
 
         return User.findByPk(content.UserId).then((user) => {
@@ -79,10 +81,19 @@ class AuthService {
     });
   }
 
-  generateSsoToken(email, locale) {
+  generateSsoToken(email, locale = "en") {
     return UserService.findByUsernameOrEmail(email).then((user) => {
-      if (!user) throw new Error("No user with this information was found.");
-      if (!user.email) throw new Error("This user has no email address.");
+      if (!user)
+        throw new Error(
+          i18n.__(
+            { phrase: "errors.entity-not-found", locale },
+            { entity: "user" }
+          )
+        );
+      if (!user.email)
+        throw new Error(
+          i18n.__({ phrase: "errors.user-has-no-email", locale })
+        );
 
       const token = this.generateAccessToken(user.id, {
         expiresIn: process.env.SSO_TOKEN_EXPIRES_IN,
@@ -116,7 +127,7 @@ class AuthService {
           return callback(null, true);
         })
         .catch((e) => {
-          console.error(e);
+          logger.error(e);
           return callback(null, false);
         });
     }
