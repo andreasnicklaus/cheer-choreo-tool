@@ -1,20 +1,22 @@
 <!DOCTYPE html>
-<html lang="<%- locals.locale? locale : 'en' %>">
+<html lang="<%= locals.locale? locale : 'en' %>">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
-      <%- t('mail.confirmEmail.bitte-bestaetige-deine-e-mail-adresse') %>
+      <%= t('mail.confirmEmail.bitte-bestaetige-deine-e-mail-adresse') %>
     </title>
   </head>
   <body>
     <h1 style="text-align: center">
-      <%- t('mail.confirmEmail.bitte-bestaetige-deine-e-mail-adresse-2') %>
+      <%= t('mail.confirmEmail.bitte-bestaetige-deine-e-mail-adresse-2') %>
     </h1>
 
     <p><%= t('mail.general.hallo-username', {username}) %></p>
 
-    <p><%- t('mail.confirmEmail.info-text-1', {userEmail}) %></p>
+    <p>
+      <%- t('mail.confirmEmail.info-text-1', {userEmail}) %><!-- njsscan-ignore: ejs_ect_template -->
+    </p>
 
     <p style="margin: 32px 0px; text-align: center">
       <a
@@ -27,23 +29,27 @@
         "
         href="<%= backendDomain %>/user/confirmEmail/<%= userId %>"
       >
-        <%- t('mail.confirmEmail.jetzt-bestaetigen') %>
+        <%= t('mail.confirmEmail.jetzt-bestaetigen') %>
       </a>
     </p>
 
     <p>
-      <%- t('mail.confirmEmail.info-text-2') %>
+      <%= t('mail.confirmEmail.info-text-2') %>
       <a href="<%= backendDomain %>/user/confirmEmail/<%= userId %>">
         <%= backendDomain %>/user/confirmEmail/<%= userId %>
       </a>
     </p>
 
-    <p><%- t('mail.general.goodbye') %></p>
-
-    <p><%- t('mail.general.sender') %></p>
+    <p><%= t('mail.general.goodbye') %></p>
 
     <p>
-      <small><%- t('mail.general.auto-email-info') %></small>
+      <%- t('mail.general.sender') %><!-- njsscan-ignore: ejs_ect_template -->
+    </p>
+
+    <p>
+      <small>
+        <%- t('mail.general.auto-email-info') %><!-- njsscan-ignore: ejs_ect_template -->
+      </small>
     </p>
 
     <hr />

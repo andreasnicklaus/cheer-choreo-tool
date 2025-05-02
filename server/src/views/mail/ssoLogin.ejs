@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="<%- locals.locale? locale : 'en' %>">
+<html lang="<%= locals.locale? locale : 'en' %>">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%- t('mail.ssoLogin.dein-login-link') %></title>
+    <title><%= t('mail.ssoLogin.dein-login-link') %></title>
   </head>
   <body>
     <h1 style="text-align: center">
-      <%- t('mail.ssoLogin.hier-ist-dein-login-link') %>
+      <%= t('mail.ssoLogin.hier-ist-dein-login-link') %>
     </h1>
 
-    <p><%- t('mail.general.hallo-username', {username}) %></p>
+    <p><%= t('mail.general.hallo-username', {username}) %></p>
 
-    <p><%- t('mail.ssoLogin.info-text-1') %></p>
+    <p><%= t('mail.ssoLogin.info-text-1') %></p>
 
     <p style="margin: 32px 0px; text-align: center">
       <a
@@ -25,30 +25,36 @@
         "
         href="<%= frontendDomain %>/login/?sso=<%= ssoToken %>"
       >
-        <%- t('emailConfirmed.login-now') %>
+        <%= t('emailConfirmed.login-now') %>
       </a>
     </p>
 
     <p>
-      <%- t('mail.confirmEmail.info-text-2') %>
+      <%= t('mail.confirmEmail.info-text-2') %>
       <a href="<%= frontendDomain %>/login/?sso=<%= ssoToken %>">
         <%= frontendDomain %>/login/?sso=<%= ssoToken %>
       </a>
     </p>
 
     <p style="text-align: center">
-      <%- t('mail.newNotification.dieser-link-ist-gueltig-bis') %> <%=
+      <%= t('mail.newNotification.dieser-link-ist-gueltig-bis') %> <%=
       expirationDate %>
     </p>
 
-    <p><%- t('mail.ssoLogin.info-text-2') %></p>
+    <p>
+      <%- t('mail.ssoLogin.info-text-2') %><!-- njsscan-ignore: ejs_ect_template -->
+    </p>
 
-    <p><%- t('mail.general.goodbye') %></p>
-
-    <p><%- t('mail.general.sender') %></p>
+    <p><%= t('mail.general.goodbye') %></p>
 
     <p>
-      <small><%- t('mail.general.auto-email-info') %></small>
+      <%- t('mail.general.sender') %><!-- njsscan-ignore: ejs_ect_template -->
+    </p>
+
+    <p>
+      <small>
+        <%- t('mail.general.auto-email-info') %><!-- njsscan-ignore: ejs_ect_template -->
+      </small>
     </p>
 
     <hr />

@@ -3,44 +3,54 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%- t('mail.welcome.willkommen-beim-choreo-planer') %></title>
+    <title><%= t('mail.welcome.willkommen-beim-choreo-planer') %></title>
   </head>
   <body>
     <h1 style="text-align: center">
-      <%- t('mail.welcome.willkommen-beim-choreo-planer-1') %> 🎉
+      <%= t('mail.welcome.willkommen-beim-choreo-planer-1') %> 🎉
     </h1>
 
-    <p><%- t('mail.general.hallo-username', {username}) %></p>
+    <p><%= t('mail.general.hallo-username', {username}) %></p>
 
-    <p><%- t('mail.welcome.info-text-1') %> 🎶🤸‍♂️</p>
+    <p>
+      <%- t('mail.welcome.info-text-1') %> 🎶🤸‍♂️<!-- njsscan-ignore: ejs_ect_template -->
+    </p>
 
-    <p><%- t('mail.welcome.info-text-2') %></p>
+    <p><%= t('mail.welcome.info-text-2') %></p>
 
-    <h2><%- t('mail.welcome.erste-schritte') %></h2>
+    <h2><%= t('mail.welcome.erste-schritte') %></h2>
     <ul>
-      <li><%- t('mail.welcome.erste-schritte-step-1') %></li>
-      <li><%- t('mail.welcome.erste-schritte-step-2') %></li>
+      <li>
+        <%- t('mail.welcome.erste-schritte-step-1') %><!-- njsscan-ignore: ejs_ect_template -->
+      </li>
+      <li>
+        <%- t('mail.welcome.erste-schritte-step-2') %><!-- njsscan-ignore: ejs_ect_template -->
+      </li>
     </ul>
     <p>
-      <%- t('mail.welcome.info-text-3') %>
+      <%= t('mail.welcome.info-text-3') %>
       <a href="<%= backendDomain %>/user/revokeEmail/<%= userId %>"
-        ><%- t('mail.welcome.konto-loeschen') %></a
+        ><%= t('mail.welcome.konto-loeschen') %></a
       >
     </p>
 
     <p>
-      <%-
+      <%=
       t('mail.welcome.wenn-du-fragen-hast-oder-unterstuetzung-benoetigst-schreib-uns-einfach-unter')
       %> <br />
       <a href="mailto:info@choreo-planer.de">📧 info@choreo-planer.de</a>
     </p>
 
-    <p><%- t('mail.general.goodbye') %></p>
-
-    <p><%- t('mail.general.sender') %></p>
+    <p><%= t('mail.general.goodbye') %></p>
 
     <p>
-      <small><%- t('mail.general.auto-email-info') %></small>
+      <%- t('mail.general.sender') %><!-- njsscan-ignore: ejs_ect_template -->
+    </p>
+
+    <p>
+      <small>
+        <%- t('mail.general.auto-email-info') %><!-- njsscan-ignore: ejs_ect_template -->
+      </small>
     </p>
 
     <hr />
