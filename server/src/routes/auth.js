@@ -63,7 +63,7 @@ router.post("/ssoRequest", (req, res, next) => {
 
   AuthService.generateSsoToken(email, req.locale)
     .then(() => {
-      res.send(req.t("responses.sso-link-sent"));
+      res.send(req.t("responses.sso-link-sent")); // njsscan-ignore: express_xss
       next();
     })
     .catch((e) => next(e));
