@@ -1,4 +1,3 @@
-const { Json } = require("sequelize/lib/utils");
 const Choreo = require("../db/models/choreo");
 const { logger } = require("../plugins/winston");
 const PositionService = require("./PositionService");
@@ -97,11 +96,19 @@ class ChoreoService {
       });
   }
 
-  async create(name, counts, SeasonTeamId, participants, UserId) {
+  async create(
+    name,
+    counts,
+    matType = Choreo.rawAttributes.matType.defaultValue,
+    SeasonTeamId,
+    participants,
+    UserId
+  ) {
     logger.debug(
       `ChoreoService.create ${JSON.stringify({
         name,
         counts,
+        matType,
         SeasonTeamId,
         participants,
         UserId,
@@ -110,6 +117,7 @@ class ChoreoService {
     return Choreo.create({
       name,
       counts,
+      matType,
       SeasonTeamId,
       UserId,
     }).then((choreo) =>
@@ -121,17 +129,24 @@ class ChoreoService {
     );
   }
 
-  async findOrCreate(name, counts, SeasonTeamId, UserId) {
+  async findOrCreate(
+    name,
+    counts,
+    matType = Choreo.rawAttributes.matType.defaultValue,
+    SeasonTeamId,
+    UserId
+  ) {
     logger.debug(
       `ChoreoService.findOrCreate ${JSON.stringify({
         name,
         counts,
+        matType,
         SeasonTeamId,
         UserId,
       })}`
     );
     const [choreo, created] = await Choreo.findOrCreate({
-      where: { name, counts, SeasonTeamId, UserId },
+      where: { name, counts, matType, SeasonTeamId, UserId },
     });
     return choreo;
   }

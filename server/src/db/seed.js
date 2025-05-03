@@ -77,6 +77,7 @@ function seed() {
                                     ChoreoService.findOrCreate(
                                       ch.name,
                                       ch.counts,
+                                      ch.matType,
                                       seasonTeam.id,
                                       user.id
                                     ).then((choreo) => {
