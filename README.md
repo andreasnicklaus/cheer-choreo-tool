@@ -41,6 +41,11 @@ See [LICENSE](LICENSE) for the license of this project.
 
 ## :sparkles: Version history
 
+### 0.10.2 - 2025-05-3
+
+- Added notification service with increased interactivity for users
+- Localization of Server Messages and Pages for English :gb: and German :de:
+
 ### 0.10.1 - 2025-04-12
 
 - Enhanced user settings on profile page
