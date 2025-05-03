@@ -1,6 +1,7 @@
 const multer = require("multer");
 const { readdir, unlink } = require("node:fs/promises");
 const path = require("node:path");
+const { logger } = require("../plugins/winston");
 
 const profilePictureStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -62,7 +63,7 @@ class FileService {
             );
           });
       })
-      .catch((e) => console.error(e));
+      .catch((e) => logger.error(e));
   }
 
   clearClubLogoFolder(clubId, fileExtension) {
@@ -76,7 +77,7 @@ class FileService {
             unlink(path.join(__dirname, "../..", "uploads", "clubLogos", file));
           });
       })
-      .catch((e) => console.error(e));
+      .catch((e) => logger.error(e));
   }
 }
 

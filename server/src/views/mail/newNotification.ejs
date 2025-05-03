@@ -3,20 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      <%= t('mail.confirmEmail.bitte-bestaetige-deine-e-mail-adresse') %>
-    </title>
+    <title><%= t('mail.newNotification.neue-benachrichtigung') %></title>
   </head>
   <body>
     <h1 style="text-align: center">
-      <%= t('mail.confirmEmail.bitte-bestaetige-deine-e-mail-adresse-2') %>
+      🔔 <%= t('mail.newNotification.du-hast-eine-neue-benachrichtigung') %> 🔔
     </h1>
 
     <p><%= t('mail.general.hallo-username', {username}) %></p>
 
-    <p>
-      <%- t('mail.confirmEmail.info-text-1', {userEmail}) %><!-- njsscan-ignore: ejs_ect_template -->
-    </p>
+    <!-- TODO: show notificationTitle -->
+    <p><%= t('mail.newNotification.info-text-1') %></p>
 
     <p style="margin: 32px 0px; text-align: center">
       <a
@@ -27,17 +24,27 @@
           padding: 16px 24px;
           border-radius: 4px;
         "
-        href="<%= backendDomain %>/user/confirmEmail/<%= userId %>"
+        href="<%= frontendDomain %>/login/?sso=<%= ssoToken %>"
       >
-        <%= t('mail.confirmEmail.jetzt-bestaetigen') %>
+        <%= t('mail.newNotification.jetzt-einloggen-und-nachricht-lesen') %>
       </a>
     </p>
 
     <p>
       <%= t('mail.confirmEmail.info-text-2') %>
-      <a href="<%= backendDomain %>/user/confirmEmail/<%= userId %>">
-        <%= backendDomain %>/user/confirmEmail/<%= userId %>
+      <a href="<%= frontendDomain %>/login/?sso=<%= ssoToken %>">
+        <%= frontendDomain %>/login/?sso=<%= ssoToken %>
       </a>
+    </p>
+
+    <p style="text-align: center">
+      <%= t('mail.newNotification.dieser-link-ist-gueltig-bis') %> <%=
+      expirationDate %>
+    </p>
+
+    <p><%= t('mail.newNotification.info-text-2') %></p>
+    <p>
+      <%- t('mail.newNotification.info-text-3') %><!-- njsscan-ignore: ejs_ect_template -->
     </p>
 
     <p><%= t('mail.general.goodbye') %></p>

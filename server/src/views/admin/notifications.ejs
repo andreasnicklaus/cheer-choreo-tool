@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="<%= locals.locale? locale : 'en' %>">
+  <head>
+    <%- include('./partials/head'); %>
+  </head>
+  <body>
+    <header><%- include('./partials/header'); %></header>
+
+    <main class="container">
+      <div class="row justify-content-between align-items-center">
+        <div class="col col-auto">
+          <h1><%= t('admin.notifications.notifications') %></h1>
+        </div>
+        <div class="col col-auto">
+          <button
+            type="button"
+            class="btn btn-success btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#notificationCreateModal"
+          >
+            <i class="bi bi-send-fill"></i>
+            <%= t('admin.notifications.send-notifications') %>
+          </button>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col"><%= t('admin.notifications.title') %></th>
+              <th scope="col"><%= t('admin.notifications.message') %></th>
+              <th scope="col"><%= t('admin.notifications.opened') %></th>
+              <th scope="col"><%= t('entities.created-at') %></th>
+              <th scope="col"><%= t('entities.updated-at') %></th>
+              <th scope="col"><%= t('entities.actions') %></th>
+            </tr>
+          </thead>
+          <tbody class="table-group-divider">
+            <% notificationList.forEach((notification, i) => { %>
+            <tr title="<%= notification.id %>">
+              <th scope="row"><%= i + 1 %></th>
+              <td><%= notification.title %></td>
+              <td>
+                <%= notification.message.length > 30 ?
+                notification.message.slice(0, 27) + "..." : notification.message
+                %>
+              </td>
+              <td>
+                <%= notification.read ? '✅' : '❌' %>
+              </td>
+              <td>
+                <%= new Date(notification.createdAt).toLocaleString(locale) %>
+              </td>
+              <td>
+                <%= new Date(notification.updatedAt).toLocaleString(locale) %>
+              </td>
+              <td>
+                <div class="btn-group">
+                  <button
+                    class="btn btn-danger btn-sm"
+                    type="button"
+                    data-delete-id="<%= notification.id %>"
+                  >
+                    <i class="bi bi-trash-fill"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+          <tfoot class="table-group-divider">
+            <tr>
+              <td></td>
+              <td>
+                <b> <%= notificationList.length %> </b>
+                <%= t('admin.notifications.notifications') %>
+              </td>
+              <td></td>
+              <td>
+                <%= Math.round(notificationList.filter(n => n.read).length / notificationList.length *1000 ) / 10 %>%
+                ✅
+              </td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </main>
+
+    <!-- Modal: Create Notification -->
+    <div
+      class="modal fade"
+      id="notificationCreateModal"
+      tabindex="-1"
+      aria-labelledby="notificationCreateModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="notificationCreateModalLabel">
+              <%= t('admin.notifications.send-a-notification') %>
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <form
+            action="/admin/notifications"
+            method="POST"
+            id="notificationCreateForm"
+          >
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="title" class="form-label"><%= t('admin.notifications.title') %></label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="title"
+                  name="title"
+                  placeholder="<%= t('admin.notifications.title') %>"
+                  autofocus="true"
+                  maxlength="40"
+                />
+                <div id="titleHelp" class="form-text"><%= t('general.optional') %> (<span id="titleLength">0</span>/40)</div>
+              </div>
+              <div class="mb-3">
+                <label for="message" class="form-label"><%= t('admin.notifications.message') %></label>
+                <textarea
+                  class="form-control"
+                  id="message"
+                  name="message"
+                  placeholder="<%= t('admin.notifications.message') %>"
+                  required
+                  rows="3"
+                  maxlength="300"
+                  minlength="5"
+                ></textarea>
+                <div id="messageHelp" class="form-text"><%= t('general.required') %> (<span id="messageLength">0</span>/300)</div>
+              </div>
+              <div class="mb-3">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="notifyViaEmail"
+                  name="notifyViaEmail"
+                />
+                <label for="notifyViaEmail" class="form-label">
+                  <%= t('admin.notifications.notify-user-via-email') %>
+                </label>
+              </div>
+              <div class="mb-3">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="notifyAll"
+                  name="notifyAll"
+                />
+                <label for="notifyAll" class="form-label">
+                  <%= t('admin.notifications.send-to-all-users') %>
+                </label>
+              </div>
+              <div class="input-group mb-3">
+                <input
+                  type="text"
+                  id="userSearchInput"
+                  list="userSearch"
+                  placeholder="<%= tn('entities.user', 1) %>"
+                  class="form-control"
+                >
+                <datalist id="userSearch">
+                  <% userList.forEach(({id, username, email, emailConfirmed}) =>
+                  { %>
+                  <option
+                    data-item-email="<%= emailConfirmed && email %>"
+                    value="<%= id %>"
+                  >
+                    <%= username %>
+                  </option>
+                  <% }) %>
+                </datalist>
+                </input>
+                <button
+                  class="btn btn-primary"
+                  type="button"
+                  id="button-selectUser"
+                >
+                  <i class="bi bi-plus"></i>
+                </button>
+              </div>
+              <div class="mb-3">
+                <label for="targetUser" class="form-label">
+                  <%= t('admin.notifications.users-to-notify') %>
+                </label>
+                <ul class="list-group" id="targetUserList"></ul>
+              </div>
+              <select
+                id="targetUsers"
+                name="targetUsers"
+                multiple
+                style="display: none"
+              >
+                <% userList.forEach(({id, username}) => { %>
+                <option value="<%= id %>"><%= username %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-outline-danger"
+                data-bs-dismiss="modal"
+              >
+                <i class="bi bi-trash"></i>
+                <%= t('general.close') %>
+              </button>
+              <button type="submit" class="btn btn-success">
+                <i class="bi bi-send-fill"></i> <%= t('general.send') %>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <footer><%- include('./partials/footer'); %></footer>
+
+    <script type="text/javascript" defer nonce="<%= cspNonce %>">
+      const titleInput = document.getElementById("title");
+      const messageInput = document.getElementById("message");
+      const titleLengthDisplay = document.getElementById("titleLength");
+      const messageLengthDisplay = document.getElementById("messageLength");
+
+      titleInput.addEventListener("input", updateTitleLengthDisplay);
+      messageInput.addEventListener("input", updateMessageLengthDisplay);
+
+      function updateTitleLengthDisplay()  {
+        titleLengthDisplay.textContent = titleInput.value.length;
+      }
+
+      function updateMessageLengthDisplay()  {
+        messageLengthDisplay.textContent = messageInput.value.length;
+      }
+    </script>
+
+    <script type="text/javascript" defer nonce="<%= cspNonce %>">
+      const notifyAllCheckbox = document.getElementById("notifyAll");
+
+      notifyAllCheckbox.addEventListener("change", (event) => {
+        const userInput = document.getElementById("userSearchInput");
+        const selectedUserList = document.getElementById("targetUserList");
+
+        if (event.target.checked) {
+          userInput.setAttribute("disabled", "true");
+          Array.from(selectedUserList.children).forEach((li) => {
+            li.className = li.className + " disabled";
+          });
+        } else {
+          userInput.removeAttribute("disabled");
+          Array.from(selectedUserList.children).forEach((li) => {
+            if (li.className.split(" ").includes("disabled"))
+              li.className = li.className.replace("disabled", "");
+          });
+        }
+      });
+    </script>
+
+    <script type="text/javascript" defer nonce="<%= cspNonce %>">
+      const selectedUsers = new Set();
+
+      function renderSelectedUsers() {
+        const selectedUserList = document.getElementById("targetUserList");
+        selectedUserList.innerHTML = ""; // Clear the list before rendering
+
+        Array.from(selectedUsers)
+          .sort((uA, uB) => {
+            return uA.username.localeCompare(uB.username);
+          })
+          .forEach((user) => {
+            const li = document.createElement("li");
+            li.className =
+              "list-group-item d-flex justify-content-between align-items-center";
+
+            const userInfoDiv = document.createElement("div");
+            userInfoDiv.className = "d-flex flex-column flex-grow-1";
+            const username = document.createElement("span");
+            username.textContent = user.username;
+            userInfoDiv.appendChild(username);
+
+            if (user.email != null && user.email != "false" && user.email) {
+              const userEmail = document.createElement("small");
+              userEmail.className = "text-muted";
+              userEmail.textContent = user.email;
+              userInfoDiv.appendChild(userEmail);
+            }
+
+            li.appendChild(userInfoDiv);
+
+            const removeButton = document.createElement("button");
+            removeButton.className = "btn-close btn-close-sm";
+            removeButton.setAttribute("aria-label", "Close");
+            removeButton.setAttribute("data-user-id", user.id);
+            removeButton.addEventListener("click", () => {
+              selectedUsers.delete(user);
+              renderSelectedUsers();
+            });
+            li.appendChild(removeButton);
+
+            selectedUserList.appendChild(li);
+          });
+      }
+
+      const selectUserButton = document.getElementById("button-selectUser");
+      const userInput = document.getElementById("userSearchInput");
+      const userOptions = Array.from(
+        document.getElementById("userSearch").options
+      );
+      selectUserButton.addEventListener("click", selectUser);
+
+      function selectUser() {
+        const userId = userInput.value;
+        const username = userOptions.find((o) => {
+          return o.value == userId;
+        })?.textContent;
+        const email = userOptions
+          .find((o) => {
+            return o.value == userId;
+          })
+          ?.getAttribute("data-item-email");
+
+        if (userId && username) {
+          selectedUsers.add({ id: userId, username, email });
+          userInput.value = "";
+          renderSelectedUsers();
+        } else {
+          alert("<%= t('admin.notifications.please-select-a-valid-user') %>");
+        }
+      }
+
+      renderSelectedUsers();
+    </script>
+
+    <script type="text/javascript" defer nonce="<%= cspNonce %>">
+      const deleteButtons = document.querySelectorAll("[data-delete-id]");
+      deleteButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const id = button.getAttribute("data-delete-id");
+          deleteNotification(id);
+        });
+      });
+
+      function deleteNotification(id) {
+        if (confirm("<%= t('admin.notifications.are-you-sure-you-want-to-delete-this-notification')%>")) {
+          fetch(`/admin/notifications/${id}`, {
+            method: "DELETE",
+          })
+            .then((data) => {
+              window.location.reload();
+            })
+            .catch((err) => {
+              console.error(err);
+              alert("<%= t('errors.something-went-wrong') %>");
+            });
+        }
+      }
+    </script>
+
+    <script type="text/javascript" defer nonce="<%= cspNonce %>">
+      const notificationCreateForm = document.getElementById(
+        "notificationCreateForm"
+      );
+      notificationCreateForm.addEventListener("submit", (event) => {
+        let title = document.getElementById("title").value;
+        if (title.length == 0) document.getElementById("title").value = null;
+        const message = document.getElementById("message").value;
+        if (!title && !message) {
+          event.preventDefault(); // Prevent form submission for validation
+          return alert("<%= t('admin.notifications.please-provide-a-title-or-message') %>");
+        }
+
+        const notifyViaEmail =
+          document.getElementById("notifyViaEmail").checked;
+
+        const notifyAll = document.getElementById("notifyAll").checked;
+        if (!notifyAll & (selectedUsers.size == 0)) {
+          event.preventDefault(); // Prevent form submission for validation
+          return alert("<%= t('admin.notifications.please-select-at-least-one-user-to-notify') %>");
+        }
+
+        const targetUsers = document.getElementById("targetUsers");
+        const selectedUserIdArray = Array.from(selectedUsers).map(
+          (user) => user.id
+        );
+        Array.from(targetUsers.options).forEach((option) => {
+          option.selected = selectedUserIdArray.some(
+            (uId) => uId == option.value
+          );
+        });
+      });
+    </script>
+  </body>
+</html>

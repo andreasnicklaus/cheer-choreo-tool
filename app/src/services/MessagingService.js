@@ -8,16 +8,6 @@ const DEFAULT_OPTIONS = {
   solid: true,
 };
 
-const ERROR_MESSAGES = [
-  i18n.t("failMessages.oh-oh"),
-  i18n.t("failMessages.satz-mit-x"),
-  i18n.t("failMessages.da-dumm"),
-  i18n.t("failMessages.check-ich-nicht"),
-  i18n.t("failMessages.probiers-nochmal"),
-  i18n.t("failMessages.computer-sagt-nein"),
-  i18n.t("failMessages.traurige-trompete"),
-];
-
 class MessagingService {
   handlers = {};
 
@@ -48,6 +38,16 @@ class MessagingService {
   }
 
   showError(message, title = null, options = {}) {
+    // ERROR_MESSAGES must be within this function to ensure that the right locale is used when it is called
+    const ERROR_MESSAGES = [
+      i18n.t("failMessages.oh-oh"),
+      i18n.t("failMessages.satz-mit-x"),
+      i18n.t("failMessages.da-dumm"),
+      i18n.t("failMessages.check-ich-nicht"),
+      i18n.t("failMessages.probiers-nochmal"),
+      i18n.t("failMessages.computer-sagt-nein"),
+      i18n.t("failMessages.traurige-trompete"),
+    ];
     if (!title)
       title = ERROR_MESSAGES[Math.floor(Math.random() * ERROR_MESSAGES.length)]; // njsscan-ignore: node_insecure_random_generator
     return this._showMessage(message, { title, variant: "danger", ...options });

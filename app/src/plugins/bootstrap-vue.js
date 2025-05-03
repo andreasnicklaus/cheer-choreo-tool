@@ -128,6 +128,9 @@ import {
   BIconPencilSquare,
   BIconCloudUpload,
   BIconStars,
+  BIconBell,
+  BIconEnvelopeOpen,
+  BIconEnvelope,
 } from "bootstrap-vue";
 
 const icons = [
@@ -196,6 +199,9 @@ const icons = [
   BIconPencilSquare,
   BIconCloudUpload,
   BIconStars,
+  BIconBell,
+  BIconEnvelopeOpen,
+  BIconEnvelope,
 ];
 icons.forEach((icon) => {
   const componentString = icon.options.name

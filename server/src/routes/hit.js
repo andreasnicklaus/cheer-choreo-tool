@@ -9,7 +9,7 @@ router.get("/:id?", authenticateUser(), (req, res, next) => {
   if (req.params.id)
     return HitService.findById(req.params.id, req.UserId)
       .then((foundHit) => {
-        if (!foundHit) res.status(404).send("Not found");
+        if (!foundHit) res.status(404).send(req.t("responses.not-found"));
         else res.send(foundHit);
         return next();
       })

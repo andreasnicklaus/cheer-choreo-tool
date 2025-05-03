@@ -17,7 +17,7 @@ const Admin = db.define(
       validate: {
         len: {
           args: [6, 999],
-          msg: "Nutzername muss mindestens 6 Zeichen haben",
+          msg: "Username has to be at least 6 characters",
         },
       },
     },

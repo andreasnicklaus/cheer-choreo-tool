@@ -37,7 +37,7 @@
           {{ $t("nav.uebersicht") }}
         </b-nav-item>
 
-        <b-nav-item-dropdown text="Choreos" :disabled="!$store.state.loggedIn">
+        <b-nav-item-dropdown :disabled="!$store.state.loggedIn">
           <template #button-content>
             <span :class="{ 'router-link-active': $route.name == 'Choreo' }">
               {{ $tc("choreo", 2) }}
@@ -118,6 +118,123 @@
       </b-navbar-nav>
 
       <b-navbar-nav class="ml-auto align-items-sm-center">
+        <b-nav-item-dropdown
+          no-caret
+          right
+          :class="{ 'mr-3': $store.state.isMobile }"
+          v-if="$store.state.loggedIn"
+        >
+          <template #button-content>
+            <b-icon-bell />
+            <span v-if="$store.state.isMobile" class="ml-2">{{
+              $t("nav.benachrichtigungen")
+            }}</span>
+            <b-badge
+              pill
+              variant="danger"
+              v-if="notifications.filter((n) => !n.read).length > 0"
+              :style="{
+                position: 'absolute',
+                right: 0,
+                top: $store.state.isMobile ? null : 0,
+              }"
+              >{{ notifications.filter((n) => !n.read).length }}</b-badge
+            >
+          </template>
+          <b-dropdown-text
+            style="width: 400px"
+            class="text-center"
+            v-if="
+              notifications.filter((n) => showAllNotifications || !n.read)
+                .length == 0
+            "
+          >
+            <b-icon-bell />
+            {{ $t("nav.du-hast-noch-keine-benachrichtigungen-erhalten") }}
+          </b-dropdown-text>
+          <b-dropdown-text
+            style="width: 400px"
+            text-class="p-0"
+            v-for="notification in notifications.filter(
+              (n) => showAllNotifications || !n.read
+            )"
+            :key="notification.id"
+          >
+            <b-card border-variant="light" class="notification-card">
+              <b-row>
+                <b-col>
+                  <b-card-sub-title>
+                    <b-badge
+                      pill
+                      variant="success"
+                      class="mr-1"
+                      v-if="!notification.read"
+                      >{{ $t("nav.neu-0") }}</b-badge
+                    >
+                    <b-badge pill variant="primary">{{
+                      toTimeAgo(notification.createdAt)
+                    }}</b-badge>
+                  </b-card-sub-title>
+                  <b-card-title class="mt-1 mb-2"
+                    ><vue-markdown
+                      :breaks="false"
+                      class="notification-card-text"
+                      :anchorAttributes="{ target: '_blank' }"
+                    >
+                      {{ notification.title.replace(/  +/g, " ") }}
+                    </vue-markdown>
+                  </b-card-title>
+                </b-col>
+                <b-col cols="auto">
+                  <b-button
+                    variant="link"
+                    @click="
+                      () =>
+                        notification.read
+                          ? markNotificationAsNotRead(notification.id)
+                          : markNotificationAsRead(notification.id)
+                    "
+                  >
+                    <b-icon-envelope v-if="notification.read" />
+                    <b-icon-envelope-open v-else />
+                  </b-button>
+                  <b-button
+                    variant="link"
+                    @click="() => deleteNotification(notification.id)"
+                  >
+                    <b-icon-trash variant="danger" />
+                  </b-button>
+                </b-col>
+              </b-row>
+              <vue-markdown
+                :breaks="false"
+                class="notification-card-text"
+                :anchorAttributes="{ target: '_blank' }"
+              >
+                {{ notification.message.replace(/  +/g, " ") }}
+              </vue-markdown>
+            </b-card>
+          </b-dropdown-text>
+          <b-dropdown-text v-if="!showAllNotifications">
+            <b-button
+              block
+              @click="() => (showAllNotifications = true)"
+              variant="link"
+              :disabled="notifications.length == 0"
+              >{{ $t("nav.alte-nachrichten-anzeigen") }}</b-button
+            ></b-dropdown-text
+          >
+          <b-dropdown-text v-else>
+            <b-button
+              block
+              @click="() => (showAllNotifications = false)"
+              variant="link"
+              :disabled="notifications.length == 0"
+              >{{ $t("nav.alte-nachrichten-ausblenden") }}</b-button
+            >
+          </b-dropdown-text>
+        </b-nav-item-dropdown>
+
         <b-nav-item-dropdown variant="link" no-caret>
           <template #button-content>
             <flag
@@ -271,10 +388,18 @@ import CreateClubModal from "./modals/CreateClubModal.vue";
 import CreateTeamModal from "./modals/CreateTeamModal.vue";
 import LanguageService from "@/services/LanguageService";
 import MessagingService from "@/services/MessagingService";
+import NotificationService from "@/services/NotificationService";
+import VueMarkdown from "vue-markdown-v2";
+import toTimeAgo from "@/utils/time";
 
 export default {
   name: "HeadNav",
-  components: { CreateChoreoModal, CreateClubModal, CreateTeamModal },
+  components: {
+    CreateChoreoModal,
+    CreateClubModal,
+    CreateTeamModal,
+    VueMarkdown,
+  },
   data: () => ({
     teams: [],
     choreos: [],
@@ -291,6 +416,11 @@ export default {
     ],
     LanguageService,
     currentProfilePictureBlob: null,
+    loadInterval: null,
+    loadNotificationsInterval: null,
+    notifications: [],
+    showAllNotifications: false,
+    showNotificationsDropdown: false,
   }),
   props: {
     onlineStatus: {
@@ -304,30 +434,46 @@ export default {
   methods: {
     load() {
       if (this.$store.state.loggedIn) {
-        AuthService.getUserInfo().then((user) => {
-          this.user = user;
-          this.loadProfileImage();
-        });
+        AuthService.getUserInfo()
+          .then((user) => {
+            this.user = user;
+            this.loadProfileImage();
+          })
+          .catch(() => {});
 
         if (this.$store.state.clubId) {
-          ClubService.getById(this.$store.state.clubId).then((club) => {
-            this.teams = club?.Teams || [];
-            this.choreos = this.teams
-              .map((t) => t.SeasonTeams.map((st) => st.Choreos))
-              .flat(Infinity);
-          });
+          ClubService.getById(this.$store.state.clubId)
+            .then((club) => {
+              this.teams = club?.Teams || [];
+              this.choreos = this.teams
+                .map((t) => t.SeasonTeams.map((st) => st.Choreos))
+                .flat(Infinity);
+            })
+            .catch(() => {});
         }
 
-        ClubService.getAll().then((clubList) => {
-          this.clubs = clubList;
-          const club = clubList[0];
-          if (!club) return;
-          if (!this.$store.state.clubId)
-            this.$store.commit("setClubId", club.id);
-          this.teams = club?.Teams || [];
-          this.choreos = this.teams.map((t) => t.Choreos).flat();
-        });
+        ClubService.getAll()
+          .then((clubList) => {
+            this.clubs = clubList;
+            const club = clubList[0];
+            if (!club) return;
+            if (!this.$store.state.clubId)
+              this.$store.commit("setClubId", club.id);
+            this.teams = club?.Teams || [];
+            this.choreos = this.teams.map((t) => t.Choreos).flat();
+          })
+          .catch(() => {});
+
+        this.loadNotifications();
       }
+    },
+    loadNotifications() {
+      if (this.$store.state.loggedIn)
+        NotificationService.getAll()
+          .then((notifications) => {
+            this.notifications = notifications;
+          })
+          .catch(() => {});
     },
     checkEmailConfirmation() {
       if (this.user?.email && !this.user?.emailConfirmed) {
@@ -368,6 +514,22 @@ export default {
           this.currentProfilePictureBlob = URL.createObjectURL(response.data);
         });
     },
+    toTimeAgo,
+    markNotificationAsNotRead(notificationId) {
+      NotificationService.markAsNotRead(notificationId).then(() => {
+        this.loadNotifications();
+      });
+    },
+    markNotificationAsRead(notificationId) {
+      NotificationService.markAsRead(notificationId).then(() => {
+        this.loadNotifications();
+      });
+    },
+    deleteNotification(notificationId) {
+      NotificationService.delete(notificationId).then(() => {
+        this.loadNotifications();
+      });
+    },
   },
   watch: {
     "$store.state.loggedIn": {
@@ -386,11 +548,20 @@ export default {
   created() {
     this.load();
     setTimeout(this.checkEmailConfirmation, 1000);
-    setInterval(this.load, 60_000);
+    this.loadInterval = setInterval(this.load, 60_000);
+    this.loadNotificationsInterval = setInterval(
+      this.loadNotifications,
+      10_000
+    );
   },
   mounted() {
     if (navigator.canShare && navigator.share)
       this.shareable = navigator.canShare(this.shareData);
+  },
+  beforeUnmount() {
+    if (this.loadInterval) clearInterval(this.loadInterval);
+    if (this.loadNotificationsInterval)
+      clearInterval(this.loadNotificationsInterval);
   },
   computed: {
     shareData() {
@@ -408,5 +579,15 @@ export default {
 .dropdown-submenu:hover:not(:has(div.collapse:hover)) {
   color: #16181b;
   background-color: #e9ecef;
+}
+
+.b-dropdown-text {
+  font-weight: initial;
+}
+</style>
+
+<style lang="scss">
+.notification-card-text > p {
+  margin: 0;
 }
 </style>
