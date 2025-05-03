@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="= locals.locale? locale : 'en' %>">
   <head>
     <%- include('./partials/head'); %>
   </head>
@@ -9,7 +9,7 @@
     <main class="container">
       <div class="row justify-content-between align-items-center">
         <div class="col col-auto">
-          <h1>Admins</h1>
+          <h1><%= tn('entities.admin', 2) %></h1>
         </div>
         <div class="col col-auto">
           <button
@@ -19,7 +19,7 @@
             data-bs-target="#adminCreateModal"
           >
             <i class="bi bi-plus-lg"></i>
-            Add
+            <%= t('general.add') %>
           </button>
         </div>
       </div>
@@ -28,10 +28,10 @@
           <thead>
             <tr>
               <th scope="col">#</th>
-              <th scope="col">Username</th>
-              <th scope="col">Created At</th>
-              <th scope="col">Updated At</th>
-              <th scope="col">Actions</th>
+              <th scope="col"><%= t('admin.users.username') %></th>
+              <th scope="col"><%= t('entities.created-at') %></th>
+              <th scope="col"><%= t('entities.updated-at') %></th>
+              <th scope="col"><%= t('entities.actions') %></th>
             </tr>
           </thead>
           <tbody class="table-group-divider">
@@ -39,8 +39,8 @@
             <tr>
               <th scope="row"><%= i + 1 %></th>
               <td><%= admin.username %></td>
-              <td><%= new Date(admin.createdAt).toLocaleString("en-EN") %></td>
-              <td><%= new Date(admin.updatedAt).toLocaleString("en-EN") %></td>
+              <td><%= new Date(admin.createdAt).toLocaleString(locale) %></td>
+              <td><%= new Date(admin.updatedAt).toLocaleString(locale) %></td>
               <td>
                 <div class="btn-group">
                   <button
@@ -72,7 +72,7 @@
               <td></td>
               <td>
                 <b> <%= adminList.length %> </b>
-                Admins
+                <%= tn('entities.admin', adminList.length) %>
               </td>
             </tr>
           </tfoot>
@@ -92,7 +92,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="adminCreateModalLabel">
-              Create Admin
+              <%= t('admin.admins.create-admin') %>
             </h1>
             <button
               type="button"
@@ -104,26 +104,32 @@
           <form action="/admin/admins" method="POST">
             <div class="modal-body">
               <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
+                <label for="username" class="form-label"
+                  ><%= t('admin.users.username')%></label
+                >
                 <input
                   type="text"
                   class="form-control"
                   id="username"
                   name="username"
                   required
-                  placeholder="Username"
+                  placeholder="<%= t('admin.users.username')%>"
                 />
-                <div id="usernameHelp" class="form-text">Min. 6 characters</div>
+                <div id="usernameHelp" class="form-text">
+                  <%= t('admin.admins.min-6-characters') %>
+                </div>
               </div>
               <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
+                <label for="password" class="form-label"
+                  ><%= t('admin.users.password')%></label
+                >
                 <input
                   type="password"
                   class="form-control"
                   id="password"
                   name="password"
                   required
-                  placeholder="Password"
+                  placeholder="<%= t('admin.users.password')%>"
                 />
               </div>
             </div>
@@ -134,10 +140,10 @@
                 data-bs-dismiss="modal"
               >
                 <i class="bi bi-trash"></i>
-                Close
+                <%= t('general.close')%>
               </button>
               <button type="submit" class="btn btn-success">
-                <i class="bi bi-check2"></i> Save changes
+                <i class="bi bi-check2"></i> <%= t('general.save-changes')%>
               </button>
             </div>
           </form>
@@ -157,7 +163,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="adminUpdateModalLabel">
-              Update Admin
+              <%= t('admin.admins.update-admin') %>
             </h1>
             <button
               type="button"
@@ -179,16 +185,20 @@
                 />
               </div>
               <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
+                <label for="username" class="form-label"
+                  ><%= t('admin.users.username') %></label
+                >
                 <input
                   type="text"
                   class="form-control"
                   id="username"
                   name="username"
                   required
-                  placeholder="Username"
+                  placeholder="<%= t('admin.users.username') %>"
                 />
-                <div id="usernameHelp" class="form-text">Min. 6 characters</div>
+                <div id="usernameHelp" class="form-text">
+                  <%= t('admin.admins.min-6-characters') %>
+                </div>
               </div>
             </div>
             <div class="modal-footer">
@@ -198,10 +208,10 @@
                 data-bs-dismiss="modal"
               >
                 <i class="bi bi-arrow-counterclockwise"></i>
-                Close
+                <%= t('general.close') %>
               </button>
               <button type="submit" class="btn btn-success">
-                <i class="bi bi-check2"></i> Save changes
+                <i class="bi bi-check2"></i> <%= t('general.save-changes') %>
               </button>
             </div>
           </form>
@@ -237,7 +247,11 @@
       });
 
       function deleteAdmin(id) {
-        if (confirm("Are you sure you want to delete this admin?")) {
+        if (
+          confirm(
+            "<%= t('admin.admins.are-you-sure-you-want-to-delete-this-admin') %>"
+          )
+        ) {
           fetch(`/admin/admins/${id}`, {
             method: "DELETE",
           })
@@ -246,7 +260,7 @@
             })
             .catch((err) => {
               console.error(err);
-              alert("Something went wrong");
+              alert("<%= t('errors.something-went-wrong') %>");
             });
         }
       }

@@ -27,7 +27,7 @@ router.post("/", (req, res, next) => {
 
 router.post("/update", (req, res, next) => {
   const { id, ...data } = req.body;
-  if ((data.password = "")) data.password = undefined;
+  if (data.password == "") data.password = undefined;
   return AdminService.update(id, data)
     .then(() => {
       return res.redirect(req.baseUrl); // njsscan-ignore: express_open_redirect

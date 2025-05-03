@@ -55,6 +55,9 @@ ax.interceptors.request.use(
     if (token) {
       config.headers.Authorization = "Bearer " + token;
     }
+
+    const locale = i18n.locale;
+    if (locale) config.headers["Accept-Language"] = locale;
     return config;
   },
   (error) => {

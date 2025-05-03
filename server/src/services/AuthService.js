@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const UserService = require("./UserService");
 const MailService = require("./MailService");
 const NotificationService = require("./NotificationService");
+const i18n = require("i18n");
 
 const TOKEN_SECRET = process.env.TOKEN_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
@@ -53,18 +54,20 @@ class AuthService {
     };
   }
 
-  resolveSsoToken(token) {
+  resolveSsoToken(token, locale = "en") {
     return new Promise((resolve, reject) => {
       jwt.verify(token, TOKEN_SECRET, async (err, content) => {
         if (err) {
-          return reject(new Error("SSO Token was not valid"));
+          return reject(
+            new Error(i18n.__({ phrase: "errors.invalid-sso-token", locale }))
+          );
         }
 
         return User.findByPk(content.UserId).then((user) => {
           if (!user) {
             return reject(
               new Error(
-                "SSO Token was valid, but the user it references does no longer exist."
+                i18n.__({ phrase: "errors.sso-token-user-missing", locale })
               )
             );
           }
@@ -78,23 +81,37 @@ class AuthService {
     });
   }
 
-  generateSsoToken(email) {
+  generateSsoToken(email, locale = "en") {
     return UserService.findByUsernameOrEmail(email).then((user) => {
-      if (!user) throw new Error("No user with this information was found.");
-      if (!user.email) throw new Error("This user has no email address.");
+      if (!user)
+        throw new Error(
+          i18n.__(
+            { phrase: "errors.entity-not-found", locale },
+            { entity: "user" }
+          )
+        );
+      if (!user.email)
+        throw new Error(
+          i18n.__({ phrase: "errors.user-has-no-email", locale })
+        );
 
       const token = this.generateAccessToken(user.id, {
         expiresIn: process.env.SSO_TOKEN_EXPIRES_IN,
       });
-      return MailService.sendSsoEmail(user.email, user.username, token).then(
-        () =>
-          NotificationService.createOne(
-            "Single Sign-On wurde verschickt",
-            `Eine E-Mail mit einem Single Sign-On Link wurde versandt. Wenn du das nicht veranlasst hast, kontaktiere uns bitte sofort.
-            
-            [Administratoren kontaktieren](mailto:admin@choreo-planer.de)`,
-            user.id
-          )
+      return MailService.sendSsoEmail(
+        user.email,
+        user.username,
+        token,
+        locale
+      ).then(() =>
+        NotificationService.createOne(
+          i18n.__({ phrase: "notifications.sso-link-was-sent.title", locale }),
+          i18n.__({
+            phrase: "notifications.sso-link-was-sent.message",
+            locale,
+          }),
+          user.id
+        )
       );
     });
   }
@@ -110,7 +127,7 @@ class AuthService {
           return callback(null, true);
         })
         .catch((e) => {
-          console.error(e);
+          logger.error(e);
           return callback(null, false);
         });
     }

@@ -19,7 +19,7 @@ router.get("/:id?", authenticateUser(), (req, res, next) => {
     if (req.query.name)
       return TeamService.findByName(req.query.name, req.UserId)
         .then((foundTeam) => {
-          if (!foundTeam) res.status(404).send("Not found");
+          if (!foundTeam) res.status(404).send(req.t("responses.not-found"));
           else res.send(foundTeam);
           return next();
         })
@@ -39,10 +39,11 @@ router.post("/", authenticateUser(), (req, res, next) => {
   return TeamService.create(name, clubId, seasonId, req.UserId)
     .then((result) => {
       NotificationService.createOne(
-        "Team erstellt!",
-        `Dein Team **${name}** wurde erstellt!
-        
-        [Checke es jetzt aus!](/team/${result.id})`,
+        req.t("notifications.team-created.title"),
+        req.t("notifications.team-created.message", {
+          name,
+          teamId: result.id,
+        }),
         req.UserId
       );
       res.send(result);

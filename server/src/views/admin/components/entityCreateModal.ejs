@@ -9,7 +9,8 @@
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="<%= entity %>CreateModalLabel">
-          Create <%= entity.substring(0, entity.length -1) %>
+          <%= t('admin.components.entityCreateModal.Create-something',
+          entity.substring(0, entity.length -1)) %>
         </h1>
         <button
           type="button"
@@ -38,7 +39,10 @@
 
               <% }) %>
               <option value="null">
-                <i>Keine Auswahl</i>
+                <i
+                  ><%= t('admin.components.entityCreateModal.keine-auswahl')
+                  %></i
+                >
               </option>
 
               <% } %>
@@ -56,10 +60,11 @@
             data-bs-dismiss="modal"
           >
             <i class="bi bi-arrow-counterclockwise"></i>
-            Close
+            <%= t('general.close') %>
           </button>
           <button type="submit" class="btn btn-success">
-            <i class="bi bi-check2"></i> Create
+            <i class="bi bi-check2"></i> <%=
+            t('admin.components.entityCreateModal.Create') %>
           </button>
         </div>
       </form>

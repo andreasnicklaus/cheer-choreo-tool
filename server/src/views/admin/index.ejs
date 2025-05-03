@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= locals.locale? locale : 'en' %>">
   <head>
     <%- include('./partials/head'); %>
     <style>
@@ -23,12 +23,14 @@
     <header><%- include('./partials/header'); %></header>
 
     <main class="container">
-      <h1>Dashboard</h1>
+      <h1><%= t('admin.index.dashboard') %></h1>
       <div class="row" style="row-gap: 16px">
         <% if (locals.newestFeedback) { %>
         <div class="col-12">
           <div class="px-5 py-4 bg-success-subtle rounded-3 mb-0">
-            <small class="text-muted">Last Feedback</small>
+            <small class="text-muted"
+              ><%= t('admin.index.last-feedback') %></small
+            >
             <p>
               <%= newestFeedback.stars %> <% for( let index = 0; index <
               parseInt(newestFeedback.stars); index++ ) { %>
@@ -45,7 +47,8 @@
             class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
           >
             <%- include('./components/dashboardKpis', { trend: userTrend, count:
-            userCount, label: 'Users', icon: 'person' }) %>
+            userCount, label: tn('entities.user', userCount), icon: 'person' })
+            %>
           </a>
         </div>
         <% } %> <% if (locals.adminCount) { %>
@@ -55,7 +58,8 @@
             class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
           >
             <%- include('./components/dashboardKpis', { trend: adminTrend,
-            count: adminCount, label: 'Admins', icon: 'person-gear' }) %>
+            count: adminCount, label: tn('entities.admin', adminCount), icon:
+            'person-gear' }) %>
           </a>
         </div>
         <% } %> <% if (locals.clubCount) { %>
@@ -65,7 +69,8 @@
             class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
           >
             <%- include('./components/dashboardKpis', { trend: clubTrend, count:
-            clubCount, label: 'Clubs', icon: 'house' }) %>
+            clubCount, label: tn('entities.club', clubCount), icon: 'house' })
+            %>
           </a>
         </div>
         <% } %><% if (locals.teamCount) { %>
@@ -75,7 +80,8 @@
             class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
           >
             <%- include('./components/dashboardKpis', { trend: teamTrend, count:
-            teamCount, label: 'Teams', icon: 'people' }) %>
+            teamCount, label: tn('entities.team', teamCount), icon: 'people' })
+            %>
           </a>
         </div>
         <% } %><% if (locals.seasonCount) { %>
@@ -85,15 +91,16 @@
             class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
           >
             <%- include('./components/dashboardKpis', { trend: seasonTrend,
-            count: seasonCount, label: 'Seasons', icon: 'calendar' }) %>
+            count: seasonCount, label: tn('entities.season', seasonCount), icon:
+            'calendar' }) %>
           </a>
         </div>
         <% } %><% if (locals.seasonTeamCount) { %>
         <div class="col-6 col-md-3">
           <div class="px-5 py-4 bg-body-secondary rounded-3 mb-0">
             <%- include('./components/dashboardKpis', { trend: seasonTeamTrend,
-            count: seasonTeamCount, label: 'SeasonTeams' , icon:
-            'calendar-range'}) %>
+            count: seasonTeamCount, label: tn('entities.seasonteam',
+            seasonTeamCount) , icon: 'calendar-range'}) %>
           </div>
         </div>
         <% } %> <% if (locals.choreoCount) { %>
@@ -103,8 +110,8 @@
             class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
           >
             <%- include('./components/dashboardKpis', { trend: choreoTrend,
-            count: choreoCount, label: 'Choreos', icon: 'layout-three-columns'
-            }) %>
+            count: choreoCount, label: tn('entities.choreo', choreoCount), icon:
+            'layout-three-columns' }) %>
           </a>
         </div>
         <% } %> <% if (locals.memberCount) { %>
@@ -114,7 +121,8 @@
             class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
           >
             <%- include('./components/dashboardKpis', { trend: memberTrend,
-            count: memberCount, label: 'Members', icon: 'people' }) %>
+            count: memberCount, label: tn('entities.member', memberCount), icon:
+            'people' }) %>
           </a>
         </div>
         <% } %><% if (locals.notificationPercentage != null) { %>
@@ -125,7 +133,7 @@
           >
             <%- include('./components/dashboardKpis', { trend:
             notificationTrend, count: notificationPercentage + "%", label:
-            'Notifications opened', icon: 'bell', trendText: "%",
+            t('admin.index.notifications-opened'), icon: 'bell', trendText: "%",
             kpiTextVariant: notificationPercentage >= 30 ?
             (notificationPercentage >= 50 ? (notificationPercentage >= 90 ?
             'success' : null) : 'warning') : 'danger' }) %>
@@ -136,7 +144,7 @@
           <div class="px-5 py-4 bg-body-secondary rounded-3 mb-0">
             <%- include('./components/dashboardKpis', { trend: feedbackAverage -
             feedbackAverageOfLastMonth, count: feedbackAverage, label:
-            'Feedback', icon: 'star' }) %>
+            t('entities.feedback'), icon: 'star' }) %>
           </div>
         </div>
         <% } %>

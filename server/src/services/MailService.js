@@ -1,5 +1,6 @@
 const { verify, sendMail } = require("../plugins/nodemailer");
 const { timeStringToMillis } = require("../utils/time");
+const i18n = require("i18n");
 
 class MailService {
   constructor() {
@@ -25,16 +26,17 @@ class MailService {
               path: "https://www.choreo-Planer.de/Icon.png",
               cid: "choreo-planer-icon",
             },
-          ]
+          ],
+          "de"
         );
       })
     );
   }
 
-  sendWelcomeEmail(username, userId, userEmail) {
+  sendWelcomeEmail(username, userId, userEmail, locale) {
     return sendMail(
       userEmail,
-      "Willkommen beim Choreo Planer",
+      i18n.__({ phrase: "mail.welcome.willkommen-beim-choreo-planer", locale }),
       "welcome.ejs",
       {
         username,
@@ -47,13 +49,18 @@ class MailService {
           path: "https://www.choreo-Planer.de/Icon.png",
           cid: "choreo-planer-icon",
         },
-      ]
+      ],
+      locale
     );
   }
-  sendEmailConfirmationEmail(username, userId, userEmail) {
+
+  sendEmailConfirmationEmail(username, userId, userEmail, locale) {
     return sendMail(
       userEmail,
-      "Bitte bestätige deine E-Mail-Adresse",
+      i18n.__({
+        phrase: "mail.confirmEmail.bitte-bestaetige-deine-e-mail-adresse",
+        locale,
+      }),
       "confirmEmail.ejs",
       {
         username,
@@ -67,7 +74,8 @@ class MailService {
           path: "https://www.choreo-Planer.de/Icon.png",
           cid: "choreo-planer-icon",
         },
-      ]
+      ],
+      locale
     );
   }
 
@@ -90,24 +98,26 @@ class MailService {
               path: "https://www.choreo-Planer.de/Icon.png",
               cid: "choreo-planer-icon",
             },
-          ]
+          ],
+          "en"
         );
       })
     );
   }
 
-  sendSsoEmail(userEmail, username, ssoToken) {
+  sendSsoEmail(userEmail, username, ssoToken, locale) {
     return sendMail(
       userEmail,
-      "Dein Login-Link",
+      i18n.__({ phrase: "mail.ssoLogin.dein-login-link", locale }),
       "ssoLogin.ejs",
       {
         username,
         ssoToken,
         frontendDomain: process.env.FRONTEND_DOMAIN,
         expirationDate: new Date(
-          new Date() + timeStringToMillis(process.env.SSO_TOKEN_EXPIRES_IN)
-        ).toLocaleString("de", {
+          new Date().valueOf() +
+            timeStringToMillis(process.env.SSO_TOKEN_EXPIRES_IN)
+        ).toLocaleString(locale, {
           weekday: "long",
           year: "numeric",
           month: "long",
@@ -122,7 +132,8 @@ class MailService {
           path: "https://www.choreo-Planer.de/Icon.png",
           cid: "choreo-planer-icon",
         },
-      ]
+      ],
+      locale
     );
   }
 
@@ -130,11 +141,12 @@ class MailService {
     userEmail,
     username,
     ssoToken,
-    notificationTitle = null
+    notificationTitle = null,
+    locale
   ) {
     return sendMail(
       userEmail,
-      "Neue Benachrichtigung!",
+      i18n.__({ phrase: "mail.newNotification.neue-benachrichtigung", locale }),
       "newNotification.ejs",
       {
         username,
@@ -142,8 +154,9 @@ class MailService {
         notificationTitle,
         frontendDomain: process.env.FRONTEND_DOMAIN,
         expirationDate: new Date(
-          new Date() + timeStringToMillis(process.env.SSO_TOKEN_EXPIRES_IN)
-        ).toLocaleString("de", {
+          new Date().valueOf() +
+            timeStringToMillis(process.env.SSO_TOKEN_EXPIRES_IN)
+        ).toLocaleString(locale, {
           weekday: "long",
           year: "numeric",
           month: "long",
@@ -158,7 +171,8 @@ class MailService {
           path: "https://www.choreo-Planer.de/Icon.png",
           cid: "choreo-planer-icon",
         },
-      ]
+      ],
+      locale
     );
   }
 }

@@ -12,7 +12,7 @@ const router = Router();
 
 router.post("/", (req, res, next) => {
   const { username, password, email } = req.body;
-  UserService.create(username, password, email)
+  UserService.create(username, password, email, false, req.locale)
     .then((user) => {
       const token = AuthService.generateAccessToken(user.id);
       res.send(token);
@@ -25,7 +25,7 @@ router.post("/", (req, res, next) => {
           .send(
             Object.keys(e.fields).includes("username") ||
               Object.keys(e.fields).includes("email")
-              ? "Nutzer existiert bereits"
+              ? req.t("errors.user-already-exists")
               : null
           );
         return next();
@@ -59,11 +59,11 @@ router.post("/login", (req, res, next) => {
 
 router.post("/ssoRequest", (req, res, next) => {
   const { email } = req.body;
-  if (!email) return res.status(400).send("An email address is required.");
+  if (!email) return res.status(400).send(req.t("responses.email-required"));
 
-  AuthService.generateSsoToken(email)
+  AuthService.generateSsoToken(email, req.locale)
     .then(() => {
-      res.send("Single-Sign-On link was sent to your email inbox.");
+      res.send(req.t("responses.sso-link-sent")); // njsscan-ignore: express_xss
       next();
     })
     .catch((e) => next(e));
@@ -72,13 +72,10 @@ router.post("/ssoRequest", (req, res, next) => {
 router.post("/sso", (req, res, next) => {
   const { ssoToken } = req.body;
   if (!ssoToken)
-    return res
-      .status(400)
-      .send("A SSO token is required. Please contact admin@choreo-planer.de");
+    return res.status(400).send(req.t("responses.sso-token-required"));
 
-  AuthService.resolveSsoToken(ssoToken)
+  AuthService.resolveSsoToken(ssoToken, req.locale)
     .then((user) => {
-      console.log({ user });
       const token = AuthService.generateAccessToken(user.id);
       res.send(token);
       next();
@@ -108,7 +105,8 @@ router.put("/me", AuthService.authenticateUser(), (req, res, next) => {
         return MailService.sendEmailConfirmationEmail(
           user.username,
           user.id,
-          user.email
+          user.email,
+          req.locale
         ).then(() => {
           res.send();
           return next();
@@ -124,7 +122,7 @@ router.put(
   AuthService.authenticateUser(),
   FileService.singleFileMiddleware("profilePicture"),
   (req, res, next) => {
-    if (!req.file) res.status(400).send("No file uploaded");
+    if (!req.file) res.status(400).send(req.t("responses.no-file-uploaded"));
     else {
       const profilePictureExtension = req.file.filename.split(".").pop();
       UserService.update(req.UserId, {
@@ -178,11 +176,12 @@ router.get(
         return MailService.sendEmailConfirmationEmail(
           user.username,
           user.id,
-          user.email
+          user.email,
+          req.locale
         ).then(() => {
           NotificationService.createOne(
-            "E-Mail wurde versandt!",
-            `Eine E-Mail mit dem Link zum Bestätigen deiner E-Mail-Adresse wurde verschickt.`,
+            req.t("notifications.confirm-email.title"),
+            req.t("notifications.confirm-email.message"),
             user.id
           );
           res.send();

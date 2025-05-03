@@ -162,7 +162,7 @@ router.post("/:entity", async (req, res, next) => {
         }
         break;
       default:
-        return next(new Error("Invalid entity"));
+        return next(new Error(req.t("errors.invalid-entity")));
     }
 
     res.redirect(`${req.baseUrl}/${entity}`); // njsscan-ignore: express_open_redirect
@@ -202,7 +202,7 @@ router.post("/:entity/update", async (req, res, next) => {
       service = ChoreoService;
       break;
     default:
-      return next(new Error("Invalid entity"));
+      return next(new Error(req.t("errors.invalid-entity")));
   }
   try {
     await service.update(id, data, null, { all: true });
@@ -233,7 +233,7 @@ router.delete("/:entity/:id", async (req, res, next) => {
       service = ChoreoService;
       break;
     default:
-      return next(new Error("Invalid entity"));
+      return next(new Error(req.t("errors.invalid-entity")));
   }
 
   try {

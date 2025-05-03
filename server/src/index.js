@@ -166,6 +166,11 @@ app.use(
 
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 
+// INTERNATIONALIZATION
+require("./plugins/i18n");
+const i18n = require("i18n");
+app.use(i18n.init);
+
 app.get("/", (req, res) => {
   res.render("../src/views/status", {
     version,
@@ -198,6 +203,15 @@ app.use("/admin", adminRouter);
 
 app.use(errorLoggingMiddleWare);
 app.use(errorHandlingMiddleWare);
+
+app.get("/test", (req, res, next) => {
+  res.render("../src/views/error.ejs", {
+    action: "email-confirmation",
+    data: JSON.stringify({ userId: "req.params.id" }),
+    error: new Error("asdfasdfjklöa"),
+    timestamp: new Date().toLocaleString(req.locale),
+  }); // njsscan-ignore: express_lfr_warning
+});
 
 function startServer() {
   logConfig();

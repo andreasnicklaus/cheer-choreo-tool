@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= locals.locale? locale : 'en' %>">
   <head>
     <%- include('./partials/head'); %>
   </head>
@@ -9,7 +9,7 @@
     <main class="container">
       <div class="row justify-content-between align-items-center">
         <div class="col col-auto">
-          <h1>Notifications</h1>
+          <h1><%= t('admin.notifications.notifications') %></h1>
         </div>
         <div class="col col-auto">
           <button
@@ -19,7 +19,7 @@
             data-bs-target="#notificationCreateModal"
           >
             <i class="bi bi-send-fill"></i>
-            Send Notifications
+            <%= t('admin.notifications.send-notifications') %>
           </button>
         </div>
       </div>
@@ -28,12 +28,12 @@
           <thead>
             <tr>
               <th scope="col">#</th>
-              <th scope="col">Title</th>
-              <th scope="col">Message</th>
-              <th scope="col">Opened</th>
-              <th scope="col">Created At</th>
-              <th scope="col">Updated At</th>
-              <th scope="col">Actions</th>
+              <th scope="col"><%= t('admin.notifications.title') %></th>
+              <th scope="col"><%= t('admin.notifications.message') %></th>
+              <th scope="col"><%= t('admin.notifications.opened') %></th>
+              <th scope="col"><%= t('entities.created-at') %></th>
+              <th scope="col"><%= t('entities.updated-at') %></th>
+              <th scope="col"><%= t('entities.actions') %></th>
             </tr>
           </thead>
           <tbody class="table-group-divider">
@@ -50,10 +50,10 @@
                 <%= notification.read ? '✅' : '❌' %>
               </td>
               <td>
-                <%= new Date(notification.createdAt).toLocaleString("en-EN") %>
+                <%= new Date(notification.createdAt).toLocaleString(locale) %>
               </td>
               <td>
-                <%= new Date(notification.updatedAt).toLocaleString("en-EN") %>
+                <%= new Date(notification.updatedAt).toLocaleString(locale) %>
               </td>
               <td>
                 <div class="btn-group">
@@ -74,7 +74,7 @@
               <td></td>
               <td>
                 <b> <%= notificationList.length %> </b>
-                Notifications
+                <%= t('admin.notifications.notifications') %>
               </td>
               <td></td>
               <td>
@@ -102,7 +102,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="notificationCreateModalLabel">
-              Send a notification
+              <%= t('admin.notifications.send-a-notification') %>
             </h1>
             <button
               type="button"
@@ -118,31 +118,31 @@
           >
             <div class="modal-body">
               <div class="mb-3">
-                <label for="title" class="form-label">Title</label>
+                <label for="title" class="form-label"><%= t('admin.notifications.title') %></label>
                 <input
                   type="text"
                   class="form-control"
                   id="title"
                   name="title"
-                  placeholder="Title"
+                  placeholder="<%= t('admin.notifications.title') %>"
                   autofocus="true"
                   maxlength="40"
                 />
-                <div id="titleHelp" class="form-text">Optional (<span id="titleLength">0</span>/40)</div>
+                <div id="titleHelp" class="form-text"><%= t('general.optional') %> (<span id="titleLength">0</span>/40)</div>
               </div>
               <div class="mb-3">
-                <label for="message" class="form-label">Message</label>
+                <label for="message" class="form-label"><%= t('admin.notifications.message') %></label>
                 <textarea
                   class="form-control"
                   id="message"
                   name="message"
-                  placeholder="Message"
+                  placeholder="<%= t('admin.notifications.message') %>"
                   required
                   rows="3"
                   maxlength="300"
                   minlength="5"
                 ></textarea>
-                <div id="messageHelp" class="form-text">Required (<span id="messageLength">0</span>/300)</div>
+                <div id="messageHelp" class="form-text"><%= t('general.required') %> (<span id="messageLength">0</span>/300)</div>
               </div>
               <div class="mb-3">
                 <input
@@ -152,7 +152,7 @@
                   name="notifyViaEmail"
                 />
                 <label for="notifyViaEmail" class="form-label">
-                  Notify user via email
+                  <%= t('admin.notifications.notify-user-via-email') %>
                 </label>
               </div>
               <div class="mb-3">
@@ -163,7 +163,7 @@
                   name="notifyAll"
                 />
                 <label for="notifyAll" class="form-label">
-                  Send to all users
+                  <%= t('admin.notifications.send-to-all-users') %>
                 </label>
               </div>
               <div class="input-group mb-3">
@@ -171,7 +171,7 @@
                   type="text"
                   id="userSearchInput"
                   list="userSearch"
-                  placeholder="User"
+                  placeholder="<%= tn('entities.user', 1) %>"
                   class="form-control"
                 >
                 <datalist id="userSearch">
@@ -196,7 +196,7 @@
               </div>
               <div class="mb-3">
                 <label for="targetUser" class="form-label">
-                  Users to notify
+                  <%= t('admin.notifications.users-to-notify') %>
                 </label>
                 <ul class="list-group" id="targetUserList"></ul>
               </div>
@@ -218,10 +218,10 @@
                 data-bs-dismiss="modal"
               >
                 <i class="bi bi-trash"></i>
-                Close
+                <%= t('general.close') %>
               </button>
               <button type="submit" class="btn btn-success">
-                <i class="bi bi-send-fill"></i> Send
+                <i class="bi bi-send-fill"></i> <%= t('general.send') %>
               </button>
             </div>
           </form>
@@ -339,7 +339,7 @@
           userInput.value = "";
           renderSelectedUsers();
         } else {
-          alert("Please select a valid user.");
+          alert("<%= t('admin.notifications.please-select-a-valid-user') %>");
         }
       }
 
@@ -356,7 +356,7 @@
       });
 
       function deleteNotification(id) {
-        if (confirm("Are you sure you want to delete this notification?")) {
+        if (confirm("<%= t('admin.notifications.are-you-sure-you-want-to-delete-this-notification')%>")) {
           fetch(`/admin/notifications/${id}`, {
             method: "DELETE",
           })
@@ -365,7 +365,7 @@
             })
             .catch((err) => {
               console.error(err);
-              alert("Something went wrong");
+              alert("<%= t('errors.something-went-wrong') %>");
             });
         }
       }
@@ -381,7 +381,7 @@
         const message = document.getElementById("message").value;
         if (!title && !message) {
           event.preventDefault(); // Prevent form submission for validation
-          return alert("Please provide a title or message.");
+          return alert("<%= t('admin.notifications.please-provide-a-title-or-message') %>");
         }
 
         const notifyViaEmail =
@@ -390,7 +390,7 @@
         const notifyAll = document.getElementById("notifyAll").checked;
         if (!notifyAll & (selectedUsers.size == 0)) {
           event.preventDefault(); // Prevent form submission for validation
-          return alert("Please select at least one user to notify.");
+          return alert("<%= t('admin.notifications.please-select-at-least-one-user-to-notify') %>");
         }
 
         const targetUsers = document.getElementById("targetUsers");
