@@ -4,7 +4,7 @@
     :title="$t('nav.neue-choreo')"
     centered
     scrollable
-    size="xl"
+    size="xxl"
     @show="resetChoreoModal"
     @ok="createChoreo"
   >
@@ -73,6 +73,34 @@
           }}
         </p>
       </b-form-group>
+
+      <b-form-group
+        label="Mat"
+        label-class="label-with-colon"
+        :state="newChoreoMatTypeIsValid"
+        :invalid-feedback="newChoreoMatTypeStateFeedback"
+      >
+        <b-form-select
+          v-model="newChoreoMatType"
+          required
+          :state="newChoreoMatTypeIsValid"
+          :options="[
+            {
+              label: 'By Sport (Lines on the mat)',
+              options: [{ value: 'cheer', text: 'Cheer (1:1, 7 lanes)' }],
+            },
+            {
+              label: 'By stage form (no lines)',
+              options: [
+                { value: 'square', text: 'Square (1:1)' },
+                { value: '1:2', text: 'Flat Rectangle (1:2)' },
+                { value: '3:4', text: 'Boxy Rectangle (3:4)' },
+              ],
+            },
+          ]"
+        />
+      </b-form-group>
+
       <b-form-group
         :label="this.$tc('team', 1)"
         label-class="label-with-colon"
@@ -221,6 +249,7 @@ export default {
     newChoreoName: null,
     newChoreoAchter: 1,
     newChoreoCount: 0,
+    newChoreoMatType: "cheer",
     newChoreoTeamId: null,
     newChoreoSeasonId: null,
     newChoreoParticipantIds: [],
@@ -250,6 +279,7 @@ export default {
       this.newChoreoName = null;
       this.newChoreoAchter = 1;
       this.newChoreoCount = 0;
+      this.newChoreoMatType = "cheer";
       this.newChoreoTeamId = this.teams[0]?.id;
 
       const seasonTeamsOfSelectedTeam = this.teams.find(
@@ -287,6 +317,7 @@ export default {
       ChoreoService.create(
         this.newChoreoName,
         count,
+        this.newChoreoMatType,
         seasonTeamId,
         participants
       ).then((choreo) => {
@@ -377,6 +408,18 @@ export default {
     newChoreoTeamStateFeedback() {
       if (!this.newChoreoTeamId) return this.$t("erforderlich");
       if (!this.teams.map((t) => t.id).includes(this.newChoreoTeamId))
+        return this.$t("errors.unerwarteter-fehler");
+      return null;
+    },
+    newChoreoMatTypeIsValid() {
+      return (
+        this.newChoreoMatType != null &&
+        ["cheer", "square", "1:2", "3:4"].includes(this.newChoreoMatType)
+      );
+    },
+    newChoreoMatTypeStateFeedback() {
+      if (!this.newChoreoMatType) return this.$t("erforderlich");
+      if (!["cheer", "square", "1:2", "3:4"].includes(this.newChoreoMatType))
         return this.$t("errors.unerwarteter-fehler");
       return null;
     },

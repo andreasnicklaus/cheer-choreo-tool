@@ -42,9 +42,9 @@ class ChoreoService {
       .then((res) => res.data);
   }
 
-  create(name, counts, seasonTeamId, participants) {
+  create(name, counts, matType, seasonTeamId, participants) {
     return ax
-      .post("/choreo", { name, counts, seasonTeamId, participants })
+      .post("/choreo", { name, counts, matType, seasonTeamId, participants })
       .then((res) => res.data);
   }
 
