@@ -156,6 +156,7 @@
               {{ $t("editView.video-exportieren") }}
             </b-dropdown-item>
             <b-dropdown-divider />
+            <!-- TODO: add menu item to select/change mat type -->
             <b-dropdown-item
               @click="() => $refs.changeChoreoLengthModal.open()"
               :disabled="!choreo"
@@ -192,6 +193,7 @@
     <!-- Main: Mat + CountOverview -->
     <b-row align-h="around" v-if="!$store.state.isMobile">
       <b-col cols="auto">
+        <!-- TODO: pass matType prop (:matType="choreo.matType") -->
         <Mat
           ref="Mat"
           :currentPositions="currentPositions"

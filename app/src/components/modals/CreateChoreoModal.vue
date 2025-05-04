@@ -4,7 +4,7 @@
     :title="$t('nav.neue-choreo')"
     centered
     scrollable
-    size="xxl"
+    size="xl"
     @show="resetChoreoModal"
     @ok="createChoreo"
   >

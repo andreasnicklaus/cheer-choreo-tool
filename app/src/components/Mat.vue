@@ -3,6 +3,7 @@
     <template #loading>
       <b-skeleton :width="width + 'px'" :height="height + 'px'"> </b-skeleton>
     </template>
+    <!-- TODO: change appearance base on matType prop -->
     <svg
       ref="svgCanvas"
       class="svgCanvas"

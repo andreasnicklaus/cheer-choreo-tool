@@ -250,6 +250,7 @@ export default {
   components: { VideoDownloadModal },
   data: () => ({
     width: 1800,
+    // TODO: switch height to computed property and calculate depending on choreo.matType
     height: 1800,
     downloadUrl: null,
     mediaRecorder: null,
@@ -348,6 +349,7 @@ export default {
         });
     },
     drawBackground() {
+      // TODO: change background depending on choreo.matType
       const canvas = this.$refs.videoCanvas;
       if (!canvas) return;
 

@@ -83,6 +83,7 @@
           </ol>
         </b-col>
         <b-col cols="auto">
+          <!-- TODO: pass matType prop (matType="cheer") -->
           <Mat
             :currentPositions="currentPositions"
             :width="matWidth"
@@ -377,6 +378,8 @@ import CountSheet from "@/components/CountSheet.vue";
 import Mat from "@/components/Mat.vue";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
+
+// TODO: add information about different mat types (cheer, dance, etc.)
 
 export default {
   name: "HomeView",
