@@ -17,6 +17,10 @@ class ChoreoService {
     return ax.put(`/choreo/${choreoId}`, { counts }).then((res) => res.data);
   }
 
+  changeMatType(choreoId, matType) {
+    return ax.put(`/choreo/${choreoId}`, { matType }).then((res) => res.data);
+  }
+
   addParticipant(choreoId, memberId, color) {
     return ax
       .post(`/choreo/${choreoId}/participants`, { memberId, color })

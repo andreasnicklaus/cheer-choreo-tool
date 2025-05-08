@@ -83,11 +83,10 @@
           </ol>
         </b-col>
         <b-col cols="auto">
-          <!-- TODO: pass matType prop (matType="cheer") -->
           <Mat
             :currentPositions="currentPositions"
             :width="matWidth"
-            :height="matWidth"
+            matType="cheer"
             :teamMembers="teamMembers"
             :interactive="false"
             :dotRadius="(matWidth / 500) * 20"

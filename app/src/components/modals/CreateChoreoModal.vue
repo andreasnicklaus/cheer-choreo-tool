@@ -80,6 +80,7 @@
         :state="newChoreoMatTypeIsValid"
         :invalid-feedback="newChoreoMatTypeStateFeedback"
       >
+        <!-- TODO: translate group labels and layout names -->
         <b-form-select
           v-model="newChoreoMatType"
           required

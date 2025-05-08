@@ -80,7 +80,7 @@ export default {
     changeChoreoLength() {
       const counts =
         parseInt(this.newChoreoAchter) * 8 + parseInt(this.newChoreoCount);
-      ChoreoService.changeLength(this.choreoId, counts).then(() => {
+      ChoreoService.changeLength(this.choreo.id, counts).then(() => {
         this.$emit("countUpdate", counts);
       });
     },
