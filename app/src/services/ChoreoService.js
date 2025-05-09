@@ -1,6 +1,24 @@
 import ax from "./RequestService";
+import i18n from "@/plugins/vue-i18n";
 
 class ChoreoService {
+  matTypeOptions = () => [
+    {
+      label: i18n.t("matTypeOptions.by-sport"),
+      options: [
+        { value: "cheer", text: i18n.t("matTypeOptions.descriptions.cheer") },
+      ],
+    },
+    {
+      label: i18n.t("matTypeOptions.by-stage"),
+      options: [
+        { value: "square", text: i18n.t("matTypeOptions.descriptions.square") },
+        { value: "1:2", text: i18n.t("matTypeOptions.descriptions.1-2") },
+        { value: "3:4", text: i18n.t("matTypeOptions.descriptions.3-4") },
+      ],
+    },
+  ];
+
   getByTeam(teamId) {
     return ax.get("/choreo", { params: { teamId } }).then((res) => res.data);
   }

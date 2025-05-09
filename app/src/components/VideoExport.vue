@@ -402,8 +402,7 @@ export default {
       context.fillStyle = "black";
       context.textBaseline = "middle";
       context.textAlign = "center";
-      // REVIEW: check if the font size is correctly calculated based on this.height
-      context.font = (16 / 500) * this.height + "px Sans-Serif";
+      context.font = (16 / 500) * this.width + "px Sans-Serif";
       context.fillText(
         text,
         (x * canvas.width) / 100,

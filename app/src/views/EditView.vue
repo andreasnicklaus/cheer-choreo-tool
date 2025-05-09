@@ -137,8 +137,7 @@
             <template #button-content>
               <b-icon-three-dots-vertical />
             </template>
-            <!-- TODO: translate group headers -->
-            <b-dropdown-group header="Export">
+            <b-dropdown-group :header="$t('editView.exportieren')">
               <b-dropdown-item
                 :to="{
                   name: 'PDF',
@@ -159,7 +158,7 @@
               </b-dropdown-item>
             </b-dropdown-group>
             <b-dropdown-divider />
-            <b-dropdown-group header="Choreo Settings">
+            <b-dropdown-group :header="$t('editView.choreo-einstellungen')">
               <b-dropdown-item
                 @click="() => $refs.changeChoreoLengthModal.open()"
                 :disabled="!choreo"
@@ -172,12 +171,11 @@
                 :disabled="!choreo"
               >
                 <b-icon-layout-three-columns class="mr-2" />
-                <!-- TODO: translate -->
-                Change mat layout
+                {{ $t("editView.change-mat-layout") }}
               </b-dropdown-item></b-dropdown-group
             >
             <b-dropdown-divider />
-            <b-dropdown-group header="Editing">
+            <b-dropdown-group :header="$t('editView.bearbeitung')">
               <b-dropdown-text style="width: 250px">
                 <b-checkbox switch v-model="snapping">
                   {{

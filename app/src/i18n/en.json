@@ -115,7 +115,11 @@
     "zum-anfang-springen": "Jump at the beginning",
     "zum-ende-springen": "Skip to the end",
     "zum-naechsten-count-springen": "Jump to the next count",
-    "zum-vorigen-count-springen": "Jump to the previous count"
+    "zum-vorigen-count-springen": "Jump to the previous count",
+    "change-mat-layout": "Change mat layout",
+    "exportieren": "Export",
+    "choreo-einstellungen": "Choreo settings",
+    "bearbeitung": "Editing"
   },
   "erfolgreich": "Successful",
   "erforderlich": "Required",
@@ -579,6 +583,10 @@
       "no-email-info": "Accounts without an email address can only be reset manually. Send an email to info@choreoplaner.de!",
       "email-info": "If your account is connected to an email address, you can have a login link sent to you via email, with which you can log in for 24 hours. You can then change your password on the profile page.",
       "login-link-schicken": "Send login link"
+    },
+    "change-mat": {
+      "layout-der-buehne-matte-aendern": "Change the layout of the mat",
+      "layout-aendern": "Change the layout"
     }
   },
   "name": "Name",
@@ -737,5 +745,16 @@
   },
   "fehler": "Error",
   "warnung": "Warning",
-  "info": "Info"
+  "info": "Info",
+  "matTypeOptions": {
+    "descriptions": {
+      "1-2": "Flat Rectangle (1:2)",
+      "3-4": "Boxy Rectangle (3:4)",
+      "cheer": "Cheer (1:1, 7 lanes)",
+      "square": "Square (1:1)"
+    },
+    "by-sport": "By Sport (Lines on the mat)",
+    "by-stage": "By stage form (no lines)"
+  },
+  "mat": "Mat/Stage"
 }

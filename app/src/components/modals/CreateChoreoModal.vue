@@ -75,30 +75,16 @@
       </b-form-group>
 
       <b-form-group
-        label="Mat"
+        :label="$t('mat')"
         label-class="label-with-colon"
         :state="newChoreoMatTypeIsValid"
         :invalid-feedback="newChoreoMatTypeStateFeedback"
       >
-        <!-- TODO: translate group labels and layout names -->
         <b-form-select
           v-model="newChoreoMatType"
           required
           :state="newChoreoMatTypeIsValid"
-          :options="[
-            {
-              label: 'By Sport (Lines on the mat)',
-              options: [{ value: 'cheer', text: 'Cheer (1:1, 7 lanes)' }],
-            },
-            {
-              label: 'By stage form (no lines)',
-              options: [
-                { value: 'square', text: 'Square (1:1)' },
-                { value: '1:2', text: 'Flat Rectangle (1:2)' },
-                { value: '3:4', text: 'Boxy Rectangle (3:4)' },
-              ],
-            },
-          ]"
+          :options="matTypeOptions"
         />
       </b-form-group>
 
@@ -356,6 +342,9 @@ export default {
       const minutes = date.getMinutes();
       const seconds = date.getSeconds();
       return `${minutes} Min. ${seconds} Sek.`;
+    },
+    matTypeOptions() {
+      return ChoreoService.matTypeOptions();
     },
     newChoreoNameIsValid() {
       return this.newChoreoName != null && this.newChoreoName.length >= 2;
