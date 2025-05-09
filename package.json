@@ -1,0 +1,21 @@
+{
+  "name": "cheer-choreo-tool",
+  "version": "0.10.2",
+  "scripts": {
+    "serve": "npm run serve -w=app",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andreasnicklaus/cheer-choreo-tool.git"
+  },
+  "author": "Andreas Nicklaus",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andreasnicklaus/cheer-choreo-tool/issues"
+  },
+  "homepage": "https://github.com/andreasnicklaus/cheer-choreo-tool#readme",
+  "workspaces": [
+    "app"
+  ]
+}

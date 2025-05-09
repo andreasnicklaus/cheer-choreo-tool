@@ -4,6 +4,7 @@ const { logger } = require("../plugins/winston");
 const MailService = require("./MailService");
 const NotificationService = require("./NotificationService");
 const i18n = require("i18n");
+const roundToDecimals = require("../utils/numbers");
 
 class UserService {
   async getAll() {
@@ -111,6 +112,22 @@ class UserService {
       } else {
         throw Error(`Beim Löschen wurde kein User mit der ID ${id} gefunden`);
       }
+    });
+  }
+
+  getLoggedInPercentage() {
+    return Promise.all([
+      this.getCount(),
+      User.count({
+        where: {
+          lastLoggedIn: null,
+        },
+      }),
+    ]).then(([totalCount, notLoggedInCount]) => {
+      return roundToDecimals(
+        ((totalCount - notLoggedInCount) / totalCount) * 100,
+        1
+      );
     });
   }
 }

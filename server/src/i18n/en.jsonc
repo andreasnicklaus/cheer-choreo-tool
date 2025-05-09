@@ -18,6 +18,7 @@
     "index": {
       "dashboard": "Dashboard",
       "last-feedback": "Last Feedback",
+      "logged-in": "logged in",
       "notifications-opened": "Notifications opened"
     },
     "users": {
@@ -68,6 +69,7 @@
   "entities": {
     "created-at": "Created At",
     "updated-at": "Updated At",
+    "lastLoggedIn": "Last seen",
     "actions": "Actions",
     "user": "[1]User|Users",
     "admin": "[1]Admin|Admins",
@@ -86,7 +88,8 @@
     "send": "Send",
     "add": "Add",
     "save-changes": "Save changes",
-    "unknown": "Unknown"
+    "unknown": "Unknown",
+    "never": "never"
   },
   "errors": {
     "something-went-wrong": "Something went wrong",

@@ -3,6 +3,9 @@
   <head>
     <%- include('./partials/head'); %>
     <style>
+      .dashboardKPI {
+        display: inline-block;
+      }
       .dashboardKPI h2 {
         font-size: 1rem;
         font-weight: 400;
@@ -48,7 +51,12 @@
           >
             <%- include('./components/dashboardKpis', { trend: userTrend, count:
             userCount, label: tn('entities.user', userCount), icon: 'person' })
-            %>
+            %> <%- include('./components/dashboardKpis', { count:
+            usersLoggedInPercentage + "%", label: t('admin.index.logged-in') ,
+            icon: 'person-plus', trendText: "%", kpiTextVariant:
+            usersLoggedInPercentage >= 30 ? (usersLoggedInPercentage >= 50 ?
+            (usersLoggedInPercentage >= 90 ? 'success' : null) : 'warning') :
+            'danger', class: "ms-4" }) %>
           </a>
         </div>
         <% } %> <% if (locals.adminCount) { %>

@@ -50,9 +50,13 @@ router.post("/login", (req, res, next) => {
       //     message:
       //       "Du musst dein E-Mail-Adresse bestätigen, um dein Konto zu aktivieren",
       //   });
-      const token = AuthService.generateAccessToken(user.id);
-      res.send(token);
-      next();
+      return UserService.update(user.id, { lastLoggedIn: Date.now() }).then(
+        () => {
+          const token = AuthService.generateAccessToken(user.id);
+          res.send(token);
+          next();
+        }
+      );
     })
     .catch((e) => next(e));
 });
