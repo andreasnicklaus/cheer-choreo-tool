@@ -262,7 +262,7 @@ export default {
             console.warn(e.code);
             if (e.code == "ERR_NETWORK")
               return this.showFailMessage(
-                e.response?.data || "{{ $t('login.server-offline') }}"
+                e.response?.data || this.$t("login.server-offline")
               );
             this.showFailMessage(
               e.response.data ||

@@ -115,7 +115,11 @@
     "zum-anfang-springen": "Zum Anfang springen",
     "zum-ende-springen": "Zum Ende springen",
     "zum-naechsten-count-springen": "Zum nächsten Count springen",
-    "zum-vorigen-count-springen": "Zum vorigen Count springen"
+    "zum-vorigen-count-springen": "Zum vorigen Count springen",
+    "change-mat-layout": "Mattenlayout ändern",
+    "exportieren": "Exportieren",
+    "choreo-einstellungen": "Choreo Einstellungen",
+    "bearbeitung": "Bearbeitung"
   },
   "erfolgreich": "Erfolgreich",
   "erforderlich": "Erforderlich",
@@ -323,7 +327,11 @@
     "personalisierung": "Personalisierung",
     "branding-deines-vereins": "Branding deines Vereins",
     "lade-das-logo-deines-vereins-hoch": "Lade das Logo deines Vereins hoch",
-    "mach-werbung-fuer-dein-team": "Mach Werbung für dein Team"
+    "mach-werbung-fuer-dein-team": "Mach Werbung für dein Team",
+    "garde": "Garde",
+    "stage-3-4": "Bühne (3:4)",
+    "stage-1-1": "Bühne (1:1)",
+    "choose-the-layout-of-your-stage": "Wähle das Layout deiner Bühne"
   },
   "impressumView": {
     "angaben-gemaess-5-tmg": "Angaben gemäß § 5 TMG",
@@ -579,6 +587,10 @@
       "no-email-info": "Konten ohne E-Mail-Adresse können nur händisch zurückgesetzt werden. Schicke eine E-Mail an info@choreo-planer.de!",
       "email-info": "Wenn dein Konto mit einer E-Mail-Adresse verbunden ist, kannst du dir einen Login-Link zusenden lassen, mit dem du dich für 24 Stunden einloggen kannst. Auf der Profilseite kannst du dann dein Passwort selbst ändern.",
       "login-link-schicken": "Login-Link schicken"
+    },
+    "change-mat": {
+      "layout-der-buehne-matte-aendern": "Layout der Bühne / Matte ändern",
+      "layout-aendern": "Layout ändern"
     }
   },
   "name": "Name",
@@ -737,5 +749,17 @@
   },
   "fehler": "Fehler",
   "warnung": "Warnung",
-  "info": "Info"
+  "info": "Info",
+  "matTypeOptions": {
+    "by-sport": "Nach Sport (Linien auf der Matte)",
+    "descriptions": {
+      "cheer": "Cheer  (1: 1, 7 Linien)",
+      "square": "Quadrat (1:1)",
+      "1-2": "Flaches Rechteck (1:2)",
+      "3-4": "Hohes Rechteck (3:4)"
+    },
+    "by-stage": "Nach Bühnenform (keine Linien)"
+  },
+  "mat": "Matte/Bühne",
+  "cheerleading": "Cheerleading"
 }

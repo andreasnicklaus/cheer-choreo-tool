@@ -14,9 +14,9 @@
             { name: tn('entities.club', 2), path: "/clubs", variant: "primary" },
             { name: tn('entities.team', 2), path: "/teams", variant: "danger" },
             { name: tn('entities.season', 2), path: "/seasons", variant: "success" },
+            { name: tn('entities.choreo', 2), path: "/choreos", variant: "info" },
             // { name: "SeasonTeams", path: "/seasonTeams", variant: "warning" },
             { name: tn('entities.member', 2), path: "/members", variant: "light" },
-            { name: tn('entities.choreo', 2), path: "/choreos", variant: "info" },
           ].forEach(entity => { %>
           <a role="button" href="/admin/db<%= entity.path %>" class="btn btn-<%= path.endsWith(entity.path) ? "" : "outline-" %><%= entity.variant || "primary"%> btn-sm">
             <%= entity.name %>

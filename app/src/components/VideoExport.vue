@@ -250,7 +250,6 @@ export default {
   components: { VideoDownloadModal },
   data: () => ({
     width: 1800,
-    height: 1800,
     downloadUrl: null,
     mediaRecorder: null,
     recordingChunks: [],
@@ -356,14 +355,20 @@ export default {
       context.fillStyle = "#e5e5f7";
       context.fillRect(0, 0, canvas.width, canvas.height);
 
-      context.fillStyle = "#444cf766";
-      for (let i = 0; i < 6; i++) {
-        context.fillRect(
-          (canvas.width / 7) * (i + 1),
-          0,
-          (5 / 500) * this.width,
-          canvas.height
-        );
+      switch (this.choreo.matType) {
+        case "cheer":
+          context.fillStyle = "#444cf766";
+          for (let i = 0; i < 6; i++) {
+            context.fillRect(
+              (canvas.width / 7) * (i + 1),
+              0,
+              (5 / 500) * this.width,
+              canvas.height
+            );
+          }
+          break;
+        default:
+          break;
       }
     },
     clearCanvas() {
@@ -397,7 +402,7 @@ export default {
       context.fillStyle = "black";
       context.textBaseline = "middle";
       context.textAlign = "center";
-      context.font = (16 / 500) * this.height + "px Sans-Serif";
+      context.font = (16 / 500) * this.width + "px Sans-Serif";
       context.fillText(
         text,
         (x * canvas.width) / 100,
@@ -675,6 +680,16 @@ export default {
           })
         );
       return slogans[Math.floor(this.count / 10) % slogans.length];
+    },
+    height() {
+      switch (this.choreo?.matType) {
+        case "1:2":
+          return this.width / 2;
+        case "3:4":
+          return (this.width / 4) * 3;
+        default:
+          return this.width;
+      }
     },
   },
   metaInfo() {

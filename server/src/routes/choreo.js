@@ -24,10 +24,11 @@ router.get("/:id?", authenticateUser(), (req, res, next) => {
 });
 
 router.post("/", authenticateUser(), (req, res, next) => {
-  const { name, counts, seasonTeamId, participants } = req.body;
+  const { name, counts, matType, seasonTeamId, participants } = req.body;
   return ChoreoService.create(
     name,
     counts,
+    matType,
     seasonTeamId,
     participants,
     req.UserId

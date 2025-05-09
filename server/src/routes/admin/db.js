@@ -74,7 +74,7 @@ router.get("/:entity", async (req, res, next) => {
         });
       break;
     case "choreos":
-      columns = ["name", "counts"];
+      columns = ["name", "counts", "matType"];
       data = await ChoreoService.getAll(UserId, { all: !UserId });
       model = Choreo;
       extraData.seasonteamList = (await SeasonTeamService.getAll())
@@ -87,6 +87,12 @@ router.get("/:entity", async (req, res, next) => {
             }${seasonTeam.Season?.year ? `, ${seasonTeam.Season?.year}` : ""})`,
           };
         });
+      extraData.mattypeList = Choreo.rawAttributes.matType.values.map(
+        (matType) => ({
+          value: matType,
+          name: matType,
+        })
+      );
       break;
   }
 
@@ -107,6 +113,7 @@ router.get("/:entity", async (req, res, next) => {
     entity: req.params.entity,
     ...extraData,
   }); // njsscan-ignore: express_lfr_warning
+
   return next();
 });
 
@@ -157,8 +164,15 @@ router.post("/:entity", async (req, res, next) => {
         break;
       case "choreos":
         {
-          let { name, counts, SeasonTeamId, UserId } = data;
-          await ChoreoService.create(name, counts, SeasonTeamId, [], UserId);
+          let { name, counts, matType, SeasonTeamId, UserId } = data;
+          await ChoreoService.create(
+            name,
+            counts,
+            matType,
+            SeasonTeamId,
+            [],
+            UserId
+          );
         }
         break;
       default:

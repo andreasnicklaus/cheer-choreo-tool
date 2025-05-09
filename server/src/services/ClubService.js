@@ -142,6 +142,7 @@ class ClubService {
             ChoreoService.create(
               "Demo-Choreo",
               25,
+              undefined,
               seasonTeam.id,
               members.map((m) => ({ id: m.id })),
               UserId

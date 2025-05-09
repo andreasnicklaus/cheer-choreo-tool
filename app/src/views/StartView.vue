@@ -606,9 +606,7 @@ export default {
       const count = seasonTeam.Choreos.filter(
         (c) => c.counts >= this.minCount && c.counts <= this.maxCount
       ).length;
-      const choreoDeclination =
-        count == 1 ? this.$tc("choreo", 1) : this.$t("choreo", 2);
-      return `${count} ${choreoDeclination}`;
+      return `${count} ${this.$tc("choreo", count)}`;
     },
     seasonCountStringByTeam(team) {
       const count = team.SeasonTeams.filter(
@@ -616,9 +614,7 @@ export default {
           this.seasonFilterIds.length == 0 ||
           this.seasonFilterIds.includes(st.Season.id)
       ).flat(Infinity).length;
-      const seasonDeclination =
-        count == 1 ? this.$tc("season", 1) : this.$tc("season", 2);
-      return `${count} ${seasonDeclination}`;
+      return `${count} ${this.$tc("season", count)}`;
     },
     onSeasonTeamCreation() {
       this.load();

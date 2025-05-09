@@ -16,7 +16,7 @@ const logger = winston.createLogger({
     new winston.transports.Console(),
     new winston.transports.File({
       filename: "./logs/error.log",
-      level: "warning",
+      level: "warn",
     }),
     new winston.transports.File({ filename: "./logs/info.log" }),
     new winston.transports.File({
