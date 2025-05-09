@@ -327,7 +327,11 @@
     "personalisierung": "Personalisierung",
     "branding-deines-vereins": "Branding deines Vereins",
     "lade-das-logo-deines-vereins-hoch": "Lade das Logo deines Vereins hoch",
-    "mach-werbung-fuer-dein-team": "Mach Werbung für dein Team"
+    "mach-werbung-fuer-dein-team": "Mach Werbung für dein Team",
+    "garde": "Garde",
+    "stage-3-4": "Bühne (3:4)",
+    "stage-1-1": "Bühne (1:1)",
+    "choose-the-layout-of-your-stage": "Wähle das Layout deiner Bühne"
   },
   "impressumView": {
     "angaben-gemaess-5-tmg": "Angaben gemäß § 5 TMG",
@@ -756,5 +760,6 @@
     },
     "by-stage": "Nach Bühnenform (keine Linien)"
   },
-  "mat": "Matte/Bühne"
+  "mat": "Matte/Bühne",
+  "cheerleading": "Cheerleading"
 }

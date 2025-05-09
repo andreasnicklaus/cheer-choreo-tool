@@ -250,7 +250,8 @@ export default {
 
 <style lang="scss" scoped>
 .svgCanvas {
-  border: 1px solid #000000;
+  border: 1px solid #a5a8f7;
+  border-radius: 4px;
   background-color: #e5e5f7;
   -webkit-touch-callout: none;
   -webkit-user-select: none;

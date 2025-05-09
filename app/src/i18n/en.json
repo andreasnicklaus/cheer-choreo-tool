@@ -327,7 +327,11 @@
     "personalisierung": "Personalization",
     "branding-deines-vereins": "Your club's branding",
     "mach-werbung-fuer-dein-team": "Advertising for your team",
-    "lade-das-logo-deines-vereins-hoch": "Upload your club's logo"
+    "lade-das-logo-deines-vereins-hoch": "Upload your club's logo",
+    "garde": "Guard Dance",
+    "stage-3-4": "Stage (3:4)",
+    "stage-1-1": "Stage (1:1)",
+    "choose-the-layout-of-your-stage": "Choose the layout of your stage"
   },
   "impressumView": {
     "angaben-gemaess-5-tmg": "Information according to § 5 TMG",
@@ -712,7 +716,7 @@
     "team-loeschen": "Delete team",
     "waehle-ein-team": "Choose a team"
   },
-  "teilnehmer": "Participant",
+  "teilnehmer": "Participant | Participants",
   "username": "Username",
   "verein": "Club | Clubs",
   "video": "Video",
@@ -756,5 +760,6 @@
     "by-sport": "By Sport (Lines on the mat)",
     "by-stage": "By stage form (no lines)"
   },
-  "mat": "Mat/Stage"
+  "mat": "Mat/Stage",
+  "cheerleading": "Cheerleading"
 }
