@@ -15,7 +15,7 @@
 ![Backend server build status](<https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/docker-server-image.yml?style=for-the-badge&logo=docker&logoColor=white&label=Backend%20Build%20(Server)>)
 ![Frontend build status](https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/pages.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=Frontend%20Build)
 
-![Last commit](https://img.shields.io/github/last-commit/andreasnicklaus/cheer-choreo-tool?style=for-the-badge)
+![Last commit](https://img.shields.io/github/last-commit/andreasnicklaus/cheer-choreo-tool?style=for-the-badge&label=Last%20Major%20Update)
 ![Top languages](https://img.shields.io/github/languages/top/andreasnicklaus/cheer-choreo-tool?style=for-the-badge)
 ![Language count](https://img.shields.io/github/languages/count/andreasnicklaus/cheer-choreo-tool?style=for-the-badge)
 
@@ -41,7 +41,15 @@ See [LICENSE](LICENSE) for the license of this project.
 
 ## :sparkles: Version history
 
-### 0.10.2 - 2025-05-3
+### 0.10.3 - 2025-05-09
+
+- New mat variants
+  - Square without license
+  - Flat rectangle (1:2) for guard dance or similar
+  - Boxy rectangle (3:4) for regular theater stages
+- Improved on user experience by adding a "last logged in" field to track the last time a user was seen
+
+### 0.10.2 - 2025-05-03
 
 - Added notification service with increased interactivity for users
 - Localization of Server Messages and Pages for English :gb: and German :de:
