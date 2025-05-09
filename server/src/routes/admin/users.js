@@ -17,7 +17,13 @@ router.get("/", (req, res, next) => {
 router.post("/", (req, res, next) => {
   let { username, password, email, emailConfirmed } = req.body;
   if (email == "") email = null;
-  return UserService.create(username, password, email, emailConfirmed)
+  return UserService.create(
+    username,
+    password,
+    email,
+    emailConfirmed,
+    req.locale
+  )
     .then(() => {
       return res.redirect(req.baseUrl); // njsscan-ignore: express_open_redirect
     })

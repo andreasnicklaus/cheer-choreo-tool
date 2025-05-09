@@ -48,6 +48,10 @@ const User = db.define(
         this.setDataValue("password", bcrypt.hashSync(value, salt));
       },
     },
+    lastLoggedIn: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
   },
   {
     defaultScope: {
