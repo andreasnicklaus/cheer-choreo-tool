@@ -2,7 +2,6 @@
   <b-modal
     :id="`changeMatLayoutModal-${id}`"
     centered
-    :title="$t('modals.change-mat.layout-der-buehne-matte-aendern')"
     @show="
       () => {
         if (this.choreo) {
@@ -12,6 +11,10 @@
     "
     @ok="changeMatType"
   >
+    <template #modal-title>
+      {{ $t("modals.change-mat.layout-der-buehne-matte-aendern") }}
+      <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
+    </template>
     <b-form>
       <b-form-group
         :label="$t('mat')"
@@ -40,9 +43,11 @@
 
 <script>
 import ChoreoService from "@/services/ChoreoService";
+import NewVersionBadge from "@/components/NewVersionBadge.vue";
 
 export default {
   name: "ChangeMatLayoutModal",
+  components: { NewVersionBadge },
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     newMatType: 1,

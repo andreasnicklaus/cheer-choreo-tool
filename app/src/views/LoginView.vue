@@ -59,9 +59,10 @@
             </a>
           </p>
 
-          <a href="#" @click="() => $refs.passwordResetModal.open()">{{
-            $t("login.passwort-vergessen")
-          }}</a>
+          <a href="#" @click="() => $refs.passwordResetModal.open()"
+            >{{ $t("login.passwort-vergessen") }}
+            <NewVersionBadge :versions="['0.10.3', '0.11.0']"
+          /></a>
         </b-form>
       </b-tab>
       <b-tab :title="$t('registrieren')" class="mt-4">
@@ -192,6 +193,7 @@
 <script>
 import ConfirmEmailModal from "@/components/modals/ConfirmEmailModal.vue";
 import PasswordResetModal from "@/components/modals/PasswordResetModal.vue";
+import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import AuthService from "@/services/AuthService";
 import MessagingService from "@/services/MessagingService";
 
@@ -199,7 +201,7 @@ const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 
 export default {
   name: "LoginView",
-  components: { ConfirmEmailModal, PasswordResetModal },
+  components: { ConfirmEmailModal, PasswordResetModal, NewVersionBadge },
   data: () => ({
     username: null,
     email: null,

@@ -2,11 +2,14 @@
   <b-modal
     :id="`passwordReset-modal-${id}`"
     centered
-    :title="$t('modals.reset-password.lost-password')"
     @show="resetPasswordResetModal"
     @ok="initializePasswordReset"
     @close="close"
   >
+    <template #modal-title>
+      {{ $t("modals.reset-password.lost-password") }}
+      <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
+    </template>
     <b-form-group
       :label="$t('e-mail-adresse')"
       label-class="label-with-colon"
@@ -53,11 +56,13 @@
 <script>
 import AuthService from "@/services/AuthService";
 import MessagingService from "@/services/MessagingService";
+import NewVersionBadge from "@/components/NewVersionBadge.vue";
 
 const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 
 export default {
   name: "LoadingModal",
+  components: { NewVersionBadge },
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     email: null,

@@ -48,6 +48,7 @@ See [LICENSE](LICENSE) for the license of this project.
   - Flat rectangle (1:2) for guard dance or similar
   - Boxy rectangle (3:4) for regular theater stages
 - Improved on user experience by adding a "last logged in" field to track the last time a user was seen
+- Added a "new feature" badge to increase visibility
 
 ### 0.10.2 - 2025-05-03
 

@@ -172,8 +172,10 @@
               >
                 <b-icon-layout-three-columns class="mr-2" />
                 {{ $t("editView.change-mat-layout") }}
-              </b-dropdown-item></b-dropdown-group
-            >
+                <NewVersionBadge
+                  :versions="['0.10.3', '0.11.0']"
+                /> </b-dropdown-item
+            ></b-dropdown-group>
             <b-dropdown-divider />
             <b-dropdown-group :header="$t('editView.bearbeitung')">
               <b-dropdown-text style="width: 250px">
@@ -409,6 +411,7 @@ import SelectHitModal from "@/components/modals/SelectHitModal.vue";
 import ColorService from "@/services/ColorService";
 import ParticipantSubstitutionModal from "@/components/modals/ParticipantSubstitutionModal.vue";
 import MobileChoreoEditModal from "@/components/modals/MobileChoreoEditModal.vue";
+import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import MessagingService from "@/services/MessagingService";
 
 export default {
@@ -426,6 +429,7 @@ export default {
     SelectHitModal,
     ParticipantSubstitutionModal,
     MobileChoreoEditModal,
+    NewVersionBadge,
   },
   data: function () {
     return {

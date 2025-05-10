@@ -530,7 +530,11 @@
           </template>
         </b-tabs>
       </b-tab>
-      <b-tab :title="$t('account.settings')">
+      <b-tab>
+        <template #title>
+          {{ $t("account.settings") }}
+          <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
+        </template>
         <b-form
           @submit="
             (event) => {
@@ -598,9 +602,10 @@
       </b-tab>
       <b-tab>
         <template #title>
-          <span class="text-danger">{{
+          <span class="text-danger mr-1">{{
             $t("accountView.gefahrenbereich")
           }}</span>
+          <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
         </template>
         <b-form-group
           label-cols="12"
@@ -655,6 +660,7 @@ import toTimeAgo from "@/utils/time";
 import ClubService from "@/services/ClubService";
 import CreateClubModal from "@/components/modals/CreateClubModal.vue";
 import MessagingService from "@/services/MessagingService";
+import NewVersionBadge from "@/components/NewVersionBadge.vue";
 
 const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 const MB = 1_048_576;
@@ -666,6 +672,7 @@ export default {
     DeleteAccountModal,
     CreateClubModal,
     DeleteClubModal,
+    NewVersionBadge,
   },
   name: "AccountView",
   data: function () {

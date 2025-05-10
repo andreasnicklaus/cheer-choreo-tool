@@ -82,19 +82,31 @@
             <li>{{ $t("Home.eintraege-machen") }}</li>
           </ol>
         </b-col>
-        <b-col cols="auto" :style="{ minHeight: matWidth + 56 + 'px' }">
-          <b-tabs pills content-class="mt-3">
+        <b-col cols="12" lg="6" :style="{ minHeight: matWidth + 56 + 'px' }">
+          <b-tabs pills content-class="mt-3" align="center">
             <b-tab :title="$t('cheerleading')" id="cheer-Mat">
-              <Mat
-                :currentPositions="currentPositions"
-                :width="matWidth"
-                matType="cheer"
-                :teamMembers="teamMembers"
-                :interactive="false"
-                :dotRadius="(matWidth / 500) * 20"
-              />
+              <div
+                :style="{
+                  minHeight: matWidth + 'px',
+                  placeItems: 'center',
+                  display: 'grid',
+                }"
+              >
+                <Mat
+                  :currentPositions="currentPositions"
+                  :width="matWidth"
+                  matType="cheer"
+                  :teamMembers="teamMembers"
+                  :interactive="false"
+                  :dotRadius="(matWidth / 500) * 20"
+                />
+              </div>
             </b-tab>
-            <b-tab :title="$t('Home.garde')" id="garde-Mat">
+            <b-tab id="garde-Mat">
+              <template #title>
+                {{ $t("Home.garde") }}
+                <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
+              </template>
               <div
                 :style="{
                   minHeight: matWidth + 'px',
@@ -112,7 +124,11 @@
                 />
               </div>
             </b-tab>
-            <b-tab :title="$t('Home.stage-3-4')" id="v34-Mat">
+            <b-tab id="v34-Mat">
+              <template #title>
+                {{ $t("Home.stage-3-4") }}
+                <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
+              </template>
               <div
                 :style="{
                   minHeight: matWidth + 'px',
@@ -130,7 +146,11 @@
                 />
               </div>
             </b-tab>
-            <b-tab :title="$t('Home.stage-1-1')" id="square-Mat">
+            <b-tab id="square-Mat">
+              <template #title>
+                {{ $t("Home.stage-1-1") }}
+                <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
+              </template>
               <div
                 :style="{
                   minHeight: matWidth + 'px',
@@ -171,7 +191,10 @@
           <li>{{ $tc("lineup", 2) }}</li>
           <li>{{ $tc("countsheet", 2) }}</li>
           <li>{{ $t("Home.verwaltung-nach-season") }}</li>
-          <li>{{ $t("Home.choose-the-layout-of-your-stage") }}</li>
+          <li>
+            {{ $t("Home.choose-the-layout-of-your-stage") }}
+            <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
+          </li>
         </ul>
       </b-col>
       <b-col class="featureCallout h3">
@@ -433,6 +456,7 @@
 import CountOverview from "@/components/CountOverview.vue";
 import CountSheet from "@/components/CountSheet.vue";
 import Mat from "@/components/Mat.vue";
+import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 
@@ -442,6 +466,7 @@ export default {
     Mat,
     CountSheet,
     CountOverview,
+    NewVersionBadge,
   },
   data: function () {
     return {

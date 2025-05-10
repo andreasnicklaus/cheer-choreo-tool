@@ -75,11 +75,14 @@
       </b-form-group>
 
       <b-form-group
-        :label="$t('mat')"
         label-class="label-with-colon"
         :state="newChoreoMatTypeIsValid"
         :invalid-feedback="newChoreoMatTypeStateFeedback"
       >
+        <template #label>
+          {{ $t("mat") }}
+          <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
+        </template>
         <b-form-select
           v-model="newChoreoMatType"
           required
@@ -228,9 +231,11 @@
 <script>
 import ChoreoService from "@/services/ChoreoService";
 import ColorService from "@/services/ColorService";
+import NewVersionBadge from "@/components/NewVersionBadge.vue";
 
 export default {
   name: "CreateChoreoModal",
+  components: { NewVersionBadge },
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     newChoreoName: null,
