@@ -477,13 +477,18 @@ export default {
       if (!context) return;
 
       const clubLogo = this.$refs.clubLogo;
+
+      const imageWidthFactor = canvas.width / 2 / clubLogo.naturalWidth;
+      const imageHeightFactor = canvas.height / 2 / clubLogo.naturalHeight;
+      const imageFactor = Math.min(imageWidthFactor, imageHeightFactor);
+
       context.globalAlpha = 0.1;
       context.drawImage(
         clubLogo,
-        canvas.width / 4,
-        canvas.height / 4,
-        canvas.width / 2,
-        canvas.height / 2
+        (canvas.width - clubLogo.naturalWidth * imageFactor) / 2,
+        (canvas.height - clubLogo.naturalHeight * imageFactor) / 2,
+        clubLogo.naturalWidth * imageFactor,
+        clubLogo.naturalHeight * imageFactor
       );
       context.globalAlpha = 1;
     },

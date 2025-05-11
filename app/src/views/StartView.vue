@@ -578,21 +578,8 @@ export default {
       this.load();
     },
     addChoreo(choreo) {
-      const selectedTeam = this.teams.find((t) =>
-        t.SeasonTeams.some((st) => st.id == choreo.SeasonTeamId)
-      );
-      const selectedSeasonTeam = selectedTeam.SeasonTeams.find(
-        (st) => st.id == choreo.SeasonTeamId
-      );
-      selectedSeasonTeam.Choreos.push({
-        ...choreo,
-        SeasonTeamId: selectedSeasonTeam.id,
-        SeasonTeam: {
-          ...selectedSeasonTeam,
-          TeamId: selectedTeam.id,
-          Team: selectedTeam,
-        },
-      });
+      console.log(choreo);
+      this.load();
     },
     onTeamCreated(team) {
       this.$router

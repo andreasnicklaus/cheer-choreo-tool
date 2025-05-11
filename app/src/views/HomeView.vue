@@ -454,6 +454,7 @@
       <b-button
         :style="{ backgroundColor: 'white', color: 'var(--success)' }"
         class="pulse-button"
+        :to="{ name: 'Login', params: { locale: $root.$i18n.locale } }"
       >
         {{ $t("anmelden") }} / {{ $t("registrieren") }}
       </b-button>

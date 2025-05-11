@@ -342,7 +342,8 @@ export default {
     },
     timeEstimationString() {
       const date = new Date(
-        (this.newChoreoAchter * 8 + this.newChoreoCount) * 400
+        (parseInt(this.newChoreoAchter) * 8 + parseInt(this.newChoreoCount)) *
+          400
       );
       const minutes = date.getMinutes();
       const seconds = date.getSeconds();
