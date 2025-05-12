@@ -166,7 +166,6 @@ export default {
       this.close();
     },
     close() {
-      console.log("custom close");
       this.$bvModal.hide(`feedback-modal-${this.id}`);
       this.$bvModal.hide(`feedback-thankyou-modal-${this.id}`);
     },

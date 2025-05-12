@@ -243,6 +243,7 @@ import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
 import VideoDownloadModal from "./modals/VideoDownloadModal.vue";
 import AuthService from "@/services/AuthService";
+import MessagingService from "@/services/MessagingService";
 import ClubService from "@/services/ClubService";
 
 export default {
@@ -326,7 +327,9 @@ export default {
           this.addAnimationsFromChoreo();
           this.initializeRecorder();
         })
-        .catch((e) => console.warn(e));
+        .catch((e) => {
+          MessagingService.showError(e.response.data, this.$t("fehler"));
+        });
     },
     loadUserInfo() {
       return AuthService.getUserInfo().then((user) => {

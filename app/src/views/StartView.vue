@@ -578,7 +578,6 @@ export default {
       this.load();
     },
     addChoreo(choreo) {
-      console.log(choreo);
       this.load();
     },
     onTeamCreated(team) {

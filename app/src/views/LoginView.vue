@@ -256,12 +256,10 @@ export default {
             .catch(() => {});
         })
         .catch((e) => {
-          console.warn(e);
           this.loading = false;
           if (e.status == 400 && e.response.data.type == "EmailUnconfirmed")
             this.$refs.confirmEmailModal.open(true);
           else {
-            console.warn(e.code);
             if (e.code == "ERR_NETWORK")
               return this.showFailMessage(
                 e.response?.data || this.$t("login.server-offline")
@@ -293,7 +291,6 @@ export default {
             .catch(() => {});
         })
         .catch((e) => {
-          console.warn(e);
           this.loading = false;
           if (e.code == "ERR_NETWORK")
             return this.showFailMessage(

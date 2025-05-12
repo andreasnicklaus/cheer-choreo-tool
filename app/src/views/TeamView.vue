@@ -372,7 +372,6 @@ export default {
       this.load();
     },
     onMemberImport(newMembers) {
-      console.table(newMembers);
       this.currentTeam?.SeasonTeams[this.seasonTabIndex]?.Members.push(
         ...newMembers
       );
