@@ -564,9 +564,11 @@ export default {
     initializeFfmpeg() {
       const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
       this.ffmpeg.on("log", ({ message }) => {
+        // eslint-disable-next-line no-console
         console.debug(message);
       });
       this.ffmpeg.on("progress", ({ progress, time }) => {
+        // eslint-disable-next-line no-console
         console.debug({ progress, time });
       });
 
