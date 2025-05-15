@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 import i18n from "@/plugins/vue-i18n";
 import VersionService from "@/services/VersionService";
 
@@ -51,7 +53,8 @@ export async function logWelcomeMessage() {
     },
     {
       key: i18n.t("logging.server-version"),
-      value: (await VersionService.getServerVersion()) ?? "unknown",
+      value:
+        (await VersionService.getServerVersion()) || i18n.t("errors.unknown"),
     },
     { key: i18n.t("logging.user-agent"), value: window.navigator.userAgent },
     { key: i18n.t("logging.current-locale"), value: i18n.locale },
