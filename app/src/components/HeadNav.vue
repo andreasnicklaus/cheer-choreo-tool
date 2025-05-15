@@ -272,7 +272,7 @@
           :title="
             onlineStatus
               ? $t('nav.server-sind-online') +
-                (serverVersion && ` (${serverVersion})`)
+                (serverVersion && ` (${serverVersion ?? $t('errors.unknown')})`)
               : $t('nav.server-sind-offline')
           "
         >

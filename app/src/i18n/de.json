@@ -125,7 +125,8 @@
   "erforderlich": "Erforderlich",
   "errors": {
     "offline": "Die Server sind zurzeit offline. Bitte versuche es später nochmal!",
-    "unerwarteter-fehler": "Unerwarteter Fehler. Bitte kontaktiere uns."
+    "unerwarteter-fehler": "Unerwarteter Fehler. Bitte kontaktiere uns.",
+    "unknown": "unbekannt"
   },
   "erstellen": "Erstellen",
   "failMessages": {
@@ -197,7 +198,8 @@
   },
   "general": {
     "ChoreoPlaner": "Choreo Planer",
-    "help": "Hilfe"
+    "help": "Hilfe",
+    "offline": "Offline"
   },
   "HelpView": {
     "fuer-deine-suche-gibt-es-keine-ergebnisse": "Für deine Suche \"{searchTerm}\" gibt es keine Ergebnisse",
@@ -761,5 +763,14 @@
     "by-stage": "Nach Bühnenform (keine Linien)"
   },
   "mat": "Matte/Bühne",
-  "cheerleading": "Cheerleading"
+  "cheerleading": "Cheerleading",
+  "logging": {
+    "app-version": "App Version",
+    "available-locales": "Verfügbare Sprachen",
+    "current-locale": "Aktuelle Sprache",
+    "server-version": "Serverversion",
+    "user-agent": "User Agent",
+    "warning": "%cAchtung: %cDiese Konsole könnte genutzt werden, um Informationen über deinen Browser oder dein Gerät zu erfahren. Gib nur Informationen heraus, wenn du selbstständig nachvollziehen kannst, dass du mit einem Vertreter von Choreo Planer im Kontakt stehst.",
+    "welcome": "%cWillkommen beim Choreo Planer\n%cVielen Dank für deine Engagement im Choreo-Sport! Über diese Konsole kannst du einige Informationen über die Anwendung und deinen Browser erfahren.\n\nHier sind ein paar hilfreiche Links:\nChoreo Planer bei IG:     https://www.instagram.com/choreoplaner\nHilfe bekommen:             https://www.choreo-planer.de/hilfe\nKontakt aufnehmen:        info@choreo-planer.de"
+  }
 }
