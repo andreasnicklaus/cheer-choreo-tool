@@ -72,3 +72,23 @@ export async function logWelcomeMessage() {
     .join("\n");
   console.log(result, ...styles);
 }
+
+function generateTimeStamp() {
+  return new Date().toISOString();
+}
+
+export function log(...messages) {
+  console.log(generateTimeStamp(), "LOG", ...messages);
+}
+
+export function debug(...messages) {
+  console.debug(generateTimeStamp(), "DEBUG", ...messages);
+}
+
+export function warn(...messages) {
+  console.warn(generateTimeStamp(), "WARN", ...messages);
+}
+
+export function error(...messages) {
+  console.error(generateTimeStamp(), "ERROR", ...messages);
+}
