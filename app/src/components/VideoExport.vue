@@ -504,9 +504,9 @@ export default {
             y: p.y,
           }))
       );
-      // if (this.includeCount) this.drawCount();
-      // if (this.includeChoreoName) this.drawChoreoName();
-      // if (this.includeTeamName) this.drawTeamName();
+      if (this.includeCount) this.drawCount();
+      if (this.includeChoreoName) this.drawChoreoName();
+      if (this.includeTeamName) this.drawTeamName();
       if (this.includeClubLogo && this.currentClubLogoBlob) this.drawClubLogo();
     },
     addAnimationsFromChoreo() {
