@@ -171,15 +171,57 @@ require("./plugins/i18n");
 const i18n = require("i18n");
 app.use(i18n.init);
 
+/**
+ * @swagger
+ * tags:
+ *    name: General
+ *    description: General-purpose endpoints
+ */
+
+/**
+ * @openapi
+ * /:
+ *    get:
+ *      description: Status page for the API server
+ *      tags:
+ *      - General
+ *      responses:
+ *        200:
+ *          description: Returns a status page with a positive status message and the server version
+ */
 app.get("/", (req, res) => {
   res.render("../src/views/status", {
     version,
     frontendDomain: process.env.FRONTEND_DOMAIN,
   }); // njsscan-ignore: express_lfr_warning
 });
+
+/**
+ * @openapi
+ * /version:
+ *    get:
+ *      description: Server version
+ *      tags:
+ *      - General
+ *      responses:
+ *        200:
+ *          description: Returns the server version
+ */
 app.get("/version", (req, res) => {
   res.send(version);
 });
+
+/**
+ * @openapi
+ * /health:
+ *   get:
+ *     description: Healthcheck
+ *     tags:
+ *     - General
+ *     responses:
+ *       200:
+ *         description: Returns status code 200 for healthchecks (not logged)
+ */
 app.get("/health", (req, res, next) => {
   res.status(200).send();
   next();
@@ -203,6 +245,62 @@ app.use("/admin", adminRouter);
 
 app.use(errorLoggingMiddleWare);
 app.use(errorHandlingMiddleWare);
+
+// SWAGGER DOC
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
+
+const swaggerOptions = {
+  definition: {
+    openapi: "3.1.1",
+    info: {
+      title: "Choreo Planer",
+      version: "0.0.1",
+      description: "This is the Choreo Planer API documentation",
+      license: {
+        name: "MIT",
+        url: "https://mit-license.org/",
+      },
+      contact: {
+        name: "Administrator",
+        email: "admin@choreo-planer.de",
+      },
+      version,
+    },
+    servers: [
+      {
+        url: `http://localhost:${port}`,
+        description: "Development Server",
+      },
+      {
+        url: "https://www.choreo-planer.de",
+        description: "Production Server",
+      },
+    ],
+  },
+  apis: [__dirname + "/routes/**/*.js", __dirname + "/index.js"],
+};
+
+const specs = swaggerJsdoc(swaggerOptions);
+/**
+ * @openapi
+ * /api-docs:
+ *   get:
+ *     description: This API documentation
+ *     tags:
+ *     - General
+ *     responses:
+ *       200:
+ *         description: Returns this documentation web page
+ */
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(specs, {
+    customSiteTitle: "Choreo-planer API Docs",
+    customfavIcon: "/favicon.ico",
+  })
+);
 
 function startServer() {
   logConfig();
