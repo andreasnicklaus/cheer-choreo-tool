@@ -204,15 +204,6 @@ app.use("/admin", adminRouter);
 app.use(errorLoggingMiddleWare);
 app.use(errorHandlingMiddleWare);
 
-app.get("/test", (req, res, next) => {
-  res.render("../src/views/error.ejs", {
-    action: "email-confirmation",
-    data: JSON.stringify({ userId: "req.params.id" }),
-    error: new Error("asdfasdfjklöa"),
-    timestamp: new Date().toLocaleString(req.locale),
-  }); // njsscan-ignore: express_lfr_warning
-});
-
 function startServer() {
   logConfig();
 
