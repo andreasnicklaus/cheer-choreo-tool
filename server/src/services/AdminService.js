@@ -2,7 +2,22 @@ const { Op } = require("sequelize");
 const Admin = require("../db/models/admin");
 const { logger } = require("../plugins/winston");
 
+/** @module Services */
+
+/**
+ * Admin management service
+ *
+ * @class AdminService
+ */
 class AdminService {
+  /**
+   * Find or create (if it does not exist) a Admin
+   *
+   * @async
+   * @param {string} username
+   * @param {string} password
+   * @returns {Admin}
+   */
   async findOrCreate(username, password) {
     logger.debug(
       `AdminService.findOrCreate ${JSON.stringify({ username, password })}`
