@@ -23,7 +23,7 @@ class MailService {
           [
             {
               filename: "logo.png",
-              path: "https://www.choreo-Planer.de/Icon.png",
+              path: "https://www.choreo-planer.de/Icon.png",
               cid: "choreo-planer-icon",
             },
           ],
@@ -46,7 +46,7 @@ class MailService {
       [
         {
           filename: "logo.png",
-          path: "https://www.choreo-Planer.de/Icon.png",
+          path: "https://www.choreo-planer.de/Icon.png",
           cid: "choreo-planer-icon",
         },
       ],
@@ -71,7 +71,7 @@ class MailService {
       [
         {
           filename: "logo.png",
-          path: "https://www.choreo-Planer.de/Icon.png",
+          path: "https://www.choreo-planer.de/Icon.png",
           cid: "choreo-planer-icon",
         },
       ],
@@ -95,7 +95,7 @@ class MailService {
           [
             {
               filename: "logo.png",
-              path: "https://www.choreo-Planer.de/Icon.png",
+              path: "https://www.choreo-planer.de/Icon.png",
               cid: "choreo-planer-icon",
             },
           ],
@@ -129,7 +129,7 @@ class MailService {
       [
         {
           filename: "logo.png",
-          path: "https://www.choreo-Planer.de/Icon.png",
+          path: "https://www.choreo-planer.de/Icon.png",
           cid: "choreo-planer-icon",
         },
       ],
@@ -168,7 +168,7 @@ class MailService {
       [
         {
           filename: "logo.png",
-          path: "https://www.choreo-Planer.de/Icon.png",
+          path: "https://www.choreo-planer.de/Icon.png",
           cid: "choreo-planer-icon",
         },
       ],
