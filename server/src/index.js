@@ -307,6 +307,19 @@ app.use(
   })
 );
 
+/**
+ * @openapi
+ * /docs:
+ *   get:
+ *     description: JsDoc documentation
+ *     tags:
+ *     - General
+ *     responses:
+ *       200:
+ *         description: JsDoc documentation
+ */
+app.use("/docs", express.static(path.join(__dirname, "docs")));
+
 function startServer() {
   logConfig();
 

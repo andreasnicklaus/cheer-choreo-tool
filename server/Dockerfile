@@ -15,4 +15,8 @@ COPY package*.json ./
 RUN npm i --omit=dev
 
 COPY ./src ./src
+
+COPY ./jsdoc.json ./
+RUN npm run docs
+
 CMD [ "npm", "run", "start" ]
