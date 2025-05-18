@@ -1,6 +1,25 @@
 const { DataTypes } = require("sequelize");
 const db = require("..");
 
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *    Season:
+ *      type: object
+ *      required:
+ *      - id
+ *      - name
+ *      properties:
+ *        id:
+ *          type: string
+ *          format: uuid
+ *        year:
+ *          type: integer
+ *        name:
+ *          type: string
+ */
+
 const Season = db.define("Season", {
   id: {
     type: DataTypes.UUID,

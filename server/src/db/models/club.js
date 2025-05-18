@@ -1,6 +1,26 @@
 const { DataTypes } = require("sequelize");
 const db = require("..");
 
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *    Club:
+ *      type: object
+ *      required:
+ *      - id
+ *      - name
+ *      properties:
+ *        id:
+ *          type: string
+ *          format: uuid
+ *        name:
+ *          type: string
+ *        logoExtension:
+ *          type: string
+ *          example: .png
+ */
+
 const Club = db.define(
   "Club",
   {

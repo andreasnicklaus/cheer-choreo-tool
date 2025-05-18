@@ -1,6 +1,30 @@
 const { DataTypes } = require("sequelize");
 const db = require("..");
 
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *    Notification:
+ *      type: object
+ *      required:
+ *      - id
+ *      - title
+ *      - message
+ *      - read
+ *      properties:
+ *        id:
+ *          type: string
+ *          format: uuid
+ *        title:
+ *          type: string
+ *        message:
+ *          type: string
+ *        read:
+ *          type: boolean
+ *          default: false
+ */
+
 const Notification = db.define(
   "Notification",
   {

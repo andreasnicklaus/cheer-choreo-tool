@@ -1,6 +1,23 @@
 const { DataTypes } = require("sequelize");
 const db = require("..");
 
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *    Team:
+ *      type: object
+ *      required:
+ *      - id
+ *      - name
+ *      properties:
+ *        id:
+ *          type: string
+ *          format: uuid
+ *        name:
+ *          type: string
+ */
+
 const Team = db.define(
   "Team",
   {

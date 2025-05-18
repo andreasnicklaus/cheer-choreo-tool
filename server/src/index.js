@@ -278,7 +278,12 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: [__dirname + "/routes/**/*.js", __dirname + "/index.js"],
+  apis: [
+    __dirname + "/routes/**/*.js",
+    __dirname + "/index.js",
+    __dirname + "/swagger.js",
+    __dirname + "/db/models/*.js",
+  ],
 };
 
 const specs = swaggerJsdoc(swaggerOptions);
@@ -297,7 +302,7 @@ app.use(
   "/api-docs",
   swaggerUi.serve,
   swaggerUi.setup(specs, {
-    customSiteTitle: "Choreo-planer API Docs",
+    customSiteTitle: "Choreo Planer API Docs",
     customfavIcon: "/favicon.ico",
   })
 );
