@@ -307,6 +307,16 @@ app.use(
   })
 );
 
+app.use(
+  "/docs",
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        "script-src": ["'self'", "https:", "'unsafe-inline'"],
+      },
+    },
+  })
+);
 /**
  * @openapi
  * /docs:
