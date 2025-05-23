@@ -22,7 +22,14 @@ const db = require("..");
  *          type: integer
  *          minimum: 0
  */
-
+/**
+ * @typedef Lineup
+ * @property {UUID} id
+ * @property {number} startCount
+ * @property {number} endCount
+ * @property {UUID} UserId
+ * @memberof module:Models
+ */
 const Lineup = db.define(
   "Lineup",
   {

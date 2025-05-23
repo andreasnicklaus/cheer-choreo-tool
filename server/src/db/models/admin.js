@@ -21,9 +21,12 @@ const bcrypt = require("bcrypt");
  *        password:
  *          type: string
  *          format: password
+ */
+/**
  * @typedef Admin
- * @property {string} id
+ * @property {UUID} id
  * @property {string} username
+ * @memberof module:Models
  */
 const Admin = db.define(
   "Admin",

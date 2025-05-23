@@ -22,6 +22,15 @@ const db = require("..");
  *          type: string
  */
 
+/**
+ * @typedef Hit
+ * @property {UUID} id
+ * @property {number} count
+ * @property {string} name
+ * @property {UUID} UserId
+ * @memberof module:Models
+ */
+
 const Hit = db.define("Hit", {
   id: {
     type: DataTypes.UUID,

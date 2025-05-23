@@ -30,6 +30,19 @@ const db = require("..");
  *          - 3:4
  *          default: cheer
  */
+/**
+ * @typedef Choreo
+ * @property {UUID} id
+ * @property {string} name
+ * @property {number} counts
+ * @property {MatType} matType
+ * @property {UUID} UserId
+ * @memberof module:Models
+ */
+/**
+ * @typedef {('cheer'|'square'|'1:2'|'3:4')} MatType
+ * @memberof module:Models
+ */
 
 const Choreo = db.define(
   "Choreo",

@@ -20,6 +20,15 @@ const db = require("..");
  *          type: string
  */
 
+/**
+ * @typedef Season
+ * @property {UUID} id
+ * @property {number} [year]
+ * @property {string} name
+ * @property {UUID} UserId
+ * @memberof module:Models
+ */
+
 const Season = db.define("Season", {
   id: {
     type: DataTypes.UUID,

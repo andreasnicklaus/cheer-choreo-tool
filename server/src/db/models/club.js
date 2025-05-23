@@ -21,6 +21,15 @@ const db = require("..");
  *          example: .png
  */
 
+/**
+ * @typedef Club
+ * @property {UUID} id
+ * @property {string} name
+ * @property {string} [logoExtension]
+ * @property {UUID} UserId
+ * @memberof module:Models
+ */
+
 const Club = db.define(
   "Club",
   {

@@ -25,6 +25,16 @@ const db = require("..");
  *          default: false
  */
 
+/**
+ * @typedef Notification
+ * @property {UUID} id
+ * @property {string} title
+ * @property {string} message
+ * @property {boolean} read
+ * @property {UUID} UserId
+ * @memberof module:Models
+ */
+
 const Notification = db.define(
   "Notification",
   {

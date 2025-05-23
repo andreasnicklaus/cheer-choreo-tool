@@ -23,6 +23,16 @@ const db = require("..");
  *          type: string
  */
 
+/**
+ * @typedef Member
+ * @property {UUID} id
+ * @property {string} name
+ * @property {string} [nickname]
+ * @property {string} abbreviation
+ * @property {UUID} UserId
+ * @memberof module:Models
+ */
+
 const Member = db.define(
   "Member",
   {

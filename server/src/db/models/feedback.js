@@ -22,6 +22,15 @@ const db = require("..");
  *          type: string
  */
 
+/**
+ * @typedef Feedback
+ * @property {UUID} id
+ * @property {number} stars
+ * @property {string} [text]
+ * @property {UUID} [UserId]
+ * @memberof module:Models
+ */
+
 const Feedback = db.define(
   "Feedback",
   {

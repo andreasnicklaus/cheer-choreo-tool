@@ -18,6 +18,14 @@ const db = require("..");
  *          type: string
  */
 
+/**
+ * @typedef Team
+ * @property {UUID} id
+ * @property {string} name
+ * @property {UUID} UserId
+ * @memberof module:Models
+ */
+
 const Team = db.define(
   "Team",
   {

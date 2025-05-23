@@ -1,6 +1,12 @@
 const { DataTypes } = require("sequelize");
 const db = require("..");
 
+/**
+ * @typedef SeasonTeam
+ * @property {UUID} id
+ * @property {UUID} UserId
+ * @memberof module:Models
+ */
 const SeasonTeam = db.define(
   "SeasonTeam",
   {

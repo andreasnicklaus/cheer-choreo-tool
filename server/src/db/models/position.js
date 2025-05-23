@@ -21,6 +21,15 @@ const db = require("..");
  *          type: number
  */
 
+/**
+ * @typedef Position
+ * @property {UUID} id
+ * @property {number} x
+ * @property {number} y
+ * @property {UUID} UserId
+ * @memberof module:Models
+ */
+
 const Position = db.define("Position", {
   id: {
     type: DataTypes.UUID,

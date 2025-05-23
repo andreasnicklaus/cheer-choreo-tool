@@ -34,6 +34,18 @@ const bcrypt = require("bcrypt");
  *          format: date-time
  */
 
+/**
+ * @typedef User
+ * @property {UUID} id
+ * @property {string} username
+ * @property {string} [email]
+ * @property {boolean} [emailConfirmed]
+ * @property {string} [profilePictureExtension]
+ * @property {string} password
+ * @property {Date} [lastLoggedIn]
+ * @memberof module:Models
+ */
+
 const User = db.define(
   "User",
   {

@@ -1,6 +1,12 @@
 const { DataTypes } = require("sequelize");
 const db = require("..");
 
+/**
+ * @typedef ChoreoParticipation
+ * @property {UUID} id
+ * @property {string} color
+ * @memberof module:Models
+ */
 const ChoreoParticipation = db.define("ChoreoParticipation", {
   id: {
     type: DataTypes.UUID,
