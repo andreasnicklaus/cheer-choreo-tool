@@ -1,7 +1,3 @@
-/**
- * @module
- */
-
 const { logger } = require("../plugins/winston");
 
 /**

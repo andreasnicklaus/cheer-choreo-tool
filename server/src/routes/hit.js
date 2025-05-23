@@ -1,10 +1,36 @@
 const { Router } = require("express");
 const HitService = require("../services/HitService");
-const MemberService = require("../services/MemberService");
 const { authenticateUser } = require("../services/AuthService");
 
 const router = Router();
 
+/**
+ * @openapi
+ * /hit/{id}:
+ *   get:
+ *     description: Get a specific hit by ID, or all hits if no ID is provided
+ *     tags:
+ *       - Hits
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: false
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Hit(s) found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               oneOf:
+ *                 - $ref: '#/components/schemas/Hit'
+ *                 - type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Hit'
+ *       404:
+ *         description: Hit not found
+ */
 router.get("/:id?", authenticateUser(), (req, res, next) => {
   if (req.params.id)
     return HitService.findById(req.params.id, req.UserId)
@@ -24,6 +50,42 @@ router.get("/:id?", authenticateUser(), (req, res, next) => {
   }
 });
 
+/**
+ * @openapi
+ * /hit/:
+ *   post:
+ *     description: Create a new hit
+ *     tags:
+ *       - Hits
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - count
+ *               - choreoId
+ *             properties:
+ *               name:
+ *                 type: string
+ *               count:
+ *                 type: integer
+ *               choreoId:
+ *                 type: string
+ *               memberIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: Hit created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Hit'
+ */
 router.post("/", authenticateUser(), (req, res, next) => {
   const { name, count, choreoId, memberIds = [] } = req.body;
   return HitService.create(name, count, choreoId, memberIds, req.UserId)
@@ -34,6 +96,35 @@ router.post("/", authenticateUser(), (req, res, next) => {
     .catch((e) => next(e));
 });
 
+/**
+ * @openapi
+ * /hit/{id}:
+ *   put:
+ *     description: Update a hit by ID
+ *     tags:
+ *       - Hits
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Hit'
+ *     responses:
+ *       200:
+ *         description: Hit updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Hit'
+ *       404:
+ *         description: Hit not found
+ */
 router.put("/:id", authenticateUser(), (req, res, next) => {
   return HitService.update(req.params.id, req.body, req.UserId)
     .then((result) => {
@@ -43,6 +134,25 @@ router.put("/:id", authenticateUser(), (req, res, next) => {
     .catch((e) => next(e));
 });
 
+/**
+ * @openapi
+ * /hit/{id}:
+ *   delete:
+ *     description: Delete a hit by ID
+ *     tags:
+ *       - Hits
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Hit deleted successfully
+ *       404:
+ *         description: Hit not found
+ */
 router.delete("/:id", authenticateUser(), (req, res, next) => {
   return HitService.remove(req.params.id, req.UserId)
     .then((result) => {

@@ -88,6 +88,8 @@ const NotificationService = require("../services/NotificationService");
  *                type: string
  *                format: email
  */
+
+/** @ignore */
 const router = Router();
 
 /**

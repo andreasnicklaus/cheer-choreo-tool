@@ -1,8 +1,4 @@
 /**
- * @module
- */
-
-/**
  * Middleware to send an appropriate status code response depending on the occurring error.
  * - {@link NotFoundError}: status code 404
  * @param {Error} err Error to handle and to log
