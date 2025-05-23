@@ -2,11 +2,33 @@
   "plugins": ["plugins/markdown"],
   "source": {
     "include": ["src"],
+    "exclude": ["src/docs"],
     "includePattern": ".+\\.js(doc|x)?$",
     "excludePattern": "(^|\\/|\\\\)_"
   },
   "opts": {
     "destination": "./src/docs/",
-    "recurse": true
+    "recurse": true,
+    "template": "node_modules/clean-jsdoc-theme",
+    "encoding": "utf8",
+    "verbose": true,
+    "theme_opts": {
+      "homepageTitle": "Choreo Planer",
+      "title": "Choreo Planer",
+      "base_url": "./docs/",
+      "readme": "../README.md",
+      "menu": [
+        {
+          "title": "Website",
+          "link": "https://www.choreo-planer.de",
+          "target": "_blank"
+        }
+      ],
+      "static_dir": ["./src/public"]
+    }
+  },
+  "markdown": {
+    "hardwrap": false,
+    "idInHeadings": true
   }
 }
