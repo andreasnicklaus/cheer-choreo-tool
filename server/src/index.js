@@ -281,7 +281,7 @@ const swaggerOptions = {
   apis: [
     __dirname + "/routes/**/*.js",
     __dirname + "/index.js",
-    __dirname + "/swagger.js",
+    __dirname + "/docDefs.js",
     __dirname + "/db/models/*.js",
   ],
 };
