@@ -6,15 +6,37 @@ const NotificationService = require("./NotificationService");
 const i18n = require("i18n");
 const roundToDecimals = require("../utils/numbers");
 
+/**
+ * Service for managing user entities and authentication.
+ * Handles CRUD operations and user-specific logic.
+ *
+ * @class UserService
+ */
 class UserService {
+  /**
+   * Get all users.
+   * @returns {Promise<Array>} Array of user objects.
+   */
   async getAll() {
     return User.findAll();
   }
 
+  /**
+   * Get a user by ID.
+   * @param {string} id - The user's ID.
+   * @returns {Promise<Object>} The user object.
+   */
   async findById(id) {
     return User.findByPk(id, { include: ["Clubs"] });
   }
 
+  /**
+   * Find a user by username or email.
+   * @param {string} usernameOrEmail - The username or email of the user.
+   * @param {Object} options - Additional options.
+   * @param {string} [options.scope="defaultScope"] - Scope for the query.
+   * @returns {Promise<Object>} The user object.
+   */
   async findByUsernameOrEmail(
     usernameOrEmail,
     { scope = "defaultScope" } = {}
@@ -26,10 +48,18 @@ class UserService {
     }); // njsscan-ignore: node_nosqli_injection
   }
 
+  /**
+   * Get the total count of users.
+   * @returns {Promise<number>} The total count of users.
+   */
   getCount() {
     return User.count();
   }
 
+  /**
+   * Get the trend of user creation and deletion.
+   * @returns {Promise<number>} The trend value.
+   */
   getTrend() {
     return Promise.all([
       User.count({
@@ -45,6 +75,15 @@ class UserService {
     ]).then(([created, deleted]) => created - deleted);
   }
 
+  /**
+   * Create a new user.
+   * @param {string} username - The username of the user.
+   * @param {string} password - The password of the user.
+   * @param {string} email - The email of the user.
+   * @param {boolean} emailConfirmed - Whether the email is confirmed.
+   * @param {string} locale - The locale for notifications.
+   * @returns {Promise<Object>} The created user object.
+   */
   async create(username, password, email, emailConfirmed, locale) {
     return User.create({ username, password, email, emailConfirmed }).then(
       (user) => {
@@ -78,6 +117,12 @@ class UserService {
     );
   }
 
+  /**
+   * Find or create a user.
+   * @param {string} username - The username of the user.
+   * @param {string} password - The password of the user.
+   * @returns {Promise<Object>} The user object.
+   */
   async findOrCreate(username, password) {
     logger.debug(
       `UserService.findOrCreate ${JSON.stringify({ username, password })}`
@@ -92,6 +137,12 @@ class UserService {
     return user;
   }
 
+  /**
+   * Update a user.
+   * @param {string} id - The ID of the user.
+   * @param {Object} data - The data to update.
+   * @returns {Promise<Object>} The updated user object.
+   */
   async update(id, data) {
     return User.findByPk(id).then(async (foundUser) => {
       if (foundUser) {
@@ -104,6 +155,11 @@ class UserService {
     });
   }
 
+  /**
+   * Remove a user.
+   * @param {string} id - The ID of the user.
+   * @returns {Promise<void>} Resolves when the user is removed.
+   */
   async remove(id) {
     return User.findByPk(id).then((foundUser) => {
       if (foundUser) {
@@ -115,6 +171,10 @@ class UserService {
     });
   }
 
+  /**
+   * Get the percentage of logged-in users.
+   * @returns {Promise<number>} The percentage of logged-in users.
+   */
   getLoggedInPercentage() {
     return Promise.all([
       this.getCount(),

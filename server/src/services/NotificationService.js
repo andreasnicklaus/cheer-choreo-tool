@@ -4,7 +4,20 @@ const { logger } = require("../plugins/winston");
 const roundToDecimals = require("../utils/numbers");
 const UserService = require("./UserService");
 
+/**
+ * Service for managing notifications.
+ * Handles notification creation, delivery, and management.
+ *
+ * @class NotificationService
+ */
 class NotificationService {
+  /**
+   * Get all notifications for a user.
+   * @param {string} UserId - The user's UUID.
+   * @param {Object} options - Options for fetching notifications.
+   * @param {boolean} options.all - Whether to fetch all notifications.
+   * @returns {Promise<Array>} List of notifications.
+   */
   getAll(UserId, options = { all: false }) {
     return Notification.findAll({
       where: options.all ? {} : { UserId },
@@ -12,10 +25,22 @@ class NotificationService {
     });
   }
 
+  /**
+   * Find a notification by ID.
+   * @param {string} id - Notification ID.
+   * @param {string} UserId - The user's UUID.
+   * @returns {Promise<Object|null>} The notification object or null.
+   */
   findById(id, UserId) {
     return Position.findOne({ where: { id, UserId } });
   }
 
+  /**
+   * Create notifications for all users.
+   * @param {string} title - Notification title.
+   * @param {string} message - Notification message.
+   * @returns {Promise<Array>} List of created notifications.
+   */
   createForAll(title, message) {
     return UserService.getAll().then((users) => {
       return Promise.all(
@@ -24,6 +49,13 @@ class NotificationService {
     });
   }
 
+  /**
+   * Create a notification for a single user.
+   * @param {string} title - Notification title.
+   * @param {string} message - Notification message.
+   * @param {string} UserId - The user's UUID.
+   * @returns {Promise<Object>} The created notification object.
+   */
   createOne(title, message, UserId) {
     return Notification.create({
       title,
@@ -32,6 +64,13 @@ class NotificationService {
     });
   }
 
+  /**
+   * Find or create a notification.
+   * @param {string} title - Notification title.
+   * @param {string} message - Notification message.
+   * @param {string} UserId - The user's UUID.
+   * @returns {Promise<Object>} The notification object.
+   */
   async findOrCreate(title, message, UserId) {
     const [notification, created] = await Notification.findOrCreate({
       where: {
@@ -43,14 +82,33 @@ class NotificationService {
     return notification;
   }
 
+  /**
+   * Mark a notification as read.
+   * @param {string} id - Notification ID.
+   * @param {string} UserId - The user's UUID.
+   * @returns {Promise<Object>} The updated notification object.
+   */
   markRead(id, UserId) {
     return this.update(id, UserId, { read: true });
   }
 
+  /**
+   * Mark a notification as unread.
+   * @param {string} id - Notification ID.
+   * @param {string} UserId - The user's UUID.
+   * @returns {Promise<Object>} The updated notification object.
+   */
   markUnread(id, UserId) {
     return this.update(id, UserId, { read: false });
   }
 
+  /**
+   * Update a notification.
+   * @param {string} id - Notification ID.
+   * @param {string} UserId - The user's UUID.
+   * @param {Object} data - Data to update.
+   * @returns {Promise<Object>} The updated notification object.
+   */
   update(id, UserId, data) {
     return Notification.findOne({
       where: { id, UserId },
@@ -72,6 +130,14 @@ class NotificationService {
     });
   }
 
+  /**
+   * Remove a notification.
+   * @param {string} id - Notification ID.
+   * @param {string} UserId - The user's UUID.
+   * @param {Object} options - Options for removing notifications.
+   * @param {boolean} options.all - Whether to remove all notifications.
+   * @returns {Promise<void>} Resolves if notification removed.
+   */
   remove(id, UserId, options = { all: false }) {
     return Notification.findOne({
       where: options.all ? { id } : { id, UserId },
@@ -90,6 +156,10 @@ class NotificationService {
       });
   }
 
+  /**
+   * Get the percentage of read notifications.
+   * @returns {Promise<number>} The percentage of read notifications.
+   */
   getReadPercentage() {
     return Promise.all([
       Notification.count({
@@ -112,6 +182,10 @@ class NotificationService {
     });
   }
 
+  /**
+   * Get the trend of read notifications.
+   * @returns {Promise<number>} The trend percentage of read notifications.
+   */
   getReadTrend() {
     return Promise.all([
       Notification.count({

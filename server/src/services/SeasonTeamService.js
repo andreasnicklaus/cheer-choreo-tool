@@ -4,7 +4,19 @@ const { logger } = require("../plugins/winston");
 const MemberService = require("./MemberService");
 const { Op } = require("sequelize");
 
+/**
+ * Service for managing season-team associations.
+ * Handles CRUD operations and logic for teams within a season.
+ *
+ * @class SeasonTeamService
+ */
 class SeasonTeamService {
+  /**
+   * Find a season team by ID.
+   * @param {number} id - The ID of the season team.
+   * @param {number} UserId - The ID of the user.
+   * @returns {Promise<Object>} The season team object.
+   */
   async findById(id, UserId) {
     return SeasonTeam.findOne({
       where: { id, UserId },
@@ -16,16 +28,28 @@ class SeasonTeamService {
     }); // njsscan-ignore: node_nosqli_injection
   }
 
+  /**
+   * Get all season teams.
+   * @returns {Promise<Array>} List of all season teams.
+   */
   getAll() {
     return SeasonTeam.findAll({
       include: ["Season", "Team", "User"],
     });
   }
 
+  /**
+   * Get the count of season teams.
+   * @returns {Promise<number>} The count of season teams.
+   */
   getCount() {
     return SeasonTeam.count();
   }
 
+  /**
+   * Get the trend of season teams created and deleted in the last 30 days.
+   * @returns {Promise<number>} The trend value (created - deleted).
+   */
   getTrend() {
     return Promise.all([
       SeasonTeam.count({
@@ -41,6 +65,14 @@ class SeasonTeamService {
     ]).then(([created, deleted]) => created - deleted);
   }
 
+  /**
+   * Create a new season team and copy members into it.
+   * @param {number} TeamId - The ID of the team.
+   * @param {number} SeasonId - The ID of the season.
+   * @param {Array<number>} memberIds - List of member IDs to copy.
+   * @param {number} UserId - The ID of the user.
+   * @returns {Promise<Object>} The created season team object.
+   */
   async create(TeamId, SeasonId, memberIds, UserId) {
     logger.debug(
       `SeasonTeamService.create ${JSON.stringify({
@@ -59,6 +91,13 @@ class SeasonTeamService {
     );
   }
 
+  /**
+   * Copy a member into a season team.
+   * @param {number} SeasonTeamId - The ID of the season team.
+   * @param {number} memberId - The ID of the member.
+   * @param {number} UserId - The ID of the user.
+   * @returns {Promise<Object>} The created member object.
+   */
   async copyMemberIntoSeasonTeam(SeasonTeamId, memberId, UserId) {
     return MemberService.findById(memberId, UserId).then((member) =>
       MemberService.create(
@@ -71,6 +110,13 @@ class SeasonTeamService {
     );
   }
 
+  /**
+   * Copy multiple members into a season team.
+   * @param {number} seasonTeamId - The ID of the season team.
+   * @param {Array<number>} memberIds - List of member IDs to copy.
+   * @param {number} UserId - The ID of the user.
+   * @returns {Promise<Array>} List of created member objects.
+   */
   async copyMembersIntoSeasonTeam(seasonTeamId, memberIds, UserId) {
     return Promise.all(
       memberIds.map((mId) =>
@@ -79,6 +125,13 @@ class SeasonTeamService {
     );
   }
 
+  /**
+   * Remove a season team by ID.
+   * @param {number} id - The ID of the season team.
+   * @param {number} UserId - The ID of the user.
+   * @returns {Promise<void>} Resolves when the season team is removed.
+   * @throws {Error} Throws an error if the season team is not found.
+   */
   async remove(id, UserId) {
     return SeasonTeam.findOne({
       where: { id, UserId },

@@ -8,18 +8,57 @@ const UserService = require("./UserService");
 const MailService = require("./MailService");
 const NotificationService = require("./NotificationService");
 const i18n = require("i18n");
+const express = require("express");
 
+/**
+ * Secret to encode the JWTs with
+ *
+ * @type {string}
+ * @ignore
+ */
 const TOKEN_SECRET = process.env.TOKEN_SECRET;
+/**
+ * Description string for expiration time of JWTs
+ *
+ * @type {string}
+ * @ignore
+ */
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
 
+/**
+ * Service for authentication operations.
+ * Handles user login, registration, and authentication logic.
+ *
+ * @class AuthService
+ */
 class AuthService {
+  /**
+   * Generates an access token
+   *
+   * @param {UUID} UserId
+   * @param {Object} [options={}]
+   * @param {string} [options.expiresIn=null]
+   * @returns {string}
+   */
   generateAccessToken(UserId, { expiresIn = null } = {}) {
     return jwt.sign({ UserId }, TOKEN_SECRET, {
       expiresIn: expiresIn || JWT_EXPIRES_IN,
     });
   }
 
+  /**
+   * Middleware generator for user authentication
+   *
+   * @param {boolean} [failIfNotLoggedIn=true]
+   * @returns {function(): any} middleware function
+   */
   authenticateUser(failIfNotLoggedIn = true) {
+    /**
+     * @param {express.Request} req
+     * @param {express.Response} res
+     * @param {express.NextFunction} next
+     * @returns {any}
+     */
     return function (req, res, next) {
       const authHeader = req.headers?.authorization;
       const token = authHeader && authHeader.split(" ")[1];
@@ -54,6 +93,15 @@ class AuthService {
     };
   }
 
+  /**
+   * Resolves Single Sign-On Tokens to a user it belongs to
+   *
+   * @param {string} token
+   * @param {string} [locale="en"]
+   * @returns {Promise<User>}
+   * @throws {Error} Token has to be a valid and not-expired JWT token
+   * @throws {Error} User the token belongs to has to (still) exist
+   */
   resolveSsoToken(token, locale = "en") {
     return new Promise((resolve, reject) => {
       jwt.verify(token, TOKEN_SECRET, async (err, content) => {
@@ -81,6 +129,15 @@ class AuthService {
     });
   }
 
+  /**
+   * Generate a Single Sign-On token for login via login-link
+   *
+   * @param {string} email Username or email address of a user
+   * @param {string} [locale="en"]
+   * @returns {Promise}
+   * @throws {Error} User with give email/username has to (still) exist
+   * @throws {Error} User with given username has to have an email address
+   */
   generateSsoToken(email, locale = "en") {
     return UserService.findByUsernameOrEmail(email).then((user) => {
       if (!user)
@@ -116,7 +173,19 @@ class AuthService {
     });
   }
 
+  /**
+   * Middleware generator for admin authentication
+   *
+   * @returns {function(): any}
+   */
   authenticateAdmin() {
+    /**
+     * Authorizes an admin user based on username and password.
+     * @param {string} username - Admin's username.
+     * @param {string} password - Admin's password.
+     * @param {function} callback - Callback function to handle authorization result.
+     * @returns {void}
+     */
     function myAuthorizer(username, password, callback) {
       return AdminService.findByUsername(username, {
         scope: "withPasswordHash",
@@ -131,6 +200,12 @@ class AuthService {
           return callback(null, false);
         });
     }
+    /**
+     * @param {express.Request} req
+     * @param {express.Response} res
+     * @param {express.NextFunction} next
+     * @returns {any}
+     */
     return basicAuth({
       authorizer: myAuthorizer,
       authorizeAsync: true,
@@ -139,6 +214,14 @@ class AuthService {
     });
   }
 
+  /**
+   * Middleware for resolving admin auth tokens to the Admin
+   *
+   * @param {express.Request} req
+   * @param {express.Response} res
+   * @param {express.NextFunction} next
+   * @returns {Promise}
+   */
   resolveAdmin(req, res, next) {
     const authHeader = req.headers?.authorization;
     const token = authHeader && authHeader.split(" ")[1];

@@ -7,6 +7,12 @@ const Position = require("../db/models/position");
 const Hit = require("../db/models/hit");
 const { Op } = require("sequelize");
 
+/**
+ * Set of web-safe HEX color codes
+ *
+ * @type {string[]}
+ * @ignore
+ */
 const defaultColors = [
   "#FF1493",
   "#C71585",
@@ -41,7 +47,22 @@ const defaultInclude = [
   "Participants",
 ];
 
+/**
+ * Service for managing choreography entities and their associations.
+ * Handles CRUD operations and related logic for choreographies.
+ *
+ * @class ChoreoService
+ */
 class ChoreoService {
+  /**
+   * Get all Choreos with specified UserId
+   *
+   * @async
+   * @param {UUID} UserId - The user's UUID.
+   * @param {Object} [options={ all: false }] - Options for the query.
+   * @param {Boolean} [options.all=false] - Whether to fetch all choreographies.
+   * @returns {Promise<Choreo[]>} List of choreographies.
+   */
   async getAll(UserId, options = { all: false }) {
     return Choreo.findAll({
       where: options.all ? {} : { UserId },
@@ -49,6 +70,14 @@ class ChoreoService {
     });
   }
 
+  /**
+   * Find all Choreos with specified UserId and TeamId
+   *
+   * @async
+   * @param {UUID} TeamId - The team's UUID.
+   * @param {UUID} UserId - The user's UUID.
+   * @returns {Promise<Choreo[]>} List of choreographies.
+   */
   async findByTeamId(TeamId, UserId) {
     return Choreo.findAll({
       where: { TeamId, UserId },
@@ -56,10 +85,20 @@ class ChoreoService {
     });
   }
 
+  /**
+   * Get the number of Choreos in the DB
+   *
+   * @returns {Promise<number>} Count of choreographies.
+   */
   getCount() {
     return Choreo.count();
   }
 
+  /**
+   * Get the number of new Choreos minus the number of deleted Choreos in the last 30 days
+   *
+   * @returns {Promise<number>} Trend of choreographies.
+   */
   getTrend() {
     return Promise.all([
       Choreo.count({
@@ -75,6 +114,16 @@ class ChoreoService {
     ]).then(([created, deleted]) => created - deleted);
   }
 
+  /**
+   * Find Choreo by its ID
+   *
+   * @async
+   * @param {UUID} id - The choreography's UUID.
+   * @param {UUID} UserId - The user's UUID.
+   * @param {Object} [options={ all: false }] - Options for the query.
+   * @param {Boolean} [options.all=false] - Whether to fetch all choreographies.
+   * @returns {Promise<Choreo>} The choreography.
+   */
   async findById(id, UserId, options = { all: false }) {
     return Choreo.findOne({
       where: options.all ? { id } : { id, UserId },
@@ -96,6 +145,18 @@ class ChoreoService {
       });
   }
 
+  /**
+   * Create a new Choreo
+   *
+   * @async
+   * @param {string} name - Name of the choreography.
+   * @param {number} counts - Number of counts in the choreography.
+   * @param {MatType} [matType='cheer'] - Type of mat used.
+   * @param {UUID} SeasonTeamId - The season team UUID.
+   * @param {Member} participants - List of participants.
+   * @param {UUID} UserId - The user's UUID.
+   * @returns {Promise<Choreo>} The created choreography.
+   */
   async create(
     name,
     counts,
@@ -129,6 +190,17 @@ class ChoreoService {
     );
   }
 
+  /**
+   * Find or create (if it does not exist) a Choreo
+   *
+   * @async
+   * @param {string} name - Name of the choreography.
+   * @param {number} counts - Number of counts in the choreography.
+   * @param {MatType} [matType='cheer'] - Type of mat used.
+   * @param {UUID} SeasonTeamId - The season team UUID.
+   * @param {UUID} UserId - The user's UUID.
+   * @returns {Promise<Choreo>} The found or created choreography.
+   */
   async findOrCreate(
     name,
     counts,
@@ -151,6 +223,16 @@ class ChoreoService {
     return choreo;
   }
 
+  /**
+   * Add a Participant to a Choreo
+   *
+   * @async
+   * @param {UUID} choreoId - The choreography's UUID.
+   * @param {UUID} memberId - The member's UUID.
+   * @param {UUID} UserId - The user's UUID.
+   * @param {string} [color=null] - Color associated with the participant.
+   * @returns {Promise<void>}
+   */
   async addParticipant(choreoId, memberId, UserId, color = null) {
     return this.findById(choreoId, UserId).then((choreo) =>
       choreo.addParticipant(memberId, {
@@ -163,6 +245,14 @@ class ChoreoService {
     );
   }
 
+  /**
+   * Remove a Participant from a Choreo
+   *
+   * @async
+   * @param {UUID} ChoreoId - The choreography's UUID.
+   * @param {UUID} MemberId - The member's UUID.
+   * @returns {Promise<void>}
+   */
   async removeParticipant(ChoreoId, MemberId) {
     return ChoreoParticipation.findOne({
       where: { MemberId, ChoreoId },
@@ -172,6 +262,16 @@ class ChoreoService {
       });
   }
 
+  /**
+   * Switch Member's Participation with another Member
+   *
+   * @async
+   * @param {UUID} ChoreoId - The choreography's UUID.
+   * @param {UUID} memberToAddId - The UUID of the member to add.
+   * @param {UUID} memberToRemoveId - The UUID of the member to remove.
+   * @param {UUID} UserId - The user's UUID.
+   * @returns {Promise<void>}
+   */
   async replaceParticipant(ChoreoId, memberToAddId, memberToRemoveId, UserId) {
     return ChoreoParticipation.findOne({
       where: { ChoreoId, MemberId: memberToRemoveId },
@@ -213,6 +313,15 @@ class ChoreoService {
       });
   }
 
+  /**
+   * Change the color of a Participant in a Choreo
+   *
+   * @param {UUID} ChoreoId - The choreography's UUID.
+   * @param {UUID} participantId - The participant's UUID.
+   * @param {string} color - New color for the participant.
+   * @param {UUID} UserId - The user's UUID.
+   * @returns {Promise<void>}
+   */
   changeParticipationColor(ChoreoId, participantId, color, UserId) {
     return ChoreoParticipation.findOne({
       where: { ChoreoId, MemberId: participantId },
@@ -223,6 +332,17 @@ class ChoreoService {
       });
   }
 
+  /**
+   * Update a choreo
+   *
+   * @async
+   * @param {UUID} id - The choreography's UUID.
+   * @param {Object} data - Data to update the choreography.
+   * @param {UUID} UserId - The user's UUID.
+   * @param {Object} [options={ all: false }] - Options for the query.
+   * @param {Boolean} [options.all=false] - Whether to fetch all choreographies.
+   * @returns {Promise<Choreo>} The updated choreography.
+   */
   async update(id, data, UserId, options = { all: false }) {
     return Choreo.findOne({
       where: options.all ? { id } : { id, UserId },
@@ -243,6 +363,16 @@ class ChoreoService {
       });
   }
 
+  /**
+   * Remove a Choreo
+   *
+   * @async
+   * @param {UUID} id - The choreography's UUID.
+   * @param {UUID} UserId - The user's UUID.
+   * @param {Object} [options={ all: false }] - Options for the query.
+   * @param {Boolean} [options.all=false] - Whether to fetch all choreographies.
+   * @returns {Promise<void>}
+   */
   async remove(id, UserId, options = { all: false }) {
     return Choreo.findOne({
       where: options.all ? { id } : { id, UserId },

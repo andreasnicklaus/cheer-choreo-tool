@@ -2,19 +2,46 @@ const { Op } = require("sequelize");
 const Member = require("../db/models/member");
 const { logger } = require("../plugins/winston");
 
+/**
+ * Service for managing member entities and their associations.
+ * Handles CRUD operations and member-specific logic.
+ *
+ * @class MemberService
+ */
 class MemberService {
+  /**
+   * Get all members for a user.
+   * @param {string} UserId - The user ID.
+   * @param {Object} options - Options for fetching members.
+   * @param {boolean} options.all - Whether to fetch all members or only those associated with the user.
+   * @returns {Promise<Array>} List of members.
+   */
   async getAll(UserId, options = { all: false }) {
     return Member.findAll({ where: options.all ? {} : { UserId } });
   }
 
+  /**
+   * Find a member by ID.
+   * @param {string} id - The member ID.
+   * @param {string} UserId - The user ID.
+   * @returns {Promise<Object|null>} The member object or null if not found.
+   */
   async findById(id, UserId) {
     return Member.findOne({ where: { id, UserId } }); // njsscan-ignore: node_nosqli_injection
   }
 
+  /**
+   * Get the total count of members.
+   * @returns {Promise<number>} The count of members.
+   */
   getCount() {
     return Member.count();
   }
 
+  /**
+   * Get the trend of member creation and deletion.
+   * @returns {Promise<number>} The difference between created and deleted members in the last 30 days.
+   */
   getTrend() {
     return Promise.all([
       Member.count({
@@ -30,6 +57,15 @@ class MemberService {
     ]).then(([created, deleted]) => created - deleted);
   }
 
+  /**
+   * Create a new member.
+   * @param {string} name - The name of the member.
+   * @param {string} nickname - The nickname of the member.
+   * @param {string} abbreviation - The abbreviation for the member.
+   * @param {string} SeasonTeamId - The season team ID.
+   * @param {string} UserId - The user ID.
+   * @returns {Promise<Object>} The created member object.
+   */
   async create(name, nickname, abbreviation, SeasonTeamId, UserId) {
     if (!abbreviation)
       abbreviation = name
@@ -55,6 +91,15 @@ class MemberService {
     });
   }
 
+  /**
+   * Find or create a member.
+   * @param {string} name - The name of the member.
+   * @param {string} nickname - The nickname of the member.
+   * @param {string} abbreviation - The abbreviation for the member.
+   * @param {string} SeasonTeamId - The season team ID.
+   * @param {string} UserId - The user ID.
+   * @returns {Promise<Object>} The found or created member object.
+   */
   async findOrCreate(name, nickname, abbreviation, SeasonTeamId, UserId) {
     logger.debug(
       `MemberService.findOrCreate ${JSON.stringify({
@@ -83,6 +128,15 @@ class MemberService {
     return member;
   }
 
+  /**
+   * Update a member's information.
+   * @param {string} id - The member ID.
+   * @param {Object} data - The data to update.
+   * @param {string} UserId - The user ID.
+   * @param {Object} options - Options for updating members.
+   * @param {boolean} options.all - Whether to update all members or only those associated with the user.
+   * @returns {Promise<Object>} The updated member object.
+   */
   async update(id, data, UserId, options = { all: false }) {
     return Member.findOne({
       where: options.all ? { id } : { id, UserId },
@@ -103,6 +157,14 @@ class MemberService {
       });
   }
 
+  /**
+   * Remove a member.
+   * @param {string} id - The member ID.
+   * @param {string} UserId - The user ID.
+   * @param {Object} options - Options for removing members.
+   * @param {boolean} options.all - Whether to remove all members or only those associated with the user.
+   * @returns {Promise<void>} Resolves when the member is removed.
+   */
   async remove(id, UserId, options = { all: false }) {
     return Member.findOne({
       where: options.all ? { id } : { id, UserId },

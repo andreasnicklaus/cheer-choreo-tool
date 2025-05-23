@@ -10,7 +10,20 @@ const defaultInclude = [
   },
 ];
 
+/**
+ * Service for managing team entities and their associations.
+ * Handles CRUD operations and team-specific logic.
+ *
+ * @class TeamService
+ */
 class TeamService {
+  /**
+   * Get all teams for a user.
+   * @param {number} UserId - The user ID.
+   * @param {Object} options - Options for filtering.
+   * @param {boolean} options.all - Whether to fetch all teams.
+   * @returns {Promise<Array>} List of teams.
+   */
   async getAll(UserId, options = { all: false }) {
     return Team.findAll({
       where: options.all ? {} : { UserId },
@@ -18,6 +31,12 @@ class TeamService {
     });
   }
 
+  /**
+   * Find teams by name for a user.
+   * @param {string} name - The name of the team.
+   * @param {number} UserId - The user ID.
+   * @returns {Promise<Array>} List of teams.
+   */
   async findByName(name, UserId) {
     return Team.findAll({
       where: { name, UserId },
@@ -25,6 +44,12 @@ class TeamService {
     });
   }
 
+  /**
+   * Find a team by ID for a user.
+   * @param {number} id - The ID of the team.
+   * @param {number} UserId - The user ID.
+   * @returns {Promise<Object>} The team object.
+   */
   async findById(id, UserId) {
     return Team.findOne({
       where: { id, UserId },
@@ -32,10 +57,18 @@ class TeamService {
     }); // njsscan-ignore: node_nosqli_injection
   }
 
+  /**
+   * Get the total count of teams.
+   * @returns {Promise<number>} The count of teams.
+   */
   getCount() {
     return Team.count();
   }
 
+  /**
+   * Get the trend of team creation and deletion.
+   * @returns {Promise<number>} The trend value.
+   */
   getTrend() {
     return Promise.all([
       Team.count({
@@ -51,6 +84,14 @@ class TeamService {
     ]).then(([created, deleted]) => created - deleted);
   }
 
+  /**
+   * Create a new team and associate it with a season.
+   * @param {string} name - The name of the team.
+   * @param {number} ClubId - The club ID.
+   * @param {number} SeasonId - The season ID.
+   * @param {number} UserId - The user ID.
+   * @returns {Promise<Object>} The created team object.
+   */
   async create(name, ClubId, SeasonId, UserId) {
     logger.debug(
       `TeamService.create ${JSON.stringify({ name, ClubId, SeasonId, UserId })}`
@@ -62,6 +103,13 @@ class TeamService {
     );
   }
 
+  /**
+   * Find or create a team.
+   * @param {string} name - The name of the team.
+   * @param {number} ClubId - The club ID.
+   * @param {number} UserId - The user ID.
+   * @returns {Promise<Object>} The found or created team object.
+   */
   async findOrCreate(name, ClubId, UserId) {
     logger.debug(
       `TeamService.findOrCreate ${JSON.stringify({ name, ClubId, UserId })}`
@@ -72,6 +120,15 @@ class TeamService {
     return team;
   }
 
+  /**
+   * Update a team.
+   * @param {number} id - The ID of the team.
+   * @param {Object} data - The data to update.
+   * @param {number} UserId - The user ID.
+   * @param {Object} options - Options for filtering.
+   * @param {boolean} options.all - Whether to update all teams.
+   * @returns {Promise<Object>} The updated team object.
+   */
   async update(id, data, UserId, options = { all: false }) {
     return Team.findOne({ where: options.all ? { id } : { id, UserId } }) // njsscan-ignore: node_nosqli_injection
       .then(async (foundTeam) => {
@@ -86,6 +143,14 @@ class TeamService {
       });
   }
 
+  /**
+   * Remove a team.
+   * @param {number} id - The ID of the team.
+   * @param {number} UserId - The user ID.
+   * @param {Object} options - Options for filtering.
+   * @param {boolean} options.all - Whether to remove all teams.
+   * @returns {Promise<void>} Resolves when the team is removed.
+   */
   async remove(id, UserId, options = { all: false }) {
     return Team.findOne({ where: options.all ? { id } : { id, UserId } }) // njsscan-ignore: node_nosqli_injection
       .then((foundTeam) => {

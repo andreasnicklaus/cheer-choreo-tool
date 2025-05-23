@@ -1,6 +1,5 @@
 const { Op } = require("sequelize");
 const Club = require("../db/models/club");
-const Member = require("../db/models/member");
 const SeasonTeam = require("../db/models/seasonTeam");
 const Team = require("../db/models/team");
 const { logger } = require("../plugins/winston");
@@ -8,7 +7,6 @@ const ChoreoService = require("./ChoreoService");
 const HitService = require("./HitService");
 const MemberService = require("./MemberService");
 const SeasonService = require("./SeasonService");
-const SeasonTeamService = require("./SeasonTeamService");
 const TeamService = require("./TeamService");
 
 const defaultInclude = [
@@ -21,7 +19,22 @@ const defaultInclude = [
   },
 ];
 
+/**
+ * Service for managing club entities and their associations.
+ * Handles CRUD operations and club-specific logic.
+ *
+ * @class ClubService
+ */
 class ClubService {
+  /**
+   * Get all Clubs with specified UserId
+   *
+   * @async
+   * @param {UUID} UserId
+   * @param {Object} [options={ all: false }]
+   * @param {boolean} [options.all=false]
+   * @returns {Club[]}
+   */
   async getAll(UserId, options = { all: false }) {
     return Club.findAll({
       where: options.all ? {} : { UserId },
@@ -46,10 +59,20 @@ class ClubService {
     });
   }
 
+  /**
+   * Get the number of Clubs in the DB
+   *
+   * @returns {number}
+   */
   getCount() {
     return Club.count();
   }
 
+  /**
+   * Get the number of new Clubs minus then number of deleted Clubs in the last 30 days
+   *
+   * @returns {number}
+   */
   getTrend() {
     return Promise.all([
       Club.count({
@@ -65,6 +88,14 @@ class ClubService {
     ]).then(([created, deleted]) => created - deleted);
   }
 
+  /**
+   * Find Club by its ID
+   *
+   * @async
+   * @param {UUID} id
+   * @param {UUID} UserId
+   * @returns {Club}
+   */
   async findById(id, UserId) {
     return Club.findOne({
       where: { id, UserId },
@@ -88,6 +119,14 @@ class ClubService {
     }); // njsscan-ignore: node_nosqli_injection
   }
 
+  /**
+   * Find Club by its name
+   *
+   * @async
+   * @param {string} name
+   * @param {UUID} UserId
+   * @returns {Club}
+   */
   async findByName(name, UserId) {
     return Club.findAll({
       where: { name, UserId },
@@ -95,6 +134,14 @@ class ClubService {
     });
   }
 
+  /**
+   * Create a new Club
+   *
+   * @async
+   * @param {string} name
+   * @param {UUID} UserId
+   * @returns {Club}
+   */
   async create(name, UserId) {
     logger.debug(`ClubService.create ${JSON.stringify({ name, UserId })}`);
     return Club.create({ name, UserId }).then((club) =>
@@ -108,6 +155,14 @@ class ClubService {
     );
   }
 
+  /**
+   * Seed a demo team and choreo for a Club
+   *
+   * @async
+   * @param {Club} club
+   * @param {UUID} UserId
+   * @returns {void}
+   */
   async seedDemo(club, UserId) {
     SeasonService.getAll(null).then((seasons) => {
       const currentSeason = seasons.find(
@@ -170,6 +225,14 @@ class ClubService {
     });
   }
 
+  /**
+   * Find or create (if it does not exist) a Club
+   *
+   * @async
+   * @param {string} name
+   * @param {UUID} UserId
+   * @returns {Club}
+   */
   async findOrCreate(name, UserId) {
     logger.debug(
       `ClubService.findOrCreate ${JSON.stringify({ name, UserId })}`
@@ -180,6 +243,17 @@ class ClubService {
     return club;
   }
 
+  /**
+   * Update a Club
+   *
+   * @async
+   * @param {UUID} id
+   * @param {Object} data
+   * @param {UUID} UserId
+   * @param {Object} [options={ all: false }]
+   * @param {boolean} [options.all=false]
+   * @returns {Club}
+   */
   async update(id, data, UserId, options = { all: false }) {
     return Club.findOne({ where: options.all ? { id } : { id, UserId } }) // njsscan-ignore: node_nosqli_injection
       .then(async (foundClub) => {
@@ -195,6 +269,16 @@ class ClubService {
       });
   }
 
+  /**
+   * Remove a Club
+   *
+   * @async
+   * @param {UUID} id
+   * @param {UUID} UserId
+   * @param {Object} [options={ all: false }]
+   * @param {boolean} [options.all=false]
+   * @returns {Promise<void>}
+   */
   async remove(id, UserId, options = { all: false }) {
     return Club.findOne({ where: options.all ? { id } : { id, UserId } }) // njsscan-ignore: node_nosqli_injection
       .then((foundClub) => {
