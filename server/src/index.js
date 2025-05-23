@@ -313,6 +313,7 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         "script-src": ["'self'", "https:", "'unsafe-inline'"],
+        "img-src": ["'self'", "https:", "data:"],
       },
     },
   })

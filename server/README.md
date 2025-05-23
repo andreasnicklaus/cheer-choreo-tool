@@ -1,0 +1,82 @@
+<h1>Choreo Planer API</h1>
+
+<div align="center">
+<img src="https://www.choreo-planer.de/Icon.png" width="200" height="200" alt="Choreo Planer Icon">
+
+<!-- Badges -->
+
+![License](https://img.shields.io/github/license/andreasnicklaus/cheer-choreo-tool?style=for-the-badge)
+![Status](https://img.shields.io/badge/In_Development-ffb02e?style=for-the-badge&logo=checkmarx&logoColor=white&label=status)
+
+![Server Version](https://img.shields.io/github/package-json/v/andreasnicklaus/cheer-choreo-tool?filename=server%2Fpackage.json&style=for-the-badge&label=Server%20Version)
+![Website Version](https://img.shields.io/github/package-json/v/andreasnicklaus/cheer-choreo-tool?filename=app%2Fpackage.json&style=for-the-badge&label=Website%20Version)
+
+![Website status](https://img.shields.io/website?url=https%3A%2F%2Fwww.choreo-planer.de&style=for-the-badge)
+![Backend status](https://img.shields.io/website?url=https%3A%2F%2Fapi.choreo-planer.de&style=for-the-badge&label=Backend)
+
+![Backend server build status](<https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/docker-server-image.yml?style=for-the-badge&logo=docker&logoColor=white&label=Backend%20Build%20(Server)>)
+![Frontend build status](https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/pages.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=Frontend%20Build)
+
+![Last commit](https://img.shields.io/github/last-commit/andreasnicklaus/cheer-choreo-tool?style=for-the-badge&label=Last%20Major%20Update)
+![Top languages](https://img.shields.io/github/languages/top/andreasnicklaus/cheer-choreo-tool?style=for-the-badge)
+![Language count](https://img.shields.io/github/languages/count/andreasnicklaus/cheer-choreo-tool?style=for-the-badge)
+
+</div>
+
+---
+
+## Overview
+
+**Choreo Planer API** is the backend server for the Choreo Planer platform, designed to help cheerleading teams plan, organize, and manage their choreography routines. This API provides endpoints for user management, routine creation, team collaboration, and more.
+
+- **Website:** [www.choreo-planer.de](https://www.choreo-planer.de)
+- **API Base URL:** [api.choreo-planer.de](https://api.choreo-planer.de)
+
+## Features
+
+- User authentication & management
+- Routine and element management
+- Team collaboration tools
+- RESTful API endpoints
+- Dockerized deployment
+
+## Quick Start
+
+### Prerequisites
+
+- [Docker](https://www.docker.com/)
+
+This documentation only provides quick start instructions for docker because the server is designed to run in a docker container.
+
+### Running the Server in production mode
+
+```bash
+docker-compose up
+```
+
+This command will start the server in production mode. The server will be available at `http://localhost:3000` by default.
+
+### Running the Server in development mode
+
+```bash
+docker-compose -f docker-compose.yml -f dev.docker-compose.yml up
+```
+
+This command will start docker compose with the development configuration which extends the production configuration for hot reloading.
+
+## Documentation
+
+- [API Reference](/api-docs/)
+- [Website](https://www.choreo-planer.de)
+
+## Support
+
+For questions or support, please open an issue or contact the maintainer via the website.
+
+---
+
+© <span id="year"></span> Choreo Planer. Licensed under the MIT License.
+
+<script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+</script>

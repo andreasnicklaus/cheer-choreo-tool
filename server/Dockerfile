@@ -17,6 +17,7 @@ RUN npm i --omit=dev
 COPY ./src ./src
 
 COPY ./jsdoc.json ./
+COPY ./README.md ./
 RUN npm run docs
 
 CMD [ "npm", "run", "start" ]
