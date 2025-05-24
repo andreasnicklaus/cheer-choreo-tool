@@ -1,7 +1,7 @@
+import { NextFunction, Request, Response } from "express";
+
 const path = require("path");
 const { version } = require("../package.json");
-
-const crypto = require("crypto");
 
 // EXPRESS REQUIREMENTS
 const express = require("express");
@@ -66,8 +66,8 @@ app.use(
   })
 );
 
-app.use((req, res, next) => {
-  res.locals.cspNonce = crypto.randomBytes(32).toString("hex");
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.locals.cspNonce = require("crypto").randomBytes(32).toString("hex");
   next();
 });
 app.use(
@@ -78,7 +78,7 @@ app.use(
         "script-src": [
           "'self'",
           "https:",
-          (req, res) => `'nonce-${res.locals.cspNonce}'`,
+          (req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`,
         ],
         "worker-src": ["'self'", "https:", "blob:"],
         upgradeInsecureRequests: null,
@@ -189,7 +189,7 @@ app.use(i18n.init);
  *        200:
  *          description: Returns a status page with a positive status message and the server version
  */
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.render("../src/views/status", {
     version,
     frontendDomain: process.env.FRONTEND_DOMAIN,
@@ -207,7 +207,7 @@ app.get("/", (req, res) => {
  *        200:
  *          description: Returns the server version
  */
-app.get("/version", (req, res) => {
+app.get("/version", (req: Request, res: Response) => {
   res.send(version);
 });
 
@@ -222,7 +222,7 @@ app.get("/version", (req, res) => {
  *       200:
  *         description: Returns status code 200 for healthchecks (not logged)
  */
-app.get("/health", (req, res, next) => {
+app.get("/health", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).send();
   next();
 });
@@ -255,7 +255,6 @@ const swaggerOptions = {
     openapi: "3.1.1",
     info: {
       title: "Choreo Planer",
-      version: "0.0.1",
       description: "This is the Choreo Planer API documentation",
       license: {
         name: "MIT",
@@ -342,7 +341,7 @@ function startServer() {
         logger.info(`App listening on http://localhost:${port}`);
       });
     })
-    .catch((e) => {
+    .catch(() => {
       logger.error(
         "Unable to authenticate with the database. Restarting in 1 sec"
       );
