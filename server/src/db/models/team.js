@@ -42,7 +42,7 @@ const Team = db.define(
   {
     paranoid: true,
     hooks: {
-      afterDestroy: function (instance, options) {
+      afterDestroy: function (instance, _options) {
         instance.getSeasonTeams().then((seasonTeamList) => {
           seasonTeamList.forEach((st) => st.destroy());
         });

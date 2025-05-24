@@ -49,7 +49,7 @@ const Club = db.define(
   },
   {
     paranoid: true,
-    afterDestroy: function (instance, options) {
+    afterDestroy: function (instance, _options) {
       instance
         .getTeams()
         .then((teamList) => teamList.forEach((team) => team.destroy()));

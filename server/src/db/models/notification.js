@@ -35,7 +35,7 @@ const db = require("..");
  * @memberof module:Models
  */
 
-const Notification = db.define(
+const NotificationModel = db.define(
   "Notification",
   {
     id: {
@@ -68,4 +68,4 @@ const Notification = db.define(
   }
 );
 
-module.exports = Notification;
+module.exports = NotificationModel;

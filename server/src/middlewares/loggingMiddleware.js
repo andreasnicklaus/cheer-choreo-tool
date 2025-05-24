@@ -6,7 +6,7 @@ const { logger } = require("../plugins/winston");
  * @param {Response} res Outgoing response object
  * @param {Function} next Next handler function
  */
-function loggerMiddleWare(req, res, next) {
+function loggerMiddleWare(req, _res, next) {
   if (req.path == "/health") return next();
   const { password, ...requestBody } = req.body;
 
@@ -25,7 +25,7 @@ function loggerMiddleWare(req, res, next) {
  * @param {Response} res Outgoing response object
  * @param {Function} next Next handler function (not called)
  */
-function errorLoggingMiddleWare(err, req, res, next) {
+function errorLoggingMiddleWare(err, _req, _res, next) {
   // Log the error message at the error level
   logger.error(err.message);
   next(err);

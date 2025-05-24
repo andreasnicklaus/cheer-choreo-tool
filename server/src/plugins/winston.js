@@ -1,5 +1,4 @@
 const winston = require("winston");
-const fs = require("fs/promises");
 
 const logger = winston.createLogger({
   // Log only if level is less than (meaning more severe) or equal to this

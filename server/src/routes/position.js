@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const PositionService = require("../services/PositionService");
 const { authenticateUser } = require("../services/AuthService");
+const LineupService = require("../services/LineupService");
 
 const router = Router();
 

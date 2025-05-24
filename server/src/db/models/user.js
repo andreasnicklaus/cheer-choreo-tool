@@ -23,7 +23,7 @@ const bcrypt = require("bcrypt");
  *        emailConfirmed:
  *          type: boolean
  *          default: false
- *        profilePictureExtension
+ *        profilePictureExtension:
  *          type: string
  *          example: .png
  *        password:
@@ -109,7 +109,7 @@ const User = db.define(
       },
     },
     paranoid: true,
-    afterDestroy: function (instance, options) {
+    afterDestroy: function (instance, _options) {
       instance
         .getClubs()
         .then((clubList) => clubList.forEach((club) => club.destroy()));

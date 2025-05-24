@@ -66,7 +66,7 @@ app.use(
   })
 );
 
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((_req: Request, res: Response, next: NextFunction) => {
   res.locals.cspNonce = require("crypto").randomBytes(32).toString("hex");
   next();
 });
@@ -78,7 +78,7 @@ app.use(
         "script-src": [
           "'self'",
           "https:",
-          (req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`,
+          (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`,
         ],
         "worker-src": ["'self'", "https:", "blob:"],
         upgradeInsecureRequests: null,
@@ -189,7 +189,7 @@ app.use(i18n.init);
  *        200:
  *          description: Returns a status page with a positive status message and the server version
  */
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (_req: Request, res: Response) => {
   res.render("../src/views/status", {
     version,
     frontendDomain: process.env.FRONTEND_DOMAIN,
@@ -207,7 +207,7 @@ app.get("/", (req: Request, res: Response) => {
  *        200:
  *          description: Returns the server version
  */
-app.get("/version", (req: Request, res: Response) => {
+app.get("/version", (_req: Request, res: Response) => {
   res.send(version);
 });
 
@@ -222,7 +222,7 @@ app.get("/version", (req: Request, res: Response) => {
  *       200:
  *         description: Returns status code 200 for healthchecks (not logged)
  */
-app.get("/health", (req: Request, res: Response, next: NextFunction) => {
+app.get("/health", (_req: Request, res: Response, next: NextFunction) => {
   res.status(200).send();
   next();
 });

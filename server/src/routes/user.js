@@ -88,10 +88,11 @@ router.delete("/", authenticateUser(), (req, res, next) => {
  */
 router.get("/revokeEmail/:id", (req, res, next) => {
   UserService.remove(req.params.id)
-    .then((result) => {
+    .then((_result) => {
       res.render("../src/views/emailRevoked.ejs", {
         frontendDomain: process.env.FRONTEND_DOMAIN,
       }); // njsscan-ignore: express_lfr_warning
+      next();
     })
     .catch((e) => {
       res.render("../src/views/error.ejs", {
@@ -122,10 +123,11 @@ router.get("/revokeEmail/:id", (req, res, next) => {
  */
 router.get("/confirmEmail/:id", (req, res, next) => {
   UserService.update(req.params.id, { emailConfirmed: true })
-    .then((result) => {
+    .then((_result) => {
       res.render("../src/views/emailConfirmed.ejs", {
         frontendDomain: process.env.FRONTEND_DOMAIN,
       }); // njsscan-ignore: express_lfr_warning
+      next();
     })
     .catch((e) => {
       res.render("../src/views/error.ejs", {

@@ -14,7 +14,6 @@ const Club = require("../../db/models/club");
 const Member = require("../../db/models/member");
 const UserService = require("../../services/UserService");
 const SeasonTeamService = require("../../services/SeasonTeamService");
-const { logger } = require("../../plugins/winston");
 const search = require("../../utils/fuzzySearch");
 
 const router = Router();

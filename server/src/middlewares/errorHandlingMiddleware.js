@@ -6,7 +6,7 @@
  * @param {Response} res Outgoing response object
  * @param {Function} next Next handler function (not called)
  */
-function errorHandlingMiddleWare(error, req, res, next) {
+function errorHandlingMiddleWare(error, _req, res, next) {
   if (!res.headersSent) {
     res.status(500).send(error?.message);
   }

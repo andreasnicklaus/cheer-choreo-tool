@@ -1,4 +1,4 @@
-const { Sequelize, DataTypes } = require("sequelize");
+const { Sequelize } = require("sequelize");
 const { dbLogger } = require("../plugins/winston");
 require("dotenv").config();
 
@@ -30,8 +30,8 @@ const SeasonTeam = require("./models/seasonTeam");
 const seed = require("./seed");
 const ChoreoParticipation = require("./models/choreoParticipation");
 const Feedback = require("./models/feedback");
-const Admin = require("./models/admin");
-const Notification = require("./models/notification");
+require("./models/admin");
+const NotificationModel = require("./models/notification");
 
 Team.hasMany(SeasonTeam, {
   onDelete: "CASCADE",
@@ -136,8 +136,8 @@ Season.belongsTo(User);
 Feedback.belongsTo(User);
 User.hasMany(Feedback);
 
-Notification.belongsTo(User);
-User.hasMany(Notification);
+NotificationModel.belongsTo(User);
+User.hasMany(NotificationModel);
 
 db.sync({
   alter: true,

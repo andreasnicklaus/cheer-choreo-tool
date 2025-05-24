@@ -19,7 +19,7 @@ function seed() {
         Promise.all([
           Promise.all(
             data.seasons.map(async (s) => {
-              const [season, created] = await Season.findOrCreate({
+              const [season, _created] = await Season.findOrCreate({
                 where: {
                   year: s.year,
                   name: s.name,
@@ -41,7 +41,7 @@ function seed() {
               })
             )
           ),
-        ]).then(([seasons, notifications]) =>
+        ]).then(([seasons, _notifications]) =>
           Promise.all(
             u.clubs.map((c) =>
               ClubService.findOrCreate(c.name, user.id).then((club) =>
@@ -59,7 +59,7 @@ function seed() {
                                 TeamId: team.id,
                                 UserId: user.id,
                               },
-                            }).then(([seasonTeam, created]) =>
+                            }).then(([seasonTeam, _created]) =>
                               Promise.all(
                                 st.Members.map((m) =>
                                   MemberService.findOrCreate(
