@@ -76,7 +76,7 @@
     "club": "[1]Club|Clubs",
     "team": "[1]Team|Teams",
     "season": "[1]Season|Seasons",
-    "seasonteam": "[1]SeasonTeam|SeasonTeams",
+    "seasonTeam": "[1]SeasonTeam|SeasonTeams",
     "choreo": "[1]Choreo|Choreos",
     "member": "[1]Member|Members",
     "feedback": "Feedback"

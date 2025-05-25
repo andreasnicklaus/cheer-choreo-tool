@@ -4,7 +4,7 @@ const path = require("path");
 const { version } = require("../package.json");
 
 // EXPRESS REQUIREMENTS
-const express = require("express");
+import express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const helmet = require("helmet");
@@ -13,7 +13,7 @@ const robots = require("express-robots-txt");
 const permissionsPolicy = require("permissions-policy");
 
 // DATABASE
-const db = require("./db");
+import db from "./db";
 
 // MIDDLEWARES
 const {
@@ -30,22 +30,22 @@ const { logger } = require("./plugins/winston");
 const logConfig = require("./utils/logConfig");
 
 // ROUTERS
-const { choreoRouter } = require("./routes/choreo");
-const { teamRouter } = require("./routes/team");
-const { clubRouter } = require("./routes/club");
-const { hitRouter } = require("./routes/hit");
-const { lineupRouter } = require("./routes/lineup");
-const { memberRouter } = require("./routes/member");
-const { positionRouter } = require("./routes/position");
-const { userRouter } = require("./routes/user");
-const { authRouter } = require("./routes/auth");
-const { seasonRouter } = require("./routes/season");
-const { seasonTeamRouter } = require("./routes/seasonTeam");
-const { feedbackRouter } = require("./routes/feedback");
-const { notificationRouter } = require("./routes/notification");
+import { choreoRouter } from "./routes/choreo";
+import { teamRouter } from "./routes/team";
+import { clubRouter } from "./routes/club";
+import { hitRouter } from "./routes/hit";
+import { lineupRouter } from "./routes/lineup";
+import { memberRouter } from "./routes/member";
+import { positionRouter } from "./routes/position";
+import { userRouter } from "./routes/admin/users";
+import { authRouter } from "./routes/auth";
+import { seasonRouter } from "./routes/season";
+import { seasonTeamRouter } from "./routes/seasonTeam";
+import { feedbackRouter } from "./routes/feedback";
+import { notificationRouter } from "./routes/notification";
 
 // ADMIN ROUTER
-const { adminRouter } = require("./routes/admin");
+import { adminRouter } from "./routes/admin/index";
 
 const app = express();
 const port = 3000;
