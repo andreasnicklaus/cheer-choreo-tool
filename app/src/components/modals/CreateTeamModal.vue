@@ -9,6 +9,7 @@
     <b-form>
       <b-form-group
         :label="$t('name')"
+        label-class="label-with-colon"
         :state="newTeamNameIsValid"
         :invalid-feedback="newTeamNameStateFeedback"
         :valid-feedback="$t('login.gueltig')"
@@ -22,7 +23,8 @@
         />
       </b-form-group>
       <b-form-group
-        :label="$t('season', 1)"
+        :label="$tc('season', 1)"
+        label-class="label-with-colon"
         :state="seasonIsValid"
         :invalid-feedback="seasonStateFeedback"
       >

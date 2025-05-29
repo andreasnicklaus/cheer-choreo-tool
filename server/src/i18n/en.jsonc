@@ -1,0 +1,217 @@
+{
+  "admin": {
+    "notifications": {
+      "notifications": "Notifications",
+      "send-notifications": "Send Notifications",
+      "title": "Title",
+      "message": "Message",
+      "opened": "Opened",
+      "send-a-notification": "Send a notification",
+      "notify-user-via-email": "Notify user via email",
+      "send-to-all-users": "Send to all users",
+      "users-to-notify": "Users to notify",
+      "please-select-a-valid-user": "Please select a valid user.",
+      "are-you-sure-you-want-to-delete-this-notification": "Are you sure you want to delete this notification?",
+      "please-provide-a-title-or-message": "Please provide a title or message.",
+      "please-select-at-least-one-user-to-notify": "Please select at least one user to notify."
+    },
+    "index": {
+      "dashboard": "Dashboard",
+      "last-feedback": "Last Feedback",
+      "logged-in": "logged in",
+      "notifications-opened": "Notifications opened"
+    },
+    "users": {
+      "username": "Username",
+      "email": "Email",
+      "users-with-email": "Users with Email",
+      "create-user": "Create User",
+      "min-6-characters": "Min. 6 characters",
+      "email-confirmed": "Email confirmed",
+      "password": "Password",
+      "update-user": "Update User",
+      "are-you-sure-you-want-to-delete-this-user": "Are you sure you want to delete this user?"
+    },
+    "db": {
+      "last-search": "Letzte Suche:",
+      "are-you-sure-you-want-to-delete-this-entity": "Are you sure you want to delete this entity?",
+      "failed-to-delete-entity": "Failed to delete entity.",
+      "search": "Search"
+    },
+    "admins": {
+      "create-admin": "Create Admin",
+      "min-6-characters": "Min. 6 characters",
+      "update-admin": "Update Admin",
+      "are-you-sure-you-want-to-delete-this-admin": "Are you sure you want to delete this admin?"
+    },
+    "components": {
+      "entityCreateModal": {
+        "Create": "Create",
+        "Create-something": "Create %s",
+        "keine-auswahl": "Keine Auswahl"
+      },
+      "entityUpdateModal": {
+        "update-something": "Update %s"
+      }
+    },
+    "partials": {
+      "head": {
+        "choreo-planer-admin-panel": "Choreo Planner Admin Panel"
+      },
+      "header": {
+        "home": "Home",
+        "db": "DB",
+        "homepage": "Homepage",
+        "unknown-user": "Unknown User"
+      }
+    }
+  },
+  "entities": {
+    "created-at": "Created At",
+    "updated-at": "Updated At",
+    "lastLoggedIn": "Last seen",
+    "actions": "Actions",
+    "user": "[1]User|Users",
+    "admin": "[1]Admin|Admins",
+    "club": "[1]Club|Clubs",
+    "team": "[1]Team|Teams",
+    "season": "[1]Season|Seasons",
+    "seasonteam": "[1]SeasonTeam|SeasonTeams",
+    "choreo": "[1]Choreo|Choreos",
+    "member": "[1]Member|Members",
+    "feedback": "Feedback"
+  },
+  "general": {
+    "optional": "Optional",
+    "required": "Required",
+    "close": "Close",
+    "send": "Send",
+    "add": "Add",
+    "save-changes": "Save changes",
+    "unknown": "Unknown",
+    "never": "never"
+  },
+  "errors": {
+    "something-went-wrong": "Something went wrong",
+    "error": "Error:",
+    "unknown-error": "Unknown error",
+    "invalid-entity": "Invalid entity",
+    "invalid-sso-token": "SSO Token was not valid",
+    "sso-token-user-missing": "SSO Token was valid, but the user it references does no longer exist.",
+    "entity-not-found": "No {{entity}} with this information was found.",
+    "user-has-no-email": "This user has no email address.",
+    "user-already-exists": "User already exists",
+    "error-email-body": "Hello,\n\nI would like to report an error:\n\nAction: {{action}}\nData: {{data}}\nError message: {{error}}\nTimestamp: {{timestamp}}\n\nThank you!"
+  },
+  "status": {
+    "server-status": "Server Status",
+    "aktuelle-version": "Current version",
+    "kontakt-aufnehmen": "Contact",
+    "server-sind-online": "Servers are online!",
+    "zum-choreo-planer": "To the Choreo Planner"
+  },
+  "error": {
+    "action": "Action:",
+    "data": "Data:",
+    "error-info": "Error information",
+    "info-text-1": "Something didn't work and we don't know why...",
+    "info-text-2": "Please try again or contact us!",
+    "message": "Error message:",
+    "oh-no": "Oh no!",
+    "reload": "Reload",
+    "timestamp": "Timestamp:",
+    "ich-moechte-einen-fehler-melden": "I want to report an error"
+  },
+  "emailRevoked": {
+    "account-deleted": "Account deleted",
+    "account-successfully-deleted": "Account successfully deleted!",
+    "back-to-the-homepage": "Return to the homepage now",
+    "info-text-1": "Too bad you go! We would have liked to stay together longer, but we understand your decision.",
+    "info-text-2": "If you change your mind, you can always write us an email to {{{contactlink}}} so that we can restore your account." // njsscan-ignore: handlebar_mustache_template
+  },
+  "emailConfirmed": {
+    "e-mail-adresse-bestaetigt": "Email address confirmed!",
+    "e-mail-bestaetigt": "Email confirmed",
+    "info-text-1": "You have successfully confirmed your email address!",
+    "info-text-2": "You will be forwarded automatically in 5 seconds...",
+    "login-now": "Log in now"
+  },
+  "mail": {
+    "confirmEmail": {
+      "bitte-bestaetige-deine-e-mail-adresse": "Please confirm your email address",
+      "bitte-bestaetige-deine-e-mail-adresse-2": "Please confirm your email address!",
+      "info-text-1": "your account with the <b>Choreo Planner</b> was created with {{userEmail}}. Please confirm your email address now!",
+      "info-text-2": "If the link above does not work, you can open the following URL in your browser:",
+      "jetzt-bestaetigen": "Confirm now"
+    },
+    "general": {
+      "auto-email-info": "This email was created automatically. Please do not respond to this email. Better write your answer to <a href=\"mailto:info@choreo-planer.de\">info@choreo-planer.de</a>. Thank you!",
+      "goodbye": "We wish you a lot of fun and success with your next project!",
+      "hallo-username": "Hello {{username}},",
+      "sender": "Dancing greetings,<br /> Andreas Nicklaus <br /> <b>Choreo Planner Team </b>",
+      "im-auftrag-von-choreo-planer": "On behalf of Choreo Planner"
+    },
+    "newFeedback": {
+      "info-text-1": "<b Title=\"{{useremail}}\">{{username}}</b> has just given a feedback!",
+      "jemand-hat-feedback-gegeben": "Someone gave feedback!",
+      "new-feedback": "New feedback!",
+      "sterne": "Stars"
+    },
+    "newNotification": {
+      "dieser-link-ist-gueltig-bis": "This link is valid until:",
+      "du-hast-eine-neue-benachrichtigung": "You have a new notification!",
+      "info-text-1": "You have received a new notification in your Choreo Planner. To read it, please click on the following link:",
+      "info-text-2": "You have received this email because you have registered with Choreo Planner. As a rule, you will get notifications if an administrator wants to send you a message.",
+      "info-text-3": "If you are not sure whether this email really comes from us, please contact us at <a href=\"mailto:admin@choreo-planer.de\">admin@choreo-planer.de</a> or via Instagram an <a href=\"https://www.instagram.com/choreoplaner\">@choreoplaner</a>.",
+      "jetzt-einloggen-und-nachricht-lesen": "Now log in and read the message",
+      "neue-benachrichtigung": "New notification!"
+    },
+    "ssoLogin": {
+      "dein-login-link": "Your login link",
+      "hier-ist-dein-login-link": "Here is your login link!",
+      "info-text-1": "You get this email because you have requested a login link. You can now log in via this link:",
+      "info-text-2": "If you have not requested the link, you can confidently ignore this email. If you get emails like this very often, it can be a sign that someone is trying to get into your account. In this case, please contact our administrators immediately at <a href=\"mailto:admin@choreo-planer.de\">admin@choreo-planer.de</a>, even if you are not sure."
+    },
+    "welcome": {
+      "erste-schritte": "First steps",
+      "erste-schritte-step-1": "<b>GettingStarted:</b> Visit our website and start directly with your first choreography. Everything is designed intuitively and uncomplicated.",
+      "erste-schritte-step-2": "<b>Discover the possibilities:</b> whether for small groups or large performances - the Choreo Planner offers you everything you need.",
+      "info-text-1": "Welcome to the <b>Choreo Planner</b> - your free online tool for dance, cheerleading, floor gymnastics and much more!",
+      "info-text-2": "We look forward to having you on board! With our tool you can easily and creatively plan, organize and visualize your choreographies.",
+      "info-text-3": "Our tool is not only free of charge, we also value data protection: your data is yours and we do not sell or share. If you accidentally created your account or want to undo the registration, just click here:",
+      "konto-loeschen": "Delete account",
+      "wenn-du-fragen-hast-oder-unterstuetzung-benoetigst-schreib-uns-einfach-unter": "If you have any questions or need support, just write us at:",
+      "willkommen-beim-choreo-planer": "Welcome to the Choreo Planner",
+      "willkommen-beim-choreo-planer-1": "Welcome to the Choreo Planner!"
+    }
+  },
+  "notifications": {
+    "club-created": {
+      "message": "Your club **{{name}}** was created.",
+      "title": "Club created!"
+    },
+    "confirm-email": {
+      "message": "An email with the link to confirm your email address was sent.",
+      "title": "Email was sent!"
+    },
+    "sso-link-was-sent": {
+      "message": "An email with a single sign-on link was sent. If you have not prompted this, please contact us immediately.\n\n[Contact Administrators](mailto:admin@choreoplaner.de)",
+      "title": "Single Sign-on was sent"
+    },
+    "team-created": {
+      "message": "Your team **{{name}}** was created! [Check it out now!](/Team/{{teamId}})",
+      "title": "Team created!"
+    },
+    "welcome": {
+      "message": "Welcome to the choreo planner! Have fun creating your teams and choreos!\n\n[Get help](/help)\n\n[Contact](mailto:info@choreo-planer.de)",
+      "title": "Welcome!"
+    }
+  },
+  "responses": {
+    "email-required": "An email address is required.",
+    "sso-link-sent": "Single-Sign-On link was sent to your email inbox.",
+    "sso-token-required": "A SSO token is required. Please contact admin@choreo-planer.de",
+    "no-file-uploaded": "No file uploaded.",
+    "not-found": "Not found"
+  }
+}

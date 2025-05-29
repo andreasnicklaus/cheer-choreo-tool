@@ -2,6 +2,9 @@ const { Op } = require("sequelize");
 const User = require("../db/models/user");
 const { logger } = require("../plugins/winston");
 const MailService = require("./MailService");
+const NotificationService = require("./NotificationService");
+const i18n = require("i18n");
+const roundToDecimals = require("../utils/numbers");
 
 class UserService {
   async getAll() {
@@ -9,15 +12,18 @@ class UserService {
   }
 
   async findById(id) {
-    return User.findByPk(id);
+    return User.findByPk(id, { include: ["Clubs"] });
   }
 
-  async findByUsernameOrEmail(usernameOrEmail, { scope = "defaultScope" }) {
+  async findByUsernameOrEmail(
+    usernameOrEmail,
+    { scope = "defaultScope" } = {}
+  ) {
     return User.scope(scope).findOne({
       where: {
         [Op.or]: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
       },
-    });
+    }); // njsscan-ignore: node_nosqli_injection
   }
 
   getCount() {
@@ -39,25 +45,37 @@ class UserService {
     ]).then(([created, deleted]) => created - deleted);
   }
 
-  async create(username, password, email) {
-    return User.create({ username, password, email }).then((user) => {
-      MailService.sendUserRegistrationNotice(
-        user.username,
-        user.id,
-        user.email
-      ).catch(logger.error);
-      if (email) {
-        MailService.sendEmailConfirmationEmail(
+  async create(username, password, email, emailConfirmed, locale) {
+    return User.create({ username, password, email, emailConfirmed }).then(
+      (user) => {
+        MailService.sendUserRegistrationNotice(
           user.username,
           user.id,
           user.email
         ).catch(logger.error);
-        MailService.sendWelcomeEmail(user.username, user.id, user.email).catch(
-          logger.error
+        NotificationService.createOne(
+          i18n.__({ phrase: "notifications.welcome.title", locale }),
+          i18n.__({ phrase: "notifications.welcome.message", locale }),
+          user.id
         );
+
+        if (email) {
+          MailService.sendEmailConfirmationEmail(
+            user.username,
+            user.id,
+            user.email,
+            locale
+          ).catch(logger.error);
+          MailService.sendWelcomeEmail(
+            user.username,
+            user.id,
+            user.email,
+            locale
+          ).catch(logger.error);
+        }
+        return user;
       }
-      return user;
-    });
+    );
   }
 
   async findOrCreate(username, password) {
@@ -94,6 +112,22 @@ class UserService {
       } else {
         throw Error(`Beim Löschen wurde kein User mit der ID ${id} gefunden`);
       }
+    });
+  }
+
+  getLoggedInPercentage() {
+    return Promise.all([
+      this.getCount(),
+      User.count({
+        where: {
+          lastLoggedIn: null,
+        },
+      }),
+    ]).then(([totalCount, notLoggedInCount]) => {
+      return roundToDecimals(
+        ((totalCount - notLoggedInCount) / totalCount) * 100,
+        1
+      );
     });
   }
 }

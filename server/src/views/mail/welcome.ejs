@@ -1,69 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= locals.locale? locale : 'en' %>">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Willkommen beim Choreo Planer</title>
+    <title><%= t('mail.welcome.willkommen-beim-choreo-planer') %></title>
   </head>
   <body>
-    <h1 style="text-align: center">Willkommen beim Choreo Planer! 🎉</h1>
+    <h1 style="text-align: center">
+      <%= t('mail.welcome.willkommen-beim-choreo-planer-1') %> 🎉
+    </h1>
 
-    <p>Hallo <%= username %>,</p>
-
-    <p>
-      herzlich willkommen beim <b>Choreo Planer</b> – deinem kostenlosen
-      Online-Tool für Tanz, Cheerleading, Bodenturnen und vieles mehr! 🎶🤸‍♂️
-    </p>
+    <p><%= t('mail.general.hallo-username', {username}) %></p>
 
     <p>
-      Wir freuen uns, dich an Bord zu haben! Mit unserem Tool kannst du einfach
-      und kreativ deine Choreografien planen, organisieren und visualisieren.
+      <%- t('mail.welcome.info-text-1') %> 🎶🤸‍♂️<!-- njsscan-ignore: ejs_ect_template -->
     </p>
 
-    <h2>Erste Schritte</h2>
+    <p><%= t('mail.welcome.info-text-2') %></p>
+
+    <h2><%= t('mail.welcome.erste-schritte') %></h2>
     <ul>
       <li>
-        <b> Loslegen: </b>
-        Besuche unsere Webseite und starte direkt mit deiner ersten
-        Choreografie. Es ist alles intuitiv und unkompliziert gestaltet.
+        <%- t('mail.welcome.erste-schritte-step-1') %><!-- njsscan-ignore: ejs_ect_template -->
       </li>
       <li>
-        <b>Entdecke die Möglichkeiten:</b>
-        Ob für kleine Gruppen oder große Performances – der Choreo Planer bietet
-        dir alles, was du brauchst.
+        <%- t('mail.welcome.erste-schritte-step-2') %><!-- njsscan-ignore: ejs_ect_template -->
       </li>
     </ul>
     <p>
-      Unser Tool ist nicht nur kostenlos, sondern wir legen auch Wert auf
-      Datenschutz: Deine Daten gehören dir, und wir verkaufen oder teilen sie
-      nicht. Falls du dein Konto versehentlich erstellt hast oder die
-      Registrierung rückgängig machen möchtest, klicke einfach hier:
+      <%= t('mail.welcome.info-text-3') %>
       <a href="<%= backendDomain %>/user/revokeEmail/<%= userId %>"
-        >Konto löschen</a
-      >.
+        ><%= t('mail.welcome.konto-loeschen') %></a
+      >
     </p>
 
     <p>
-      Wenn du Fragen hast oder Unterstützung benötigst, schreib uns einfach
-      unter: <br />
+      <%=
+      t('mail.welcome.wenn-du-fragen-hast-oder-unterstuetzung-benoetigst-schreib-uns-einfach-unter')
+      %> <br />
       <a href="mailto:info@choreo-planer.de">📧 info@choreo-planer.de</a>
     </p>
 
-    <p>Wir wünschen dir viel Spaß und Erfolg mit deinem nächsten Projekt!</p>
+    <p><%= t('mail.general.goodbye') %></p>
 
     <p>
-      Tanzende Grüße,<br />
-      Andreas Nicklaus<br />
-      <b>Choreo Planer Team</b>
+      <%- t('mail.general.sender') %><!-- njsscan-ignore: ejs_ect_template -->
     </p>
 
     <p>
-      <small
-        >Diese E-Mail wurde automatisch erstellt. Bitte antworte nicht auf diese
-        E-Mail. Schreibe deine Antwort lieber an
-        <a href="mailto:info@choreo-planer.de">info@choreo-planer.de</a>. Vielen
-        Dank!</small
-      >
+      <small>
+        <%- t('mail.general.auto-email-info') %><!-- njsscan-ignore: ejs_ect_template -->
+      </small>
     </p>
 
     <hr />

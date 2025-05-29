@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= locals.locale? locale : 'en' %>">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>E-Mail bestätigt</title>
+    <title><%= t('emailConfirmed.e-mail-bestaetigt') %></title>
     <style>
       * {
         text-align: center;
@@ -33,12 +33,14 @@
     </script>
   </head>
   <body>
-    <h1>🎉 E-Mail-Adresse bestätigt!</h1>
-    <p>Du hast dein E-Mail-Adresse erfolgreich bestätigt!</p>
-    <p>In 5 Sekunden wirst du automatisch weitergeleitet...</p>
+    <h1>🎉 <%= t('emailConfirmed.e-mail-adresse-bestaetigt') %></h1>
+    <p><%= t('emailConfirmed.info-text-1') %></p>
+    <p><%= t('emailConfirmed.info-text-2') %></p>
 
     <p style="margin: 32px 0px">
-      <a type="button" href="<%= frontendDomain %>/login"> Jetzt einloggen </a>
+      <a type="button" href="<%= frontendDomain %>/login"
+        ><%= t('emailConfirmed.login-now') %></a
+      >
     </p>
   </body>
 </html>

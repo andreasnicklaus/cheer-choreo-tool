@@ -82,42 +82,141 @@
             <li>{{ $t("Home.eintraege-machen") }}</li>
           </ol>
         </b-col>
-        <b-col cols="auto">
-          <Mat
-            :currentPositions="currentPositions"
-            :width="matWidth"
-            :height="matWidth"
-            :teamMembers="teamMembers"
-            :interactive="false"
-            :dotRadius="(matWidth / 500) * 20"
-          />
+        <b-col cols="12" lg="6" :style="{ minHeight: matWidth + 56 + 'px' }">
+          <b-tabs pills content-class="mt-3" align="center">
+            <b-tab :title="$t('cheerleading')" id="cheer-Mat">
+              <div
+                :style="{
+                  minHeight: matWidth + 'px',
+                  placeItems: 'center',
+                  display: 'grid',
+                }"
+              >
+                <Mat
+                  :currentPositions="currentPositions"
+                  :width="matWidth"
+                  matType="cheer"
+                  :teamMembers="teamMembers"
+                  :interactive="false"
+                  :dotRadius="(matWidth / 500) * 20"
+                />
+              </div>
+            </b-tab>
+            <b-tab id="garde-Mat">
+              <template #title>
+                {{ $t("Home.garde") }}
+                <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
+              </template>
+              <div
+                :style="{
+                  minHeight: matWidth + 'px',
+                  placeItems: 'center',
+                  display: 'grid',
+                }"
+              >
+                <Mat
+                  :currentPositions="currentPositions"
+                  :width="matWidth"
+                  matType="1:2"
+                  :teamMembers="teamMembers"
+                  :interactive="false"
+                  :dotRadius="(matWidth / 500) * 20"
+                />
+              </div>
+            </b-tab>
+            <b-tab id="v34-Mat">
+              <template #title>
+                {{ $t("Home.stage-3-4") }}
+                <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
+              </template>
+              <div
+                :style="{
+                  minHeight: matWidth + 'px',
+                  placeItems: 'center',
+                  display: 'grid',
+                }"
+              >
+                <Mat
+                  :currentPositions="currentPositions"
+                  :width="matWidth"
+                  matType="3:4"
+                  :teamMembers="teamMembers"
+                  :interactive="false"
+                  :dotRadius="(matWidth / 500) * 20"
+                />
+              </div>
+            </b-tab>
+            <b-tab id="square-Mat">
+              <template #title>
+                {{ $t("Home.stage-1-1") }}
+                <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
+              </template>
+              <div
+                :style="{
+                  minHeight: matWidth + 'px',
+                  placeItems: 'center',
+                  display: 'grid',
+                }"
+              >
+                <Mat
+                  :currentPositions="currentPositions"
+                  :width="matWidth"
+                  matType="square"
+                  :teamMembers="teamMembers"
+                  :interactive="false"
+                  :dotRadius="(matWidth / 500) * 20"
+                />
+              </div>
+            </b-tab>
+          </b-tabs>
         </b-col>
       </b-row>
     </section>
 
     <div id="featureCallouts1" class="featureCallouts d-none d-md-flex">
       <b-col class="featureCallout h3">
-        <b-icon-people-fill /><br />
+        <b-icon-people-fill class="text-info" /><br />
         {{ $t("Home.mitgliederverwaltung") }}
         <ul>
           <li>{{ $tc("verein", 2) }}</li>
           <li>{{ $tc("team", 2) }}</li>
           <li>{{ $t("seasonkader") }}</li>
-          <li>{{ $t("teilnehmer") }}</li>
+          <li>{{ $tc("teilnehmer", 2) }}</li>
         </ul>
       </b-col>
       <b-col class="featureCallout h3">
-        <b-icon-layout-three-columns /><br />
+        <b-icon-layout-three-columns class="text-secondary" /><br />
         {{ $t("Home.choreoplanung") }}
         <ul>
           <li>{{ $tc("lineup", 2) }}</li>
           <li>{{ $tc("countsheet", 2) }}</li>
           <li>{{ $t("Home.verwaltung-nach-season") }}</li>
-          <li>{{ $t("teilnehmer") }}</li>
+          <li>
+            {{ $t("Home.choose-the-layout-of-your-stage") }}
+            <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
+          </li>
         </ul>
       </b-col>
       <b-col class="featureCallout h3">
-        <b-icon-file-pdf-fill /><br />
+        <b-icon-stars class="text-warning" /><br />
+        {{ $t("Home.personalisierung") }}
+        <ul>
+          <li>
+            {{ $t("Home.branding-deines-vereins") }}
+            <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
+          </li>
+          <li>
+            {{ $t("Home.lade-das-logo-deines-vereins-hoch") }}
+            <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
+          </li>
+          <li>
+            {{ $t("Home.mach-werbung-fuer-dein-team") }}
+            <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
+          </li>
+        </ul>
+      </b-col>
+      <b-col class="featureCallout h3">
+        <b-icon-file-pdf-fill class="text-danger" /><br />
         {{ $t("Home.dateigenerierung") }}
         <ul>
           <li>{{ $t("Home.videos-als-mp4-und-webm") }}</li>
@@ -126,7 +225,7 @@
         </ul>
       </b-col>
       <b-col class="featureCallout h3">
-        <b-icon-film /><br />
+        <b-icon-film class="text-secondary" /><br />
         {{ $t("Home.video-export") }}
         <ul>
           <li>{{ $t("Home.teile-choreos-einfach-als-video") }}</li>
@@ -135,7 +234,7 @@
         </ul>
       </b-col>
       <b-col class="featureCallout h3">
-        <b-icon-shield-fill-check /><br />
+        <b-icon-shield-fill-check class="text-primary" /><br />
         {{ $t("Home.datensicherung") }}
         <ul>
           <li>{{ $t("Home.speicherung-auf-unseren-servern") }}</li>
@@ -155,7 +254,7 @@
         </ul>
       </b-col>
       <b-col class="featureCallout h3">
-        <b-icon-trophy-fill /><br />
+        <b-icon-trophy-fill class="text-warning" /><br />
         {{ $t("Home.meisterschaftsvorbereitung") }}
         <ul>
           <li>{{ $t("Home.bereite-choreos-vor") }}</li>
@@ -222,7 +321,7 @@
       class="featureCallouts row-reverse d-none d-md-flex"
     >
       <b-col class="featureCallout h3">
-        <b-icon-person-plus-fill /><br />
+        <b-icon-person-plus-fill class="text-success" /><br />
         1. {{ $t("anmelden") }}
         <ol>
           <li>{{ $t("Home.anmelden-mit-benutzername-und-passwort") }}</li>
@@ -230,7 +329,7 @@
         </ol>
       </b-col>
       <b-col class="featureCallout h3">
-        <b-icon-people-fill /><br />
+        <b-icon-people-fill class="text-info" /><br />
         2. {{ $t("Home.team-anlegen") }}
         <ol>
           <li>{{ $t("Home.name-deines-teams") }}</li>
@@ -239,7 +338,7 @@
         </ol>
       </b-col>
       <b-col class="featureCallout h3">
-        <b-icon-layout-three-columns /><br />
+        <b-icon-layout-three-columns class="text-secondary" /><br />
         3. {{ $t("Home.choreos-planen") }}
         <ol>
           <li>{{ $t("Home.name-der-choreo") }}</li>
@@ -259,8 +358,8 @@
       </b-col>
       <b-col class="featureCallout h3">
         <div>
-          <b-icon-chat-fill />
-          <b-icon-file-earmark-arrow-up-fill />
+          <b-icon-chat-fill class="text-success" />
+          <b-icon-file-earmark-arrow-up-fill class="text-danger" />
         </div>
         <br />
         5. {{ $t("Home.countsheets-teilen") }}
@@ -355,6 +454,7 @@
       <b-button
         :style="{ backgroundColor: 'white', color: 'var(--success)' }"
         class="pulse-button"
+        :to="{ name: 'Login', params: { locale: $root.$i18n.locale } }"
       >
         {{ $t("anmelden") }} / {{ $t("registrieren") }}
       </b-button>
@@ -366,6 +466,7 @@
 import CountOverview from "@/components/CountOverview.vue";
 import CountSheet from "@/components/CountSheet.vue";
 import Mat from "@/components/Mat.vue";
+import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 
@@ -375,6 +476,7 @@ export default {
     Mat,
     CountSheet,
     CountOverview,
+    NewVersionBadge,
   },
   data: function () {
     return {
@@ -865,30 +967,50 @@ export default {
         ],
       },
     ];
+    const displayedMats = [
+      {
+        id: "cheer-Mat",
+        heightFactor: 1,
+      },
+      {
+        id: "garde-Mat",
+        heightFactor: 0.5,
+      },
+      {
+        id: "v34-Mat",
+        heightFactor: 0.75,
+      },
+      {
+        id: "square-Mat",
+        heightFactor: 1,
+      },
+    ];
 
     matAnimations.forEach(({ id, positions }) => {
-      scrollTimeLine.to(
-        `#t${id}`,
-        {
-          keyframes: positions.map((p) => ({
-            ease: p.ease,
-            x: p.x * this.matWidth,
-            y: p.y * this.matWidth,
-          })),
-        },
-        "<"
-      );
-      scrollTimeLine.to(
-        `#c${id}`,
-        {
-          keyframes: positions.map((p) => ({
-            ease: p.ease,
-            cx: p.x * this.matWidth,
-            cy: p.y * this.matWidth,
-          })),
-        },
-        "<"
-      );
+      displayedMats.forEach(({ id: matId, heightFactor }) => {
+        scrollTimeLine.to(
+          `#${matId} #t${id}`,
+          {
+            keyframes: positions.map((p) => ({
+              ease: p.ease,
+              x: p.x * this.matWidth,
+              y: p.y * this.matWidth * heightFactor,
+            })),
+          },
+          "<"
+        );
+        scrollTimeLine.to(
+          `#${matId} #c${id}`,
+          {
+            keyframes: positions.map((p) => ({
+              ease: p.ease,
+              cx: p.x * this.matWidth,
+              cy: p.y * this.matWidth * heightFactor,
+            })),
+          },
+          "<"
+        );
+      });
     });
 
     ScrollTrigger.create({

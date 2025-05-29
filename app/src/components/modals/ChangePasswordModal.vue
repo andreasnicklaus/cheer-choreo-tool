@@ -17,6 +17,7 @@
         :invalid-feedback="newPasswordStateFeedback"
         :valid-feedback="$t('modals.change-password.dein-passwort-ist-gueltig')"
         :label="$t('modals.change-password.neues-passwort')"
+        label-class="label-with-colon"
       >
         <b-form-input
           v-model="newPassword"
@@ -35,6 +36,7 @@
           )
         "
         :label="$t('modals.change-password.wiederholung')"
+        label-class="label-with-colon"
       >
         <b-form-input
           v-model="passwordRepetition"
@@ -61,6 +63,7 @@
 
 <script>
 import AuthService from "@/services/AuthService";
+import MessagingService from "@/services/MessagingService";
 
 export default {
   name: "ChangePasswordModal",
@@ -76,29 +79,17 @@ export default {
     changePassword() {
       AuthService.changePassword(this.newPassword)
         .then(() => {
-          this.$bvToast.toast(
+          MessagingService.showSuccess(
             this.$t("modals.change-password.dein-passwort-wurde-geaendert"),
-            {
-              variant: "success",
-              title: this.$t("modals.change-password.passwort-geaendert"),
-              autoHideDelay: 3000,
-              appendToast: true,
-              solid: true,
-            }
+            this.$t("modals.change-password.passwort-geaendert")
           );
         })
         .catch(() => {
-          this.$bvToast.toast(
+          MessagingService.showError(
             this.$t(
               "modals.change-password.dein-neues-passwort-ist-nicht-erlaubt"
             ),
-            {
-              variant: "danger",
-              title: this.$t("accountView.das-hat-nicht-funktioniert"),
-              autoHideDelay: 3000,
-              appendToast: true,
-              solid: true,
-            }
+            this.$t("accountView.das-hat-nicht-funktioniert")
           );
         });
     },

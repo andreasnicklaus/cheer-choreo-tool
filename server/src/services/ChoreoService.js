@@ -1,4 +1,3 @@
-const { Json } = require("sequelize/lib/utils");
 const Choreo = require("../db/models/choreo");
 const { logger } = require("../plugins/winston");
 const PositionService = require("./PositionService");
@@ -80,27 +79,36 @@ class ChoreoService {
     return Choreo.findOne({
       where: options.all ? { id } : { id, UserId },
       include: defaultInclude,
-    }).then(async (choreo) => {
-      const lineups = await LineupService.findByChoreoId(choreo.id);
-      choreo.dataValues.Lineups = lineups;
-      await Promise.all(
-        choreo.dataValues.Lineups.map(async (lineup) => {
-          lineup.dataValues.Positions = await PositionService.findByLineupId(
-            lineup.id,
-            UserId
-          );
-          return lineup;
-        })
-      );
-      return choreo;
-    });
+    }) // njsscan-ignore: node_nosqli_injection
+      .then(async (choreo) => {
+        const lineups = await LineupService.findByChoreoId(choreo.id);
+        choreo.dataValues.Lineups = lineups;
+        await Promise.all(
+          choreo.dataValues.Lineups.map(async (lineup) => {
+            lineup.dataValues.Positions = await PositionService.findByLineupId(
+              lineup.id,
+              UserId
+            );
+            return lineup;
+          })
+        );
+        return choreo;
+      });
   }
 
-  async create(name, counts, SeasonTeamId, participants, UserId) {
+  async create(
+    name,
+    counts,
+    matType = Choreo.rawAttributes.matType.defaultValue,
+    SeasonTeamId,
+    participants,
+    UserId
+  ) {
     logger.debug(
       `ChoreoService.create ${JSON.stringify({
         name,
         counts,
+        matType,
         SeasonTeamId,
         participants,
         UserId,
@@ -109,6 +117,7 @@ class ChoreoService {
     return Choreo.create({
       name,
       counts,
+      matType,
       SeasonTeamId,
       UserId,
     }).then((choreo) =>
@@ -120,17 +129,24 @@ class ChoreoService {
     );
   }
 
-  async findOrCreate(name, counts, SeasonTeamId, UserId) {
+  async findOrCreate(
+    name,
+    counts,
+    matType = Choreo.rawAttributes.matType.defaultValue,
+    SeasonTeamId,
+    UserId
+  ) {
     logger.debug(
       `ChoreoService.findOrCreate ${JSON.stringify({
         name,
         counts,
+        matType,
         SeasonTeamId,
         UserId,
       })}`
     );
     const [choreo, created] = await Choreo.findOrCreate({
-      where: { name, counts, SeasonTeamId, UserId },
+      where: { name, counts, matType, SeasonTeamId, UserId },
     });
     return choreo;
   }
@@ -141,7 +157,7 @@ class ChoreoService {
         through: {
           color:
             color ||
-            defaultColors[Math.floor(Math.random() * defaultColors.length)],
+            defaultColors[Math.floor(Math.random() * defaultColors.length)], // njsscan-ignore: node_insecure_random_generator
         },
       })
     );
@@ -150,31 +166,35 @@ class ChoreoService {
   async removeParticipant(ChoreoId, MemberId) {
     return ChoreoParticipation.findOne({
       where: { MemberId, ChoreoId },
-    }).then((foundChoreoParticipation) => {
-      return foundChoreoParticipation.destroy();
-    });
+    }) // njsscan-ignore: node_nosqli_injection
+      .then((foundChoreoParticipation) => {
+        return foundChoreoParticipation.destroy();
+      });
   }
 
   async replaceParticipant(ChoreoId, memberToAddId, memberToRemoveId, UserId) {
     return ChoreoParticipation.findOne({
       where: { ChoreoId, MemberId: memberToRemoveId },
-    }).then(async (foundChoreoParticipation) => {
-      const color = foundChoreoParticipation.color;
-      await this.removeParticipant(ChoreoId, memberToRemoveId);
-      await this.addParticipant(ChoreoId, memberToAddId, UserId, color);
+    }) // njsscan-ignore: node_nosqli_injection
+      .then(async (foundChoreoParticipation) => {
+        const color = foundChoreoParticipation.color;
+        await this.removeParticipant(ChoreoId, memberToRemoveId);
+        await this.addParticipant(ChoreoId, memberToAddId, UserId, color);
 
-      await Promise.all([
-        // Update all Positions
-        Position.findAll({
-          where: { UserId, MemberId: memberToRemoveId },
-        }).then((positionList) =>
-          Promise.all(
-            positionList.map((position) => position.setMember(memberToAddId))
-          )
-        ),
-        // Update all Hits
-        Hit.findAll({ where: { ChoreoId, UserId }, include: "Members" }).then(
-          (hitList) => {
+        await Promise.all([
+          // Update all Positions
+          Position.findAll({
+            where: { UserId, MemberId: memberToRemoveId },
+          }).then((positionList) =>
+            Promise.all(
+              positionList.map((position) => position.setMember(memberToAddId))
+            )
+          ),
+          // Update all Hits
+          Hit.findAll({
+            where: { ChoreoId, UserId },
+            include: "Members",
+          }).then((hitList) => {
             hitList = hitList.filter((hit) =>
               hit.Members.some((m) => m.id == memberToRemoveId)
             );
@@ -186,55 +206,59 @@ class ChoreoService {
                 ])
               )
             );
-          }
-        ),
-      ]);
+          }),
+        ]);
 
-      return this.findById(ChoreoId, UserId);
-    });
+        return this.findById(ChoreoId, UserId);
+      });
   }
 
   changeParticipationColor(ChoreoId, participantId, color, UserId) {
     return ChoreoParticipation.findOne({
       where: { ChoreoId, MemberId: participantId },
-    }).then(async (foundChoreoParticipation) => {
-      await foundChoreoParticipation.update({ color });
-      return foundChoreoParticipation.save();
-    });
+    }) // njsscan-ignore: node_nosqli_injection
+      .then(async (foundChoreoParticipation) => {
+        await foundChoreoParticipation.update({ color });
+        return foundChoreoParticipation.save();
+      });
   }
 
   async update(id, data, UserId, options = { all: false }) {
     return Choreo.findOne({
       where: options.all ? { id } : { id, UserId },
-    }).then(async (foundChoreo) => {
-      if (foundChoreo) {
-        logger.debug(
-          `ChoreoService.update ${JSON.stringify({ id, data, UserId })}`
-        );
-        await foundChoreo.update(data);
-        await foundChoreo.save();
-        return this.findById(id, UserId, options);
-      } else {
-        throw new Error(
-          `Beim Update wurde keine Choreo mit der ID ${id} gefunden`
-        );
-      }
-    });
+    }) // njsscan-ignore: node_nosqli_injection
+      .then(async (foundChoreo) => {
+        if (foundChoreo) {
+          logger.debug(
+            `ChoreoService.update ${JSON.stringify({ id, data, UserId })}`
+          );
+          await foundChoreo.update(data);
+          await foundChoreo.save();
+          return this.findById(id, UserId, options);
+        } else {
+          throw new Error(
+            `Beim Update wurde keine Choreo mit der ID ${id} gefunden`
+          );
+        }
+      });
   }
 
   async remove(id, UserId, options = { all: false }) {
     return Choreo.findOne({
       where: options.all ? { id } : { id, UserId },
-    }).then(async (foundChoreo) => {
-      if (foundChoreo) {
-        logger.debug(`ChoreoService.remove ${JSON.stringify({ id, UserId })}`);
-        return foundChoreo.destroy();
-      } else {
-        throw new Error(
-          `Beim Update wurde keine Choreo mit der ID ${id} gefunden`
-        );
-      }
-    });
+    }) // njsscan-ignore: node_nosqli_injection
+      .then(async (foundChoreo) => {
+        if (foundChoreo) {
+          logger.debug(
+            `ChoreoService.remove ${JSON.stringify({ id, UserId })}`
+          );
+          return foundChoreo.destroy();
+        } else {
+          throw new Error(
+            `Beim Update wurde keine Choreo mit der ID ${id} gefunden`
+          );
+        }
+      });
   }
 }
 

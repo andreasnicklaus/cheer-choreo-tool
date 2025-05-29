@@ -1,27 +1,16 @@
 <template>
   <b-skeleton-wrapper :loading="!currentPositions">
     <template #loading>
-      <b-skeleton :width="width + 'px'" :height="height + 'px'"> </b-skeleton>
+      <b-skeleton :width="width + 'px'" :height="_height + 'px'"> </b-skeleton>
     </template>
     <svg
       ref="svgCanvas"
-      class="svgCanvas"
-      :height="height"
+      :class="`svgCanvas ${matType}`"
+      :height="_height"
       :width="width"
       xmlns="http://www.w3.org/2000/svg"
       :style="{
-        border: '1px solid #000000',
-        backgroundColor: '#e5e5f7',
-        backgroundImage:
-          'linear-gradient(to right, #444cf766 5px, #e5e5f744 5px )',
         backgroundSize: width / 7 + 'px 100%',
-        backgroundRepeat: 'repeat',
-        '-webkit-touch-callout': 'none',
-        '-webkit-user-select': 'none',
-        '-khtml-user-select': 'none',
-        '-moz-user-select': 'none',
-        '-ms-user-select': 'none',
-        'user-select': 'none',
       }"
       @mouseleave="mouseLeave"
     >
@@ -50,7 +39,7 @@
               ? 0.7
               : 1,
           cx: (position.x * width) / 100 + 'px',
-          cy: (position.y * height) / 100 + 'px',
+          cy: (position.y * _height) / 100 + 'px',
         }"
       ></circle>
       <text
@@ -61,7 +50,7 @@
         alignment-baseline="central"
         :font-size="dotRadius / 20 + 'em'"
         :transform="`matrix(1,0,0,1,${(position.x * width) / 100},${
-          (position.y * height) / 100
+          (position.y * _height) / 100
         })`"
         :style="{
           'pointer-events': 'none',
@@ -83,6 +72,7 @@
         :style="{
           'pointer-events': 'none',
           fill: '#6c757d !important',
+          display: matType == 'cheer' ? 'block' : 'none',
         }"
       >
         {{ i + 1 }}
@@ -116,7 +106,7 @@ export default {
     },
     height: {
       type: Number,
-      default: 500,
+      required: false,
     },
     dotRadius: {
       type: Number,
@@ -134,9 +124,25 @@ export default {
       type: Boolean,
       default: true,
     },
+    matType: {
+      type: String,
+      default: "square",
+    },
   },
   mounted() {
     this.positions = this.currentPositions;
+  },
+  computed: {
+    _height() {
+      switch (this.matType) {
+        case "1:2":
+          return this.width / 2;
+        case "3:4":
+          return (this.width / 4) * 3;
+        default:
+          return this.height || this.width;
+      }
+    },
   },
   methods: {
     mouseEnter(member) {
@@ -165,7 +171,7 @@ export default {
       );
 
       let xNew = ((event.clientX - canvasX) / this.width) * 100;
-      let yNew = ((event.clientY - canvasY) / this.height) * 100;
+      let yNew = ((event.clientY - canvasY) / this._height) * 100;
 
       if (xNew == selectedPosition?.x && yNew == selectedPosition?.y) return;
 
@@ -207,20 +213,23 @@ export default {
           if (np && op) {
             gsap.fromTo(
               `#c${np.MemberId}`,
-              { cx: (op.x * this.width) / 100, cy: (op.y * this.width) / 100 },
               {
-                cx: (np.x * this.height) / 100,
-                cy: (np.y * this.height) / 100,
+                cx: (op.x * this.width) / 100,
+                cy: (op.y * this._height) / 100,
+              },
+              {
+                cx: (np.x * this.width) / 100,
+                cy: (np.y * this._height) / 100,
                 duration: this.transitionMs / 1000,
                 ease: "none",
               }
             );
             gsap.fromTo(
               `#t${np.MemberId}`,
-              { x: (op.x * this.width) / 100, y: (op.y * this.width) / 100 },
+              { x: (op.x * this.width) / 100, y: (op.y * this._height) / 100 },
               {
-                x: (np.x * this.height) / 100,
-                y: (np.y * this.height) / 100,
+                x: (np.x * this.width) / 100,
+                y: (np.y * this._height) / 100,
                 duration: this.transitionMs / 1000,
                 ease: "none",
               }
@@ -238,3 +247,22 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.svgCanvas {
+  border: 1px solid #a5a8f7;
+  border-radius: 4px;
+  background-color: #e5e5f7;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background-repeat: repeat;
+
+  &.cheer {
+    background-image: linear-gradient(to right, #444cf766 5px, #e5e5f744 5px);
+  }
+}
+</style>

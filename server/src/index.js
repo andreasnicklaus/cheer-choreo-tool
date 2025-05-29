@@ -42,6 +42,7 @@ const { authRouter } = require("./routes/auth");
 const { seasonRouter } = require("./routes/season");
 const { seasonTeamRouter } = require("./routes/seasonTeam");
 const { feedbackRouter } = require("./routes/feedback");
+const { notificationRouter } = require("./routes/notification");
 
 // ADMIN ROUTER
 const { adminRouter } = require("./routes/admin");
@@ -80,6 +81,7 @@ app.use(
           (req, res) => `'nonce-${res.locals.cspNonce}'`,
         ],
         "worker-src": ["'self'", "https:", "blob:"],
+        upgradeInsecureRequests: null,
       },
     },
     referrerPolicy: {
@@ -89,53 +91,52 @@ app.use(
 );
 
 const permPolicy = ["self", `"${process.env.FRONTEND_DOMAIN}"`];
-console.log({ permPolicy });
 app.use(
   permissionsPolicy({
     features: {
       accelerometer: permPolicy,
-      ambientLightSensor: permPolicy,
+      // ambientLightSensor: permPolicy,
       autoplay: permPolicy,
-      battery: permPolicy,
+      // battery: permPolicy,
       camera: permPolicy,
       displayCapture: permPolicy,
-      documentDomain: permPolicy,
-      documentWrite: permPolicy,
+      // documentDomain: permPolicy,
+      // documentWrite: permPolicy,
       encryptedMedia: permPolicy,
-      executionWhileNotRendered: permPolicy,
-      executionWhileOutOfViewport: permPolicy,
-      fontDisplayLateSwap: permPolicy,
+      // executionWhileNotRendered: permPolicy,
+      // executionWhileOutOfViewport: permPolicy,
+      // fontDisplayLateSwap: permPolicy,
       fullscreen: permPolicy,
       geolocation: permPolicy,
       gyroscope: permPolicy,
       interestCohort: permPolicy,
-      layoutAnimations: permPolicy,
-      legacyImageFormats: permPolicy,
-      loadingFrameDefaultEager: permPolicy,
+      // layoutAnimations: permPolicy,
+      // legacyImageFormats: permPolicy,
+      // loadingFrameDefaultEager: permPolicy,
       magnetometer: permPolicy,
       microphone: permPolicy,
       midi: permPolicy,
-      navigationOverride: permPolicy,
-      notifications: permPolicy,
-      oversizedImages: permPolicy,
+      // navigationOverride: permPolicy,
+      // notifications: permPolicy,
+      // oversizedImages: permPolicy,
       payment: permPolicy,
       pictureInPicture: permPolicy,
-      publickeyCredentials: permPolicy,
-      push: permPolicy,
+      // publickeyCredentials: permPolicy,
+      // push: permPolicy,
       serial: permPolicy,
-      speaker: permPolicy,
-      syncScript: permPolicy,
+      // speaker: permPolicy,
+      // syncScript: permPolicy,
       syncXhr: permPolicy,
-      unoptimizedImages: permPolicy,
-      unoptimizedLosslessImages: permPolicy,
-      unoptimizedLossyImages: permPolicy,
-      unsizedMedia: permPolicy,
+      // unoptimizedImages: permPolicy,
+      // unoptimizedLosslessImages: permPolicy,
+      // unoptimizedLossyImages: permPolicy,
+      // unsizedMedia: permPolicy,
       usb: permPolicy,
-      verticalScroll: permPolicy,
-      vibrate: permPolicy,
-      vr: permPolicy,
-      wakeLock: permPolicy,
-      xr: permPolicy,
+      // verticalScroll: permPolicy,
+      // vibrate: permPolicy,
+      // vr: permPolicy,
+      // wakeLock: permPolicy,
+      // xr: permPolicy,
       xrSpatialTracking: permPolicy,
     },
   })
@@ -165,11 +166,16 @@ app.use(
 
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 
+// INTERNATIONALIZATION
+require("./plugins/i18n");
+const i18n = require("i18n");
+app.use(i18n.init);
+
 app.get("/", (req, res) => {
   res.render("../src/views/status", {
     version,
     frontendDomain: process.env.FRONTEND_DOMAIN,
-  });
+  }); // njsscan-ignore: express_lfr_warning
 });
 app.get("/version", (req, res) => {
   res.send(version);
@@ -191,6 +197,7 @@ app.use("/auth", authRouter);
 app.use("/season", seasonRouter);
 app.use("/seasonTeam", seasonTeamRouter);
 app.use("/feedback", feedbackRouter);
+app.use("/notifications", notificationRouter);
 
 app.use("/admin", adminRouter);
 

@@ -148,6 +148,7 @@
                     {
                       "name": "RM 2023",
                       "counts": 377,
+                      "matType": "square",
                       "Participants": ["AO", "AG", "AB", "AE", "DM", "EJ"],
                       "Hits": [
                         {
@@ -1408,6 +1409,7 @@
                     {
                       "name": "Seniorenfeier",
                       "counts": 56,
+                      "matType": "1:2",
                       "Participants": ["AO", "AG", "AB", "AE", "DM", "EJ"],
                       "Hits": [],
                       "Lineups": []
@@ -1417,6 +1419,17 @@
               ]
             }
           ]
+        }
+      ],
+      "notifications": [
+        {
+          "title": "Willkommen",
+          "message": "Willkommen beim Choreo Planer! Wir wünschen dir viel Spaß beim Planen deiner Choreos!"
+        },
+        {
+          "title": "Willkommen2",
+          "message": "Willkommen beim Choreo Planer! Wir wünschen dir viel Spaß beim Planen deiner Choreos!",
+          "read": true
         }
       ]
     }

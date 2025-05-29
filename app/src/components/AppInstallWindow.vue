@@ -8,7 +8,6 @@
       top: 0,
       zIndex: 99,
       backgroundColor: '#fff',
-      borderRadius: '0 0 20px 20px',
       border: 'none',
       boxShadow: '0px 0px 25px #aaa',
       color: '#2c3e50',

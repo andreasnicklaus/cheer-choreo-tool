@@ -27,6 +27,7 @@ import {
   OverlayPlugin,
   ProgressPlugin,
   AvatarPlugin,
+  VBHoverPlugin,
 } from "bootstrap-vue";
 
 const bootstrapPlugins = [
@@ -55,6 +56,7 @@ const bootstrapPlugins = [
   OverlayPlugin,
   ProgressPlugin,
   AvatarPlugin,
+  VBHoverPlugin,
 ];
 bootstrapPlugins.forEach((plugin) => {
   Vue.use(plugin);
@@ -86,6 +88,7 @@ import {
   BIconCaretUpFill,
   BIconShare,
   BIconCheckCircle,
+  BIconCheckCircleFill,
   BIconXCircle,
   BIconQuestionCircle,
   BIconQuestion,
@@ -121,6 +124,13 @@ import {
   BIconHouseFill,
   BIconArrowCounterclockwise,
   BIconPerson,
+  BIconExclamationTriangle,
+  BIconPencilSquare,
+  BIconCloudUpload,
+  BIconStars,
+  BIconBell,
+  BIconEnvelopeOpen,
+  BIconEnvelope,
 } from "bootstrap-vue";
 
 const icons = [
@@ -149,6 +159,7 @@ const icons = [
   BIconCaretUpFill,
   BIconShare,
   BIconCheckCircle,
+  BIconCheckCircleFill,
   BIconXCircle,
   BIconQuestionCircle,
   BIconQuestion,
@@ -184,6 +195,13 @@ const icons = [
   BIconHouseFill,
   BIconArrowCounterclockwise,
   BIconPerson,
+  BIconExclamationTriangle,
+  BIconPencilSquare,
+  BIconCloudUpload,
+  BIconStars,
+  BIconBell,
+  BIconEnvelopeOpen,
+  BIconEnvelope,
 ];
 icons.forEach((icon) => {
   const componentString = icon.options.name

@@ -4,13 +4,19 @@ const { logger } = require("../plugins/winston");
 const basicAuth = require("express-basic-auth");
 const AdminService = require("./AdminService");
 const bcrypt = require("bcrypt");
+const UserService = require("./UserService");
+const MailService = require("./MailService");
+const NotificationService = require("./NotificationService");
+const i18n = require("i18n");
 
 const TOKEN_SECRET = process.env.TOKEN_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
 
 class AuthService {
-  generateAccessToken(UserId) {
-    return jwt.sign({ UserId }, TOKEN_SECRET, { expiresIn: JWT_EXPIRES_IN });
+  generateAccessToken(UserId, { expiresIn = null } = {}) {
+    return jwt.sign({ UserId }, TOKEN_SECRET, {
+      expiresIn: expiresIn || JWT_EXPIRES_IN,
+    });
   }
 
   authenticateUser(failIfNotLoggedIn = true) {
@@ -40,11 +46,74 @@ class AuthService {
               `User ${user.username} with id ${user.id} used this token: ${token}`
             );
             req.UserId = user.id;
+            req.User = user;
             next();
           })
           .catch((e) => next(e));
       });
     };
+  }
+
+  resolveSsoToken(token, locale = "en") {
+    return new Promise((resolve, reject) => {
+      jwt.verify(token, TOKEN_SECRET, async (err, content) => {
+        if (err) {
+          return reject(
+            new Error(i18n.__({ phrase: "errors.invalid-sso-token", locale }))
+          );
+        }
+
+        return User.findByPk(content.UserId).then((user) => {
+          if (!user) {
+            return reject(
+              new Error(
+                i18n.__({ phrase: "errors.sso-token-user-missing", locale })
+              )
+            );
+          }
+
+          logger.debug(
+            `User ${user.username} with id ${user.id} used this SSO token: ${token}`
+          );
+          resolve(user);
+        });
+      });
+    });
+  }
+
+  generateSsoToken(email, locale = "en") {
+    return UserService.findByUsernameOrEmail(email).then((user) => {
+      if (!user)
+        throw new Error(
+          i18n.__(
+            { phrase: "errors.entity-not-found", locale },
+            { entity: "user" }
+          )
+        );
+      if (!user.email)
+        throw new Error(
+          i18n.__({ phrase: "errors.user-has-no-email", locale })
+        );
+
+      const token = this.generateAccessToken(user.id, {
+        expiresIn: process.env.SSO_TOKEN_EXPIRES_IN,
+      });
+      return MailService.sendSsoEmail(
+        user.email,
+        user.username,
+        token,
+        locale
+      ).then(() =>
+        NotificationService.createOne(
+          i18n.__({ phrase: "notifications.sso-link-was-sent.title", locale }),
+          i18n.__({
+            phrase: "notifications.sso-link-was-sent.message",
+            locale,
+          }),
+          user.id
+        )
+      );
+    });
   }
 
   authenticateAdmin() {
@@ -58,7 +127,7 @@ class AuthService {
           return callback(null, true);
         })
         .catch((e) => {
-          console.error(e);
+          logger.error(e);
           return callback(null, false);
         });
     }

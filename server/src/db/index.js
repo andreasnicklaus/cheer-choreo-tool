@@ -6,9 +6,11 @@ const dbName = process.env.POSTGRES_DB;
 const dbUsername = process.env.POSTGRES_USER;
 const dbPassword = process.env.POSTGRES_PASSWORD;
 const dbHost = process.env.DB_HOST;
+const dbPort = process.env.DB_PORT || 5432;
 
 const db = new Sequelize(dbName, dbUsername, dbPassword, {
   host: dbHost,
+  port: dbPort,
   dialect: "postgres",
   logging: dbLogger.debug.bind(dbLogger),
 });
@@ -29,6 +31,7 @@ const seed = require("./seed");
 const ChoreoParticipation = require("./models/choreoParticipation");
 const Feedback = require("./models/feedback");
 const Admin = require("./models/admin");
+const Notification = require("./models/notification");
 
 Team.hasMany(SeasonTeam, {
   onDelete: "CASCADE",
@@ -132,6 +135,9 @@ Season.belongsTo(User);
 
 Feedback.belongsTo(User);
 User.hasMany(Feedback);
+
+Notification.belongsTo(User);
+User.hasMany(Notification);
 
 db.sync({
   alter: true,

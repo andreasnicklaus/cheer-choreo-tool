@@ -85,7 +85,7 @@ class ClubService {
           "name",
         ],
       ],
-    });
+    }); // njsscan-ignore: node_nosqli_injection
   }
 
   async findByName(name, UserId) {
@@ -142,6 +142,7 @@ class ClubService {
             ChoreoService.create(
               "Demo-Choreo",
               25,
+              undefined,
               seasonTeam.id,
               members.map((m) => ({ id: m.id })),
               UserId
@@ -180,8 +181,8 @@ class ClubService {
   }
 
   async update(id, data, UserId, options = { all: false }) {
-    return Club.findOne({ where: options.all ? { id } : { id, UserId } }).then(
-      async (foundClub) => {
+    return Club.findOne({ where: options.all ? { id } : { id, UserId } }) // njsscan-ignore: node_nosqli_injection
+      .then(async (foundClub) => {
         if (foundClub) {
           logger.debug(
             `ClubService.update ${JSON.stringify({ id, data, UserId })}`
@@ -191,21 +192,19 @@ class ClubService {
         } else {
           throw Error(`Beim Update wurde kein Club mit der ID ${id} gefunden`);
         }
-      }
-    );
+      });
   }
 
   async remove(id, UserId, options = { all: false }) {
-    return Club.findOne({ where: options.all ? { id } : { id, UserId } }).then(
-      (foundClub) => {
+    return Club.findOne({ where: options.all ? { id } : { id, UserId } }) // njsscan-ignore: node_nosqli_injection
+      .then((foundClub) => {
         if (foundClub) {
           logger.debug(`ClubService.remove ${JSON.stringify({ id })}`);
           return foundClub.destroy();
         } else {
           throw Error(`Beim Löschen wurde kein Club mit der ID ${id} gefunden`);
         }
-      }
-    );
+      });
   }
 }
 

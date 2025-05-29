@@ -26,6 +26,9 @@ services:
       - 3000:3000
     volumes:
       - ./logs:/usr/src/app/logs
+      - ./uploads:/usr/src/app/uploads
+      - ./uploads/profilePictures:/usr/src/app/uploads/profilePictures
+      - ./uploads/clubLogos:/usr/src/app/uploads/clubLogos
     depends_on:
       db:
         condition: service_healthy

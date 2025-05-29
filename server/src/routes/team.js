@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const TeamService = require("../services/TeamService");
 const { authenticateUser } = require("../services/AuthService");
+const NotificationService = require("../services/NotificationService");
 
 const router = Router();
 
@@ -18,7 +19,7 @@ router.get("/:id?", authenticateUser(), (req, res, next) => {
     if (req.query.name)
       return TeamService.findByName(req.query.name, req.UserId)
         .then((foundTeam) => {
-          if (!foundTeam) res.status(404).send("Not found");
+          if (!foundTeam) res.status(404).send(req.t("responses.not-found"));
           else res.send(foundTeam);
           return next();
         })
@@ -37,6 +38,14 @@ router.post("/", authenticateUser(), (req, res, next) => {
   const { name, clubId, seasonId } = req.body;
   return TeamService.create(name, clubId, seasonId, req.UserId)
     .then((result) => {
+      NotificationService.createOne(
+        req.t("notifications.team-created.title"),
+        req.t("notifications.team-created.message", {
+          name,
+          teamId: result.id,
+        }),
+        req.UserId
+      );
       res.send(result);
       return next();
     })

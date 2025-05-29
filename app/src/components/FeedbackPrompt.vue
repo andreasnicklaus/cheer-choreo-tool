@@ -174,7 +174,7 @@ export default {
       return document.querySelectorAll(".modal.in").length > 0;
     },
     initializeShowTimer() {
-      this.showTimer = setTimeout(this.timedOpen, 120_000);
+      this.showTimer = setTimeout(this.timedOpen, 600_000); // opens the feedback prompt modal after 10 minutes of inactivity
     },
     resetShowTimer() {
       if (this.showTimer) {

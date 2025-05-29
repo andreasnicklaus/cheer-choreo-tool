@@ -8,7 +8,7 @@ router.get("/:id?", authenticateUser(), (req, res, next) => {
   if (req.params.id)
     ChoreoService.findById(req.params.id, req.UserId)
       .then((foundChoreo) => {
-        if (!foundChoreo) res.status(404).send("Not found");
+        if (!foundChoreo) res.status(404).send(req.t("responses.not-found"));
         else res.send(foundChoreo);
         return next();
       })
@@ -24,10 +24,11 @@ router.get("/:id?", authenticateUser(), (req, res, next) => {
 });
 
 router.post("/", authenticateUser(), (req, res, next) => {
-  const { name, counts, seasonTeamId, participants } = req.body;
+  const { name, counts, matType, seasonTeamId, participants } = req.body;
   return ChoreoService.create(
     name,
     counts,
+    matType,
     seasonTeamId,
     participants,
     req.UserId

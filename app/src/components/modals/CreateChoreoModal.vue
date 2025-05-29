@@ -10,7 +10,8 @@
   >
     <b-form>
       <b-form-group
-        label="Name:"
+        :label="$t('name')"
+        label-class="label-with-colon"
         :state="newChoreoNameIsValid"
         :invalid-feedback="newChoreoNameStateFeedback"
         :valid-feedback="$t('login.gueltig')"
@@ -25,7 +26,10 @@
           "
         />
       </b-form-group>
-      <b-form-group :label="$t('modals.create-choreo.laenge')">
+      <b-form-group
+        :label="$t('modals.create-choreo.laenge')"
+        label-class="label-with-colon"
+      >
         <b-row>
           <b-col>
             <b-form-group
@@ -69,8 +73,27 @@
           }}
         </p>
       </b-form-group>
+
       <b-form-group
-        label="Team:"
+        label-class="label-with-colon"
+        :state="newChoreoMatTypeIsValid"
+        :invalid-feedback="newChoreoMatTypeStateFeedback"
+      >
+        <template #label>
+          {{ $t("mat") }}
+          <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
+        </template>
+        <b-form-select
+          v-model="newChoreoMatType"
+          required
+          :state="newChoreoMatTypeIsValid"
+          :options="matTypeOptions"
+        />
+      </b-form-group>
+
+      <b-form-group
+        :label="this.$tc('team', 1)"
+        label-class="label-with-colon"
         :state="newChoreoTeamIsValid"
         :invalid-feedback="newChoreoTeamStateFeedback"
       >
@@ -82,7 +105,8 @@
         />
       </b-form-group>
       <b-form-group
-        label="Season:"
+        :label="$tc('season', 1)"
+        label-class="label-with-colon"
         :state="newChoreoSeasonIsValid"
         :invalid-feedback="newChoreoSeasonStateFeedback"
         :valid-feedback="$t('login.gueltig')"
@@ -102,7 +126,7 @@
           "
         />
       </b-form-group>
-      <b-form-group :label="$t('teilnehmer')">
+      <b-form-group :label="$t('teilnehmer')" label-class="label-with-colon">
         <b-skeleton-wrapper
           :loading="!newChoreoTeamIsValid || !newChoreoSeasonIsValid"
         >
@@ -207,14 +231,17 @@
 <script>
 import ChoreoService from "@/services/ChoreoService";
 import ColorService from "@/services/ColorService";
+import NewVersionBadge from "@/components/NewVersionBadge.vue";
 
 export default {
   name: "CreateChoreoModal",
+  components: { NewVersionBadge },
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     newChoreoName: null,
     newChoreoAchter: 1,
     newChoreoCount: 0,
+    newChoreoMatType: "cheer",
     newChoreoTeamId: null,
     newChoreoSeasonId: null,
     newChoreoParticipantIds: [],
@@ -244,6 +271,7 @@ export default {
       this.newChoreoName = null;
       this.newChoreoAchter = 1;
       this.newChoreoCount = 0;
+      this.newChoreoMatType = "cheer";
       this.newChoreoTeamId = this.teams[0]?.id;
 
       const seasonTeamsOfSelectedTeam = this.teams.find(
@@ -281,6 +309,7 @@ export default {
       ChoreoService.create(
         this.newChoreoName,
         count,
+        this.newChoreoMatType,
         seasonTeamId,
         participants
       ).then((choreo) => {
@@ -313,11 +342,15 @@ export default {
     },
     timeEstimationString() {
       const date = new Date(
-        (this.newChoreoAchter * 8 + this.newChoreoCount) * 400
+        (parseInt(this.newChoreoAchter) * 8 + parseInt(this.newChoreoCount)) *
+          400
       );
       const minutes = date.getMinutes();
       const seconds = date.getSeconds();
       return `${minutes} Min. ${seconds} Sek.`;
+    },
+    matTypeOptions() {
+      return ChoreoService.matTypeOptions();
     },
     newChoreoNameIsValid() {
       return this.newChoreoName != null && this.newChoreoName.length >= 2;
@@ -371,6 +404,18 @@ export default {
     newChoreoTeamStateFeedback() {
       if (!this.newChoreoTeamId) return this.$t("erforderlich");
       if (!this.teams.map((t) => t.id).includes(this.newChoreoTeamId))
+        return this.$t("errors.unerwarteter-fehler");
+      return null;
+    },
+    newChoreoMatTypeIsValid() {
+      return (
+        this.newChoreoMatType != null &&
+        ["cheer", "square", "1:2", "3:4"].includes(this.newChoreoMatType)
+      );
+    },
+    newChoreoMatTypeStateFeedback() {
+      if (!this.newChoreoMatType) return this.$t("erforderlich");
+      if (!["cheer", "square", "1:2", "3:4"].includes(this.newChoreoMatType))
         return this.$t("errors.unerwarteter-fehler");
       return null;
     },

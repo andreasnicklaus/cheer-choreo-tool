@@ -68,7 +68,7 @@
                   <b>{{ Math.floor(count / 8) + 1 }}</b>
                 </p>
                 <p class="mb-0">
-                  {{ $t("count", 1) }}: <b>{{ (count % 8) + 1 }}</b>
+                  {{ $tc("count", 1) }}: <b>{{ (count % 8) + 1 }}</b>
                 </p>
               </div>
             </b-row>
@@ -137,44 +137,60 @@
             <template #button-content>
               <b-icon-three-dots-vertical />
             </template>
-            <b-dropdown-item
-              :to="{
-                name: 'PDF',
-                params: { choreoId, locale: $root.$i18n.localele },
-              }"
-            >
-              <b-icon-file-pdf class="mr-2" />
-              {{ $t("Home.countsheet-als-pdf") }}
-            </b-dropdown-item>
-            <b-dropdown-item
-              :to="{
-                name: 'Video',
-                params: { choreoId, locale: $root.$i18n.locale },
-              }"
-            >
-              <b-icon-film class="mr-2" />
-              {{ $t("editView.video-exportieren") }}
-            </b-dropdown-item>
+            <b-dropdown-group :header="$t('editView.exportieren')">
+              <b-dropdown-item
+                :to="{
+                  name: 'PDF',
+                  params: { choreoId, locale: $root.$i18n.localele },
+                }"
+              >
+                <b-icon-file-pdf class="mr-2" />
+                {{ $t("Home.countsheet-als-pdf") }}
+              </b-dropdown-item>
+              <b-dropdown-item
+                :to="{
+                  name: 'Video',
+                  params: { choreoId, locale: $root.$i18n.locale },
+                }"
+              >
+                <b-icon-film class="mr-2" />
+                {{ $t("editView.video-exportieren") }}
+              </b-dropdown-item>
+            </b-dropdown-group>
             <b-dropdown-divider />
-            <b-dropdown-item
-              @click="() => $refs.changeChoreoLengthModal.open()"
-              :disabled="!choreo"
-            >
-              <b-icon-hash class="mr-2" />
-              {{ $t("editView.laenge-anpassen") }}
-            </b-dropdown-item>
-            <b-dropdown-text>
-              <b-checkbox switch v-model="snapping">
-                {{
-                  $t("editView.positionen-horizontal-und-vertikal-ausrichten")
-                }}
-              </b-checkbox>
-            </b-dropdown-text>
-            <b-dropdown-text>
-              <b-checkbox switch v-model="moveWithCountEdit">
-                {{ $t("editView.beim-bearbeiten-den-count-mitwechseln") }}
-              </b-checkbox>
-            </b-dropdown-text>
+            <b-dropdown-group :header="$t('editView.choreo-einstellungen')">
+              <b-dropdown-item
+                @click="() => $refs.changeChoreoLengthModal.open()"
+                :disabled="!choreo"
+              >
+                <b-icon-hash class="mr-2" />
+                {{ $t("editView.laenge-anpassen") }}
+              </b-dropdown-item>
+              <b-dropdown-item
+                @click="() => $refs.changeMatLayoutModal.open()"
+                :disabled="!choreo"
+              >
+                <b-icon-layout-three-columns class="mr-2" />
+                {{ $t("editView.change-mat-layout") }}
+                <NewVersionBadge
+                  :versions="['0.10.3', '0.11.0']"
+                /> </b-dropdown-item
+            ></b-dropdown-group>
+            <b-dropdown-divider />
+            <b-dropdown-group :header="$t('editView.bearbeitung')">
+              <b-dropdown-text style="width: 250px">
+                <b-checkbox switch v-model="snapping">
+                  {{
+                    $t("editView.positionen-horizontal-und-vertikal-ausrichten")
+                  }}
+                </b-checkbox>
+              </b-dropdown-text>
+              <b-dropdown-text>
+                <b-checkbox switch v-model="moveWithCountEdit">
+                  {{ $t("editView.beim-bearbeiten-den-count-mitwechseln") }}
+                </b-checkbox>
+              </b-dropdown-text>
+            </b-dropdown-group>
             <b-dropdown-divider />
             <b-dropdown-item
               @click="() => $refs.deleteChoreoModal.open()"
@@ -198,6 +214,7 @@
           :transitionMs="transitionMs"
           :teamMembers="teamMembers"
           :snapping="snapping"
+          :matType="choreo?.matType"
           @positionChange="onPositionChange"
         />
       </b-col>
@@ -354,6 +371,11 @@
       :choreo="choreo"
       @countUpdate="onCountUpdate"
     />
+    <ChangeMatLayoutModal
+      ref="changeMatLayoutModal"
+      :choreo="choreo"
+      @matTypeUpdate="onMatTypeUpdate"
+    />
     <DeleteChoreoModal ref="deleteChoreoModal" :choreoId="choreoId" />
     <HowToModal ref="howToModal" />
     <SelectHitModal
@@ -384,10 +406,13 @@ import CreateHitModal from "@/components/modals/CreateHitModal.vue";
 import HowToModal from "@/components/modals/HowToModal.vue";
 import DeleteChoreoModal from "@/components/modals/DeleteChoreoModal.vue";
 import ChangeChoreoLengthModal from "@/components/modals/ChangeChoreoLengthModal.vue";
+import ChangeMatLayoutModal from "@/components/modals/ChangeMatLayoutModal.vue";
 import SelectHitModal from "@/components/modals/SelectHitModal.vue";
 import ColorService from "@/services/ColorService";
 import ParticipantSubstitutionModal from "@/components/modals/ParticipantSubstitutionModal.vue";
 import MobileChoreoEditModal from "@/components/modals/MobileChoreoEditModal.vue";
+import NewVersionBadge from "@/components/NewVersionBadge.vue";
+import MessagingService from "@/services/MessagingService";
 
 export default {
   name: "EditView",
@@ -400,9 +425,11 @@ export default {
     HowToModal,
     DeleteChoreoModal,
     ChangeChoreoLengthModal,
+    ChangeMatLayoutModal,
     SelectHitModal,
     ParticipantSubstitutionModal,
     MobileChoreoEditModal,
+    NewVersionBadge,
   },
   data: function () {
     return {
@@ -676,6 +703,10 @@ export default {
       this.choreo.counts = counts;
       this.showSuccessMessage();
     },
+    onMatTypeUpdate(matType) {
+      this.choreo.matType = matType;
+      this.showSuccessMessage();
+    },
     openCreateHitModal() {
       this.$refs.createHitModal.open();
     },
@@ -701,19 +732,13 @@ export default {
       this.$refs.countOverview.$el.scrollIntoView({ behavior: "smooth" });
     },
     showSuccessMessage(savedType) {
-      const toastId = "toastId";
-      this.$bvToast.hide(toastId);
-      this.$bvToast.toast(
+      MessagingService.showSuccess(
         savedType
           ? `${savedType} ${this.$t("editView.wurde-gespeichert")}`
           : this.$t("editView.deine-choreo-wurde-gespeichert"),
+        this.$t("editView.gespeichert"),
         {
-          variant: "success",
-          title: this.$t("editView.gespeichert"),
-          autoHideDelay: 1500,
-          appendToast: false,
-          solid: true,
-          id: toastId,
+          autoHideDelay: 1_500,
         }
       );
     },

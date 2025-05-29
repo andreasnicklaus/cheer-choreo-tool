@@ -2,8 +2,6 @@ name: Build and push docker server images
 
 on:
   push:
-    branches:
-      - "main"
     paths:
       - "server/**"
       - ".github/workflows/docker-server-image.yml"
@@ -38,24 +36,21 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      # - name: Build and push for arm v7
-      #   uses: docker/build-push-action@v5
-      #   with:
-      #     context: ./server
-      #     file: ./server/arm32v7.Dockerfile
-      #     platforms: linux/arm/v7
-      #     push: true
-      #     tags: ${{ steps.meta.outputs.tags }}
-      #     labels: ${{ steps.meta.outputs.labels }}
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
           context: ./server
           file: ./server/Dockerfile
           platforms: linux/amd64
-          push: true
+          push: ${{github.ref == 'refs/heads/main'}}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  deployment-trigger:
+    runs-on: ubuntu-latest
+    needs: docker-server
+    if: github.ref == 'refs/heads/main'
+    steps:
       - name: Trigger server deployment
         uses: tyrrrz/action-http-request@master
         with:

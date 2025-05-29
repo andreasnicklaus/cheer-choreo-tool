@@ -29,7 +29,7 @@ class TeamService {
     return Team.findOne({
       where: { id, UserId },
       include: defaultInclude,
-    });
+    }); // njsscan-ignore: node_nosqli_injection
   }
 
   getCount() {
@@ -73,8 +73,8 @@ class TeamService {
   }
 
   async update(id, data, UserId, options = { all: false }) {
-    return Team.findOne({ where: options.all ? { id } : { id, UserId } }).then(
-      async (foundTeam) => {
+    return Team.findOne({ where: options.all ? { id } : { id, UserId } }) // njsscan-ignore: node_nosqli_injection
+      .then(async (foundTeam) => {
         if (foundTeam) {
           logger.debug(
             `TeamService.update ${JSON.stringify({ id, data, UserId })}`
@@ -83,21 +83,19 @@ class TeamService {
           return foundTeam.save();
         } else
           throw Error(`Beim Update wurde kein Team mit der ID ${id} gefunden`);
-      }
-    );
+      });
   }
 
   async remove(id, UserId, options = { all: false }) {
-    return Team.findOne({ where: options.all ? { id } : { id, UserId } }).then(
-      (foundTeam) => {
+    return Team.findOne({ where: options.all ? { id } : { id, UserId } }) // njsscan-ignore: node_nosqli_injection
+      .then((foundTeam) => {
         if (foundTeam) {
           logger.debug(`TeamService.remove ${JSON.stringify({ id, UserId })}`);
           return foundTeam.destroy();
         } else {
           throw Error(`Beim Löschen wurde kein Team mit der ID ${id} gefunden`);
         }
-      }
-    );
+      });
   }
 }
 

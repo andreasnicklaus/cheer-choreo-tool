@@ -22,7 +22,11 @@
         }
       "
     >
-      <b-form-group :label="$t('modals.create-lineup.start')" label-cols="2">
+      <b-form-group
+        :label="$t('modals.create-lineup.start')"
+        label-cols="2"
+        label-class="label-with-colon"
+      >
         <b-row>
           <b-col>
             <b-form-group
@@ -58,6 +62,7 @@
       </b-form-group>
       <b-form-group
         :label="$t('modals.create-lineup.ende')"
+        label-class="label-with-colon"
         label-cols="2"
         :state="startIsBeforeEnd"
         :invalid-feedback="startIsBeforeEndStateFeedback"
@@ -97,6 +102,7 @@
       </b-form-group>
       <b-form-group
         :label="$t('teilnehmer')"
+        label-class="label-with-colon"
         :state="editLineupMembersIsValid"
         :invalid-feedback="editLineupMembersStateFeedback"
       >

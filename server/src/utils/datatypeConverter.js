@@ -6,6 +6,8 @@ module.exports.sequelizeDataTypeToHtmlInputType = (sequelizeDataType) => {
       return "number";
     case "UUID":
       return "text";
+    case "ENUM":
+      return "ENUM";
     default:
       return "text";
   }

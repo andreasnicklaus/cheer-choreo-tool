@@ -169,7 +169,11 @@
               </b-row>
             </h5>
             <b-col>
-              <b-form-group label="Count:" label-cols="2">
+              <b-form-group
+                :label="$tc('count', 1)"
+                label-cols="2"
+                label-class="label-with-colon"
+              >
                 <b-row>
                   <b-col>
                     <b-form-group
@@ -206,7 +210,8 @@
               <hr />
 
               <b-form-group
-                label="Teilnehmer:"
+                :label="$t('teilnehmer')"
+                label-class="label-with-colon"
                 :state="editHitMembersIsValid"
                 :invalid-feedback="editHitMembersStateFeedback"
               >
@@ -424,7 +429,11 @@
             </h5>
 
             <b-form>
-              <b-form-group label="Start:" label-cols="2">
+              <b-form-group
+                :label="$t('nav.start')"
+                label-cols="2"
+                label-class="label-with-colon"
+              >
                 <b-row>
                   <b-col>
                     <b-form-group
@@ -458,7 +467,8 @@
                 </b-row>
               </b-form-group>
               <b-form-group
-                label="Ende:"
+                :label="$t('hits.ende')"
+                label-class="label-with-colon"
                 label-cols="2"
                 :state="editLineupStartIsBeforeEnd"
                 :invalid-feedback="editLineupStartIsBeforeEndStateFeedback"
@@ -499,7 +509,8 @@
               <hr />
 
               <b-form-group
-                label="Teilnehmer:"
+                :label="$t('teilnehmer')"
+                label-class="label-with-colon"
                 :state="editLineupMembersIsValid"
                 :invalid-feedback="editLineupMembersStateFeedback"
               >

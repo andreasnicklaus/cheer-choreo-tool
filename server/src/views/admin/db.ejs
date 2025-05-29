@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= locals.locale? locale : 'en' %>">
   <head>
     <%- include('./partials/head'); %>
   </head>
@@ -11,12 +11,12 @@
       <div class="row justify-content-between align-items-center mb-3">
         <div class="col-auto">
           <% [
-            { name: "Clubs", path: "/clubs", variant: "primary" },
-            { name: "Teams", path: "/teams", variant: "danger" },
-            { name: "Seasons", path: "/seasons", variant: "success" },
+            { name: tn('entities.club', 2), path: "/clubs", variant: "primary" },
+            { name: tn('entities.team', 2), path: "/teams", variant: "danger" },
+            { name: tn('entities.season', 2), path: "/seasons", variant: "success" },
+            { name: tn('entities.choreo', 2), path: "/choreos", variant: "info" },
             // { name: "SeasonTeams", path: "/seasonTeams", variant: "warning" },
-            { name: "Members", path: "/members", variant: "light" },
-            { name: "Choreos", path: "/choreos", variant: "info" },
+            { name: tn('entities.member', 2), path: "/members", variant: "light" },
           ].forEach(entity => { %>
           <a role="button" href="/admin/db<%= entity.path %>" class="btn btn-<%= path.endsWith(entity.path) ? "" : "outline-" %><%= entity.variant || "primary"%> btn-sm">
             <%= entity.name %>
@@ -33,7 +33,7 @@
             data-bs-toggle="modal"
             data-bs-target="#<%= path.split("/")[path.split("/").length - 1].toLowerCase() %>CreateModal"
           >
-            <i class="bi bi-plus-circle"></i> Add
+            <i class="bi bi-plus-circle"></i> <%= t('general.add') %>
           </button>
         </div>
         <% } %>
@@ -52,15 +52,15 @@
               </datalist> 
               <% if (query.UserId) { %>
               <div id="userIdHelp" class="form-text">
-                Letzte Suche: <%= userList.find(option => option.value == query?.UserId).name %>
+                <%= t('admin.db.last-search') %> <%= userList.find(option => option.value == query?.UserId).name %>
                 </div>
                 <% } %>
             </div>
             <div class="col">
-              <input type="text" name="s" placeholder="Search" value="<%= query?.s %>" class="form-control" />
+              <input type="text" name="s" placeholder="<%= t('admin.db.search') %>" value="<%= query?.s %>" class="form-control" />
               <% if (query.s) { %>
               <div id="userIdHelp" class="form-text">
-                Letzte Suche: <%= query.s %>
+                <%= t('admin.db.last-search') %> <%= query.s %>
                 </div>
                 <% } %>
             </div>
@@ -81,9 +81,9 @@
               <% columns.forEach(column => { %>
                 <th style="text-transform: capitalize;" scope="col"><%= column %></th>
                 <% }); %>
-              <th scope="col">Created At</th>
-              <th scope="col">Updated At</th>
-              <th scope="col">Actions</th>
+              <th scope="col"><%= t('entities.created-at') %></th>
+              <th scope="col"><%= t('entities.updated-at') %></th>
+              <th scope="col"><%= t('entities.actions') %></th>
           </tr>
           </thead>
           <tbody class="table-group-divider">
@@ -92,8 +92,8 @@
                 <% columns.forEach(column => { %>
                   <td scope="col"><%= datum[column] %></td>
                 <% }); %>
-                <td><%= new Date(datum.createdAt).toLocaleString("en-EN") %></td>
-                <td><%= new Date(datum.updatedAt).toLocaleString("en-EN") %></td>
+                <td><%= new Date(datum.createdAt).toLocaleString(locale) %></td>
+                <td><%= new Date(datum.updatedAt).toLocaleString(locale) %></td>
                 <td>
                   <div class="btn-group">
                     
@@ -113,7 +113,7 @@
                   <button
                     class="btn btn-danger btn-sm"
                     type="button"
-                    onclick="deleteEntity('<%= datum.id %>')"
+                    data-delete-id="<%= datum.id %>"
                   >
                     <i class="bi bi-trash-fill"></i>
                   </button>
@@ -127,9 +127,9 @@
               <% columns.forEach(column => { %>
                 <th style="text-transform: capitalize;" scope="col"><%= column %></th>
                 <% }); %>
-                <th scope="col">Created At</th>
-                <th scope="col">Updated At</th>
-                <th scope="col">Actions</th>
+                <th scope="col"><%= t('entities.created-at') %></th>
+                <th scope="col"><%= t('entities.updated-at') %></th>
+                <th scope="col"><%= t('entities.actions') %></th>
             </tr>
           </tfoot>
         </table>
@@ -140,8 +140,16 @@
 
     <footer><%- include('./partials/footer'); %></footer>
     <script type="text/javascript" defer nonce="<%= cspNonce %>">
+      const deleteButtons = document.querySelectorAll('[data-delete-id]')
+      deleteButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const id = button.getAttribute('data-delete-id');
+          deleteEntity(id);
+        });
+      })
+
       function deleteEntity(id) {
-        if (confirm('Are you sure you want to delete this entity?')) {
+        if (confirm("<%= t('admin.db.are-you-sure-you-want-to-delete-this-entity') %>")) {
           fetch(`<%= path %>/${id}`, {
             method: 'DELETE',
           })
@@ -149,12 +157,12 @@
             if (response.ok) {
               location.reload();
             } else {
-              alert('Failed to delete entity.');
+              alert("<%= t('admin.db.failed-to-delete-entity') %>");
             }
           })
           .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to delete entity.');
+            console.error("<%= t('errors.error') %>", error);
+            alert("<%= t('admin.db.failed-to-delete-entity') %>");
           });
         }
       }

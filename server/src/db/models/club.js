@@ -13,6 +13,10 @@ const Club = db.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    logoExtension: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     paranoid: true,

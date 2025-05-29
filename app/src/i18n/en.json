@@ -6,21 +6,39 @@
     "bestaetigt": "confirmed",
     "check-email": "Please check your email inbox and confirm your email address with the link contained therein!",
     "das-hat-nicht-funktioniert": "That didn't work",
-    "erstellt-am": "Created on",
+    "erstellt-am": "Created",
     "konto-loeschen": "Delete account",
     "nicht-bestaetigt": "not confirmed",
     "no-email": "no known email address",
     "nutzername-nicht-erlaubt": "Your new username is not allowed. Either the username is empty or there is already a user with the name.",
     "passwort-aendern": "Change Password",
     "unbekannter-fehler": "An unknown error occurred. Reload the page or log in again to display the page.",
-    "zuletzt-geaendert-am": "Last changed on"
+    "zuletzt-geaendert-am": "Last updated",
+    "konto-loeschen-descriptions": "Only delete your account if you no longer want to use the app. Your data will be marked as inactive.",
+    "gefahrenbereich": "Danger zone",
+    "profilbild": "Profile picture",
+    "bild-entfernen": "Remove image",
+    "save-new-email-info": "After saving you have to confirm your email address!",
+    "no-email-info": "You haven't saved an email address yet.",
+    "vereinslogo": "Club logo",
+    "als-aktiven-verein-auswaehlen": "Select as active club",
+    "du-hast-diesen-verein-als-aktiven-verein-ausgewaehlt": "You selected this club as the active club.",
+    "cant-delete-only-club": "You can't remove your only club! \nCreate another club first.",
+    "cant-delete-active-club": "You cannot delete your active club! \nFirst select another one first.",
+    "verein-loeschen": "Delete club",
+    "deine-nutzerinformationen-wurden-gespeichert": "Your user information was saved!",
+    "deine-vereinsinformationen-wurden-gespeichert": "Your club information was saved!",
+    "lade-ein-bild-hoch-max-mb": "Upload a picture: max. {0} MB",
+    "es-ist-nicht-moeglich-bilder-hochzuladen-die-groesser-al-mb-gross-sind": "It is not possible to upload images that are larger than {0} MB. Select a smaller file!",
+    "die-e-mail-zur-bestaetigung-deiner-e-mail-adresse-wurde-erneut-verschickt-check-dein-postfach": "The email to confirm your email address has been sent. Check your mailbox!",
+    "e-mail-versandt": "Email sent"
   },
   "achter": "Eight",
   "alle-auswaehlen": "Select all",
   "anmelden": "Log in",
   "app-install": {
     "app-herunterladen": "Download the app!",
-    "install-info": "The app does not occupy a storage space on your device and makes it easier to start the application!",
+    "install-info": "The app does not occupy any storage space on your device and makes it easier to start the application!",
     "installieren": "INSTALL",
     "nein-danke": "No thanks!"
   },
@@ -97,7 +115,11 @@
     "zum-anfang-springen": "Jump at the beginning",
     "zum-ende-springen": "Skip to the end",
     "zum-naechsten-count-springen": "Jump to the next count",
-    "zum-vorigen-count-springen": "Jump to the previous count"
+    "zum-vorigen-count-springen": "Jump to the previous count",
+    "change-mat-layout": "Change mat layout",
+    "exportieren": "Export",
+    "choreo-einstellungen": "Choreo settings",
+    "bearbeitung": "Editing"
   },
   "erfolgreich": "Successful",
   "erforderlich": "Required",
@@ -301,7 +323,15 @@
     "waehle-aus-wer-soll": "Select who should appear on the video",
     "waehle-mit-allen-aus": "Choose whether you want to have a video with everybody on the mat or selected people",
     "warte-bis-video": "Wait until your video is finished",
-    "zum-loslegen": "Just register to get started and create the first team:"
+    "zum-loslegen": "Just register to get started and create the first team:",
+    "personalisierung": "Personalization",
+    "branding-deines-vereins": "Your club's branding",
+    "mach-werbung-fuer-dein-team": "Advertising for your team",
+    "lade-das-logo-deines-vereins-hoch": "Upload your club's logo",
+    "garde": "Guard Dance",
+    "stage-3-4": "Stage (3:4)",
+    "stage-1-1": "Stage (1:1)",
+    "choose-the-layout-of-your-stage": "Choose the layout of your stage"
   },
   "impressumView": {
     "angaben-gemaess-5-tmg": "Information according to § 5 TMG",
@@ -364,7 +394,14 @@
     "passwort-mindest-laenge": "Your password must be at least 6 characters long.",
     "passwort-wiederholen": "Repeat password",
     "warum-email": "We need your email address to reset your password or restore your account.",
-    "wiederholung-gleicht-nicht-passwort": "The repetition is not identical to the password."
+    "wiederholung-gleicht-nicht-passwort": "The repetition is not identical to the password.",
+    "server-offline": "The servers seem to be offline. Please try again later!",
+    "bitte-kontrolliere-nutzernamen-email-und-passwort": "Please check that you spelled username/email and password correctly.",
+    "clubName-mindestens-laenge": "The name of the club must be at least 6 characters long.",
+    "passwort-vergessen": "Forgot your password?",
+    "account-exists": "It seems that there is already a user with this name or email address ...",
+    "login-link-was-sent": "A password link was sent to your email address. Check your mailbox!",
+    "erfolg": "Success"
   },
   "meta": {
     "account": {
@@ -404,7 +441,7 @@
     "change-length": {
       "choreo-min-length": "You can't have a choreo with 0 counts.",
       "counts-zusaetzliche-counts-nach-den-achtern": "Counts (additional counts after the eights)",
-      "geschaetzte-zeit": "Estimated time:",
+      "geschaetzte-zeit": "Estimated time;",
       "laenge-aendern": "Change length",
       "laenge-der-choreo-aendern": "Change length of the choreo"
     },
@@ -429,7 +466,7 @@
       "example-name": "State Championship, Regionals {0}, ...",
       "extra-count-muss-zwischen-0-und-7-liegen": "Extra count must be between 0 and 7",
       "geschaetzte-zeit-timeestimationstring": "Estimated time: {0}",
-      "laenge": "Length:",
+      "laenge": "Length",
       "min-achter": "Eight must be larger than 0",
       "min-choreoname-length": "Min. 2 characters"
     },
@@ -541,6 +578,19 @@
     "video-download": {
       "format": "Format",
       "video-herunterladen": "Download video"
+    },
+    "delete-club": {
+      "verein-loeschen": "Delete club?"
+    },
+    "reset-password": {
+      "lost-password": "Request a login link",
+      "no-email-info": "Accounts without an email address can only be reset manually. Send an email to info@choreoplaner.de!",
+      "email-info": "If your account is connected to an email address, you can have a login link sent to you via email, with which you can log in for 24 hours. You can then change your password on the profile page.",
+      "login-link-schicken": "Send login link"
+    },
+    "change-mat": {
+      "layout-der-buehne-matte-aendern": "Change the layout of the mat",
+      "layout-aendern": "Change the layout"
     }
   },
   "name": "Name",
@@ -559,7 +609,12 @@
     "start": "Start",
     "teilen": "Share",
     "uebersicht": "Overview",
-    "vereine": "Clubs"
+    "vereine": "Clubs",
+    "benachrichtigungen": "Notifications",
+    "du-hast-noch-keine-benachrichtigungen-erhalten": "You have not received any notifications yet.",
+    "neu-0": "New!",
+    "alte-nachrichten-anzeigen": "Show old messages",
+    "alte-nachrichten-ausblenden": "Hide old messages"
   },
   "navigation": {
     "datenschutz": "Data protection",
@@ -590,9 +645,12 @@
     "laedt-choreo": "Loading choreo",
     "min-teilnehmer-erforderlich": "Min. 1 participant required",
     "PDF": "PDF",
-    "pdf-wird-generiert": "PDF is generated",
+    "pdf-wird-generiert": "PDF is being generated",
     "team-name-anzeigen": "Show team name",
-    "teilnehmer-namen-anzeigen": "Show participant names"
+    "teilnehmer-namen-anzeigen": "Show participant names",
+    "pdf-generieren": "Generate PDF",
+    "vereinslogo-anzeigen": "Show club logo",
+    "zeige-das-logo-deines-vereins-auf-dem-countsheet-an": "Show the logo of your club on the countsheet"
   },
   "personas": {
     "anna-unersetzlich": "Anna Awesome",
@@ -658,7 +716,7 @@
     "team-loeschen": "Delete team",
     "waehle-ein-team": "Choose a team"
   },
-  "teilnehmer": "Participant",
+  "teilnehmer": "Participant | Participants",
   "username": "Username",
   "verein": "Club | Clubs",
   "video": "Video",
@@ -671,8 +729,37 @@
     "herunterladen": "Download",
     "teilnehmer-die-im-video-angezeigt-werden-sollen": "Participants who are to be displayed in the video",
     "video-generieren": "Generate video",
-    "video-zusammenstellen": "Create video"
+    "video-zusammenstellen": "Create video",
+    "dein-vereinslogo-als-wasserzeichen-im-video-anzeigen": "Show your club logo as a watermark in the video"
   },
   "zur-startseite": "To the landing page",
-  "zuruecksetzen": "Reset"
+  "zuruecksetzen": "Reset",
+  "account": {
+    "email-confirmation-warning": "You have not yet confirmed your email address. Please click on the link in the email we sent you to confirm your email address.",
+    "link-nochmal-senden": "Send link again",
+    "settings": "Settings",
+    "tracking-opt-out": "Tracking (Opt-out)",
+    "tracking-info": "We use your data anonymously to analyze and improve the use of the app.",
+    "tracking-description": "I don't want my data to be anonymized and aggregated to analyze and improve the use of the app.",
+    "achtung": "Watch out!",
+    "tracking-warning": "By disabling tracking, we cannot see which pages are called up and may have errors!",
+    "rueckgaengig-machen": "Undo",
+    "reset-password": "Reset password",
+    "reset-password-description": "Reset your password to protect your account. Change your password if you suspect that someone else has access to your account."
+  },
+  "fehler": "Error",
+  "warnung": "Warning",
+  "info": "Info",
+  "matTypeOptions": {
+    "descriptions": {
+      "1-2": "Flat Rectangle (1:2)",
+      "3-4": "Boxy Rectangle (3:4)",
+      "cheer": "Cheer (1:1, 7 lanes)",
+      "square": "Square (1:1)"
+    },
+    "by-sport": "By Sport (Lines on the mat)",
+    "by-stage": "By stage form (no lines)"
+  },
+  "mat": "Mat/Stage",
+  "cheerleading": "Cheerleading"
 }

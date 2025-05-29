@@ -9,7 +9,8 @@
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="<%= entity %>UpdateModalLabel">
-          Update <%= entity.substring(0, entity.length -1) %>
+          <%= t('admin.components.entityUpdateModal.update-something',
+          entity.substring(0, entity.length -1)) %>
         </h1>
         <button
           type="button"
@@ -33,7 +34,7 @@
           <% JSON.parse(editColumns).forEach(({column, type, required}) => { %>
           <div class="mb-3">
             <label for="<%= column %>" class="form-label"><%= column %></label>
-            <% if (column.endsWith("Id")) { %>
+            <% if (column.endsWith("Id") || type == "ENUM") { %>
             <select
               class="form-select"
               id="<%= column %>"
@@ -46,9 +47,14 @@
 
               <option value="<%= option.value %>"><%= option.name %></option>
 
-              <% }) %>
+              <% }) %> <% } %> <% if (locals[column.toLowerCase() + 'List']) {
+              %> <% locals[column.toLowerCase() + 'List'].forEach(option => { %>
+              <option value="<%= option.value %>"><%= option.name %></option>
+              <% }) %> <% } %> <% if (type != "ENUM") { %>
               <option value="null">
-                <i>Keine Auswahl</i>
+                <i>
+                  <%= t('admin.components.entityCreateModal.keine-auswahl') %>
+                </i>
               </option>
 
               <% } %>
@@ -66,10 +72,10 @@
             data-bs-dismiss="modal"
           >
             <i class="bi bi-arrow-counterclockwise"></i>
-            Close
+            <%= t('general.close') %>
           </button>
           <button type="submit" class="btn btn-success">
-            <i class="bi bi-check2"></i> Save changes
+            <i class="bi bi-check2"></i> <%= t('general.save-changes') %>
           </button>
         </div>
       </form>
@@ -85,8 +91,8 @@
       const entity = JSON.parse(button.getAttribute("data-bs-entity"))
 
       document.getElementById("<%= entity %>Id").value = entity.id;
-      <%- editColumns %>.forEach(({column, type}) => {
-      document.getElementById(column).value = entity[column]
+      <%- editColumns %>.forEach(({column, type}) => { // njsscan-ignore: ejs_ect_template
+        document.getElementById(column).value = entity[column]
       })
     })
   }

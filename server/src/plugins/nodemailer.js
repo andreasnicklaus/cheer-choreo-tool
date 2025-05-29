@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 let ejs = require("ejs");
 const { mailLogger } = require("./winston");
+const i18n = require("i18n");
 
 const client = nodemailer.createTransport({
   host: process.env.SMTP_SERVER,
@@ -43,8 +44,11 @@ async function sendMail(
   subject,
   templateName,
   variables = {},
-  attachments = []
+  attachments = [],
+  locale = "en"
 ) {
+  variables = { ...variables, t: i18n.__, locale };
+
   mailLogger.info(
     `Sending mail with ${JSON.stringify({
       recipient,
@@ -54,9 +58,10 @@ async function sendMail(
       attachments,
     })}`
   );
+
   ejs.renderFile(
     "src/views/mail/" + templateName,
-    { ...variables, timestamp: new Date().toLocaleTimeString("de") },
+    { ...variables, timestamp: new Date().toLocaleTimeString(locale) },
     (err, html) => {
       if (err) mailLogger.error(err);
       else {

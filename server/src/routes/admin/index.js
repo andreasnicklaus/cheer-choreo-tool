@@ -16,6 +16,8 @@ const FeedbackService = require("../../services/FeedbackService");
 const { dbRouter } = require("./db");
 const { adminRouter } = require("./admins");
 const { userRouter } = require("./users");
+const { notificationRouter } = require("./notification");
+const NotificationService = require("../../services/NotificationService");
 
 const router = Router();
 router.use(function (req, res, next) {
@@ -32,7 +34,7 @@ router.use(function (req, res, next) {
       `${req.protocol}://${req.get("host")}`
     );
     url.search = new URLSearchParams(cleanedQuery).toString();
-    return res.redirect(url.toString());
+    return res.redirect(url.toString()); // njsscan-ignore: express_open_redirect
   }
 
   res.locals.query = cleanedQuery;
@@ -45,6 +47,7 @@ async function renderDashboard(req, res) {
     AdminService.getTrend(),
     UserService.getCount(),
     UserService.getTrend(),
+    UserService.getLoggedInPercentage(),
     ChoreoService.getCount(),
     ChoreoService.getTrend(),
     ClubService.getCount(),
@@ -60,12 +63,15 @@ async function renderDashboard(req, res) {
     FeedbackService.getNewest(),
     FeedbackService.getTotalAverage(),
     FeedbackService.getAverageOfLastMonth(),
+    NotificationService.getReadPercentage(),
+    NotificationService.getReadTrend(),
   ]).then(
     ([
       adminCount,
       adminTrend,
       userCount,
       userTrend,
+      usersLoggedInPercentage,
       choreoCount,
       choreoTrend,
       clubCount,
@@ -81,6 +87,8 @@ async function renderDashboard(req, res) {
       newestFeedback,
       feedbackAverage,
       feedbackAverageOfLastMonth,
+      notificationPercentage,
+      notificationTrend,
     ]) => {
       return res.render("../src/views/admin/index.ejs", {
         username: req.Admin.username,
@@ -88,6 +96,7 @@ async function renderDashboard(req, res) {
         adminTrend,
         userCount,
         userTrend,
+        usersLoggedInPercentage,
         choreoCount,
         choreoTrend,
         clubCount,
@@ -103,13 +112,15 @@ async function renderDashboard(req, res) {
         newestFeedback,
         feedbackAverage,
         feedbackAverageOfLastMonth,
-      });
+        notificationPercentage,
+        notificationTrend,
+      }); // njsscan-ignore: express_lfr_warning
     }
   );
 }
 
 router.get("/", authenticateAdmin(), resolveAdmin, (req, res, next) => {
-  renderDashboard(req, res)
+  return renderDashboard(req, res)
     .then(() => next())
     .catch((e) => next(e));
 });
@@ -117,5 +128,11 @@ router.get("/", authenticateAdmin(), resolveAdmin, (req, res, next) => {
 router.use("/db", authenticateAdmin(), resolveAdmin, dbRouter);
 router.use("/users", authenticateAdmin(), resolveAdmin, userRouter);
 router.use("/admins", authenticateAdmin(), resolveAdmin, adminRouter);
+router.use(
+  "/notifications",
+  authenticateAdmin(),
+  resolveAdmin,
+  notificationRouter
+);
 
 module.exports = { adminRouter: router };

@@ -20,6 +20,11 @@ const Choreo = db.define(
         min: 0,
       },
     },
+    matType: {
+      type: DataTypes.ENUM("cheer", "square", "1:2", "3:4"),
+      defaultValue: "cheer",
+      allowNull: false,
+    },
   },
   {
     paranoid: true,

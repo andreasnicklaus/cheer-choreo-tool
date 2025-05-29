@@ -181,6 +181,7 @@
                 <template #default>
                   <b-form-group
                     :label="$t('start.min-laenge')"
+                    label-class="label-with-colon"
                     :description="`${Math.floor(minCount / 8)} ${$t(
                       'achter'
                     )} + ${minCount % 8}`"
@@ -195,6 +196,7 @@
                   <hr />
                   <b-form-group
                     :label="$t('start.max-laenge')"
+                    label-class="label-with-colon"
                     :description="`${Math.floor(maxCount / 8)} ${$t(
                       'achter'
                     )} + ${maxCount % 8}`"
@@ -576,21 +578,8 @@ export default {
       this.load();
     },
     addChoreo(choreo) {
-      const selectedTeam = this.teams.find((t) =>
-        t.SeasonTeams.some((st) => st.id == choreo.SeasonTeamId)
-      );
-      const selectedSeasonTeam = selectedTeam.SeasonTeams.find(
-        (st) => st.id == choreo.SeasonTeamId
-      );
-      selectedSeasonTeam.Choreos.push({
-        ...choreo,
-        SeasonTeamId: selectedSeasonTeam.id,
-        SeasonTeam: {
-          ...selectedSeasonTeam,
-          TeamId: selectedTeam.id,
-          Team: selectedTeam,
-        },
-      });
+      console.log(choreo);
+      this.load();
     },
     onTeamCreated(team) {
       this.$router
@@ -604,9 +593,7 @@ export default {
       const count = seasonTeam.Choreos.filter(
         (c) => c.counts >= this.minCount && c.counts <= this.maxCount
       ).length;
-      const choreoDeclination =
-        count == 1 ? this.$tc("choreo", 1) : this.$t("choreo", 2);
-      return `${count} ${choreoDeclination}`;
+      return `${count} ${this.$tc("choreo", count)}`;
     },
     seasonCountStringByTeam(team) {
       const count = team.SeasonTeams.filter(
@@ -614,9 +601,7 @@ export default {
           this.seasonFilterIds.length == 0 ||
           this.seasonFilterIds.includes(st.Season.id)
       ).flat(Infinity).length;
-      const seasonDeclination =
-        count == 1 ? this.$tc("season", 1) : this.$tc("season", 2);
-      return `${count} ${seasonDeclination}`;
+      return `${count} ${this.$tc("season", count)}`;
     },
     onSeasonTeamCreation() {
       this.load();

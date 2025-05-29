@@ -18,7 +18,8 @@
       >
         <b-form>
           <b-form-group
-            label="Season:"
+            :label="$tc('season', 1)"
+            label-class="label-with-colon"
             :state="seasonIsValid"
             :invalid-feedback="seasonStateFeedback"
           >
@@ -35,6 +36,7 @@
         <b-form>
           <b-form-group
             :label="$t('modals.create-season.name-der-event-gruppe')"
+            label-class="label-with-colon"
             :state="newSeasonNameIsValid"
             :invalid-feedback="newSeasonNameStateFeedback"
             :valid-feedback="$t('login.gueltig')"
@@ -48,6 +50,7 @@
           </b-form-group>
           <b-form-group
             :label="$t('jahr')"
+            label-class="label-with-colon"
             :state="newSeasonYearIsValid"
             :invalid-feedback="newSeasonYearStateFeedback"
             :valid-feedback="$t('login.gueltig')"
@@ -78,6 +81,7 @@
 
     <b-form-group
       :label="$t('modals.create-season.team-mitglieder')"
+      label-class="label-with-colon"
       :state="newSeasonMembersIsValid"
       :invalid-feedback="newSeasonMembersStateFeedback"
     >
