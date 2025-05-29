@@ -36,7 +36,7 @@
     "i18n": "^0.15.1",
     "jsonc.min": "^1.1.0",
     "jsonwebtoken": "^9.0.2",
-    "multer": "^1.4.5-lts.2",
+    "multer": "^2.0.0",
     "nodemailer": "^6.9.16",
     "permissions-policy": "^0.6.0",
     "pg": "^8.13.0",
