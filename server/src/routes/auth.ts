@@ -205,7 +205,7 @@ router.post("/login", (req: Request, res: Response, next: NextFunction) => {
  *          application/json:
  *            schema:
  *              type: string
- *              example:Single Sign-On link was sent to your email inbox.
+ *              example: Single Sign-On link was sent to your email inbox.
  *      400:
  *        description: Email address not provided
  *        content:

@@ -1,4 +1,4 @@
-const { verify, sendMail } = require("../plugins/nodemailer");
+import { sendMail, verify } from "../plugins/nodemailer";
 const { timeStringToMillis } = require("../utils/time");
 const i18n = require("i18n");
 

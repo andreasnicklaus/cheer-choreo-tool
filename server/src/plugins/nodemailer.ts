@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-let ejs = require("ejs");
+const ejs = require("ejs");
 const { mailLogger } = require("./winston");
 const i18n = require("i18n");
 
@@ -16,7 +16,7 @@ const client = nodemailer.createTransport({
   },
 });
 
-function verify() {
+export function verify() {
   if (
     !(
       process.env.SMTP_SERVER &&
@@ -30,7 +30,7 @@ function verify() {
   )
     throw new Error("Not all needed environment variables are specified.");
 
-  client.verify((error, success) => {
+  client.verify((error: Error, success: boolean) => {
     if (error) {
       mailLogger.error(error);
       throw error;
@@ -39,12 +39,12 @@ function verify() {
   });
 }
 
-async function sendMail(
-  recipient,
-  subject,
-  templateName,
+export async function sendMail(
+  recipient: string,
+  subject: string,
+  templateName: string,
   variables = {},
-  attachments = [],
+  attachments: object[] = [],
   locale = "en"
 ) {
   variables = { ...variables, t: i18n.__, locale };
@@ -62,7 +62,7 @@ async function sendMail(
   ejs.renderFile(
     "src/views/mail/" + templateName,
     { ...variables, timestamp: new Date().toLocaleTimeString(locale) },
-    (err, html) => {
+    (err: Error, html: string) => {
       if (err) mailLogger.error(err);
       else {
         return client
@@ -76,7 +76,7 @@ async function sendMail(
             html,
             attachments,
           })
-          .catch((err) => {
+          .catch((err: Error) => {
             mailLogger.error(err);
             throw err;
           });
@@ -85,4 +85,4 @@ async function sendMail(
   );
 }
 
-module.exports = { sendMail, verify };
+export default { sendMail, verify };

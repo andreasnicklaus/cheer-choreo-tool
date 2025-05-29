@@ -1,4 +1,4 @@
-const winston = require("winston");
+import winston from "winston";
 
 const logger = winston.createLogger({
   // Log only if level is less than (meaning more severe) or equal to this
@@ -7,7 +7,7 @@ const logger = winston.createLogger({
   format: winston.format.combine(
     winston.format.timestamp(),
     winston.format.printf(
-      (info) => `${info.timestamp} ${info.level}: ${info.message}`
+      (info: Record<string, string>) => `${info.timestamp} ${info.level}: ${info.message}`
     )
   ),
   // Log to the console and a file
@@ -32,7 +32,7 @@ const dbLogger = winston.createLogger({
   format: winston.format.combine(
     winston.format.timestamp(),
     winston.format.printf(
-      (info) => `${info.timestamp} ${info.level}: ${info.message}`
+      (info: Record<string, string>) => `${info.timestamp} ${info.level}: ${info.message}`
     )
   ),
   // Log to the console and a file
@@ -48,7 +48,7 @@ const mailLogger = winston.createLogger({
   format: winston.format.combine(
     winston.format.timestamp(),
     winston.format.printf(
-      (info) => `${info.timestamp} ${info.level}: ${info.message}`
+      (info: Record<string, string>) => `${info.timestamp} ${info.level}: ${info.message}`
     )
   ),
   // Log to the console and a file
@@ -61,5 +61,5 @@ const mailLogger = winston.createLogger({
   ],
 });
 
-module.exports = { logger, dbLogger, mailLogger };
-module.exports.default = logger;
+export { logger, dbLogger, mailLogger };
+export default logger;

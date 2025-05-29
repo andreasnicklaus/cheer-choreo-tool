@@ -16,13 +16,9 @@ const permissionsPolicy = require("permissions-policy");
 import db from "./db";
 
 // MIDDLEWARES
-const {
-  errorHandlingMiddleWare,
-} = require("./middlewares/errorHandlingMiddleware");
-const {
-  errorLoggingMiddleWare,
-  loggerMiddleWare,
-} = require("./middlewares/loggingMiddleware");
+const { errorHandlingMiddleWare } = require("./middlewares/errorHandlingMiddleware");
+import { errorLoggingMiddleWare, loggerMiddleWare } from "./middlewares/loggingMiddleware";
+
 const favicon = require("serve-favicon");
 
 // LOGGER
@@ -278,10 +274,10 @@ const swaggerOptions = {
     ],
   },
   apis: [
-    __dirname + "/routes/**/*.js",
-    __dirname + "/index.js",
-    __dirname + "/docDefs.js",
-    __dirname + "/db/models/*.js",
+    __dirname + "/routes/**/*.ts",
+    __dirname + "/index.ts",
+    __dirname + "/docDefs.ts",
+    __dirname + "/db/models/*.ts",
   ],
 };
 

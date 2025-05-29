@@ -14,7 +14,7 @@ import Member from "../../db/models/member";
 import SeasonTeamService from "../../services/SeasonTeamService";
 import ChoreoService from "../../services/ChoreoService";
 import search from "../../utils/fuzzySearch";
-import { sequelizeDataTypeToHtmlInputType } from "../../utils/datatypeConverter";
+import sequelizeDataTypeToHtmlInputType from "../../utils/datatypeConverter";
 
 type entityList = { value: string, name: string }[]
 
@@ -28,8 +28,8 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.get("/:entity", async (req: Request, res: Response, next: NextFunction) => {
-  const UserId = (req.query.UserId || null) as string;
-  const searchTerm = req.query.s || null;
+  const UserId = (req.query.UserId ?? null) as string;
+  const searchTerm = req.query.s ?? null;
 
   let columns, data;
   let model;
@@ -96,7 +96,7 @@ router.get("/:entity", async (req: Request, res: Response, next: NextFunction) =
       break;
   }
 
-  if (searchTerm) data = search(data, { keys: columns }, searchTerm);
+  if (searchTerm) data = search(data, { keys: columns }, searchTerm as string);
 
   res.render("../src/views/admin/db.ejs", {
     username: req.Admin.username,

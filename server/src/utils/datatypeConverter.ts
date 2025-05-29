@@ -1,4 +1,4 @@
-module.exports.sequelizeDataTypeToHtmlInputType = (sequelizeDataType) => {
+function sequelizeDataTypeToHtmlInputType(sequelizeDataType: { key: string }) {
   switch (sequelizeDataType.key) {
     case "STRING":
       return "text";
@@ -12,3 +12,5 @@ module.exports.sequelizeDataTypeToHtmlInputType = (sequelizeDataType) => {
       return "text";
   }
 };
+
+export default sequelizeDataTypeToHtmlInputType

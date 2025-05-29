@@ -112,7 +112,7 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *     requestBody:
  *       required: true
  *       content:
- *         application/json
+ *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/Position'
  *     responses:
