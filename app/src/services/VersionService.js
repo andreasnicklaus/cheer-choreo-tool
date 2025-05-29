@@ -1,3 +1,5 @@
+import ax from "./RequestService";
+
 const VERSIONS = [
   {
     tag: "0.10.3",
@@ -12,6 +14,8 @@ const VERSIONS = [
 ];
 
 class VersionService {
+  serverVersion = null;
+
   isVersionNew(versionTag) {
     const versionData = VERSIONS.find((v) => v.tag == versionTag);
     if (!versionData) return false;
@@ -20,6 +24,19 @@ class VersionService {
     if (versionData.end && Date.now() > versionData.end) return false;
 
     return true;
+  }
+
+  getAppVersion() {
+    return process.env.VUE_APP_VERSION;
+  }
+
+  async getServerVersion() {
+    if (this.serverVersion) return this.serverVersion;
+
+    return ax
+      .get("/version")
+      .then((res) => res.data)
+      .catch(() => null);
   }
 }
 

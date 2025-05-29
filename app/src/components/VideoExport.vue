@@ -243,7 +243,9 @@ import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
 import VideoDownloadModal from "./modals/VideoDownloadModal.vue";
 import AuthService from "@/services/AuthService";
+import MessagingService from "@/services/MessagingService";
 import ClubService from "@/services/ClubService";
+import { debug } from "@/utils/logging";
 
 export default {
   name: "VideoExport",
@@ -326,7 +328,9 @@ export default {
           this.addAnimationsFromChoreo();
           this.initializeRecorder();
         })
-        .catch((e) => console.warn(e));
+        .catch((e) => {
+          MessagingService.showError(e.response.data, this.$t("fehler"));
+        });
     },
     loadUserInfo() {
       return AuthService.getUserInfo().then((user) => {
@@ -561,10 +565,10 @@ export default {
     initializeFfmpeg() {
       const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
       this.ffmpeg.on("log", ({ message }) => {
-        console.debug(message);
+        debug(message);
       });
       this.ffmpeg.on("progress", ({ progress, time }) => {
-        console.debug({ progress, time });
+        debug({ progress, time });
       });
 
       return Promise.all([
