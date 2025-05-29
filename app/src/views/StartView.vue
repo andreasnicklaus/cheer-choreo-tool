@@ -577,8 +577,7 @@ export default {
       this.$refs.createClubModal.close();
       this.load();
     },
-    addChoreo(choreo) {
-      console.log(choreo);
+    addChoreo() {
       this.load();
     },
     onTeamCreated(team) {

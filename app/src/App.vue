@@ -149,9 +149,11 @@ import AppInstallWindow from "./components/AppInstallWindow.vue";
 import ConsentWindow from "./components/ConsentWindow.vue";
 import FeedbackPrompt from "./components/FeedbackPrompt.vue";
 import HeadNav from "./components/HeadNav.vue";
-import ax, { getApiDomain } from "./services/RequestService";
+import { getApiDomain } from "./services/RequestService";
 import breakpoints from "@/utils/breakpoints";
 import MessagingService from "./services/MessagingService";
+import { logWelcomeMessage } from "@/utils/logging";
+import VersionService from "./services/VersionService";
 
 export default {
   components: { HeadNav, ConsentWindow, AppInstallWindow, FeedbackPrompt },
@@ -251,16 +253,21 @@ export default {
       this.$bvToast.toast(message, options)
     );
 
+    logWelcomeMessage();
+
     if (!window.__PRERENDER_INJECTED)
-      ax.get("/version")
-        .then((res) => {
+      VersionService.getServerVersion().then((version) => {
+        if (version) {
           this.online = true;
-          this.serverVersion = res.data;
-        })
-        .catch(() => {
+          this.serverVersion = version;
+        } else {
           this.online = false;
-          MessagingService.showError(this.$t("errors.offline"), "Offline");
-        });
+          MessagingService.showError(
+            this.$t("errors.offline"),
+            this.$t("general.offline")
+          );
+        }
+      });
   },
   watch: {
     "breakpoints.screen.mobile": {

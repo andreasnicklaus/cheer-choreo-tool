@@ -43,7 +43,6 @@ ax.interceptors.response.use(
           .catch(() => {});
         break;
       default:
-        console.warn(error);
     }
     return Promise.reject(error);
   }

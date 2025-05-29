@@ -125,7 +125,8 @@
   "erforderlich": "Required",
   "errors": {
     "offline": "The servers are currently offline. Please try again later!",
-    "unerwarteter-fehler": "Unexpected error. Please contact us."
+    "unerwarteter-fehler": "Unexpected error. Please contact us.",
+    "unknown": "unknown"
   },
   "erstellen": "Create",
   "failMessages": {
@@ -197,7 +198,8 @@
   },
   "general": {
     "ChoreoPlaner": "Choreo Planner",
-    "help": "Help"
+    "help": "Help",
+    "offline": "Offline"
   },
   "HelpView": {
     "fuer-deine-suche-gibt-es-keine-ergebnisse": "There are no results for your search \"{searchTerm}\"",
@@ -761,5 +763,14 @@
     "by-stage": "By stage form (no lines)"
   },
   "mat": "Mat/Stage",
-  "cheerleading": "Cheerleading"
+  "cheerleading": "Cheerleading",
+  "logging": {
+    "app-version": "App Version",
+    "server-version": "Server Version",
+    "user-agent": "User Agent",
+    "current-locale": "Current Locale",
+    "available-locales": "Available Locales",
+    "warning": "%cAttention: %cThis console could be used to obtain information about your browser or device. Only give out information if you can independently verify that you are in contact with a representative of Choreo Planer.",
+    "welcome": "%cWelcome to Choreo Planner\n%cThank you for your commitment to choreo sports! You can use this console to find out some information about the application and your browser.\n\nHere are a few helpful links:\nChoreo Planner on IG:     https://www.instagram.com/choreoplaner\nGet help:                           https://www.choreo-planer.de/hilfe\nContact us:                       info@choreo-planer.de"
+  }
 }

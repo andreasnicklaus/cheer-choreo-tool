@@ -787,7 +787,6 @@ export default {
       this.choreo = choreo;
     },
     changeColor(participantId, color) {
-      console.log(participantId, color);
       ChoreoService.changeParticipantColor(
         this.choreoId,
         participantId,
