@@ -41,7 +41,7 @@ See [LICENSE](LICENSE) for the license of this project.
 
 ## :sparkles: Version history
 
-### 0.10.3 - 2025-05-09
+### 0.11.0 - 2025-05-09 (alias: 0.10.3)
 
 - New mat variants
   - Square without license
