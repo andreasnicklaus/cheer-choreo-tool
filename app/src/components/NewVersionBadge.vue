@@ -7,6 +7,15 @@
 <script>
 import VersionService from "@/services/VersionService";
 
+/**
+ * @module Component:NewVersionBadge
+ *
+ * @vue-data {Boolean} show=false
+ *
+ * @vue-prop {String} [version]
+ * @vue-prop {string[]} [versions]
+ */
+
 export default {
   name: "NewVersionBadge",
   data: () => ({

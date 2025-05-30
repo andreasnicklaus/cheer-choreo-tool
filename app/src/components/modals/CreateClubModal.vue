@@ -45,6 +45,19 @@
 <script>
 import ClubService from "@/services/ClubService";
 
+/**
+ * @module Modal:CreateClubModal
+ *
+ * @vue-data {String} id
+ * @vue-data {String|null} newClubName=null
+ *
+ * @vue-props {Boolean} preventClosing=false
+ *
+ * @vue-computed {Boolean} newClubNameIsValid
+ * @vue-computed {String|null} newClubNameStateFeedback
+ *
+ * @vue-events {string} clubCreated
+ */
 export default {
   name: "CreateClubModal",
   data: () => ({

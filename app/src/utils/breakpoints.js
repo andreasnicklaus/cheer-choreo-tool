@@ -4,8 +4,6 @@ const state = Vue.observable({
   screen: {},
 });
 
-/* This assumes you're using default bootstrap breakpoint names */
-/* You need to hardcode the breakpoint values if you want to support IE11 */
 const style = getComputedStyle(document.body);
 const xs = style.getPropertyValue("--breakpoint-xs").replace("px", "");
 const sm = style.getPropertyValue("--breakpoint-sm").replace("px", "");

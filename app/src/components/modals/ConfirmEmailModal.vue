@@ -22,6 +22,12 @@
 </template>
 
 <script>
+/**
+ * @module Modal:HowToModal
+ *
+ * @vue-data {String} id
+ * @vue-data {Boolean} isError=false
+ */
 export default {
   name: "HowToModal",
   data: () => ({

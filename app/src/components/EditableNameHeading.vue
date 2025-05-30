@@ -53,6 +53,18 @@
 </template>
 
 <script>
+/**
+ * @module Component:EditableNameHeading
+ *
+ * @vue-prop {String} name
+ * @vue-prop {String} [value]
+ * @vue-prop {String} [placeholder]
+ *
+ * @vue-data {Boolean} edit=false
+ * @vue-data {String|null} valueReplica=null
+ *
+ * @vue-event {string} input
+ */
 export default {
   name: "EditableNameHeading",
   props: {

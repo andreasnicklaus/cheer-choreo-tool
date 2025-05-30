@@ -18,6 +18,13 @@
 <script>
 import ChoreoService from "@/services/ChoreoService";
 
+/**
+ * @module Modal:DeleteChoreoModal
+ *
+ * @vue-data {String} id
+ *
+ * @vue-props {String} choreoId
+ */
 export default {
   name: "DeleteChoreoModal",
   data: () => ({

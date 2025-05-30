@@ -661,6 +661,34 @@ import CreateLineupModal from "./modals/CreateLineupModal.vue";
 import DeleteLineupModal from "./modals/DeleteLineupModal.vue";
 import DeleteHitModal from "./modals/DeleteHitModal.vue";
 
+/**
+ * @module Component:CountOverview
+ *
+ * @vue-data {Number|null} editHitId=null
+ * @vue-data {String|null} editHitName=null
+ * @vue-data {Number} editHitAchter=1
+ * @vue-data {Number} editHitCount=1
+ * @vue-data {Array} editHitMembers
+ * @vue-data {String|null} editLineupId=null
+ * @vue-data {Number} editLineupStartAchter=1
+ * @vue-data {Number} editLineupStartCount=1
+ * @vue-data {Number} editLineupEndAchter=1
+ * @vue-data {Number} editLineupEndCount=1
+ * @vue-data {Array} editLineupMembers
+ *
+ * @vue-prop {Number} count
+ * @vue-prop {Array} hitsForCurrentCount
+ * @vue-prop {Array} lineupsForCurrentCount
+ * @vue-prop {Array} teamMembers
+ * @vue-prop {Object} choreo
+ * @vue-prop {Array} currentPositions
+ * @vue-prop {Boolean} [interactive=true]
+ *
+ * @vue-event {Array} updateHits - Emitted when hits are updated.
+ * @vue-event {Array} updateLineups - Emitted when lineups are updated.
+ * @vue-event {Number} updateCount - Emitted when the count is updated.
+ * @vue-event {null} openCreateHitModal - Emitted to open the modal for creating a new hit.
+ */
 export default {
   name: "CountOverview",
   components: { CreateLineupModal, DeleteLineupModal, DeleteHitModal },

@@ -59,6 +59,21 @@
 </template>
 
 <script>
+/**
+ * @module Modal:VideoDownloadModal
+ *
+ * @vue-data {String} id
+ * @vue-data {String} selectedDownloadOptionId="mp4"
+ *
+ * @vue-props {Object} choreo
+ * @vue-props {Number} width=500
+ * @vue-props {String} downloadUrl
+ * @vue-props {Array} downloadOptions
+ *
+ * @vue-computed {Object} selectedDownloadOption
+ *
+ * @vue-event {String} downloadOptionChanged
+ */
 export default {
   name: "VideoDownloadModal",
   data: () => ({

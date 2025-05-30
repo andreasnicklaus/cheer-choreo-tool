@@ -19,6 +19,14 @@
 <script>
 import SeasonTeamService from "@/services/SeasonTeamService";
 
+/**
+ * @module Modal:DeleteSeasonTeamModal
+ *
+ * @vue-data {String} id
+ * @vue-data {String|null} deleteSeasonTeamId=null
+ *
+ * @vue-events {string} seasonTeamDeleted
+ */
 export default {
   name: "DeleteSeasonTeamModal",
   data: () => ({

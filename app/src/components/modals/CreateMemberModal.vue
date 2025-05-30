@@ -79,6 +79,27 @@
 <script>
 import MemberService from "@/services/MemberService";
 
+/**
+ * @module Modal:CreateMemberModal
+ *
+ * @vue-data {String} id
+ * @vue-data {String|null} newMemberName=null
+ * @vue-data {String|null} newMemberNickname=null
+ * @vue-data {String|null} newMemberAbbreviation=null
+ *
+ * @vue-props {Object} currentTeam
+ * @vue-props {String} editMemberId
+ * @vue-props {Number} seasonTabIndex=0
+ *
+ * @vue-computed {Boolean} newMemberNameIsValid
+ * @vue-computed {String|null} newMemberNameStateFeedback
+ * @vue-computed {String|null} proposedAbbreviation
+ * @vue-computed {Boolean} abbreviationIsValid
+ * @vue-computed {String|null} abbreviationStateFeedback
+ *
+ * @vue-events {Object} memberCreated
+ * @vue-events {Object} memberUpdated
+ */
 export default {
   name: "CreateMemberModal",
   data: () => ({

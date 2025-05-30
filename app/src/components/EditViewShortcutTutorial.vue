@@ -76,3 +76,9 @@
     </b-tbody>
   </b-table-simple>
 </template>
+
+<script>
+/**
+ * @module Component:EditViewShortcutTutorial
+ */
+</script>

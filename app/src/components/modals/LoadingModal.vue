@@ -22,6 +22,13 @@
 </template>
 
 <script>
+/**
+ * @module Modal:LoadingModal
+ *
+ * @vue-data {String} id
+ *
+ * @vue-props {String} description="Lade Daten..."
+ */
 export default {
   name: "LoadingModal",
   data: () => ({

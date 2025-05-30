@@ -102,6 +102,19 @@ import FeedbackService from "@/services/FeedbackService";
 
 const feedbackDeclinedCookieName = "feedback-declined";
 
+/**
+ * @module Component:FeedbackPrompt
+ *
+ * @vue-data {String} id
+ * @vue-data {Number} stars=4
+ * @vue-data {String|null} feedbackText=null
+ * @vue-data {Number|null} hoverStars=null
+ * @vue-data {Boolean} sending=false
+ * @vue-data {Boolean} feedbackAlreadyGiven=false
+ * @vue-data {Boolean} forced=false
+ * @vue-data {Number|null} showTimer=null
+ */
+
 export default {
   name: "FeedbackPrompt",
   data: () => ({

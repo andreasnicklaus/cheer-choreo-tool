@@ -47,6 +47,11 @@
 const cookieName = "mtm_consent";
 const dismissCookieName = "consent-dismissed";
 
+/**
+ * @module Component:ConsentWindow
+ *
+ * @vue-data {Boolean} showConsentWindow=false
+ */
 export default {
   name: "ConsentWindow",
   data: () => ({

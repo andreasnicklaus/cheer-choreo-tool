@@ -392,6 +392,27 @@ import NotificationService from "@/services/NotificationService";
 import VueMarkdown from "vue-markdown-v2";
 import toTimeAgo from "@/utils/time";
 
+/**
+ * @module Component:HeadNav
+ *
+ * @vue-data {Array} teams=[]
+ * @vue-data {Array} choreos=[]
+ * @vue-data {Array} clubs=[]
+ * @vue-data {Object} user=null
+ * @vue-data {Boolean} shareable=false
+ * @vue-data {Array} flags=[]
+ * @vue-data {Object} currentProfilePictureBlob=null
+ * @vue-data {Object} loadInterval=null
+ * @vue-data {Object} loadNotificationsInterval=null
+ * @vue-data {Array} notifications=[]
+ * @vue-data {Boolean} showAllNotifications=false
+ * @vue-data {Boolean} showNotificationsDropdown=false
+ *
+ * @vue-prop {Boolean} onlineStatus
+ * @vue-prop {String} [serverVersion=null]
+ *
+ * @vue-computed {Object} shareData
+ */
 export default {
   name: "HeadNav",
   components: {

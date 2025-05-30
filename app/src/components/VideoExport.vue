@@ -247,6 +247,38 @@ import MessagingService from "@/services/MessagingService";
 import ClubService from "@/services/ClubService";
 import { debug } from "@/utils/logging";
 
+/**
+ * @module Component:VideoExport
+ *
+ * @vue-data {Number} width=1800
+ * @vue-data {String|null} downloadUrl=null
+ * @vue-data {MediaRecorder|null} mediaRecorder=null
+ * @vue-data {Array} recordingChunks=[]
+ * @vue-data {Number|null} count=null
+ * @vue-data {gsap.timeline|null} animationTimeline=null
+ * @vue-data {Number} bps=2.51
+ * @vue-data {Object|null} user=null
+ * @vue-data {Object|null} choreo=null
+ * @vue-data {Array} teamMembers=[]
+ * @vue-data {Boolean} animationIsRunning=false
+ * @vue-data {Boolean} recordingIsRunning=false
+ * @vue-data {Boolean} includeCount=true
+ * @vue-data {Boolean} includeTeamName=true
+ * @vue-data {Boolean} includeChoreoName=true
+ * @vue-data {Array} includedMembers=[]
+ * @vue-data {Boolean} includeClubLogo=false
+ * @vue-data {Blob|null} currentClubLogoBlob=null
+ * @vue-data {Array} downloadOptions=[{id: 'webm', ext: '.webm', name: 'Webm'}, {id: 'mp4', ext: '.mp4', name: 'MP4'}]
+ * @vue-data {FFmpeg|null} ffmpeg=null
+ * @vue-data {String|null} mp4Url=null
+ *
+ * @vue-computed {Object} currentClub
+ * @vue-computed {String} waitingSlogan
+ * @vue-computed {Number} height
+ *
+ * @vue-computed {MetaInfo} metaInfo
+ */
+
 export default {
   name: "VideoExport",
   components: { VideoDownloadModal },

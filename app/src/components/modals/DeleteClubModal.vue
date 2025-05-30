@@ -19,6 +19,14 @@
 <script>
 import ClubService from "@/services/ClubService";
 
+/**
+ * @module Modal:DeleteClubModal
+ *
+ * @vue-data {String} id
+ * @vue-data {String|null} deleteClubId=null
+ *
+ * @vue-events {string} clubDeleted
+ */
 export default {
   name: "DeleteClubModal",
   data: () => ({

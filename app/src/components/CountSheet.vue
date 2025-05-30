@@ -75,6 +75,23 @@
 </template>
 
 <script>
+/**
+ * @module Component:CountSheet
+ *
+ * @vue-prop {Number} count
+ * @vue-prop {Object} [choreo]
+ * @vue-prop {Boolean} [interactive=true]
+ * @vue-prop {Boolean} [stickyHeader=true]
+ * @vue-prop {Number} fontSize
+ * @vue-prop {Number} [startCount=0]
+ * @vue-prop {Boolean} [fixed=false]
+ *
+ * @vue-computed {Array} achter
+ * @vue-computed {String} tableHeight
+ *
+ * @vue-event {Number} setCounter
+ * @vue-event {null} openCreateHitModal
+ */
 export default {
   name: "CountSheet",
   props: {

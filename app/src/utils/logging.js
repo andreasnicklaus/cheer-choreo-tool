@@ -29,6 +29,13 @@ console.image = async function (url, size = 100) {
 const DEFAULT_TEXT_STYLE =
   "font-family: Avenir, Helvetica, Arial, sans-serif; font-size: 12px;";
 
+/**
+ * Log a welcome message in the console
+ *
+ * @export
+ * @async
+ * @returns {void}
+ */
 export async function logWelcomeMessage() {
   console.clear();
 
@@ -76,22 +83,51 @@ export async function logWelcomeMessage() {
   console.log(result, ...styles);
 }
 
+/**
+ * Generate a timestamp for logging
+ *
+ * @returns {string} ISO string representing the current date and time
+ */
 function generateTimeStamp() {
   return new Date().toISOString();
 }
 
+/**
+ * Log a INFO message with a timestamp
+ *
+ * @export
+ * @param {string[]} messages
+ */
 export function log(...messages) {
   console.log(generateTimeStamp(), "LOG", ...messages);
 }
 
+/**
+ * Log a DEBUG message with a timestamp
+ *
+ * @export
+ * @param {string[]} messages
+ */
 export function debug(...messages) {
   console.debug(generateTimeStamp(), "DEBUG", ...messages);
 }
 
+/**
+ * Log a WARN message with a timestamp
+ *
+ * @export
+ * @param {string[]} messages
+ */
 export function warn(...messages) {
   console.warn(generateTimeStamp(), "WARN", ...messages);
 }
 
+/**
+ * Log a ERROR message with a timestamp
+ *
+ * @export
+ * @param {string[]} messages
+ */
 export function error(...messages) {
   console.error(generateTimeStamp(), "ERROR", ...messages);
 }

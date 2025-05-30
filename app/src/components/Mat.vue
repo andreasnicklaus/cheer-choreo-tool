@@ -84,6 +84,27 @@
 <script>
 import gsap from "gsap";
 
+/**
+ * @module Component:MatComponent
+ *
+ * @vue-data {String} selectedMemberId=null
+ * @vue-data {Number} snappingDistance=2
+ * @vue-data {Array} positions=null
+ *
+ * @vue-prop {Array} [currentPositions=[]]
+ * @vue-prop {Array} [teamMembers=[]]
+ * @vue-prop {Number} [width=500]
+ * @vue-prop {Number} [height]
+ * @vue-prop {Number} [dotRadius=20]
+ * @vue-prop {Boolean} [snapping=true]
+ * @vue-prop {Number} [transitionMs=1000]
+ * @vue-prop {Boolean} [interactive=true]
+ * @vue-prop {String} [matType="square"]
+ *
+ * @vue-computed {Number} _height
+ *
+ * @vue-event {Array} positionChange - Emitted when a member's position is changed. [selectedMemberId, xNew, yNew]
+ */
 export default {
   name: "MatComponent",
   data: () => ({

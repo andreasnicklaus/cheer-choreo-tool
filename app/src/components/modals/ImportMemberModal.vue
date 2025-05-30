@@ -58,6 +58,32 @@
 <script>
 import SeasonTeamService from "@/services/SeasonTeamService";
 
+/**
+ * @module Modal:ImportMemberModal
+ *
+ * @vue-data {String} id
+ * @vue-data {String|null} teamId=null
+ * @vue-data {String|null} seasonId=null
+ * @vue-data {Array} memberIds=[]
+ *
+ * @vue-props {Array} teams
+ * @vue-props {String} currentTeamId
+ * @vue-props {String} currentSeasonTeamId
+ *
+ * @vue-computed {Array} teamOptions
+ * @vue-computed {Object|null} selectedTeam
+ * @vue-computed {Array} seasonOptions
+ * @vue-computed {Object|null} selectedSeasonTeam
+ * @vue-computed {Array} memberOptions
+ * @vue-computed {Boolean} teamIdIsValid
+ * @vue-computed {String|null} teamIdStateFeedback
+ * @vue-computed {Boolean} seasonIdIsValid
+ * @vue-computed {String|null} seasonIdStateFeedback
+ * @vue-computed {Boolean} memberIdsIsValid
+ * @vue-computed {String|null} memberIdsStateFeedback
+ * 
+ * @vue-event {Array} import
+ */
 export default {
   name: "ImportMemberModal",
   data: () => ({

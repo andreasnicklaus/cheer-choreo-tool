@@ -45,12 +45,26 @@
 import ChoreoService from "@/services/ChoreoService";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
 
+/**
+ * @module Modal:ChangeMatLayoutModal
+ *
+ * @vue-data {String} id
+ * @vue-data {String|null} newMatType=null
+ *
+ * @vue-props {Object} choreo
+ *
+ * @vue-computed {Array} matTypeOptions
+ * @vue-computed {String|null} newMatTypeStateFeedback
+ * @vue-computed {Boolean} newMatTypeIsValid
+ *
+ * @vue-events {string} matTypeUpdate
+ */
 export default {
   name: "ChangeMatLayoutModal",
   components: { NewVersionBadge },
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
-    newMatType: 1,
+    newMatType: null,
   }),
   props: {
     choreo: {

@@ -50,6 +50,12 @@
 <script>
 import AuthService from "@/services/AuthService";
 
+/**
+ * @module Modal:DeleteAccountModal
+ *
+ * @vue-data {String} id
+ * @vue-data {Boolean} accountDeletionApproval=false
+ */
 export default {
   name: "DeleteAccountModal",
   data: () => ({

@@ -19,6 +19,16 @@
 <script>
 import LineupService from "@/services/LineupService";
 
+/**
+ * @module Modal:DeleteLineupModal
+ *
+ * @vue-data {String} id
+ * @vue-data {String|null} deleteLineupId=null
+ *
+ * @vue-props {Object} choreo
+ *
+ * @vue-events {Array} updateLineups
+ */
 export default {
   name: "DeleteLineupModal",
   data: () => ({

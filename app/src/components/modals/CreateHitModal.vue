@@ -256,6 +256,33 @@ function generateHitNameProposals() {
 }
 const hitNameProposals = generateHitNameProposals();
 
+/**
+ * @module Modal:CreateHitModal
+ *
+ * @vue-data {String} id
+ * @vue-data {String|null} newHitName=null
+ * @vue-data {Number} newHitAchter=1
+ * @vue-data {Number} newHitCount=1
+ * @vue-data {Array|null} newHitMembers=null
+ * @vue-data {Array} hitNameProposals
+ *
+ * @vue-props {Array} [teamMembers]
+ * @vue-props {String} choreoId
+ * @vue-props {Number} [count=0]
+ * @vue-props {Array} [hitsForCurrentCount]
+ * @vue-props {Number} [maxCount=0]
+ *
+ * @vue-computed {Boolean} newHitNameIsValid
+ * @vue-computed {String|null} newHitNameStateFeedback
+ * @vue-computed {Boolean} newHitAchterIsValid
+ * @vue-computed {String|null} newHitAchterStateFeedback
+ * @vue-computed {Boolean} newHitCountIsValid
+ * @vue-computed {String|null} newHitCountStateFeedback
+ * @vue-computed {Boolean} newHitMembersIsValid
+ * @vue-computed {String|null} newHitMembersStateFeedback
+ *
+ * @vue-event {string} hitCreated
+ */
 export default {
   name: "CreateHitModal",
   data: () => ({

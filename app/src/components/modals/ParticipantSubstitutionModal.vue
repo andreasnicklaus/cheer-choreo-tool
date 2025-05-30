@@ -53,6 +53,26 @@
 <script>
 import ChoreoService from "@/services/ChoreoService";
 
+/**
+ * @module Modal:ParticipantSubstitutionModal
+ * 
+ * @vue-data {String} id
+ * @vue-data {String|null} memberToReplaceId=null
+ * @vue-data {String|null} memberToSubInId=null
+ * 
+ * @vue-props {Object} choreo
+ * @vue-props {Array} participants
+ * @vue-props {Array} nonParticipants
+ * 
+ * @vue-computed {Array} participantOptions
+ * @vue-computed {Array} nonParticipantOptions
+ * @vue-computed {Boolean} memberToReplaceIdIsValid
+ * @vue-computed {String|null} memberToReplaceIdStateFeedback
+ * @vue-computed {Boolean} memberToSubInIdIsValid
+ * @vue-computed {String|null} memberToSubInIdStateFeedback
+ * 
+ * @vue-events {Object} substitution
+ */
 export default {
   name: "ParticipantSubstitutionModal",
   data: () => ({

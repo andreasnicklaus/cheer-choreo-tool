@@ -61,6 +61,23 @@
 <script>
 import ChoreoService from "@/services/ChoreoService";
 
+/**
+ * @module Modal:ChangeChoreoLengthModal
+ *
+ * @vue-data {String} id
+ * @vue-data {Number} newChoreoAchter=1
+ * @vue-data {Number} newChoreoCount=0
+ *
+ * @vue-props {Object} choreo
+ *
+ * @vue-computed {String} timeEstimationString
+ * @vue-computed {Boolean} achterIsValid
+ * @vue-computed {Boolean} countIsValid
+ * @vue-computed {Boolean} newCountIsValid
+ * @vue-computed {String|null} lengthStateFeedback
+ *
+ * @vue-event {Number} countUpdate
+ */
 export default {
   name: "ChangeChoreoLengthModal",
   data: () => ({
