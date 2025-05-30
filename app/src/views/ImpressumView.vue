@@ -37,6 +37,9 @@
 </template>
 
 <script>
+/**
+ * @vue-computed {MetaInfo} metaInfo
+ */
 export default {
   name: "ImpressumView",
   metaInfo() {

@@ -3,7 +3,7 @@
   "source": {
     "include": ["src"],
     "exclude": ["public/docs"],
-    "includePattern": "App\\.(vue|js)?$",
+    "includePattern": "\\.(vue|js)?$",
     "excludePattern": "(^|\\/|\\\\)_"
   },
   "opts": {

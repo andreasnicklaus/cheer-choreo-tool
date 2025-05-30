@@ -95,6 +95,14 @@
 <script>
 import VueMarkdown from "vue-markdown-v2";
 
+/**
+ * @vue-data {string} searchTerm
+ *
+ * @vue-computed {Array} faqCategories
+ * @vue-computed {Array} filteredFaqCategories
+ *
+ * @vue-computed {MetaInfo} metaInfo
+ */
 export default {
   name: "HelpView",
   data: function () {

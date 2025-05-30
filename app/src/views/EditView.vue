@@ -414,6 +414,34 @@ import MobileChoreoEditModal from "@/components/modals/MobileChoreoEditModal.vue
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import MessagingService from "@/services/MessagingService";
 
+/**
+ * @vue-data {string|null} choreoId=null
+ * @vue-data {number} matHeight=500
+ * @vue-data {number} matWidth=500
+ * @vue-data {boolean} snapping=true
+ * @vue-data {boolean} moveWithCountEdit=true
+ * @vue-data {number} count=0
+ * @vue-data {Array} team_table_fields
+ * @vue-data {Array} participants_table_fields
+ * @vue-data {Object|null} choreo=null
+ * @vue-data {Object|null} lastKeyEvent=null
+ * @vue-data {number} transitionMs=800
+ * @vue-data {Object} positionUpdates={}
+ * @vue-data {boolean} lineupCreationInProgress=false
+ * @vue-data {number|null} playInterval=null
+ * @vue-data {boolean} countBackButtonHasNeverBeenUsed=true
+ * @vue-data {boolean} countStartButtonHasNeverBeenUsed=true
+ * @vue-data {boolean} countNextButtonHasNeverBeenUsed=true
+ * @vue-data {boolean} countEndButtonHasNeverBeenUsed=true
+ *
+ * @vue-computed {Array} teamMembers
+ * @vue-computed {Array} notParticipatingMembers
+ * @vue-computed {Array} currentPositions
+ * @vue-computed {Array} hitsForCurrentCount
+ * @vue-computed {Array} lineupsForCurrentCount
+ *
+ * @vue-computed {MetaInfo} metaInfo
+ */
 export default {
   name: "EditView",
   components: {

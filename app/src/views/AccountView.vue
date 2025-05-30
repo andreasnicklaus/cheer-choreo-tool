@@ -666,6 +666,41 @@ const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 const MB = 1_048_576;
 const MAX_IMAGE_MB = 2;
 
+/**
+ * @vue-data {Number} MAX_IMAGE_MB=2
+ * @vue-data {Boolean} loading=true
+ * @vue-data {Object} user=null
+ * @vue-data {string|null} newProfilePicture=null
+ * @vue-data {Blob|null} currentProfilePictureBlob=null
+ * @vue-data {string|null} username=null
+ * @vue-data {string|null} email=null
+ * @vue-data {string|null} newClubLogo=null
+ * @vue-data {Blob|null} currentClubLogoBlob=null
+ * @vue-data {string|null} clubName=null
+ * @vue-data {Boolean} tracking=false
+ * @vue-data {Boolean} profilePictureIsHovered=false
+ * @vue-data {Boolean} clubLogoIsHovered=false
+ * @vue-data {Boolean} profilePictureDeletion=false
+ * @vue-data {Boolean} clubLogoDeletion=false
+ * @vue-data {Number} clubTabIndex=0
+ *
+ * @vue-computed {Blob|null} newProfilePictureBlob
+ * @vue-computed {Object} currentClub
+ * @vue-computed {Blob|null} newClubLogoBlob
+ * @vue-computed {Boolean} usernameIsValid
+ * @vue-computed {string|null} usernameError
+ * @vue-computed {Boolean} emailIsValid
+ * @vue-computed {string|null} emailError
+ * @vue-computed {Boolean} clubNameIsValid
+ * @vue-computed {string|null} clubNameError
+ * @vue-computed {Boolean} newProfilePictureIsValid
+ * @vue-computed {string|null} newProfilePictureError
+ * @vue-computed {Boolean} newClubLogoIsValid
+ * @vue-computed {string|null} newClubLogoError
+ *
+ * @vue-computed {MetaInfo} metaInfo
+ */
+
 export default {
   components: {
     ChangePasswordModal,

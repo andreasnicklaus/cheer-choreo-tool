@@ -470,6 +470,19 @@ import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 
+/**
+ * @vue-data {Number} count=0
+ * @vue-data {Array} teamMembers
+ * @vue-data {Object} choreo
+ * @vue-data {Array} currentPositions
+ * @vue-data {Array} selectedTeamMembers
+ *
+ * @vue-computed {Array} hitsForCurrentCount
+ * @vue-computed {Number} matWidth
+ *
+ * @vue-meta {MetaInfo} metaInfo
+ */
+
 export default {
   name: "HomeView",
   components: {

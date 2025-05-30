@@ -155,6 +155,13 @@ import MessagingService from "./services/MessagingService";
 import { logWelcomeMessage } from "@/utils/logging";
 import VersionService from "./services/VersionService";
 
+/**
+ * @vue-data {boolean} online
+ * @vue-data {string} serverVersion
+ * @vue-data {string} applicationVersion
+ * @vue-data {Breakpoints} breakpoints
+ * @vue-computed {MetaInfo} metaInfo
+ */
 export default {
   components: { HeadNav, ConsentWindow, AppInstallWindow, FeedbackPrompt },
   data: () => ({

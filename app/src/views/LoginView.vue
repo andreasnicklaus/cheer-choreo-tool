@@ -199,6 +199,27 @@ import MessagingService from "@/services/MessagingService";
 
 const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 
+/**
+ * @vue-data {string|null} username=null
+ * @vue-data {string|null} email=null
+ * @vue-data {string|null} password=null
+ * @vue-data {string|null} passwordRepetition=null
+ * @vue-data {number} tabIndex=0
+ * @vue-data {boolean} loading=false
+ * 
+ * @vue-computed {string[]} failMessages
+ * @vue-computed {boolean} usernameIsValid
+ * @vue-computed {string|null} usernameError
+ * @vue-computed {boolean} emailIsValid
+ * @vue-computed {string|null} emailError
+ * @vue-computed {boolean} passwordIsValid
+ * @vue-computed {string|null} passwordError
+ * @vue-computed {boolean} passwordRepetitionIsValid
+ * @vue-computed {string|null} passwordRepetitionError
+ * @vue-computed {boolean} isWelcome
+ * 
+ * @vue-computed {MetaInfo} metaInfo
+ */
 export default {
   name: "LoginView",
   components: { ConfirmEmailModal, PasswordResetModal, NewVersionBadge },

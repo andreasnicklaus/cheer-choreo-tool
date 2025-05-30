@@ -253,6 +253,20 @@ import DeleteTeamModal from "@/components/modals/DeleteTeamModal.vue";
 import ImportMemberModal from "@/components/modals/ImportMemberModal.vue";
 import TeamService from "@/services/TeamService";
 
+/**
+ * @vue-data {string} presentation=table
+ * @vue-data {string|null} teamId=null
+ * @vue-data {Array} teams
+ * @vue-data {number} seasonTabIndex=0
+ * @vue-data {Array} tableFields
+ * @vue-data {number|null} editMemberId=null
+ * 
+ * @vue-computed {Object|null} currentTeam
+ * @vue-computed {Array} sortedMembersOfCurrentTeam
+ * 
+ * @vue-computed {MetaInfo} metaInfo
+ */
+
 export default {
   name: "TeamView",
   components: {

@@ -266,6 +266,35 @@ import ChoreoService from "@/services/ChoreoService";
 import ClubService from "@/services/ClubService";
 import VueHtml2pdf from "vue-html2pdf";
 
+/**
+ * @vue-data {Object|null} user=null
+ * @vue-data {String|null} choreoId
+ * @vue.data {Object|null} choreo=null
+ * @vue-data {Array} teamMembers
+ * @vue-data {Array} hitSplits
+ * @vue-data {Number} sloganIndex=0
+ * @vue-data {Interval|null} sloganInterval=null
+ * @vue-data {Boolean} includeDate=true
+ * @vue-data {Boolean} includeTeamName=true
+ * @vue-data {Boolean} includeChoreoName=true
+ * @vue-data {Boolean} includeMemberNames=false
+ * @vue-data {Array} includedMembers
+ * @vue-data {Boolean} includeLogo=true
+ * @vue-data {Boolean} loading=true
+ * @vue-data {String} date
+ * @vue-data {Blob|null} currentClubLogoBlob=null
+ *
+ * @vue-computed {Object|null} currentClub
+ * @vue-computed {string[]} slogans
+ * @vue-computed {string} slogan
+ * @vue-computed {Boolean} dateIsValid
+ * @vue-computed {String|null} dateStateFeedback
+ * @vue-computed {Boolean} includedMembersIsValid
+ * @vue-computed {String|null} includedMembersStateFeedback
+ *
+ * @vue-computed {MetaInfo} metaInfo
+ */
+
 export default {
   name: "PdfView",
   components: { CountSheet, VueHtml2pdf, LoadingModal },

@@ -7,6 +7,10 @@
 <script>
 import VideoExport from "@/components/VideoExport.vue";
 
+/**
+ *
+ */
+
 export default {
   name: "VideoView",
   components: { VideoExport },

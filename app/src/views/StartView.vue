@@ -475,6 +475,23 @@ import CreateSeasonModal from "@/components/modals/CreateSeasonModal.vue";
 import CreateTeamModal from "@/components/modals/CreateTeamModal.vue";
 import ClubService from "@/services/ClubService";
 
+/**
+ * @vue-data {boolean} useFolderColors=true
+ * @vue-data {Object|null} club=null
+ * @vue-data {Array} teams
+ * @vue-data {Array} seasons
+ * @vue-data {Array} teamFilterIds
+ * @vue-data {Array} seasonFilterIds
+ * @vue-data {string|null} searchTerm=null
+ * @vue-data {number} minCount=0
+ * @vue-data {number} maxCount=400
+ * @vue-data {boolean} loading=true
+ * @vue-data {boolean} filterCollapseVisible=false
+ *
+ * @vue-computed {Array} choreos
+ *
+ * @vue-computed {MetaInfo} metaInfo
+ */
 export default {
   name: "StartView",
   components: {

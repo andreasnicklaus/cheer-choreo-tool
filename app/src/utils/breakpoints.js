@@ -48,4 +48,28 @@ function onResize() {
 window.onresize = onResize;
 onResize();
 
+/**
+ * @typedef Breakpoints
+ * @property {object} screen
+ * @property {number} screen.width
+ * @property {boolean} screen.mobile
+ * @property {boolean} screen.xs
+ * @property {boolean} screen.sm
+ * @property {boolean} screen.md
+ * @property {boolean} screen.lg
+ * @property {boolean} screen.xl
+ * @property {object} screen.gt
+ * @property {boolean} screen.gt.xs
+ * @property {boolean} screen.gt.sm
+ * @property {boolean} screen.gt.md
+ * @property {boolean} screen.gt.lg
+ * @property {boolean} screen.gt.xl
+ * @property {object} screen.lt
+ * @property {boolean} screen.lt.xs
+ * @property {boolean} screen.lt.sm
+ * @property {boolean} screen.lt.md
+ * @property {boolean} screen.lt.lg
+ * @property {boolean} screen.lt.xl
+ */
+
 export default state;
