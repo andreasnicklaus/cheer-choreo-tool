@@ -4,10 +4,12 @@
   "private": true,
   "scripts": {
     "serve": "npm run icons && vue-cli-service serve",
-    "build": "npm run icons && vue-cli-service build",
+    "build": "npm run icons && npm run docs && vue-cli-service build",
     "lint": "vue-cli-service lint",
     "icons": "vue-asset-generate -a ./public/Icon.png -b #FFFFFF",
-    "sitemap": "vue-cli-service sitemap"
+    "sitemap": "vue-cli-service sitemap",
+    "docs": "jsdoc -c jsdoc.json",
+    "docs:watch": "concurrently --kill-others \"live-server ./public/docs\" \"nodemon --exec npm run docs\""
   },
   "dependencies": {
     "@babel/eslint-parser": "^7.12.16",
@@ -53,9 +55,21 @@
     "@babel/core": "^7.12.16",
     "@vue/cli-plugin-router": "~5.0.0",
     "@vue/cli-plugin-vuex": "~5.0.0",
+    "clean-jsdoc-theme": "^4.3.0",
+    "concurrently": "^9.1.2",
     "eslint": "^7.32.0",
+    "jsdoc": "^4.0.4",
+    "jsdoc-vuejs": "^4.0.0",
+    "live-server": "^1.2.2",
+    "nodemon": "^3.1.10",
     "prettier": "^2.4.1",
     "sass": "^1.32.7",
     "vue-template-compiler": "^2.6.14"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "./public/docs"
+    ],
+    "ext": "vue,js"
   }
 }
