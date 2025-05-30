@@ -11,3 +11,5 @@
  * @typedef {string} UUID
  * @memberof module:Models
  */
+
+// TODO: add security information to swagger docs
