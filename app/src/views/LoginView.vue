@@ -206,7 +206,6 @@ const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
  * @vue-data {string|null} passwordRepetition=null
  * @vue-data {number} tabIndex=0
  * @vue-data {boolean} loading=false
- * 
  * @vue-computed {string[]} failMessages
  * @vue-computed {boolean} usernameIsValid
  * @vue-computed {string|null} usernameError
@@ -217,7 +216,6 @@ const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
  * @vue-computed {boolean} passwordRepetitionIsValid
  * @vue-computed {string|null} passwordRepetitionError
  * @vue-computed {boolean} isWelcome
- * 
  * @vue-computed {MetaInfo} metaInfo
  */
 export default {

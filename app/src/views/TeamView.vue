@@ -260,10 +260,8 @@ import TeamService from "@/services/TeamService";
  * @vue-data {number} seasonTabIndex=0
  * @vue-data {Array} tableFields
  * @vue-data {number|null} editMemberId=null
- * 
  * @vue-computed {Object|null} currentTeam
  * @vue-computed {Array} sortedMembersOfCurrentTeam
- * 
  * @vue-computed {MetaInfo} metaInfo
  */
 
