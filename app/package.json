@@ -70,6 +70,6 @@
     "ignore": [
       "./public/docs"
     ],
-    "ext": "vue,js"
+    "ext": "vue,js,md"
   }
 }

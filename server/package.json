@@ -9,7 +9,7 @@
     "dev": "nodemon -L --exec tsx src/index.ts",
     "reset": "node src/resetDB.js",
     "docs": "jsdoc -c jsdoc.json",
-    "docs-dev": "concurrently --kill-others \"live-server --wait=1000 src/docs\" \"nodemon --exec npm run docs\"",
+    "docs-dev": "concurrently --kill-others \"live-server --wait=1000 dist/docs\" \"nodemon --exec npm run docs\"",
     "build": "npm run clean && npm run lint && npm run build:ts",
     "build:ts": "tsc && tscp",
     "clean": "rimraf dist",
@@ -77,7 +77,7 @@
   },
   "nodemonConfig": {
     "ignore": [
-      "./src/docs"
+      "./dist"
     ],
     "ext": "ts,json,js"
   }

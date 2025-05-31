@@ -25,13 +25,6 @@
 
 ---
 
-## Overview
-
-**Choreo Planer API** is the backend server for the Choreo Planer platform, designed to help cheerleading teams plan, organize, and manage their choreography routines. This API provides endpoints for user management, routine creation, team collaboration, and more.
-
-- **Website:** [www.choreo-planer.de](https://www.choreo-planer.de)
-- **API Base URL:** [api.choreo-planer.de](https://api.choreo-planer.de)
-
 ## Features
 
 - User authentication & management
@@ -47,6 +40,13 @@
 - [Docker](https://www.docker.com/)
 
 This documentation only provides quick start instructions for docker because the server is designed to run in a docker container.
+
+### Setup the environment variables
+
+1. Rename each `.env.template` file to `.env`
+   1. `.env.template` -> `.env`
+   2. `.server.env.template` -> `.server.env`
+2. Fill in the required environment variables in each `.env` file. The `.env` files are located in the following directories:
 
 ### Running the Server in production mode
 
@@ -64,18 +64,13 @@ docker-compose -f docker-compose.yml -f dev.docker-compose.yml up
 
 This command will start docker compose with the development configuration which extends the production configuration for hot reloading.
 
-## Documentation
-
-- [API Reference](/api-docs/)
-- [Website](https://www.choreo-planer.de)
-
 ## Support
 
 For questions or support, please open an issue or contact the maintainer via the website.
 
 ---
 
-© <span id="year"></span> Choreo Planer. Licensed under the MIT License.
+© <span id="year"></span> Andreas Nicklaus. Licensed under the MIT License.
 
 <script>
     document.getElementById("year").textContent = new Date().getFullYear();
