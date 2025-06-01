@@ -76,6 +76,8 @@ import MessagingService from "@/services/MessagingService";
  * @vue-computed {String|null} newPasswordStateFeedback
  * @vue-computed {Boolean} passwordRepetitionIsValid
  * @vue-computed {String|null} passwordRepetitionStateFeedback
+ *
+ * @example <ChangePasswordModal />
  */
 export default {
   name: "ChangePasswordModal",

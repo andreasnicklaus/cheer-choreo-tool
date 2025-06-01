@@ -80,5 +80,7 @@
 <script>
 /**
  * @module Component:EditViewShortcutTutorial
+ *
+ * @example <EditViewShortcutTutorial />
  */
 </script>

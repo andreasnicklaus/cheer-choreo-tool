@@ -65,14 +65,22 @@
  * @vue-data {String} id
  * @vue-data {String} selectedDownloadOptionId="mp4"
  *
- * @vue-props {Object} choreo
- * @vue-props {Number} width=500
- * @vue-props {String} downloadUrl
- * @vue-props {Array} downloadOptions
+ * @vue-prop {Object} choreo
+ * @vue-prop {Number} [width=500]
+ * @vue-prop {String} downloadUrl
+ * @vue-prop {Array} downloadOptions
  *
  * @vue-computed {Object} selectedDownloadOption
  *
  * @vue-event {String} downloadOptionChanged
+ *
+ * @example
+ * <template>
+ *   <VideoDownloadModal ref="videoDownloadModal" :choreo="choreoObj" :width="800" :downloadUrl="url" :downloadOptions="options" @downloadOptionChanged="handler" />
+ *   <Button @click="() => $refs.videoDownloadModal.open()" />
+ * </template>
+ * @example <VideoDownloadModal :choreo="choreoObj" :width="800" :downloadUrl="url" :downloadOptions="options" @downloadOptionChanged="handler" />
+ * @example <VideoDownloadModal :downloadUrl="url" :downloadOptions="options" @downloadOptionChanged="handler" />
  */
 export default {
   name: "VideoDownloadModal",

@@ -23,10 +23,12 @@
 
 <script>
 /**
- * @module Modal:HowToModal
+ * @module Modal:ConfirmEmailModal
  *
  * @vue-data {String} id
  * @vue-data {Boolean} isError=false
+ *
+ * @example <ConfirmEmailModal />
  */
 export default {
   name: "HowToModal",

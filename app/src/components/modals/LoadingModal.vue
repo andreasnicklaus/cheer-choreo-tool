@@ -27,7 +27,16 @@
  *
  * @vue-data {String} id
  *
- * @vue-props {String} description="Lade Daten..."
+ * @vue-prop {String} [description="Lade Daten..."]
+ *
+ * @example
+ * <template>
+ *  <LoadingModal ref="loadingModal" />
+ *  <Button @click="() => $refs.loadingModal.open()" />
+ *  <Button @click="() => $refs.loadingModal.close()" />
+ * </template>
+ * @example <LoadingModal />
+ * @example <LoadingModal description="Bitte warten..." />
  */
 export default {
   name: "LoadingModal",

@@ -667,36 +667,36 @@ const MB = 1_048_576;
 const MAX_IMAGE_MB = 2;
 
 /**
- * @vue-data {Number} MAX_IMAGE_MB=2
- * @vue-data {Boolean} loading=true
- * @vue-data {Object} user=null
- * @vue-data {string|null} newProfilePicture=null
- * @vue-data {Blob|null} currentProfilePictureBlob=null
- * @vue-data {string|null} username=null
- * @vue-data {string|null} email=null
- * @vue-data {string|null} newClubLogo=null
- * @vue-data {Blob|null} currentClubLogoBlob=null
- * @vue-data {string|null} clubName=null
- * @vue-data {Boolean} tracking=false
- * @vue-data {Boolean} profilePictureIsHovered=false
- * @vue-data {Boolean} clubLogoIsHovered=false
- * @vue-data {Boolean} profilePictureDeletion=false
- * @vue-data {Boolean} clubLogoDeletion=false
- * @vue-data {Number} clubTabIndex=0
+ * @vue-data {Number} MAX_IMAGE_MB=2 - Maximum size for profile and club images in MB.
+ * @vue-data {Boolean} loading=true - Indicates if the view is loading.
+ * @vue-data {Object} user=null - The user object containing user information.
+ * @vue-data {string|null} newProfilePicture=null - The new profile picture file to be uploaded.
+ * @vue-data {Blob|null} currentProfilePictureBlob=null - The current profile picture as a Blob.
+ * @vue-data {string|null} username=null - The username of the user.
+ * @vue-data {string|null} email=null - The email address of the user.
+ * @vue-data {string|null} newClubLogo=null - The new club logo file to be uploaded.
+ * @vue-data {Blob|null} currentClubLogoBlob=null - The current club logo as a Blob.
+ * @vue-data {string|null} clubName=null - The name of the club.
+ * @vue-data {Boolean} tracking=false - Indicates if tracking is enabled.
+ * @vue-data {Boolean} profilePictureIsHovered=false - Whether the profile picture is hovered.
+ * @vue-data {Boolean} clubLogoIsHovered=false - Whether the club logo is hovered.
+ * @vue-data {Boolean} profilePictureDeletion=false - Whether the profile picture is marked for deletion.
+ * @vue-data {Boolean} clubLogoDeletion=false - Whether the club logo is marked for deletion.
+ * @vue-data {Number} clubTabIndex=0 - The index of the currently selected club tab.
  *
- * @vue-computed {Blob|null} newProfilePictureBlob
- * @vue-computed {Object} currentClub
- * @vue-computed {Blob|null} newClubLogoBlob
- * @vue-computed {Boolean} usernameIsValid
- * @vue-computed {string|null} usernameError
- * @vue-computed {Boolean} emailIsValid
- * @vue-computed {string|null} emailError
- * @vue-computed {Boolean} clubNameIsValid
- * @vue-computed {string|null} clubNameError
- * @vue-computed {Boolean} newProfilePictureIsValid
- * @vue-computed {string|null} newProfilePictureError
- * @vue-computed {Boolean} newClubLogoIsValid
- * @vue-computed {string|null} newClubLogoError
+ * @vue-computed {Blob|null} newProfilePictureBlob - The new profile picture as a Blob.
+ * @vue-computed {Object} currentClub - The currently selected club object.
+ * @vue-computed {Blob|null} newClubLogoBlob - The new club logo as a Blob.
+ * @vue-computed {Boolean} usernameIsValid - Whether the username is valid.
+ * @vue-computed {string|null} usernameError - Error message for username validation.
+ * @vue-computed {Boolean} emailIsValid - Whether the email is valid.
+ * @vue-computed {string|null} emailError - Error message for email validation.
+ * @vue-computed {Boolean} clubNameIsValid - Whether the club name is valid.
+ * @vue-computed {string|null} clubNameError - Error message for club name validation.
+ * @vue-computed {Boolean} newProfilePictureIsValid - Whether the new profile picture is valid.
+ * @vue-computed {string|null} newProfilePictureError - Error message for new profile picture validation.
+ * @vue-computed {Boolean} newClubLogoIsValid - Whether the new club logo is valid.
+ * @vue-computed {string|null} newClubLogoError - Error message for new club logo validation.
  *
  * @vue-computed {MetaInfo} metaInfo
  */

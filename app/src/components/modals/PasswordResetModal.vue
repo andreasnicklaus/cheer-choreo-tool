@@ -61,7 +61,7 @@ import NewVersionBadge from "@/components/NewVersionBadge.vue";
 const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 
 /**
- * @module Modal:LoadingModal
+ * @module Modal:PasswordResetModal
  *
  * @vue-data {String} id
  * @vue-data {String|null} email=null
@@ -71,6 +71,12 @@ const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
  * @vue-computed {String|null} emailError
  *
  * @vue-event {null} passwordResetRequested
+ *
+ * @example
+ * <template>
+ *  <PasswordResetModal ref="passwordResetModal" @passwordResetRequested="handler" />
+ *  <Button @click="() => $refs.passwordResetModal.open()" />
+ * </template>
  */
 export default {
   name: "LoadingModal",

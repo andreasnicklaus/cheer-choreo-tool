@@ -23,7 +23,13 @@ import ChoreoService from "@/services/ChoreoService";
  *
  * @vue-data {String} id
  *
- * @vue-props {String} choreoId
+ * @vue-prop {String} choreoId
+ *
+ * @example
+ * <template>
+ *  <DeleteChoreoModal ref="deleteChoreoModal" choreoId="abc" />
+ *  <Button @click="() => $refs.deleteChoreoModal.open()" />
+ * </template>
  */
 export default {
   name: "DeleteChoreoModal",

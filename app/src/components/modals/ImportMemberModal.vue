@@ -60,13 +60,16 @@ import SeasonTeamService from "@/services/SeasonTeamService";
 
 /**
  * @module Modal:ImportMemberModal
+ *
  * @vue-data {String} id
  * @vue-data {String|null} teamId=null
  * @vue-data {String|null} seasonId=null
- * @vue-data {Array} memberIds=[]
- * @vue-props {Array} teams
- * @vue-props {String} currentTeamId
- * @vue-props {String} currentSeasonTeamId
+ * @vue-data {Array} memberIds
+ *
+ * @vue-prop {Array} teams
+ * @vue-prop {String} currentTeamId
+ * @vue-prop {String} currentSeasonTeamId
+ *
  * @vue-computed {Array} teamOptions
  * @vue-computed {Object|null} selectedTeam
  * @vue-computed {Array} seasonOptions
@@ -78,7 +81,14 @@ import SeasonTeamService from "@/services/SeasonTeamService";
  * @vue-computed {String|null} seasonIdStateFeedback
  * @vue-computed {Boolean} memberIdsIsValid
  * @vue-computed {String|null} memberIdsStateFeedback
+ *
  * @vue-event {Array} import
+ *
+ * @example
+ * <template>
+ *  <ImportMemberModal ref="importMemberModal" :teams="teams" currentTeamId="1" currentSeasonTeamId="2" @import="handler" />
+ *  <Button @click="() => $refs.importMemberModal.open()" />
+ * </template>
  */
 export default {
   name: "ImportMemberModal",

@@ -17,8 +17,8 @@ class MessagingService {
 
   /**
    * Subscribe a handler for message display.
-   * @param {string} key
-   * @param {Function} handler
+   * @param {string} key - Unique key for the handler
+   * @param {Function} handler - Function to handle message display
    */
   subscribe(key, handler) {
     this.handlers[key] = handler;
@@ -26,8 +26,8 @@ class MessagingService {
 
   /**
    * Show a generic message with options.
-   * @param {string} message
-   * @param {Object} options
+   * @param {string} message - The message to display
+   * @param {Object} options - Options for the message display
    * @returns {Promise}
    */
   _showMessage(message, options) {
@@ -40,9 +40,9 @@ class MessagingService {
 
   /**
    * Show an info message.
-   * @param {string} message
-   * @param {string|null} title
-   * @param {Object} options
+   * @param {string} message - The message to display
+   * @param {string|null} title - The title of the message (optional)
+   * @param {Object} [options] - Options for the message display
    * @returns {Promise}
    */
   showInfo(message, title = null, options = {}) {
@@ -52,9 +52,9 @@ class MessagingService {
 
   /**
    * Show a success message.
-   * @param {string} message
-   * @param {string|null} title
-   * @param {Object} options
+   * @param {string} message - The message to display
+   * @param {string|null} [title] - The title of the message
+   * @param {Object} [options] - Options for the message display
    * @returns {Promise}
    */
   showSuccess(message, title = null, options = {}) {
@@ -68,9 +68,9 @@ class MessagingService {
 
   /**
    * Show an error message.
-   * @param {string} message
-   * @param {string|null} title
-   * @param {Object} options
+   * @param {string} message - The error message to display
+   * @param {string|null} [title] - The title of the error message
+   * @param {Object} [options] - Options for the message display
    * @returns {Promise}
    */
   showError(message, title = null, options = {}) {
@@ -91,9 +91,9 @@ class MessagingService {
 
   /**
    * Show a warning message.
-   * @param {string} message
-   * @param {string|null} title
-   * @param {Object} options
+   * @param {string} message - The warning message to display
+   * @param {string|null} [title] - The title of the warning message
+   * @param {Object} [options] - Options for the message display
    * @returns {Promise}
    */
   showWarning(message, title = null, options = {}) {

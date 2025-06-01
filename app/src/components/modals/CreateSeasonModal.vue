@@ -135,9 +135,7 @@ import SeasonTeamService from "@/services/SeasonTeamService";
  * @vue-data {Number|null} seasonToCopyMembersFromId=null
  * @vue-data {Array} newSeasonMemberIds
  *
- * @vue-props {Array} teams
- *
- * @vue-events {Object} seasonTeamCreated
+ * @vue-prop {Array} teams
  *
  * @vue-computed {Object} team
  * @vue-computed {Array} seasonSelectOptions
@@ -153,6 +151,14 @@ import SeasonTeamService from "@/services/SeasonTeamService";
  * @vue-computed {String|null} newSeasonYearStateFeedback
  * @vue-computed {Boolean} newSeasonMembersIsValid
  * @vue-computed {String|null} newSeasonMembersStateFeedback
+ *
+ * @vue-event {Object} seasonTeamCreated
+ *
+ * @example
+ * <template>
+ *  <CreateSeasonModal ref=createSeasonModal :teams="teams" @seasonTeamCreated="handler" />
+ *  <Button @click="() => $refs.createSeasonModal.open()" />
+ * </template>
  */
 export default {
   name: "CreateSeasonModal",

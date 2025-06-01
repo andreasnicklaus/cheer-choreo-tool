@@ -30,7 +30,7 @@ class ChoreoService {
 
   /**
    * Get all choreographies for a team.
-   * @param {string} teamId
+   * @param {string} teamId - ID of the team
    * @returns {Promise<Array>} Array of choreographies
    */
   getByTeam(teamId) {
@@ -39,7 +39,7 @@ class ChoreoService {
 
   /**
    * Get a choreography by its ID.
-   * @param {string} choreoId
+   * @param {string} choreoId - ID of the choreography
    * @returns {Promise<Object>} Choreography object
    */
   getById(choreoId) {
@@ -48,8 +48,8 @@ class ChoreoService {
 
   /**
    * Change the name of a choreography.
-   * @param {string} choreoId
-   * @param {string} name
+   * @param {string} choreoId - ID of the choreography
+   * @param {string} name - New name for the choreography
    * @returns {Promise<Object>} Updated choreography
    */
   changeName(choreoId, name) {
@@ -58,8 +58,8 @@ class ChoreoService {
 
   /**
    * Change the length (counts) of a choreography.
-   * @param {string} choreoId
-   * @param {number} counts
+   * @param {string} choreoId - ID of the choreography
+   * @param {number} counts - New length in counts
    * @returns {Promise<Object>} Updated choreography
    */
   changeLength(choreoId, counts) {
@@ -68,8 +68,8 @@ class ChoreoService {
 
   /**
    * Change the mat type of a choreography.
-   * @param {string} choreoId
-   * @param {string} matType
+   * @param {string} choreoId - ID of the choreography
+   * @param {string} matType - New mat type
    * @returns {Promise<Object>} Updated choreography
    */
   changeMatType(choreoId, matType) {
@@ -78,9 +78,9 @@ class ChoreoService {
 
   /**
    * Add a participant to a choreography.
-   * @param {string} choreoId
-   * @param {string} memberId
-   * @param {string} color
+   * @param {string} choreoId - ID of the choreography
+   * @param {string} memberId - ID of the member to add
+   * @param {string} color - Color for the participant
    * @returns {Promise<Object>} Added participant
    */
   addParticipant(choreoId, memberId, color) {
@@ -91,8 +91,8 @@ class ChoreoService {
 
   /**
    * Remove a participant from a choreography.
-   * @param {string} choreoId
-   * @param {string} memberId
+   * @param {string} choreoId - ID of the choreography
+   * @param {string} memberId - ID of the member to remove
    * @returns {Promise}
    */
   removeParticipant(choreoId, memberId) {
@@ -101,9 +101,9 @@ class ChoreoService {
 
   /**
    * Replace a participant in a choreography.
-   * @param {string} choreoId
-   * @param {string} memberToRemoveId
-   * @param {string} memberToAddId
+   * @param {string} choreoId - ID of the choreography
+   * @param {string} memberToRemoveId - ID of the member to remove
+   * @param {string} memberToAddId - ID of the member to add
    * @returns {Promise<Object>} Updated participant list
    */
   replaceParticipant(choreoId, memberToRemoveId, memberToAddId) {
@@ -117,9 +117,9 @@ class ChoreoService {
 
   /**
    * Change the color of a participant in a choreography.
-   * @param {string} choreoId
-   * @param {string} participantId
-   * @param {string} color
+   * @param {string} choreoId - ID of the choreography
+   * @param {string} participantId - ID of the participant
+   * @param {string} color - New color for the participant
    * @returns {Promise<Object>} Updated participant
    */
   changeParticipantColor(choreoId, participantId, color) {
@@ -130,11 +130,11 @@ class ChoreoService {
 
   /**
    * Create a new choreography.
-   * @param {string} name
-   * @param {number} counts
-   * @param {string} matType
-   * @param {string} seasonTeamId
-   * @param {Array} participants
+   * @param {string} name - Name of the choreography
+   * @param {number} counts - Length of the choreography in counts
+   * @param {string} matType - Mat type for the choreography
+   * @param {string} seasonTeamId - ID of the season team
+   * @param {Array} participants - Array of participant objects
    * @returns {Promise<Object>} Created choreography
    */
   create(name, counts, matType, seasonTeamId, participants) {
@@ -145,7 +145,7 @@ class ChoreoService {
 
   /**
    * Remove a choreography by its ID.
-   * @param {string} choreoId
+   * @param {string} choreoId - ID of the choreography to remove
    * @returns {Promise}
    */
   remove(choreoId) {
@@ -154,9 +154,9 @@ class ChoreoService {
 
   /**
    * Get positions for all team members for a given count in a choreography.
-   * @param {Object} choreo
-   * @param {number} count
-   * @param {Array} teamMembers
+   * @param {Object} choreo - Choreography object
+   * @param {number} count - Count for which to get positions
+   * @param {Array} teamMembers - Array of team member objects
    * @returns {Array} Array of position objects
    */
   getPositionsFromChoreoAndCount(choreo, count, teamMembers) {

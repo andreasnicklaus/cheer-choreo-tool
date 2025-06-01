@@ -25,9 +25,15 @@ import HitService from "@/services/HitService";
  * @vue-data {String} id
  * @vue-data {String|null} deleteHitId=null
  *
- * @vue-props {Object} choreo
+ * @vue-prop {Object} choreo
  *
- * @vue-events {Array} updateHits
+ * @vue-event {Array} updateHits
+ *
+ * @example
+ * <template>
+ *  <DeleteHitModal ref="deleteHitModal" :choreo="choreoObj" @updateHits="handler" />
+ *  <Button @click="() => $refs.deleteHitModal.open('abc')" />
+ * </template>
  */
 export default {
   name: "DeleteHitModal",

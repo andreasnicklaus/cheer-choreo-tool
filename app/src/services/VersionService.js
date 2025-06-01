@@ -27,7 +27,7 @@ class VersionService {
 
   /**
    * Check if a version tag is considered new.
-   * @param {string} versionTag
+   * @param {string} versionTag - Version tag to check
    * @returns {boolean} True if the version is new, false otherwise
    */
   isVersionNew(versionTag) {

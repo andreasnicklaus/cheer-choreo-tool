@@ -96,10 +96,10 @@
 import VueMarkdown from "vue-markdown-v2";
 
 /**
- * @vue-data {string} searchTerm
+ * @vue-data {string} searchTerm - The search term entered by the user.
  *
- * @vue-computed {Array} faqCategories
- * @vue-computed {Array} filteredFaqCategories
+ * @vue-computed {Array} faqCategories - An array of FAQ categories, each containing a name, order, and an array of FAQs.
+ * @vue-computed {Array} filteredFaqCategories - An array of FAQ categories filtered by the search term.
  *
  * @vue-computed {MetaInfo} metaInfo
  */

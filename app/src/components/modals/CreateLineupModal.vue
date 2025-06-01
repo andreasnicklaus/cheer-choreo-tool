@@ -219,11 +219,11 @@ import PositionService from "@/services/PositionService";
  * @vue-data {Number} editLineupEndCount=1
  * @vue-data {Array} editLineupMembers
  *
- * @vue-props {Number} count
- * @vue-props {Object} choreo
- * @vue-props {Array} teamMembers
- * @vue-props {Array} lineupsForCurrentCount
- * @vue-props {Array} currentPositions
+ * @vue-prop {Number} count
+ * @vue-prop {Object} choreo
+ * @vue-prop {Array} teamMembers
+ * @vue-prop {Array} lineupsForCurrentCount
+ * @vue-prop {Array} currentPositions
  *
  * @vue-computed {Boolean} startIsBeforeEnd
  * @vue-computed {String|null} startIsBeforeEndStateFeedback
@@ -239,6 +239,12 @@ import PositionService from "@/services/PositionService";
  * @vue-computed {String|null} editLineupMembersStateFeedback
  *
  * @vue-event {Object} updateLineups
+ *
+ * @example
+ * <template>
+ *  <CreateLineupModal ref="createLineupModal" :count="1" :choreo="choreoObj" :teamMembers="members" :lineupsForCurrentCount="lineups" :currentPositions="positions" @updateLineups="handler" />
+ *  <Button @click="() => $refs.createLineupModal.open()" />
+ * </template>
  */
 export default {
   name: "CreateLineupModal",

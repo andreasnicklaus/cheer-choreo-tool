@@ -15,7 +15,7 @@ class NotificationService {
 
   /**
    * Mark a notification as not read.
-   * @param {string} notificationId
+   * @param {string} notificationId - ID of the notification to mark as not read
    * @returns {Promise<Object>} Response data
    */
   markAsNotRead(notificationId) {
@@ -26,7 +26,7 @@ class NotificationService {
 
   /**
    * Mark a notification as read.
-   * @param {string} notificationId
+   * @param {string} notificationId - ID of the notification to mark as read
    * @returns {Promise<Object>} Response data
    */
   markAsRead(notificationId) {
@@ -37,7 +37,7 @@ class NotificationService {
 
   /**
    * Delete a notification by its ID.
-   * @param {string} notificationId
+   * @param {string} notificationId - ID of the notification to delete
    * @returns {Promise<Object>} Response data
    */
   delete(notificationId) {

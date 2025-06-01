@@ -7,10 +7,10 @@ import ax from "./RequestService";
 class MemberService {
   /**
    * Create a new member.
-   * @param {string} name
-   * @param {string} nickname
-   * @param {string} abbreviation
-   * @param {string} seasonTeamId
+   * @param {string} name - Full name of the member
+   * @param {string} nickname - Nickname of the member
+   * @param {string} abbreviation - Abbreviation for the member
+   * @param {string} seasonTeamId - ID of the season team the member belongs to
    * @returns {Promise<Object>} Created member
    */
   create(name, nickname, abbreviation, seasonTeamId) {
@@ -21,8 +21,8 @@ class MemberService {
 
   /**
    * Update a member's data.
-   * @param {string} memberId
-   * @param {Object} data
+   * @param {string} memberId - ID of the member to update
+   * @param {Object} data - Data to update the member with
    * @returns {Promise<Object>} Updated member
    */
   update(memberId, data) {
@@ -31,7 +31,7 @@ class MemberService {
 
   /**
    * Remove a member by their ID.
-   * @param {string} memberId
+   * @param {string} memberId - ID of the member to remove
    * @returns {Promise<Object>} Response data
    */
   remove(memberId) {

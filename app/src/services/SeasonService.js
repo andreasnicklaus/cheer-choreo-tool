@@ -15,8 +15,8 @@ class SeasonService {
 
   /**
    * Create a new season.
-   * @param {string} name
-   * @param {number} year
+   * @param {string} name - Name of the season
+   * @param {number} year - Year of the season
    * @returns {Promise<Object>} Created season
    */
   create(name, year) {

@@ -664,30 +664,33 @@ import DeleteHitModal from "./modals/DeleteHitModal.vue";
 /**
  * @module Component:CountOverview
  *
- * @vue-data {Number|null} editHitId=null
- * @vue-data {String|null} editHitName=null
- * @vue-data {Number} editHitAchter=1
- * @vue-data {Number} editHitCount=1
- * @vue-data {Array} editHitMembers
- * @vue-data {String|null} editLineupId=null
- * @vue-data {Number} editLineupStartAchter=1
- * @vue-data {Number} editLineupStartCount=1
- * @vue-data {Number} editLineupEndAchter=1
- * @vue-data {Number} editLineupEndCount=1
- * @vue-data {Array} editLineupMembers
+ * @vue-data {Number|null} editHitId=null - The ID of the hit currently being edited, or null if none.
+ * @vue-data {String|null} editHitName=null - The name of the hit currently being edited.
+ * @vue-data {Number} editHitAchter=1 - The 'Achter' value for the hit being edited.
+ * @vue-data {Number} editHitCount=1 - The count value for the hit being edited.
+ * @vue-data {Array} editHitMembers - The members assigned to the hit being edited.
+ * @vue-data {String|null} editLineupId=null - The ID of the lineup currently being edited, or null if none.
+ * @vue-data {Number} editLineupStartAchter=1 - The starting 'Achter' value for the lineup being edited.
+ * @vue-data {Number} editLineupStartCount=1 - The starting count value for the lineup being edited.
+ * @vue-data {Number} editLineupEndAchter=1 - The ending 'Achter' value for the lineup being edited.
+ * @vue-data {Number} editLineupEndCount=1 - The ending count value for the lineup being edited.
+ * @vue-data {Array} editLineupMembers - The members assigned to the lineup being edited.
  *
- * @vue-prop {Number} count
- * @vue-prop {Array} hitsForCurrentCount
- * @vue-prop {Array} lineupsForCurrentCount
- * @vue-prop {Array} teamMembers
- * @vue-prop {Object} choreo
- * @vue-prop {Array} currentPositions
- * @vue-prop {Boolean} [interactive=true]
+ * @vue-prop {Number} count - The current count value for the overview.
+ * @vue-prop {Array} hitsForCurrentCount - The list of hits for the current count.
+ * @vue-prop {Array} lineupsForCurrentCount - The list of lineups for the current count.
+ * @vue-prop {Array} teamMembers - The list of team members.
+ * @vue-prop {Object} choreo - The choreography object.
+ * @vue-prop {Array} currentPositions - The current positions of team members.
+ * @vue-prop {Boolean} [interactive=true] - Whether the overview is interactive.
  *
  * @vue-event {Array} updateHits - Emitted when hits are updated.
  * @vue-event {Array} updateLineups - Emitted when lineups are updated.
  * @vue-event {Number} updateCount - Emitted when the count is updated.
- * @vue-event {null} openCreateHitModal - Emitted to open the modal for creating a new hit.
+ * @vue-event {null} openCreateHitModal - Notifies parent component to call <code>open()</code> on {@link Modal:CreateHitModal CreateHitModal}.
+ *
+ * @example <CountOverview :count="0" :choreo="choreoObj" :teamMembers="members" @updateHits="handler" @updateLineups="handler" @updateCount="handler" @openCreateHitModal="handler" />
+ * @example <CountOverview :count="0" :choreo="choreoObj" :teamMembers="members" :interactive="false"  @updateHits="handler" @updateLineups="handler" @updateCount="handler" @openCreateHitModal="handler" />
  */
 export default {
   name: "CountOverview",

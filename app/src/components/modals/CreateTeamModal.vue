@@ -69,7 +69,13 @@ import TeamService from "@/services/TeamService";
  * @vue-computed {Boolean} seasonIsValid
  * @vue-computed {String|null} seasonStateFeedback
  *
- * @vue-events {string} teamCreated
+ * @vue-event {string} teamCreated
+ *
+ * @example
+ * <template>
+ *  <CreateTeamModal ref="createTeamModal" @teamCreated="handler" />
+ *  <Button @click="() => $refs.createTeamModal.open()" />
+ * </template>
  */
 export default {
   name: "CreateTeamModal",

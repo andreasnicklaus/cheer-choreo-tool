@@ -246,7 +246,7 @@ import NewVersionBadge from "@/components/NewVersionBadge.vue";
  * @vue-data {Array} newChoreoParticipantIds
  * @vue-data {Array} participantOptions
  *
- * @vue-props {Array} teams
+ * @vue-prop {Array} teams
  *
  * @vue-computed {Object} selectedTeam
  * @vue-computed {Object} selectedSeasonTeam
@@ -266,6 +266,12 @@ import NewVersionBadge from "@/components/NewVersionBadge.vue";
  * @vue-computed {String|null} newChoreoSeasonStateFeedback
  *
  * @vue-event {Object} addChoreo
+ *
+ * @example
+ * <template>
+ *  <CreateChoreoModal :teams="teams" ref="createChoreoModal" @addChoreo="handler" />
+ *  <Button @click="() => $refs.createChoreoModal.open()" />
+ * </template>
  */
 export default {
   name: "CreateChoreoModal",

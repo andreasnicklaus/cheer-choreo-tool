@@ -15,8 +15,8 @@ class AuthService {
    * Make a login request with username and password and store the authentication token
    *
    * @async
-   * @param {string} username
-   * @param {string} password
+   * @param {string} username - The username of the user
+   * @param {string} password - The password of the user
    * @returns {Boolean} Returns true if the login was successful, otherwise throws an error
    */
   async login(username, password) {
@@ -43,7 +43,7 @@ class AuthService {
    * Make a login request with an SSO token and store the authentication token
    *
    * @async
-   * @param {string} ssoToken
+   * @param {string} ssoToken - The SSO token received from the SSO provider
    * @returns {Boolean} Returns true if the login was successful, otherwise throws an error
    */
   async ssoLogin(ssoToken) {
@@ -70,7 +70,7 @@ class AuthService {
    * Request an SSO login link for the given email address.
    *
    * @async
-   * @param {string} email
+   * @param {string} email - The email address to request the SSO link for
    * @returns {unknown} Returns the response data from the server
    */
   async requestSSO(email) {
@@ -81,9 +81,9 @@ class AuthService {
    * Make a registration request with username, password, and email and store the authentication token
    *
    * @async
-   * @param {string} username
-   * @param {string} password
-   * @param {string} email
+   * @param {string} username - The username of the user
+   * @param {string} password - The password of the user
+   * @param {string} email - The email address of the user
    * @returns {Boolean} Returns true if the registration was successful, otherwise throws an error
    */
   async register(username, password, email) {
@@ -123,7 +123,7 @@ class AuthService {
   /**
    * Make a request to change the password of the currently logged-in user
    *
-   * @param {string} password
+   * @param {string} password - The new password to set for the user
    * @returns {unknown} Returns the response data from the server
    */
   changePassword(password) {
@@ -133,8 +133,8 @@ class AuthService {
   /**
    * Make a request to update the user information of the currently logged-in user
    *
-   * @param {string} username
-   * @param {string} email
+   * @param {string} username - The new username to set for the user
+   * @param {string} email - The new email address to set for the user
    * @returns {unknown} Returns the response data from the server
    */
   updateUserInfo(username, email) {
@@ -146,7 +146,7 @@ class AuthService {
   /**
    * Make a request to update the profile picture of the currently logged-in user
    *
-   * @param {File} profilePicture
+   * @param {File} profilePicture - The new profile picture file to upload
    * @returns {Promise<unknown>} Returns the response data from the server
    */
   updateProfilePicture(profilePicture) {
@@ -203,8 +203,8 @@ class AuthService {
   /**
    * Get the profile image of a user by user ID and image extension
    *
-   * @param {string} userId
-   * @param {string} extension
+   * @param {string} userId - The ID of the user whose profile image is requested
+   * @param {string} extension - The file extension of the profile image (e.g., 'jpg', 'png')
    * @returns {Promise<string>} Returns a promise that resolves to the profile image blob
    */
   getProfileImage(userId, extension) {

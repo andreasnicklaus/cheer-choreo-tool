@@ -254,14 +254,16 @@ import ImportMemberModal from "@/components/modals/ImportMemberModal.vue";
 import TeamService from "@/services/TeamService";
 
 /**
- * @vue-data {string} presentation=table
- * @vue-data {string|null} teamId=null
- * @vue-data {Array} teams
- * @vue-data {number} seasonTabIndex=0
- * @vue-data {Array} tableFields
- * @vue-data {number|null} editMemberId=null
- * @vue-computed {Object|null} currentTeam
- * @vue-computed {Array} sortedMembersOfCurrentTeam
+ * @vue-data {string} presentation=table - The current presentation mode, either 'table' or 'list'.
+ * @vue-data {string|null} teamId=null - The ID of the currently selected team.
+ * @vue-data {Array} teams - An array of all teams.
+ * @vue-data {number} seasonTabIndex=0 - The index of the currently selected season tab.
+ * @vue-data {Array} tableFields - The fields to display in the team members table.
+ * @vue-data {number|null} editMemberId=null - The ID of the member currently being edited, or null if no member is being edited.
+ *
+ * @vue-computed {Object|null} currentTeam - The currently selected team based on `teamId`.
+ * @vue-computed {Array} sortedMembersOfCurrentTeam - An array of members of the current team, sorted by name.
+ *
  * @vue-computed {MetaInfo} metaInfo
  */
 

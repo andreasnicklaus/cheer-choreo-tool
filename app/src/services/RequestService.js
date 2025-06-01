@@ -68,6 +68,12 @@ ax.interceptors.request.use(
   }
 );
 
+/**
+ * Get the API domain based on the environment.
+ *
+ * @export
+ * @returns {("https://api.choreo-planer.de/" | "http://localhost:3000/")}
+ */
 export function getApiDomain() {
   return process.env.NODE_ENV == "production"
     ? "https://api.choreo-planer.de/"

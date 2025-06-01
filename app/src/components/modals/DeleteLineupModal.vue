@@ -25,9 +25,15 @@ import LineupService from "@/services/LineupService";
  * @vue-data {String} id
  * @vue-data {String|null} deleteLineupId=null
  *
- * @vue-props {Object} choreo
+ * @vue-prop {Object} choreo
  *
- * @vue-events {Array} updateLineups
+ * @vue-event {Array} updateLineups
+ *
+ * @example
+ * <template>
+ *  <DeleteLineupModal ref="deleteLineupModal" :choreo="choreoObj" @updateLineups="handler" />
+ *  <Button @click="() => $refs.deleteLineupModal.open('abc')" />
+ * </template>
  */
 export default {
   name: "DeleteLineupModal",

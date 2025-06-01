@@ -87,9 +87,9 @@ import MemberService from "@/services/MemberService";
  * @vue-data {String|null} newMemberNickname=null
  * @vue-data {String|null} newMemberAbbreviation=null
  *
- * @vue-props {Object} currentTeam
- * @vue-props {String} editMemberId
- * @vue-props {Number} seasonTabIndex=0
+ * @vue-prop {Object} currentTeam
+ * @vue-prop {String} editMemberId
+ * @vue-prop {Number} [seasonTabIndex=0]
  *
  * @vue-computed {Boolean} newMemberNameIsValid
  * @vue-computed {String|null} newMemberNameStateFeedback
@@ -97,8 +97,19 @@ import MemberService from "@/services/MemberService";
  * @vue-computed {Boolean} abbreviationIsValid
  * @vue-computed {String|null} abbreviationStateFeedback
  *
- * @vue-events {Object} memberCreated
- * @vue-events {Object} memberUpdated
+ * @vue-event {Object} memberCreated
+ * @vue-event {Object} memberUpdated
+ *
+ * @example
+ * <template>
+ *  <CreateMemberModal :currentTeam="team" :editMemberId="'memberId'" @memberCreated="handler" @memberUpdated="handler" />
+ *  <Button @click="() => $refs.createMemberModal.open()" />
+ * </template>
+ * @example
+ * <template>
+ *  <CreateMemberModal ref="createMemberModal" :currentTeam="team" :editMemberId="'memberId'" :seasonTeamIndex="0" @memberCreated="handler" @memberUpdated="handler" />
+ *  <Button @click="() => $refs.createMemberModal.open()" />
+ * </template>
  */
 export default {
   name: "CreateMemberModal",

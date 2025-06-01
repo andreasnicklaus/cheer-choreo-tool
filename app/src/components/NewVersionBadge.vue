@@ -12,8 +12,12 @@ import VersionService from "@/services/VersionService";
  *
  * @vue-data {Boolean} show=false
  *
- * @vue-prop {String} [version]
- * @vue-prop {string[]} [versions]
+ * @vue-prop {String} [version] - The specific version to check for newness.
+ * @vue-prop {string[]} [versions] - An array of versions to check for newness.
+ *
+ * @example <NewVersionBadge />
+ * @example <NewVersionBadge version="1.2.3" />
+ * @example <NewVersionBadge :versions="['1.2.3', '1.2.4']" />
  */
 
 export default {

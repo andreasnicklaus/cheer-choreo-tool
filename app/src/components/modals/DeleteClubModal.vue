@@ -25,7 +25,13 @@ import ClubService from "@/services/ClubService";
  * @vue-data {String} id
  * @vue-data {String|null} deleteClubId=null
  *
- * @vue-events {string} clubDeleted
+ * @vue-event {string} clubDeleted
+ *
+ * @example
+ * <template>
+ *  <DeleteClubModal ref="deleteClubModal" @clubDeleted="handler" />
+ *  <Button @click="() => $refs.deleteClubModal.open('abc')" />
+ * </template>
  */
 export default {
   name: "DeleteClubModal",

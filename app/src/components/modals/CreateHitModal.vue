@@ -266,11 +266,11 @@ const hitNameProposals = generateHitNameProposals();
  * @vue-data {Array|null} newHitMembers=null
  * @vue-data {Array} hitNameProposals
  *
- * @vue-props {Array} [teamMembers]
- * @vue-props {String} choreoId
- * @vue-props {Number} [count=0]
- * @vue-props {Array} [hitsForCurrentCount]
- * @vue-props {Number} [maxCount=0]
+ * @vue-prop {Array} [teamMembers]
+ * @vue-prop {String} choreoId
+ * @vue-prop {Number} [count=0]
+ * @vue-prop {Array} [hitsForCurrentCount]
+ * @vue-prop {Number} [maxCount=0]
  *
  * @vue-computed {Boolean} newHitNameIsValid
  * @vue-computed {String|null} newHitNameStateFeedback
@@ -282,6 +282,12 @@ const hitNameProposals = generateHitNameProposals();
  * @vue-computed {String|null} newHitMembersStateFeedback
  *
  * @vue-event {string} hitCreated
+ *
+ * @example
+ * <template>
+ *  <CreateHitModal :choreoId="'abc'" :teamMembers="members" ref="createHitModal" @hitCreated="handler" />
+ *  <Button @click="() => $refs.createHitModal.open()" />
+ * </template>
  */
 export default {
   name: "CreateHitModal",

@@ -267,30 +267,30 @@ import ClubService from "@/services/ClubService";
 import VueHtml2pdf from "vue-html2pdf";
 
 /**
- * @vue-data {Object|null} user=null
- * @vue-data {String|null} choreoId
- * @vue.data {Object|null} choreo=null
- * @vue-data {Array} teamMembers
- * @vue-data {Array} hitSplits
- * @vue-data {Number} sloganIndex=0
- * @vue-data {Interval|null} sloganInterval=null
- * @vue-data {Boolean} includeDate=true
- * @vue-data {Boolean} includeTeamName=true
- * @vue-data {Boolean} includeChoreoName=true
- * @vue-data {Boolean} includeMemberNames=false
- * @vue-data {Array} includedMembers
- * @vue-data {Boolean} includeLogo=true
- * @vue-data {Boolean} loading=true
- * @vue-data {String} date
- * @vue-data {Blob|null} currentClubLogoBlob=null
+ * @vue-data {Object|null} user=null - The currently logged-in user.
+ * @vue-data {String|null} choreoId - The ID of the choreo to load.
+ * @vue.data {Object|null} choreo=null - The loaded choreo object.
+ * @vue-data {Array} teamMembers - The list of team members for the choreo.
+ * @vue-data {Array} hitSplits - The splits of the counts for the choreo.
+ * @vue-data {Number} sloganIndex=0 - The index of the current slogan.
+ * @vue-data {Interval|null} sloganInterval=null - Interval for changing slogans.
+ * @vue-data {Boolean} includeDate=true - Whether to include the date on the PDF.
+ * @vue-data {Boolean} includeTeamName=true - Whether to include the team name on the PDF.
+ * @vue-data {Boolean} includeChoreoName=true - Whether to include the choreo name on the PDF.
+ * @vue-data {Boolean} includeMemberNames=false - Whether to include member names on the PDF.
+ * @vue-data {Array} includedMembers - The IDs of members to include in the PDF.
+ * @vue-data {Boolean} includeLogo=true - Whether to include the club logo on the PDF.
+ * @vue-data {Boolean} loading=true - Whether the PDF is currently loading.
+ * @vue-data {String} date - The date to include on the PDF, formatted as YYYY-MM-DD.
+ * @vue-data {Blob|null} currentClubLogoBlob=null - The blob URL of the current club's logo.
  *
- * @vue-computed {Object|null} currentClub
- * @vue-computed {string[]} slogans
- * @vue-computed {string} slogan
- * @vue-computed {Boolean} dateIsValid
- * @vue-computed {String|null} dateStateFeedback
- * @vue-computed {Boolean} includedMembersIsValid
- * @vue-computed {String|null} includedMembersStateFeedback
+ * @vue-computed {Object|null} currentClub - The current club of the user, based on the store's club ID.
+ * @vue-computed {string[]} slogans - An array of slogans to display while loading the PDF.
+ * @vue-computed {string} slogan - The current slogan to display, based on the slogan index.
+ * @vue-computed {Boolean} dateIsValid - Whether the selected date is valid.
+ * @vue-computed {String|null} dateStateFeedback - Feedback message for the date input.
+ * @vue-computed {Boolean} includedMembersIsValid - Whether at least one member is included in the PDF.
+ * @vue-computed {String|null} includedMembersStateFeedback - Feedback message for the included members input.
  *
  * @vue-computed {MetaInfo} metaInfo
  */

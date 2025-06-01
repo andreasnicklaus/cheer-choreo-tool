@@ -7,10 +7,10 @@ import ax from "./RequestService";
 class PositionService {
   /**
    * Create a new position in a lineup.
-   * @param {string} lineupId
-   * @param {number} x
-   * @param {number} y
-   * @param {string} memberId
+   * @param {string} lineupId - ID of the lineup
+   * @param {number} x - X coordinate of the position
+   * @param {number} y - Y coordinate of the position
+   * @param {string} memberId - ID of the member for this position
    * @returns {Promise<Object>} Created position
    */
   create(lineupId, x, y, memberId) {
@@ -21,7 +21,7 @@ class PositionService {
 
   /**
    * Get all positions for a lineup.
-   * @param {string} lineupId
+   * @param {string} lineupId - ID of the lineup
    * @returns {Promise<Array>} Array of position objects
    */
   getByLineupId(lineupId) {
@@ -32,10 +32,10 @@ class PositionService {
 
   /**
    * Update a position in a lineup.
-   * @param {string} lineupId
-   * @param {string} positionId
-   * @param {number} x
-   * @param {number} y
+   * @param {string} lineupId - ID of the lineup
+   * @param {string} positionId - ID of the position to update
+   * @param {number} x - X coordinate of the position
+   * @param {number} y - Y coordinate of the position
    * @returns {Promise<Object>} Updated position
    */
   update(lineupId, positionId, x, y) {
@@ -46,7 +46,7 @@ class PositionService {
 
   /**
    * Remove a position by its ID.
-   * @param {string} positionId
+   * @param {string} positionId - ID of the position to remove
    * @returns {Promise<Object>} Response data
    */
   remove(positionId) {

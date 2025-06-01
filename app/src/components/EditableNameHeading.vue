@@ -56,14 +56,17 @@
 /**
  * @module Component:EditableNameHeading
  *
- * @vue-prop {String} name
- * @vue-prop {String} [value]
- * @vue-prop {String} [placeholder]
+ * @vue-prop {String} name - The label or name to display as the heading.
+ * @vue-prop {String} [value] - The value bound to the heading (for v-model).
+ * @vue-prop {String} [placeholder] - Placeholder text when value is empty.
  *
- * @vue-data {Boolean} edit=false
- * @vue-data {String|null} valueReplica=null
+ * @vue-data {Boolean} edit=false - Whether the heading is in edit mode.
+ * @vue-data {String|null} valueReplica=null - Temporary value used during editing.
  *
- * @vue-event {string} input
+ * @vue-event {string} input - Emitted when the value is changed by the user.
+ *
+ * @example <EditableNameHeading name="Title" v-model="value" />
+ * @example <EditableNameHeading name="Title" v-model="value" placeholder="Enter name" />
  */
 export default {
   name: "EditableNameHeading",

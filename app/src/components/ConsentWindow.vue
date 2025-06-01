@@ -50,7 +50,9 @@ const dismissCookieName = "consent-dismissed";
 /**
  * @module Component:ConsentWindow
  *
- * @vue-data {Boolean} showConsentWindow=false
+ * @vue-data {Boolean} showConsentWindow=false - Whether the consent window is visible.
+ *
+ * @example <ConsentWindow />
  */
 export default {
   name: "ConsentWindow",

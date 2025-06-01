@@ -15,7 +15,7 @@ class ClubService {
 
   /**
    * Get a club by its ID.
-   * @param {string} clubId
+   * @param {string} clubId - ID of the club
    * @returns {Promise<Object>} Club object
    */
   getById(clubId) {
@@ -24,7 +24,7 @@ class ClubService {
 
   /**
    * Find clubs by name.
-   * @param {string} name
+   * @param {string} name - Name of the club to search for
    * @returns {Promise<Array>} Array of club objects
    */
   findByName(name) {
@@ -33,7 +33,7 @@ class ClubService {
 
   /**
    * Create a new club.
-   * @param {string} name
+   * @param {string} name - Name of the club to create
    * @returns {Promise<Object>} Created club
    */
   create(name) {
@@ -42,8 +42,8 @@ class ClubService {
 
   /**
    * Update a club's data.
-   * @param {string} clubId
-   * @param {Object} data
+   * @param {string} clubId - ID of the club to update
+   * @param {Object} data - Data to update the club with
    * @returns {Promise<Object>} Updated club
    */
   update(clubId, data) {
@@ -52,8 +52,8 @@ class ClubService {
 
   /**
    * Update a club's logo.
-   * @param {string} clubId
-   * @param {File} clubLogo
+   * @param {string} clubId - ID of the club to update
+   * @param {File} clubLogo - Logo file to upload
    * @returns {Promise<Object>} Response data
    */
   updateClubLogo(clubId, clubLogo) {
@@ -70,7 +70,7 @@ class ClubService {
 
   /**
    * Get a club's logo as a blob.
-   * @param {string} clubId
+   * @param {string} clubId - ID of the club
    * @returns {Promise<Blob>} Club logo blob
    */
   getClubLogo(clubId) {
@@ -80,7 +80,7 @@ class ClubService {
 
   /**
    * Delete a club's logo.
-   * @param {string} clubId
+   * @param {string} clubId - ID of the club
    * @returns {Promise<Object>} Response data
    */
   deleteClubLogo(clubId) {
@@ -89,7 +89,7 @@ class ClubService {
 
   /**
    * Remove a club by its ID.
-   * @param {string} clubId
+   * @param {string} clubId - ID of the club to remove
    * @returns {Promise<Object>} Response data
    */
   remove(clubId) {

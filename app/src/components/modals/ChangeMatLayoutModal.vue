@@ -51,13 +51,19 @@ import NewVersionBadge from "@/components/NewVersionBadge.vue";
  * @vue-data {String} id
  * @vue-data {String|null} newMatType=null
  *
- * @vue-props {Object} choreo
+ * @vue-prop {Object} choreo
  *
  * @vue-computed {Array} matTypeOptions
  * @vue-computed {String|null} newMatTypeStateFeedback
  * @vue-computed {Boolean} newMatTypeIsValid
  *
- * @vue-events {string} matTypeUpdate
+ * @vue-event {string} matTypeUpdate
+ *
+ * @example
+ * <template>
+ *  <ChangeMatLayoutModal :choreo="choreoObj" ref="changeMatLayoutModal" @matTypeUpdate="handler" />
+ *  <Button @click="() => $refs.changeMatLayoutModal.open()" />
+ * </template>
  */
 export default {
   name: "ChangeMatLayoutModal",

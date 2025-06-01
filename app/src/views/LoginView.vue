@@ -200,22 +200,24 @@ import MessagingService from "@/services/MessagingService";
 const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 
 /**
- * @vue-data {string|null} username=null
- * @vue-data {string|null} email=null
- * @vue-data {string|null} password=null
- * @vue-data {string|null} passwordRepetition=null
- * @vue-data {number} tabIndex=0
- * @vue-data {boolean} loading=false
- * @vue-computed {string[]} failMessages
- * @vue-computed {boolean} usernameIsValid
- * @vue-computed {string|null} usernameError
- * @vue-computed {boolean} emailIsValid
- * @vue-computed {string|null} emailError
- * @vue-computed {boolean} passwordIsValid
- * @vue-computed {string|null} passwordError
- * @vue-computed {boolean} passwordRepetitionIsValid
- * @vue-computed {string|null} passwordRepetitionError
- * @vue-computed {boolean} isWelcome
+ * @vue-data {string|null} username=null - The username for login or registration.
+ * @vue-data {string|null} email=null - The email address for login or registration.
+ * @vue-data {string|null} password=null - The password for login or registration.
+ * @vue-data {string|null} passwordRepetition=null - The repeated password for registration.
+ * @vue-data {number} tabIndex=0 - The index of the currently active tab (0 for login, 1 for registration).
+ * @vue-data {boolean} loading=false - Whether a login or registration request is in progress.
+ *
+ * @vue-computed {string[]} failMessages - An array of random failure messages to show on error.
+ * @vue-computed {boolean} usernameIsValid - Whether the username is valid (at least 6 characters).
+ * @vue-computed {string|null} usernameError - Error message for invalid username.
+ * @vue-computed {boolean} emailIsValid - Whether the email is valid (matches email regex).
+ * @vue-computed {string|null} emailError - Error message for invalid email.
+ * @vue-computed {boolean} passwordIsValid - Whether the password is valid (at least 6 characters).
+ * @vue-computed {string|null} passwordError - Error message for invalid password.
+ * @vue-computed {boolean} passwordRepetitionIsValid - Whether the password repetition matches the password.
+ * @vue-computed {string|null} passwordRepetitionError - Error message for mismatched password repetition.
+ * @vue-computed {boolean} isWelcome - Whether the current route is the welcome page.
+ *
  * @vue-computed {MetaInfo} metaInfo
  */
 export default {

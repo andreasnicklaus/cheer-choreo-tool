@@ -476,19 +476,19 @@ import CreateTeamModal from "@/components/modals/CreateTeamModal.vue";
 import ClubService from "@/services/ClubService";
 
 /**
- * @vue-data {boolean} useFolderColors=true
- * @vue-data {Object|null} club=null
- * @vue-data {Array} teams
- * @vue-data {Array} seasons
- * @vue-data {Array} teamFilterIds
- * @vue-data {Array} seasonFilterIds
- * @vue-data {string|null} searchTerm=null
- * @vue-data {number} minCount=0
- * @vue-data {number} maxCount=400
- * @vue-data {boolean} loading=true
- * @vue-data {boolean} filterCollapseVisible=false
+ * @vue-data {boolean} useFolderColors=true - Whether to use folder colors for teams and seasons.
+ * @vue-data {Object|null} club=null - The currently active club, or null if no club is selected.
+ * @vue-data {Array} teams - List of teams in the club, sorted by name.
+ * @vue-data {Array} seasons - List of seasons across all teams, sorted by year.
+ * @vue-data {Array} teamFilterIds - List of team IDs to filter choreos by.
+ * @vue-data {Array} seasonFilterIds - List of season IDs to filter choreos by.
+ * @vue-data {string|null} searchTerm=null - The search term for filtering choreos.
+ * @vue-data {number} minCount=0 - Minimum count of choreos to filter by.
+ * @vue-data {number} maxCount=400 - Maximum count of choreos to filter by.
+ * @vue-data {boolean} loading=true - Whether the data is currently loading.
+ * @vue-data {boolean} filterCollapseVisible=false - Whether the filter section is expanded or collapsed.
  *
- * @vue-computed {Array} choreos
+ * @vue-computed {Array} choreos - Flattened list of all choreos across all teams and seasons, sorted by update date.
  *
  * @vue-computed {MetaInfo} metaInfo
  */

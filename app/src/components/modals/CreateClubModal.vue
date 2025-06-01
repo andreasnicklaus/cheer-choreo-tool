@@ -51,12 +51,23 @@ import ClubService from "@/services/ClubService";
  * @vue-data {String} id
  * @vue-data {String|null} newClubName=null
  *
- * @vue-props {Boolean} preventClosing=false
+ * @vue-prop {Boolean} [preventClosing=false]
  *
  * @vue-computed {Boolean} newClubNameIsValid
  * @vue-computed {String|null} newClubNameStateFeedback
  *
- * @vue-events {string} clubCreated
+ * @vue-event {string} clubCreated
+ *
+ * @example
+ * <template>
+ *  <CreateClubModal ref="createClubModal" @clubCreated="handler" />
+ *  <Button @click="() => $refs.createClubModal.open()" />
+ * </template>
+ * @example
+ * <template>
+ *  <CreateClubModal :preventClosing="true" ref="createClubModal" @clubCreated="handler" />
+ *  <Button @click="() => $refs.createClubModal.open()" />
+ * </template>
  */
 export default {
   name: "CreateClubModal",

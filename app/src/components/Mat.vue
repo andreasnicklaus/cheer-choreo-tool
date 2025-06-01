@@ -87,23 +87,26 @@ import gsap from "gsap";
 /**
  * @module Component:MatComponent
  *
- * @vue-data {String} selectedMemberId=null
- * @vue-data {Number} snappingDistance=2
- * @vue-data {Array} positions=null
+ * @vue-data {String} selectedMemberId=null - The currently selected member's ID for interaction.
+ * @vue-data {Number} snappingDistance=2 - The distance threshold for snapping positions.
+ * @vue-data {Array} positions=null - The array of member positions on the mat.
  *
- * @vue-prop {Array} [currentPositions=[]]
- * @vue-prop {Array} [teamMembers=[]]
- * @vue-prop {Number} [width=500]
- * @vue-prop {Number} [height]
- * @vue-prop {Number} [dotRadius=20]
- * @vue-prop {Boolean} [snapping=true]
- * @vue-prop {Number} [transitionMs=1000]
- * @vue-prop {Boolean} [interactive=true]
- * @vue-prop {String} [matType="square"]
+ * @vue-prop {Array} [currentPositions] - The current positions of all members.
+ * @vue-prop {Array} [teamMembers] - The list of team members displayed on the mat.
+ * @vue-prop {Number} [width=500] - The width of the SVG mat in pixels.
+ * @vue-prop {Number} [height] - The height of the SVG mat in pixels.
+ * @vue-prop {Number} [dotRadius=20] - The radius of each member's dot on the mat.
+ * @vue-prop {Boolean} [snapping=true] - Whether position snapping is enabled.
+ * @vue-prop {Number} [transitionMs=1000] - The transition duration for movements in milliseconds.
+ * @vue-prop {Boolean} [interactive=true] - Whether the mat is interactive (allows dragging).
+ * @vue-prop {String} [matType="square"] - The type/layout of the mat (e.g., 'square', 'cheer').
  *
- * @vue-computed {Number} _height
+ * @vue-computed {Number} _height - The computed height of the mat based on type and width
  *
  * @vue-event {Array} positionChange - Emitted when a member's position is changed. [selectedMemberId, xNew, yNew]
+ *
+ * @example <Mat :currentPositions="positions" :teamMembers="members" @positionChange="handler" />
+ * @example <Mat :currentPositions="positions" :teamMembers="members" :width="800" :height="400" :dotRadius="30" :snapping="false" :transitionMs="500" :interactive="false" matType="cheer" @positionChange="handler" />
  */
 export default {
   name: "MatComponent",

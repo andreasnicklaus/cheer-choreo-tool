@@ -250,33 +250,36 @@ import { debug } from "@/utils/logging";
 /**
  * @module Component:VideoExport
  *
- * @vue-data {Number} width=1800
- * @vue-data {String|null} downloadUrl=null
- * @vue-data {MediaRecorder|null} mediaRecorder=null
- * @vue-data {Array} recordingChunks=[]
- * @vue-data {Number|null} count=null
- * @vue-data {gsap.timeline|null} animationTimeline=null
- * @vue-data {Number} bps=2.51
- * @vue-data {Object|null} user=null
- * @vue-data {Object|null} choreo=null
- * @vue-data {Array} teamMembers=[]
- * @vue-data {Boolean} animationIsRunning=false
- * @vue-data {Boolean} recordingIsRunning=false
- * @vue-data {Boolean} includeCount=true
- * @vue-data {Boolean} includeTeamName=true
- * @vue-data {Boolean} includeChoreoName=true
- * @vue-data {Array} includedMembers=[]
- * @vue-data {Boolean} includeClubLogo=false
- * @vue-data {Blob|null} currentClubLogoBlob=null
- * @vue-data {Array} downloadOptions=[{id: 'webm', ext: '.webm', name: 'Webm'}, {id: 'mp4', ext: '.mp4', name: 'MP4'}]
- * @vue-data {FFmpeg|null} ffmpeg=null
- * @vue-data {String|null} mp4Url=null
+ * @vue-data {Number} width=1800 - The width of the video canvas.
+ * @vue-data {String|null} downloadUrl=null - The URL for the downloaded video.
+ * @vue-data {MediaRecorder|null} mediaRecorder=null - The MediaRecorder instance for recording the video.
+ * @vue-data {Array} recordingChunks - The chunks of video data recorded.
+ * @vue-data {Number|null} count=null - The current count in the video, used for choreography timing.
+ * @vue-data {gsap.timeline|null} animationTimeline=null - The GSAP timeline for controlling the animation of the video.
+ * @vue-data {Number} bps=2.51 - Beats per second for the choreography.
+ * @vue-data {Object|null} user=null - The authenticated user object.
+ * @vue-data {Object|null} choreo=null - The choreography object being exported.
+ * @vue-data {Array} teamMembers - The members of the team participating in the choreography.
+ * @vue-data {Boolean} animationIsRunning=false - Whether the animation is currently running.
+ * @vue-data {Boolean} recordingIsRunning=false - Whether the recording is currently running.
+ * @vue-data {Boolean} includeCount=true - Whether to include the count in the video.
+ * @vue-data {Boolean} includeTeamName=true - Whether to include the team name in the video.
+ * @vue-data {Boolean} includeChoreoName=true - Whether to include the choreography name in the video.
+ * @vue-data {Array} includedMembers - The names of team members to include in the video.
+ * @vue-data {Boolean} includeClubLogo=false - Whether to include the club logo in the video.
+ * @vue-data {Blob|null} currentClubLogoBlob=null - The Blob URL of the current club's logo, if available.
+ * @vue-data {Array} downloadOptions=[{id: 'webm', ext: '.webm', name: 'Webm'}, {id: 'mp4', ext: '.mp4', name: 'MP4'}] - The available download options for the video.
+ * @vue-data {FFmpeg|null} ffmpeg=null - The FFmpeg instance for video processing.
+ * @vue-data {String|null} mp4Url=null - The URL for the MP4 version of the video, if available.
  *
- * @vue-computed {Object} currentClub
- * @vue-computed {String} waitingSlogan
- * @vue-computed {Number} height
+ * @vue-computed {Object} currentClub - The current club of the user, based on the store state.
+ * @vue-computed {String} waitingSlogan - A random slogan displayed while the video is being generated.
+ * @vue-computed {Number} height - The height of the video canvas, calculated based on the width and the aspect ratio.
  *
  * @vue-computed {MetaInfo} metaInfo
+ *
+ * @example <VideoExport :width="800" />
+ * @example <VideoExport />
  */
 
 export default {

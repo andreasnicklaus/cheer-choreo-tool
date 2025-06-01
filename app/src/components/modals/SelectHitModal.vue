@@ -30,9 +30,15 @@
  * @vue-data {String} id
  * @vue-data {String|null} hitIdToUpdate=null
  *
- * @vue-props {Array} hitsForCurrentCount
+ * @vue-prop {Array} hitsForCurrentCount
  *
- * @vue-events {string} selection
+ * @vue-event {string} selection
+ *
+ * @example
+ * <template>
+ *   <SelectHitModal ref="selectHitModal" :hitsForCurrentCount="hits" @selection="handler" />
+ *   <Button @click="() => $refs.selectHitModal.open()" />
+ * </template>
  */
 export default {
   name: "SelectHitModal",

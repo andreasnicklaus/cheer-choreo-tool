@@ -78,19 +78,22 @@
 /**
  * @module Component:CountSheet
  *
- * @vue-prop {Number} count
- * @vue-prop {Object} [choreo]
- * @vue-prop {Boolean} [interactive=true]
- * @vue-prop {Boolean} [stickyHeader=true]
- * @vue-prop {Number} fontSize
- * @vue-prop {Number} [startCount=0]
- * @vue-prop {Boolean} [fixed=false]
+ * @vue-prop {Number} count - The current count value, used to highlight the selected cell.
+ * @vue-prop {Object} [choreo] - The choreography object containing hits and counts.
+ * @vue-prop {Boolean} [interactive=true] - Whether the table is interactive (clickable).
+ * @vue-prop {Boolean} [stickyHeader=true] - Whether the header should stick to the top when scrolling.
+ * @vue-prop {Number} fontSize - The font size for the table cells.
+ * @vue-prop {Number} [startCount=0] - The starting count for the table, used to calculate the achter values.
+ * @vue-prop {Boolean} [fixed=false] - Whether the table should have fixed headers and footers.
  *
- * @vue-computed {Array} achter
- * @vue-computed {String} tableHeight
+ * @vue-computed {Array} achter - An array of objects representing the "achter" rows, each containing counts and hits.
+ * @vue-computed {String} tableHeight - The height of the table, calculated based on the window height.
  *
- * @vue-event {Number} setCounter
- * @vue-event {null} openCreateHitModal
+ * @vue-event {Number} setCounter - Emitted when a count is set by clicking a button. The value is calculated as `achter * 8 + count`.
+ * @vue-event {null} openCreateHitModal - Notifies parent component to call <code>open()</code> on {@link Modal:CreateHitModal CreateHitModal}
+ *
+ * @example <CountSheet :count="0" :fontSize="16" @setCounter="handler" @openCreateHitModal="handler" />
+ * @example <CountSheet :count="0" :choreo="choreoObj" :interactive="false" :stickyHeader="false" :fontSize="18" :startCount="2" :fixed="true" @setCounter="handler" @openCreateHitModal="handler" />
  */
 export default {
   name: "CountSheet",

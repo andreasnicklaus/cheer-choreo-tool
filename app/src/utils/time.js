@@ -16,8 +16,8 @@ function initTimeAgo(locale) {
  * Turn a date into a "time ago" string, e.g. "5 minutes ago", "2 days ago"
  * @global
  *
- * @param {Date} date
- * @param {string} [locale=i18n.locale]
+ * @param {Date} date - Date to format
+ * @param {string} [locale=i18n.locale] - Locale to use for formatting
  * @returns {string} Formatted time ago string
  */
 function toTimeAgo(date, locale = i18n.locale) {

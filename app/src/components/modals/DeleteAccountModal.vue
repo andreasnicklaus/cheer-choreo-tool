@@ -55,6 +55,12 @@ import AuthService from "@/services/AuthService";
  *
  * @vue-data {String} id
  * @vue-data {Boolean} accountDeletionApproval=false
+ *
+ * @example
+ * <template>
+ *  <DeleteAccountModal ref="deleteAccountModal" />
+ *  <Button @click="() => $refs.deleteAccountModal.open()" />
+ * </template>
  */
 export default {
   name: "DeleteAccountModal",

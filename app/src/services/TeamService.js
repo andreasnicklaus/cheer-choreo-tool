@@ -15,7 +15,7 @@ class TeamService {
 
   /**
    * Get teams by name.
-   * @param {string} name
+   * @param {string} name - Name of the team to search for
    * @returns {Promise<Array>} Array of team objects
    */
   getByName(name) {
@@ -24,7 +24,7 @@ class TeamService {
 
   /**
    * Get a team by its ID.
-   * @param {string} teamId
+   * @param {string} teamId - ID of the team
    * @returns {Promise<Object>} Team object
    */
   getById(teamId) {
@@ -33,9 +33,9 @@ class TeamService {
 
   /**
    * Create a new team.
-   * @param {string} name
-   * @param {string} clubId
-   * @param {string} seasonId
+   * @param {string} name - Name of the team to create
+   * @param {string} clubId - ID of the club the team belongs to
+   * @param {string} seasonId - ID of the season the team is in
    * @returns {Promise<Object>} Created team
    */
   create(name, clubId, seasonId) {
@@ -44,8 +44,8 @@ class TeamService {
 
   /**
    * Set the name of a team.
-   * @param {string} teamId
-   * @param {string} name
+   * @param {string} teamId - ID of the team to update
+   * @param {string} name - New name for the team
    * @returns {Promise<Object>} Updated team
    */
   setName(teamId, name) {
@@ -54,7 +54,7 @@ class TeamService {
 
   /**
    * Remove a team by its ID.
-   * @param {string} teamId
+   * @param {string} teamId - ID of the team to remove
    * @returns {Promise<Object>} Response data
    */
   remove(teamId) {

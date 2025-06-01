@@ -96,7 +96,7 @@ function generateTimeStamp() {
  * Log a INFO message with a timestamp
  *
  * @export
- * @param {string[]} messages
+ * @param {string[]} messages - Messages to log
  */
 export function log(...messages) {
   console.log(generateTimeStamp(), "LOG", ...messages);
@@ -106,7 +106,7 @@ export function log(...messages) {
  * Log a DEBUG message with a timestamp
  *
  * @export
- * @param {string[]} messages
+ * @param {string[]} messages - Messages to log
  */
 export function debug(...messages) {
   console.debug(generateTimeStamp(), "DEBUG", ...messages);
@@ -116,7 +116,7 @@ export function debug(...messages) {
  * Log a WARN message with a timestamp
  *
  * @export
- * @param {string[]} messages
+ * @param {string[]} messages - Messages to log
  */
 export function warn(...messages) {
   console.warn(generateTimeStamp(), "WARN", ...messages);
@@ -126,7 +126,7 @@ export function warn(...messages) {
  * Log a ERROR message with a timestamp
  *
  * @export
- * @param {string[]} messages
+ * @param {string[]} messages - Messages to log
  */
 export function error(...messages) {
   console.error(generateTimeStamp(), "ERROR", ...messages);
