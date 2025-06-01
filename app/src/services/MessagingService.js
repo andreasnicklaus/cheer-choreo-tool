@@ -1,5 +1,9 @@
 import i18n from "@/plugins/vue-i18n";
 
+/**
+ * Service for displaying messages and notifications to the user.
+ * @class MessagingService
+ */
 const DEFAULT_OPTIONS = {
   variant: "info",
   title: "Info",
@@ -11,10 +15,21 @@ const DEFAULT_OPTIONS = {
 class MessagingService {
   handlers = {};
 
+  /**
+   * Subscribe a handler for message display.
+   * @param {string} key
+   * @param {Function} handler
+   */
   subscribe(key, handler) {
     this.handlers[key] = handler;
   }
 
+  /**
+   * Show a generic message with options.
+   * @param {string} message
+   * @param {Object} options
+   * @returns {Promise}
+   */
   _showMessage(message, options) {
     return Promise.all(
       Object.values(this.handlers).map((handler) =>
@@ -23,11 +38,25 @@ class MessagingService {
     );
   }
 
+  /**
+   * Show an info message.
+   * @param {string} message
+   * @param {string|null} title
+   * @param {Object} options
+   * @returns {Promise}
+   */
   showInfo(message, title = null, options = {}) {
     if (!title) title = i18n.t("info");
     return this._showMessage(message, { title, ...options });
   }
 
+  /**
+   * Show a success message.
+   * @param {string} message
+   * @param {string|null} title
+   * @param {Object} options
+   * @returns {Promise}
+   */
   showSuccess(message, title = null, options = {}) {
     if (!title) title = i18n.t("login.erfolg");
     return this._showMessage(message, {
@@ -37,6 +66,13 @@ class MessagingService {
     });
   }
 
+  /**
+   * Show an error message.
+   * @param {string} message
+   * @param {string|null} title
+   * @param {Object} options
+   * @returns {Promise}
+   */
   showError(message, title = null, options = {}) {
     // ERROR_MESSAGES must be within this function to ensure that the right locale is used when it is called
     const ERROR_MESSAGES = [
@@ -53,6 +89,13 @@ class MessagingService {
     return this._showMessage(message, { title, variant: "danger", ...options });
   }
 
+  /**
+   * Show a warning message.
+   * @param {string} message
+   * @param {string|null} title
+   * @param {Object} options
+   * @returns {Promise}
+   */
   showWarning(message, title = null, options = {}) {
     if (!title) title = i18n.t("warnung");
     return this._showMessage(message, { title, variant: "warn", ...options });

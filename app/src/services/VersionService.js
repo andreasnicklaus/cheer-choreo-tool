@@ -1,5 +1,10 @@
 import ax from "./RequestService";
 
+/**
+ * List of application versions with their active periods.
+ *
+ * @type {Array<{tag: string, start: Date|null, end: Date|null}>}
+ */
 const VERSIONS = [
   {
     tag: "0.10.3",
@@ -13,9 +18,18 @@ const VERSIONS = [
   },
 ];
 
+/**
+ * Service for managing application and server versions.
+ * @class VersionService
+ */
 class VersionService {
   serverVersion = null;
 
+  /**
+   * Check if a version tag is considered new.
+   * @param {string} versionTag
+   * @returns {boolean} True if the version is new, false otherwise
+   */
   isVersionNew(versionTag) {
     const versionData = VERSIONS.find((v) => v.tag == versionTag);
     if (!versionData) return false;
@@ -26,10 +40,18 @@ class VersionService {
     return true;
   }
 
+  /**
+   * Get the current app version from environment variables.
+   * @returns {string} App version
+   */
   getAppVersion() {
     return process.env.VUE_APP_VERSION;
   }
 
+  /**
+   * Get the current server version from the API.
+   * @returns {Promise<string|null>} Server version or null if unavailable
+   */
   async getServerVersion() {
     if (this.serverVersion) return this.serverVersion;
 
