@@ -13,6 +13,8 @@ const router = Router();
  *     description: Get all notifications for the current user
  *     tags:
  *       - Notifications
+ *     security:
+ *       - userAuthentication: []
  *     responses:
  *       200:
  *         description: List of notifications
@@ -22,6 +24,8 @@ const router = Router();
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Notification'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.get("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
   NotificationService.getAll(req.UserId)
@@ -39,6 +43,8 @@ router.get("/", AuthService.authenticateUser(), (req: Request, res: Response, ne
  *     description: Mark a notification as read
  *     tags:
  *       - Notifications
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -48,6 +54,8 @@ router.get("/", AuthService.authenticateUser(), (req: Request, res: Response, ne
  *     responses:
  *       200:
  *         description: Notification marked as read
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.post("/:id/read", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
   return NotificationService.markRead(req.params.id, req.UserId)
@@ -65,6 +73,8 @@ router.post("/:id/read", AuthService.authenticateUser(), (req: Request, res: Res
  *     description: Mark a notification as unread
  *     tags:
  *       - Notifications
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -74,6 +84,8 @@ router.post("/:id/read", AuthService.authenticateUser(), (req: Request, res: Res
  *     responses:
  *       200:
  *         description: Notification marked as unread
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.post("/:id/unread", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
   return NotificationService.markUnread(req.params.id, req.UserId)
@@ -91,6 +103,8 @@ router.post("/:id/unread", AuthService.authenticateUser(), (req: Request, res: R
  *     description: Delete a notification by ID
  *     tags:
  *       - Notifications
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -100,6 +114,8 @@ router.post("/:id/unread", AuthService.authenticateUser(), (req: Request, res: R
  *     responses:
  *       200:
  *         description: Notification deleted successfully
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.delete("/:id", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
   return NotificationService.remove(req.params.id, req.UserId)

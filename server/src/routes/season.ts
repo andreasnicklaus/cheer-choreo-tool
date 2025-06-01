@@ -13,6 +13,8 @@ const router = Router();
  *     description: Get all seasons for the current user
  *     tags:
  *       - Seasons
+ *     security:
+ *       - userAuthentication: []
  *     responses:
  *       200:
  *         description: List of seasons
@@ -22,6 +24,8 @@ const router = Router();
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Season'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.get("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
   return SeasonService.getAll(req.UserId)
@@ -39,6 +43,8 @@ router.get("/", AuthService.authenticateUser(), (req: Request, res: Response, ne
  *     description: Create a new season
  *     tags:
  *       - Seasons
+ *     security:
+ *       - userAuthentication: []
  *     requestBody:
  *       required: true
  *       content:
@@ -60,6 +66,8 @@ router.get("/", AuthService.authenticateUser(), (req: Request, res: Response, ne
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Season'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
   const { name, year } = req.body;

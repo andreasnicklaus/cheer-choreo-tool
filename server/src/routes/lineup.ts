@@ -15,6 +15,8 @@ const router = Router();
  *     description: Create a new lineup
  *     tags:
  *       - Lineups
+ *     security:
+ *       - userAuthentication: []
  *     requestBody:
  *       required: true
  *       content:
@@ -39,6 +41,8 @@ const router = Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Lineup'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
   const { startCount, endCount, choreoId } = req.body;
@@ -57,6 +61,8 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *     description: Update a lineup by ID
  *     tags:
  *       - Lineups
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -76,6 +82,8 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Lineup'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       404:
  *         description: Lineup not found
  */
@@ -95,6 +103,8 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *     description: Add a position to a lineup
  *     tags:
  *       - Lineups
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -125,6 +135,8 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Position'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.post(
   "/:id/position",
@@ -156,6 +168,8 @@ router.post(
  *     description: Update a position in a lineup
  *     tags:
  *       - Lineups
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -180,6 +194,8 @@ router.post(
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Position'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       404:
  *         description: Position not found
  */
@@ -208,6 +224,8 @@ router.put(
  *     description: Delete a lineup by ID
  *     tags:
  *       - Lineups
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -217,6 +235,8 @@ router.put(
  *     responses:
  *       200:
  *         description: Lineup deleted successfully
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       404:
  *         description: Lineup not found
  */

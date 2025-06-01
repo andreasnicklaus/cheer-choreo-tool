@@ -13,6 +13,8 @@ const router = Router();
  *     description: Create a new member
  *     tags:
  *       - Members
+ *     security:
+ *       - userAuthentication: []
  *     requestBody:
  *       required: true
  *       content:
@@ -38,6 +40,8 @@ const router = Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Member'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
   const { name, nickname, abbreviation, seasonTeamId } = req.body;
@@ -56,6 +60,8 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *     description: Update a member by ID
  *     tags:
  *       - Members
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -75,6 +81,8 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Member'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       404:
  *         description: Member not found
  */
@@ -94,6 +102,8 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *     description: Delete a member by ID
  *     tags:
  *       - Members
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -103,6 +113,8 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *     responses:
  *       200:
  *         description: Member deleted successfully
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       404:
  *         description: Member not found
  */

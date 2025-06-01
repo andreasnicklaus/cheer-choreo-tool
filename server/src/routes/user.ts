@@ -13,6 +13,8 @@ const router = Router();
  *     description: Update the current user's information
  *     tags:
  *       - Users
+ *     security:
+ *       - userAuthentication: []
  *     requestBody:
  *       required: true
  *       content:
@@ -27,7 +29,7 @@ const router = Router();
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       401:
- *         description: Unauthorized
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.put("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
   UserService.update(req.UserId, req.body)
@@ -45,11 +47,13 @@ router.put("/", AuthService.authenticateUser(), (req: Request, res: Response, ne
  *     description: Delete the current user's account
  *     tags:
  *       - Users
+ *     security:
+ *       - userAuthentication: []
  *     responses:
  *       200:
  *         description: User deleted successfully
  *       401:
- *         description: Unauthorized
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.delete("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
   UserService.remove(req.UserId)

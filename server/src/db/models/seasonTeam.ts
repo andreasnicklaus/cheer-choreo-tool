@@ -7,6 +7,23 @@ import Season from "./season";
 import db from "../db";
 
 /**
+ * @openapi
+ * components:
+ *  schemas:
+ *    SeasonTeam:
+ *      type: object
+ *      required:
+ *      - id
+ *      - UserId
+ *      properties:
+ *        id:
+ *          type: string
+ *          format: uuid
+ *        UserId:
+ *          type: string
+ *          format: uuid
+ */
+/**
  * @typedef SeasonTeam
  * @property {UUID} id
  * @property {UUID} UserId

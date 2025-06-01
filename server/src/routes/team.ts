@@ -14,6 +14,8 @@ const router = Router();
  *     description: Get a specific team by ID, or all teams if no ID is provided. Optionally filter by name.
  *     tags:
  *       - Teams
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -36,6 +38,8 @@ const router = Router();
  *                 - type: array
  *                   items:
  *                     $ref: '#/components/schemas/Team'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       404:
  *         description: Team not found
  */
@@ -73,6 +77,8 @@ router.get("/:id?", AuthService.authenticateUser(), (req: Request, res: Response
  *     description: Create a new team
  *     tags:
  *       - Teams
+ *     security:
+ *       - userAuthentication: []
  *     requestBody:
  *       required: true
  *       content:
@@ -97,7 +103,9 @@ router.get("/:id?", AuthService.authenticateUser(), (req: Request, res: Response
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Team'
- */
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+  */
 router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
   const { name, clubId, seasonId } = req.body;
   return TeamService.create(name, clubId, seasonId, req.UserId)
@@ -123,6 +131,8 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *     description: Update a team by ID
  *     tags:
  *       - Teams
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -142,6 +152,8 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Team'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       404:
  *         description: Team not found
  */
@@ -161,6 +173,8 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *     description: Delete a team by ID
  *     tags:
  *       - Teams
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -170,6 +184,8 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *     responses:
  *       200:
  *         description: Team deleted successfully
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       404:
  *         description: Team not found
  */

@@ -16,6 +16,8 @@ const router = Router();
  *     description: Get a specific club by ID, or all clubs if no ID is provided. Optionally filter by name.
  *     tags:
  *       - Clubs
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -38,6 +40,8 @@ const router = Router();
  *                 - type: array
  *                   items:
  *                     $ref: '#/components/schemas/Club'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       404:
  *         description: Club not found
  */
@@ -75,6 +79,8 @@ router.get("/:id?", AuthService.authenticateUser(), (req: Request, res: Response
  *     description: Create a new club
  *     tags:
  *       - Clubs
+ *     security:
+ *       - userAuthentication: []
  *     requestBody:
  *       required: true
  *       content:
@@ -93,6 +99,8 @@ router.get("/:id?", AuthService.authenticateUser(), (req: Request, res: Response
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Club'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
   const { name } = req.body;
@@ -116,6 +124,8 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *     description: Update a club by ID
  *     tags:
  *       - Clubs
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -135,6 +145,8 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Club'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       404:
  *         description: Club not found
  */
@@ -154,6 +166,8 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *     description: Delete a club by ID
  *     tags:
  *       - Clubs
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -163,6 +177,8 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *     responses:
  *       200:
  *         description: Club deleted successfully
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       404:
  *         description: Club not found
  */
@@ -182,6 +198,8 @@ router.delete("/:id", AuthService.authenticateUser(), (req: Request, res: Respon
  *     description: Upload a club logo for a club
  *     tags:
  *       - Clubs
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -207,6 +225,8 @@ router.delete("/:id", AuthService.authenticateUser(), (req: Request, res: Respon
  *               $ref: '#/components/schemas/Club'
  *       400:
  *         description: No file uploaded
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.put(
   "/:id/clubLogo",
@@ -239,6 +259,8 @@ router.put(
  *     description: Get the club logo for a club
  *     tags:
  *       - Clubs
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -250,6 +272,8 @@ router.put(
  *         description: Club logo file
  *       400:
  *         description: No file uploaded
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.get(
   "/:id/clubLogo",
@@ -279,6 +303,8 @@ router.get(
  *     description: Delete the club logo for a club
  *     tags:
  *       - Clubs
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -288,6 +314,8 @@ router.get(
  *     responses:
  *       200:
  *         description: Club logo deleted successfully
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.delete(
   "/:id/clubLogo",

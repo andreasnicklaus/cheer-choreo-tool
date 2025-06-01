@@ -13,6 +13,8 @@ const router = Router();
  *     description: Get a specific hit by ID, or all hits if no ID is provided
  *     tags:
  *       - Hits
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -30,6 +32,8 @@ const router = Router();
  *                 - type: array
  *                   items:
  *                     $ref: '#/components/schemas/Hit'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       404:
  *         description: Hit not found
  */
@@ -59,6 +63,8 @@ router.get("/:id?", AuthService.authenticateUser(), (req: Request, res: Response
  *     description: Create a new hit
  *     tags:
  *       - Hits
+ *     security:
+ *       - userAuthentication: []
  *     requestBody:
  *       required: true
  *       content:
@@ -87,6 +93,8 @@ router.get("/:id?", AuthService.authenticateUser(), (req: Request, res: Response
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Hit'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
   const { name, count, choreoId, memberIds = [] } = req.body;
@@ -105,6 +113,8 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *     description: Update a hit by ID
  *     tags:
  *       - Hits
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -124,6 +134,8 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Hit'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       404:
  *         description: Hit not found
  */
@@ -143,6 +155,8 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *     description: Delete a hit by ID
  *     tags:
  *       - Hits
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -152,6 +166,8 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *     responses:
  *       200:
  *         description: Hit deleted successfully
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       404:
  *         description: Hit not found
  */

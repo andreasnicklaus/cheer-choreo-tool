@@ -15,6 +15,8 @@ const router = Router();
  *     description: Get all positions for a lineup (by lineupId query param)
  *     tags:
  *       - Positions
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: lineupId
  *         in: query
@@ -30,6 +32,8 @@ const router = Router();
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Position'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.get("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
   if (req.query.lineupId)
@@ -48,6 +52,8 @@ router.get("/", AuthService.authenticateUser(), (req: Request, res: Response, ne
  *     description: Create a new position
  *     tags:
  *       - Positions
+ *     security:
+ *       - userAuthentication: []
  *     requestBody:
  *       required: true
  *       content:
@@ -75,6 +81,8 @@ router.get("/", AuthService.authenticateUser(), (req: Request, res: Response, ne
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Position'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
   const { x, y, memberId, lineupId } = req.body;
@@ -103,6 +111,8 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *     description: Update a position by ID
  *     tags:
  *       - Positions
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -122,6 +132,8 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Position'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       404:
  *         description: Position not found
  */
@@ -141,6 +153,8 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *     description: Delete a position by ID
  *     tags:
  *       - Positions
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -150,6 +164,8 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *     responses:
  *       200:
  *         description: Position deleted successfully
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       404:
  *         description: Position not found
  */

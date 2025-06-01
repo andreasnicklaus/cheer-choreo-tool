@@ -283,6 +283,8 @@ router.post("/sso", (req: Request, res: Response, next: NextFunction) => {
  *    description: User information endpoint
  *    tags:
  *    - Authorization & Account Management
+ *    security:
+ *      - userAuthentication: []
  *    responses:
  *      200:
  *        description: Success
@@ -290,6 +292,8 @@ router.post("/sso", (req: Request, res: Response, next: NextFunction) => {
  *          application/json:
  *            schema:
  *              $ref: '#/components/schemas/User'
+ *      401:
+ *        $ref: '#/components/responses/UnauthorizedError'
  */
 router.get("/me", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
   UserService.findById(req.UserId)
@@ -307,11 +311,15 @@ router.get("/me", AuthService.authenticateUser(), (req: Request, res: Response, 
  *    description: User update endpoint, sends confirmation email if email is updated
  *    tags:
  *    - Authorization & Account Management
+ *    security:
+ *      - userAuthentication: []
  *    requestBody:
  *      $ref: '#/components/requestBodies/UserUpdateRequestBody'
  *    responses:
  *      200:
  *        description: Update successful
+ *      401:
+ *        $ref: '#/components/responses/UnauthorizedError'
  *      404:
  *        description: User was not found
  */
@@ -344,6 +352,8 @@ router.put("/me", AuthService.authenticateUser(), (req: Request, res: Response, 
  *    description: Upload endpoint for profile picture
  *    tags:
  *    - Authorization & Account Management
+ *    security:
+ *      - userAuthentication: []
  *    requestBody:
  *      $ref: '#/components/requestBodies/LoginRequestBody'
  *    responses:
@@ -360,6 +370,8 @@ router.put("/me", AuthService.authenticateUser(), (req: Request, res: Response, 
  *            schema:
  *              type: string
  *              example: No file uploaded.
+ *      401:
+ *        $ref: '#/components/responses/UnauthorizedError'
  */
 router.put(
   "/me/profilePicture",
@@ -390,6 +402,8 @@ router.put(
  *    description: Profile picture retrieval endpoint
  *    tags:
  *    - Authorization & Account Management
+ *    security:
+ *      - userAuthentication: []
  *    parameters:
  *    - name: filename
  *      in: path
@@ -401,6 +415,8 @@ router.put(
  *    responses:
  *      200:
  *        description: Success
+ *      401:
+ *        $ref: '#/components/responses/UnauthorizedError'
  *      404:
  *        description: File not found
  */
@@ -425,9 +441,13 @@ router.get(
  *    description: Delete the profile picture
  *    tags:
  *    - Authorization & Account Management
+ *    security:
+ *      - userAuthentication: []
  *    responses:
  *      200:
  *        description: Deletion successful or no profile picture to be deleted
+ *      401:
+ *        $ref: '#/components/responses/UnauthorizedError'
  */
 router.delete(
   "/me/profilePicture",
@@ -450,9 +470,13 @@ router.delete(
  *    description: Resend the email confirmation link in a new email, creates a notification
  *    tags:
  *    - Authorization & Account Management
+ *    security:
+ *      - userAuthentication: []
  *    responses:
  *      200:
  *        description: Email was sent
+ *      401:
+ *        $ref: '#/components/responses/UnauthorizedError'
  */
 router.get(
   "/me/resendEmailConfirmationLink",

@@ -13,6 +13,8 @@ const router = Router();
  *     description: Submit feedback (optionally anonymous)
  *     tags:
  *       - Feedback
+ *     security:
+ *       - userAuthentication: []
  *     requestBody:
  *       required: true
  *       content:
@@ -36,6 +38,8 @@ const router = Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Feedback'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.post("/", AuthService.authenticateUser(false), (req: Request, res: Response, next: NextFunction) => {
   const { stars, text } = req.body;
@@ -55,6 +59,8 @@ router.post("/", AuthService.authenticateUser(false), (req: Request, res: Respon
  *     description: Get all feedback for the current user
  *     tags:
  *       - Feedback
+ *     security:
+ *       - userAuthentication: []
  *     responses:
  *       200:
  *         description: List of feedback
@@ -64,6 +70,8 @@ router.post("/", AuthService.authenticateUser(false), (req: Request, res: Respon
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Feedback'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.get("/", AuthService.authenticateUser(false), (req: Request, res: Response, next: NextFunction) => {
   const UserId = req.UserId;

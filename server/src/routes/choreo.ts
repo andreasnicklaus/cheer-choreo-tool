@@ -20,6 +20,8 @@ const router = Router();
  *    description: Get a list of choreos or a specific choreo
  *    tags:
  *    - Choreos
+ *     security:
+ *       - userAuthentication: []
  *    parameters:
  *    - name: id
  *      in: path
@@ -38,6 +40,8 @@ const router = Router();
  *              - type: array
  *                items:
  *                  $ref: '#/components/schemas/Choreo'
+ *      401:
+ *        $ref: '#/components/responses/UnauthorizedError'
  *      404:
  *        description: Choreo was not found
  *        content:
@@ -72,6 +76,8 @@ router.get("/:id?", AuthService.authenticateUser(), (req: Request, res: Response
  *     description: Create a new choreo
  *     tags:
  *       - Choreos
+ *     security:
+ *       - userAuthentication: []
  *     requestBody:
  *       required: true
  *       content:
@@ -103,6 +109,8 @@ router.get("/:id?", AuthService.authenticateUser(), (req: Request, res: Response
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Choreo'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
   const { name, counts, matType, seasonTeamId, participants } = req.body;
@@ -128,6 +136,8 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *     description: Update a choreo by ID
  *     tags:
  *       - Choreos
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -147,6 +157,8 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Choreo'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       404:
  *         description: Choreo not found
  */
@@ -166,6 +178,8 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *     description: Delete a choreo by ID
  *     tags:
  *       - Choreos
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -175,6 +189,8 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *     responses:
  *       200:
  *         description: Choreo deleted successfully
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       404:
  *         description: Choreo not found
  */
@@ -194,6 +210,8 @@ router.delete("/:id", AuthService.authenticateUser(), (req: Request, res: Respon
  *     description: Add a participant to a choreo
  *     tags:
  *       - Choreos
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -216,6 +234,8 @@ router.delete("/:id", AuthService.authenticateUser(), (req: Request, res: Respon
  *     responses:
  *       200:
  *         description: Participant added successfully
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.post(
   "/:id/participants",
@@ -243,6 +263,8 @@ router.post(
  *     description: Remove a participant from a choreo
  *     tags:
  *       - Choreos
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -257,6 +279,8 @@ router.post(
  *     responses:
  *       200:
  *         description: Participant removed successfully
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.delete(
   "/:id/participants/:participationId",
@@ -281,6 +305,8 @@ router.delete(
  *     description: Replace a participant in a choreo
  *     tags:
  *       - Choreos
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -308,6 +334,8 @@ router.delete(
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Choreo'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.patch(
   "/:id/participants",
@@ -335,6 +363,8 @@ router.patch(
  *     description: Change the color of a participant in a choreo
  *     tags:
  *       - Choreos
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -360,7 +390,9 @@ router.patch(
  *     responses:
  *       200:
  *         description: Color changed successfully
- */
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+*/
 router.patch(
   "/:id/participants/:participantId",
   AuthService.authenticateUser(),

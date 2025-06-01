@@ -14,6 +14,8 @@ const router = Router();
  *     description: Create a new season-team association
  *     tags:
  *       - SeasonTeams
+ *     security:
+ *       - userAuthentication: []
  *     requestBody:
  *       required: true
  *       content:
@@ -39,6 +41,8 @@ const router = Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/SeasonTeam'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
   const { teamId, seasonId, memberIds = [] } = req.body;
@@ -57,6 +61,8 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *     description: Copy members into a season team
  *     tags:
  *       - SeasonTeams
+ *     security:
+ *       - userAuthentication: [] 
  *     parameters:
  *       - name: id
  *         in: path
@@ -83,6 +89,8 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Member'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
   const { memberIds } = req.body;
@@ -105,6 +113,8 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *     description: Delete a season team by ID
  *     tags:
  *       - SeasonTeams
+ *     security:
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -114,6 +124,8 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *     responses:
  *       200:
  *         description: SeasonTeam deleted successfully
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.delete("/:id", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
   return SeasonTeamService.remove(req.params.id, req.UserId)
