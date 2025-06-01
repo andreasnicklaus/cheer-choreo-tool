@@ -20,8 +20,8 @@ const router = Router();
  *    description: Get a list of choreos or a specific choreo
  *    tags:
  *    - Choreos
- *     security:
- *       - userAuthentication: []
+ *    security:
+ *      - userAuthentication: []
  *    parameters:
  *    - name: id
  *      in: path
