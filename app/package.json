@@ -9,7 +9,8 @@
     "icons": "vue-asset-generate -a ./public/Icon.png -b #FFFFFF",
     "sitemap": "vue-cli-service sitemap",
     "docs": "jsdoc -c jsdoc.json",
-    "docs:watch": "concurrently --kill-others \"live-server ./public/docs\" \"nodemon --exec npm run docs\""
+    "docs:watch": "concurrently --kill-others \"live-server ./public/docs\" \"nodemon --exec npm run docs\"",
+    "docs:update": "nodemon --exec npm run docs"
   },
   "dependencies": {
     "@babel/eslint-parser": "^7.12.16",
