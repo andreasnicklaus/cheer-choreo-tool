@@ -45,6 +45,9 @@
           >
             {{ $tc("navigation.feedback-geben") }} </b-button
           ><br />
+          <b-button variant="link" href="/docs/" target="_blank">
+            {{ $t("HelpView.documentation_capitalized") }}
+          </b-button>
         </b-col>
         <b-col cols="auto">
           <h5>

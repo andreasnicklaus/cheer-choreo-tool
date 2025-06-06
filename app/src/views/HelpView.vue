@@ -67,6 +67,9 @@
         >
         {{ $t("HelpView.und-beschreibe-dein-problem") }}
       </p>
+      <i18n path="HelpView.documentation-text" tag="p">
+        <a href="/docs/" target="_blank">{{ $t("HelpView.documentation") }}</a>
+      </i18n>
     </b-card>
 
     <script type="application/ld+json">

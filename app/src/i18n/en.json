@@ -206,7 +206,10 @@
     "hilfe-bekommen": "Get help",
     "nicht-die-richtige-antwort-dabei": "Not the correct answer? Contact us at",
     "oder-auf-instagram": "or on Instagram",
-    "und-beschreibe-dein-problem": "and describe your problem."
+    "und-beschreibe-dein-problem": "and describe your problem.",
+    "documentation": "documentation",
+    "documentation_capitalized": "@.capitalize:HelpView.documentation",
+    "documentation-text": "Tech experts are wholeheartedly invited to take a look at the {0}."
   },
   "hits": {
     "arabesque": "Arabesque",

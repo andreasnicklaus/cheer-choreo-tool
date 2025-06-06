@@ -31,6 +31,52 @@
 
 [![](https://img.shields.io/badge/Visit%20www.choreo--planer.de-orange?style=for-the-badge&logo=googlechrome&logoColor=white)](https://www.choreo-planer.de)
 
+## Architecture
+
+```mermaid
+graph
+  User --> github
+
+  subgraph github[Github Pages]
+    subgraph vue[Vue JS UI]
+      VueMatomo
+      bootstrap-vue
+      vue-18n
+      vue-meta
+    end
+  end
+
+  VueMatomo --> Router
+
+  User --IPv4/IPv6--> aws(AWS EC2 as Reverse Proxy)
+  aws --IPv6--> Router
+
+  BetterStack --IPv4/Ipv6--> aws
+  BetterStack --> github
+
+
+  subgraph On-Premise
+    Router --> ReverseProxy
+    subgraph HomeServer
+      subgraph Docker
+        ReverseProxy[Reverse Proxy] --> Matomo
+        ReverseProxy[Reverse Proxy] --> api
+        sequelize --> db[(Postgres Database)]
+        subgraph api[Choreo Planer API]
+          sequelize
+          i18n
+          winston
+          nodemailer
+        end
+      end
+    end
+  end
+
+  nodemailer --> GoogleMail(Google Mail)
+  mailProxy(DNS-provided E-Mail Proxy) --> GoogleMail
+  GoogleMail --> Brevo(Brevo)
+```
+
 ## :+1: Collaborators
 
 - [Andreas Nicklaus](https://github.com/andreasnicklaus) <br/> [![](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/andreasnicklaus/) [![](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/andreasnicklaus) [![](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/andreasnicklaus)

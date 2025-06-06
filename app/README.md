@@ -60,6 +60,38 @@
 - `src/` – Main Vue app source code
 - `public/` – Static assets and icons
 
+## Architecture
+
+<pre class="mermaid">
+graph
+  User --> github
+
+  subgraph github[Github Pages]
+    subgraph vue[Vue JS UI]
+      bootstrap-vue
+      vue-18n
+      vue-meta
+      VueMatomo
+    end
+  end
+
+  VueMatomo --> Router
+
+
+  BetterStack --> github
+
+
+  subgraph On-Premise
+    Router --> ReverseProxy
+    subgraph HomeServer
+      subgraph Docker
+        ReverseProxy[Reverse Proxy] --> Matomo
+      end
+    end
+  end
+
+</pre>
+
 ## License
 
 See [LICENSE](../LICENSE) for details.
@@ -74,4 +106,7 @@ For questions or support, please open an issue or contact the maintainer via the
 
 <script>
     document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 </script>

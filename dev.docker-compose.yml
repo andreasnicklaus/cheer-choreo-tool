@@ -13,3 +13,4 @@ services:
       - .server.dev.env
     volumes:
       - ./server/src:/usr/src/app/src
+      - ./server/dist:/usr/src/app/dist

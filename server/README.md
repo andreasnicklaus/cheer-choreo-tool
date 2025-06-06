@@ -64,6 +64,38 @@ docker-compose -f docker-compose.yml -f dev.docker-compose.yml up
 
 This command will start docker compose with the development configuration which extends the production configuration for hot reloading.
 
+## Architecture
+
+<pre class="mermaid">
+
+graph
+  User --IPv4/IPv6--> aws(AWS EC2 as Reverse Proxy)
+  aws --IPv6--> Router
+
+  BetterStack --IPv4/Ipv6--> aws
+
+  subgraph On-Premise
+    Router --> ReverseProxy
+    subgraph HomeServer
+      subgraph Docker
+        ReverseProxy[Reverse Proxy] --> api
+        sequelize --> db[(Postgres Database)]
+        subgraph api[Choreo Planer API]
+          sequelize
+          i18n
+          winston
+          nodemailer
+        end
+      end
+    end
+  end
+
+  nodemailer --> GoogleMail(Google Mail)
+  mailProxy(DNS-provided E-Mail Proxy) --> GoogleMail
+  GoogleMail --> Brevo(Brevo)
+
+</pre>
+
 ## Support
 
 For questions or support, please open an issue or contact the maintainer via the website.
@@ -74,4 +106,7 @@ For questions or support, please open an issue or contact the maintainer via the
 
 <script>
     document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 </script>

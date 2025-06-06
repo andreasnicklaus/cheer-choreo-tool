@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-const path = require("path");
+import path = require("path");
 const { version } = require("../package.json");
 
 // EXPRESS REQUIREMENTS
@@ -325,7 +325,7 @@ app.use(
  *       200:
  *         description: JsDoc documentation
  */
-app.use("/docs", express.static(path.join(__dirname, "docs")));
+app.use("/docs", express.static(path.join(__dirname, process.env.NODE_ENV == "production" ? "docs" : "../dist/docs")));
 
 function startServer() {
   logConfig();
