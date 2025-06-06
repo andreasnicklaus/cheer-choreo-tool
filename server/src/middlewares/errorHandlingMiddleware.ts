@@ -8,9 +8,14 @@ import { NextFunction, Request, Response } from "express";
  * @param {Response} res Outgoing response object
  * @param {Function} next Next handler function (not called)
  */
-function errorHandlingMiddleWare(error: Error, _req: Request, res: Response, next: NextFunction) {
+function errorHandlingMiddleWare(error: Error, req: Request, res: Response, next: NextFunction) {
   if (!res.headersSent) {
-    res.status(500).send(error?.message);
+    res.status(500).render("../src/views/error.ejs", {
+      action: "generic error handling",
+      data: JSON.stringify({ userId: req.UserId, url: req.url }),
+      error: error,
+      timestamp: new Date().toLocaleString(req.locale),
+    }); // njsscan-ignore: express_lfr_warning
   }
   next(error);
 }
