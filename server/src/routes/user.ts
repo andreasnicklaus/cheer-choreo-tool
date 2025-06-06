@@ -134,4 +134,4 @@ router.get("/confirmEmail/:id", (req: Request, res: Response, next: NextFunction
     });
 });
 
-export default { userRouter: router };
+export { router as userRouter };

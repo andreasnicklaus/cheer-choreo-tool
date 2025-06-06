@@ -33,7 +33,7 @@ import { hitRouter } from "./routes/hit";
 import { lineupRouter } from "./routes/lineup";
 import { memberRouter } from "./routes/member";
 import { positionRouter } from "./routes/position";
-import { userRouter } from "./routes/admin/users";
+import { userRouter } from "./routes/user";
 import { authRouter } from "./routes/auth";
 import { seasonRouter } from "./routes/season";
 import { seasonTeamRouter } from "./routes/seasonTeam";
@@ -246,6 +246,7 @@ app.use(errorHandlingMiddleWare);
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
+const swaggerFileExtension = process.env.NODE_ENV == "production" ? "js" : "ts"
 const swaggerOptions = {
   definition: {
     openapi: "3.1.1",
@@ -274,10 +275,10 @@ const swaggerOptions = {
     ],
   },
   apis: [
-    __dirname + "/routes/**/*.ts",
-    __dirname + "/index.ts",
-    __dirname + "/docDefs.ts",
-    __dirname + "/db/models/*.ts",
+    `${__dirname}/routes/**/*.${swaggerFileExtension}`,
+    `${__dirname}/index.${swaggerFileExtension}`,
+    `${__dirname}/docDefs.${swaggerFileExtension}`,
+    `${__dirname}/db/models/*.${swaggerFileExtension}`,
   ],
 };
 
