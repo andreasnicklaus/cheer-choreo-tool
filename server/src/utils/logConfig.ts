@@ -29,6 +29,11 @@ function logConfig() {
 
   const backendDomain = process.env.BACKEND_DOMAIN || "not defined";
 
+  const LogIngestingHost = process.env.BETTERSTACK_LOG_INGESTING_HOST || "not defined";
+  const LogSourceToken = process.env.BETTERSTACK_LOG_SOURCE_TOKEN
+    ? "<redacted>"
+    : "not defined"; // njsscan-ignore: node_password
+
   logger.info("################");
   logger.info("Configuration:");
   logger.info("################");
@@ -53,6 +58,9 @@ function logConfig() {
   logger.info();
   logger.info(`  Frontend Domain:       ${frontendDomain}`);
   logger.info(`  Backend Domain:        ${backendDomain}`);
+  logger.info();
+  logger.info(`  Log Source ID:         ${LogSourceToken}`);
+  logger.info(`  Log Ingesting Host:    ${LogIngestingHost}`);
   logger.info("################");
 }
 

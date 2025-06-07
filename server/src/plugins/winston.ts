@@ -1,4 +1,13 @@
 import winston from "winston";
+import { Logtail } from "@logtail/node"
+import { LogtailTransport } from "@logtail/winston"
+
+const $SOURCE_TOKEN = process.env.BETTERSTACK_LOG_SOURCE_TOKEN as string
+const $INGESTING_HOST = process.env.BETTERSTACK_LOG_INGESTING_HOST
+
+const betterStackLogTail = new Logtail($SOURCE_TOKEN, {
+  endpoint: `https://${$INGESTING_HOST}`,
+})
 
 const logger = winston.createLogger({
   // Log only if level is less than (meaning more severe) or equal to this
@@ -12,6 +21,7 @@ const logger = winston.createLogger({
   ),
   // Log to the console and a file
   transports: [
+    new LogtailTransport(betterStackLogTail),
     new winston.transports.Console(),
     new winston.transports.File({
       filename: "./logs/error.log",
@@ -53,6 +63,7 @@ const mailLogger = winston.createLogger({
   ),
   // Log to the console and a file
   transports: [
+    new LogtailTransport(betterStackLogTail),
     new winston.transports.Console(),
     new winston.transports.File({
       filename: "./logs/mail.log",
