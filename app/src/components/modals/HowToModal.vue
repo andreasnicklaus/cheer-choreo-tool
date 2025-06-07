@@ -143,6 +143,17 @@
 <script>
 import EditViewShortcutTutorial from "../EditViewShortcutTutorial.vue";
 
+/**
+ * @module Modal:HowToModal
+ *
+ * @vue-data {String} id
+ *
+ * @example
+ * <template>
+ *  <HowToModal ref="howToModal" />
+ *  <Button @click="() => $refs.howToModal.open()" />
+ * </template>
+ */
 export default {
   name: "HowToModal",
   components: { EditViewShortcutTutorial },

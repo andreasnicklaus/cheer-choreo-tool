@@ -24,3 +24,9 @@ logs
 
 # Environment variables
 .env*
+
+# jsDoc
+docs
+
+# typescript
+dist

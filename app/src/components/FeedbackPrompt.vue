@@ -102,6 +102,27 @@ import FeedbackService from "@/services/FeedbackService";
 
 const feedbackDeclinedCookieName = "feedback-declined";
 
+/**
+ * @module Component:FeedbackPrompt
+ *
+ * @vue-data {String} id
+ * @vue-data {Number} stars=4
+ * @vue-data {String|null} feedbackText=null
+ * @vue-data {Number|null} hoverStars=null
+ * @vue-data {Boolean} sending=false
+ * @vue-data {Boolean} feedbackAlreadyGiven=false
+ * @vue-data {Boolean} forced=false
+ * @vue-data {Number|null} showTimer=null
+ *
+ * @vue-event {Object} feedbackSent - Emitted when feedback is successfully sent.
+ *
+ * @example
+ * <template>
+ *   <FeedbackPrompt ref="feedbackPrompt" @feedbackSent="handler" />
+ *   <Button @click="() => $refs.feedbackPrompt.open()" />
+ * </template>
+ */
+
 export default {
   name: "FeedbackPrompt",
   data: () => ({
@@ -150,6 +171,10 @@ export default {
         parseInt(this.stars) + 1,
         this.feedbackText
       ).then(() => {
+        this.$emit("feedbackSent", {
+          stars: this.stars,
+          feedbackText: this.feedbackText,
+        });
         this.$bvModal.show(`feedback-thankyou-modal-${this.id}`);
         this.feedbackAlreadyGiven = true;
       });

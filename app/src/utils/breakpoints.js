@@ -4,8 +4,6 @@ const state = Vue.observable({
   screen: {},
 });
 
-/* This assumes you're using default bootstrap breakpoint names */
-/* You need to hardcode the breakpoint values if you want to support IE11 */
 const style = getComputedStyle(document.body);
 const xs = style.getPropertyValue("--breakpoint-xs").replace("px", "");
 const sm = style.getPropertyValue("--breakpoint-sm").replace("px", "");
@@ -47,5 +45,29 @@ function onResize() {
 /* Might want to debounce the event, to limit amount of calls */
 window.onresize = onResize;
 onResize();
+
+/**
+ * @typedef Breakpoints
+ * @property {object} screen
+ * @property {number} screen.width
+ * @property {boolean} screen.mobile
+ * @property {boolean} screen.xs
+ * @property {boolean} screen.sm
+ * @property {boolean} screen.md
+ * @property {boolean} screen.lg
+ * @property {boolean} screen.xl
+ * @property {object} screen.gt
+ * @property {boolean} screen.gt.xs
+ * @property {boolean} screen.gt.sm
+ * @property {boolean} screen.gt.md
+ * @property {boolean} screen.gt.lg
+ * @property {boolean} screen.gt.xl
+ * @property {object} screen.lt
+ * @property {boolean} screen.lt.xs
+ * @property {boolean} screen.lt.sm
+ * @property {boolean} screen.lt.md
+ * @property {boolean} screen.lt.lg
+ * @property {boolean} screen.lt.xl
+ */
 
 export default state;

@@ -53,6 +53,32 @@
 <script>
 import ChoreoService from "@/services/ChoreoService";
 
+/**
+ * @module Modal:ParticipantSubstitutionModal
+ *
+ * @vue-data {String} id
+ * @vue-data {String|null} memberToReplaceId=null
+ * @vue-data {String|null} memberToSubInId=null
+ *
+ * @vue-prop {Object} choreo
+ * @vue-prop {Array} participants
+ * @vue-prop {Array} nonParticipants
+ *
+ * @vue-computed {Array} participantOptions
+ * @vue-computed {Array} nonParticipantOptions
+ * @vue-computed {Boolean} memberToReplaceIdIsValid
+ * @vue-computed {String|null} memberToReplaceIdStateFeedback
+ * @vue-computed {Boolean} memberToSubInIdIsValid
+ * @vue-computed {String|null} memberToSubInIdStateFeedback
+ *
+ * @vue-event {Object} substitution
+ *
+ * @example
+ * <template>
+ *   <ParticipantSubstitutionModal ref="participantSubstitutionModal" :choreo="choreoObj" :participants="p" :nonParticipants="np" @substitution="handler" />
+ *   <Button @click="() => $refs.participantSubstitutionModal.open()" />
+ * </template>
+ */
 export default {
   name: "ParticipantSubstitutionModal",
   data: () => ({

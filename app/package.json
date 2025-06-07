@@ -4,10 +4,13 @@
   "private": true,
   "scripts": {
     "serve": "npm run icons && vue-cli-service serve",
-    "build": "npm run icons && vue-cli-service build",
+    "build": "npm run icons && npm run docs && vue-cli-service build",
     "lint": "vue-cli-service lint",
     "icons": "vue-asset-generate -a ./public/Icon.png -b #FFFFFF",
-    "sitemap": "vue-cli-service sitemap"
+    "sitemap": "vue-cli-service sitemap",
+    "docs": "jsdoc -c jsdoc.json",
+    "docs:watch": "concurrently --kill-others \"live-server ./public/docs\" \"nodemon --exec npm run docs\"",
+    "docs:update": "nodemon --exec npm run docs"
   },
   "dependencies": {
     "@babel/eslint-parser": "^7.12.16",
@@ -24,12 +27,15 @@
     "axios-cache-interceptor": "^1.6.0",
     "bootstrap": "^4.5.2",
     "bootstrap-vue": "^2.17.3",
+    "clean-jsdoc-theme": "^4.3.0",
     "core-js": "^3.8.3",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-vue": "^8.0.3",
     "gsap": "^3.12.5",
     "javascript-time-ago": "^2.5.11",
+    "jsdoc": "^4.0.4",
+    "jsdoc-vuejs": "^4.0.0",
     "mutationobserver-shim": "^0.3.7",
     "popper.js": "^1.16.1",
     "portal-vue": "^2.1.7",
@@ -53,9 +59,18 @@
     "@babel/core": "^7.12.16",
     "@vue/cli-plugin-router": "~5.0.0",
     "@vue/cli-plugin-vuex": "~5.0.0",
+    "concurrently": "^9.1.2",
     "eslint": "^7.32.0",
+    "live-server": "^1.2.2",
+    "nodemon": "^3.1.10",
     "prettier": "^2.4.1",
     "sass": "^1.32.7",
     "vue-template-compiler": "^2.6.14"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "./public/docs"
+    ],
+    "ext": "vue,js,md"
   }
 }

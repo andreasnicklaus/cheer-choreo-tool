@@ -5,7 +5,20 @@ import i18n from "@/plugins/vue-i18n";
 
 const tokenStorageKey = "choreo-planer-token";
 
+/**
+ * Service for handling user authentication, including login, registration, and profile management.
+ *
+ * @class AuthService
+ */
 class AuthService {
+  /**
+   * Make a login request with username and password and store the authentication token
+   *
+   * @async
+   * @param {string} username - The username of the user
+   * @param {string} password - The password of the user
+   * @returns {Boolean} Returns true if the login was successful, otherwise throws an error
+   */
   async login(username, password) {
     return ax
       .post("/auth/login", { username, password })
@@ -26,6 +39,13 @@ class AuthService {
       });
   }
 
+  /**
+   * Make a login request with an SSO token and store the authentication token
+   *
+   * @async
+   * @param {string} ssoToken - The SSO token received from the SSO provider
+   * @returns {Boolean} Returns true if the login was successful, otherwise throws an error
+   */
   async ssoLogin(ssoToken) {
     return ax
       .post("/auth/sso", { ssoToken })
@@ -46,10 +66,26 @@ class AuthService {
       });
   }
 
+  /**
+   * Request an SSO login link for the given email address.
+   *
+   * @async
+   * @param {string} email - The email address to request the SSO link for
+   * @returns {unknown} Returns the response data from the server
+   */
   async requestSSO(email) {
     return ax.post("/auth/ssoRequest", { email }).then((res) => res.data);
   }
 
+  /**
+   * Make a registration request with username, password, and email and store the authentication token
+   *
+   * @async
+   * @param {string} username - The username of the user
+   * @param {string} password - The password of the user
+   * @param {string} email - The email address of the user
+   * @returns {Boolean} Returns true if the registration was successful, otherwise throws an error
+   */
   async register(username, password, email) {
     return ax
       .post("/auth", { username, password, email })
@@ -69,6 +105,12 @@ class AuthService {
       });
   }
 
+  /**
+   * Remove the authentication token and redirect to the login page if the current route is private
+   *
+   * @async
+   * @returns {void}
+   */
   async logout() {
     this.removeToken();
     store.commit("setLoginState", false);
@@ -78,16 +120,35 @@ class AuthService {
         .catch(() => {});
   }
 
+  /**
+   * Make a request to change the password of the currently logged-in user
+   *
+   * @param {string} password - The new password to set for the user
+   * @returns {unknown} Returns the response data from the server
+   */
   changePassword(password) {
     return ax.put("/user", { password }).then((res) => res.data);
   }
 
+  /**
+   * Make a request to update the user information of the currently logged-in user
+   *
+   * @param {string} username - The new username to set for the user
+   * @param {string} email - The new email address to set for the user
+   * @returns {unknown} Returns the response data from the server
+   */
   updateUserInfo(username, email) {
     return ax.put("/auth/me", { username, email }).then((res) => {
       return res.data;
     });
   }
 
+  /**
+   * Make a request to update the profile picture of the currently logged-in user
+   *
+   * @param {File} profilePicture - The new profile picture file to upload
+   * @returns {Promise<unknown>} Returns the response data from the server
+   */
   updateProfilePicture(profilePicture) {
     const formData = new FormData();
     formData.append("profilePicture", profilePicture);
@@ -100,6 +161,11 @@ class AuthService {
       .then((res) => res.data);
   }
 
+  /**
+   * Make a request to delete the currently logged-in user account
+   *
+   * @returns {Promise<unknown>} Returns the response data from the server
+   */
   deleteAccount() {
     return ax.delete("/user").then((res) => {
       this.logout();
@@ -107,27 +173,59 @@ class AuthService {
     });
   }
 
+  /**
+   * Get the authentication token from local storage
+   *
+   * @returns {string}
+   */
   getAuthToken() {
     return localStorage.getItem(tokenStorageKey);
   }
 
+  /**
+   * Remove the authentication token from local storage
+   *
+   * @returns {void}
+   */
   removeToken() {
     return localStorage.removeItem(tokenStorageKey);
   }
 
+  /**
+   * Get the user information of the currently logged-in user
+   *
+   * @returns {Promise<object>} Returns the user information from the server
+   */
   getUserInfo() {
     return ax.get("/auth/me").then((res) => res.data);
   }
 
+  /**
+   * Get the profile image of a user by user ID and image extension
+   *
+   * @param {string} userId - The ID of the user whose profile image is requested
+   * @param {string} extension - The file extension of the profile image (e.g., 'jpg', 'png')
+   * @returns {Promise<string>} Returns a promise that resolves to the profile image blob
+   */
   getProfileImage(userId, extension) {
     const profileImageUrl = `/auth/me/profilePicture/${userId}.${extension}`;
     return ax.get(profileImageUrl, { responseType: "blob" });
   }
 
+  /**
+   * Make a request to delete the profile picture of the currently logged-in user
+   *
+   * @returns {Promise<unknown>} Returns the response data from the server
+   */
   deleteProfilePicture() {
     return ax.delete("/auth/me/profilePicture").then((res) => res.data);
   }
 
+  /**
+   * Make a request to resend the email confirmation link for the currently logged-in user
+   *
+   * @returns {Promise<unknown>} Returns the response data from the server
+   */
   resendEmailConfirmationLink() {
     return ax
       .get("/auth/me/resendEmailConfirmationLink")

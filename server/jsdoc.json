@@ -1,0 +1,44 @@
+{
+  "plugins": ["plugins/markdown"],
+  "source": {
+    "include": ["dist"],
+    "exclude": ["dist/docs"],
+    "includePattern": ".+\\.js(doc|x)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "opts": {
+    "destination": "./dist/docs/",
+    "recurse": true,
+    "template": "node_modules/clean-jsdoc-theme",
+    "encoding": "utf8",
+    "readme": "./README.md",
+    "verbose": true,
+    "theme_opts": {
+      "homepageTitle": "Choreo Planer",
+      "title": "Choreo Planer",
+      "base_url": "./docs/",
+      "menu": [
+        {
+          "title": "choreo-planer.de",
+          "link": "https://www.choreo-planer.de",
+          "target": "_blank"
+        },
+        {
+          "title": "API Documentation",
+          "link": "/api-docs",
+          "target": "_blank"
+        },
+        {
+          "title": "Frontend Documentation",
+          "link": "https://www.choreo-planer.de/docs",
+          "target": "_blank"
+        }
+      ],
+      "static_dir": ["./src/public"]
+    }
+  },
+  "markdown": {
+    "hardwrap": false,
+    "idInHeadings": true
+  }
+}

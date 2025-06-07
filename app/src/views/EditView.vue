@@ -414,6 +414,34 @@ import MobileChoreoEditModal from "@/components/modals/MobileChoreoEditModal.vue
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import MessagingService from "@/services/MessagingService";
 
+/**
+ * @vue-data {string|null} choreoId=null - The ID of the choreo being edited.
+ * @vue-data {number} matHeight=500 - The height of the mat in pixels.
+ * @vue-data {number} matWidth=500 - The width of the mat in pixels.
+ * @vue-data {boolean} snapping=true - Whether positions should snap to a grid.
+ * @vue-data {boolean} moveWithCountEdit=true - Whether the mat should move with count edits.
+ * @vue-data {number} count=0 - The current count being edited.
+ * @vue-data {Array} team_table_fields - Fields for the team table.
+ * @vue-data {Array} participants_table_fields - Fields for the participants table.
+ * @vue-data {Object|null} choreo=null - The current choreo object being edited.
+ * @vue-data {Object|null} lastKeyEvent=null - The last key event captured for keyboard shortcuts.
+ * @vue-data {number} transitionMs=800 - The transition duration for movements in milliseconds.
+ * @vue-data {Object} positionUpdates={} - A map of member IDs to their position update timeouts.
+ * @vue-data {boolean} lineupCreationInProgress=false - Whether a lineup creation is currently in progress.
+ * @vue-data {number|null} playInterval=null - The interval ID for playing the counts automatically.
+ * @vue-data {boolean} countBackButtonHasNeverBeenUsed=true - Whether the back button has been used before.
+ * @vue-data {boolean} countStartButtonHasNeverBeenUsed=true - Whether the start button has been used before.
+ * @vue-data {boolean} countNextButtonHasNeverBeenUsed=true - Whether the next button has been used before.
+ * @vue-data {boolean} countEndButtonHasNeverBeenUsed=true - Whether the end button has been used before.
+ *
+ * @vue-computed {Array} teamMembers - The list of team members participating in the choreo.
+ * @vue-computed {Array} notParticipatingMembers - The list of team members not participating in the choreo.
+ * @vue-computed {Array} currentPositions - The current positions of all members on the mat.
+ * @vue-computed {Array} hitsForCurrentCount - The hits for the current count being edited.
+ * @vue-computed {Array} lineupsForCurrentCount - The lineups for the current count being edited.
+ *
+ * @vue-computed {MetaInfo} metaInfo
+ */
 export default {
   name: "EditView",
   components: {

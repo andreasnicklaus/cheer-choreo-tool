@@ -19,6 +19,22 @@
 <script>
 import LineupService from "@/services/LineupService";
 
+/**
+ * @module Modal:DeleteLineupModal
+ *
+ * @vue-data {String} id
+ * @vue-data {String|null} deleteLineupId=null
+ *
+ * @vue-prop {Object} choreo
+ *
+ * @vue-event {Array} updateLineups
+ *
+ * @example
+ * <template>
+ *  <DeleteLineupModal ref="deleteLineupModal" :choreo="choreoObj" @updateLineups="handler" />
+ *  <Button @click="() => $refs.deleteLineupModal.open('abc')" />
+ * </template>
+ */
 export default {
   name: "DeleteLineupModal",
   data: () => ({

@@ -392,6 +392,29 @@ import NotificationService from "@/services/NotificationService";
 import VueMarkdown from "vue-markdown-v2";
 import toTimeAgo from "@/utils/time";
 
+/**
+ * @module Component:HeadNav
+ *
+ * @vue-data {Array} teams - List of teams the user owns.
+ * @vue-data {Array} choreos - List of choreographies associated with the user.
+ * @vue-data {Array} clubs - List of clubs the user owns.
+ * @vue-data {Object} user=null - The currently logged-in user object.
+ * @vue-data {Boolean} shareable=false - Whether the current page can be shared using the Web Share API.
+ * @vue-data {Array} flags - List of available languages with their flags and local names.
+ * @vue-data {Object} currentProfilePictureBlob=null - Blob URL for the user's profile picture.
+ * @vue-data {Object} loadInterval=null
+ * @vue-data {Object} loadNotificationsInterval=null
+ * @vue-data {Array} notifications
+ * @vue-data {Boolean} showAllNotifications=false
+ * @vue-data {Boolean} showNotificationsDropdown=false
+ *
+ * @vue-prop {Boolean} onlineStatus - Indicates if the server is online.
+ * @vue-prop {String} [serverVersion=null] - The version of the server software.
+ *
+ * @vue-computed {Object} shareData - Data used for sharing the current page.
+ *
+ * @example <HeadNav :teams="teams" />
+ */
 export default {
   name: "HeadNav",
   components: {

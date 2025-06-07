@@ -38,6 +38,14 @@
 <script>
 const cookieName = "install-dismissed";
 
+/**
+ * @module Component:AppInstallWindow
+ *
+ * @vue-data {Object|null} installationPrompt=null - The installation prompt event, if available.
+ *
+ * @example
+ * <AppInstallWindow />
+ */
 export default {
   name: "AppInstallWindow",
   data: () => ({

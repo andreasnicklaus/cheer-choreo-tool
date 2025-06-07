@@ -31,6 +31,73 @@
 
 [![](https://img.shields.io/badge/Visit%20www.choreo--planer.de-orange?style=for-the-badge&logo=googlechrome&logoColor=white)](https://www.choreo-planer.de)
 
+## Architecture
+
+```mermaid
+graph
+
+  subgraph Github
+    subgraph pages[Github Pages]
+      subgraph vue[Vue JS UI]
+        VueMatomo
+        bootstrap-vue
+        vue-18n
+        vue-meta
+      end
+    end
+    githubactions(Github Actions)
+  end
+
+
+
+  subgraph On-Premise
+    Router --port forwarding--> ReverseProxy
+    subgraph HomeServer
+      subgraph Docker
+        ReverseProxy
+        Matomo
+        Watchtower
+        ReverseProxy[Reverse Proxy]
+        sequelize
+        db[(Postgres Database)]
+        dba[(Analytics Database)]
+        subgraph api[Choreo Planer API]
+          sequelize
+          i18n
+          winston
+          nodemailer
+        end
+      end
+    end
+  end
+
+  ReverseProxy --> api
+  ReverseProxy --> Watchtower
+  ReverseProxy --> Matomo
+
+  sequelize --> db
+  Matomo --> dba
+
+  VueMatomo --IPv4/IPv6,https--> aws
+
+  User --IPv4/IPv6,https--> aws(AWS EC2 as Reverse Proxy)
+  User --IPv4/IPv6,https--> pages
+  aws --IPv6,https--> Router
+
+  BetterStack --IPv4/Ipv6--> aws
+  BetterStack --IPv4/IPv6,https--> pages
+
+  githubactions --update docker images--> dockerhub([Docker Hub])
+  githubactions --update UI--> pages
+  githubactions --trigger watchtower update--> aws
+
+  Watchtower --fetch image versions--> dockerhub
+
+  nodemailer --https---> GoogleMail(Google Mail)
+  mailProxy(DNS provider) --forward emails to *@choreo-planer.de--> GoogleMail
+  GoogleMail --send emails as *@choreo-planer.de--> Brevo(Brevo)
+```
+
 ## :+1: Collaborators
 
 - [Andreas Nicklaus](https://github.com/andreasnicklaus) <br/> [![](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/andreasnicklaus/) [![](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/andreasnicklaus) [![](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/andreasnicklaus)

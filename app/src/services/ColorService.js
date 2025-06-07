@@ -1,3 +1,8 @@
+/**
+ * Service for providing and selecting colors for participants.
+ *
+ * @class ColorService
+ */
 const colors = [
   "#FF8888",
   "#FF0000",
@@ -31,6 +36,11 @@ const colors = [
 ];
 
 class ColorService {
+  /**
+   * Get a random color not already used.
+   * @param {Array} alreadyUsedColors - Array of colors already used
+   * @returns {string} A random color string
+   */
   getRandom(alreadyUsedColors = []) {
     let possibleColors = colors.filter(
       (color) =>

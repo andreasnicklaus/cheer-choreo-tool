@@ -1,7 +1,16 @@
 import ax from "./RequestService";
 import i18n from "@/plugins/vue-i18n";
 
+/**
+ * Service for managing choreographies, participants, and positions.
+ *
+ * @class ChoreoService
+ */
 class ChoreoService {
+  /**
+   * Get mat type options for choreography creation.
+   * @returns {Array} Array of mat type option objects
+   */
   matTypeOptions = () => [
     {
       label: i18n.t("matTypeOptions.by-sport"),
@@ -19,36 +28,84 @@ class ChoreoService {
     },
   ];
 
+  /**
+   * Get all choreographies for a team.
+   * @param {string} teamId - ID of the team
+   * @returns {Promise<Array>} Array of choreographies
+   */
   getByTeam(teamId) {
     return ax.get("/choreo", { params: { teamId } }).then((res) => res.data);
   }
 
+  /**
+   * Get a choreography by its ID.
+   * @param {string} choreoId - ID of the choreography
+   * @returns {Promise<Object>} Choreography object
+   */
   getById(choreoId) {
     return ax.get(`/choreo/${choreoId}`).then((res) => res.data);
   }
 
+  /**
+   * Change the name of a choreography.
+   * @param {string} choreoId - ID of the choreography
+   * @param {string} name - New name for the choreography
+   * @returns {Promise<Object>} Updated choreography
+   */
   changeName(choreoId, name) {
     return ax.put(`/choreo/${choreoId}`, { name }).then((res) => res.data);
   }
 
+  /**
+   * Change the length (counts) of a choreography.
+   * @param {string} choreoId - ID of the choreography
+   * @param {number} counts - New length in counts
+   * @returns {Promise<Object>} Updated choreography
+   */
   changeLength(choreoId, counts) {
     return ax.put(`/choreo/${choreoId}`, { counts }).then((res) => res.data);
   }
 
+  /**
+   * Change the mat type of a choreography.
+   * @param {string} choreoId - ID of the choreography
+   * @param {string} matType - New mat type
+   * @returns {Promise<Object>} Updated choreography
+   */
   changeMatType(choreoId, matType) {
     return ax.put(`/choreo/${choreoId}`, { matType }).then((res) => res.data);
   }
 
+  /**
+   * Add a participant to a choreography.
+   * @param {string} choreoId - ID of the choreography
+   * @param {string} memberId - ID of the member to add
+   * @param {string} color - Color for the participant
+   * @returns {Promise<Object>} Added participant
+   */
   addParticipant(choreoId, memberId, color) {
     return ax
       .post(`/choreo/${choreoId}/participants`, { memberId, color })
       .then((res) => res.data);
   }
 
+  /**
+   * Remove a participant from a choreography.
+   * @param {string} choreoId - ID of the choreography
+   * @param {string} memberId - ID of the member to remove
+   * @returns {Promise}
+   */
   removeParticipant(choreoId, memberId) {
     return ax.delete(`/choreo/${choreoId}/participants/${memberId}`);
   }
 
+  /**
+   * Replace a participant in a choreography.
+   * @param {string} choreoId - ID of the choreography
+   * @param {string} memberToRemoveId - ID of the member to remove
+   * @param {string} memberToAddId - ID of the member to add
+   * @returns {Promise<Object>} Updated participant list
+   */
   replaceParticipant(choreoId, memberToRemoveId, memberToAddId) {
     return ax
       .patch(`/choreo/${choreoId}/participants`, {
@@ -58,22 +115,50 @@ class ChoreoService {
       .then((res) => res.data);
   }
 
+  /**
+   * Change the color of a participant in a choreography.
+   * @param {string} choreoId - ID of the choreography
+   * @param {string} participantId - ID of the participant
+   * @param {string} color - New color for the participant
+   * @returns {Promise<Object>} Updated participant
+   */
   changeParticipantColor(choreoId, participantId, color) {
     return ax
       .patch(`/choreo/${choreoId}/participants/${participantId}`, { color })
       .then((res) => res.data);
   }
 
+  /**
+   * Create a new choreography.
+   * @param {string} name - Name of the choreography
+   * @param {number} counts - Length of the choreography in counts
+   * @param {string} matType - Mat type for the choreography
+   * @param {string} seasonTeamId - ID of the season team
+   * @param {Array} participants - Array of participant objects
+   * @returns {Promise<Object>} Created choreography
+   */
   create(name, counts, matType, seasonTeamId, participants) {
     return ax
       .post("/choreo", { name, counts, matType, seasonTeamId, participants })
       .then((res) => res.data);
   }
 
+  /**
+   * Remove a choreography by its ID.
+   * @param {string} choreoId - ID of the choreography to remove
+   * @returns {Promise}
+   */
   remove(choreoId) {
     return ax.delete(`/choreo/${choreoId}`).then((res) => res.data);
   }
 
+  /**
+   * Get positions for all team members for a given count in a choreography.
+   * @param {Object} choreo - Choreography object
+   * @param {number} count - Count for which to get positions
+   * @param {Array} teamMembers - Array of team member objects
+   * @returns {Array} Array of position objects
+   */
   getPositionsFromChoreoAndCount(choreo, count, teamMembers) {
     if (!teamMembers || !choreo || !choreo.Lineups) return [];
 

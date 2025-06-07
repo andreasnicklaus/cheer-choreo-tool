@@ -65,6 +65,20 @@
 import AuthService from "@/services/AuthService";
 import MessagingService from "@/services/MessagingService";
 
+/**
+ * @module Modal:ChangePasswordModal
+ *
+ * @vue-data {String} id
+ * @vue-data {String|null} newPassword=null
+ * @vue-data {String|null} passwordRepetition=null
+ *
+ * @vue-computed {Boolean} newPasswordIsValid
+ * @vue-computed {String|null} newPasswordStateFeedback
+ * @vue-computed {Boolean} passwordRepetitionIsValid
+ * @vue-computed {String|null} passwordRepetitionStateFeedback
+ *
+ * @example <ChangePasswordModal />
+ */
 export default {
   name: "ChangePasswordModal",
   data: () => ({

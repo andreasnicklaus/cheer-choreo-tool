@@ -19,6 +19,20 @@
 <script>
 import SeasonTeamService from "@/services/SeasonTeamService";
 
+/**
+ * @module Modal:DeleteSeasonTeamModal
+ *
+ * @vue-data {String} id
+ * @vue-data {String|null} deleteSeasonTeamId=null
+ *
+ * @vue-event {string} seasonTeamDeleted
+ *
+ * @example
+ * <template>
+ *  <DeleteSeasonTeamModal ref="deleteSeasonTeamModal" @seasonTeamDeleted="handler" />
+ *  <Button @click="() => $refs.deleteSeasonTeamModal.open('abc')" />
+ * </template>
+ */
 export default {
   name: "DeleteSeasonTeamModal",
   data: () => ({

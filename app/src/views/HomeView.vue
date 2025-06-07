@@ -470,6 +470,19 @@ import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 
+/**
+ * @vue-data {Number} count=0 - The current count value, used to highlight the selected cell.
+ * @vue-data {Array} teamMembers - List of team members with their details.
+ * @vue-data {Object} choreo - The choreography object containing hits and counts.
+ * @vue-data {Array} currentPositions - The current positions of all members on the mat.
+ * @vue-data {Array} selectedTeamMembers - The currently selected team members for video export.
+ *
+ * @vue-computed {Array} hitsForCurrentCount - The hits for the current count, filtered from the choreo object.
+ * @vue-computed {Number} matWidth - The width of the mat, calculated based on the window size.
+ *
+ * @vue-meta {MetaInfo} metaInfo
+ */
+
 export default {
   name: "HomeView",
   components: {

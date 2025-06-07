@@ -24,6 +24,22 @@
 </template>
 
 <script>
+/**
+ * @module Modal:SelectHitModal
+ *
+ * @vue-data {String} id
+ * @vue-data {String|null} hitIdToUpdate=null
+ *
+ * @vue-prop {Array} hitsForCurrentCount
+ *
+ * @vue-event {string} selection
+ *
+ * @example
+ * <template>
+ *   <SelectHitModal ref="selectHitModal" :hitsForCurrentCount="hits" @selection="handler" />
+ *   <Button @click="() => $refs.selectHitModal.open()" />
+ * </template>
+ */
 export default {
   name: "SelectHitModal",
   data: () => ({

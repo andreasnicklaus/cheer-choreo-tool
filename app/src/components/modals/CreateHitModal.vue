@@ -256,6 +256,39 @@ function generateHitNameProposals() {
 }
 const hitNameProposals = generateHitNameProposals();
 
+/**
+ * @module Modal:CreateHitModal
+ *
+ * @vue-data {String} id
+ * @vue-data {String|null} newHitName=null
+ * @vue-data {Number} newHitAchter=1
+ * @vue-data {Number} newHitCount=1
+ * @vue-data {Array|null} newHitMembers=null
+ * @vue-data {Array} hitNameProposals
+ *
+ * @vue-prop {Array} [teamMembers]
+ * @vue-prop {String} choreoId
+ * @vue-prop {Number} [count=0]
+ * @vue-prop {Array} [hitsForCurrentCount]
+ * @vue-prop {Number} [maxCount=0]
+ *
+ * @vue-computed {Boolean} newHitNameIsValid
+ * @vue-computed {String|null} newHitNameStateFeedback
+ * @vue-computed {Boolean} newHitAchterIsValid
+ * @vue-computed {String|null} newHitAchterStateFeedback
+ * @vue-computed {Boolean} newHitCountIsValid
+ * @vue-computed {String|null} newHitCountStateFeedback
+ * @vue-computed {Boolean} newHitMembersIsValid
+ * @vue-computed {String|null} newHitMembersStateFeedback
+ *
+ * @vue-event {string} hitCreated
+ *
+ * @example
+ * <template>
+ *  <CreateHitModal :choreoId="'abc'" :teamMembers="members" ref="createHitModal" @hitCreated="handler" />
+ *  <Button @click="() => $refs.createHitModal.open()" />
+ * </template>
+ */
 export default {
   name: "CreateHitModal",
   data: () => ({

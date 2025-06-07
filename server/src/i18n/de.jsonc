@@ -78,7 +78,7 @@
     "feedback": "Rückmeldung",
     "member": "[1] Mitglied | Mitglieder",
     "season": "[1] Season | Seasons",
-    "seasonteam": "[1] Seasonteam | Seasontams",
+    "seasonTeam": "[1] Seasonteam | Seasontams",
     "team": "[1] Team | Teams"
   },
   "general": {
@@ -108,6 +108,8 @@
     "aktuelle-version": "Aktuelle version",
     "zum-choreo-planer": "Zum Choreo Planer",
     "kontakt-aufnehmen": "Kontakt aufnehmen",
+    "api-docs": "API Dokumentation",
+    "code-docs": "Code Dokumentation",
     "server-status": "Server Status"
   },
   "error": {

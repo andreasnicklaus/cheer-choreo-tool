@@ -45,6 +45,9 @@
           >
             {{ $tc("navigation.feedback-geben") }} </b-button
           ><br />
+          <b-button variant="link" href="/docs/" target="_blank">
+            {{ $t("HelpView.documentation_capitalized") }}
+          </b-button>
         </b-col>
         <b-col cols="auto">
           <h5>
@@ -155,6 +158,13 @@ import MessagingService from "./services/MessagingService";
 import { logWelcomeMessage } from "@/utils/logging";
 import VersionService from "./services/VersionService";
 
+/**
+ * @vue-data {boolean} online
+ * @vue-data {string} serverVersion
+ * @vue-data {string} applicationVersion
+ * @vue-data {Breakpoints} breakpoints
+ * @vue-computed {MetaInfo} metaInfo
+ */
 export default {
   components: { HeadNav, ConsentWindow, AppInstallWindow, FeedbackPrompt },
   data: () => ({
