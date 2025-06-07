@@ -64,7 +64,7 @@
 
 <pre class="mermaid">
 graph
-  User --> github
+  User --IPv4/IPv6,https--> github
 
   subgraph github[Github Pages]
     subgraph vue[Vue JS UI]
@@ -75,10 +75,11 @@ graph
     end
   end
 
-  VueMatomo --> Router
+  VueMatomo --IPv4/IPv6,https--> aws(AWS EC2 as Reverse Proxy)
+  aws --IPv6,https--> Router
 
 
-  BetterStack --> github
+  BetterStack --IPv4/IPv6,https--> github
 
 
   subgraph On-Premise

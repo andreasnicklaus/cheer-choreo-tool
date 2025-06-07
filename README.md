@@ -35,33 +35,32 @@
 
 ```mermaid
 graph
-  User --> github
 
-  subgraph github[Github Pages]
-    subgraph vue[Vue JS UI]
-      VueMatomo
-      bootstrap-vue
-      vue-18n
-      vue-meta
+  subgraph Github
+    subgraph pages[Github Pages]
+      subgraph vue[Vue JS UI]
+        VueMatomo
+        bootstrap-vue
+        vue-18n
+        vue-meta
+      end
     end
+    githubactions(Github Actions)
   end
 
-  VueMatomo --> Router
-
-  User --IPv4/IPv6--> aws(AWS EC2 as Reverse Proxy)
-  aws --IPv6--> Router
-
-  BetterStack --IPv4/Ipv6--> aws
-  BetterStack --> github
 
 
   subgraph On-Premise
-    Router --> ReverseProxy
+    Router --port forwarding--> ReverseProxy
     subgraph HomeServer
       subgraph Docker
-        ReverseProxy[Reverse Proxy] --> Matomo
-        ReverseProxy[Reverse Proxy] --> api
-        sequelize --> db[(Postgres Database)]
+        ReverseProxy
+        Matomo
+        Watchtower
+        ReverseProxy[Reverse Proxy]
+        sequelize
+        db[(Postgres Database)]
+        dba[(Analytics Database)]
         subgraph api[Choreo Planer API]
           sequelize
           i18n
@@ -72,9 +71,31 @@ graph
     end
   end
 
-  nodemailer --> GoogleMail(Google Mail)
-  mailProxy(DNS-provided E-Mail Proxy) --> GoogleMail
-  GoogleMail --> Brevo(Brevo)
+  ReverseProxy --> api
+  ReverseProxy --> Watchtower
+  ReverseProxy --> Matomo
+
+  sequelize --> db
+  Matomo --> dba
+
+  VueMatomo --IPv4/IPv6,https--> aws
+
+  User --IPv4/IPv6,https--> aws(AWS EC2 as Reverse Proxy)
+  User --IPv4/IPv6,https--> pages
+  aws --IPv6,https--> Router
+
+  BetterStack --IPv4/Ipv6--> aws
+  BetterStack --IPv4/IPv6,https--> pages
+
+  githubactions --update docker images--> dockerhub([Docker Hub])
+  githubactions --update UI--> pages
+  githubactions --trigger watchtower update--> aws
+
+  Watchtower --fetch image versions--> dockerhub
+
+  nodemailer --https---> GoogleMail(Google Mail)
+  mailProxy(DNS provider) --forward emails to *@choreo-planer.de--> GoogleMail
+  GoogleMail --send emails as *@choreo-planer.de--> Brevo(Brevo)
 ```
 
 ## :+1: Collaborators

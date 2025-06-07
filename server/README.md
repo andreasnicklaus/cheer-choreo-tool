@@ -69,10 +69,10 @@ This command will start docker compose with the development configuration which 
 <pre class="mermaid">
 
 graph
-  User --IPv4/IPv6--> aws(AWS EC2 as Reverse Proxy)
-  aws --IPv6--> Router
+  User --IPv4/IPv6,https--> aws(AWS EC2 as Reverse Proxy)
+  aws --IPv6,https--> Router
 
-  BetterStack --IPv4/Ipv6--> aws
+  BetterStack --IPv4/Ipv6,https--> aws
 
   subgraph On-Premise
     Router --> ReverseProxy
@@ -90,7 +90,7 @@ graph
     end
   end
 
-  nodemailer --> GoogleMail(Google Mail)
+  nodemailer --https--> GoogleMail(Google Mail)
   mailProxy(DNS-provided E-Mail Proxy) --> GoogleMail
   GoogleMail --> Brevo(Brevo)
 
