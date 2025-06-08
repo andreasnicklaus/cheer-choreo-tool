@@ -57,3 +57,22 @@ services:
       start_period: 30s
       start_interval: 3s
       timeout: 10s
+
+  pgbackups:
+    image: prodrigestivill/postgres-backup-local
+    restart: unless-stopped
+    volumes:
+      - ./pgbackups:/backups
+    env_file:
+      - .env
+      - .backup.env
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_EXTRA_OPTS=-Z6 --schema=public --blobs
+      - SCHEDULE=@daily
+      - BACKUP_KEEP_DAYS=7
+      - BACKUP_KEEP_WEEKS=4
+      - BACKUP_KEEP_MONTHS=6
+    depends_on:
+      db:
+        condition: service_healthy
