@@ -2,6 +2,18 @@
 
 import i18n from "@/plugins/vue-i18n";
 import VersionService from "@/services/VersionService";
+import store from "@/store";
+import { Logtail } from "@logtail/browser";
+
+const SOURCE_TOKEN = process.env.VUE_APP_BETTERSTACK_SOURCE_TOKEN;
+const INGESTING_HOST = process.env.VUE_APP_BETTERSTACK_INGESTING_HOST;
+
+const logtail = new Logtail(SOURCE_TOKEN, {
+  endpoint: INGESTING_HOST,
+});
+
+// const sendLogsToIngest = process.env.NODE_ENV == "production";
+const sendLogsToIngest = true;
 
 console.image = async function (url, size = 100) {
   const img = await fetch("/Icon.png");
@@ -100,6 +112,13 @@ function generateTimeStamp() {
  */
 export function log(...messages) {
   console.log(generateTimeStamp(), "LOG", ...messages);
+  if (sendLogsToIngest) {
+    logtail.info(messages.join(), {
+      state: store?.state,
+      version: VersionService.getAppVersion(),
+    });
+    logtail.flush();
+  }
 }
 
 /**
@@ -110,6 +129,13 @@ export function log(...messages) {
  */
 export function debug(...messages) {
   console.debug(generateTimeStamp(), "DEBUG", ...messages);
+  if (sendLogsToIngest) {
+    logtail.debug(messages.join(), {
+      state: store?.state,
+      version: VersionService.getAppVersion(),
+    });
+    logtail.flush();
+  }
 }
 
 /**
@@ -120,6 +146,13 @@ export function debug(...messages) {
  */
 export function warn(...messages) {
   console.warn(generateTimeStamp(), "WARN", ...messages);
+  if (sendLogsToIngest) {
+    logtail.warn(messages.join(), {
+      state: store?.state,
+      version: VersionService.getAppVersion(),
+    });
+    logtail.flush();
+  }
 }
 
 /**
@@ -130,4 +163,11 @@ export function warn(...messages) {
  */
 export function error(...messages) {
   console.error(generateTimeStamp(), "ERROR", ...messages);
+  if (sendLogsToIngest) {
+    logtail.error(messages.join(), {
+      state: store?.state,
+      version: VersionService.getAppVersion(),
+    });
+    logtail.flush();
+  }
 }
