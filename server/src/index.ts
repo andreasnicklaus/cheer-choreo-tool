@@ -47,9 +47,16 @@ const app = express();
 const port = 3000;
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
+const corsWhiteList = [process.env.FRONTEND_DOMAIN, "http://localhost:8080"]
 app.use(
   cors({
-    origin: process.env.FRONTEND_DOMAIN,
+    origin: function (origin: string | undefined, callback: { (err: Error | null, allow?: boolean): void }) {
+      if (corsWhiteList.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
+    }
   })
 );
 app.use(robots(__dirname + "/public/robots.txt"));
@@ -77,6 +84,7 @@ app.use(
           (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`,
         ],
         "worker-src": ["'self'", "https:", "blob:"],
+        "connect-src": ["'self'", "https:", "blob:", process.env.FRONTED_DOMAIN, "ws:"],
         upgradeInsecureRequests: null,
       },
     },
