@@ -546,21 +546,13 @@ export default {
               positionToUpdate.id,
               x,
               y
-            ).then((position) => {
-              let lineupCopy = this.choreo.Lineups;
-              let positionsCopy = lineupCopy.find(
+            ).then(() => {
+              const pos = this.choreo.Lineups.find(
                 (l) => l.id == positionToUpdate.LineupId
-              ).Positions;
-              positionsCopy = positionsCopy.filter(
-                (p) => p.id != positionToUpdate.id
-              );
-              positionsCopy.push(position);
-              lineupCopy.find(
-                (l) => l.id == positionToUpdate.LineupId
-              ).Positions = positionsCopy;
-              this.choreo.Lineups = lineupCopy;
-              this.positionUpdates[memberId] = null;
+              ).Positions.find((p) => p.id == positionToUpdate.id);
 
+              pos.x = x;
+              pos.y = y;
               this.showSuccessMessage(this.$tc("lineup", 1));
             });
         }, 1000);
