@@ -22,7 +22,7 @@ class AuthService {
    * @returns {Boolean} Returns true if the login was successful, otherwise throws an error
    */
   async login(username, password) {
-    debug("Attempting login with", { username, password: "<redacted>" });
+    debug("Attempting login", { username, password: "<redacted>" });
     return ax
       .post("/auth/login", { username, password })
       .then((res) => {
@@ -100,7 +100,7 @@ class AuthService {
    * @returns {Boolean} Returns true if the registration was successful, otherwise throws an error
    */
   async register(username, password, email) {
-    debug("Attempting to register with", {
+    debug("Attempting to register", {
       username,
       email,
       password: "<redacted>",
@@ -170,7 +170,7 @@ class AuthService {
    * @returns {unknown} Returns the response data from the server
    */
   updateUserInfo(username, email) {
-    debug("Updating user info with", { username, email });
+    debug("Updating user info", { username, email });
     return ax.put("/auth/me", { username, email }).then((res) => {
       debug("Successfully updated user information");
       return res.data;

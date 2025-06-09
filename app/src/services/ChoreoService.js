@@ -180,7 +180,7 @@ class ChoreoService {
    * @returns {Promise<Object>} Created choreography
    */
   create(name, counts, matType, seasonTeamId, participants) {
-    debug("Creating choreo with", {
+    debug("Creating choreo", {
       name,
       counts,
       matType,

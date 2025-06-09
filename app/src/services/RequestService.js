@@ -4,7 +4,7 @@ import AuthService from "./AuthService";
 import store from "@/store";
 import router from "@/router";
 import i18n from "@/plugins/vue-i18n";
-import { logRequest } from "@/utils/logging";
+import { logRequest, error as logError } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
 
 /**
@@ -49,7 +49,7 @@ ax.interceptors.response.use(
             params: { locale: i18n.locale },
           })
           .catch(() => {
-            error(
+            logError(
               "Redundant navigation to login",
               ERROR_CODES.REDUNDANT_ROUTING
             );
@@ -64,7 +64,7 @@ ax.interceptors.response.use(
             params: { locale: i18n.locale },
           })
           .catch(() => {
-            error(
+            logError(
               "Redundant navigation to login",
               ERROR_CODES.REDUNDANT_ROUTING
             );

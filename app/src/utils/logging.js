@@ -133,7 +133,10 @@ export function log(...messages) {
 export function debug(...messages) {
   console.debug(generateTimeStamp(), "DEBUG", ...messages);
   if (sendLogsToIngest) {
-    logtail.debug(messages.join(), {
+    const message = messages
+      .map((m) => (typeof m !== "object" ? m : JSON.stringify(m)))
+      .join(" ");
+    logtail.debug(message, {
       state: store?.state,
       version: VersionService.getAppVersion(),
       user_locale: i18n.locale,
