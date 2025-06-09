@@ -171,3 +171,43 @@ export function error(...messages) {
     logtail.flush();
   }
 }
+
+/**
+ * Log request results
+ *
+ * @export
+ * @param {number} status - response status
+ * @param {number} time - ms between request and response
+ * @param {string} url - path of the request
+ */
+export function logRequest(status, time, url) {
+  const message = `${url} responded with status ${status} in ${time} ms`;
+  if (!status || status >= 400) {
+    if (sendLogsToIngest) {
+      logtail.warn(message, {
+        state: store?.state,
+        version: VersionService.getAppVersion(),
+        request: {
+          status,
+          time,
+          url,
+        },
+      });
+      logtail.flush();
+    }
+  } else {
+    console.debug(message);
+    if (sendLogsToIngest) {
+      logtail.debug(message, {
+        state: store?.state,
+        version: VersionService.getAppVersion(),
+        request: {
+          status,
+          time,
+          url,
+        },
+      });
+      logtail.flush();
+    }
+  }
+}
