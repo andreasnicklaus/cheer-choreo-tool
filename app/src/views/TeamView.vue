@@ -252,6 +252,8 @@ import DeleteSeasonTeamModal from "@/components/modals/DeleteSeasonTeamModal.vue
 import DeleteTeamModal from "@/components/modals/DeleteTeamModal.vue";
 import ImportMemberModal from "@/components/modals/ImportMemberModal.vue";
 import TeamService from "@/services/TeamService";
+import ERROR_CODES from "@/utils/error_codes";
+import { error } from "@/utils/logging";
 
 /**
  * @vue-data {string} presentation=table - The current presentation mode, either 'table' or 'list'.
@@ -370,14 +372,24 @@ export default {
               locale: this.$root.$i18n.locale,
             },
           })
-          .catch(() => {});
+          .catch(() => {
+            error(
+              "Redundant navigation to team",
+              ERROR_CODES.REDUNDANT_ROUTING
+            );
+          });
       else
         this.$router
           .push({
             name: "Start",
             params: { locale: this.$root.$i18n.locale },
           })
-          .catch(() => {});
+          .catch(() => {
+            error(
+              "Redundant navigation to start",
+              ERROR_CODES.REDUNDANT_ROUTING
+            );
+          });
     },
     onSeasonTeamCreation() {
       this.load();

@@ -99,6 +99,8 @@
 
 <script>
 import FeedbackService from "@/services/FeedbackService";
+import { error } from "@/utils/logging";
+import ERROR_CODES from "@/utils/error_codes";
 
 const feedbackDeclinedCookieName = "feedback-declined";
 
@@ -143,6 +145,10 @@ export default {
           this.feedbackAlreadyGiven = feedbacks?.length > 0;
         })
         .catch(() => {
+          error(
+            "Feedback could not be queried",
+            ERROR_CODES.FEEDBACK_QUERY_FAILED
+          );
           this.feedbackAlreadyGiven = false;
         });
     }

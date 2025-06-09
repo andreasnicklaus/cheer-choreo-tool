@@ -1,5 +1,7 @@
 import i18n from "@/plugins/vue-i18n";
 import router from "@/router";
+import ERROR_CODES from "@/utils/error_codes";
+import { error } from "@/utils/logging";
 
 /**
  * Service for managing application language and locale settings.
@@ -35,7 +37,12 @@ class LanguageService {
         .replace({
           params: { locale: language },
         })
-        .catch(() => {});
+        .catch(() => {
+          error(
+            "Redundant navigation with locale",
+            ERROR_CODES.REDUNDANT_ROUTING
+          );
+        });
   }
 
   /**

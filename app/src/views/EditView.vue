@@ -413,6 +413,8 @@ import ParticipantSubstitutionModal from "@/components/modals/ParticipantSubstit
 import MobileChoreoEditModal from "@/components/modals/MobileChoreoEditModal.vue";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import MessagingService from "@/services/MessagingService";
+import { error } from "@/utils/logging";
+import ERROR_CODES from "@/utils/error_codes";
 
 /**
  * @vue-data {string|null} choreoId=null - The ID of the choreo being edited.
@@ -521,13 +523,19 @@ export default {
           if (choreo.Lineups.length == 0 && choreo.Hits.length == 0)
             this.$refs.howToModal.open();
         })
-        .catch(() => {
+        .catch((e) => {
+          error(e, ERROR_CODES.CLUB_QUERY_FAILED);
           this.$router
             .push({
               name: "Start",
               params: { locale: this.$root.$i18n.locale },
             })
-            .catch(() => {});
+            .catch(() => {
+              error(
+                "Redundant navigation to start",
+                ERROR_CODES.REDUNDANT_ROUTING
+              );
+            });
         });
     },
     onPositionChange(memberId, x, y) {

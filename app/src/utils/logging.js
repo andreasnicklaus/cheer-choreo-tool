@@ -4,6 +4,7 @@ import i18n from "@/plugins/vue-i18n";
 import VersionService from "@/services/VersionService";
 import store from "@/store";
 import { Logtail } from "@logtail/browser";
+import ERROR_CODES from "./error_codes";
 
 const SOURCE_TOKEN = process.env.VUE_APP_BETTERSTACK_SOURCE_TOKEN;
 const INGESTING_HOST = process.env.VUE_APP_BETTERSTACK_INGESTING_HOST;
@@ -12,8 +13,9 @@ const logtail = new Logtail(SOURCE_TOKEN, {
   endpoint: INGESTING_HOST,
 });
 
-// const sendLogsToIngest = process.env.NODE_ENV == "production";
-const sendLogsToIngest = true;
+const SESSION_ID = (Math.random() + 1).toString(36).substring(7);
+
+const sendLogsToIngest = process.env.NODE_ENV == "production";
 
 console.image = async function (url, size = 100) {
   const img = await fetch("/Icon.png");
@@ -117,6 +119,7 @@ export function log(...messages) {
       state: store?.state,
       version: VersionService.getAppVersion(),
       user_locale: i18n.locale,
+      SESSION_ID,
     });
   }
 }
@@ -134,6 +137,7 @@ export function debug(...messages) {
       state: store?.state,
       version: VersionService.getAppVersion(),
       user_locale: i18n.locale,
+      SESSION_ID,
     });
   }
 }
@@ -151,6 +155,7 @@ export function warn(...messages) {
       state: store?.state,
       version: VersionService.getAppVersion(),
       user_locale: i18n.locale,
+      SESSION_ID,
     });
   }
 }
@@ -159,15 +164,17 @@ export function warn(...messages) {
  * Log a ERROR message with a timestamp
  *
  * @export
- * @param {string[]} messages - Messages to log
+ * @param {string} message - Message to log
  */
-export function error(...messages) {
-  console.error(generateTimeStamp(), "ERROR", ...messages);
+export function error(message, errorCode = ERROR_CODES.UNKNOWN_ERROR) {
+  console.error(generateTimeStamp(), "ERROR", errorCode, message);
   if (sendLogsToIngest) {
-    logtail.error(messages.join(), {
+    logtail.error(`${errorCode} ${message}`, {
       state: store?.state,
       version: VersionService.getAppVersion(),
       user_locale: i18n.locale,
+      errorCode,
+      SESSION_ID,
     });
   }
 }
@@ -193,6 +200,7 @@ export function logRequest(status, time, url) {
           url,
         },
         user_locale: i18n.locale,
+        SESSION_ID,
       });
     }
   } else {
@@ -207,6 +215,7 @@ export function logRequest(status, time, url) {
           url,
         },
         user_locale: i18n.locale,
+        SESSION_ID,
       });
     }
   }

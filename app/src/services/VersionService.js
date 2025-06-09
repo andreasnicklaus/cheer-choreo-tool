@@ -1,4 +1,6 @@
+import { error } from "@/utils/logging";
 import ax from "./RequestService";
+import ERROR_CODES from "@/utils/error_codes";
 
 /**
  * List of application versions with their active periods.
@@ -58,7 +60,10 @@ class VersionService {
     return ax
       .get("/version")
       .then((res) => res.data)
-      .catch(() => null);
+      .catch((e) => {
+        error(e, ERROR_CODES.VERSION_QUERY_FAILED);
+        return null;
+      });
   }
 }
 

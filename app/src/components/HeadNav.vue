@@ -391,6 +391,8 @@ import MessagingService from "@/services/MessagingService";
 import NotificationService from "@/services/NotificationService";
 import VueMarkdown from "vue-markdown-v2";
 import toTimeAgo from "@/utils/time";
+import { error } from "@/utils/logging";
+import ERROR_CODES from "@/utils/error_codes";
 
 /**
  * @module Component:HeadNav
@@ -462,7 +464,12 @@ export default {
             this.user = user;
             this.loadProfileImage();
           })
-          .catch(() => {});
+          .catch(() => {
+            error(
+              "Could not load user info",
+              ERROR_CODES.USER_INFO_QUERY_FAILED
+            );
+          });
 
         if (this.$store.state.clubId) {
           ClubService.getById(this.$store.state.clubId)
@@ -472,7 +479,12 @@ export default {
                 .map((t) => t.SeasonTeams.map((st) => st.Choreos))
                 .flat(Infinity);
             })
-            .catch(() => {});
+            .catch(() => {
+              error(
+                "Could not find club" + this.$store.state.clubId,
+                ERROR_CODES.CLUB_QUERY_FAILED
+              );
+            });
         }
 
         ClubService.getAll()
@@ -485,7 +497,9 @@ export default {
             this.teams = club?.Teams || [];
             this.choreos = this.teams.map((t) => t.Choreos).flat();
           })
-          .catch(() => {});
+          .catch(() => {
+            error("Could not load clubs", ERROR_CODES.CLUB_QUERY_FAILED);
+          });
 
         this.loadNotifications();
       }
@@ -496,7 +510,12 @@ export default {
           .then((notifications) => {
             this.notifications = notifications;
           })
-          .catch(() => {});
+          .catch(() => {
+            error(
+              "Could not load notifications",
+              ERROR_CODES.NOTIFICATION_QUERY_FAILED
+            );
+          });
     },
     checkEmailConfirmation() {
       if (this.user?.email && !this.user?.emailConfirmed) {

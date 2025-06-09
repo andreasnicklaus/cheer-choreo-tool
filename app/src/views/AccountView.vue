@@ -661,6 +661,8 @@ import ClubService from "@/services/ClubService";
 import CreateClubModal from "@/components/modals/CreateClubModal.vue";
 import MessagingService from "@/services/MessagingService";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
+import { error } from "@/utils/logging";
+import ERROR_CODES from "@/utils/error_codes";
 
 const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 const MB = 1_048_576;
@@ -751,6 +753,7 @@ export default {
           this.loadProfileImage();
         })
         .catch(() => {
+          error("Cannot get user info", ERROR_CODES.USER_INFO_QUERY_FAILED);
           MessagingService.showError(
             this.$t("accountView.unbekannter-fehler"),
             this.$t("accountView.das-hat-nicht-funktioniert")
@@ -831,7 +834,8 @@ export default {
             this.$t("editView.gespeichert")
           );
         })
-        .catch(() => {
+        .catch((e) => {
+          error(e, ERROR_CODES.USER_UPDATE_FAILED);
           MessagingService.showError(
             this.$t("accountView.unbekannter-fehler"),
             this.$t("accountView.das-hat-nicht-funktioniert")
@@ -870,7 +874,8 @@ export default {
             this.$t("editView.gespeichert")
           );
         })
-        .catch(() => {
+        .catch((e) => {
+          error(e, ERROR_CODES.CLUB_UPDATE_FAILED);
           MessagingService.showError(
             this.$t("accountView.unbekannter-fehler"),
             this.$t("accountView.das-hat-nicht-funktioniert")
