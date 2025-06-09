@@ -116,8 +116,8 @@ export function log(...messages) {
     logtail.info(messages.join(), {
       state: store?.state,
       version: VersionService.getAppVersion(),
+      user_locale: i18n.locale,
     });
-    logtail.flush();
   }
 }
 
@@ -133,8 +133,8 @@ export function debug(...messages) {
     logtail.debug(messages.join(), {
       state: store?.state,
       version: VersionService.getAppVersion(),
+      user_locale: i18n.locale,
     });
-    logtail.flush();
   }
 }
 
@@ -150,8 +150,8 @@ export function warn(...messages) {
     logtail.warn(messages.join(), {
       state: store?.state,
       version: VersionService.getAppVersion(),
+      user_locale: i18n.locale,
     });
-    logtail.flush();
   }
 }
 
@@ -167,8 +167,8 @@ export function error(...messages) {
     logtail.error(messages.join(), {
       state: store?.state,
       version: VersionService.getAppVersion(),
+      user_locale: i18n.locale,
     });
-    logtail.flush();
   }
 }
 
@@ -192,8 +192,8 @@ export function logRequest(status, time, url) {
           time,
           url,
         },
+        user_locale: i18n.locale,
       });
-      logtail.flush();
     }
   } else {
     console.debug(message);
@@ -206,8 +206,8 @@ export function logRequest(status, time, url) {
           time,
           url,
         },
+        user_locale: i18n.locale,
       });
-      logtail.flush();
     }
   }
 }
