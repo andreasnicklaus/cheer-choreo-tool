@@ -104,12 +104,13 @@ function seed() {
         Promise.all([
           Promise.all(
             data.seasons.map(async (s) => {
+              const whereParams: { year: number, name: string, UserId?: string } = {
+                year: s.year,
+                name: s.name,
+              }
+              if (s.usersSpecific) whereParams.UserId = user.id
               const [season, _created] = await Season.findOrCreate({
-                where: {
-                  year: s.year,
-                  name: s.name,
-                  UserId: s.usersSpecific ? user.id : { [require('sequelize').Op.is]: null },
-                },
+                where: whereParams,
               });
               return season;
             })
