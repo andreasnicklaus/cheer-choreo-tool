@@ -1,7 +1,7 @@
 import i18n from "@/plugins/vue-i18n";
 import router from "@/router";
 import ERROR_CODES from "@/utils/error_codes";
-import { error } from "@/utils/logging";
+import { debug, error } from "@/utils/logging";
 
 /**
  * Service for managing application language and locale settings.
@@ -27,6 +27,8 @@ class LanguageService {
       storeInLocalStorage,
     };
 
+    debug("Setting language", language, options);
+
     if (options.storeInLocalStorage)
       localStorage.setItem(localStorageKey, language);
     document.documentElement.lang = language;
@@ -43,6 +45,7 @@ class LanguageService {
             ERROR_CODES.REDUNDANT_ROUTING
           );
         });
+    debug("Successfully changed the language");
   }
 
   /**
@@ -51,6 +54,7 @@ class LanguageService {
    * @returns {string} The selected locale
    */
   loadLanguage(availableLocales) {
+    debug("Loading initial language from browser", availableLocales);
     let locale = "de";
 
     const usersLanguage = window.navigator.language.split("-")[0];
@@ -61,6 +65,8 @@ class LanguageService {
     } else if (availableLocales.includes(usersLanguage)) {
       locale = usersLanguage;
     }
+
+    debug("Successfully loaded language", locale);
 
     return locale;
   }

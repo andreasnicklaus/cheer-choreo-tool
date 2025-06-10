@@ -1,3 +1,4 @@
+import { debug } from "@/utils/logging";
 import ax from "./RequestService";
 
 /**
@@ -13,9 +14,13 @@ class LineupService {
    * @returns {Promise<Object>} Created lineup
    */
   create(startCount, endCount, choreoId) {
+    debug("Creating a new lineup", { startCount, endCount, choreoId });
     return ax
       .post(`/lineup`, { startCount, endCount, choreoId })
-      .then((res) => res.data);
+      .then((res) => {
+        debug("Successfully created new lineup");
+        return res.data;
+      });
   }
 
   /**
@@ -25,7 +30,11 @@ class LineupService {
    * @returns {Promise<Object>} Updated lineup
    */
   update(id, data) {
-    return ax.put(`/lineup/${id}`, data).then((res) => res.data);
+    debug("Updating lineup", { id, data });
+    return ax.put(`/lineup/${id}`, data).then((res) => {
+      debug("Successfully updated lineup");
+      return res.data;
+    });
   }
 
   /**
@@ -34,7 +43,11 @@ class LineupService {
    * @returns {Promise<Object>} Response data
    */
   remove(id) {
-    return ax.delete(`/lineup/${id}`).then((res) => res.data);
+    debug("Deleting lineup", id);
+    return ax.delete(`/lineup/${id}`).then((res) => {
+      debug("Successfully deleted lineup");
+      return res.data;
+    });
   }
 }
 

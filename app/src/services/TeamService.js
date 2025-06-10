@@ -1,3 +1,4 @@
+import { debug } from "@/utils/logging";
 import ax from "./RequestService";
 
 /**
@@ -19,7 +20,11 @@ class TeamService {
    * @returns {Promise<Array>} Array of team objects
    */
   getByName(name) {
-    return ax.get("/team", { params: { name } }).then((res) => res.data);
+    debug("Querying teams by name", name);
+    return ax.get("/team", { params: { name } }).then((res) => {
+      debug("Successfully queried teams by name");
+      return res.data;
+    });
   }
 
   /**
@@ -28,7 +33,11 @@ class TeamService {
    * @returns {Promise<Object>} Team object
    */
   getById(teamId) {
-    return ax.get(`/team/${teamId}`).then((res) => res.data);
+    debug("Querying team by id", teamId);
+    return ax.get(`/team/${teamId}`).then((res) => {
+      debug("Successfully queried team by id");
+      return res.data;
+    });
   }
 
   /**
@@ -39,7 +48,11 @@ class TeamService {
    * @returns {Promise<Object>} Created team
    */
   create(name, clubId, seasonId) {
-    return ax.post("/team", { name, clubId, seasonId }).then((res) => res.data);
+    debug("Creating a new team", { clubId, name, seasonId });
+    return ax.post("/team", { name, clubId, seasonId }).then((res) => {
+      debug("Successfully created team");
+      return res.data;
+    });
   }
 
   /**
@@ -49,7 +62,11 @@ class TeamService {
    * @returns {Promise<Object>} Updated team
    */
   setName(teamId, name) {
-    return ax.put(`/team/${teamId}`, { name }).then((res) => res.data);
+    debug("Setting team's name", { teamId, name });
+    return ax.put(`/team/${teamId}`, { name }).then((res) => {
+      debug("Successfully updated team's name");
+      return res.data;
+    });
   }
 
   /**
@@ -58,7 +75,11 @@ class TeamService {
    * @returns {Promise<Object>} Response data
    */
   remove(teamId) {
-    return ax.delete(`/team/${teamId}`).then((res) => res.data);
+    debug("Removing team", teamId);
+    return ax.delete(`/team/${teamId}`).then((res) => {
+      debug("Successfully deleted team");
+      return res.data;
+    });
   }
 }
 

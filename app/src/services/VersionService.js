@@ -1,4 +1,4 @@
-import { error } from "@/utils/logging";
+import { debug, error } from "@/utils/logging";
 import ax from "./RequestService";
 import ERROR_CODES from "@/utils/error_codes";
 
@@ -19,6 +19,10 @@ const VERSIONS = [
     end: new Date(2025, 6, 15), // July 15th 2025
   },
 ];
+debug("Started VersionService", {
+  VERSIONS,
+  VUE_APP_VERSION: process.env.VUE_APP_VERSION,
+});
 
 /**
  * Service for managing application and server versions.
@@ -55,11 +59,15 @@ class VersionService {
    * @returns {Promise<string|null>} Server version or null if unavailable
    */
   async getServerVersion() {
+    debug("Querying serverVersion", { serverVersion: this.serverVersion });
     if (this.serverVersion) return this.serverVersion;
 
     return ax
       .get("/version")
-      .then((res) => res.data)
+      .then((res) => {
+        debug("Successfully queried server version");
+        return res.data;
+      })
       .catch((e) => {
         error(e, ERROR_CODES.VERSION_QUERY_FAILED);
         return null;

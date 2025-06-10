@@ -1,3 +1,4 @@
+import { debug } from "@/utils/logging";
 import ax from "./RequestService";
 
 /**
@@ -14,9 +15,13 @@ class PositionService {
    * @returns {Promise<Object>} Created position
    */
   create(lineupId, x, y, memberId) {
+    debug("Creating new position", { lineupId, x, y, memberId });
     return ax
       .post(`/lineup/${lineupId}/position`, { x, y, memberId })
-      .then((res) => res.data);
+      .then((res) => {
+        debug("Successfully created position");
+        return res.data;
+      });
   }
 
   /**
@@ -25,9 +30,11 @@ class PositionService {
    * @returns {Promise<Array>} Array of position objects
    */
   getByLineupId(lineupId) {
-    return ax
-      .get(`/position`, { params: { lineupId } })
-      .then((res) => res.data);
+    debug("Querying positions by lineup", lineupId);
+    return ax.get(`/position`, { params: { lineupId } }).then((res) => {
+      debug("Successfully queried positions by lineup");
+      return res.data;
+    });
   }
 
   /**
@@ -39,9 +46,13 @@ class PositionService {
    * @returns {Promise<Object>} Updated position
    */
   update(lineupId, positionId, x, y) {
+    debug("Updating position", { lineupId, positionId, x, y });
     return ax
       .put(`/lineup/${lineupId}/position/${positionId}`, { x, y })
-      .then((res) => res.data);
+      .then((res) => {
+        debug("Successfully updated position");
+        return res.data;
+      });
   }
 
   /**
@@ -50,7 +61,11 @@ class PositionService {
    * @returns {Promise<Object>} Response data
    */
   remove(positionId) {
-    return ax.delete(`/position/${positionId}`).then((res) => res.data);
+    debug("Deleting position", positionId);
+    return ax.delete(`/position/${positionId}`).then((res) => {
+      debug("Successfully deleted position");
+      return res.data;
+    });
   }
 }
 

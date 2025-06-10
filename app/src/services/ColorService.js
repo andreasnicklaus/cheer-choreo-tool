@@ -1,3 +1,5 @@
+import { debug } from "@/utils/logging";
+
 /**
  * Service for providing and selecting colors for participants.
  *
@@ -42,12 +44,16 @@ class ColorService {
    * @returns {string} A random color string
    */
   getRandom(alreadyUsedColors = []) {
+    debug("Creating a random color", { alreadyUsedColors });
     let possibleColors = colors.filter(
       (color) =>
         alreadyUsedColors.length == 0 || !alreadyUsedColors.includes(color)
     );
     if (possibleColors.length == 0) possibleColors = colors;
-    return possibleColors[Math.floor(Math.random() * possibleColors.length)]; // njsscan-ignore: node_insecure_random_generator
+    const chosenColor =
+      possibleColors[Math.floor(Math.random() * possibleColors.length)]; // njsscan-ignore: node_insecure_random_generator
+    debug("Return chosen color", chosenColor);
+    return chosenColor;
   }
 }
 

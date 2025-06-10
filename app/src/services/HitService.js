@@ -1,3 +1,4 @@
+import { debug } from "@/utils/logging";
 import ax from "./RequestService";
 
 /**
@@ -14,9 +15,11 @@ class HitService {
    * @returns {Promise<Object>} Created hit
    */
   create(name, count, choreoId, memberIds = []) {
-    return ax
-      .post("/hit", { name, count, choreoId, memberIds })
-      .then((res) => res.data);
+    debug("Creating a new hit", { name, count, choreoId, memberIds });
+    return ax.post("/hit", { name, count, choreoId, memberIds }).then((res) => {
+      debug("Successfully created new hit");
+      return res.data;
+    });
   }
 
   /**
@@ -26,7 +29,11 @@ class HitService {
    * @returns {Promise<Object>} Updated hit
    */
   setCount(hitId, count) {
-    return ax.put(`/hit/${hitId}`, { count }).then((res) => res.data);
+    debug("Setting count of hit", { hitId, count });
+    return ax.put(`/hit/${hitId}`, { count }).then((res) => {
+      debug("Successfully set count");
+      return res.data;
+    });
   }
 
   /**
@@ -38,13 +45,17 @@ class HitService {
    * @returns {Promise<Object>} Updated hit
    */
   update(hitId, name, count, MemberIds) {
+    debug("Updating hit", { hitId, name, count, MemberIds });
     return ax
       .put(`/hit/${hitId}`, {
         name,
         count,
         MemberIds,
       })
-      .then((res) => res.data);
+      .then((res) => {
+        debug("Successfully updated hit");
+        return res.data;
+      });
   }
 
   /**
@@ -53,7 +64,11 @@ class HitService {
    * @returns {Promise<Object>} Response data
    */
   remove(hitId) {
-    return ax.delete(`/hit/${hitId}`).then((res) => res.data);
+    debug("Deleting hit", hitId);
+    return ax.delete(`/hit/${hitId}`).then((res) => {
+      debug("Successfully deleted hit");
+      return res.data;
+    });
   }
 }
 

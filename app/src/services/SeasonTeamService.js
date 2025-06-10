@@ -1,3 +1,4 @@
+import { debug } from "@/utils/logging";
 import ax from "./RequestService";
 
 /**
@@ -13,9 +14,13 @@ class SeasonTeamService {
    * @returns {Promise<Object>} Created season team
    */
   create(teamId, seasonId, memberIds) {
+    debug("Creating a new seasonTeam", { teamId, seasonId, memberIds });
     return ax
       .post("/seasonTeam", { teamId, seasonId, memberIds })
-      .then((res) => res.data);
+      .then((res) => {
+        debug("Successfully created a seasonTeam");
+        return res.data;
+      });
   }
 
   /**
@@ -25,9 +30,11 @@ class SeasonTeamService {
    * @returns {Promise<Object>} Updated season team
    */
   importMembers(seasonTeamId, memberIds) {
-    return ax
-      .put(`/seasonTeam/${seasonTeamId}`, { memberIds })
-      .then((res) => res.data);
+    debug("Importing members", { seasonTeamId, memberIds });
+    return ax.put(`/seasonTeam/${seasonTeamId}`, { memberIds }).then((res) => {
+      debug("Successfully imported members");
+      return res.data;
+    });
   }
 
   /**
@@ -36,7 +43,11 @@ class SeasonTeamService {
    * @returns {Promise<Object>} Response data
    */
   remove(seasonTeamId) {
-    return ax.delete(`/seasonTeam/${seasonTeamId}`).then((res) => res.data);
+    debug("Removing seasonTeam", seasonTeamId);
+    return ax.delete(`/seasonTeam/${seasonTeamId}`).then((res) => {
+      debug("Successfully deleted seasonTeam");
+      return res.data;
+    });
   }
 }
 

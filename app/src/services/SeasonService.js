@@ -1,3 +1,4 @@
+import { debug } from "@/utils/logging";
 import ax from "./RequestService";
 
 /**
@@ -10,7 +11,11 @@ class SeasonService {
    * @returns {Promise<Array>} Array of season objects
    */
   getAll() {
-    return ax.get("/season").then((res) => res.data);
+    debug("Querying seasons");
+    return ax.get("/season").then((res) => {
+      debug("Successfully queried seasons");
+      return res.data;
+    });
   }
 
   /**
@@ -20,7 +25,11 @@ class SeasonService {
    * @returns {Promise<Object>} Created season
    */
   create(name, year) {
-    return ax.post("/season", { name, year }).then((res) => res.data);
+    debug("Creating a new season", { name, year });
+    return ax.post("/season", { name, year }).then((res) => {
+      debug("Successfully created new season");
+      return res.data;
+    });
   }
 }
 
