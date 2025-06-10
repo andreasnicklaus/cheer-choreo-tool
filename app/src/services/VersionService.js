@@ -19,10 +19,6 @@ const VERSIONS = [
     end: new Date(2025, 6, 15), // July 15th 2025
   },
 ];
-debug("Started VersionService", {
-  VERSIONS,
-  VUE_APP_VERSION: process.env.VUE_APP_VERSION,
-});
 
 /**
  * Service for managing application and server versions.

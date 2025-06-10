@@ -54,7 +54,6 @@ class LanguageService {
    * @returns {string} The selected locale
    */
   loadLanguage(availableLocales) {
-    debug("Loading initial language from browser", availableLocales);
     let locale = "de";
 
     const usersLanguage = window.navigator.language.split("-")[0];
@@ -65,8 +64,6 @@ class LanguageService {
     } else if (availableLocales.includes(usersLanguage)) {
       locale = usersLanguage;
     }
-
-    debug("Successfully loaded language", locale);
 
     return locale;
   }
