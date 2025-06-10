@@ -1,4 +1,5 @@
 import Vue from "vue";
+import { debug } from "./logging";
 
 const state = Vue.observable({
   screen: {},
@@ -40,6 +41,7 @@ function onResize() {
       xl: width < 9999,
     },
   };
+  debug("Window resized", { width, screen: state.screen });
 }
 
 /* Might want to debounce the event, to limit amount of calls */

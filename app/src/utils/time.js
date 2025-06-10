@@ -2,6 +2,7 @@ import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en.json";
 import de from "javascript-time-ago/locale/de.json";
 import i18n from "@/plugins/vue-i18n";
+import { debug } from "./logging";
 
 de.now.now.past = "vor einem Moment";
 
@@ -21,8 +22,11 @@ function initTimeAgo(locale) {
  * @returns {string} Formatted time ago string
  */
 function toTimeAgo(date, locale = i18n.locale) {
+  debug("Converting time to timeAgo", { date, locale });
   const timeAgo = initTimeAgo(locale);
-  return timeAgo.format(new Date(date), "round-minute");
+  const result = timeAgo.format(new Date(date), "round-minute");
+  debug("Converted time", { result });
+  return result;
 }
 
 export default toTimeAgo;

@@ -4,6 +4,7 @@ import store from "@/store";
 import routes from "./routes";
 import i18n from "@/plugins/vue-i18n";
 import LanguageService from "@/services/LanguageService";
+import { debug } from "@/utils/logging";
 
 Vue.use(VueRouter);
 
@@ -17,6 +18,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  debug("Routing to new page", { to, from });
   const newLocale = to.params.locale;
   const prevLocale = from.params.locale;
 

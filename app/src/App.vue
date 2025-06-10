@@ -155,7 +155,7 @@ import HeadNav from "./components/HeadNav.vue";
 import { getApiDomain } from "./services/RequestService";
 import breakpoints from "@/utils/breakpoints";
 import MessagingService from "./services/MessagingService";
-import { logWelcomeMessage } from "@/utils/logging";
+import { debug, logWelcomeMessage } from "@/utils/logging";
 import VersionService from "./services/VersionService";
 
 /**
@@ -259,6 +259,9 @@ export default {
     };
   },
   mounted() {
+    debug("Started App", {
+      VUE_APP_VERSION: process.env.VUE_APP_VERSION,
+    });
     MessagingService.subscribe("App", (message, options) =>
       this.$bvToast.toast(message, options)
     );
