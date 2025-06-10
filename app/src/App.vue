@@ -298,6 +298,9 @@ html {
 .modal-open {
   padding: 0 !important;
 }
+.b-toaster {
+  z-index: 9999999;
+}
 </style>
 
 <style lang="scss">
