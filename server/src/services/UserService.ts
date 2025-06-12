@@ -19,6 +19,7 @@ class UserService {
    * @returns {Promise<Array>} Array of user objects.
    */
   async getAll() {
+    logger.debug(`UserService.getAll`)
     return User.findAll();
   }
 
@@ -28,6 +29,7 @@ class UserService {
    * @returns {Promise<Object>} The user object.
    */
   async findById(id: string) {
+    logger.debug(`UserService.findById ${JSON.stringify({ id })}`)
     return User.findByPk(id, { include: ["Clubs"] });
   }
 
@@ -42,6 +44,7 @@ class UserService {
     usernameOrEmail: string,
     { scope = "defaultScope" } = {}
   ) {
+    logger.debug(`UserService.findByUsernameOrEmail ${JSON.stringify({ usernameOrEmail, scope })}`)
     return User.scope(scope).findOne({
       where: {
         [Op.or]: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
@@ -54,6 +57,7 @@ class UserService {
    * @returns {Promise<number>} The total count of users.
    */
   getCount() {
+    logger.debug(`UserService.getCount`)
     return User.count();
   }
 
@@ -62,6 +66,7 @@ class UserService {
    * @returns {Promise<number>} The trend value.
    */
   getTrend() {
+    logger.debug(`UserService.getTrend`)
     return Promise.all([
       User.count({
         where: {
@@ -86,6 +91,7 @@ class UserService {
    * @returns {Promise<Object>} The created user object.
    */
   async create(username: string, password: string, email: string, emailConfirmed: boolean, locale: string) {
+    logger.debug(`UserService.create ${JSON.stringify({ username, password: password ? '<redacted>' : 'undefined', email, emailConfirmed, locale })}`)
     return User.create({ username, password, email, emailConfirmed }).then(
       (user) => {
         MailService.sendUserRegistrationNotice(
@@ -144,15 +150,18 @@ class UserService {
    * @param {Object} data - The data to update.
    * @returns {Promise<Object>} The updated user object.
    */
-  async update(id: string, data: object) {
+  async update(id: string, data: object & { password: string }) {
+    const { password, ...logData } = data
+    logger.debug(`UserService.update ${JSON.stringify({ id, data: logData })}`);
     return User.findByPk(id).then(async (foundUser) => {
       if (foundUser) {
-        logger.debug(`UserService.update ${JSON.stringify({ id, data })}`);
         await foundUser.update(data);
         await foundUser.save();
         return User.findByPk(id);
-      } else
-        throw Error(`Beim Update wurde kein User mit der ID ${id} gefunden`);
+      } else {
+        logger.error(`No user found with ID ${id} when updating`);
+        throw new Error(`No user found with ID ${id} when updating`);
+      }
     });
   }
 
@@ -162,12 +171,13 @@ class UserService {
    * @returns {Promise<void>} Resolves when the user is removed.
    */
   async remove(id: string) {
+    logger.debug(`UserService.remove ${JSON.stringify({ id })}`);
     return User.findByPk(id).then((foundUser) => {
       if (foundUser) {
-        logger.debug(`UserService.remove ${JSON.stringify({ id })}`);
         return foundUser.destroy();
       } else {
-        throw Error(`Beim Löschen wurde kein User mit der ID ${id} gefunden`);
+        logger.error(`No user found with ID ${id} when deleting`);
+        throw new Error(`No user found with ID ${id} when deleting`);
       }
     });
   }
@@ -177,6 +187,7 @@ class UserService {
    * @returns {Promise<number>} The percentage of logged-in users.
    */
   getLoggedInPercentage() {
+    logger.debug(`UserService.getLoggedInPercentage`)
     return Promise.all([
       this.getCount(),
       User.count({

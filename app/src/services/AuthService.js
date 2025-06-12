@@ -30,7 +30,7 @@ class AuthService {
         if (!token) {
           store.commit("setLoginState", false);
           warn("Requested authentication token, but did not receive a token");
-          throw Error("No token received");
+          throw new Error("No token received");
         }
 
         debug("Succesfully logged in as", username);
@@ -63,7 +63,7 @@ class AuthService {
           warn(
             "Requested authentication token with SSO token, but did not receive an authentication token"
           );
-          throw Error("No token received");
+          throw new Error("No token received");
         }
 
         debug("Successfully logged in with SSO token");
@@ -114,7 +114,7 @@ class AuthService {
           warn(
             "Requested authentication token through registration token, but did not receive one"
           );
-          throw Error("No token received");
+          throw new Error("No token received");
         }
 
         debug("Successfully registered as", username);

@@ -27,6 +27,7 @@ class TeamService {
    * @returns {Promise<Array>} List of teams.
    */
   async getAll(UserId: string | null, options = { all: false }) {
+    logger.debug(`TeamService.getAll ${JSON.stringify({ UserId, options })}`)
     return Team.findAll({
       where: options.all ? {} : UserId ? { UserId } : {},
       include: defaultInclude,
@@ -40,6 +41,7 @@ class TeamService {
    * @returns {Promise<Array>} List of teams.
    */
   async findByName(name: string, UserId: string) {
+    logger.debug(`TeamService.findByName ${JSON.stringify({ name, UserId })}`)
     return Team.findAll({
       where: { name, UserId },
       include: defaultInclude,
@@ -53,6 +55,7 @@ class TeamService {
    * @returns {Promise<Object>} The team object.
    */
   async findById(id: string, UserId: string) {
+    logger.debug(`TeamService.findById ${JSON.stringify({ id, UserId })}`)
     return Team.findOne({
       where: { id, UserId },
       include: defaultInclude,
@@ -64,6 +67,7 @@ class TeamService {
    * @returns {Promise<number>} The count of teams.
    */
   getCount() {
+    logger.debug(`TeamService.getCount`)
     return Team.count();
   }
 
@@ -72,6 +76,7 @@ class TeamService {
    * @returns {Promise<number>} The trend value.
    */
   getTrend() {
+    logger.debug(`TeamService.getTrend`)
     return Promise.all([
       Team.count({
         where: {
@@ -132,18 +137,20 @@ class TeamService {
    * @returns {Promise<Object>} The updated team object.
    */
   async update(id: string, data: object, UserId: string | null, options = { all: false }) {
+    logger.debug(
+      `TeamService.update ${JSON.stringify({ id, data, UserId })}`
+    );
     return Team.findOne({
       where: options.all || !UserId ? { id } : { id, UserId }
     }) // njsscan-ignore: node_nosqli_injection
       .then(async (foundTeam: Team | null) => {
         if (foundTeam) {
-          logger.debug(
-            `TeamService.update ${JSON.stringify({ id, data, UserId })}`
-          );
           await foundTeam.update(data);
           return foundTeam.save();
-        } else
-          throw Error(`Beim Update wurde kein Team mit der ID ${id} gefunden`);
+        } else {
+          logger.error(`No team found with ID ${id} when updating`);
+          throw new Error(`No team found with ID ${id} when updating`);
+        }
       });
   }
 
@@ -156,13 +163,14 @@ class TeamService {
    * @returns {Promise<void>} Resolves when the team is removed.
    */
   async remove(id: string, UserId: string | null, options = { all: false }) {
+    logger.debug(`TeamService.remove ${JSON.stringify({ id, UserId, options })}`);
     return Team.findOne({ where: options.all || !UserId ? { id } : { id, UserId } }) // njsscan-ignore: node_nosqli_injection
       .then((foundTeam) => {
         if (foundTeam) {
-          logger.debug(`TeamService.remove ${JSON.stringify({ id, UserId })}`);
           return foundTeam.destroy();
         } else {
-          throw Error(`Beim Löschen wurde kein Team mit der ID ${id} gefunden`);
+          logger.error(`No team found with ID ${id} when deleting`);
+          throw new Error(`No team found with ID ${id} when deleting`);
         }
       });
   }

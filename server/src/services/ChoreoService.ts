@@ -74,6 +74,7 @@ class ChoreoService {
    * @returns {Promise<Choreo[]>} List of choreographies.
    */
   async getAll(UserId: string, options = { all: false }) {
+    logger.debug(`ChoreoService.getAll ${JSON.stringify({ UserId, options })}`)
     return Choreo.findAll({
       where: options.all ? {} : { UserId },
       include: defaultInclude,
@@ -89,6 +90,7 @@ class ChoreoService {
    * @returns {Promise<Choreo[]>} List of choreographies.
    */
   async findByTeamId(TeamId: string, UserId: string) {
+    logger.debug(`ChoreoService.findByTeamId ${JSON.stringify({ TeamId, UserId })}`)
     return Choreo.findAll({
       where: { TeamId, UserId },
       include: defaultInclude,
@@ -101,6 +103,7 @@ class ChoreoService {
    * @returns {Promise<number>} Count of choreographies.
    */
   getCount() {
+    logger.debug(`ChoreoService.getCount`)
     return Choreo.count();
   }
 
@@ -110,6 +113,7 @@ class ChoreoService {
    * @returns {Promise<number>} Trend of choreographies.
    */
   getTrend() {
+    logger.debug(`ChoreoService.getTrend`)
     return Promise.all([
       Choreo.count({
         where: {
@@ -135,6 +139,7 @@ class ChoreoService {
    * @returns {Promise<Choreo>} The choreography.
    */
   async findById(id: string, UserId: string | null, options = { all: false }) {
+    logger.debug(`ChoreoService.findById ${JSON.stringify({ id, UserId, options })}`)
     return Choreo.findOne({
       where: options.all
         ? { id }
@@ -145,6 +150,7 @@ class ChoreoService {
     }) // njsscan-ignore: node_nosqli_injection
       .then(async (choreo: Choreo | null) => {
         if (!choreo) {
+          logger.error(`Choreo with ID ${id} not found`)
           throw new Error(`Choreo with ID ${id} not found`);
         }
         const lineups = await LineupService.findByChoreoId(choreo.id);
@@ -252,9 +258,11 @@ class ChoreoService {
    * @returns {Promise<void>}
    */
   async addParticipant(choreoId: string, memberId: string, UserId: string, color: string | null = null) {
+    logger.debug(`ChoreoService.addParticipant ${JSON.stringify({ choreoId, memberId, UserId, color })}`)
     return this.findById(choreoId, UserId).then((choreo) =>
       MemberService.findById(memberId, UserId).then((member) => {
         if (!member) {
+          logger.error(`Member with ID ${memberId} not found`);
           throw new Error(`Member with ID ${memberId} not found`);
         }
         return choreo.addParticipant(member, {
@@ -279,6 +287,7 @@ class ChoreoService {
    * @returns {Promise<void>}
    */
   async removeParticipant(ChoreoId: string, MemberId: string) {
+    logger.debug(`ChoreoService.removeParticipant ${JSON.stringify({ ChoreoId, MemberId })}`)
     return ChoreoParticipation.findOne({
       where: { MemberId, ChoreoId },
     }) // njsscan-ignore: node_nosqli_injection
@@ -299,11 +308,15 @@ class ChoreoService {
    * @returns {Promise<void>}
    */
   async replaceParticipant(ChoreoId: string, memberToAddId: string, memberToRemoveId: string, UserId: string) {
+    logger.debug(`ChoreoService.replaceParticipant ${JSON.stringify({ ChoreoId, memberToAddId, memberToRemoveId, UserId })}`)
     return ChoreoParticipation.findOne({
       where: { ChoreoId, MemberId: memberToRemoveId },
     }) // njsscan-ignore: node_nosqli_injection
       .then(async (foundChoreoParticipation: ChoreoParticipation | null) => {
         if (!foundChoreoParticipation) {
+          logger.error(
+            `ChoreoParticipation with ChoreoId ${ChoreoId} and MemberId ${memberToRemoveId} not found`
+          );
           throw new Error(
             `ChoreoParticipation with ChoreoId ${ChoreoId} and MemberId ${memberToRemoveId} not found`
           );
@@ -354,11 +367,15 @@ class ChoreoService {
    * @returns {Promise<void>}
    */
   changeParticipationColor(ChoreoId: string, participantId: string, color: string, UserId: string) {
+    logger.debug(`ChoreoService.changeParticipationColor ${JSON.stringify({ ChoreoId, participantId, color, UserId })}`)
     return ChoreoParticipation.findOne({
       where: { ChoreoId, MemberId: participantId, UserId },
     }) // njsscan-ignore: node_nosqli_injection
       .then(async (foundChoreoParticipation: ChoreoParticipation | null) => {
         if (!foundChoreoParticipation) {
+          logger.error(
+            `ChoreoParticipation with ChoreoId ${ChoreoId} and MemberId ${participantId} not found`
+          );
           throw new Error(
             `ChoreoParticipation with ChoreoId ${ChoreoId} and MemberId ${participantId} not found`
           );
@@ -380,20 +397,21 @@ class ChoreoService {
    * @returns {Promise<Choreo>} The updated choreography.
    */
   async update(id: string, data: object, UserId: string | null, options = { all: false }) {
+    logger.debug(`ChoreoService.update ${JSON.stringify({ id, data, UserId, options })}`)
     return Choreo.findOne({
       where: options.all || !UserId ? { id } : { id, UserId }
     }) // njsscan-ignore: node_nosqli_injection
       .then(async (foundChoreo) => {
         if (foundChoreo) {
-          logger.debug(
-            `ChoreoService.update ${JSON.stringify({ id, data, UserId })}`
-          );
           await foundChoreo.update(data);
           await foundChoreo.save();
           return this.findById(id, UserId, options);
         } else {
+          logger.error(
+            `No choreo found with ID ${id} when updating`
+          );
           throw new Error(
-            `Beim Update wurde keine Choreo mit der ID ${id} gefunden`
+            `No choreo found with ID ${id} when updating`
           );
         }
       });
@@ -410,18 +428,19 @@ class ChoreoService {
    * @returns {Promise<void>}
    */
   async remove(id: string, UserId: string | null, options = { all: false }) {
+    logger.debug(`ChoreoService.remove ${JSON.stringify({ id, UserId, options })}`)
     return Choreo.findOne({
       where: options.all || !UserId ? { id } : { id, UserId }
     }) // njsscan-ignore: node_nosqli_injection
       .then(async (foundChoreo) => {
         if (foundChoreo) {
-          logger.debug(
-            `ChoreoService.remove ${JSON.stringify({ id, UserId })}`
-          );
           return foundChoreo.destroy();
         } else {
+          logger.error(
+            `No choreo found with ID ${id} when deleting`
+          );
           throw new Error(
-            `Beim Update wurde keine Choreo mit der ID ${id} gefunden`
+            `No choreo found with ID ${id} when deleting`
           );
         }
       });

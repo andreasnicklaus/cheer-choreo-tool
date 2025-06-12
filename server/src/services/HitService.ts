@@ -16,6 +16,7 @@ class HitService {
    * @returns {Promise<Array<Hit>>} List of Hit objects.
    */
   async getAll(UserId: string) {
+    logger.debug(`HitService.getAll ${JSON.stringify({ UserId })}`)
     return Hit.findAll({ where: { UserId }, include: "Members" });
   }
 
@@ -27,6 +28,7 @@ class HitService {
    * @returns {Promise<Hit|null>} The found Hit or null.
    */
   async findById(id: string, UserId: string) {
+    logger.debug(`HitService.findById ${JSON.stringify({ id, UserId })}`)
     return Hit.findOne({
       where: { id, UserId },
       include: { all: true, nested: true },
@@ -41,6 +43,7 @@ class HitService {
    * @returns {Promise<Array<Hit>>} List of matching Hits.
    */
   async findByName(name: string, UserId: string) {
+    logger.debug(`HitService.findByName ${JSON.stringify({ name, UserId })}`)
     return Hit.findAll({
       where: { name, UserId },
       include: { all: true, nested: true },
@@ -114,10 +117,10 @@ class HitService {
    * @returns {Promise<Hit>} The updated Hit.
    */
   async update(id: string, data: Hit & { MemberIds: string[] }, UserId: string) {
+    logger.debug(`HitService.update ${JSON.stringify({ id, data, UserId })}`);
     return Hit.findOne({ where: { id, UserId } }) // njsscan-ignore: node_nosqli_injection
       .then(async (foundHit: Hit | null) => {
         if (foundHit) {
-          logger.debug(`HitService.update ${JSON.stringify({ id, data })}`);
           await foundHit.update(data);
           await foundHit.save();
           if (data.MemberIds) await foundHit.setMembers(data.MemberIds);
@@ -126,7 +129,8 @@ class HitService {
             include: "Members",
           }); // njsscan-ignore: node_nosqli_injection
         } else {
-          throw Error(`Beim Update wurde kein Hit mit der ID ${id} gefunden`);
+          logger.error(`No hit found with ID ${id} when updating`);
+          throw new Error(`No hit found with ID ${id} when updating`);
         }
       });
   }
@@ -139,13 +143,14 @@ class HitService {
    * @returns {Promise<void>} Resolves if deletion is successful.
    */
   async remove(id: string, UserId: string) {
+    logger.debug(`HitService.remove ${JSON.stringify({ id, UserId })}`);
     return Hit.findOne({ where: { id, UserId } }) // njsscan-ignore: node_nosqli_injection
       .then((foundHit: Hit | null) => {
         if (foundHit) {
-          logger.debug(`HitService.remove ${JSON.stringify({ id, UserId })}`);
           return foundHit.destroy();
         } else {
-          throw Error(`Beim Löschen wurde kein Hit mit der ID ${id} gefunden`);
+          logger.error(`No hit found with ID ${id} when deleting`);
+          throw new Error(`No hit found with ID ${id} when deleting`);
         }
       });
   }
