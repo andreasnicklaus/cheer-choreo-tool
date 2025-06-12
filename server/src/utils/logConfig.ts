@@ -1,6 +1,7 @@
 const { logger } = require("../plugins/winston");
 
 function logConfig() {
+  logger.debug("Starting logging the configuration variables")
   const dbName = process.env.POSTGRES_DB || "not defined";
   const dbUsername = process.env.POSTGRES_USER || "not defined";
   const dbHost = process.env.DB_HOST || "not defined";
