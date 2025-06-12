@@ -16,7 +16,7 @@ class HitService {
    * @returns {Promise<Array<Hit>>} List of Hit objects.
    */
   async getAll(UserId: string) {
-    logger.debug(`HitService.getAll ${JSON.stringify({ UserId })}`)
+    logger.debug(`HitService getAll ${JSON.stringify({ UserId })}`)
     return Hit.findAll({ where: { UserId }, include: "Members" });
   }
 
@@ -28,7 +28,7 @@ class HitService {
    * @returns {Promise<Hit|null>} The found Hit or null.
    */
   async findById(id: string, UserId: string) {
-    logger.debug(`HitService.findById ${JSON.stringify({ id, UserId })}`)
+    logger.debug(`HitService findById ${JSON.stringify({ id, UserId })}`)
     return Hit.findOne({
       where: { id, UserId },
       include: { all: true, nested: true },
@@ -43,7 +43,7 @@ class HitService {
    * @returns {Promise<Array<Hit>>} List of matching Hits.
    */
   async findByName(name: string, UserId: string) {
-    logger.debug(`HitService.findByName ${JSON.stringify({ name, UserId })}`)
+    logger.debug(`HitService findByName ${JSON.stringify({ name, UserId })}`)
     return Hit.findAll({
       where: { name, UserId },
       include: { all: true, nested: true },
@@ -62,7 +62,7 @@ class HitService {
    */
   async create(name: string, count: number, ChoreoId: string, MemberIds = [], UserId: string) {
     logger.debug(
-      `HitService.create ${JSON.stringify({
+      `HitService create ${JSON.stringify({
         name,
         count,
         ChoreoId,
@@ -88,7 +88,7 @@ class HitService {
    */
   async findOrCreate(name: string, count: number, ChoreoId: string, MemberIds: string[] = [], UserId: string) {
     logger.debug(
-      `HitService.findOrCreate ${JSON.stringify({
+      `HitService findOrCreate ${JSON.stringify({
         name,
         count,
         ChoreoId,
@@ -117,7 +117,7 @@ class HitService {
    * @returns {Promise<Hit>} The updated Hit.
    */
   async update(id: string, data: Hit & { MemberIds: string[] }, UserId: string) {
-    logger.debug(`HitService.update ${JSON.stringify({ id, data, UserId })}`);
+    logger.debug(`HitService update ${JSON.stringify({ id, data, UserId })}`);
     return Hit.findOne({ where: { id, UserId } }) // njsscan-ignore: node_nosqli_injection
       .then(async (foundHit: Hit | null) => {
         if (foundHit) {
@@ -143,7 +143,7 @@ class HitService {
    * @returns {Promise<void>} Resolves if deletion is successful.
    */
   async remove(id: string, UserId: string) {
-    logger.debug(`HitService.remove ${JSON.stringify({ id, UserId })}`);
+    logger.debug(`HitService remove ${JSON.stringify({ id, UserId })}`);
     return Hit.findOne({ where: { id, UserId } }) // njsscan-ignore: node_nosqli_injection
       .then((foundHit: Hit | null) => {
         if (foundHit) {

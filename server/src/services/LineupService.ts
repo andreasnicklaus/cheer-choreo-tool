@@ -19,7 +19,7 @@ class LineupService {
    */
   async create(startCount: number, endCount: number, ChoreoId: string, UserId: string) {
     logger.debug(
-      `LineupService.create ${JSON.stringify({
+      `LineupService create ${JSON.stringify({
         startCount,
         endCount,
         ChoreoId,
@@ -39,7 +39,7 @@ class LineupService {
    */
   async findOrCreate(startCount: number, endCount: number, ChoreoId: string, UserId: string) {
     logger.debug(
-      `LineupService.findOrCreate ${JSON.stringify({
+      `LineupService findOrCreate ${JSON.stringify({
         startCount,
         endCount,
         ChoreoId,
@@ -61,7 +61,7 @@ class LineupService {
    */
   async update(id: string, data: object, UserId: string) {
     logger.debug(
-      `LineupService.update ${JSON.stringify({ id, data, UserId })}`
+      `LineupService update ${JSON.stringify({ id, data, UserId })}`
     );
     return Lineup.findOne({ where: { id, UserId } }) // njsscan-ignore: node_nosqli_injection
       .then(async (foundLineup: Lineup | null) => {
@@ -99,7 +99,7 @@ class LineupService {
    * @returns {Promise<Object>} The found lineup.
    */
   async findById(id: string, UserId: string) {
-    logger.debug(`LineupService.findById ${JSON.stringify({ id, UserId })}`)
+    logger.debug(`LineupService findById ${JSON.stringify({ id, UserId })}`)
     return Lineup.findOne({ where: { id, UserId } }); // njsscan-ignore: node_nosqli_injection
   }
 
@@ -109,7 +109,7 @@ class LineupService {
    * @returns {Promise<Array>} List of lineups.
    */
   async findByChoreoId(ChoreoId: string) {
-    logger.debug(`LineupService.findByChoreoId ${JSON.stringify({ ChoreoId })}`)
+    logger.debug(`LineupService findByChoreoId ${JSON.stringify({ ChoreoId })}`)
     return Lineup.findAll({ where: { ChoreoId } });
   }
 
@@ -121,7 +121,7 @@ class LineupService {
    */
   async remove(id: string, UserId: string) {
     logger.debug(
-      `LineupService.remove ${JSON.stringify({ id, UserId })}`
+      `LineupService remove ${JSON.stringify({ id, UserId })}`
     );
     return Lineup.findOne({ where: { id, UserId } }) // njsscan-ignore: node_nosqli_injection
       .then((foundLineup: Lineup | null) => {

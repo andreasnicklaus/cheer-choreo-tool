@@ -84,7 +84,7 @@ class FileService {
    * @returns {Promise<void>}
    */
   clearProfilePictureFolder(userId: string, fileExtension: string | null = null) {
-    logger.debug(`FileService.clearProfilePictureFolder ${JSON.stringify({ userId, fileExtension })}`)
+    logger.debug(`FileService clearProfilePictureFolder ${JSON.stringify({ userId, fileExtension })}`)
     return readdir(path.join(__dirname, "../..", "uploads", "profilePictures"))
       .then((files: string[]) => {
         files
@@ -108,7 +108,7 @@ class FileService {
    * @returns {Promise<void>}
    */
   clearClubLogoFolder(clubId: string, fileExtension: string | null = null) {
-    logger.debug(`FileService.clearClubLogoFolder ${JSON.stringify({ clubId, fileExtension })}`)
+    logger.debug(`FileService clearClubLogoFolder ${JSON.stringify({ clubId, fileExtension })}`)
     return readdir(path.join(__dirname, "../..", "uploads", "clubLogos"))
       .then((files: string[]) => {
         files

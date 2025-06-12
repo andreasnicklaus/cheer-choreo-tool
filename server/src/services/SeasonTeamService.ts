@@ -20,7 +20,7 @@ class SeasonTeamService {
    * @returns {Promise<Object>} The season team object.
    */
   async findById(id: string, UserId: string) {
-    logger.debug(`SeasonTeamService.findById ${JSON.stringify({ id, UserId })}`)
+    logger.debug(`SeasonTeamService findById ${JSON.stringify({ id, UserId })}`)
     return SeasonTeam.findOne({
       where: { id, UserId },
       include: ["Choreos", "Members"],
@@ -36,7 +36,7 @@ class SeasonTeamService {
    * @returns {Promise<Array>} List of all season teams.
    */
   getAll() {
-    logger.debug(`SeasonTeamService.getAll`)
+    logger.debug(`SeasonTeamService getAll`)
     return SeasonTeam.findAll({
       include: ["Season", "Team", "User"],
     });
@@ -47,7 +47,7 @@ class SeasonTeamService {
    * @returns {Promise<number>} The count of season teams.
    */
   getCount() {
-    logger.debug(`SeasonTeamService.getCount`)
+    logger.debug(`SeasonTeamService getCount`)
     return SeasonTeam.count();
   }
 
@@ -56,7 +56,7 @@ class SeasonTeamService {
    * @returns {Promise<number>} The trend value (created - deleted).
    */
   getTrend() {
-    logger.debug(`SeasonTeamService.getTrend`)
+    logger.debug(`SeasonTeamService getTrend`)
     return Promise.all([
       SeasonTeam.count({
         where: {
@@ -81,7 +81,7 @@ class SeasonTeamService {
    */
   async create(TeamId: string, SeasonId: string, memberIds: string[], UserId: string) {
     logger.debug(
-      `SeasonTeamService.create ${JSON.stringify({
+      `SeasonTeamService create ${JSON.stringify({
         TeamId,
         SeasonId,
         memberIds,
@@ -105,7 +105,7 @@ class SeasonTeamService {
    * @returns {Promise<Object>} The created member object.
    */
   async copyMemberIntoSeasonTeam(SeasonTeamId: string, memberId: string, UserId: string) {
-    logger.debug(`SeasonTeamService.copyMemberIntoSeasonTeam ${JSON.stringify({ SeasonTeamId, memberId, UserId })}`)
+    logger.debug(`SeasonTeamService copyMemberIntoSeasonTeam ${JSON.stringify({ SeasonTeamId, memberId, UserId })}`)
     return MemberService.findById(memberId, UserId).then((member: Member) =>
       MemberService.create(
         member.name,
@@ -125,7 +125,7 @@ class SeasonTeamService {
    * @returns {Promise<Array>} List of created member objects.
    */
   async copyMembersIntoSeasonTeam(seasonTeamId: string, memberIds: string[], UserId: string) {
-    logger.debug(`SeasonTeamService.copyMembersIntoSeasonTeam ${JSON.stringify({ seasonTeamId, memberIds, UserId })}`)
+    logger.debug(`SeasonTeamService copyMembersIntoSeasonTeam ${JSON.stringify({ seasonTeamId, memberIds, UserId })}`)
     return Promise.all(
       memberIds.map((mId) =>
         this.copyMemberIntoSeasonTeam(seasonTeamId, mId, UserId)
@@ -142,7 +142,7 @@ class SeasonTeamService {
    */
   async remove(id: string, UserId: string) {
     logger.debug(
-      `SeasonTeamService.remove ${JSON.stringify({ id, UserId })}`
+      `SeasonTeamService remove ${JSON.stringify({ id, UserId })}`
     );
     return SeasonTeam.findOne({
       where: { id, UserId },

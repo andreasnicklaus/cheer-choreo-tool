@@ -18,7 +18,7 @@ class SeasonService {
    * @returns {Promise<Array>} List of seasons.
    */
   async getAll(UserId: string, options = { all: false }) {
-    logger.debug(`SeasonService.getAll ${JSON.stringify({ UserId, options })}`)
+    logger.debug(`SeasonService getAll ${JSON.stringify({ UserId, options })}`)
     if (UserId)
       return Season.findAll({
         where: options.all
@@ -38,7 +38,7 @@ class SeasonService {
    * @returns {Promise<number>} Count of seasons.
    */
   getCount() {
-    logger.debug(`SeasonService.getCount`)
+    logger.debug(`SeasonService getCount`)
     return Season.count();
   }
 
@@ -47,7 +47,7 @@ class SeasonService {
    * @returns {Promise<number>} Count of seasons created in the last 30 days.
    */
   getTrend() {
-    logger.debug(`SeasonService.getTrend`)
+    logger.debug(`SeasonService getTrend`)
     return Season.count({
       where: {
         createdAt: { [Op.gt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30 },
@@ -64,7 +64,7 @@ class SeasonService {
    */
   async create(name: string, year: number, UserId: string) {
     logger.debug(
-      `SeasonService.create ${JSON.stringify({
+      `SeasonService create ${JSON.stringify({
         name,
         year,
         UserId,
@@ -85,7 +85,7 @@ class SeasonService {
    */
   async update(id: string, data: object, UserId: string | null, options = { all: false }) {
     logger.debug(
-      `SeasonService.update ${JSON.stringify({ id, data, UserId })}`
+      `SeasonService update ${JSON.stringify({ id, data, UserId })}`
     );
     return Season.findOne({
       where: options.all || !UserId ? { id } : { id, UserId }
@@ -112,7 +112,7 @@ class SeasonService {
    */
   async remove(id: string, UserId: string | null, options = { all: false }) {
     logger.debug(
-      `SeasonService.remove ${JSON.stringify({ id, UserId })}`
+      `SeasonService remove ${JSON.stringify({ id, UserId })}`
     );
     return Season.findOne({
       where: options.all || !UserId ? { id } : { id, UserId }

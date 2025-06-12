@@ -47,7 +47,7 @@ class ClubService {
    * @returns {Club[]}
    */
   async getAll(UserId: string | null, options = { all: false }) {
-    logger.debug(`ClubService.getAll ${JSON.stringify({ UserId, options })}`)
+    logger.debug(`ClubService getAll ${JSON.stringify({ UserId, options })}`)
     return Club.findAll({
       where: options.all ? {} : (UserId ? { UserId } : {}),
       include: defaultInclude,
@@ -77,7 +77,7 @@ class ClubService {
    * @returns {number}
    */
   getCount() {
-    logger.debug(`ClubService.getCount`)
+    logger.debug(`ClubService getCount`)
     return Club.count();
   }
 
@@ -87,7 +87,7 @@ class ClubService {
    * @returns {number}
    */
   getTrend() {
-    logger.debug(`ClubService.getTrend`)
+    logger.debug(`ClubService getTrend`)
     return Promise.all([
       Club.count({
         where: {
@@ -111,7 +111,7 @@ class ClubService {
    * @returns {Club}
    */
   async findById(id: string, UserId: string) {
-    logger.debug(`ClubService.findById ${JSON.stringify({ id, UserId })}`)
+    logger.debug(`ClubService findById ${JSON.stringify({ id, UserId })}`)
     return Club.findOne({
       where: { id, UserId },
       include: defaultInclude,
@@ -143,7 +143,7 @@ class ClubService {
    * @returns {Club}
    */
   async findByName(name: string, UserId: string) {
-    logger.debug(`ClubService.findByName ${JSON.stringify({ name, UserId })}`)
+    logger.debug(`ClubService findByName ${JSON.stringify({ name, UserId })}`)
     return Club.findAll({
       where: { name, UserId },
       include: defaultInclude,
@@ -159,7 +159,7 @@ class ClubService {
    * @returns {Club}
    */
   async create(name: string, UserId: string) {
-    logger.debug(`ClubService.create ${JSON.stringify({ name, UserId })}`);
+    logger.debug(`ClubService create ${JSON.stringify({ name, UserId })}`);
     return Club.create({ name, UserId }).then((club: Club) =>
       Club.count({ where: { UserId } }).then(async (count: number) => {
         if (count <= 1) {
@@ -185,7 +185,7 @@ class ClubService {
    * @returns {void}
    */
   async seedDemo(club: Club, UserId: string) {
-    logger.debug(`ClubService.seedDemo ${JSON.stringify({ club, UserId })}`)
+    logger.debug(`ClubService seedDemo ${JSON.stringify({ club, UserId })}`)
     SeasonService.getAll(null).then((seasons: Season[]) => {
       const currentSeason = seasons.find(
         (s) => s.year == new Date().getFullYear()
@@ -257,7 +257,7 @@ class ClubService {
    */
   async findOrCreate(name: string, UserId: string) {
     logger.debug(
-      `ClubService.findOrCreate ${JSON.stringify({ name, UserId })}`
+      `ClubService findOrCreate ${JSON.stringify({ name, UserId })}`
     );
     const [club, _created] = await Club.findOrCreate({
       where: { name, UserId },
@@ -277,7 +277,7 @@ class ClubService {
    * @returns {Club}
    */
   async update(id: string, data: object, UserId: string | null, options = { all: false }) {
-    logger.debug(`ClubService.update ${JSON.stringify({ id, data, UserId, options })}`);
+    logger.debug(`ClubService update ${JSON.stringify({ id, data, UserId, options })}`);
     return Club.findOne({ where: options.all || !UserId ? { id } : { id, UserId } }) // njsscan-ignore: node_nosqli_injection
       .then(async (foundClub) => {
         if (foundClub) {
@@ -301,7 +301,7 @@ class ClubService {
    * @returns {Promise<void>}
    */
   async remove(id: string, UserId: string | null, options = { all: false }) {
-    logger.debug(`ClubService.remove ${JSON.stringify({ id, UserId, options })}`);
+    logger.debug(`ClubService remove ${JSON.stringify({ id, UserId, options })}`);
     return Club.findOne({ where: options.all || !UserId ? { id } : { id, UserId } }) // njsscan-ignore: node_nosqli_injection
       .then((foundClub) => {
         if (foundClub) {

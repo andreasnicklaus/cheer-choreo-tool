@@ -18,7 +18,7 @@ class PositionService {
    */
   async create(x: number, y: number, UserId: string) {
     logger.debug(
-      `PositionService.create ${JSON.stringify({
+      `PositionService create ${JSON.stringify({
         x,
         y,
         UserId,
@@ -38,7 +38,7 @@ class PositionService {
    */
   async findOrCreate(x: number, y: number, LineupId: string, MemberId: string, UserId: string) {
     logger.debug(
-      `PositionService.findOrCreate ${JSON.stringify({
+      `PositionService findOrCreate ${JSON.stringify({
         x,
         y,
         LineupId,
@@ -59,7 +59,7 @@ class PositionService {
    * @returns {Promise<Array>} List of positions.
    */
   async findByLineupId(LineupId: string, UserId: string | null) {
-    logger.debug(`PositionService. ${JSON.stringify({ LineupId, UserId })}`)
+    logger.debug(`PositionService  ${JSON.stringify({ LineupId, UserId })}`)
     return Position.findAll({
       where: UserId ? { LineupId, UserId } : { LineupId },
       include: "Member"
@@ -73,7 +73,7 @@ class PositionService {
    * @returns {Promise<Object|null>} The found position or null if not found.
    */
   async findById(id: string, UserId: string) {
-    logger.debug(`PositionService.findById ${JSON.stringify({ id, UserId })}`)
+    logger.debug(`PositionService findById ${JSON.stringify({ id, UserId })}`)
     return Position.findOne({ where: { id, UserId }, include: "Member" }); // njsscan-ignore: node_nosqli_injection
   }
 
@@ -88,7 +88,7 @@ class PositionService {
    */
   async update(id: string, LineupId: string | null, data: object, UserId: string) {
     logger.debug(
-      `PositionService.update ${JSON.stringify({
+      `PositionService update ${JSON.stringify({
         id,
         data,
         UserId,
@@ -118,7 +118,7 @@ class PositionService {
    */
   async remove(id: string, UserId: string) {
     logger.debug(
-      `PositionService.remove ${JSON.stringify({ id, UserId })}`
+      `PositionService remove ${JSON.stringify({ id, UserId })}`
     );
     return Position.findOne({ where: { id, UserId } }) // njsscan-ignore: node_nosqli_injection
       .then((foundPosition) => {

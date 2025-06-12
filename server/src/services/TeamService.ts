@@ -27,7 +27,7 @@ class TeamService {
    * @returns {Promise<Array>} List of teams.
    */
   async getAll(UserId: string | null, options = { all: false }) {
-    logger.debug(`TeamService.getAll ${JSON.stringify({ UserId, options })}`)
+    logger.debug(`TeamService getAll ${JSON.stringify({ UserId, options })}`)
     return Team.findAll({
       where: options.all ? {} : UserId ? { UserId } : {},
       include: defaultInclude,
@@ -41,7 +41,7 @@ class TeamService {
    * @returns {Promise<Array>} List of teams.
    */
   async findByName(name: string, UserId: string) {
-    logger.debug(`TeamService.findByName ${JSON.stringify({ name, UserId })}`)
+    logger.debug(`TeamService findByName ${JSON.stringify({ name, UserId })}`)
     return Team.findAll({
       where: { name, UserId },
       include: defaultInclude,
@@ -55,7 +55,7 @@ class TeamService {
    * @returns {Promise<Object>} The team object.
    */
   async findById(id: string, UserId: string) {
-    logger.debug(`TeamService.findById ${JSON.stringify({ id, UserId })}`)
+    logger.debug(`TeamService findById ${JSON.stringify({ id, UserId })}`)
     return Team.findOne({
       where: { id, UserId },
       include: defaultInclude,
@@ -67,7 +67,7 @@ class TeamService {
    * @returns {Promise<number>} The count of teams.
    */
   getCount() {
-    logger.debug(`TeamService.getCount`)
+    logger.debug(`TeamService getCount`)
     return Team.count();
   }
 
@@ -76,7 +76,7 @@ class TeamService {
    * @returns {Promise<number>} The trend value.
    */
   getTrend() {
-    logger.debug(`TeamService.getTrend`)
+    logger.debug(`TeamService getTrend`)
     return Promise.all([
       Team.count({
         where: {
@@ -101,7 +101,7 @@ class TeamService {
    */
   async create(name: string, ClubId: string, SeasonId: string, UserId: string) {
     logger.debug(
-      `TeamService.create ${JSON.stringify({ name, ClubId, SeasonId, UserId })}`
+      `TeamService create ${JSON.stringify({ name, ClubId, SeasonId, UserId })}`
     );
     return Team.create({ name, ClubId, UserId }).then((team: Team) =>
       SeasonTeamService.create(team.id, SeasonId, [], UserId).then(
@@ -119,7 +119,7 @@ class TeamService {
    */
   async findOrCreate(name: string, ClubId: string, UserId: string) {
     logger.debug(
-      `TeamService.findOrCreate ${JSON.stringify({ name, ClubId, UserId })}`
+      `TeamService findOrCreate ${JSON.stringify({ name, ClubId, UserId })}`
     );
     const [team, _created] = await Team.findOrCreate({
       where: { name, ClubId, UserId },
@@ -138,7 +138,7 @@ class TeamService {
    */
   async update(id: string, data: object, UserId: string | null, options = { all: false }) {
     logger.debug(
-      `TeamService.update ${JSON.stringify({ id, data, UserId })}`
+      `TeamService update ${JSON.stringify({ id, data, UserId })}`
     );
     return Team.findOne({
       where: options.all || !UserId ? { id } : { id, UserId }
@@ -163,7 +163,7 @@ class TeamService {
    * @returns {Promise<void>} Resolves when the team is removed.
    */
   async remove(id: string, UserId: string | null, options = { all: false }) {
-    logger.debug(`TeamService.remove ${JSON.stringify({ id, UserId, options })}`);
+    logger.debug(`TeamService remove ${JSON.stringify({ id, UserId, options })}`);
     return Team.findOne({ where: options.all || !UserId ? { id } : { id, UserId } }) // njsscan-ignore: node_nosqli_injection
       .then((foundTeam) => {
         if (foundTeam) {

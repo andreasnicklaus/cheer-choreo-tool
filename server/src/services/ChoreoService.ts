@@ -74,7 +74,7 @@ class ChoreoService {
    * @returns {Promise<Choreo[]>} List of choreographies.
    */
   async getAll(UserId: string, options = { all: false }) {
-    logger.debug(`ChoreoService.getAll ${JSON.stringify({ UserId, options })}`)
+    logger.debug(`ChoreoService getAll ${JSON.stringify({ UserId, options })}`)
     return Choreo.findAll({
       where: options.all ? {} : { UserId },
       include: defaultInclude,
@@ -90,7 +90,7 @@ class ChoreoService {
    * @returns {Promise<Choreo[]>} List of choreographies.
    */
   async findByTeamId(TeamId: string, UserId: string) {
-    logger.debug(`ChoreoService.findByTeamId ${JSON.stringify({ TeamId, UserId })}`)
+    logger.debug(`ChoreoService findByTeamId ${JSON.stringify({ TeamId, UserId })}`)
     return Choreo.findAll({
       where: { TeamId, UserId },
       include: defaultInclude,
@@ -103,7 +103,7 @@ class ChoreoService {
    * @returns {Promise<number>} Count of choreographies.
    */
   getCount() {
-    logger.debug(`ChoreoService.getCount`)
+    logger.debug(`ChoreoService getCount`)
     return Choreo.count();
   }
 
@@ -113,7 +113,7 @@ class ChoreoService {
    * @returns {Promise<number>} Trend of choreographies.
    */
   getTrend() {
-    logger.debug(`ChoreoService.getTrend`)
+    logger.debug(`ChoreoService getTrend`)
     return Promise.all([
       Choreo.count({
         where: {
@@ -139,7 +139,7 @@ class ChoreoService {
    * @returns {Promise<Choreo>} The choreography.
    */
   async findById(id: string, UserId: string | null, options = { all: false }) {
-    logger.debug(`ChoreoService.findById ${JSON.stringify({ id, UserId, options })}`)
+    logger.debug(`ChoreoService findById ${JSON.stringify({ id, UserId, options })}`)
     return Choreo.findOne({
       where: options.all
         ? { id }
@@ -190,7 +190,7 @@ class ChoreoService {
     UserId: string
   ) {
     logger.debug(
-      `ChoreoService.create ${JSON.stringify({
+      `ChoreoService create ${JSON.stringify({
         name,
         counts,
         matType,
@@ -233,7 +233,7 @@ class ChoreoService {
     UserId: string
   ) {
     logger.debug(
-      `ChoreoService.findOrCreate ${JSON.stringify({
+      `ChoreoService findOrCreate ${JSON.stringify({
         name,
         counts,
         matType,
@@ -258,7 +258,7 @@ class ChoreoService {
    * @returns {Promise<void>}
    */
   async addParticipant(choreoId: string, memberId: string, UserId: string, color: string | null = null) {
-    logger.debug(`ChoreoService.addParticipant ${JSON.stringify({ choreoId, memberId, UserId, color })}`)
+    logger.debug(`ChoreoService addParticipant ${JSON.stringify({ choreoId, memberId, UserId, color })}`)
     return this.findById(choreoId, UserId).then((choreo) =>
       MemberService.findById(memberId, UserId).then((member) => {
         if (!member) {
@@ -287,7 +287,7 @@ class ChoreoService {
    * @returns {Promise<void>}
    */
   async removeParticipant(ChoreoId: string, MemberId: string) {
-    logger.debug(`ChoreoService.removeParticipant ${JSON.stringify({ ChoreoId, MemberId })}`)
+    logger.debug(`ChoreoService removeParticipant ${JSON.stringify({ ChoreoId, MemberId })}`)
     return ChoreoParticipation.findOne({
       where: { MemberId, ChoreoId },
     }) // njsscan-ignore: node_nosqli_injection
@@ -308,7 +308,7 @@ class ChoreoService {
    * @returns {Promise<void>}
    */
   async replaceParticipant(ChoreoId: string, memberToAddId: string, memberToRemoveId: string, UserId: string) {
-    logger.debug(`ChoreoService.replaceParticipant ${JSON.stringify({ ChoreoId, memberToAddId, memberToRemoveId, UserId })}`)
+    logger.debug(`ChoreoService replaceParticipant ${JSON.stringify({ ChoreoId, memberToAddId, memberToRemoveId, UserId })}`)
     return ChoreoParticipation.findOne({
       where: { ChoreoId, MemberId: memberToRemoveId },
     }) // njsscan-ignore: node_nosqli_injection
@@ -367,7 +367,7 @@ class ChoreoService {
    * @returns {Promise<void>}
    */
   changeParticipationColor(ChoreoId: string, participantId: string, color: string, UserId: string) {
-    logger.debug(`ChoreoService.changeParticipationColor ${JSON.stringify({ ChoreoId, participantId, color, UserId })}`)
+    logger.debug(`ChoreoService changeParticipationColor ${JSON.stringify({ ChoreoId, participantId, color, UserId })}`)
     return ChoreoParticipation.findOne({
       where: { ChoreoId, MemberId: participantId, UserId },
     }) // njsscan-ignore: node_nosqli_injection
@@ -397,7 +397,7 @@ class ChoreoService {
    * @returns {Promise<Choreo>} The updated choreography.
    */
   async update(id: string, data: object, UserId: string | null, options = { all: false }) {
-    logger.debug(`ChoreoService.update ${JSON.stringify({ id, data, UserId, options })}`)
+    logger.debug(`ChoreoService update ${JSON.stringify({ id, data, UserId, options })}`)
     return Choreo.findOne({
       where: options.all || !UserId ? { id } : { id, UserId }
     }) // njsscan-ignore: node_nosqli_injection
@@ -428,7 +428,7 @@ class ChoreoService {
    * @returns {Promise<void>}
    */
   async remove(id: string, UserId: string | null, options = { all: false }) {
-    logger.debug(`ChoreoService.remove ${JSON.stringify({ id, UserId, options })}`)
+    logger.debug(`ChoreoService remove ${JSON.stringify({ id, UserId, options })}`)
     return Choreo.findOne({
       where: options.all || !UserId ? { id } : { id, UserId }
     }) // njsscan-ignore: node_nosqli_injection

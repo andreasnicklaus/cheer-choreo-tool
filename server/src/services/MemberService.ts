@@ -18,7 +18,7 @@ class MemberService {
    * @returns {Promise<Array>} List of members.
    */
   async getAll(UserId: string, options = { all: false }) {
-    logger.debug(`MemberService.getAll ${JSON.stringify({ UserId, options })}`)
+    logger.debug(`MemberService getAll ${JSON.stringify({ UserId, options })}`)
     return Member.findAll({ where: options.all ? {} : { UserId } });
   }
 
@@ -29,7 +29,7 @@ class MemberService {
    * @returns {Promise<Object|null>} The member object or null if not found.
    */
   async findById(id: string, UserId: string) {
-    logger.debug(`MemberService.findById ${JSON.stringify({ id, UserId })}`)
+    logger.debug(`MemberService findById ${JSON.stringify({ id, UserId })}`)
     return Member.findOne({ where: { id, UserId } }); // njsscan-ignore: node_nosqli_injection
   }
 
@@ -38,7 +38,7 @@ class MemberService {
    * @returns {Promise<number>} The count of members.
    */
   getCount() {
-    logger.debug(`MemberService.getCount`)
+    logger.debug(`MemberService getCount`)
     return Member.count();
   }
 
@@ -47,7 +47,7 @@ class MemberService {
    * @returns {Promise<number>} The difference between created and deleted members in the last 30 days.
    */
   getTrend() {
-    logger.debug(`MemberService.getTrend`)
+    logger.debug(`MemberService getTrend`)
     return Promise.all([
       Member.count({
         where: {
@@ -79,7 +79,7 @@ class MemberService {
         .join("");
 
     logger.debug(
-      `MemberService.create ${JSON.stringify({
+      `MemberService create ${JSON.stringify({
         name,
         nickname,
         abbreviation,
@@ -107,7 +107,7 @@ class MemberService {
    */
   async findOrCreate(name: string, nickname: string, abbreviation: string, SeasonTeamId: string, UserId: string) {
     logger.debug(
-      `MemberService.findOrCreate ${JSON.stringify({
+      `MemberService findOrCreate ${JSON.stringify({
         name,
         nickname,
         abbreviation,
@@ -144,7 +144,7 @@ class MemberService {
    */
   async update(id: string, data: object, UserId: string | null, options = { all: false }) {
     logger.debug(
-      `MemberService.update ${JSON.stringify({ id, data, UserId })}`
+      `MemberService update ${JSON.stringify({ id, data, UserId })}`
     );
     return Member.findOne({
       where: options.all || !UserId ? { id } : { id, UserId }
@@ -181,7 +181,7 @@ class MemberService {
    */
   async remove(id: string, UserId: string | null, options = { all: false }) {
     logger.debug(
-      `MemberService.remove ${JSON.stringify({ id, UserId })}`
+      `MemberService remove ${JSON.stringify({ id, UserId })}`
     );
     return Member.findOne({
       where: options.all || !UserId ? { id } : { id, UserId }

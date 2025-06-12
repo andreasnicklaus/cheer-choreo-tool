@@ -10,8 +10,7 @@ const betterStackLogTail = new Logtail($SOURCE_TOKEN, {
 })
 
 const logger = winston.createLogger({
-  // Log only if level is less than (meaning more severe) or equal to this
-  level: "info",
+  level: "debug",
   // Use timestamp and printf to create a standard log format
   format: winston.format.combine(
     winston.format.timestamp(),
@@ -22,7 +21,9 @@ const logger = winston.createLogger({
   // Log to the console and a file
   transports: [
     new LogtailTransport(betterStackLogTail),
-    new winston.transports.Console(),
+    new winston.transports.Console({
+      level: "info",
+    }),
     new winston.transports.File({
       filename: "./logs/error.log",
       level: "warn",

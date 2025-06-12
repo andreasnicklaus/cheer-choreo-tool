@@ -59,7 +59,7 @@ class AuthService {
    * @returns {string}
    */
   generateAccessToken(UserId: string, { expiresIn = null }: { expiresIn?: string | null } = {}) {
-    logger.debug(`AuthService.generateAccessToken ${JSON.stringify({ UserId, expiresIn })}`)
+    logger.debug(`AuthService generateAccessToken ${JSON.stringify({ UserId, expiresIn })}`)
     return jwt.sign({ UserId }, TOKEN_SECRET, {
       expiresIn: expiresIn || JWT_EXPIRES_IN,
     });
@@ -158,7 +158,7 @@ class AuthService {
    * @throws {Error} User with given username has to have an email address
    */
   generateSsoToken(email: string, locale = "en") {
-    logger.debug(`AuthService.generateSsoToken ${JSON.stringify({ email, locale })}`)
+    logger.debug(`AuthService generateSsoToken ${JSON.stringify({ email, locale })}`)
     return UserService.findByUsernameOrEmail(email).then((user: User | null) => {
       if (!user) {
         logger.warn(`No user with email ${email} found`)

@@ -30,7 +30,7 @@ class MailService {
    * @returns {Promise<void[]>} Resolves when all emails are sent.
    */
   sendUserRegistrationNotice(username: string, userId: string, userEmail: string) {
-    logger.debug(`MailService.sendUserRegistrationNotice ${JSON.stringify({ username, userId, userEmail })}`)
+    logger.debug(`MailService sendUserRegistrationNotice ${JSON.stringify({ username, userId, userEmail })}`)
     return Promise.all(
       this.adminEmails.map((recipient) => {
         return sendMail(
@@ -64,7 +64,7 @@ class MailService {
    * @returns {Promise<void>} Resolves when the email is sent.
    */
   sendWelcomeEmail(username: string, userId: string, userEmail: string, locale: string) {
-    logger.debug(`MailService.sendWelcomeEmail ${JSON.stringify({ username, userId, userEmail, locale })}`)
+    logger.debug(`MailService sendWelcomeEmail ${JSON.stringify({ username, userId, userEmail, locale })}`)
     return sendMail(
       userEmail,
       i18n.__({ phrase: "mail.welcome.willkommen-beim-choreo-planer", locale }),
@@ -94,7 +94,7 @@ class MailService {
    * @returns {Promise<void>} Resolves when the email is sent.
    */
   sendEmailConfirmationEmail(username: string, userId: string, userEmail: string, locale: string) {
-    logger.debug(`MailService.sendEmailConfirmationEmail ${JSON.stringify({ username, userId, userEmail, locale })}`)
+    logger.debug(`MailService sendEmailConfirmationEmail ${JSON.stringify({ username, userId, userEmail, locale })}`)
     return sendMail(
       userEmail,
       i18n.__({
@@ -128,7 +128,7 @@ class MailService {
    * @returns {Promise<void[]>} Resolves when all emails are sent.
    */
   sendFeedbackNotice(username: string, userEmail: string, stars: number, text: string) {
-    logger.debug(`MailService.sendFeebackNotice ${JSON.stringify({ username, userEmail, stars, text })}`)
+    logger.debug(`MailService sendFeebackNotice ${JSON.stringify({ username, userEmail, stars, text })}`)
     return Promise.all(
       this.adminEmails.map((recipient) => {
         return sendMail(
@@ -163,7 +163,7 @@ class MailService {
    * @returns {Promise<void>} Resolves when the email is sent.
    */
   sendSsoEmail(userEmail: string, username: string, ssoToken: string, locale: string) {
-    logger.debug(`MailService.sendSsoEmail ${JSON.stringify({ userEmail, username, ssoToken, locale })}`)
+    logger.debug(`MailService sendSsoEmail ${JSON.stringify({ userEmail, username, ssoToken, locale })}`)
     return sendMail(
       userEmail,
       i18n.__({ phrase: "mail.ssoLogin.dein-login-link", locale }),
@@ -211,7 +211,7 @@ class MailService {
     notificationTitle: string | null = null,
     locale: string
   ) {
-    logger.debug(`MailService.sendNotificationNotice ${JSON.stringify({ userEmail, username, ssoToken, notificationTitle, locale })}`)
+    logger.debug(`MailService sendNotificationNotice ${JSON.stringify({ userEmail, username, ssoToken, notificationTitle, locale })}`)
     return sendMail(
       userEmail,
       i18n.__({ phrase: "mail.newNotification.neue-benachrichtigung", locale }),
