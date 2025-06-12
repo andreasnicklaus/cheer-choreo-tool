@@ -661,7 +661,7 @@ import ClubService from "@/services/ClubService";
 import CreateClubModal from "@/components/modals/CreateClubModal.vue";
 import MessagingService from "@/services/MessagingService";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
-import { error } from "@/utils/logging";
+import { error, log } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
 
 const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -829,6 +829,7 @@ export default {
         .then(() => {
           this.init();
 
+          log("Your user information was saved!");
           MessagingService.showSuccess(
             this.$t("accountView.deine-nutzerinformationen-wurden-gespeichert"),
             this.$t("editView.gespeichert")
@@ -867,6 +868,7 @@ export default {
         .then(() => {
           this.init();
 
+          log("Your club information was saved!");
           MessagingService.showSuccess(
             this.$t(
               "accountView.deine-vereinsinformationen-wurden-gespeichert"
@@ -898,6 +900,7 @@ export default {
     },
     resendEmailConfirmationLink() {
       return AuthService.resendEmailConfirmationLink().then(() => {
+        log("An email was sent with a link to confirm your email address.");
         MessagingService.showSuccess(
           this.$t(
             "accountView.die-e-mail-zur-bestaetigung-deiner-e-mail-adresse-wurde-erneut-verschickt-check-dein-postfach"

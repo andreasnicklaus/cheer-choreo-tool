@@ -197,7 +197,7 @@ import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import AuthService from "@/services/AuthService";
 import MessagingService from "@/services/MessagingService";
 import ERROR_CODES from "@/utils/error_codes";
-import { error } from "@/utils/logging";
+import { error, log } from "@/utils/logging";
 
 const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 
@@ -341,6 +341,7 @@ export default {
         });
     },
     onPasswordReset() {
+      log("A password link was sent to your email address. Check your inbox!");
       MessagingService.showSuccess(
         this.$t("login.login-link-was-sent"),
         this.$t("login.erfolg"),

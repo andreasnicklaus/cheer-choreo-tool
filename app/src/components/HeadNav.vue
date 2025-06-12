@@ -391,7 +391,7 @@ import MessagingService from "@/services/MessagingService";
 import NotificationService from "@/services/NotificationService";
 import VueMarkdown from "vue-markdown-v2";
 import toTimeAgo from "@/utils/time";
-import { error } from "@/utils/logging";
+import { error, warn } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
 
 /**
@@ -519,6 +519,9 @@ export default {
     },
     checkEmailConfirmation() {
       if (this.user?.email && !this.user?.emailConfirmed) {
+        warn(
+          "You logged into an account without email or without confirmed email address. Please add and confirm your email address to ensure that all features work properly."
+        );
         MessagingService.showWarning(
           this.$t("nav.checkEmail.text"),
           this.$t("nav.checkEmail.title"),

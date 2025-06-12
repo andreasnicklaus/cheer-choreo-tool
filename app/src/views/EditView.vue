@@ -413,7 +413,7 @@ import ParticipantSubstitutionModal from "@/components/modals/ParticipantSubstit
 import MobileChoreoEditModal from "@/components/modals/MobileChoreoEditModal.vue";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import MessagingService from "@/services/MessagingService";
-import { error } from "@/utils/logging";
+import { debug, error } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
 
 /**
@@ -760,6 +760,7 @@ export default {
       this.$refs.countOverview.$el.scrollIntoView({ behavior: "smooth" });
     },
     showSuccessMessage(savedType) {
+      debug("Saved successfully");
       MessagingService.showSuccess(
         savedType
           ? `${savedType} ${this.$t("editView.wurde-gespeichert")}`

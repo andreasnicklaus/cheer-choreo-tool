@@ -65,7 +65,7 @@
 import AuthService from "@/services/AuthService";
 import MessagingService from "@/services/MessagingService";
 import ERROR_CODES from "@/utils/error_codes";
-import { error } from "@/utils/logging";
+import { error, log } from "@/utils/logging";
 
 /**
  * @module Modal:ChangePasswordModal
@@ -95,6 +95,7 @@ export default {
     changePassword() {
       AuthService.changePassword(this.newPassword)
         .then(() => {
+          log("Your password has been changed");
           MessagingService.showSuccess(
             this.$t("modals.change-password.dein-passwort-wurde-geaendert"),
             this.$t("modals.change-password.passwort-geaendert")
