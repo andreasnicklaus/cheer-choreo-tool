@@ -16,7 +16,7 @@ const logtail = new Logtail(SOURCE_TOKEN, {
 const SESSION_ID =
   process.env.NODE_ENV == "production"
     ? "PROD-"
-    : "DEV-" + (Math.random() + 1).toString(36).substring(7);
+    : "DEV-" + (Math.random() + 1).toString(36).substring(7); // njsscan-ignore: node_insecure_random_generator
 
 const sendLogsToIngest = true;
 // const sendLogsToIngest = process.env.NODE_ENV == "production";
