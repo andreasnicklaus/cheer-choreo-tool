@@ -13,9 +13,13 @@ const logtail = new Logtail(SOURCE_TOKEN, {
   endpoint: INGESTING_HOST,
 });
 
-const SESSION_ID = (Math.random() + 1).toString(36).substring(7);
+const SESSION_ID =
+  process.env.NODE_ENV == "production"
+    ? "PROD-"
+    : "DEV-" + (Math.random() + 1).toString(36).substring(7);
 
-const sendLogsToIngest = process.env.NODE_ENV == "production";
+const sendLogsToIngest = true;
+// const sendLogsToIngest = process.env.NODE_ENV == "production";
 
 console.image = async function (url, size = 100) {
   const img = await fetch("/Icon.png");
