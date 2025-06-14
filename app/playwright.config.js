@@ -1,8 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-// const reporter = process.env.CI ? "github" : "html";
-const reporter = [["html"]];
-if (process.env.CI) reporter.push(["github"]);
+const reporter = process.env.CI ? "github" : "html";
 
 /**
  * Read environment variables from file.
