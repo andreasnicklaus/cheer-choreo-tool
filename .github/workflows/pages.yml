@@ -21,14 +21,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
+          cache: "npm"
+          cache-dependency-path: "**/package.json"
       - name: Install dependencies
-        run: npm ci
+        run: npm i
       - name: Run Jest tests
         run: npm run test:unit
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run Playwright tests
-        run: npm run test:2e2
+        run: npm run test:e2e
       - name: Upload Playwright Report
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
