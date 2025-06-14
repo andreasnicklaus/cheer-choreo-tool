@@ -26,6 +26,8 @@
   },
   "homepage": "https://www.choreo-planer.de",
   "dependencies": {
+    "@logtail/node": "^0.5.5",
+    "@logtail/winston": "^0.5.5",
     "@sequelize/postgres": "^7.0.0-alpha.42",
     "@types/express": "^5.0.2",
     "@types/multer": "^1.4.12",

@@ -474,6 +474,8 @@ import CreateClubModal from "@/components/modals/CreateClubModal.vue";
 import CreateSeasonModal from "@/components/modals/CreateSeasonModal.vue";
 import CreateTeamModal from "@/components/modals/CreateTeamModal.vue";
 import ClubService from "@/services/ClubService";
+import { error } from "@/utils/logging";
+import ERROR_CODES from "@/utils/error_codes";
 
 /**
  * @vue-data {boolean} useFolderColors=true - Whether to use folder colors for teams and seasons.
@@ -603,7 +605,9 @@ export default {
           name: "Team",
           params: { teamId: team.id, locale: this.$root.$i18n.locale },
         })
-        .catch(() => {});
+        .catch(() => {
+          error("Redundant navigation to team", ERROR_CODES.REDUNDANT_ROUTING);
+        });
     },
     choreoCountStringBySeasonTeam(seasonTeam) {
       const count = seasonTeam.Choreos.filter(

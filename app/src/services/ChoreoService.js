@@ -1,3 +1,4 @@
+import { debug } from "@/utils/logging";
 import ax from "./RequestService";
 import i18n from "@/plugins/vue-i18n";
 
@@ -34,7 +35,11 @@ class ChoreoService {
    * @returns {Promise<Array>} Array of choreographies
    */
   getByTeam(teamId) {
-    return ax.get("/choreo", { params: { teamId } }).then((res) => res.data);
+    debug("Querying choreos with teamId", teamId);
+    return ax.get("/choreo", { params: { teamId } }).then((res) => {
+      debug("Successfully queried team");
+      return res.data;
+    });
   }
 
   /**
@@ -43,7 +48,11 @@ class ChoreoService {
    * @returns {Promise<Object>} Choreography object
    */
   getById(choreoId) {
-    return ax.get(`/choreo/${choreoId}`).then((res) => res.data);
+    debug("Querying choreo by id", choreoId);
+    return ax.get(`/choreo/${choreoId}`).then((res) => {
+      debug("Successfully queried choreo");
+      return res.data;
+    });
   }
 
   /**
@@ -53,7 +62,11 @@ class ChoreoService {
    * @returns {Promise<Object>} Updated choreography
    */
   changeName(choreoId, name) {
-    return ax.put(`/choreo/${choreoId}`, { name }).then((res) => res.data);
+    debug(`Changing the name of choreo ${choreoId} to ${name}`);
+    return ax.put(`/choreo/${choreoId}`, { name }).then((res) => {
+      debug("Successfully changed the name of the choreo", name);
+      return res.data;
+    });
   }
 
   /**
@@ -63,7 +76,11 @@ class ChoreoService {
    * @returns {Promise<Object>} Updated choreography
    */
   changeLength(choreoId, counts) {
-    return ax.put(`/choreo/${choreoId}`, { counts }).then((res) => res.data);
+    debug(`Changing the length of choreo ${choreoId} to ${counts}`);
+    return ax.put(`/choreo/${choreoId}`, { counts }).then((res) => {
+      debug("Successfully changed the length of choreo", choreoId);
+      return res.data;
+    });
   }
 
   /**
@@ -73,7 +90,11 @@ class ChoreoService {
    * @returns {Promise<Object>} Updated choreography
    */
   changeMatType(choreoId, matType) {
-    return ax.put(`/choreo/${choreoId}`, { matType }).then((res) => res.data);
+    debug(`Changing the mat type of choreo ${choreoId} to ${matType}`);
+    return ax.put(`/choreo/${choreoId}`, { matType }).then((res) => {
+      debug("Successfully changed the mat type of choreo", choreoId);
+      return res.data;
+    });
   }
 
   /**
@@ -84,9 +105,15 @@ class ChoreoService {
    * @returns {Promise<Object>} Added participant
    */
   addParticipant(choreoId, memberId, color) {
+    debug(
+      `Adding participant ${memberId} to choreo ${choreoId} with color ${color}`
+    );
     return ax
       .post(`/choreo/${choreoId}/participants`, { memberId, color })
-      .then((res) => res.data);
+      .then((res) => {
+        debug("Successfully added participant to choreo");
+        return res.data;
+      });
   }
 
   /**
@@ -96,6 +123,7 @@ class ChoreoService {
    * @returns {Promise}
    */
   removeParticipant(choreoId, memberId) {
+    debug(`Removing participant ${memberId} from choreo ${choreoId}`);
     return ax.delete(`/choreo/${choreoId}/participants/${memberId}`);
   }
 
@@ -107,12 +135,18 @@ class ChoreoService {
    * @returns {Promise<Object>} Updated participant list
    */
   replaceParticipant(choreoId, memberToRemoveId, memberToAddId) {
+    debug(
+      `Replacing participant ${memberToRemoveId} for ${memberToAddId} in choreo ${choreoId}`
+    );
     return ax
       .patch(`/choreo/${choreoId}/participants`, {
         memberToRemoveId,
         memberToAddId,
       })
-      .then((res) => res.data);
+      .then((res) => {
+        debug("Successfully replaced participant");
+        return res.data;
+      });
   }
 
   /**
@@ -123,9 +157,17 @@ class ChoreoService {
    * @returns {Promise<Object>} Updated participant
    */
   changeParticipantColor(choreoId, participantId, color) {
+    debug(`Changing participant color with`, {
+      choreoId,
+      participantId,
+      color,
+    });
     return ax
       .patch(`/choreo/${choreoId}/participants/${participantId}`, { color })
-      .then((res) => res.data);
+      .then((res) => {
+        debug("Successfully changed participant color");
+        return res.data;
+      });
   }
 
   /**
@@ -138,9 +180,19 @@ class ChoreoService {
    * @returns {Promise<Object>} Created choreography
    */
   create(name, counts, matType, seasonTeamId, participants) {
+    debug("Creating choreo", {
+      name,
+      counts,
+      matType,
+      seasonTeamId,
+      participants,
+    });
     return ax
       .post("/choreo", { name, counts, matType, seasonTeamId, participants })
-      .then((res) => res.data);
+      .then((res) => {
+        debug("Successfully created choreo");
+        return res.data;
+      });
   }
 
   /**
@@ -149,7 +201,11 @@ class ChoreoService {
    * @returns {Promise}
    */
   remove(choreoId) {
-    return ax.delete(`/choreo/${choreoId}`).then((res) => res.data);
+    debug("Deleting choreo", choreoId);
+    return ax.delete(`/choreo/${choreoId}`).then((res) => {
+      debug("Successfully deleted choreo");
+      return res.data;
+    });
   }
 
   /**

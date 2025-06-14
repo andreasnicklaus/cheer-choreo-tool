@@ -661,6 +661,8 @@ import ClubService from "@/services/ClubService";
 import CreateClubModal from "@/components/modals/CreateClubModal.vue";
 import MessagingService from "@/services/MessagingService";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
+import { error, log } from "@/utils/logging";
+import ERROR_CODES from "@/utils/error_codes";
 
 const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 const MB = 1_048_576;
@@ -751,6 +753,7 @@ export default {
           this.loadProfileImage();
         })
         .catch(() => {
+          error("Cannot get user info", ERROR_CODES.USER_INFO_QUERY_FAILED);
           MessagingService.showError(
             this.$t("accountView.unbekannter-fehler"),
             this.$t("accountView.das-hat-nicht-funktioniert")
@@ -826,12 +829,14 @@ export default {
         .then(() => {
           this.init();
 
+          log("Your user information was saved!");
           MessagingService.showSuccess(
             this.$t("accountView.deine-nutzerinformationen-wurden-gespeichert"),
             this.$t("editView.gespeichert")
           );
         })
-        .catch(() => {
+        .catch((e) => {
+          error(e, ERROR_CODES.USER_UPDATE_FAILED);
           MessagingService.showError(
             this.$t("accountView.unbekannter-fehler"),
             this.$t("accountView.das-hat-nicht-funktioniert")
@@ -863,6 +868,7 @@ export default {
         .then(() => {
           this.init();
 
+          log("Your club information was saved!");
           MessagingService.showSuccess(
             this.$t(
               "accountView.deine-vereinsinformationen-wurden-gespeichert"
@@ -870,7 +876,8 @@ export default {
             this.$t("editView.gespeichert")
           );
         })
-        .catch(() => {
+        .catch((e) => {
+          error(e, ERROR_CODES.CLUB_UPDATE_FAILED);
           MessagingService.showError(
             this.$t("accountView.unbekannter-fehler"),
             this.$t("accountView.das-hat-nicht-funktioniert")
@@ -893,6 +900,7 @@ export default {
     },
     resendEmailConfirmationLink() {
       return AuthService.resendEmailConfirmationLink().then(() => {
+        log("An email was sent with a link to confirm your email address.");
         MessagingService.showSuccess(
           this.$t(
             "accountView.die-e-mail-zur-bestaetigung-deiner-e-mail-adresse-wurde-erneut-verschickt-check-dein-postfach"

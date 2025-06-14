@@ -33,3 +33,47 @@ services:
       db:
         condition: service_healthy
         restart: true
+    healthcheck:
+      test: wget -O - http://0.0.0.0:3000/health || exit 1
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      start_interval: 3s
+      timeout: 10s
+
+  vector:
+    image: timberio/vector:latest-alpine
+    hostname: dev-host
+    restart: unless-stopped
+    command: ["-c", "/etc/vector/vector.yaml"]
+    env_file:
+      - ./vector/.env
+    volumes:
+      - ./vector/vector.yaml:/etc/vector/vector.yaml
+      - /var/run/docker.sock:/var/run/docker.sock
+    healthcheck:
+      test: wget -O - http://0.0.0.0:8686/health || exit 1
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      start_interval: 3s
+      timeout: 10s
+
+  pgbackups:
+    image: prodrigestivill/postgres-backup-local
+    restart: unless-stopped
+    volumes:
+      - ./pgbackups:/backups
+    env_file:
+      - .env
+      - .backup.env
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_EXTRA_OPTS=-Z6 --schema=public --blobs
+      - SCHEDULE=@daily
+      - BACKUP_KEEP_DAYS=7
+      - BACKUP_KEEP_WEEKS=4
+      - BACKUP_KEEP_MONTHS=6
+    depends_on:
+      db:
+        condition: service_healthy

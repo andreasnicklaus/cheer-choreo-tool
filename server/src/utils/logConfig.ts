@@ -1,6 +1,7 @@
 const { logger } = require("../plugins/winston");
 
 function logConfig() {
+  logger.debug("Starting logging the configuration variables")
   const dbName = process.env.POSTGRES_DB || "not defined";
   const dbUsername = process.env.POSTGRES_USER || "not defined";
   const dbHost = process.env.DB_HOST || "not defined";
@@ -29,6 +30,11 @@ function logConfig() {
 
   const backendDomain = process.env.BACKEND_DOMAIN || "not defined";
 
+  const LogIngestingHost = process.env.BETTERSTACK_LOG_INGESTING_HOST || "not defined";
+  const LogSourceToken = process.env.BETTERSTACK_LOG_SOURCE_TOKEN
+    ? "<redacted>"
+    : "not defined"; // njsscan-ignore: node_password
+
   logger.info("################");
   logger.info("Configuration:");
   logger.info("################");
@@ -53,6 +59,9 @@ function logConfig() {
   logger.info();
   logger.info(`  Frontend Domain:       ${frontendDomain}`);
   logger.info(`  Backend Domain:        ${backendDomain}`);
+  logger.info();
+  logger.info(`  Log Source Token:      ${LogSourceToken}`);
+  logger.info(`  Log Ingesting Host:    ${LogIngestingHost}`);
   logger.info("################");
 }
 

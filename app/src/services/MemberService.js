@@ -1,3 +1,4 @@
+import { debug } from "@/utils/logging";
 import ax from "./RequestService";
 
 /**
@@ -14,9 +15,18 @@ class MemberService {
    * @returns {Promise<Object>} Created member
    */
   create(name, nickname, abbreviation, seasonTeamId) {
+    debug("Creating new member", {
+      name,
+      nickname,
+      abbreviation,
+      seasonTeamId,
+    });
     return ax
       .post("/member", { name, nickname, abbreviation, seasonTeamId })
-      .then((res) => res.data);
+      .then((res) => {
+        debug("Successfully created member");
+        return res.data;
+      });
   }
 
   /**
@@ -26,7 +36,11 @@ class MemberService {
    * @returns {Promise<Object>} Updated member
    */
   update(memberId, data) {
-    return ax.put(`/member/${memberId}`, data).then((res) => res.data);
+    debug("Updating member", { memberId, data });
+    return ax.put(`/member/${memberId}`, data).then((res) => {
+      debug("Successfully updated member");
+      return res.data;
+    });
   }
 
   /**
@@ -35,7 +49,11 @@ class MemberService {
    * @returns {Promise<Object>} Response data
    */
   remove(memberId) {
-    return ax.delete(`/member/${memberId}`).then((res) => res.data);
+    debug("Deleting member", memberId);
+    return ax.delete(`/member/${memberId}`).then((res) => {
+      debug("Successfully removed member");
+      return res.data;
+    });
   }
 }
 

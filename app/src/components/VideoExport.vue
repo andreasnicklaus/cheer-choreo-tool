@@ -245,7 +245,8 @@ import VideoDownloadModal from "./modals/VideoDownloadModal.vue";
 import AuthService from "@/services/AuthService";
 import MessagingService from "@/services/MessagingService";
 import ClubService from "@/services/ClubService";
-import { debug } from "@/utils/logging";
+import { debug, error } from "@/utils/logging";
+import ERROR_CODES from "@/utils/error_codes";
 
 /**
  * @module Component:VideoExport
@@ -364,6 +365,7 @@ export default {
           this.initializeRecorder();
         })
         .catch((e) => {
+          error("Could not load choreo", ERROR_CODES.CHOREO_QUERY_FAILED);
           MessagingService.showError(e.response.data, this.$t("fehler"));
         });
     },

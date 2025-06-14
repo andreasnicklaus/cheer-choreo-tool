@@ -18,6 +18,7 @@ class MemberService {
    * @returns {Promise<Array>} List of members.
    */
   async getAll(UserId: string, options = { all: false }) {
+    logger.debug(`MemberService getAll ${JSON.stringify({ UserId, options })}`)
     return Member.findAll({ where: options.all ? {} : { UserId } });
   }
 
@@ -28,6 +29,7 @@ class MemberService {
    * @returns {Promise<Object|null>} The member object or null if not found.
    */
   async findById(id: string, UserId: string) {
+    logger.debug(`MemberService findById ${JSON.stringify({ id, UserId })}`)
     return Member.findOne({ where: { id, UserId } }); // njsscan-ignore: node_nosqli_injection
   }
 
@@ -36,6 +38,7 @@ class MemberService {
    * @returns {Promise<number>} The count of members.
    */
   getCount() {
+    logger.debug(`MemberService getCount`)
     return Member.count();
   }
 
@@ -44,6 +47,7 @@ class MemberService {
    * @returns {Promise<number>} The difference between created and deleted members in the last 30 days.
    */
   getTrend() {
+    logger.debug(`MemberService getTrend`)
     return Promise.all([
       Member.count({
         where: {
@@ -75,7 +79,7 @@ class MemberService {
         .join("");
 
     logger.debug(
-      `MemberService.create ${JSON.stringify({
+      `MemberService create ${JSON.stringify({
         name,
         nickname,
         abbreviation,
@@ -103,7 +107,7 @@ class MemberService {
    */
   async findOrCreate(name: string, nickname: string, abbreviation: string, SeasonTeamId: string, UserId: string) {
     logger.debug(
-      `MemberService.findOrCreate ${JSON.stringify({
+      `MemberService findOrCreate ${JSON.stringify({
         name,
         nickname,
         abbreviation,
@@ -139,14 +143,14 @@ class MemberService {
    * @returns {Promise<Object>} The updated member object.
    */
   async update(id: string, data: object, UserId: string | null, options = { all: false }) {
+    logger.debug(
+      `MemberService update ${JSON.stringify({ id, data, UserId })}`
+    );
     return Member.findOne({
       where: options.all || !UserId ? { id } : { id, UserId }
     }) // njsscan-ignore: node_nosqli_injection
       .then(async (foundMember) => {
         if (foundMember) {
-          logger.debug(
-            `MemberService.update ${JSON.stringify({ id, data, UserId })}`
-          );
           await foundMember.update(data);
           await foundMember.save();
           return Member.findOne({
@@ -157,8 +161,11 @@ class MemberService {
                 : { id })
           }); // njsscan-ignore: node_nosqli_injection
         } else {
-          throw Error(
-            `Beim Update wurde kein Member mit der ID ${id} gefunden`
+          logger.error(
+            `No member found with ID ${id} when updating`
+          );
+          throw new Error(
+            `No member found with ID ${id} when updating`
           );
         }
       });
@@ -173,18 +180,21 @@ class MemberService {
    * @returns {Promise<void>} Resolves when the member is removed.
    */
   async remove(id: string, UserId: string | null, options = { all: false }) {
+    logger.debug(
+      `MemberService remove ${JSON.stringify({ id, UserId })}`
+    );
     return Member.findOne({
       where: options.all || !UserId ? { id } : { id, UserId }
     }) // njsscan-ignore: node_nosqli_injection
       .then((foundMember) => {
         if (foundMember) {
-          logger.debug(
-            `MemberService.remove ${JSON.stringify({ id, UserId })}`
-          );
           return foundMember.destroy();
         } else {
-          throw Error(
-            `Beim Löschen wurde kein Member mit der ID ${id} gefunden`
+          logger.error(
+            `No member found with ID ${id} when deleting`
+          );
+          throw new Error(
+            `No member found with ID ${id} when deleting`
           );
         }
       });

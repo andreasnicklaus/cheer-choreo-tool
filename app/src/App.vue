@@ -155,7 +155,7 @@ import HeadNav from "./components/HeadNav.vue";
 import { getApiDomain } from "./services/RequestService";
 import breakpoints from "@/utils/breakpoints";
 import MessagingService from "./services/MessagingService";
-import { logWelcomeMessage } from "@/utils/logging";
+import { debug, error, logWelcomeMessage } from "@/utils/logging";
 import VersionService from "./services/VersionService";
 
 /**
@@ -259,6 +259,9 @@ export default {
     };
   },
   mounted() {
+    debug("Started App", {
+      VUE_APP_VERSION: process.env.VUE_APP_VERSION,
+    });
     MessagingService.subscribe("App", (message, options) =>
       this.$bvToast.toast(message, options)
     );
@@ -272,6 +275,9 @@ export default {
           this.serverVersion = version;
         } else {
           this.online = false;
+          error(
+            "The servers aer currently offline. Please refresh or try again later."
+          );
           MessagingService.showError(
             this.$t("errors.offline"),
             this.$t("general.offline")
@@ -297,6 +303,9 @@ html {
 }
 .modal-open {
   padding: 0 !important;
+}
+.b-toaster {
+  z-index: 9999999;
 }
 </style>
 

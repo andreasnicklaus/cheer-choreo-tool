@@ -57,6 +57,8 @@
 import AuthService from "@/services/AuthService";
 import MessagingService from "@/services/MessagingService";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
+import { error } from "@/utils/logging";
+import ERROR_CODES from "@/utils/error_codes";
 
 const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 
@@ -107,6 +109,7 @@ export default {
           this.close();
         })
         .catch((e) => {
+          error(e, ERROR_CODES.SSO_REQUEST_FAILED);
           this.loading = false;
           MessagingService.showError(e.response.data, this.$t("fehler"), {
             autoHideDelay: 5_000,

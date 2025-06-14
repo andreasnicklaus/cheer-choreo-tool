@@ -104,12 +104,13 @@ function seed() {
         Promise.all([
           Promise.all(
             data.seasons.map(async (s) => {
+              const whereParams: { year: number, name: string, UserId?: string } = {
+                year: s.year,
+                name: s.name,
+              }
+              if (s.usersSpecific) whereParams.UserId = user.id
               const [season, _created] = await Season.findOrCreate({
-                where: {
-                  year: s.year,
-                  name: s.name,
-                  UserId: s.usersSpecific ? user.id : { [require('sequelize').Op.is]: null },
-                },
+                where: whereParams,
               });
               return season;
             })
@@ -143,6 +144,7 @@ function seed() {
                                     (s) => s.name == st.SeasonName
                                   );
                                   if (!season) {
+                                    logger.error(`Season with name ${st.SeasonName} not found`);
                                     throw new Error(`Season with name ${st.SeasonName} not found`);
                                   }
                                   return season.id;
@@ -201,6 +203,7 @@ function seed() {
                                                     p.memberAbbreviation
                                                 );
                                                 if (!member) {
+                                                  logger.error(`Member with abbreviation ${p.memberAbbreviation} not found`);
                                                   throw new Error(`Member with abbreviation ${p.memberAbbreviation} not found`);
                                                 }
                                                 return PositionService.findOrCreate(
@@ -224,6 +227,7 @@ function seed() {
                                                 (m) => m.abbreviation == p
                                               );
                                               if (!participant) {
+                                                logger.error(`Participant with abbreviation ${p} not found`);
                                                 throw new Error(`Participant with abbreviation ${p} not found`);
                                               }
                                               return participant.id;

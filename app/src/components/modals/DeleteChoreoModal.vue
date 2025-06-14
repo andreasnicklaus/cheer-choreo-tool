@@ -17,6 +17,8 @@
 
 <script>
 import ChoreoService from "@/services/ChoreoService";
+import ERROR_CODES from "@/utils/error_codes";
+import { error } from "@/utils/logging";
 
 /**
  * @module Modal:DeleteChoreoModal
@@ -52,7 +54,12 @@ export default {
             name: "Start",
             params: { locale: this.$root.$i18n.locale },
           })
-          .catch(() => {});
+          .catch(() => {
+            error(
+              "Redundant navigation to start",
+              ERROR_CODES.REDUNDANT_ROUTING
+            );
+          });
       });
     },
   },

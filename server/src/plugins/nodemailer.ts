@@ -27,8 +27,10 @@ export function verify() {
       process.env.EMAIL_ADMIN_ADDRESSES &&
       process.env.BACKEND_DOMAIN
     )
-  )
+  ) {
+    mailLogger.error("Not all needed environment variables are specified.")
     throw new Error("Not all needed environment variables are specified.");
+  }
 
   client.verify((error: Error, success: boolean) => {
     if (error) {

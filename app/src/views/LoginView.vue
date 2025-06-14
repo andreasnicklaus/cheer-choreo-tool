@@ -196,6 +196,8 @@ import PasswordResetModal from "@/components/modals/PasswordResetModal.vue";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import AuthService from "@/services/AuthService";
 import MessagingService from "@/services/MessagingService";
+import ERROR_CODES from "@/utils/error_codes";
+import { error, log } from "@/utils/logging";
 
 const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 
@@ -242,9 +244,15 @@ export default {
               this.$route.query?.redirectUrl ||
                 `/${this.$root.$i18n.locale}/start`
             )
-            .catch(() => {});
+            .catch(() => {
+              error(
+                "Redundant navigation to redirect url or start",
+                ERROR_CODES.REDUNDANT_ROUTING
+              );
+            });
         })
         .catch((e) => {
+          error(e, ERROR_CODES.SSO_LOGIN_FAILED);
           this.showFailMessage(e.response.data);
         });
   },
@@ -274,9 +282,15 @@ export default {
               this.$route.query?.redirectUrl ||
                 `/${this.$root.$i18n.locale}/start`
             )
-            .catch(() => {});
+            .catch(() => {
+              error(
+                "Redundant navigation to redirect url or start",
+                ERROR_CODES.REDUNDANT_ROUTING
+              );
+            });
         })
         .catch((e) => {
+          error(e, ERROR_CODES.LOGIN_FAILED);
           this.loading = false;
           if (e.status == 400 && e.response.data.type == "EmailUnconfirmed")
             this.$refs.confirmEmailModal.open(true);
@@ -309,9 +323,15 @@ export default {
               this.$route.query?.redirectUrl ||
                 `/${this.$root.$i18n.locale}/start`
             )
-            .catch(() => {});
+            .catch(() => {
+              error(
+                "Redundant navigation to redirect url or start",
+                ERROR_CODES.REDUNDANT_ROUTING
+              );
+            });
         })
         .catch((e) => {
+          error(e, ERROR_CODES.REGISTRATION_FAILED);
           this.loading = false;
           if (e.code == "ERR_NETWORK")
             return this.showFailMessage(
@@ -321,6 +341,7 @@ export default {
         });
     },
     onPasswordReset() {
+      log("A password link was sent to your email address. Check your inbox!");
       MessagingService.showSuccess(
         this.$t("login.login-link-was-sent"),
         this.$t("login.erfolg"),

@@ -14,3 +14,7 @@ services:
     volumes:
       - ./server/src:/usr/src/app/src
       - ./server/dist:/usr/src/app/dist
+
+  vector:
+    deploy:
+      replicas: 0

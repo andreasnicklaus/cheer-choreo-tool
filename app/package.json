@@ -19,6 +19,7 @@
     "@dreysolano/prerender-spa-plugin": "^1.0.3",
     "@ffmpeg/ffmpeg": "^0.12.10",
     "@ffmpeg/util": "^0.12.1",
+    "@logtail/browser": "^0.5.4",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-plugin-pwa": "~5.0.0",

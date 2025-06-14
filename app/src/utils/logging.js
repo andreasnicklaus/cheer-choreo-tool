@@ -2,6 +2,24 @@
 
 import i18n from "@/plugins/vue-i18n";
 import VersionService from "@/services/VersionService";
+import store from "@/store";
+import { Logtail } from "@logtail/browser";
+import ERROR_CODES from "./error_codes";
+
+const SOURCE_TOKEN = process.env.VUE_APP_BETTERSTACK_SOURCE_TOKEN;
+const INGESTING_HOST = process.env.VUE_APP_BETTERSTACK_INGESTING_HOST;
+
+const logtail = new Logtail(SOURCE_TOKEN, {
+  endpoint: INGESTING_HOST,
+});
+
+const SESSION_ID =
+  process.env.NODE_ENV == "production"
+    ? "PROD-"
+    : "DEV-" + (Math.random() + 1).toString(36).substring(7); // njsscan-ignore: node_insecure_random_generator
+
+const sendLogsToIngest = true;
+// const sendLogsToIngest = process.env.NODE_ENV == "production";
 
 console.image = async function (url, size = 100) {
   const img = await fetch("/Icon.png");
@@ -100,6 +118,14 @@ function generateTimeStamp() {
  */
 export function log(...messages) {
   console.log(generateTimeStamp(), "LOG", ...messages);
+  if (sendLogsToIngest) {
+    logtail.info(messages.join(), {
+      state: store?.state,
+      version: VersionService.getAppVersion(),
+      user_locale: i18n.locale,
+      SESSION_ID,
+    });
+  }
 }
 
 /**
@@ -110,6 +136,17 @@ export function log(...messages) {
  */
 export function debug(...messages) {
   console.debug(generateTimeStamp(), "DEBUG", ...messages);
+  if (sendLogsToIngest) {
+    const message = messages
+      .map((m) => (typeof m !== "object" ? m : JSON.stringify(m)))
+      .join(" ");
+    logtail.debug(message, {
+      state: store?.state,
+      version: VersionService.getAppVersion(),
+      user_locale: i18n.locale,
+      SESSION_ID,
+    });
+  }
 }
 
 /**
@@ -120,14 +157,73 @@ export function debug(...messages) {
  */
 export function warn(...messages) {
   console.warn(generateTimeStamp(), "WARN", ...messages);
+  if (sendLogsToIngest) {
+    logtail.warn(messages.join(), {
+      state: store?.state,
+      version: VersionService.getAppVersion(),
+      user_locale: i18n.locale,
+      SESSION_ID,
+    });
+  }
 }
 
 /**
  * Log a ERROR message with a timestamp
  *
  * @export
- * @param {string[]} messages - Messages to log
+ * @param {string} message - Message to log
  */
-export function error(...messages) {
-  console.error(generateTimeStamp(), "ERROR", ...messages);
+export function error(message, errorCode = ERROR_CODES.UNKNOWN_ERROR) {
+  console.error(generateTimeStamp(), "ERROR", errorCode, message);
+  if (sendLogsToIngest) {
+    logtail.error(`${errorCode} ${message}`, {
+      state: store?.state,
+      version: VersionService.getAppVersion(),
+      user_locale: i18n.locale,
+      errorCode,
+      SESSION_ID,
+    });
+  }
+}
+
+/**
+ * Log request results
+ *
+ * @export
+ * @param {number} status - response status
+ * @param {number} time - ms between request and response
+ * @param {string} url - path of the request
+ */
+export function logRequest(status, time, url) {
+  const message = `${url} responded with status ${status} in ${time} ms`;
+  if (!status || status >= 400) {
+    if (sendLogsToIngest) {
+      logtail.warn(message, {
+        state: store?.state,
+        version: VersionService.getAppVersion(),
+        request: {
+          status,
+          time,
+          url,
+        },
+        user_locale: i18n.locale,
+        SESSION_ID,
+      });
+    }
+  } else {
+    console.debug(message);
+    if (sendLogsToIngest) {
+      logtail.debug(message, {
+        state: store?.state,
+        version: VersionService.getAppVersion(),
+        request: {
+          status,
+          time,
+          url,
+        },
+        user_locale: i18n.locale,
+        SESSION_ID,
+      });
+    }
+  }
 }

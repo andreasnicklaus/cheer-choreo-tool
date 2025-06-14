@@ -4,6 +4,8 @@ import AuthService from "./AuthService";
 import store from "@/store";
 import router from "@/router";
 import i18n from "@/plugins/vue-i18n";
+import { logRequest, error as logError } from "@/utils/logging";
+import ERROR_CODES from "@/utils/error_codes";
 
 /**
  * Axios request service with authentication and error handling.
@@ -17,8 +19,20 @@ const ax = setupCache(
 );
 
 ax.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    logRequest(
+      response.status,
+      Date.now() - response.config?.requestStarted,
+      response.config.url
+    );
+    return response;
+  },
   (error) => {
+    logRequest(
+      error?.response?.status,
+      Date.now() - error?.config?.requestStarted,
+      error.config.url
+    );
     if (!error.response?.status) {
       AuthService.removeToken();
       store.commit("setLoginState", false);
@@ -34,7 +48,12 @@ ax.interceptors.response.use(
             name: "Login",
             params: { locale: i18n.locale },
           })
-          .catch(() => {});
+          .catch(() => {
+            logError(
+              "Redundant navigation to login",
+              ERROR_CODES.REDUNDANT_ROUTING
+            );
+          });
         break;
       case 403:
         AuthService.removeToken();
@@ -44,7 +63,12 @@ ax.interceptors.response.use(
             name: "Login",
             params: { locale: i18n.locale },
           })
-          .catch(() => {});
+          .catch(() => {
+            logError(
+              "Redundant navigation to login",
+              ERROR_CODES.REDUNDANT_ROUTING
+            );
+          });
         break;
       default:
     }
@@ -67,6 +91,11 @@ ax.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+ax.interceptors.request.use((config) => {
+  config.requestStarted = Date.now();
+  return config;
+});
 
 /**
  * Get the API domain based on the environment.

@@ -1,0 +1,45 @@
+api:
+  enabled: true
+  address: 0.0.0.0:8686
+sources:
+  docker_logs:
+    type: "docker_logs"
+    include_containers:
+      - cheer-choreo-tool-server-1
+      - cheer-choreo-tool-db-1
+  better_stack_host_metrics:
+    type: "host_metrics"
+    scrape_interval_secs: 30
+transforms:
+  better_stack_transform:
+    type: "remap"
+    inputs:
+      - "docker_logs"
+    source: |
+      .dt = del(.timestamp)
+
+sinks:
+  better_stack:
+    type: "http"
+    method: "post"
+    inputs:
+      - "better_stack_transform"
+    uri: "https://${BETTERSTACK_LOG_INGESTING_HOST:?Ingesting host must be supplied}/"
+    encoding:
+      codec: "json"
+    compression: "gzip"
+    auth:
+      strategy: "bearer"
+      token: "P2p3U5mL8NLYbYwLGtiXq2VF"
+  better_stack_http_metrics_sink:
+    type: "http"
+    method: "post"
+    uri: "https://${BETTERSTACK_LOG_INGESTING_HOST:?Ingesting host must be supplied}/metrics"
+    encoding:
+      codec: "json"
+    compression: "gzip"
+    auth:
+      strategy: "bearer"
+      token: "${BETTERSTACK_LOG_SOURCE_TOKEN:?Source Token must be supplied}"
+    inputs:
+      - "better_stack_host_metrics"

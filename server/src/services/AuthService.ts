@@ -59,6 +59,7 @@ class AuthService {
    * @returns {string}
    */
   generateAccessToken(UserId: string, { expiresIn = null }: { expiresIn?: string | null } = {}) {
+    logger.debug(`AuthService generateAccessToken ${JSON.stringify({ UserId, expiresIn })}`)
     return jwt.sign({ UserId }, TOKEN_SECRET, {
       expiresIn: expiresIn || JWT_EXPIRES_IN,
     });
@@ -157,18 +158,23 @@ class AuthService {
    * @throws {Error} User with given username has to have an email address
    */
   generateSsoToken(email: string, locale = "en") {
+    logger.debug(`AuthService generateSsoToken ${JSON.stringify({ email, locale })}`)
     return UserService.findByUsernameOrEmail(email).then((user: User | null) => {
-      if (!user)
+      if (!user) {
+        logger.warn(`No user with email ${email} found`)
         throw new Error(
           i18n.__(
             { phrase: "errors.entity-not-found", locale },
             { entity: "user" }
           )
         );
-      if (!user.email)
+      }
+      if (!user.email) {
+        logger.warn("Found user has no email")
         throw new Error(
           i18n.__({ phrase: "errors.user-has-no-email", locale })
         );
+      }
 
       const token = this.generateAccessToken(user.id, {
         expiresIn: process.env.SSO_TOKEN_EXPIRES_IN,

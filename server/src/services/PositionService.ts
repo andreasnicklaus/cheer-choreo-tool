@@ -18,7 +18,7 @@ class PositionService {
    */
   async create(x: number, y: number, UserId: string) {
     logger.debug(
-      `PositionService.create ${JSON.stringify({
+      `PositionService create ${JSON.stringify({
         x,
         y,
         UserId,
@@ -38,7 +38,7 @@ class PositionService {
    */
   async findOrCreate(x: number, y: number, LineupId: string, MemberId: string, UserId: string) {
     logger.debug(
-      `PositionService.findOrCreate ${JSON.stringify({
+      `PositionService findOrCreate ${JSON.stringify({
         x,
         y,
         LineupId,
@@ -59,6 +59,7 @@ class PositionService {
    * @returns {Promise<Array>} List of positions.
    */
   async findByLineupId(LineupId: string, UserId: string | null) {
+    logger.debug(`PositionService  ${JSON.stringify({ LineupId, UserId })}`)
     return Position.findAll({
       where: UserId ? { LineupId, UserId } : { LineupId },
       include: "Member"
@@ -72,6 +73,7 @@ class PositionService {
    * @returns {Promise<Object|null>} The found position or null if not found.
    */
   async findById(id: string, UserId: string) {
+    logger.debug(`PositionService findById ${JSON.stringify({ id, UserId })}`)
     return Position.findOne({ where: { id, UserId }, include: "Member" }); // njsscan-ignore: node_nosqli_injection
   }
 
@@ -85,25 +87,25 @@ class PositionService {
    * @throws Will throw an error if the position is not found.
    */
   async update(id: string, LineupId: string | null, data: object, UserId: string) {
+    logger.debug(
+      `PositionService update ${JSON.stringify({
+        id,
+        data,
+        UserId,
+      })}`
+    );
     return Position.findOne({
       where: LineupId ? { LineupId, id, UserId } : { id, UserId },
       include: "Member",
     }) // njsscan-ignore: node_nosqli_injection
       .then(async (foundPosition) => {
         if (foundPosition) {
-          logger.debug(
-            `PositionService.update ${JSON.stringify({
-              id,
-              data,
-              UserId,
-            })}`
-          );
           await foundPosition.update(data);
           return foundPosition.save();
-        } else
-          throw Error(
-            `Beim Update wurde keine Position mit der ID ${id} gefunden`
-          );
+        } else {
+          logger.error(`No position found with ID ${id} when updating`);
+          throw new Error(`No position found with ID ${id} when updating`);
+        }
       });
   }
 
@@ -115,17 +117,16 @@ class PositionService {
    * @throws Will throw an error if the position is not found.
    */
   async remove(id: string, UserId: string) {
+    logger.debug(
+      `PositionService remove ${JSON.stringify({ id, UserId })}`
+    );
     return Position.findOne({ where: { id, UserId } }) // njsscan-ignore: node_nosqli_injection
       .then((foundPosition) => {
         if (foundPosition) {
-          logger.debug(
-            `PositionService.remove ${JSON.stringify({ id, UserId })}`
-          );
           return foundPosition.destroy();
         } else {
-          throw Error(
-            `Beim Löschen wurde keine Position mit der ID ${id} gefunden`
-          );
+          logger.error(`No position found with ID ${id} when deleting`);
+          throw new Error(`No position found with ID ${id} when deleting`);
         }
       });
   }

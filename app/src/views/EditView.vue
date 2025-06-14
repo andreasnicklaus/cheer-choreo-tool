@@ -413,6 +413,8 @@ import ParticipantSubstitutionModal from "@/components/modals/ParticipantSubstit
 import MobileChoreoEditModal from "@/components/modals/MobileChoreoEditModal.vue";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import MessagingService from "@/services/MessagingService";
+import { debug, error } from "@/utils/logging";
+import ERROR_CODES from "@/utils/error_codes";
 
 /**
  * @vue-data {string|null} choreoId=null - The ID of the choreo being edited.
@@ -521,13 +523,19 @@ export default {
           if (choreo.Lineups.length == 0 && choreo.Hits.length == 0)
             this.$refs.howToModal.open();
         })
-        .catch(() => {
+        .catch((e) => {
+          error(e, ERROR_CODES.CLUB_QUERY_FAILED);
           this.$router
             .push({
               name: "Start",
               params: { locale: this.$root.$i18n.locale },
             })
-            .catch(() => {});
+            .catch(() => {
+              error(
+                "Redundant navigation to start",
+                ERROR_CODES.REDUNDANT_ROUTING
+              );
+            });
         });
     },
     onPositionChange(memberId, x, y) {
@@ -546,21 +554,13 @@ export default {
               positionToUpdate.id,
               x,
               y
-            ).then((position) => {
-              let lineupCopy = this.choreo.Lineups;
-              let positionsCopy = lineupCopy.find(
+            ).then(() => {
+              const pos = this.choreo.Lineups.find(
                 (l) => l.id == positionToUpdate.LineupId
-              ).Positions;
-              positionsCopy = positionsCopy.filter(
-                (p) => p.id != positionToUpdate.id
-              );
-              positionsCopy.push(position);
-              lineupCopy.find(
-                (l) => l.id == positionToUpdate.LineupId
-              ).Positions = positionsCopy;
-              this.choreo.Lineups = lineupCopy;
-              this.positionUpdates[memberId] = null;
+              ).Positions.find((p) => p.id == positionToUpdate.id);
 
+              pos.x = x;
+              pos.y = y;
               this.showSuccessMessage(this.$tc("lineup", 1));
             });
         }, 1000);
@@ -760,6 +760,7 @@ export default {
       this.$refs.countOverview.$el.scrollIntoView({ behavior: "smooth" });
     },
     showSuccessMessage(savedType) {
+      debug("Saved successfully");
       MessagingService.showSuccess(
         savedType
           ? `${savedType} ${this.$t("editView.wurde-gespeichert")}`

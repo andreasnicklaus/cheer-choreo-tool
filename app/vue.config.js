@@ -4,6 +4,10 @@ const PrerenderSpaPlugin = require("@dreysolano/prerender-spa-plugin");
 const path = require("path");
 
 process.env.VUE_APP_VERSION = require("./package.json").version;
+process.env.VUE_APP_BETTERSTACK_INGESTING_HOST =
+  require("./betterstackconfig.json").INGESTING_HOST;
+process.env.VUE_APP_BETTERSTACK_SOURCE_TOKEN =
+  require("./betterstackconfig.json").SOURCE_TOKEN;
 
 const langPrefixes = ["de", "en"];
 

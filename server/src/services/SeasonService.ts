@@ -18,6 +18,7 @@ class SeasonService {
    * @returns {Promise<Array>} List of seasons.
    */
   async getAll(UserId: string, options = { all: false }) {
+    logger.debug(`SeasonService getAll ${JSON.stringify({ UserId, options })}`)
     if (UserId)
       return Season.findAll({
         where: options.all
@@ -37,6 +38,7 @@ class SeasonService {
    * @returns {Promise<number>} Count of seasons.
    */
   getCount() {
+    logger.debug(`SeasonService getCount`)
     return Season.count();
   }
 
@@ -45,6 +47,7 @@ class SeasonService {
    * @returns {Promise<number>} Count of seasons created in the last 30 days.
    */
   getTrend() {
+    logger.debug(`SeasonService getTrend`)
     return Season.count({
       where: {
         createdAt: { [Op.gt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30 },
@@ -61,7 +64,7 @@ class SeasonService {
    */
   async create(name: string, year: number, UserId: string) {
     logger.debug(
-      `SeasonService.create ${JSON.stringify({
+      `SeasonService create ${JSON.stringify({
         name,
         year,
         UserId,
@@ -81,20 +84,19 @@ class SeasonService {
    * @throws Will throw an error if the season is not found.
    */
   async update(id: string, data: object, UserId: string | null, options = { all: false }) {
+    logger.debug(
+      `SeasonService update ${JSON.stringify({ id, data, UserId })}`
+    );
     return Season.findOne({
       where: options.all || !UserId ? { id } : { id, UserId }
     }) // njsscan-ignore: node_nosqli_injection
       .then(async (foundSeason) => {
         if (foundSeason) {
-          logger.debug(
-            `SeasonService.update ${JSON.stringify({ id, data, UserId })}`
-          );
           await foundSeason.update(data);
           return foundSeason.save();
         } else {
-          throw Error(
-            `Beim Update wurde keine Season mit der ID ${id} gefunden`
-          );
+          logger.error(`No season found with ID ${id} when updating`);
+          throw new Error(`No season found with ID ${id} when updating`);
         }
       });
   }
@@ -109,19 +111,18 @@ class SeasonService {
    * @throws Will throw an error if the season is not found.
    */
   async remove(id: string, UserId: string | null, options = { all: false }) {
+    logger.debug(
+      `SeasonService remove ${JSON.stringify({ id, UserId })}`
+    );
     return Season.findOne({
       where: options.all || !UserId ? { id } : { id, UserId }
     }) // njsscan-ignore: node_nosqli_injection
       .then((foundSeason) => {
         if (foundSeason) {
-          logger.debug(
-            `SeasonService.remove ${JSON.stringify({ id, UserId })}`
-          );
           return foundSeason.destroy();
         } else {
-          throw Error(
-            `Beim Löschen wurde keine Season mit der ID ${id} gefunden`
-          );
+          logger.error(`No season found with ID ${id} when deleting`);
+          throw new Error(`No season found with ID ${id} when deleting`);
         }
       });
   }
