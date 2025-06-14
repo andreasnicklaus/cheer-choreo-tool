@@ -9,16 +9,18 @@ import ERROR_CODES from "./error_codes";
 const SOURCE_TOKEN = process.env.VUE_APP_BETTERSTACK_SOURCE_TOKEN;
 const INGESTING_HOST = process.env.VUE_APP_BETTERSTACK_INGESTING_HOST;
 
-const logtail = new Logtail(SOURCE_TOKEN, {
-  endpoint: INGESTING_HOST,
-});
+let logtail;
+if (SOURCE_TOKEN && INGESTING_HOST)
+  logtail = new Logtail(SOURCE_TOKEN, {
+    endpoint: INGESTING_HOST,
+  });
 
 const SESSION_ID =
   process.env.NODE_ENV == "production"
     ? "PROD-"
     : "DEV-" + (Math.random() + 1).toString(36).substring(7); // njsscan-ignore: node_insecure_random_generator
 
-const sendLogsToIngest = true;
+const sendLogsToIngest = SOURCE_TOKEN && INGESTING_HOST;
 // const sendLogsToIngest = process.env.NODE_ENV == "production";
 
 console.image = async function (url, size = 100) {
