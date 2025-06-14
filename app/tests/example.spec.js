@@ -17,3 +17,8 @@ test("get started link", async ({ page }) => {
     page.getByRole("heading", { name: "Interested?" })
   ).toBeVisible();
 });
+
+test("failing test", async () => {
+  // Expects page to have a heading with the name of Installation.
+  await expect(false).toBeTruthy();
+});
