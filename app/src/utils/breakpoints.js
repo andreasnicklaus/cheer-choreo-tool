@@ -13,7 +13,7 @@ const lg = style.getPropertyValue("--breakpoint-lg").replace("px", "");
 const xl = style.getPropertyValue("--breakpoint-xl").replace("px", "");
 
 function onResize() {
-  const width = document.getElementById("app").clientWidth;
+  const width = document.getElementById("app")?.clientWidth ?? 1900;
 
   /* Not really sure how to properly define gt or lt */
   state.screen = {
