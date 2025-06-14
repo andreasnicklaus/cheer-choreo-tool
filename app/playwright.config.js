@@ -1,6 +1,16 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const reporter = process.env.CI ? "github" : "html";
+const reporter = process.env.CI
+  ? [
+      [
+        "@estruyf/github-actions-reporter",
+        {
+          showError: true,
+          showArtifactsLink: true,
+        },
+      ],
+    ]
+  : "html";
 
 /**
  * Read environment variables from file.

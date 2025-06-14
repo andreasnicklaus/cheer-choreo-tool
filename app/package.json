@@ -59,6 +59,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
+    "@estruyf/github-actions-reporter": "^1.10.0",
     "@playwright/test": "^1.53.0",
     "@types/node": "^24.0.1",
     "@vue/cli-plugin-router": "~5.0.0",
