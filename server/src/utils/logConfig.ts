@@ -60,7 +60,7 @@ function logConfig() {
   logger.info(`  Frontend Domain:       ${frontendDomain}`);
   logger.info(`  Backend Domain:        ${backendDomain}`);
   logger.info();
-  logger.info(`  Log Source ID:         ${LogSourceToken}`);
+  logger.info(`  Log Source Token:      ${LogSourceToken}`);
   logger.info(`  Log Ingesting Host:    ${LogIngestingHost}`);
   logger.info("################");
 }
