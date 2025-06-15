@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const reporter = [["html"]];
+const reporter = [["html", { open: process.env.CI ? "never" : "on-failure" }]];
 if (process.env.CI)
   reporter.push([
     "@estruyf/github-actions-reporter",
@@ -33,8 +33,9 @@ export default defineConfig({
 
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    baseURL: "http://localhost:8080", // Base URL to use in actions like `await page.goto('/')`.
+    baseURL: "http://localhost:3000", // Base URL to use in actions like `await page.goto('/')`.
     trace: "on-first-retry", // Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer
+    locale: "en-GB",
   },
 
   /* Configure projects for major browsers */
@@ -77,8 +78,8 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: "npm run serve",
-    url: "http://localhost:8080",
+    command: "serve dist",
+    url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
   },
 });

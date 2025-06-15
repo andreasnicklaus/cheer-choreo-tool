@@ -8,7 +8,31 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  install-dependencies:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./app
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: "npm"
+          cache-dependency-path: "**/package.json"
+      - name: Install dependencies
+        run: npm i
+      - name: Upload node_modules
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: app-dev-node-modules
+          path: "app/node_modules/"
+          retention-days: 1
+
+  test-unit:
     timeout-minutes: 60
     runs-on: ubuntu-latest
 
@@ -23,21 +47,14 @@ jobs:
           node-version: lts/*
           cache: "npm"
           cache-dependency-path: "**/package.json"
-      - name: Install dependencies
-        run: npm i
+      # - name: Install dependencies
+      #   run: npm i
+      - uses: actions/download-artifact@v4
+        with:
+          name: app-dev-node-modules
+          path: app/node_modules
       - name: Run Jest tests
         run: npm run test:unit
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-      - name: Run Playwright tests
-        run: npm run test:e2e
-      - name: Upload Playwright Report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report
-          path: "app/playwright-report/"
-          retention-days: 30
       - name: Upload Jest Coverage Report
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
@@ -47,7 +64,7 @@ jobs:
           retention-days: 30
 
   build:
-    needs: test
+    needs: test-unit
     runs-on: ubuntu-latest
 
     defaults:
@@ -96,8 +113,50 @@ jobs:
           name: github-pages
           path: ${{ runner.temp }}/artifact.tar
 
+  test-integration:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./app
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: "npm"
+          cache-dependency-path: "**/package.json"
+      # - name: Install dependencies
+      #   run: npm i
+      - uses: actions/download-artifact@v4
+        with:
+          name: app-dev-node-modules
+          path: app/node_modules
+      - uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: app/dist
+      - name: List directories
+        run: ls -al
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Run Playwright tests
+        run: npm run test:e2e
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: "app/playwright-report/"
+          retention-days: 30
+
   deploy:
-    needs: build
+    needs:
+      - build
+      - test-integration
+      - test-unit
     if: github.ref == 'refs/heads/main'
 
     permissions:
