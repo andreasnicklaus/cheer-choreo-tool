@@ -31,7 +31,7 @@ jobs:
           name: app-dev-node-modules
           path: "app/node_modules/"
           retention-days: 1
-          compression-level: 1
+          compression-level: 6
 
   test-unit:
     needs: install-dependencies
@@ -86,7 +86,7 @@ jobs:
         with:
           name: app-dev-node-modules
       - name: Install dependencies
-        run: NODE_ENV=production npm i
+        run: npm i
 
       - name: Build app
         run: npm run build
