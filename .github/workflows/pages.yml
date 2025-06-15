@@ -31,8 +31,10 @@ jobs:
           name: app-dev-node-modules
           path: "app/node_modules/"
           retention-days: 1
+          compression-level: 1
 
   test-unit:
+    needs: install-dependencies
     timeout-minutes: 60
     runs-on: ubuntu-latest
 
@@ -64,7 +66,7 @@ jobs:
           retention-days: 30
 
   build:
-    needs: test-unit
+    # needs: test-unit
     runs-on: ubuntu-latest
 
     defaults:
@@ -114,6 +116,7 @@ jobs:
           path: ${{ runner.temp }}/artifact.tar
 
   test-integration:
+    needs: install-dependencies
     timeout-minutes: 60
     runs-on: ubuntu-latest
 
