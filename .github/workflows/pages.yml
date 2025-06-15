@@ -147,7 +147,8 @@ jobs:
           name: github-pages
           path: app/dist
       - name: Unpack dist
-        run: tar -xvf ./dist/artifact.tar
+        run: tar -xvf artifact.tar
+        working-directory: app/dist/
       - name: List directories
         run: ls -al dist
       - name: Install Playwright Browsers
