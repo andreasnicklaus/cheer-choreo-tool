@@ -147,7 +147,7 @@ jobs:
           name: github-pages
           path: app/dist
       - name: List directories
-        run: ls -al
+        run: ls -al dist
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run Playwright tests
