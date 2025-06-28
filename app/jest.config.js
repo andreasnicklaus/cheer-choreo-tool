@@ -27,7 +27,15 @@ const config = {
   coverageDirectory: "coverage",
 
   // An array of regexp pattern strings used to skip coverage collection
-  coveragePathIgnorePatterns: ["node_modules", "<rootDir>/src/docsDef.js"],
+  coveragePathIgnorePatterns: [
+    "node_modules",
+    "<rootDir>/src/docsDef.js",
+    "<rootDir>/src/main.js",
+    "<rootDir>/src/registerServiceWorker.js",
+    "<rootDir>/src/plugins/bootstrap-vue.js",
+    "<rootDir>/src/plugins/vue-flag-icon.js",
+    "<rootDir>/src/plugins/vue-meta.js",
+  ],
 
   // Indicates which provider should be used to instrument code for coverage
   coverageProvider: "v8",
