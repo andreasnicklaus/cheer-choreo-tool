@@ -56,18 +56,25 @@ class VersionService {
    */
   async getServerVersion() {
     debug("Querying serverVersion", { serverVersion: this.serverVersion });
+    console.log({ serverVersion: this.serverVersion });
     if (this.serverVersion) return this.serverVersion;
 
     return ax
       .get("/version")
       .then((res) => {
         debug("Successfully queried server version");
+        this.serverVersion = res.data;
         return res.data;
       })
       .catch((e) => {
         error(e, ERROR_CODES.VERSION_QUERY_FAILED);
         return null;
       });
+  }
+
+  /** Reset the cached server version */
+  resetCache() {
+    this.serverVersion = null;
   }
 }
 
