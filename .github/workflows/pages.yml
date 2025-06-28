@@ -149,8 +149,6 @@ jobs:
       - name: Unpack dist
         run: tar -xvf artifact.tar
         working-directory: app/dist/
-      - name: List directories
-        run: ls -al dist
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run Playwright tests
