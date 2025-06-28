@@ -2,7 +2,6 @@ import { test, expect, jest, beforeEach } from "@jest/globals";
 import { describe } from "node:test";
 import ChoreoService from "@/services/ChoreoService";
 import ax from "@/services/RequestService";
-import { start } from "repl";
 
 jest.mock("@/services/RequestService", () => ({
   get: jest.fn(),
