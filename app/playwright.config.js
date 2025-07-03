@@ -24,7 +24,7 @@ if (process.env.CI)
  */
 export default defineConfig({
   testDir: "./tests",
-  testMatch: "**/*.spec.js",
+  testMatch: "**/*.spec.ts",
   fullyParallel: true, // Run tests in files in parallel
   forbidOnly: !!process.env.CI, // Fail the build on CI if you accidentally left test.only in the source code.
   retries: process.env.CI ? 2 : 0, // Retry on CI only

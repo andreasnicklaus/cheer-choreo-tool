@@ -1,9 +1,11 @@
-export default class Page {
-  page;
-  route;
+import { type Page } from "@playwright/test";
 
-  constructor(page) {
-    if (this.constructor == Page) {
+export default abstract class TestPage {
+  page: Page;
+  abstract route: string;
+
+  constructor(page: any) {
+    if (this.constructor == TestPage) {
       throw new Error("Class is of abstract type and can't be instantiated");
     }
     this.page = page;

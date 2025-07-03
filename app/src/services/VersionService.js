@@ -56,7 +56,6 @@ class VersionService {
    */
   async getServerVersion() {
     debug("Querying serverVersion", { serverVersion: this.serverVersion });
-    console.log({ serverVersion: this.serverVersion });
     if (this.serverVersion) return this.serverVersion;
 
     return ax

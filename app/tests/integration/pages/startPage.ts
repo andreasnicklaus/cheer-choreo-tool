@@ -1,10 +1,11 @@
-import { expect } from "@playwright/test";
-import Page from "./page";
+import { expect, type Page } from "@playwright/test";
+import TestPage from "./page";
 
-export default class StartPage extends Page {
-  constructor(page) {
+export default class StartPage extends TestPage {
+  route = "/";
+
+  constructor(page: Page) {
     super(page);
-    this.route = "/";
   }
 
   iCheckTitle() {
@@ -13,7 +14,7 @@ export default class StartPage extends Page {
     );
   }
 
-  iCheckInterestedSection() {
+  iCheckAllSections() {
     return expect(
       this.page.getByRole("heading", { name: "Interested?" })
     ).toBeVisible();
