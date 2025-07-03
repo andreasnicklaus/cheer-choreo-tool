@@ -13,6 +13,5 @@ test("has title", async () => {
 });
 
 test("displays all sections", async () => {
-  expect(true).toBeTruthy();
   await startPage.iCheckAllSections();
 });

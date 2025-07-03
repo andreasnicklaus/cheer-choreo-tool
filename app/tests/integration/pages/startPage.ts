@@ -15,8 +15,17 @@ export default class StartPage extends TestPage {
   }
 
   iCheckAllSections() {
-    return expect(
-      this.page.getByRole("heading", { name: "Interested?" })
-    ).toBeVisible();
+    const headingTitles = [
+      "Your Choreo Planner",
+      "Create choreos",
+      "Share countsheets",
+      "Create videos",
+      "Interested?",
+    ];
+    return Promise.all(
+      headingTitles.map((title) =>
+        expect(this.page.getByRole("heading", { name: title })).toBeVisible()
+      )
+    );
   }
 }
