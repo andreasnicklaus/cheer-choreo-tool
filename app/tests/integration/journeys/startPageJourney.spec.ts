@@ -15,3 +15,13 @@ test("has title", async () => {
 test("displays all sections", async () => {
   await startPage.iCheckAllSections();
 });
+
+test("sections contain correct contents", async ({}, testInfo) => {
+  await startPage.iCheckMainSectionContents();
+  await startPage.iCheckMatSectionContents();
+  await startPage.iCheckFeatureCallouts(Boolean(testInfo.project.use.isMobile));
+  await startPage.iCheckCountsheetSectionContents(
+    Boolean(testInfo.project.use.isMobile)
+  );
+  await startPage.iCheckCreateVideoSectionContents();
+});
