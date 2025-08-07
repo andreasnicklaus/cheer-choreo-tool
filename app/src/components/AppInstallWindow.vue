@@ -52,6 +52,13 @@ export default {
     installationPrompt: null,
   }),
   mounted() {
+    if (localStorage.getItem("isTestEnvironment"))
+      this.installationPrompt = {
+        prompt: () => {
+          this.installationPrompt = null;
+        },
+      };
+
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
       const cookie = this.$cookie.get(cookieName);

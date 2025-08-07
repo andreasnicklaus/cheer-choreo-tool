@@ -1,7 +1,7 @@
 import { expect, type Page } from "@playwright/test";
 import TestPage from "./page";
 
-export default class StartPage extends TestPage {
+export default class HomePage extends TestPage {
   route = "/";
 
   constructor(page: Page) {

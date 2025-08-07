@@ -14,6 +14,7 @@
     "test": "npm run test:unit && npm run test:e2e",
     "test:e2e:pretest": "tsc --noEmit",
     "test:e2e": "npm run test:e2e:pretest && playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "test:unit": "jest"
   },
   "dependencies": {
