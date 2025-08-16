@@ -1,3 +1,4 @@
+import { defaultTeam } from "./team";
 import { defaultUser } from "./user";
 
 export const defaultChoreos = [
@@ -10,5 +11,8 @@ export const defaultChoreos = [
     deletedAt: null,
     UserId: defaultUser.id,
     ClubId: "20f5bc46-de1b-4316-beaa-df927bbe57fc",
+    Team: defaultTeam,
+    Hits: [],
+    Lineups: [],
   },
 ];

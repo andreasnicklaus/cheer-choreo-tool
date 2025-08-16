@@ -234,6 +234,8 @@ export default {
     loading: false,
   }),
   mounted() {
+    // TODO: check if the user is already logged in and redirect if so
+
     const query = this.$route.query;
     if (query?.sso)
       AuthService.ssoLogin(query.sso)

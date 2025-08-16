@@ -10,7 +10,7 @@
         },
         {
           "name": "choreo-planer-token",
-          "value": "true"
+          "value": "test-auth-token"
         }
       ]
     }
