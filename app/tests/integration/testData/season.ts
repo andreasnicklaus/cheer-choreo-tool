@@ -1,4 +1,4 @@
-import { defaultUser } from "./user";
+import { defaultUserId } from "./defaultUserId";
 
 export const defaultSeasons = [
   {
@@ -8,7 +8,7 @@ export const defaultSeasons = [
     createdAt: "2025-06-09T10:37:01.158Z",
     updatedAt: "2025-06-09T10:37:01.158Z",
     deletedAt: null,
-    UserId: defaultUser.id,
+    UserId: defaultUserId,
   },
   {
     id: "35a796cc-a42f-4d42-983f-bd2f7763d271",
@@ -17,7 +17,7 @@ export const defaultSeasons = [
     createdAt: "2025-06-09T10:37:01.152Z",
     updatedAt: "2025-06-09T10:37:01.152Z",
     deletedAt: null,
-    UserId: defaultUser.id,
+    UserId: defaultUserId,
   },
   {
     id: "2625f6f7-ae78-4d02-8ef8-ff36bd0b31e2",
@@ -26,7 +26,7 @@ export const defaultSeasons = [
     createdAt: "2025-06-09T10:37:01.144Z",
     updatedAt: "2025-06-09T10:37:01.144Z",
     deletedAt: null,
-    UserId: defaultUser.id,
+    UserId: defaultUserId,
   },
   {
     id: "6bb05df3-6cbb-4d70-baab-a5e90ef91cd0",
@@ -35,7 +35,7 @@ export const defaultSeasons = [
     createdAt: "2025-06-09T10:37:01.138Z",
     updatedAt: "2025-06-09T10:37:01.138Z",
     deletedAt: null,
-    UserId: defaultUser.id,
+    UserId: defaultUserId,
   },
   {
     id: "46e9b0c1-4192-4b51-a520-9ad2b05636bd",
@@ -44,7 +44,7 @@ export const defaultSeasons = [
     createdAt: "2025-06-09T10:37:01.128Z",
     updatedAt: "2025-06-09T10:37:01.128Z",
     deletedAt: null,
-    UserId: defaultUser.id,
+    UserId: defaultUserId,
   },
   {
     id: "7bfc7644-1317-452d-88ae-d8266f6cfd02",
@@ -53,7 +53,7 @@ export const defaultSeasons = [
     createdAt: "2025-06-09T10:37:01.113Z",
     updatedAt: "2025-06-09T10:37:01.113Z",
     deletedAt: null,
-    UserId: defaultUser.id,
+    UserId: defaultUserId,
   },
   {
     id: "d9cc67f3-4cc9-4e03-bf39-07cd44363165",
@@ -62,6 +62,6 @@ export const defaultSeasons = [
     createdAt: "2025-06-09T10:37:01.092Z",
     updatedAt: "2025-06-09T10:37:01.092Z",
     deletedAt: null,
-    UserId: defaultUser.id,
+    UserId: defaultUserId,
   },
 ];

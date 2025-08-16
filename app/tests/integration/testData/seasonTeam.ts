@@ -1,6 +1,6 @@
 import { defaultChoreos } from "./choreo";
+import { defaultUserId } from "./defaultUserId";
 import { defaultSeasons } from "./season";
-import { defaultUser } from "./user";
 
 export const defaultSeasonTeams = [
   {
@@ -11,6 +11,6 @@ export const defaultSeasonTeams = [
     createdAt: "2025-06-09T10:37:01.158Z",
     updatedAt: "2025-06-09T10:37:01.158Z",
     deletedAt: null,
-    UserId: defaultUser.id,
+    UserId: defaultUserId,
   },
 ];

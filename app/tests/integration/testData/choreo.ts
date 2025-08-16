@@ -1,5 +1,5 @@
+import { defaultUserId } from "./defaultUserId";
 import { defaultTeam } from "./team";
-import { defaultUser } from "./user";
 
 export const defaultChoreos = [
   {
@@ -9,7 +9,7 @@ export const defaultChoreos = [
     createdAt: "2025-06-09T10:37:01.158Z",
     updatedAt: "2025-06-09T10:37:01.158Z",
     deletedAt: null,
-    UserId: defaultUser.id,
+    UserId: defaultUserId,
     ClubId: "20f5bc46-de1b-4316-beaa-df927bbe57fc",
     Team: defaultTeam,
     Hits: [],
