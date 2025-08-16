@@ -10,6 +10,7 @@ import {
   mockTeams,
   mockVersion,
 } from "./requests";
+import { mockTrackingRequests } from "./trackingRequests";
 
 export async function mockDefaultStartRequests(page: Page) {
   await Promise.all([
@@ -22,5 +23,6 @@ export async function mockDefaultStartRequests(page: Page) {
     mockVersion(page),
     mockChoreos(page),
     mockTeams(page),
+    mockTrackingRequests(page),
   ]);
 }

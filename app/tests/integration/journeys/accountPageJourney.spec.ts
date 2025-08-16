@@ -1,6 +1,7 @@
 import test from "@playwright/test";
 import AccountPage from "../pages/accountPage";
 import { mockDefaultStartRequests } from "../utils/multiRequests";
+import { defaultClubs } from "../testData/club";
 
 let accountPage: AccountPage;
 
@@ -18,20 +19,51 @@ test("should display the account page with the correct title", async () => {
   await accountPage.iCheckTitle();
 });
 
-test("should display user information", async () => {
-  await accountPage.iCheckUserInfoDisplay();
+test.describe("User Information", () => {
+  test("should display user information", async () => {
+    await accountPage.iCheckUserInfoDisplay();
+  });
+
+  test("should allow changing the user information", async () => {
+    await accountPage.iChangeUserInfo(
+      "NewUsername",
+      "new.email@choreo-planer.de"
+    );
+  });
 });
 
-test("should display clubs info", async () => {
-  await accountPage.iSwitchToClubs();
-  await accountPage.iCheckClubInfoDisplay();
+test.describe("Clubs", () => {
+  test("should display clubs info", async () => {
+    await accountPage.iSwitchToClubs();
+    await accountPage.iCheckClubInfoDisplay();
+  });
+  test("should allow changing the club information", async () => {
+    await accountPage.iChangeClubInfo("New Club Name");
+  });
+
+  test("should allow changing the active club", async () => {
+    await accountPage.iChangeActiveClub(defaultClubs[1].name);
+  });
 });
 
-// TODO: Add tests for settings and danger zone tabs
+test.describe("Settings", () => {
+  test("should allow changing the settings", async () => {
+    await accountPage.iChangeSettings();
+  });
+  test("should display settings tab", async () => {
+    await accountPage.iCheckSettingsTabDisplay();
+  });
+});
 
-// TODO: Add tests for changing the user information
-// TODO: Add tests for changing the club information#
-// TODO: Add tests for changing the active club
-// TODO: Add tests for changing the settings
-// TODO: Add tests for changing the password in the danger zone
-// TODO: Add tests for deleting the account in the danger zone
+test.describe("Danger Zone", () => {
+  test("should display danger zone tab", async () => {
+    await accountPage.iCheckDangerZoneTabDisplay();
+  });
+  test("should allow changing the password in the danger zone", async () => {
+    await accountPage.iChangePassword("newpassword");
+  });
+
+  test("should allow deleting the account in the danger zone", async () => {
+    await accountPage.iDeleteAccount();
+  });
+});

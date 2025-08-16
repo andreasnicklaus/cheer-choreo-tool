@@ -31,7 +31,8 @@
     "lade-ein-bild-hoch-max-mb": "Upload a picture: max. {0} MB",
     "es-ist-nicht-moeglich-bilder-hochzuladen-die-groesser-al-mb-gross-sind": "It is not possible to upload images that are larger than {0} MB. Select a smaller file!",
     "die-e-mail-zur-bestaetigung-deiner-e-mail-adresse-wurde-erneut-verschickt-check-dein-postfach": "The email to confirm your email address has been sent. Check your mailbox!",
-    "e-mail-versandt": "Email sent"
+    "e-mail-versandt": "Email sent",
+    "settings-saved": "Your settings were saved!"
   },
   "achter": "Eight",
   "alle-auswaehlen": "Select all",

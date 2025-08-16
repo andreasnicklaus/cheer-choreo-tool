@@ -797,6 +797,10 @@ export default {
       } else {
         window._paq.push(["rememberConsentGiven"]);
       }
+      MessagingService.showSuccess(
+        this.$t("accountView.settings-saved"),
+        this.$t("editView.gespeichert")
+      );
     },
     resetSettings() {
       this.tracking = Boolean(this.$cookie.get("mtm_consent"));
