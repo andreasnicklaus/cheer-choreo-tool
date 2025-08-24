@@ -6,11 +6,11 @@ const state = Vue.observable({
 });
 
 const style = getComputedStyle(document.body);
-const xs = style.getPropertyValue("--breakpoint-xs").replace("px", "");
-const sm = style.getPropertyValue("--breakpoint-sm").replace("px", "");
-const md = style.getPropertyValue("--breakpoint-md").replace("px", "");
-const lg = style.getPropertyValue("--breakpoint-lg").replace("px", "");
-const xl = style.getPropertyValue("--breakpoint-xl").replace("px", "");
+const xs = style.getPropertyValue("--breakpoint-xs").replace("px", "") || 0;
+const sm = style.getPropertyValue("--breakpoint-sm").replace("px", "") || 576;
+const md = style.getPropertyValue("--breakpoint-md").replace("px", "") || 768;
+const lg = style.getPropertyValue("--breakpoint-lg").replace("px", "") || 992;
+const xl = style.getPropertyValue("--breakpoint-xl").replace("px", "") || 1200;
 
 function onResize() {
   const width = document.getElementById("app")?.clientWidth || 1900;

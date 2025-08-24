@@ -5,6 +5,7 @@ import {
   mockChoreos,
   mockClubs,
   mockFeedback,
+  mockMembers,
   mockNotifications,
   mockSeasons,
   mockTeams,
@@ -23,6 +24,7 @@ export async function mockDefaultStartRequests(page: Page) {
     mockVersion(page),
     mockChoreos(page),
     mockTeams(page),
+    mockMembers(page),
     mockTrackingRequests(page),
   ]);
 }

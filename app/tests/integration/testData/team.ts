@@ -13,6 +13,16 @@ export const defaultTeams = [
     Choreos: defaultChoreos,
     SeasonTeams: defaultSeasonTeams,
   },
+  {
+    id: "6a238d60-8eff-4e13-a4c4-699cf1b27dcc",
+    name: "Default Team 2",
+    createdAt: "2025-06-09T10:37:01.158Z",
+    updatedAt: "2025-06-09T10:37:01.158Z",
+    deletedAt: null,
+    UserId: defaultUserId,
+    Choreos: defaultChoreos,
+    SeasonTeams: defaultSeasonTeams,
+  },
 ];
 
 export const defaultTeam = {

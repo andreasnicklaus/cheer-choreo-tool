@@ -7,11 +7,14 @@ import { defaultClubs } from "../testData/club";
 import { defaultTeams } from "../testData/team";
 import { checkAuthorization } from "./authorization";
 import { defaultChoreos } from "../testData/choreo";
+import { defaultMembers } from "../testData/member";
+
+const API_URL = "https://api.choreo-planer.de";
 
 export async function authAnyBackEndRequest(page: Page) {
   await page.route("**/*", async (route) => {
     if (
-      route.request().url().includes("https://api.choreo-planer.de/") &&
+      route.request().url().includes(API_URL) &&
       (await checkAuthorization(route.request()))
     )
       await route.fulfill({ status: 204 });
@@ -20,7 +23,7 @@ export async function authAnyBackEndRequest(page: Page) {
 }
 
 export async function mockAuthMe(page: Page, user = defaultUser) {
-  return page.route("**/auth/me", async (route) => {
+  return page.route(`${API_URL}/auth/me`, async (route) => {
     if (await checkAuthorization(route.request()))
       await route.fulfill({
         json: user,
@@ -32,7 +35,7 @@ export async function mockNotifications(
   page: Page,
   notifications = defaultNotifications
 ) {
-  return page.route("**/notifications", async (route) => {
+  return page.route(`${API_URL}/notifications`, async (route) => {
     if (await checkAuthorization(route.request()))
       await route.fulfill({
         json: notifications,
@@ -41,7 +44,7 @@ export async function mockNotifications(
 }
 
 export async function mockSeasons(page: Page, seasons = defaultSeasons) {
-  return page.route("**/season", async (route) => {
+  return page.route(`${API_URL}/season`, async (route) => {
     if (await checkAuthorization(route.request()))
       await route.fulfill({
         json: seasons,
@@ -50,7 +53,7 @@ export async function mockSeasons(page: Page, seasons = defaultSeasons) {
 }
 
 export async function mockFeedback(page: Page, feedback = []) {
-  return page.route("**/feedback", async (route) => {
+  return page.route(`${API_URL}/feedback`, async (route) => {
     if (await checkAuthorization(route.request()))
       await route.fulfill({
         json: feedback,
@@ -60,7 +63,7 @@ export async function mockFeedback(page: Page, feedback = []) {
 
 export async function mockClubs(page: Page, clubs = defaultClubs) {
   return Promise.all([
-    page.route("**/club", async (route) => {
+    page.route(`${API_URL}/club`, async (route) => {
       if (await checkAuthorization(route.request()))
         await route.fulfill({
           json: clubs,
@@ -68,7 +71,7 @@ export async function mockClubs(page: Page, clubs = defaultClubs) {
     }),
     clubs
       .map((club) =>
-        page.route(`**/club/${club.id}`, async (route) => {
+        page.route(`${API_URL}/club/${club.id}`, async (route) => {
           if (await checkAuthorization(route.request()))
             await route.fulfill({
               json: club,
@@ -80,7 +83,7 @@ export async function mockClubs(page: Page, clubs = defaultClubs) {
 }
 
 export async function mockVersion(page: Page, version = defaultVersion) {
-  return page.route("**/version", async (route) => {
+  return page.route(`${API_URL}/version`, async (route) => {
     await route.fulfill({
       body: version,
     });
@@ -89,7 +92,7 @@ export async function mockVersion(page: Page, version = defaultVersion) {
 
 export async function mockTeams(page: Page, teams = defaultTeams) {
   return Promise.all([
-    page.route("**/team", async (route) => {
+    page.route(`${API_URL}/team`, async (route) => {
       if (await checkAuthorization(route.request()))
         await route.fulfill({
           json: teams,
@@ -97,7 +100,7 @@ export async function mockTeams(page: Page, teams = defaultTeams) {
     }),
     teams
       .map((team) =>
-        page.route(`**/team/${team.id}`, async (route) => {
+        page.route(`${API_URL}/team/${team.id}`, async (route) => {
           if (await checkAuthorization(route.request()))
             await route.fulfill({
               json: team,
@@ -109,7 +112,7 @@ export async function mockTeams(page: Page, teams = defaultTeams) {
 }
 export async function mockChoreos(page: Page, choreos = defaultChoreos) {
   return Promise.all([
-    page.route("**/choreo", async (route) => {
+    page.route(`${API_URL}/choreo`, async (route) => {
       if (await checkAuthorization(route.request()))
         await route.fulfill({
           json: choreos,
@@ -117,7 +120,7 @@ export async function mockChoreos(page: Page, choreos = defaultChoreos) {
     }),
     choreos
       .map((choreo) =>
-        page.route(`**/choreo/${choreo.id}`, async (route) => {
+        page.route(`${API_URL}/choreo/${choreo.id}`, async (route) => {
           if (await checkAuthorization(route.request()))
             await route.fulfill({
               json: choreo,
@@ -129,7 +132,7 @@ export async function mockChoreos(page: Page, choreos = defaultChoreos) {
 }
 
 export async function mockSsoLoginRequest(page: Page) {
-  return page.route("**/auth/sso", async (route) => {
+  return page.route(`${API_URL}/auth/sso`, async (route) => {
     await route.fulfill({
       json: "sso-auth-token",
     });
@@ -137,7 +140,7 @@ export async function mockSsoLoginRequest(page: Page) {
 }
 
 export async function mockLoginRequest(page: Page) {
-  return page.route("**/auth/login", async (route) => {
+  return page.route(`${API_URL}/auth/login`, async (route) => {
     const postData = JSON.parse(route.request().postData() as string);
     if (postData?.username && postData?.password) {
       if (postData.password == "falsePassword") {
@@ -154,7 +157,7 @@ export async function mockLoginRequest(page: Page) {
 }
 
 export async function mockRegistrationRequest(page: Page) {
-  return page.route("**/auth", async (route) => {
+  return page.route(`${API_URL}/auth`, async (route) => {
     const postData = JSON.parse(route.request().postData() as string);
     if (postData?.username && postData?.email && postData?.password) {
       if (postData.password == "falsePassword") {
@@ -168,4 +171,34 @@ export async function mockRegistrationRequest(page: Page) {
         });
     }
   });
+}
+
+export async function mockMembers(page: Page, members = defaultMembers) {
+  return Promise.all([
+    page.route(`${API_URL}/member`, async (route) => {
+      if (await checkAuthorization(route.request()))
+        if (route.request().method() === "POST") {
+          const postData = JSON.parse(route.request().postData() as string);
+          await route.fulfill({
+            json: {
+              ...postData,
+              id: "new-member-id",
+            },
+          });
+        } else
+          await route.fulfill({
+            json: members,
+          });
+    }),
+    members
+      .map((member) =>
+        page.route(`${API_URL}/member/${member.id}`, async (route) => {
+          if (await checkAuthorization(route.request()))
+            await route.fulfill({
+              json: member,
+            });
+        })
+      )
+      .flat(),
+  ]);
 }
