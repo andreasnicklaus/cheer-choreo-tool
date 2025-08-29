@@ -1,6 +1,15 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const reporter = [["html", { open: "never" }]];
+const reporter = [
+  ["html", { open: "never" }],
+  [
+    "list",
+    {
+      printSteps: true,
+    },
+  ],
+];
+
 if (process.env.CI)
   reporter.push([
     "@estruyf/github-actions-reporter",

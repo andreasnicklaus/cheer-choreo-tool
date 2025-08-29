@@ -231,6 +231,7 @@ export default class AppPage extends TestPage {
     await teamMenuItem.click();
     const teamLink = this.page.getByRole("menuitem", {
       name: defaultTeams[0].name,
+      exact: true,
     });
     await expect(teamLink).toBeVisible();
     await teamLink.click();

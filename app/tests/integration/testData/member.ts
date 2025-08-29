@@ -7,6 +7,9 @@ export const defaultMembers = [
     name: "Test Member1",
     abbreviation: "TM",
     nickname: "Testi Membi",
+    ChoreoParticipation: {
+      color: "#00FF00",
+    },
   },
   {
     id: "04621aae-fa9b-4682-b023-7e0ff05f3861",
@@ -14,5 +17,8 @@ export const defaultMembers = [
     name: "Test Member2",
     abbreviation: "Tm",
     nickname: "T Membi",
+    ChoreoParticipation: {
+      color: "#FF0000",
+    },
   },
 ];

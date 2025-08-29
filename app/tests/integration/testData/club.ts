@@ -19,7 +19,7 @@ export const defaultClubs = [
     updatedAt: new Date().toISOString(),
     deletedAt: null,
     UserId: defaultUserId,
-    Teams: null,
+    Teams: defaultTeams,
     clubLogoExtension: null,
   },
 ];

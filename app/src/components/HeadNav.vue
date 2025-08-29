@@ -500,7 +500,10 @@ export default {
             if (!this.$store.state.clubId)
               this.$store.commit("setClubId", club.id);
             this.teams = club?.Teams || [];
-            this.choreos = this.teams.map((t) => t.Choreos).flat();
+            // TODO: check if this still works outside of DEV
+            this.choreos = this.teams
+              .map((t) => t.SeasonTeams.map((st) => st.Choreos))
+              .flat(Infinity);
           })
           .catch(() => {
             error("Could not load clubs", ERROR_CODES.CLUB_QUERY_FAILED);

@@ -246,7 +246,7 @@ export default class TeamPage extends TestPage {
     // const nameInput = this.page.getByRole("textbox", {
     //   name: defaultTeams[0].name,
     // });
-    const nameInput = this.page.locator('[id="__BVID__162"]');
+    const nameInput = this.page.getByRole("textbox");
     await expect(nameInput).toBeVisible();
     await nameInput.fill(newTeamName);
     await expect(nameInput).toHaveValue(newTeamName);
