@@ -18,7 +18,7 @@ export const defaultTeams: Team[] = [
     updatedAt: "2025-06-09T10:37:01.158Z",
     deletedAt: null,
     UserId: defaultUserId,
-    SeasonTeams: [],
+    SeasonTeams: [defaultSeasonTeams[1]],
   },
 ];
 

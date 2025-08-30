@@ -36,7 +36,11 @@ export default class ChoreoPage extends TestPage {
   }
 
   iSeeChoreoName(name: string) {
-    return expect(this.page.getByText(name)).toBeVisible();
+    return expect(
+      this.page
+        .getByRole("heading", { name: `Choreo ${name} pen` })
+        .locator("b")
+    ).toBeVisible();
   }
 
   async iEditChoreoName() {

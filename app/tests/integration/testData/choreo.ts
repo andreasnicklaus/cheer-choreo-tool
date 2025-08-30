@@ -1,8 +1,25 @@
+import { defaultSeasonTeams } from "./seasonTeam";
 import { defaultTeam } from "./defaultTeam";
 import { defaultUserId } from "./defaultUserId";
 import { defaultHits } from "./hit";
 import { defaultLineups } from "./lineup";
 import { defaultMembers } from "./member";
+import { defaultSeasons } from "./season";
+
+const emptySeasonTeams = [
+  {
+    id: "047efd99-663d-4de8-8b51-68ec9f424b72",
+    SeasonID: defaultSeasons[1].id,
+    Season: defaultSeasons[1],
+    Choreos: [],
+    createdAt: "2025-06-09T10:37:01.158Z",
+    updatedAt: "2025-06-09T10:37:01.158Z",
+    deletedAt: null,
+    UserId: defaultUserId,
+    Members: [],
+    Team: defaultTeam,
+  },
+];
 
 type Choreo = {
   id: string;
@@ -17,6 +34,7 @@ type Choreo = {
   Hits: typeof defaultHits;
   Lineups: typeof defaultLineups;
   Participants: typeof defaultMembers;
+  SeasonTeam: (typeof defaultSeasonTeams)[0];
 };
 
 export const defaultChoreos: Choreo[] = [
@@ -33,6 +51,7 @@ export const defaultChoreos: Choreo[] = [
     Hits: defaultHits,
     Lineups: defaultLineups,
     Participants: defaultMembers,
+    SeasonTeam: emptySeasonTeams[0],
   },
 ];
 
@@ -50,5 +69,6 @@ export const emptyChoreos: Choreo[] = [
     Hits: [],
     Lineups: [],
     Participants: [],
+    SeasonTeam: emptySeasonTeams[0],
   },
 ];

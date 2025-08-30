@@ -132,7 +132,7 @@ export default class TeamPage extends TestPage {
       .getByRole("combobox");
     await expect(seasonSelect).toBeVisible();
     await expect(seasonSelect).toHaveValue(
-      defaultTeams[1].SeasonTeams[1].SeasonID
+      defaultTeams[1].SeasonTeams[0].SeasonID
     );
 
     const member1Checkbox = this.page
