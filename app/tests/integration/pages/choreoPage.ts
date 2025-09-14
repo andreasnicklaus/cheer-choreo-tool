@@ -1,9 +1,8 @@
-import { expect, Page } from "@playwright/test";
+import { expect, Locator, Page } from "@playwright/test";
 import TestPage from "./page";
 import { defaultChoreos } from "../testData/choreo";
 import { defaultHits } from "../testData/hit";
 import { defaultMembers } from "../testData/member";
-import { defaultPositions } from "../testData/position";
 import { defaultLineups } from "../testData/lineup";
 
 export default class ChoreoPage extends TestPage {
@@ -65,13 +64,17 @@ export default class ChoreoPage extends TestPage {
     await expect(this.page.getByText(newChoreoName)).toBeVisible();
   }
 
-  async iEditChoreoLength() {
+  private async iOpenMenu() {
     const menuButton = this.page.getByRole("button", {
       name: "three dots vertical",
     });
     await expect(menuButton).toBeVisible();
     await expect(menuButton).toBeEnabled();
     await menuButton.click();
+  }
+
+  async iEditChoreoLength() {
+    await this.iOpenMenu();
 
     const editLengthButton = this.page.getByRole("menuitem", {
       name: "hash Adjust length",
@@ -82,7 +85,7 @@ export default class ChoreoPage extends TestPage {
 
     const achterInput = this.page
       .locator("div")
-      .filter({ hasText: /^Achter$/ })
+      .filter({ hasText: /^Eight$/ })
       .getByRole("spinbutton");
     await expect(achterInput).toBeVisible();
     await expect(achterInput).toBeEnabled();
@@ -258,5 +261,393 @@ export default class ChoreoPage extends TestPage {
         ])
         .flat()
     );
+  }
+
+  async iDragAndDropLineupPosition() {
+    const expectedCoordinates = { cx: 35.7, cy: 50 }; // improve values based on browser
+
+    const circleToDrag = this.page.locator(`#c${defaultMembers[1].id}`);
+    await expect(circleToDrag).toBeVisible();
+    const coordinatesBefore = await this.getCircleCoordinates(circleToDrag);
+    await expect(coordinatesBefore.cx).toBeCloseTo(expectedCoordinates.cx, 1);
+    await expect(coordinatesBefore.cy).toBeCloseTo(expectedCoordinates.cy);
+
+    await circleToDrag.hover();
+    await this.page.mouse.down();
+    await this.page.mouse.move(300, 500, { steps: 5 });
+    await this.page.mouse.up();
+    const coordinatesAfter = await this.getCircleCoordinates(circleToDrag);
+
+    // improve values based on browser
+    // mat size / browser window size / drag distance
+    await expect(coordinatesAfter.cx).not.toBeCloseTo(
+      expectedCoordinates.cx,
+      1
+    );
+    await expect(coordinatesAfter.cy).not.toBeCloseTo(expectedCoordinates.cy);
+  }
+
+  private getCircleCoordinates(circleElement: Locator) {
+    return circleElement.evaluate((circle: HTMLElement) => {
+      const attributes = Array.from(circle.attributes);
+      const styleAttribute = attributes.find(
+        (attr) => attr.name === "style"
+      )?.value;
+
+      if (!styleAttribute) return { cx: null, cy: null };
+
+      const styles = styleAttribute.split(";");
+
+      const stylesKeyValueList = styles.map((style) => {
+        const [key, value] = style.split(":").map((s) => s.trim());
+        return { key, value };
+      });
+
+      let cx = stylesKeyValueList.find(({ key }) => key == "cx")?.value;
+      if (cx?.endsWith("px")) cx = cx.replace("px", "").trim();
+      let cy = stylesKeyValueList.find(({ key }) => key == "cy")?.value;
+      if (cy?.endsWith("px")) cy = cy.replace("px", "").trim();
+
+      return { cx: cx ? parseFloat(cx) : 0, cy: cy ? parseFloat(cy) : 0 };
+    });
+  }
+
+  async iSeeLinkToVideoExport() {
+    await this.iOpenMenu();
+
+    const videoExportLink = this.page.getByRole("menuitem", {
+      name: "film Export video",
+    });
+    await expect(videoExportLink).toBeVisible();
+    await expect(videoExportLink).toBeEnabled();
+    await expect(videoExportLink).toHaveAttribute(
+      "href",
+      `/en/video/${defaultChoreos[0].id}`
+    );
+  }
+
+  async iSeeLinkToCountsheet() {
+    await this.iOpenMenu();
+
+    const countsheetLink = this.page.getByRole("menuitem", {
+      name: "file pdf Countsheet as PDF",
+    });
+    await expect(countsheetLink).toBeVisible();
+    await expect(countsheetLink).toBeEnabled();
+    return expect(countsheetLink).toHaveAttribute(
+      "href",
+      `/pdf/${defaultChoreos[0].id}`
+    );
+  }
+
+  async iMoveHitUp() {
+    const secondHitButton = this.page.getByRole("button", {
+      name: defaultHits[1].name,
+      exact: true,
+    });
+    await expect(secondHitButton).toBeVisible();
+    await expect(secondHitButton).toBeEnabled();
+    await secondHitButton.click();
+
+    const moveUpButton = this.page.getByTitle("Move to the previous count");
+    await expect(moveUpButton).toBeVisible();
+    await expect(moveUpButton).toBeEnabled();
+    await moveUpButton.click();
+
+    // hit is moved to count 8 of the first eight
+    await expect(
+      this.page.locator("td:nth-child(9) > .btn").first()
+    ).toHaveText(defaultHits[1].name);
+
+    // the current count is 8 in the first eight
+    await expect(
+      this.page.getByText("Eight: 1", { exact: true })
+    ).toBeVisible();
+    await expect(
+      this.page.getByText("Count: 8", { exact: true })
+    ).toBeVisible();
+  }
+
+  async iMoveHitDown() {
+    const secondHitButton = this.page.getByRole("button", {
+      name: defaultHits[1].name,
+      exact: true,
+    });
+    await expect(secondHitButton).toBeVisible();
+    await expect(secondHitButton).toBeEnabled();
+    await secondHitButton.click();
+
+    const moveDownButton = this.page.getByTitle("Move to the next count");
+    await expect(moveDownButton).toBeVisible();
+    await expect(moveDownButton).toBeEnabled();
+    await moveDownButton.click();
+
+    // hit is moved to count 2 of the second eight
+    await expect(
+      this.page.locator("tr:nth-child(2) > td:nth-child(3) > .btn")
+    ).toHaveText(defaultHits[1].name);
+
+    // the current count is 2 in the second eight
+    await expect(
+      this.page.getByText("Eight: 2", { exact: true })
+    ).toBeVisible();
+    await expect(
+      this.page.getByText("Count: 2", { exact: true })
+    ).toBeVisible();
+  }
+
+  async iEditHit() {
+    const firstHitButton = this.page.getByRole("button", {
+      name: defaultHits[0].name,
+      exact: true,
+    });
+    await expect(firstHitButton).toBeVisible();
+    await expect(firstHitButton).toBeEnabled();
+    await firstHitButton.click();
+
+    const editButton = this.page.getByTitle("edit");
+    await expect(editButton).toBeVisible();
+    await expect(editButton).toBeEnabled();
+    await editButton.click();
+
+    const newEight = 2;
+    const newCount = 3;
+    const newName = "Edited Hit Name";
+
+    const nameInput = this.page.getByRole("textbox", {
+      name: "Name of the hits",
+    });
+    await expect(nameInput).toBeVisible();
+    await expect(nameInput).toBeEnabled();
+    await nameInput.fill(newName);
+    await expect(nameInput).toHaveValue(newName);
+
+    const eightInput = this.page.locator("input").nth(3);
+    await expect(eightInput).toBeVisible();
+    await expect(eightInput).toBeEnabled();
+    await eightInput.fill(newEight.toString());
+    await expect(eightInput).toHaveValue(newEight.toString());
+
+    const countInput = this.page.locator("input").nth(4);
+    await expect(countInput).toBeVisible();
+    await expect(countInput).toBeEnabled();
+    await countInput.fill(newCount.toString());
+    await expect(countInput).toHaveValue(newCount.toString());
+
+    const saveButton = this.page.getByRole("button", {
+      name: "check",
+      exact: true,
+    });
+    await expect(saveButton).toBeVisible();
+    await expect(saveButton).toBeEnabled();
+    await saveButton.click();
+
+    await expect(
+      this.page.locator("tr:nth-child(2) > td:nth-child(4) > .btn")
+    ).toHaveText(newName);
+    await expect(
+      this.page.locator("tr:nth-child(1) > td:nth-child(5) > .btn")
+    ).toHaveText("-");
+  }
+
+  async iDeleteHit() {
+    const firstHitButton = this.page.getByRole("button", {
+      name: defaultHits[0].name,
+      exact: true,
+    });
+    await expect(firstHitButton).toBeVisible();
+    await expect(firstHitButton).toBeEnabled();
+    await firstHitButton.click();
+
+    const deleteButton = this.page.getByRole("button", { name: "trash" });
+    await expect(deleteButton).toBeVisible();
+    await expect(deleteButton).toBeEnabled();
+    await deleteButton.click();
+
+    const confirmDeleteButton = this.page.getByRole("button", {
+      name: "Delete",
+    });
+    await expect(confirmDeleteButton).toBeVisible();
+    await expect(confirmDeleteButton).toBeEnabled();
+    await confirmDeleteButton.click();
+
+    await expect(
+      this.page.getByText("You haven't planned anything")
+    ).toBeVisible();
+
+    await expect(
+      this.page.locator("tr:nth-child(1) > td:nth-child(5) > .btn")
+    ).toHaveText("-");
+  }
+
+  async iSelectAllMembersInLineup() {
+    this.page.locator("td:nth-child(3) > .btn").first().click();
+
+    const selectAllButton = this.page.getByRole("button", {
+      name: "people fill",
+    });
+    await expect(selectAllButton).toBeVisible();
+    await expect(selectAllButton).toBeEnabled();
+    await selectAllButton.click();
+
+    await expect(this.page.getByText("All", { exact: true })).toBeVisible();
+    await expect(selectAllButton).not.toBeVisible();
+  }
+
+  async iEditLineup() {
+    this.page.locator("td:nth-child(3) > .btn").first().click();
+
+    const editButton = this.page.getByTitle("edit");
+    await expect(editButton).toBeVisible();
+    await expect(editButton).toBeEnabled();
+    await editButton.click();
+
+    const newStartAchter = 2;
+    const newStartCount = 1;
+    const newEndAchter = 2;
+    const newEndCount = 1;
+
+    const startAchterInput = this.page.locator("input").nth(2);
+    await expect(startAchterInput).toBeVisible();
+    await expect(startAchterInput).toBeEnabled();
+    await startAchterInput.fill(newStartAchter.toString());
+    await expect(startAchterInput).toHaveValue(newStartAchter.toString());
+
+    const startCountInput = this.page.locator("input").nth(3);
+    await expect(startCountInput).toBeVisible();
+    await expect(startCountInput).toBeEnabled();
+    await startCountInput.fill(newStartCount.toString());
+    await expect(startCountInput).toHaveValue(newStartCount.toString());
+
+    const endAchterInput = this.page.locator("input").nth(4);
+    await expect(endAchterInput).toBeVisible();
+    await expect(endAchterInput).toBeEnabled();
+    await endAchterInput.fill(newEndAchter.toString());
+    await expect(endAchterInput).toHaveValue(newEndAchter.toString());
+
+    const endCountInput = this.page.locator("input").nth(5);
+    await expect(endCountInput).toBeVisible();
+    await expect(endCountInput).toBeEnabled();
+    await endCountInput.fill(newEndCount.toString());
+    await expect(endCountInput).toHaveValue(newEndCount.toString());
+
+    const saveButton = this.page.getByRole("button", {
+      name: "check",
+      exact: true,
+    });
+    await expect(saveButton).toBeVisible();
+    await expect(saveButton).toBeEnabled();
+    await saveButton.click();
+
+    // TODO: find a way to verify the lineup change
+
+    const switchToCountButton = this.page.locator(
+      `tr:nth-child(${newStartAchter}) > td:nth-child(${
+        newStartCount + 1
+      }) > .btn`
+    );
+    await expect(switchToCountButton).toBeVisible();
+    await expect(switchToCountButton).toBeEnabled();
+    await switchToCountButton.click();
+
+    await expect(
+      this.page.getByText(
+        `Counts: ${newStartAchter} / ${newStartCount} - ${newEndAchter} / ${newEndCount}`
+      )
+    ).toBeVisible();
+  }
+
+  async iDeleteLineup() {
+    this.page.locator("td:nth-child(3) > .btn").first().click();
+
+    const deleteButton = this.page.getByRole("button", { name: "trash" });
+    await expect(deleteButton).toBeVisible();
+    await expect(deleteButton).toBeEnabled();
+    await deleteButton.click();
+
+    const confirmationButton = this.page.getByRole("button", {
+      name: "Delete",
+    });
+    await expect(confirmationButton).toBeVisible();
+    await expect(confirmationButton).toBeEnabled();
+    await confirmationButton.click();
+
+    await expect(
+      this.page.getByText("You haven't planned anything")
+    ).toBeVisible();
+  }
+
+  async iAddLineup() {
+    const addLineupButton = this.page.getByRole("button", {
+      name: "plus Add a lineup",
+    });
+    await expect(addLineupButton).toBeVisible();
+    await expect(addLineupButton).toBeEnabled();
+    await addLineupButton.click();
+
+    const newStartAchter = 1;
+    const newStartCount = 1;
+    const newEndAchter = 2;
+    const newEndCount = 2;
+
+    const startAchterInput = this.page.locator("input[type='number']").nth(0);
+    await expect(startAchterInput).toBeVisible();
+    await expect(startAchterInput).toBeEnabled();
+    await startAchterInput.fill(newStartAchter.toString());
+    await expect(startAchterInput).toHaveValue(newStartAchter.toString());
+
+    const startCountInput = this.page.locator("input[type='number']").nth(1);
+    await expect(startCountInput).toBeVisible();
+    await expect(startCountInput).toBeEnabled();
+    await startCountInput.fill(newStartCount.toString());
+    await expect(startCountInput).toHaveValue(newStartCount.toString());
+
+    const endAchterInput = this.page.locator("input[type='number']").nth(2);
+    await expect(endAchterInput).toBeVisible();
+    await expect(endAchterInput).toBeEnabled();
+    await endAchterInput.fill(newEndAchter.toString());
+    await expect(endAchterInput).toHaveValue(newEndAchter.toString());
+
+    const endCountInput = this.page.locator("input[type='number']").nth(3);
+    await expect(endCountInput).toBeVisible();
+    await expect(endCountInput).toBeEnabled();
+    await endCountInput.fill(newEndCount.toString());
+    await expect(endCountInput).toHaveValue(newEndCount.toString());
+
+    const saveButton = this.page.getByRole("button", { name: "Save" });
+    await expect(saveButton).toBeVisible();
+    await expect(saveButton).toBeEnabled();
+    await saveButton.click();
+
+    await expect(
+      this.page.getByText(
+        `Counts: ${newStartAchter} / ${newStartCount} - ${newEndAchter} / ${newEndCount}`
+      )
+    ).toBeVisible();
+  }
+
+  async iAddHit() {
+    const addHitButton = this.page.getByRole("button", {
+      name: "plus Add count entry",
+    });
+    await expect(addHitButton).toBeVisible();
+    await expect(addHitButton).toBeEnabled();
+    await addHitButton.click();
+
+    const newName = "New Hit Name";
+    const newNameInput = this.page.getByRole("textbox", {
+      name: "What is the name of the new",
+    });
+    await expect(newNameInput).toBeVisible();
+    await expect(newNameInput).toBeEnabled();
+    await newNameInput.fill(newName);
+
+    const saveButton = this.page.getByRole("button", { name: "Save" });
+    await expect(saveButton).toBeVisible();
+    await expect(saveButton).toBeEnabled();
+    await saveButton.click();
+
+    const newHitDisplay = this.page.locator("#editView h5").getByText(newName);
+    await expect(newHitDisplay).toBeVisible();
   }
 }

@@ -8,6 +8,9 @@ import { defaultTeams } from "../testData/team";
 import { checkAuthorization } from "./authorization";
 import { defaultChoreos } from "../testData/choreo";
 import { defaultMembers } from "../testData/member";
+import { defaultLineups } from "../testData/lineup";
+import { defaultPositions } from "../testData/position";
+import { defaultHits } from "../testData/hit";
 
 const API_URL = "https://api.choreo-planer.de";
 
@@ -197,6 +200,124 @@ export async function mockMembers(page: Page, members = defaultMembers) {
             await route.fulfill({
               json: member,
             });
+        })
+      )
+      .flat(),
+  ]);
+}
+
+export async function mockLineups(page: Page, lineups = defaultLineups) {
+  return Promise.all([
+    page.route(`${API_URL}/lineup`, async (route) => {
+      if (await checkAuthorization(route.request()))
+        if (route.request().method() === "POST") {
+          const postData = JSON.parse(route.request().postData() as string);
+          await route.fulfill({
+            json: {
+              ...postData,
+              id: "new-lineup-id",
+            },
+          });
+        } else
+          await route.fulfill({
+            json: lineups,
+          });
+    }),
+    lineups
+      .map((lineup) =>
+        page.route(`${API_URL}/lineup/${lineup.id}`, async (route) => {
+          if (await checkAuthorization(route.request()))
+            if (route.request().method() === "PUT") {
+              const postData = JSON.parse(route.request().postData() as string);
+              await route.fulfill({
+                json: {
+                  ...lineup,
+                  ...postData,
+                },
+              });
+            } else
+              await route.fulfill({
+                json: lineup,
+              });
+        })
+      )
+      .flat(),
+  ]);
+}
+
+export async function mockPositions(page: Page, positions = defaultPositions) {
+  return Promise.all(
+    [{ id: "new-lineup-id" }, ...defaultLineups].map(({ id }) => [
+      page.route(`${API_URL}/lineup/${id}/position`, async (route) => {
+        if (await checkAuthorization(route.request()))
+          if (route.request().method() === "POST") {
+            const postData = JSON.parse(route.request().postData() as string);
+            await route.fulfill({
+              json: {
+                ...postData,
+                id: "new-position-id" + Math.random().toString(36).substring(7),
+                Member:
+                  defaultMembers.find((m) => m.id === postData.MemberId) ||
+                  null,
+              },
+            });
+          } else
+            await route.fulfill({
+              json: positions,
+            });
+      }),
+      positions
+        .map((position) =>
+          page.route(
+            `${API_URL}/lineup/${id}/position/${position.id}`,
+            async (route) => {
+              if (await checkAuthorization(route.request()))
+                await route.fulfill({
+                  json: position,
+                });
+            }
+          )
+        )
+        .flat(),
+    ])
+  );
+}
+
+export async function mockHits(page: Page, hits = defaultHits) {
+  return Promise.all([
+    page.route(`${API_URL}/hit`, async (route) => {
+      if (await checkAuthorization(route.request()))
+        if (route.request().method() === "POST") {
+          const postData = JSON.parse(route.request().postData() as string);
+          await route.fulfill({
+            json: {
+              ...postData,
+              id: "new-hit-id",
+              Member:
+                defaultMembers.find((m) => m.id === postData.MemberId) || null,
+            },
+          });
+        } else
+          await route.fulfill({
+            json: hits,
+          });
+    }),
+    hits
+      .map((hit) =>
+        page.route(`${API_URL}/hit/${hit.id}`, async (route) => {
+          if (await checkAuthorization(route.request()))
+            if (route.request().method() === "PUT") {
+              const postData = JSON.parse(route.request().postData() as string);
+              await route.fulfill({
+                json: {
+                  ...hit,
+                  ...postData,
+                },
+              });
+            } else
+              await route.fulfill({
+                json: hit,
+              });
         })
       )
       .flat(),

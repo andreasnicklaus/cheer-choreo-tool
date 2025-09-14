@@ -5,8 +5,11 @@ import {
   mockChoreos,
   mockClubs,
   mockFeedback,
+  mockHits,
+  mockLineups,
   mockMembers,
   mockNotifications,
+  mockPositions,
   mockSeasons,
   mockTeams,
   mockVersion,
@@ -25,6 +28,9 @@ export async function mockDefaultStartRequests(page: Page) {
     mockChoreos(page),
     mockTeams(page),
     mockMembers(page),
+    mockPositions(page),
+    mockLineups(page),
+    mockHits(page),
     mockTrackingRequests(page),
   ]);
 }
