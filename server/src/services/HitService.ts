@@ -16,7 +16,7 @@ class HitService {
    * @returns {Promise<Array<Hit>>} List of Hit objects.
    */
   async getAll(UserId: string) {
-    logger.debug(`HitService getAll ${JSON.stringify({ UserId })}`)
+    logger.debug(`HitService getAll ${JSON.stringify({ UserId })}`);
     return Hit.findAll({ where: { UserId }, include: "Members" });
   }
 
@@ -28,7 +28,7 @@ class HitService {
    * @returns {Promise<Hit|null>} The found Hit or null.
    */
   async findById(id: string, UserId: string) {
-    logger.debug(`HitService findById ${JSON.stringify({ id, UserId })}`)
+    logger.debug(`HitService findById ${JSON.stringify({ id, UserId })}`);
     return Hit.findOne({
       where: { id, UserId },
       include: { all: true, nested: true },
@@ -43,7 +43,7 @@ class HitService {
    * @returns {Promise<Array<Hit>>} List of matching Hits.
    */
   async findByName(name: string, UserId: string) {
-    logger.debug(`HitService findByName ${JSON.stringify({ name, UserId })}`)
+    logger.debug(`HitService findByName ${JSON.stringify({ name, UserId })}`);
     return Hit.findAll({
       where: { name, UserId },
       include: { all: true, nested: true },
@@ -56,24 +56,32 @@ class HitService {
    * @param {string} name - The Hit's name.
    * @param {number} count - The count value.
    * @param {string} ChoreoId - The choreography ID.
-   * @param {Array<string>} [MemberIds=[]] - Array of member IDs.
+   * @param {Array<string>} [memberIds=[]] - Array of member IDs.
    * @param {string} UserId - The user's UUID.
    * @returns {Promise<Hit>} The created Hit with members.
    */
-  async create(name: string, count: number, ChoreoId: string, MemberIds = [], UserId: string) {
+  async create(
+    name: string,
+    count: number,
+    ChoreoId: string,
+    memberIds = [],
+    UserId: string
+  ) {
     logger.debug(
       `HitService create ${JSON.stringify({
         name,
         count,
         ChoreoId,
-        MemberIds,
+        memberIds,
         UserId,
       })}`
     );
-    return Hit.create({ name, count, ChoreoId, UserId }).then(async (hit: Hit) => {
-      if (MemberIds.length > 0) await hit.setMembers(MemberIds);
-      return Hit.findByPk(hit.id, { include: "Members" });
-    });
+    return Hit.create({ name, count, ChoreoId, UserId }).then(
+      async (hit: Hit) => {
+        if (memberIds.length > 0) await hit.setMembers(memberIds);
+        return Hit.findByPk(hit.id, { include: "Members" });
+      }
+    );
   }
 
   /**
@@ -82,17 +90,23 @@ class HitService {
    * @param {string} name - The Hit's name.
    * @param {number} count - The count value.
    * @param {string} ChoreoId - The choreography ID.
-   * @param {Array<string>} [MemberIds=[]] - Array of member IDs.
+   * @param {Array<string>} [memberIds=[]] - Array of member IDs.
    * @param {string} UserId - The user's UUID.
    * @returns {Promise<Hit>} The found or created Hit.
    */
-  async findOrCreate(name: string, count: number, ChoreoId: string, MemberIds: string[] = [], UserId: string) {
+  async findOrCreate(
+    name: string,
+    count: number,
+    ChoreoId: string,
+    memberIds: string[] = [],
+    UserId: string
+  ) {
     logger.debug(
       `HitService findOrCreate ${JSON.stringify({
         name,
         count,
         ChoreoId,
-        MemberIds,
+        memberIds,
         UserId,
       })}`
     );
@@ -104,7 +118,7 @@ class HitService {
         UserId,
       },
     });
-    await hit.setMembers(MemberIds);
+    await hit.setMembers(memberIds);
     return hit;
   }
 
@@ -116,14 +130,18 @@ class HitService {
    * @param {string} UserId - The user's UUID.
    * @returns {Promise<Hit>} The updated Hit.
    */
-  async update(id: string, data: Hit & { MemberIds: string[] }, UserId: string) {
+  async update(
+    id: string,
+    data: Hit & { memberIds: string[] },
+    UserId: string
+  ) {
     logger.debug(`HitService update ${JSON.stringify({ id, data, UserId })}`);
     return Hit.findOne({ where: { id, UserId } }) // njsscan-ignore: node_nosqli_injection
       .then(async (foundHit: Hit | null) => {
         if (foundHit) {
           await foundHit.update(data);
           await foundHit.save();
-          if (data.MemberIds) await foundHit.setMembers(data.MemberIds);
+          if (data.memberIds) await foundHit.setMembers(data.memberIds);
           return Hit.findOne({
             where: { id, UserId },
             include: "Members",

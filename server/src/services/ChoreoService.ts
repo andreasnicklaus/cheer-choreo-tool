@@ -252,18 +252,18 @@ class ChoreoService {
    *
    * @async
    * @param {UUID} choreoId - The choreography's UUID.
-   * @param {UUID} memberId - The member's UUID.
+   * @param {UUID} MemberId - The member's UUID.
    * @param {UUID} UserId - The user's UUID.
    * @param {string} [color=null] - Color associated with the participant.
    * @returns {Promise<void>}
    */
-  async addParticipant(choreoId: string, memberId: string, UserId: string, color: string | null = null) {
-    logger.debug(`ChoreoService addParticipant ${JSON.stringify({ choreoId, memberId, UserId, color })}`)
+  async addParticipant(choreoId: string, MemberId: string, UserId: string, color: string | null = null) {
+    logger.debug(`ChoreoService addParticipant ${JSON.stringify({ choreoId, MemberId, UserId, color })}`)
     return this.findById(choreoId, UserId).then((choreo) =>
-      MemberService.findById(memberId, UserId).then((member) => {
+      MemberService.findById(MemberId, UserId).then((member) => {
         if (!member) {
-          logger.error(`Member with ID ${memberId} not found`);
-          throw new Error(`Member with ID ${memberId} not found`);
+          logger.error(`Member with ID ${MemberId} not found`);
+          throw new Error(`Member with ID ${MemberId} not found`);
         }
         return choreo.addParticipant(member, {
           through: {

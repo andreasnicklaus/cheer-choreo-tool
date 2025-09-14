@@ -210,7 +210,7 @@ describe("ChoreoService", () => {
       expect(ax.post).toHaveBeenCalledWith(
         "/choreo/test-choreoId/participants",
         {
-          memberId: "test-participantId",
+          MemberId: "test-participantId",
           color: "test-color",
         }
       );
@@ -384,13 +384,13 @@ describe("ChoreoService", () => {
               id: "1",
               startCount: 0,
               endCount: 5,
-              Positions: [{ memberId: "1", x: 0, y: 0 }],
+              Positions: [{ MemberId: "1", x: 0, y: 0 }],
             },
             {
               id: "2",
               startCount: 5,
               endCount: 10,
-              Positions: [{ memberId: "1", x: 5, y: 5 }],
+              Positions: [{ MemberId: "1", x: 5, y: 5 }],
             },
           ],
         },
@@ -398,7 +398,7 @@ describe("ChoreoService", () => {
         []
       );
       expect(result).toEqual([
-        { Member: undefined, memberId: "1", x: 0, y: 0 },
+        { Member: undefined, MemberId: "1", x: 0, y: 0 },
       ]);
     });
 

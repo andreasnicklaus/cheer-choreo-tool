@@ -11,13 +11,13 @@ class PositionService {
    * @param {string} lineupId - ID of the lineup
    * @param {number} x - X coordinate of the position
    * @param {number} y - Y coordinate of the position
-   * @param {string} memberId - ID of the member for this position
+   * @param {string} MemberId - ID of the member for this position
    * @returns {Promise<Object>} Created position
    */
-  create(lineupId, x, y, memberId) {
-    debug("Creating new position", { lineupId, x, y, memberId });
+  create(lineupId, x, y, MemberId) {
+    debug("Creating new position", { lineupId, x, y, MemberId });
     return ax
-      .post(`/lineup/${lineupId}/position`, { x, y, memberId })
+      .post(`/lineup/${lineupId}/position`, { x, y, MemberId })
       .then((res) => {
         debug("Successfully created position");
         return res.data;

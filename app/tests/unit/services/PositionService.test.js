@@ -29,7 +29,7 @@ describe("PositionService", () => {
       );
 
       expect(ax.post).toHaveBeenCalledWith("/lineup/test-lineupId/position", {
-        memberId: "test-memberId",
+        MemberId: "test-memberId",
         x: 0,
         y: 1,
       });
@@ -45,7 +45,7 @@ describe("PositionService", () => {
       ).rejects.toThrow("Network Error");
 
       expect(ax.post).toHaveBeenCalledWith("/lineup/test-lineupId/position", {
-        memberId: "test-memberId",
+        MemberId: "test-memberId",
         x: 0,
         y: 1,
       });

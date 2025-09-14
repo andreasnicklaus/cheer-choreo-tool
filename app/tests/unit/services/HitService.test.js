@@ -28,7 +28,7 @@ describe("HitService", () => {
         name: "Hit1",
         count: 10,
         choreoId: "choreo1",
-        memberIds: ["member1"],
+        MemberIds: ["member1"],
       });
       expect(result).toEqual(mockResponse.data);
     });
@@ -45,7 +45,7 @@ describe("HitService", () => {
         name: "Hit1",
         count: 10,
         choreoId: "choreo1",
-        memberIds: ["member1"],
+        MemberIds: ["member1"],
       });
     });
   });

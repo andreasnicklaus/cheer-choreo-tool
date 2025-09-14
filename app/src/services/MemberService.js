@@ -31,13 +31,13 @@ class MemberService {
 
   /**
    * Update a member's data.
-   * @param {string} memberId - ID of the member to update
+   * @param {string} MemberId - ID of the member to update
    * @param {Object} data - Data to update the member with
    * @returns {Promise<Object>} Updated member
    */
-  update(memberId, data) {
-    debug("Updating member", { memberId, data });
-    return ax.put(`/member/${memberId}`, data).then((res) => {
+  update(MemberId, data) {
+    debug("Updating member", { MemberId, data });
+    return ax.put(`/member/${MemberId}`, data).then((res) => {
       debug("Successfully updated member");
       return res.data;
     });
@@ -45,12 +45,12 @@ class MemberService {
 
   /**
    * Remove a member by their ID.
-   * @param {string} memberId - ID of the member to remove
+   * @param {string} MemberId - ID of the member to remove
    * @returns {Promise<Object>} Response data
    */
-  remove(memberId) {
-    debug("Deleting member", memberId);
-    return ax.delete(`/member/${memberId}`).then((res) => {
+  remove(MemberId) {
+    debug("Deleting member", MemberId);
+    return ax.delete(`/member/${MemberId}`).then((res) => {
       debug("Successfully removed member");
       return res.data;
     });

@@ -30,7 +30,7 @@ describe("SeasonTeamService", () => {
       expect(ax.post).toHaveBeenCalledWith("/seasonTeam", {
         teamId: "test-teamId",
         seasonId: "test-seasonId",
-        memberIds: ["test-memberId"],
+        MemberIds: ["test-memberId"],
       });
       expect(result).toEqual(mockResponse.data);
     });
@@ -48,7 +48,7 @@ describe("SeasonTeamService", () => {
       expect(ax.post).toHaveBeenCalledWith("/seasonTeam", {
         teamId: "test-teamId",
         seasonId: "test-seasonId",
-        memberIds: ["test-memberId"],
+        MemberIds: ["test-memberId"],
       });
     });
   });
@@ -64,7 +64,7 @@ describe("SeasonTeamService", () => {
       );
 
       expect(ax.put).toHaveBeenCalledWith("/seasonTeam/test-seasonTeamId", {
-        memberIds: ["test-memberId1", "test-memberId2"],
+        MemberIds: ["test-memberId1", "test-memberId2"],
       });
       expect(result).toEqual(mockResponse.data);
     });
@@ -81,7 +81,7 @@ describe("SeasonTeamService", () => {
       ).rejects.toThrow("Network Error");
 
       expect(ax.put).toHaveBeenCalledWith("/seasonTeam/test-seasonTeamId", {
-        memberIds: ["test-memberId1", "test-memberId2"],
+        MemberIds: ["test-memberId1", "test-memberId2"],
       });
     });
   });

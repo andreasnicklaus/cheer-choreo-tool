@@ -346,10 +346,10 @@ export default {
     requestMemberRemoval(id) {
       this.$refs.deleteMemberModal.open(id);
     },
-    onMemberDeletion(memberId) {
+    onMemberDeletion(MemberId) {
       this.currentTeam.SeasonTeams[this.seasonTabIndex].Members =
         this.currentTeam.SeasonTeams[this.seasonTabIndex].Members.filter(
-          (m) => m.id != memberId
+          (m) => m.id != MemberId
         );
     },
     editMember(id) {

@@ -35,15 +35,19 @@ const router = Router();
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  */
-router.get("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  if (req.query.lineupId)
-    PositionService.findByLineupId(req.query.lineupId as string, req.UserId)
-      .then((foundPositions: Position[]) => {
-        res.send(foundPositions);
-        return next();
-      })
-      .catch((e: Error) => next(e));
-});
+router.get(
+  "/",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    if (req.query.lineupId)
+      PositionService.findByLineupId(req.query.lineupId as string, req.UserId)
+        .then((foundPositions: Position[]) => {
+          res.send(foundPositions);
+          return next();
+        })
+        .catch((e: Error) => next(e));
+  }
+);
 
 /**
  * @openapi
@@ -63,14 +67,14 @@ router.get("/", AuthService.authenticateUser(), (req: Request, res: Response, ne
  *             required:
  *               - x
  *               - y
- *               - memberId
+ *               - MemberId
  *               - lineupId
  *             properties:
  *               x:
  *                 type: number
  *               y:
  *                 type: number
- *               memberId:
+ *               MemberId:
  *                 type: string
  *               lineupId:
  *                 type: string
@@ -84,25 +88,31 @@ router.get("/", AuthService.authenticateUser(), (req: Request, res: Response, ne
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  */
-router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  const { x, y, memberId, lineupId } = req.body;
+router.post(
+  "/",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    const { x, y, MemberId, lineupId } = req.body;
 
-  PositionService.findOrCreate(x, y, lineupId, memberId, req.UserId)
-    .then(async (position: Position) => {
-      return Promise.all([
-        position.setMember(memberId),
-        LineupService.findById(lineupId, req.UserId).then((lineup: Lineup | null) =>
-          lineup?.addPosition(position)
-        ),
-      ]).then(() =>
-        PositionService.findById(position.id, req.UserId).then((p: Position | null) => {
-          res.send(p);
-          next();
-        })
-      );
-    })
-    .catch((e: Error) => next(e));
-});
+    PositionService.findOrCreate(x, y, lineupId, MemberId, req.UserId)
+      .then(async (position: Position) => {
+        return Promise.all([
+          position.setMember(MemberId),
+          LineupService.findById(lineupId, req.UserId).then(
+            (lineup: Lineup | null) => lineup?.addPosition(position)
+          ),
+        ]).then(() =>
+          PositionService.findById(position.id, req.UserId).then(
+            (p: Position | null) => {
+              res.send(p);
+              next();
+            }
+          )
+        );
+      })
+      .catch((e: Error) => next(e));
+  }
+);
 
 /**
  * @openapi
@@ -137,14 +147,18 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *       404:
  *         description: Position not found
  */
-router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  PositionService.update(req.params.id, null, req.body, req.UserId)
-    .then((position: Position) => {
-      res.send(position);
-      next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.put(
+  "/:id",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    PositionService.update(req.params.id, null, req.body, req.UserId)
+      .then((position: Position) => {
+        res.send(position);
+        next();
+      })
+      .catch((e: Error) => next(e));
+  }
+);
 
 /**
  * @openapi
@@ -169,13 +183,17 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *       404:
  *         description: Position not found
  */
-router.delete("/:id", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  PositionService.remove(req.params.id, req.UserId)
-    .then(() => {
-      res.send();
-      next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.delete(
+  "/:id",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    PositionService.remove(req.params.id, req.UserId)
+      .then(() => {
+        res.send();
+        next();
+      })
+      .catch((e: Error) => next(e));
+  }
+);
 
 export { router as positionRouter };

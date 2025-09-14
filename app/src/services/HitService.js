@@ -11,12 +11,12 @@ class HitService {
    * @param {string} name - Name of the hit
    * @param {number} count - Count for the hit
    * @param {string} choreoId - Choreography ID
-   * @param {Array} memberIds - Array of member IDs
+   * @param {Array} MemberIds - Array of member IDs
    * @returns {Promise<Object>} Created hit
    */
-  create(name, count, choreoId, memberIds = []) {
-    debug("Creating a new hit", { name, count, choreoId, memberIds });
-    return ax.post("/hit", { name, count, choreoId, memberIds }).then((res) => {
+  create(name, count, choreoId, MemberIds = []) {
+    debug("Creating a new hit", { name, count, choreoId, MemberIds });
+    return ax.post("/hit", { name, count, choreoId, MemberIds }).then((res) => {
       debug("Successfully created new hit");
       return res.data;
     });

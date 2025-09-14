@@ -225,9 +225,9 @@ router.delete("/:id", AuthService.authenticateUser(), (req: Request, res: Respon
  *           schema:
  *             type: object
  *             required:
- *               - memberId
+ *               - MemberId
  *             properties:
- *               memberId:
+ *               MemberId:
  *                 type: string
  *               color:
  *                 type: string
@@ -241,10 +241,10 @@ router.post(
   "/:id/participants",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    const { memberId, color } = req.body;
+    const { MemberId, color } = req.body;
     return ChoreoService.addParticipant(
       req.params.id,
-      memberId,
+      MemberId,
       req.UserId,
       color
     )

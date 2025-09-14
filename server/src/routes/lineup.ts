@@ -44,15 +44,19 @@ const router = Router();
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  */
-router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  const { startCount, endCount, choreoId } = req.body;
-  LineupService.create(startCount, endCount, choreoId, req.UserId)
-    .then((lineup: Lineup) => {
-      res.send(lineup);
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.post(
+  "/",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    const { startCount, endCount, choreoId } = req.body;
+    LineupService.create(startCount, endCount, choreoId, req.UserId)
+      .then((lineup: Lineup) => {
+        res.send(lineup);
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  }
+);
 
 /**
  * @openapi
@@ -87,14 +91,18 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *       404:
  *         description: Lineup not found
  */
-router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  LineupService.update(req.params.id, req.body, req.UserId)
-    .then((lineup: Lineup | null) => {
-      res.send(lineup);
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.put(
+  "/:id",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    LineupService.update(req.params.id, req.body, req.UserId)
+      .then((lineup: Lineup | null) => {
+        res.send(lineup);
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  }
+);
 
 /**
  * @openapi
@@ -120,13 +128,13 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *             required:
  *               - x
  *               - y
- *               - memberId
+ *               - MemberId
  *             properties:
  *               x:
  *                 type: number
  *               y:
  *                 type: number
- *               memberId:
+ *               MemberId:
  *                 type: string
  *     responses:
  *       200:
@@ -142,19 +150,21 @@ router.post(
   "/:id/position",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    const { x, y, memberId } = req.body;
+    const { x, y, MemberId } = req.body;
     PositionService.create(x, y, req.UserId)
       .then(async (position: Position) => {
         return Promise.all([
-          position.setMember(memberId),
-          LineupService.findById(req.params.id, req.UserId).then((lineup: Lineup | null) =>
-            lineup?.addPosition(position)
+          position.setMember(MemberId),
+          LineupService.findById(req.params.id, req.UserId).then(
+            (lineup: Lineup | null) => lineup?.addPosition(position)
           ),
         ]).then(() =>
-          PositionService.findById(position.id, req.UserId).then((p: Position | null) => {
-            res.send(p);
-            next();
-          })
+          PositionService.findById(position.id, req.UserId).then(
+            (p: Position | null) => {
+              res.send(p);
+              next();
+            }
+          )
         );
       })
       .catch((e: Error) => next(e));
@@ -240,13 +250,17 @@ router.put(
  *       404:
  *         description: Lineup not found
  */
-router.delete("/:id", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  LineupService.remove(req.params.id, req.UserId)
-    .then(() => {
-      res.send();
-      next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.delete(
+  "/:id",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    LineupService.remove(req.params.id, req.UserId)
+      .then(() => {
+        res.send();
+        next();
+      })
+      .catch((e: Error) => next(e));
+  }
+);
 
 export { router as lineupRouter };
