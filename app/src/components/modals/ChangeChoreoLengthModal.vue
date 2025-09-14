@@ -15,7 +15,7 @@
   >
     <b-form>
       <b-form-group
-        description="Achter"
+        :description="$t('achter')"
         :state="achterIsValid"
         :invalid-feedback="lengthStateFeedback"
       >

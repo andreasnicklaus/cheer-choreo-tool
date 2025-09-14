@@ -177,7 +177,7 @@
                 <b-row>
                   <b-col>
                     <b-form-group
-                      description="Achter"
+                      :description="$t('achter')"
                       :state="editHitAchterIsValid"
                       :invalid-feedback="editHitAchterStateFeedback"
                     >
@@ -191,7 +191,7 @@
                   </b-col>
                   <b-col>
                     <b-form-group
-                      description="Count"
+                      :description="$tc('count', 1)"
                       :state="editHitCountIsValid"
                       :invalid-feedback="editHitCountStateFeedback"
                     >
@@ -437,7 +437,7 @@
                 <b-row>
                   <b-col>
                     <b-form-group
-                      description="Achter"
+                      :description="$t('achter')"
                       :state="editLineupStartAchterIsValid"
                       :invalid-feedback="editLineupStartAchterStateFeedback"
                     >
@@ -451,7 +451,7 @@
                   </b-col>
                   <b-col>
                     <b-form-group
-                      description="Count"
+                      :description="$tc('count', 1)"
                       :state="editLineupStartCountIsValid"
                       :invalid-feedback="editLineupStartCountStateFeedback"
                     >
@@ -476,7 +476,7 @@
                 <b-row>
                   <b-col>
                     <b-form-group
-                      description="Achter"
+                      :description="$t('achter')"
                       :state="editLineupEndAchterIsValid"
                       :invalid-feedback="editLineupEndAchterStateFeedback"
                     >
@@ -490,7 +490,7 @@
                   </b-col>
                   <b-col>
                     <b-form-group
-                      description="Count"
+                      :description="$tc('count', 1)"
                       :state="editLineupEndCountIsValid"
                       :invalid-feedback="editLineupEndCountStateFeedback"
                     >

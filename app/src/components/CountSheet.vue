@@ -15,7 +15,17 @@
     <b-thead head-variant="light">
       <b-tr>
         <b-th
-          v-for="field in ['Achter', '1', '2', '3', '4', '5', '6', '7', '8']"
+          v-for="field in [
+            $t('achter'),
+            '1',
+            '2',
+            '3',
+            '4',
+            '5',
+            '6',
+            '7',
+            '8',
+          ]"
           :key="field"
         >
           {{ field }}
@@ -25,7 +35,17 @@
     <b-tbody>
       <b-tr v-for="(acht, i) in achter" :key="i" :style="{ height: '1px' }">
         <b-td
-          v-for="label in ['achter', '1', '2', '3', '4', '5', '6', '7', '8']"
+          v-for="label in [
+            $t('achter'),
+            '1',
+            '2',
+            '3',
+            '4',
+            '5',
+            '6',
+            '7',
+            '8',
+          ]"
           :key="label"
           :style="{
             height: 'inherit',
@@ -33,7 +53,7 @@
             // border: 'none',
           }"
         >
-          <span v-if="label == 'achter'">
+          <span v-if="label == $t('achter')">
             {{ acht[label] + 1 }}
           </span>
           <b-button
@@ -141,7 +161,7 @@ export default {
       else {
         const achterLength = Math.ceil(this.choreo.counts / 8);
         const achter = new Array(achterLength).fill(null).map((_, i) => ({
-          achter: Math.floor(this.startCount / 8) + i,
+          [this.$t("achter")]: Math.floor(this.startCount / 8) + i,
           1: this.findActionsForCount(this.startCount + i * 8 + 0),
           2: this.findActionsForCount(this.startCount + i * 8 + 1),
           3: this.findActionsForCount(this.startCount + i * 8 + 2),
