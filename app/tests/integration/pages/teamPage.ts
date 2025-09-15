@@ -117,7 +117,6 @@ export default class TeamPage extends TestPage {
       exact: true,
     });
     await expect(importButton).toBeVisible();
-    // FIXME: The import button should be disabled until a member is selected
     await expect(importButton).toBeDisabled();
 
     const teamSelect = this.page

@@ -1,4 +1,4 @@
-import { type Page } from "@playwright/test";
+import { expect, Locator, type Page } from "@playwright/test";
 
 export default abstract class TestPage {
   page: Page;
@@ -17,5 +17,11 @@ export default abstract class TestPage {
         "No route was passed. Set this.route to ensure routing works"
       );
     return this.page.goto(this.route);
+  }
+
+  protected async iClickButton(button: Locator) {
+    await expect(button).toBeVisible();
+    await expect(button).toBeEnabled();
+    await button.click();
   }
 }

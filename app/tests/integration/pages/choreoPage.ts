@@ -539,8 +539,6 @@ export default class ChoreoPage extends TestPage {
     await expect(saveButton).toBeEnabled();
     await saveButton.click();
 
-    // TODO: find a way to verify the lineup change
-
     const switchToCountButton = this.page.locator(
       `tr:nth-child(${newStartAchter}) > td:nth-child(${
         newStartCount + 1
