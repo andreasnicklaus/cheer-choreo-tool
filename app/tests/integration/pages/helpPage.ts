@@ -18,12 +18,12 @@ export default class HelpPage extends TestPage {
     const question = this.page.getByRole("button", {
       name: "Who is the choreo planner for?",
     });
-    await expect(question).toBeVisible();
-    await question.click();
+    await this.iClickButton(question);
+
     await expect(
       this.page.getByText("The choreo planner is for")
     ).toBeVisible();
-    await question.click();
+    await this.iClickButton(question);
     return expect(
       this.page.getByText("The choreo planner is for")
     ).not.toBeVisible();
@@ -31,11 +31,9 @@ export default class HelpPage extends TestPage {
 
   async iTypeInSearchInput() {
     const searchInput = this.page.getByRole("textbox", { name: "Search" });
-    await expect(searchInput).toBeVisible();
-
     const text = "report problems";
-    await searchInput.fill(text);
-    await expect(searchInput).toHaveValue(text);
+    await this.iFillInput(searchInput, text);
+
     const result = this.page.getByRole("button", {
       name: "How can I report problems?",
     });

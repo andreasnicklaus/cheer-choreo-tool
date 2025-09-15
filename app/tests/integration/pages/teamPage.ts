@@ -23,7 +23,9 @@ export default class TeamPage extends TestPage {
     isMobile: Boolean = false
   ) {
     if (listView) {
-      await this.page.getByRole("button", { name: "list ul" }).click();
+      const listButton = this.page.getByRole("button", { name: "list ul" });
+      await this.iClickButton(listButton);
+
       return Promise.all(
         defaultMembers.map((member) =>
           Promise.all([
@@ -71,7 +73,8 @@ export default class TeamPage extends TestPage {
       abbreviation = "AA",
       nickname = "Newbie";
 
-    await this.page.getByRole("button", { name: "plus Add" }).click();
+    const addButton = this.page.getByRole("button", { name: "plus Add" });
+    await this.iClickButton(addButton);
 
     const saveButton = this.page.getByRole("button", { name: "Save" });
     await expect(saveButton).toBeVisible();
@@ -81,23 +84,17 @@ export default class TeamPage extends TestPage {
       name: "Name",
       exact: true,
     });
-    await expect(nameInput).toBeVisible();
-    await nameInput.fill(name);
-    await expect(nameInput).toHaveValue(name);
+    await this.iFillInput(nameInput, name);
 
     await expect(saveButton).toBeEnabled();
 
     const abbreviationInput = this.page.getByRole("textbox", { name: "NM" });
-    await expect(abbreviationInput).toBeVisible();
-    await abbreviationInput.fill(abbreviation);
-    await expect(abbreviationInput).toHaveValue(abbreviation);
+    await this.iFillInput(abbreviationInput, abbreviation);
 
     const nicknameInput = this.page.getByRole("textbox", { name: "Nickname" });
-    await expect(nicknameInput).toBeVisible();
-    await nicknameInput.fill(nickname);
-    await expect(nicknameInput).toHaveValue(nickname);
+    await this.iFillInput(nicknameInput, nickname);
 
-    await saveButton.click();
+    await this.iClickButton(saveButton);
 
     return expect(
       this.page.getByRole("cell", {
@@ -108,9 +105,10 @@ export default class TeamPage extends TestPage {
   }
 
   async iImportMember() {
-    await this.page
-      .getByRole("button", { name: "box arrow in right Import" })
-      .click();
+    const importMemberButton = this.page.getByRole("button", {
+      name: "box arrow in right Import",
+    });
+    await this.iClickButton(importMemberButton);
 
     const importButton = this.page.getByRole("button", {
       name: "Import",
@@ -141,52 +139,37 @@ export default class TeamPage extends TestPage {
     await member1Checkbox.check();
     await expect(member1Checkbox).toBeChecked();
 
-    await expect(importButton).toBeEnabled();
-    return importButton.click();
+    return this.iClickButton(importButton);
   }
 
   async iEditMember() {
     const editButton = this.page.getByRole("button", { name: "pen" }).nth(1);
-    await expect(editButton).toBeVisible();
-    await expect(editButton).toBeEnabled();
-    await editButton.click();
+    await this.iClickButton(editButton);
 
     const nameInput = this.page.getByRole("textbox", {
       name: "Name",
       exact: true,
     });
-    await expect(nameInput).toBeVisible();
-    await nameInput.fill("Edited Member");
-    await expect(nameInput).toHaveValue("Edited Member");
+    await this.iFillInput(nameInput, "Edited Member");
 
     const abbreviationInput = this.page.getByRole("textbox", { name: "EM" });
-    await expect(abbreviationInput).toBeVisible();
-    await abbreviationInput.fill("EM");
-    await expect(abbreviationInput).toHaveValue("EM");
+    await this.iFillInput(abbreviationInput, "EM");
 
     const nicknameInput = this.page.getByRole("textbox", { name: "Nickname" });
-    await expect(nicknameInput).toBeVisible();
-    await nicknameInput.fill("Edited");
-    await expect(nicknameInput).toHaveValue("Edited");
+    await this.iFillInput(nicknameInput, "Edited");
 
     const saveButton = this.page.getByRole("button", { name: "Save" });
-    await expect(saveButton).toBeVisible();
-    await expect(saveButton).toBeEnabled();
-    return saveButton.click();
+    await this.iClickButton(saveButton);
   }
 
   async iDeleteMember() {
     const deleteButton = this.page
       .getByRole("button", { name: "trash" })
       .first();
-    await expect(deleteButton).toBeVisible();
-    await expect(deleteButton).toBeEnabled();
-    await deleteButton.click();
+    await this.iClickButton(deleteButton);
 
     const confirmButton = this.page.getByRole("button", { name: "Delete" });
-    await expect(confirmButton).toBeVisible();
-    await expect(confirmButton).toBeEnabled();
-    await confirmButton.click();
+    await this.iClickButton(confirmButton);
 
     return expect(
       this.page.getByRole("cell", { name: "Test Member1" })
@@ -198,9 +181,7 @@ export default class TeamPage extends TestPage {
       name: `${defaultSeasons[1].name} ( person ${defaultSeasonTeams[1].Members.length})`,
     });
     await expect(seasonTab).not.toHaveAttribute("aria-selected", "true");
-    await expect(seasonTab).toBeVisible();
-    await expect(seasonTab).toBeEnabled();
-    await seasonTab.click();
+    await this.iClickButton(seasonTab);
     return expect(seasonTab).toHaveAttribute("aria-selected", "true");
   }
 
@@ -214,16 +195,12 @@ export default class TeamPage extends TestPage {
     const teamSelect = this.page.getByRole("button", {
       name: defaultTeams[0].name,
     });
-    await expect(teamSelect).toBeVisible();
-    await expect(teamSelect).toBeEnabled();
-    await teamSelect.click();
+    await this.iClickButton(teamSelect);
 
     const teamOption = this.page.getByRole("menuitem", {
       name: defaultTeams[1].name,
     });
-    await expect(teamOption).toBeVisible();
-    await expect(teamOption).toBeEnabled();
-    await teamOption.click();
+    await this.iClickButton(teamOption);
 
     return expect(
       this.page
@@ -236,45 +213,30 @@ export default class TeamPage extends TestPage {
     const editButton = this.page
       .getByRole("heading", { name: `Team ${defaultTeams[0].name} pen` })
       .getByRole("button");
-    await expect(editButton).toBeVisible();
-    await expect(editButton).toBeEnabled();
-    await editButton.click();
+    await this.iClickButton(editButton);
 
     const newTeamName = "Edited Team Name";
 
-    // const nameInput = this.page.getByRole("textbox", {
-    //   name: defaultTeams[0].name,
-    // });
     const nameInput = this.page.getByRole("textbox");
-    await expect(nameInput).toBeVisible();
-    await nameInput.fill(newTeamName);
-    await expect(nameInput).toHaveValue(newTeamName);
+    await this.iFillInput(nameInput, newTeamName);
 
     const saveButton = this.page.getByRole("button", { name: "check" });
-    await expect(saveButton).toBeVisible();
-    await expect(saveButton).toBeEnabled();
-    return saveButton.click();
+    await this.iClickButton(saveButton);
   }
 
   async iDeleteTeam() {
     const openMenuButton = this.page.getByRole("button", {
       name: "three dots vertical",
     });
-    await expect(openMenuButton).toBeVisible();
-    await expect(openMenuButton).toBeEnabled();
-    await openMenuButton.click();
+    await this.iClickButton(openMenuButton);
 
     const deleteButton = this.page.getByRole("menuitem", {
       name: "trash Delete team",
     });
-    await expect(deleteButton).toBeVisible();
-    await expect(deleteButton).toBeEnabled();
-    await deleteButton.click();
+    await this.iClickButton(deleteButton);
 
     const confirmButton = this.page.getByRole("button", { name: "Delete" });
-    await expect(confirmButton).toBeVisible();
-    await expect(confirmButton).toBeEnabled();
-    await confirmButton.click();
+    await this.iClickButton(confirmButton);
 
     return expect(
       this.page
@@ -287,21 +249,15 @@ export default class TeamPage extends TestPage {
     const openMenuButton = this.page.getByRole("button", {
       name: "three dots vertical",
     });
-    await expect(openMenuButton).toBeVisible();
-    await expect(openMenuButton).toBeEnabled();
-    await openMenuButton.click();
+    await this.iClickButton(openMenuButton);
 
     const deleteButton = this.page.getByRole("menuitem", {
       name: "trash Delete season",
     });
-    await expect(deleteButton).toBeVisible();
-    await expect(deleteButton).toBeEnabled();
-    await deleteButton.click();
+    await this.iClickButton(deleteButton);
 
     const confirmButton = this.page.getByRole("button", { name: "Delete" });
-    await expect(confirmButton).toBeVisible();
-    await expect(confirmButton).toBeEnabled();
-    return confirmButton.click();
+    await this.iClickButton(confirmButton);
     // check to ensure the season is deleted is not possible as the app simply reloads
   }
 }

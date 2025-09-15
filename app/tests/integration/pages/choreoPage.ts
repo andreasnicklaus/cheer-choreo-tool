@@ -31,7 +31,8 @@ export default class ChoreoPage extends TestPage {
   }
 
   iClickHelpButton() {
-    return this.page.getByRole("button", { name: "question" }).click();
+    const helpButton = this.page.getByRole("button", { name: "question" });
+    return this.iClickButton(helpButton);
   }
 
   iSeeChoreoName(name: string) {
@@ -44,22 +45,14 @@ export default class ChoreoPage extends TestPage {
 
   async iEditChoreoName() {
     const editButton = this.page.getByRole("button", { name: "pen" });
-    await expect(editButton).toBeVisible();
-    await expect(editButton).toBeEnabled();
-    await editButton.click();
+    await this.iClickButton(editButton);
 
     const input = this.page.getByRole("textbox");
-    await expect(input).toBeVisible();
-    await expect(input).toBeEnabled();
-
     const newChoreoName = "Edited Choreo Name";
-    await input.fill(newChoreoName);
-    await expect(input).toHaveValue(newChoreoName);
+    await this.iFillInput(input, newChoreoName);
 
     const saveButton = this.page.getByRole("button", { name: "check" });
-    await expect(saveButton).toBeVisible();
-    await expect(saveButton).toBeEnabled();
-    await saveButton.click();
+    await this.iClickButton(saveButton);
 
     await expect(this.page.getByText(newChoreoName)).toBeVisible();
   }
@@ -68,9 +61,7 @@ export default class ChoreoPage extends TestPage {
     const menuButton = this.page.getByRole("button", {
       name: "three dots vertical",
     });
-    await expect(menuButton).toBeVisible();
-    await expect(menuButton).toBeEnabled();
-    await menuButton.click();
+    await this.iClickButton(menuButton);
   }
 
   async iEditChoreoLength() {
@@ -79,37 +70,26 @@ export default class ChoreoPage extends TestPage {
     const editLengthButton = this.page.getByRole("menuitem", {
       name: "hash Adjust length",
     });
-    await expect(editLengthButton).toBeVisible();
-    await expect(editLengthButton).toBeEnabled();
-    await editLengthButton.click();
+    await this.iClickButton(editLengthButton);
 
     const achterInput = this.page
       .locator("div")
       .filter({ hasText: /^Eight$/ })
       .getByRole("spinbutton");
-    await expect(achterInput).toBeVisible();
-    await expect(achterInput).toBeEnabled();
+
+    const newAchter = 1;
+    await this.iFillInput(achterInput, newAchter.toString());
 
     const countInput = this.page
       .locator("div")
       .filter({ hasText: /^Counts/ })
       .getByRole("spinbutton");
-    await expect(countInput).toBeVisible();
-    await expect(countInput).toBeEnabled();
-
-    const newAchter = 1;
-
-    await achterInput.fill(newAchter.toString());
-    await expect(achterInput).toHaveValue(newAchter.toString());
 
     const newCount = 1;
-    await countInput.fill(newCount.toString());
-    await expect(countInput).toHaveValue(newCount.toString());
+    await this.iFillInput(countInput, newCount.toString());
 
     const saveButton = this.page.getByRole("button", { name: "Change length" });
-    await expect(saveButton).toBeVisible();
-    await expect(saveButton).toBeEnabled();
-    await saveButton.click();
+    await this.iClickButton(saveButton);
 
     const count8 = this.page.locator(
       "tr:nth-child(2) > td:nth-child(3) > .btn"
@@ -121,16 +101,12 @@ export default class ChoreoPage extends TestPage {
     const menuButton = this.page.getByRole("button", {
       name: "three dots vertical",
     });
-    await expect(menuButton).toBeVisible();
-    await expect(menuButton).toBeEnabled();
-    await menuButton.click();
+    await this.iClickButton(menuButton);
 
     const editMatTypeButton = this.page.getByRole("menuitem", {
       name: "layout three columns Change",
     });
-    await expect(editMatTypeButton).toBeVisible();
-    await expect(editMatTypeButton).toBeEnabled();
-    await editMatTypeButton.click();
+    await this.iClickButton(editMatTypeButton);
 
     const matTypeSelect = this.page.getByRole("combobox");
     await expect(matTypeSelect).toBeVisible();
@@ -143,9 +119,7 @@ export default class ChoreoPage extends TestPage {
     const saveButton = this.page.getByRole("button", {
       name: "Change the layout",
     });
-    await expect(saveButton).toBeVisible();
-    await expect(saveButton).toBeEnabled();
-    return saveButton.click();
+    await this.iClickButton(saveButton);
     // TODO: find a way to verify the mat type change
   }
 
@@ -181,9 +155,7 @@ export default class ChoreoPage extends TestPage {
       name: defaultHits[0].name,
       exact: true,
     });
-    await expect(firstHitButton).toBeVisible();
-    await expect(firstHitButton).toBeEnabled();
-    await firstHitButton.click();
+    await this.iClickButton(firstHitButton);
 
     await expect(firstHitOverviewHeading).toBeVisible();
 
@@ -194,9 +166,7 @@ export default class ChoreoPage extends TestPage {
       name: defaultHits[1].name,
       exact: true,
     });
-    await expect(secondHitButton).toBeVisible();
-    await expect(secondHitButton).toBeEnabled();
-    await secondHitButton.click();
+    await this.iClickButton(secondHitButton);
 
     await expect(this.page.getByText("All", { exact: true })).not.toBeVisible();
     await expect(
@@ -345,14 +315,10 @@ export default class ChoreoPage extends TestPage {
       name: defaultHits[1].name,
       exact: true,
     });
-    await expect(secondHitButton).toBeVisible();
-    await expect(secondHitButton).toBeEnabled();
-    await secondHitButton.click();
+    await this.iClickButton(secondHitButton);
 
     const moveUpButton = this.page.getByTitle("Move to the previous count");
-    await expect(moveUpButton).toBeVisible();
-    await expect(moveUpButton).toBeEnabled();
-    await moveUpButton.click();
+    await this.iClickButton(moveUpButton);
 
     // hit is moved to count 8 of the first eight
     await expect(
@@ -373,14 +339,10 @@ export default class ChoreoPage extends TestPage {
       name: defaultHits[1].name,
       exact: true,
     });
-    await expect(secondHitButton).toBeVisible();
-    await expect(secondHitButton).toBeEnabled();
-    await secondHitButton.click();
+    await this.iClickButton(secondHitButton);
 
     const moveDownButton = this.page.getByTitle("Move to the next count");
-    await expect(moveDownButton).toBeVisible();
-    await expect(moveDownButton).toBeEnabled();
-    await moveDownButton.click();
+    await this.iClickButton(moveDownButton);
 
     // hit is moved to count 2 of the second eight
     await expect(
@@ -401,14 +363,10 @@ export default class ChoreoPage extends TestPage {
       name: defaultHits[0].name,
       exact: true,
     });
-    await expect(firstHitButton).toBeVisible();
-    await expect(firstHitButton).toBeEnabled();
-    await firstHitButton.click();
+    await this.iClickButton(firstHitButton);
 
     const editButton = this.page.getByTitle("edit");
-    await expect(editButton).toBeVisible();
-    await expect(editButton).toBeEnabled();
-    await editButton.click();
+    await this.iClickButton(editButton);
 
     const newEight = 2;
     const newCount = 3;
@@ -417,30 +375,19 @@ export default class ChoreoPage extends TestPage {
     const nameInput = this.page.getByRole("textbox", {
       name: "Name of the hits",
     });
-    await expect(nameInput).toBeVisible();
-    await expect(nameInput).toBeEnabled();
-    await nameInput.fill(newName);
-    await expect(nameInput).toHaveValue(newName);
+    await this.iFillInput(nameInput, newName);
 
     const eightInput = this.page.locator("input").nth(3);
-    await expect(eightInput).toBeVisible();
-    await expect(eightInput).toBeEnabled();
-    await eightInput.fill(newEight.toString());
-    await expect(eightInput).toHaveValue(newEight.toString());
+    await this.iFillInput(eightInput, newEight.toString());
 
     const countInput = this.page.locator("input").nth(4);
-    await expect(countInput).toBeVisible();
-    await expect(countInput).toBeEnabled();
-    await countInput.fill(newCount.toString());
-    await expect(countInput).toHaveValue(newCount.toString());
+    await this.iFillInput(countInput, newCount.toString());
 
     const saveButton = this.page.getByRole("button", {
       name: "check",
       exact: true,
     });
-    await expect(saveButton).toBeVisible();
-    await expect(saveButton).toBeEnabled();
-    await saveButton.click();
+    await this.iClickButton(saveButton);
 
     await expect(
       this.page.locator("tr:nth-child(2) > td:nth-child(4) > .btn")
@@ -455,21 +402,15 @@ export default class ChoreoPage extends TestPage {
       name: defaultHits[0].name,
       exact: true,
     });
-    await expect(firstHitButton).toBeVisible();
-    await expect(firstHitButton).toBeEnabled();
-    await firstHitButton.click();
+    await this.iClickButton(firstHitButton);
 
     const deleteButton = this.page.getByRole("button", { name: "trash" });
-    await expect(deleteButton).toBeVisible();
-    await expect(deleteButton).toBeEnabled();
-    await deleteButton.click();
+    await this.iClickButton(deleteButton);
 
     const confirmDeleteButton = this.page.getByRole("button", {
       name: "Delete",
     });
-    await expect(confirmDeleteButton).toBeVisible();
-    await expect(confirmDeleteButton).toBeEnabled();
-    await confirmDeleteButton.click();
+    await this.iClickButton(confirmDeleteButton);
 
     await expect(
       this.page.getByText("You haven't planned anything")
@@ -486,9 +427,7 @@ export default class ChoreoPage extends TestPage {
     const selectAllButton = this.page.getByRole("button", {
       name: "people fill",
     });
-    await expect(selectAllButton).toBeVisible();
-    await expect(selectAllButton).toBeEnabled();
-    await selectAllButton.click();
+    await this.iClickButton(selectAllButton);
 
     await expect(this.page.getByText("All", { exact: true })).toBeVisible();
     await expect(selectAllButton).not.toBeVisible();
@@ -498,9 +437,7 @@ export default class ChoreoPage extends TestPage {
     this.page.locator("td:nth-child(3) > .btn").first().click();
 
     const editButton = this.page.getByTitle("edit");
-    await expect(editButton).toBeVisible();
-    await expect(editButton).toBeEnabled();
-    await editButton.click();
+    await this.iClickButton(editButton);
 
     const newStartAchter = 2;
     const newStartCount = 1;
@@ -508,45 +445,29 @@ export default class ChoreoPage extends TestPage {
     const newEndCount = 1;
 
     const startAchterInput = this.page.locator("input").nth(2);
-    await expect(startAchterInput).toBeVisible();
-    await expect(startAchterInput).toBeEnabled();
-    await startAchterInput.fill(newStartAchter.toString());
-    await expect(startAchterInput).toHaveValue(newStartAchter.toString());
+    await this.iFillInput(startAchterInput, newStartAchter.toString());
 
     const startCountInput = this.page.locator("input").nth(3);
-    await expect(startCountInput).toBeVisible();
-    await expect(startCountInput).toBeEnabled();
-    await startCountInput.fill(newStartCount.toString());
-    await expect(startCountInput).toHaveValue(newStartCount.toString());
+    await this.iFillInput(startCountInput, newStartCount.toString());
 
     const endAchterInput = this.page.locator("input").nth(4);
-    await expect(endAchterInput).toBeVisible();
-    await expect(endAchterInput).toBeEnabled();
-    await endAchterInput.fill(newEndAchter.toString());
-    await expect(endAchterInput).toHaveValue(newEndAchter.toString());
+    await this.iFillInput(endAchterInput, newEndAchter.toString());
 
     const endCountInput = this.page.locator("input").nth(5);
-    await expect(endCountInput).toBeVisible();
-    await expect(endCountInput).toBeEnabled();
-    await endCountInput.fill(newEndCount.toString());
-    await expect(endCountInput).toHaveValue(newEndCount.toString());
+    await this.iFillInput(endCountInput, newEndCount.toString());
 
     const saveButton = this.page.getByRole("button", {
       name: "check",
       exact: true,
     });
-    await expect(saveButton).toBeVisible();
-    await expect(saveButton).toBeEnabled();
-    await saveButton.click();
+    await this.iClickButton(saveButton);
 
     const switchToCountButton = this.page.locator(
       `tr:nth-child(${newStartAchter}) > td:nth-child(${
         newStartCount + 1
       }) > .btn`
     );
-    await expect(switchToCountButton).toBeVisible();
-    await expect(switchToCountButton).toBeEnabled();
-    await switchToCountButton.click();
+    await this.iClickButton(switchToCountButton);
 
     await expect(
       this.page.getByText(
@@ -559,16 +480,12 @@ export default class ChoreoPage extends TestPage {
     this.page.locator("td:nth-child(3) > .btn").first().click();
 
     const deleteButton = this.page.getByRole("button", { name: "trash" });
-    await expect(deleteButton).toBeVisible();
-    await expect(deleteButton).toBeEnabled();
-    await deleteButton.click();
+    await this.iClickButton(deleteButton);
 
     const confirmationButton = this.page.getByRole("button", {
       name: "Delete",
     });
-    await expect(confirmationButton).toBeVisible();
-    await expect(confirmationButton).toBeEnabled();
-    await confirmationButton.click();
+    await this.iClickButton(confirmationButton);
 
     await expect(
       this.page.getByText("You haven't planned anything")
@@ -579,9 +496,7 @@ export default class ChoreoPage extends TestPage {
     const addLineupButton = this.page.getByRole("button", {
       name: "plus Add a lineup",
     });
-    await expect(addLineupButton).toBeVisible();
-    await expect(addLineupButton).toBeEnabled();
-    await addLineupButton.click();
+    await this.iClickButton(addLineupButton);
 
     const newStartAchter = 1;
     const newStartCount = 1;
@@ -589,33 +504,19 @@ export default class ChoreoPage extends TestPage {
     const newEndCount = 2;
 
     const startAchterInput = this.page.locator("input[type='number']").nth(0);
-    await expect(startAchterInput).toBeVisible();
-    await expect(startAchterInput).toBeEnabled();
-    await startAchterInput.fill(newStartAchter.toString());
-    await expect(startAchterInput).toHaveValue(newStartAchter.toString());
+    await this.iFillInput(startAchterInput, newStartAchter.toString());
 
     const startCountInput = this.page.locator("input[type='number']").nth(1);
-    await expect(startCountInput).toBeVisible();
-    await expect(startCountInput).toBeEnabled();
-    await startCountInput.fill(newStartCount.toString());
-    await expect(startCountInput).toHaveValue(newStartCount.toString());
+    await this.iFillInput(startCountInput, newStartCount.toString());
 
     const endAchterInput = this.page.locator("input[type='number']").nth(2);
-    await expect(endAchterInput).toBeVisible();
-    await expect(endAchterInput).toBeEnabled();
-    await endAchterInput.fill(newEndAchter.toString());
-    await expect(endAchterInput).toHaveValue(newEndAchter.toString());
+    await this.iFillInput(endAchterInput, newEndAchter.toString());
 
     const endCountInput = this.page.locator("input[type='number']").nth(3);
-    await expect(endCountInput).toBeVisible();
-    await expect(endCountInput).toBeEnabled();
-    await endCountInput.fill(newEndCount.toString());
-    await expect(endCountInput).toHaveValue(newEndCount.toString());
+    await this.iFillInput(endCountInput, newEndCount.toString());
 
     const saveButton = this.page.getByRole("button", { name: "Save" });
-    await expect(saveButton).toBeVisible();
-    await expect(saveButton).toBeEnabled();
-    await saveButton.click();
+    await this.iClickButton(saveButton);
 
     await expect(
       this.page.getByText(
@@ -628,22 +529,20 @@ export default class ChoreoPage extends TestPage {
     const addHitButton = this.page.getByRole("button", {
       name: "plus Add count entry",
     });
-    await expect(addHitButton).toBeVisible();
-    await expect(addHitButton).toBeEnabled();
-    await addHitButton.click();
+    await this.iClickButton(addHitButton);
 
     const newName = "New Hit Name";
     const newNameInput = this.page.getByRole("textbox", {
       name: "What is the name of the new",
     });
+    // iFillInput() is not used because the textbox becomes a combobox after input
+    // await this.iFillInput()
     await expect(newNameInput).toBeVisible();
     await expect(newNameInput).toBeEnabled();
     await newNameInput.fill(newName);
 
     const saveButton = this.page.getByRole("button", { name: "Save" });
-    await expect(saveButton).toBeVisible();
-    await expect(saveButton).toBeEnabled();
-    await saveButton.click();
+    await this.iClickButton(saveButton);
 
     const newHitDisplay = this.page.locator("#editView h5").getByText(newName);
     await expect(newHitDisplay).toBeVisible();

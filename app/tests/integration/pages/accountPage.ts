@@ -88,16 +88,16 @@ export default class AccountPage extends TestPage {
 
   async iChangeUserInfo(newUsername: string, newEmail: string) {
     const usernameInput = this.page.getByRole("textbox", { name: "Username" });
-    await usernameInput.fill(newUsername);
-    await expect(usernameInput).toHaveValue(newUsername);
+    await this.iFillInput(usernameInput, newUsername);
 
     const emailInput = this.page.getByRole("textbox", {
       name: "E-mail address",
     });
-    await emailInput.fill(newEmail);
-    await expect(emailInput).toHaveValue(newEmail);
+    await this.iFillInput(emailInput, newEmail);
 
-    await this.page.getByRole("button", { name: "Save" }).click();
+    const saveButton = this.page.getByRole("button", { name: "Save" });
+    await this.iClickButton(saveButton);
+
     return expect(
       this.page.getByText("Your user information was saved")
     ).toBeVisible();
@@ -107,8 +107,7 @@ export default class AccountPage extends TestPage {
     await this.iSwitchToClubs();
 
     const nameInput = this.page.getByRole("textbox", { name: "Name" });
-    await nameInput.fill(newClubName);
-    await expect(nameInput).toHaveValue(newClubName);
+    await this.iFillInput(nameInput, newClubName);
 
     await this.page.getByRole("button", { name: "Save" }).click();
     await expect(
@@ -119,9 +118,12 @@ export default class AccountPage extends TestPage {
   async iChangeActiveClub(clubName: string) {
     await this.iSwitchToClubs();
     await this.page.getByRole("tab", { name: clubName }).click();
-    await this.page
-      .getByRole("button", { name: "check Select as active club" })
-      .click();
+
+    const selectClubButton = this.page.getByRole("button", {
+      name: "check Select as active club",
+    });
+    await this.iClickButton(selectClubButton);
+
     return expect(
       this.page.getByRole("tab", { name: `${clubName} check circle` })
     ).toBeVisible();
@@ -134,7 +136,10 @@ export default class AccountPage extends TestPage {
       .locator("div")
       .nth(2)
       .click();
-    await this.page.getByRole("button", { name: "Save" }).click();
+
+    const saveButton = this.page.getByRole("button", { name: "Save" });
+    await this.iClickButton(saveButton);
+
     await expect(
       this.page.getByText("Your settings were saved!")
     ).toBeVisible();
@@ -142,18 +147,27 @@ export default class AccountPage extends TestPage {
 
   async iChangePassword(newPassword: string) {
     await this.iSwitchToDangerZone();
-    await this.page.getByRole("button", { name: "Change Password" }).click();
-    await this.page
+
+    const changePasswordButton = this.page.getByRole("button", {
+      name: "Change Password",
+    });
+    await this.iClickButton(changePasswordButton);
+
+    const passwordInput = this.page
       .getByRole("group", { name: "New password:" })
-      .getByPlaceholder("New password")
-      .fill(newPassword);
-    await this.page
+      .getByPlaceholder("New password");
+    await this.iFillInput(passwordInput, newPassword);
+    const passwordRepetitionInput = this.page
       .getByRole("group", { name: "Repetition:" })
-      .getByPlaceholder("New password")
-      .fill(newPassword);
-    await this.page
-      .getByRole("button", { name: "Change password", exact: true })
-      .click();
+      .getByPlaceholder("New password");
+    await this.iFillInput(passwordRepetitionInput, newPassword);
+
+    const saveButton = this.page.getByRole("button", {
+      name: "Change password",
+      exact: true,
+    });
+    await this.iClickButton(saveButton);
+
     await expect(
       this.page.getByText("Your password has been changed")
     ).toBeVisible();
@@ -165,14 +179,17 @@ export default class AccountPage extends TestPage {
     const checkbox = this.page.getByText("I understand and want to");
     await expect(checkbox).toBeVisible();
     await checkbox.click();
-    await this.page
+
+    const deleteButton = this.page
       .getByRole("dialog")
-      .getByRole("button", { name: "Delete account" })
-      .click();
-    await this.page
+      .getByRole("button", { name: "Delete account" });
+    await this.iClickButton(deleteButton);
+
+    const confirmButton = this.page
       .getByRole("dialog")
-      .getByRole("button", { name: "Delete now" })
-      .click();
+      .getByRole("button", { name: "Delete now" });
+    await this.iClickButton(confirmButton);
+
     await expect(this.page).toHaveURL("/en/login");
   }
 }

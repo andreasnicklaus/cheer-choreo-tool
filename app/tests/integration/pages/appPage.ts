@@ -131,27 +131,36 @@ export default class AppPage extends TestPage {
   }
 
   async iDismissAppInstallWindow() {
-    await this.page.getByRole("button", { name: "No thanks!" }).click();
+    const dismissButton = this.page.getByRole("button", { name: "No thanks!" });
+    await this.iClickButton(dismissButton);
+
     return expect(
       this.page.getByText("Download the app! The app")
     ).not.toBeVisible();
   }
 
   async iInstallApp() {
-    await this.page.getByRole("button", { name: "download INSTALL" }).click();
+    const installButton = this.page.getByRole("button", {
+      name: "download INSTALL",
+    });
+    await this.iClickButton(installButton);
+
     return expect(
       this.page.getByText("Download the app! The app")
     ).not.toBeVisible();
   }
 
   iOpenNotificationDropDown() {
-    return this.page.getByRole("button", { name: "bell" }).click();
+    const notificationButton = this.page.getByRole("button", { name: "bell" });
+    return this.iClickButton(notificationButton);
   }
+
   iShouldSeeEmptyNotificationNotice() {
     return expect(
       this.page.getByText("You have not received any notifications yet.")
     ).toBeVisible();
   }
+
   iCheckNotificationDropDownContents() {
     return Promise.all(
       defaultNotifications.map((notification) => {
@@ -166,11 +175,12 @@ export default class AppPage extends TestPage {
       })
     );
   }
+
   iMarkFirstNotificationItemAsRead() {
-    return this.page
+    const markReadButton = this.page
       .getByRole("button", { name: "envelope open" })
-      .nth(0)
-      .click();
+      .nth(0);
+    return this.iClickButton(markReadButton);
   }
 
   async iOpenAccountDropDown() {
@@ -227,8 +237,8 @@ export default class AppPage extends TestPage {
   }
   async iCheckTeamsMenuItem() {
     const teamMenuItem = this.page.getByRole("button", { name: "Teams" });
-    await expect(teamMenuItem).toBeVisible();
-    await teamMenuItem.click();
+    await this.iClickButton(teamMenuItem);
+
     const teamLink = this.page.getByRole("menuitem", {
       name: defaultTeams[0].name,
       exact: true,
@@ -242,7 +252,6 @@ export default class AppPage extends TestPage {
     const menuToggle = this.page.getByRole("button", {
       name: "Toggle navigation",
     });
-    await expect(menuToggle).toBeVisible();
-    return menuToggle.click();
+    return this.iClickButton(menuToggle);
   }
 }

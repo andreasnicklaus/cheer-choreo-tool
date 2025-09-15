@@ -24,4 +24,11 @@ export default abstract class TestPage {
     await expect(button).toBeEnabled();
     await button.click();
   }
+
+  protected async iFillInput(input: Locator, value: string) {
+    await expect(input).toBeVisible();
+    await expect(input).toBeEnabled();
+    await input.fill(value);
+    await expect(input).toHaveValue(value);
+  }
 }

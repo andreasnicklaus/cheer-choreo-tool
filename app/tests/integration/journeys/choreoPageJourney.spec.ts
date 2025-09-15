@@ -132,7 +132,7 @@ test.describe("hits", () => {
   test("the delete button should remove a hit", async ({}, testInfo) => {
     if (!Boolean(testInfo.project.use.isMobile)) await choreoPage.iDeleteHit();
   });
-  test("the 'Add an entry' should add a hit", async ({}, testInfo) => {
+  test("the 'Add an entry' button should add a hit", async ({}, testInfo) => {
     if (!Boolean(testInfo.project.use.isMobile)) await choreoPage.iAddHit();
   });
 });

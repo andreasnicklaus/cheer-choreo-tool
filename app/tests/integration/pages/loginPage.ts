@@ -20,16 +20,14 @@ export default class LoginPage extends TestPage {
 
   async iInputUserName(userName: string) {
     const userNameInput = this.page.getByRole("textbox", { name: "Username" });
-    await expect(userNameInput).toBeVisible();
-    return userNameInput.fill(userName);
+    await this.iFillInput(userNameInput, userName)
   }
 
   async iInputEmail(email: string) {
     const emailInput = this.page.getByRole("textbox", {
       name: "E-mail address",
     });
-    await expect(emailInput).toBeVisible();
-    return emailInput.fill(email);
+    await this.iFillInput(emailInput, email)
   }
 
   async iInputPassword(password: string) {
@@ -37,36 +35,28 @@ export default class LoginPage extends TestPage {
       name: "Password",
       exact: true,
     });
-    await expect(passwordInput).toBeVisible();
-    await passwordInput.fill(password);
-    return expect(passwordInput).toHaveValue(password);
+    await this.iFillInput(passwordInput, password)
   }
 
   async iInputPasswordRepetition(password: string) {
     const passwordInput = this.page.getByRole("textbox", {
       name: "Repeat password",
     });
-    await expect(passwordInput).toBeVisible();
-    await passwordInput.fill(password);
-    return expect(passwordInput).toHaveValue(password);
+    await this.iFillInput(passwordInput, password)
   }
 
   async iClickOnLoginButton() {
     const loginButton = this.page
       .getByLabel("Log in")
       .getByRole("button", { name: "Log in" });
-    await expect(loginButton).toBeVisible();
-    await expect(loginButton).toBeEnabled();
-    return loginButton.click();
+    return this.iClickButton(loginButton);
   }
 
   async iClickOnRegisterButton() {
     const registerButton = this.page
       .getByLabel("Register")
       .getByRole("button", { name: "Register" });
-    await expect(registerButton).toBeVisible();
-    await expect(registerButton).toBeEnabled();
-    return registerButton.click();
+    return this.iClickButton(registerButton);
   }
 
   async iCheckErrorAlert(errorMessage: string = "Invalid credentials") {
@@ -78,7 +68,6 @@ export default class LoginPage extends TestPage {
 
   async iSwitchToRegistration() {
     const registrationTab = this.page.getByRole("tab", { name: "Register" });
-    await expect(registrationTab).toBeVisible();
-    return registrationTab.click();
+    return this.iClickButton(registrationTab);
   }
 }
