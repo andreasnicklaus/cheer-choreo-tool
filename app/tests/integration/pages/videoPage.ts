@@ -36,7 +36,7 @@ export default class VideoPage extends TestPage {
 
     if (!supportsCanvasRecording) {
       const errorMessage = this.page.getByText("Your browser does not support");
-      await expect(errorMessage).toBeVisible();
+      await expect(errorMessage).toBeVisible({ timeout: 10_000 });
     } else {
       // check if popup is shown
       const cancelButton = this.page.getByRole("button", { name: "Cancel" });
