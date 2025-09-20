@@ -21,11 +21,16 @@ test("should display the page with the correct title", async () => {
 test("should display the correct static data", async () => {
   await pdfPage.iCheckStaticData();
 });
-// TODO: test pdf generation with default configuration
+
 test("should generate a pdf with the default configuration", async () => {
   await pdfPage.iGeneratePdf();
 });
-// TODO: test pdf generation with participant names (including warnings)
-// TODO: test pdf generation without team name
-// TODO: test pdf generation with a different date and without a date
-// TODO: test pdf generation with only a single member (and error for no selected member)
+
+test("should disable the generate button when no members are selected", async () => {
+  await pdfPage.iTryPdfGenerationWithNoMembers();
+});
+
+test("should show a warning when displaying participant names, but all are selected", async () => {
+  await pdfPage.iShowWarningForDisplayingParticipantNames();
+});
+// TODO: find a way to test the pdf content

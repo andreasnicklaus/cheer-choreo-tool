@@ -40,7 +40,22 @@ export default class PdfPage extends TestPage {
     await expect(
       this.page.getByText("PDF is being generated")
     ).not.toBeVisible();
+  }
 
-    // TODO: find a way to test the pdf content
+  async iTryPdfGenerationWithNoMembers() {
+    await this.page.getByRole("button", { name: "slash Select none" }).click();
+    const generateButton = this.page.getByRole("button", {
+      name: "file pdf Generate PDF",
+    });
+    await expect(generateButton).toBeDisabled();
+  }
+
+  async iShowWarningForDisplayingParticipantNames() {
+    await this.page.getByText("Show participant names").click();
+
+    const warningMessage = this.page.getByText(
+      "If you select all participants, the names are not written on the countsheet to save space."
+    );
+    await expect(warningMessage).toBeVisible();
   }
 }
