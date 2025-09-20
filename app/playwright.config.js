@@ -52,44 +52,45 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
-      canShare: false,
+      use: { ...devices["Desktop Chrome"], supportsCanvasRecording: true },
     },
 
     {
       name: "firefox",
-      use: { ...devices["Desktop Firefox"] },
-      canShare: false,
+      use: { ...devices["Desktop Firefox"], supportsCanvasRecording: true },
     },
 
     {
       name: "webkit",
-      use: { ...devices["Desktop Safari"] },
-      canShare: false,
+      use: { ...devices["Desktop Safari"], supportsCanvasRecording: false },
     },
 
     /* Test against mobile viewports. */
     {
       name: "Mobile Chrome",
-      use: { ...devices["Pixel 5"] },
-      canShare: false,
+      use: { ...devices["Pixel 5"], supportsCanvasRecording: true },
     },
     {
       name: "Mobile Safari",
-      use: { ...devices["iPhone 12"] },
-      canShare: false,
+      use: { ...devices["iPhone 12"], supportsCanvasRecording: false },
     },
 
     /* Test against branded browsers. */
     {
       name: "Microsoft Edge",
-      use: { ...devices["Desktop Edge"], channel: "msedge" },
-      canShare: true,
+      use: {
+        ...devices["Desktop Edge"],
+        channel: "msedge",
+        supportsCanvasRecording: true,
+      },
     },
     {
       name: "Google Chrome",
-      use: { ...devices["Desktop Chrome"], channel: "chrome" },
-      canShare: true,
+      use: {
+        ...devices["Desktop Chrome"],
+        channel: "chrome",
+        supportsCanvasRecording: true,
+      },
     },
   ],
 

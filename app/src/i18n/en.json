@@ -736,7 +736,8 @@
     "teilnehmer-die-im-video-angezeigt-werden-sollen": "Participants who are to be displayed in the video",
     "video-generieren": "Generate video",
     "video-zusammenstellen": "Create video",
-    "dein-vereinslogo-als-wasserzeichen-im-video-anzeigen": "Show your club logo as a watermark in the video"
+    "dein-vereinslogo-als-wasserzeichen-im-video-anzeigen": "Show your club logo as a watermark in the video",
+    "dein-browser-unterstuetzt-kein-video": "Your browser does not support exporting to a video. Please try a different browser or device."
   },
   "zur-startseite": "To the landing page",
   "zuruecksetzen": "Reset",

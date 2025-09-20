@@ -736,7 +736,8 @@
     "teilnehmer-die-im-video-angezeigt-werden-sollen": "Teilnehmer, die im Video angezeigt werden sollen",
     "video-generieren": "Video generieren",
     "video-zusammenstellen": "Video zusammenstellen",
-    "dein-vereinslogo-als-wasserzeichen-im-video-anzeigen": "Dein Vereinslogo als Wasserzeichen im Video anzeigen"
+    "dein-vereinslogo-als-wasserzeichen-im-video-anzeigen": "Dein Vereinslogo als Wasserzeichen im Video anzeigen",
+    "dein-browser-unterstuetzt-kein-video": "Dein Browser unterstützt nicht den Exportieren in ein Video. Bitte versuche es mit einem anderen Browser oder Gerät."
   },
   "zur-startseite": "Zur Startseite",
   "zuruecksetzen": "Zurücksetzen",
