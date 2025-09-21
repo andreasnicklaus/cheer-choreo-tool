@@ -217,7 +217,6 @@ export default class AppPage extends TestPage {
         ...defaultClubs.map((club) => {
           expect(this.page.getByText(club.name, { exact: true })).toBeVisible();
         }),
-        // TODO: tests for the active club display
       ].flat()
     );
   }

@@ -89,7 +89,15 @@ test.describe("Already logged in", () => {
   test.use({
     storageState: "tests/integration/testData/.localstorage-dev.loggedIn.json",
   });
-  // TODO: test automatic redirection if the user is already logged in
+
+  test("should go to the start page if already logged in", async () => {
+    await loginPage.iCheckRedirectionToPage();
+  });
+
+  test("should go to the redirect URL if already logged in", async () => {
+    await loginPage.page.goto("/login?redirectUrl=/en/hilfe");
+    await loginPage.iCheckRedirectionToPage("/en/hilfe");
+  });
 });
 
 test.describe("SSO login", () => {
