@@ -276,7 +276,7 @@ export default {
         } else {
           this.online = false;
           error(
-            "The servers aer currently offline. Please refresh or try again later."
+            "The servers are currently offline. Please refresh or try again later."
           );
           MessagingService.showError(
             this.$t("errors.offline"),

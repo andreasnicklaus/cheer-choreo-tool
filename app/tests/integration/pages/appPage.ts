@@ -189,30 +189,58 @@ export default class AppPage extends TestPage {
     return accountDropDown.click();
   }
 
-  iCheckAccountDropDownContents(isMobile: Boolean) {
-    return Promise.all([
-      expect(
-        this.page.getByRole("menuitem", { name: defaultUser.username })
-      ).toBeVisible(),
-      expect(
-        this.page.getByRole("menuitem", { name: "door open Log out" })
-      ).toBeVisible(),
-      expect(
-        this.page
-          .getByLabel(defaultUser.username, {
-            exact: true,
-          })
-          .or(this.page.getByLabel("", { exact: true }))
-          .getByText("Clubs")
-      ).toBeVisible(),
-      expect(
-        this.page.getByRole("menuitem", { name: "plus New club" })
-      ).toBeVisible(),
-      ...defaultClubs.map((club) => {
-        expect(this.page.getByText(club.name, { exact: true })).toBeVisible();
-      }),
-      // TODO: tests for the active club display
-    ]);
+  iCheckAccountDropDownContents() {
+    return Promise.all(
+      [
+        expect(
+          this.page.getByRole("menuitem", { name: defaultUser.username })
+        ).toBeVisible(),
+        expect(
+          this.page.getByRole("menuitem", { name: "door open Log out" })
+        ).toBeVisible(),
+        expect(
+          this.page
+            .getByLabel(defaultUser.username, {
+              exact: true,
+            })
+            .or(this.page.getByLabel("", { exact: true }))
+            .getByText("Clubs")
+        ).toBeVisible(),
+        defaultClubs.map((club) =>
+          expect(
+            this.page.getByRole("menuitem", { name: club.name, exact: true })
+          ).toBeVisible()
+        ),
+        expect(
+          this.page.getByRole("menuitem", { name: "plus New club" })
+        ).toBeVisible(),
+        ...defaultClubs.map((club) => {
+          expect(this.page.getByText(club.name, { exact: true })).toBeVisible();
+        }),
+        // TODO: tests for the active club display
+      ].flat()
+    );
+  }
+
+  async iCheckActiveClub(isMobile: boolean) {
+    const firstClubMenuItem = this.page.getByRole("menuitem", {
+      name: defaultClubs[0].name,
+      exact: true,
+    });
+    const secondClubMenuItem = this.page.getByRole("menuitem", {
+      name: defaultClubs[1].name,
+      exact: true,
+    });
+
+    await expect(firstClubMenuItem).toContainClass("text-primary");
+    await expect(secondClubMenuItem).not.toContainClass("text-primary");
+
+    await secondClubMenuItem.click();
+    if (isMobile) await this.iOpenMobileMenu();
+    await this.iOpenAccountDropDown();
+
+    await expect(secondClubMenuItem).toContainClass("text-primary");
+    await expect(firstClubMenuItem).not.toContainClass("text-primary");
   }
 
   async iCheckOverviewMenuItem() {
@@ -253,5 +281,26 @@ export default class AppPage extends TestPage {
       name: "Toggle navigation",
     });
     return this.iClickButton(menuToggle);
+  }
+
+  async iSwitchLanguageTo(language: string) {
+    const languageSelectButton = this.page.locator(
+      '[id="__BVID__26__BV_toggle_"]'
+    );
+    await this.iClickButton(languageSelectButton);
+
+    const languageButton = this.page.getByRole("menuitem", { name: language });
+    await this.iClickButton(languageButton);
+
+    await this.iCheckGermanLocalization();
+  }
+
+  async iCheckGermanLocalization() {
+    await expect(
+      this.page.getByRole("heading", { name: "Dein Choreo Planer" })
+    ).toBeVisible();
+    await expect(this.page).toHaveTitle(
+      "Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport"
+    );
   }
 }

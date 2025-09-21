@@ -6,12 +6,13 @@ import { defaultVersion } from "../testData/version";
 
 let appPage: AppPage;
 
-test.describe("App contents for unauthenticated users", () => {
-  test.beforeEach(async ({ page }) => {
-    appPage = new AppPage(page);
-    await appPage.goToPage();
-  });
+test.beforeEach(async ({ page }) => {
+  appPage = new AppPage(page);
+  await mockDefaultStartRequests(page);
+  await appPage.goToPage();
+});
 
+test.describe("App contents for unauthenticated users", () => {
   test("displays footer contents", async () => {
     await appPage.iCheckFooterContents();
   });
@@ -33,28 +34,22 @@ test.describe("App contents for unauthenticated users", () => {
   test("displays correct app version and server version", async ({}, testInfo) => {
     await appPage.iCheckAppVersion();
     await appPage.iCheckServerVersion(
-      null,
-      Boolean(testInfo.project.use.isMobile)
-    );
-    await mockVersion(appPage.page);
-    await appPage.goToPage();
-    await appPage.iCheckServerVersion(
       defaultVersion,
       Boolean(testInfo.project.use.isMobile)
     );
     await appPage.iCheckVersionMismatchErrorMessage(defaultVersion);
+    await mockVersion(appPage.page, "");
+    await appPage.goToPage();
+    await appPage.iCheckServerVersion(
+      null,
+      Boolean(testInfo.project.use.isMobile)
+    );
   });
 });
 
 test.describe("App contents for authenticated users", () => {
   test.use({
     storageState: "tests/integration/testData/.localstorage-dev.loggedIn.json",
-  });
-
-  test.beforeEach(async ({ page }) => {
-    appPage = new AppPage(page);
-    await mockDefaultStartRequests(page);
-    await appPage.goToPage();
   });
 
   test("displays navigation dropdown and empty notification list", async ({}, testInfo) => {
@@ -78,10 +73,9 @@ test.describe("App contents for authenticated users", () => {
     if (isMobile) await appPage.iOpenMobileMenu();
 
     await appPage.iOpenAccountDropDown();
-    await appPage.iCheckAccountDropDownContents(isMobile);
+    await appPage.iCheckAccountDropDownContents();
+    await appPage.iCheckActiveClub(isMobile);
   });
-
-  // TODO: check active club switching
 
   test.describe("displays menu items for authenticated users", async () => {
     test("Overview menu item", async ({}, testInfo) => {
@@ -104,4 +98,34 @@ test.describe("App contents for authenticated users", () => {
   });
 });
 
-// TODO: test localization
+test.describe("App localization", () => {
+  test("can switch language to German", async ({}, testInfo) => {
+    if (Boolean(testInfo.project.use.isMobile)) await appPage.iOpenMobileMenu();
+    await appPage.iSwitchLanguageTo("Deutsch");
+  });
+
+  test("automatically switches language based on localized path", async () => {
+    await appPage.page.goto("/de");
+    await appPage.iCheckGermanLocalization();
+  });
+});
+
+test.describe("App localization with user locale set", () => {
+  test.use({
+    locale: "de-DE",
+  });
+  test("automatically switches language based on browser settings", async () => {
+    await appPage.goToPage();
+    await appPage.iCheckGermanLocalization();
+  });
+});
+
+test.describe("App localization with localStorage set", () => {
+  test.use({
+    storageState: "tests/integration/testData/.localstorage-dev.german.json",
+  });
+  test("automatically switches language based on localStorage", async () => {
+    await appPage.goToPage();
+    await appPage.iCheckGermanLocalization();
+  });
+});
