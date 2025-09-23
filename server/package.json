@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "NODE_ENV=production node dist/index.js",
     "dev": "nodemon -L --exec tsx src/index.ts",
     "reset": "node src/resetDB.js",
@@ -12,6 +11,9 @@
     "docs-dev": "concurrently --kill-others \"live-server --wait=1000 dist/docs\" \"nodemon --exec npm run docs\"",
     "build": "npm run clean && npm run lint && npm run build:ts",
     "build:ts": "tsc && tscp",
+    "test": "npm run test:prep && npm run test:unit",
+    "test:prep": "npm run lint && tsc --noEmit",
+    "test:unit": "jest",
     "clean": "rimraf dist",
     "lint": "eslint ."
   },
@@ -69,11 +71,14 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.27.0",
+    "@jest/globals": "^30.1.2",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.15.21",
     "@types/sequelize": "^4.28.20",
     "concurrently": "^9.1.2",
     "live-server": "^1.2.2",
     "nodemon": "^3.1.4",
+    "ts-jest": "^29.4.4",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.4"
   },
