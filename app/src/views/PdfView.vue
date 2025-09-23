@@ -97,7 +97,9 @@
       :title="$t('pdf.countsheet-zusammenstellen')"
     >
       <b-card-sub-title v-if="choreo">
-        <p class="m-0">Ausgewählte Choreo: {{ choreo.name }}</p>
+        <p class="m-0">
+          {{ $t("video-export-comp.ausgewaehlte-choreo") }}: {{ choreo.name }}
+        </p>
         <p class="m-0">
           {{ $tc("team", 1) }}: {{ choreo.SeasonTeam.Team.name }} ({{
             choreo.SeasonTeam.Season.name
@@ -465,8 +467,6 @@ export default {
     return {
       title: `${this.choreo?.name || this.$t("pdf.laedt-choreo")} - ${this.$t(
         "pdf.PDF"
-      )} - ${this.$t("general.ChoreoPlaner")} | ${this.$t(
-        "meta.defaults.title"
       )}`,
       meta: [
         {

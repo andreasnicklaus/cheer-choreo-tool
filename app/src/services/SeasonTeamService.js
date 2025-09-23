@@ -10,13 +10,13 @@ class SeasonTeamService {
    * Create a new season team.
    * @param {string} teamId - ID of the team
    * @param {string} seasonId - ID of the season
-   * @param {Array} memberIds - Array of member IDs to include in the team
+   * @param {Array} MemberIds - Array of member IDs to include in the team
    * @returns {Promise<Object>} Created season team
    */
-  create(teamId, seasonId, memberIds) {
-    debug("Creating a new seasonTeam", { teamId, seasonId, memberIds });
+  create(teamId, seasonId, MemberIds) {
+    debug("Creating a new seasonTeam", { teamId, seasonId, MemberIds });
     return ax
-      .post("/seasonTeam", { teamId, seasonId, memberIds })
+      .post("/seasonTeam", { teamId, seasonId, MemberIds })
       .then((res) => {
         debug("Successfully created a seasonTeam");
         return res.data;
@@ -26,12 +26,12 @@ class SeasonTeamService {
   /**
    * Import members into a season team.
    * @param {string} seasonTeamId - ID of the season team
-   * @param {Array} memberIds - Array of member IDs to import
+   * @param {Array} MemberIds - Array of member IDs to import
    * @returns {Promise<Object>} Updated season team
    */
-  importMembers(seasonTeamId, memberIds) {
-    debug("Importing members", { seasonTeamId, memberIds });
-    return ax.put(`/seasonTeam/${seasonTeamId}`, { memberIds }).then((res) => {
+  importMembers(seasonTeamId, MemberIds) {
+    debug("Importing members", { seasonTeamId, MemberIds });
+    return ax.put(`/seasonTeam/${seasonTeamId}`, { MemberIds }).then((res) => {
       debug("Successfully imported members");
       return res.data;
     });

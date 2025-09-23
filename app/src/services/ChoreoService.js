@@ -100,16 +100,16 @@ class ChoreoService {
   /**
    * Add a participant to a choreography.
    * @param {string} choreoId - ID of the choreography
-   * @param {string} memberId - ID of the member to add
+   * @param {string} MemberId - ID of the member to add
    * @param {string} color - Color for the participant
    * @returns {Promise<Object>} Added participant
    */
-  addParticipant(choreoId, memberId, color) {
+  addParticipant(choreoId, MemberId, color) {
     debug(
-      `Adding participant ${memberId} to choreo ${choreoId} with color ${color}`
+      `Adding participant ${MemberId} to choreo ${choreoId} with color ${color}`
     );
     return ax
-      .post(`/choreo/${choreoId}/participants`, { memberId, color })
+      .post(`/choreo/${choreoId}/participants`, { MemberId, color })
       .then((res) => {
         debug("Successfully added participant to choreo");
         return res.data;
@@ -119,12 +119,12 @@ class ChoreoService {
   /**
    * Remove a participant from a choreography.
    * @param {string} choreoId - ID of the choreography
-   * @param {string} memberId - ID of the member to remove
+   * @param {string} MemberId - ID of the member to remove
    * @returns {Promise}
    */
-  removeParticipant(choreoId, memberId) {
-    debug(`Removing participant ${memberId} from choreo ${choreoId}`);
-    return ax.delete(`/choreo/${choreoId}/participants/${memberId}`);
+  removeParticipant(choreoId, MemberId) {
+    debug(`Removing participant ${MemberId} from choreo ${choreoId}`);
+    return ax.delete(`/choreo/${choreoId}/participants/${MemberId}`);
   }
 
   /**

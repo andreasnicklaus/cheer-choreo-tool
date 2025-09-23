@@ -24,7 +24,8 @@ function initTimeAgo(locale) {
 function toTimeAgo(date, locale = i18n.locale) {
   debug("Converting time to timeAgo", { date, locale });
   const timeAgo = initTimeAgo(locale);
-  const result = timeAgo.format(new Date(date), "round-minute");
+  const result =
+    date != null ? timeAgo.format(new Date(date), "round-minute") : null;
   debug("Converted time", { result });
   return result;
 }

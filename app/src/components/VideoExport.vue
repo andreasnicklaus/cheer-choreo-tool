@@ -334,7 +334,7 @@ export default {
       this.animationTimeline.time(0);
     },
     startRecording() {
-      this.mediaRecorder.stop();
+      this.mediaRecorder?.stop();
       this.animationTimeline.pause();
 
       this.count = 0;
@@ -581,6 +581,14 @@ export default {
     initializeRecorder() {
       if (!this.$refs.videoCanvas) {
         return setTimeout(this.initializeRecorder, 50);
+      }
+
+      if (!this.$refs.videoCanvas.captureStream) {
+        MessagingService.showError(
+          this.$t("video-export-comp.dein-browser-unterstuetzt-kein-video"),
+          this.$t("fehler")
+        );
+        return;
       }
 
       const stream = this.$refs.videoCanvas.captureStream(1000);

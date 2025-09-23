@@ -122,11 +122,11 @@
           no-caret
           right
           :class="{ 'mr-3': $store.state.isMobile }"
-          v-if="$store.state.loggedIn"
+          v-show="$store.state.loggedIn"
         >
           <template #button-content>
             <b-icon-bell />
-            <span v-if="$store.state.isMobile" class="ml-2">{{
+            <span v-show="$store.state.isMobile" class="ml-2">{{
               $t("nav.benachrichtigungen")
             }}</span>
             <b-badge
@@ -241,7 +241,7 @@
               :squared="false"
               :iso="flags.find((f) => f.lang == $root.$i18n.locale)?.flag"
             />
-            <span v-if="$store.state.isMobile">
+            <span v-show="$store.state.isMobile">
               {{ flags.find((f) => f.lang == $root.$i18n.locale)?.localName }}
             </span>
           </template>
@@ -260,14 +260,15 @@
           @click="share"
           v-b-tooltip.hover
           :title="$t('nav.teilen')"
-          v-if="shareable"
+          v-show="shareable"
         >
           <b-icon-share />
           <span class="d-sm-none ml-2">{{ $t("nav.teilen") }}</span>
         </b-nav-item>
+
         <b-nav-item
           class="d-sm-block d-none"
-          v-if="onlineStatus != null"
+          v-show="onlineStatus != null"
           v-b-tooltip.hover
           :title="
             onlineStatus
@@ -275,9 +276,13 @@
                 (serverVersion && ` (${serverVersion || $t('errors.unknown')})`)
               : $t('nav.server-sind-offline')
           "
+          data-testid="serverStatus"
         >
-          <b-icon-check-circle variant="success" v-if="onlineStatus === true" />
-          <b-icon-x-circle variant="danger" v-if="onlineStatus === false" />
+          <b-icon-check-circle
+            variant="success"
+            v-show="onlineStatus === true"
+          />
+          <b-icon-x-circle variant="danger" v-show="onlineStatus === false" />
         </b-nav-item>
         <b-nav-item
           :to="{ name: 'Help', params: { locale: $root.$i18n.locale } }"
@@ -495,7 +500,10 @@ export default {
             if (!this.$store.state.clubId)
               this.$store.commit("setClubId", club.id);
             this.teams = club?.Teams || [];
-            this.choreos = this.teams.map((t) => t.Choreos).flat();
+            // TODO: check if this still works outside of DEV
+            this.choreos = this.teams
+              .map((t) => t.SeasonTeams.map((st) => st.Choreos))
+              .flat(Infinity);
           })
           .catch(() => {
             error("Could not load clubs", ERROR_CODES.CLUB_QUERY_FAILED);

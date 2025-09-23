@@ -1,0 +1,18 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "localhost",
+      "localStorage": [
+        {
+          "name": "isTestEnvironment",
+          "value": "true"
+        },
+        {
+          "name": "cp-locale",
+          "value": "de"
+        }
+      ]
+    }
+  ]
+}

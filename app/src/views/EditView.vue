@@ -538,16 +538,16 @@ export default {
             });
         });
     },
-    onPositionChange(memberId, x, y) {
+    onPositionChange(MemberId, x, y) {
       const positionToUpdate = this.lineupsForCurrentCount
-        .map((l) => l.Positions.filter((p) => p.MemberId == memberId))
+        .map((l) => l.Positions.filter((p) => p.MemberId == MemberId))
         .flat()[0];
 
       if (positionToUpdate) {
-        const memberTimeout = this.positionUpdates[memberId];
+        const memberTimeout = this.positionUpdates[MemberId];
         if (memberTimeout) clearTimeout(memberTimeout);
 
-        this.positionUpdates[memberId] = setTimeout(() => {
+        this.positionUpdates[MemberId] = setTimeout(() => {
           if (positionToUpdate.id)
             PositionService.update(
               positionToUpdate.LineupId,
@@ -592,19 +592,19 @@ export default {
             }
           );
         } else {
-          const memberTimeout = this.positionUpdates[memberId];
+          const memberTimeout = this.positionUpdates[MemberId];
           if (memberTimeout) clearTimeout(memberTimeout);
 
-          this.positionUpdates[memberId] = setTimeout(() => {
+          this.positionUpdates[MemberId] = setTimeout(() => {
             let lineupCopy = this.choreo.Lineups;
             let positionsCopy = lineupCopy.find(
               (l) => l.id == lineupToUpdate.id
             ).Positions;
-            positionsCopy = positionsCopy.filter((p) => p.MemberId != memberId);
+            positionsCopy = positionsCopy.filter((p) => p.MemberId != MemberId);
             positionsCopy.push({
               LineupId: lineupToUpdate.id,
-              MemberId: memberId,
-              Member: this.teamMembers.find((m) => m.id == memberId),
+              MemberId: MemberId,
+              Member: this.teamMembers.find((m) => m.id == MemberId),
               x,
               y,
             });
@@ -612,20 +612,20 @@ export default {
               positionsCopy;
             this.choreo.Lineups = lineupCopy;
 
-            PositionService.create(lineupToUpdate.id, x, y, memberId).then(
+            PositionService.create(lineupToUpdate.id, x, y, MemberId).then(
               (position) => {
                 let lineupCopy = this.choreo.Lineups;
                 let positionsCopy = lineupCopy.find(
                   (l) => l.id == lineupToUpdate.id
                 ).Positions;
                 positionsCopy = positionsCopy.filter(
-                  (p) => p.MemberId != memberId
+                  (p) => p.MemberId != MemberId
                 );
                 positionsCopy.push(position);
                 lineupCopy.find((l) => l.id == lineupToUpdate.id).Positions =
                   positionsCopy;
                 this.choreo.Lineups = lineupCopy;
-                this.positionUpdates[memberId] = null;
+                this.positionUpdates[MemberId] = null;
                 this.showSuccessMessage(this.$tc("lineup", 1));
               }
             );
@@ -721,7 +721,15 @@ export default {
       this.showSuccessMessage(this.$tc("countsheet", 1));
     },
     onUpdateLineups(lineups) {
+      console.log(
+        "🚀 ~ onUpdateLineups ~ lineups:",
+        JSON.stringify(lineups, null, 2)
+      );
       this.choreo.Lineups = lineups;
+      console.log(
+        "🚀 ~ onUpdateLineups ~ this.choreo.Lineups:",
+        JSON.stringify(this.choreo.Lineups)
+      );
       this.showSuccessMessage(this.$tc("lineup", 1));
     },
     onUpdateCount(count) {
@@ -787,26 +795,26 @@ export default {
       this.setCounter(this.choreo.counts - 1);
       this.countEndButtonHasNeverBeenUsed = false;
     },
-    subOutParticipant(memberId) {
-      this.$refs.participantSubstitutionModal.open(memberId, null);
+    subOutParticipant(MemberId) {
+      this.$refs.participantSubstitutionModal.open(MemberId, null);
     },
-    subInMember(memberId) {
-      this.$refs.participantSubstitutionModal.open(null, memberId);
+    subInMember(MemberId) {
+      this.$refs.participantSubstitutionModal.open(null, MemberId);
     },
-    removeParticipant(memberId) {
-      ChoreoService.removeParticipant(this.choreoId, memberId).then(() => {
+    removeParticipant(MemberId) {
+      ChoreoService.removeParticipant(this.choreoId, MemberId).then(() => {
         this.choreo.Participants = this.choreo.Participants.filter(
-          (p) => p.id != memberId
+          (p) => p.id != MemberId
         );
       });
     },
-    addParticipant(memberId) {
+    addParticipant(MemberId) {
       const color = ColorService.getRandom(
         this.choreo.Participants.map((p) => p.ChoreoParticipation.color)
       );
-      ChoreoService.addParticipant(this.choreoId, memberId, color).then(() => {
+      ChoreoService.addParticipant(this.choreoId, MemberId, color).then(() => {
         const memberToAdd = {
-          ...this.choreo.SeasonTeam.Members.find((m) => m.id == memberId),
+          ...this.choreo.SeasonTeam.Members.find((m) => m.id == MemberId),
           ChoreoParticipation: { color },
         };
         this.choreo.Participants = [...this.choreo.Participants, memberToAdd];

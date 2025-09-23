@@ -45,9 +45,12 @@
       />
     </b-form-group>
     <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="success">{{
-        $t("teamView.importieren")
-      }}</b-button>
+      <b-button
+        @click="ok"
+        variant="success"
+        :disabled="!teamId || !seasonId || !memberIds || memberIds.length == 0"
+        >{{ $t("teamView.importieren") }}</b-button
+      >
       <b-button @click="cancel" variant="outline-danger">{{
         $t("abbrechen")
       }}</b-button>

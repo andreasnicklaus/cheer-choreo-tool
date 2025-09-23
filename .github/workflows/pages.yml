@@ -8,7 +8,65 @@ on:
   workflow_dispatch:
 
 jobs:
+  install-dependencies:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./app
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: "npm"
+          cache-dependency-path: "**/package.json"
+      - name: Install dependencies
+        run: npm i
+      - name: Upload node_modules
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: app-dev-node-modules
+          path: "app/node_modules/"
+          retention-days: 1
+          compression-level: 6
+
+  test-unit:
+    needs: install-dependencies
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./app
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: "npm"
+          cache-dependency-path: "**/package.json"
+      - uses: actions/download-artifact@v4
+        with:
+          name: app-dev-node-modules
+          path: app/node_modules
+      - name: Install dependencies
+        run: npm i
+      - name: Run Jest tests
+        run: npm run test:unit
+      - name: Upload Jest Coverage Report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: jest-coverage-report
+          path: "app/coverage/"
+          retention-days: 30
+
   build:
+    needs: install-dependencies
     runs-on: ubuntu-latest
 
     defaults:
@@ -24,8 +82,11 @@ jobs:
           cache: "npm"
           cache-dependency-path: "**/package.json"
 
+      - uses: actions/download-artifact@v4
+        with:
+          name: app-dev-node-modules
       - name: Install dependencies
-        run: NODE_ENV=production npm i
+        run: npm i
 
       - name: Build app
         run: npm run build
@@ -57,8 +118,59 @@ jobs:
           name: github-pages
           path: ${{ runner.temp }}/artifact.tar
 
+  test-integration:
+    needs:
+      - install-dependencies
+      - build
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./app
+
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3, 4, 5, 6]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: "npm"
+          cache-dependency-path: "**/package.json"
+      - uses: actions/download-artifact@v4
+        with:
+          name: app-dev-node-modules
+          path: app/node_modules
+      - name: Install dependencies
+        run: npm i
+      - uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: app/dist
+      - name: Unpack dist
+        run: tar -xvf artifact.tar
+        working-directory: app/dist/
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Run Playwright tests
+        run: npm run test:e2e -- --shard=${{ matrix.shardIndex }}/6
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-${{ matrix.shardIndex }}
+          path: "app/playwright-report/"
+          retention-days: 30
+
   deploy:
-    needs: build
+    needs:
+      - build
+      - test-integration
+      - test-unit
     if: github.ref == 'refs/heads/main'
 
     permissions:

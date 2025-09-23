@@ -234,22 +234,17 @@ export default {
     loading: false,
   }),
   mounted() {
+    if (this.$store.state.loggedIn) {
+      this.redirect();
+      return;
+    }
+
     const query = this.$route.query;
     if (query?.sso)
       AuthService.ssoLogin(query.sso)
         .then(() => {
           window._paq.push(["trackGoal", 2]);
-          this.$router
-            .push(
-              this.$route.query?.redirectUrl ||
-                `/${this.$root.$i18n.locale}/start`
-            )
-            .catch(() => {
-              error(
-                "Redundant navigation to redirect url or start",
-                ERROR_CODES.REDUNDANT_ROUTING
-              );
-            });
+          this.redirect();
         })
         .catch((e) => {
           error(e, ERROR_CODES.SSO_LOGIN_FAILED);
@@ -257,6 +252,18 @@ export default {
         });
   },
   methods: {
+    redirect() {
+      this.$router
+        .push(
+          this.$route.query?.redirectUrl || `/${this.$root.$i18n.locale}/start`
+        )
+        .catch(() => {
+          error(
+            "Redundant navigation to redirect url or start",
+            ERROR_CODES.REDUNDANT_ROUTING
+          );
+        });
+    },
     showFailMessage(message, title = null) {
       MessagingService.showError(message, title);
     },

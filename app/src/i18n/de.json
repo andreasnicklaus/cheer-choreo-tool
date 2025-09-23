@@ -31,7 +31,8 @@
     "lade-ein-bild-hoch-max-mb": "Lade ein Bild hoch: max. {0} MB",
     "es-ist-nicht-moeglich-bilder-hochzuladen-die-groesser-al-mb-gross-sind": "Es ist nicht möglich, Bilder hochzuladen, die größer als {0} MB groß sind. Wähle eine kleinere Datei aus!",
     "die-e-mail-zur-bestaetigung-deiner-e-mail-adresse-wurde-erneut-verschickt-check-dein-postfach": "Die E-Mail zur Bestätigung deiner E-Mail-Adresse wurde erneut verschickt. Check dein Postfach!",
-    "e-mail-versandt": "E-Mail versandt"
+    "e-mail-versandt": "E-Mail versandt",
+    "settings-saved": "Ihre Einstellungen wurden gespeichert!"
   },
   "achter": "Achter",
   "alle-auswaehlen": "Alle auswählen",
@@ -735,7 +736,8 @@
     "teilnehmer-die-im-video-angezeigt-werden-sollen": "Teilnehmer, die im Video angezeigt werden sollen",
     "video-generieren": "Video generieren",
     "video-zusammenstellen": "Video zusammenstellen",
-    "dein-vereinslogo-als-wasserzeichen-im-video-anzeigen": "Dein Vereinslogo als Wasserzeichen im Video anzeigen"
+    "dein-vereinslogo-als-wasserzeichen-im-video-anzeigen": "Dein Vereinslogo als Wasserzeichen im Video anzeigen",
+    "dein-browser-unterstuetzt-kein-video": "Dein Browser unterstützt nicht den Exportieren in ein Video. Bitte versuche es mit einem anderen Browser oder Gerät."
   },
   "zur-startseite": "Zur Startseite",
   "zuruecksetzen": "Zurücksetzen",

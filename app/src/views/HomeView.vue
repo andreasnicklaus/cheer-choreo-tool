@@ -446,6 +446,7 @@
         borderRadius: '4px',
       }"
       class="text-center py-5 px-3"
+      id="interestedSection"
     >
       <h2 class="mb-1">{{ $t("Home.interesse-geweckt") }}</h2>
       <p class="mb-4">

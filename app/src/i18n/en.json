@@ -31,7 +31,8 @@
     "lade-ein-bild-hoch-max-mb": "Upload a picture: max. {0} MB",
     "es-ist-nicht-moeglich-bilder-hochzuladen-die-groesser-al-mb-gross-sind": "It is not possible to upload images that are larger than {0} MB. Select a smaller file!",
     "die-e-mail-zur-bestaetigung-deiner-e-mail-adresse-wurde-erneut-verschickt-check-dein-postfach": "The email to confirm your email address has been sent. Check your mailbox!",
-    "e-mail-versandt": "Email sent"
+    "e-mail-versandt": "Email sent",
+    "settings-saved": "Your settings were saved!"
   },
   "achter": "Eight",
   "alle-auswaehlen": "Select all",
@@ -328,7 +329,7 @@
     "waehle-aus-wer-soll": "Select who should appear on the video",
     "waehle-mit-allen-aus": "Choose whether you want to have a video with everybody on the mat or selected people",
     "warte-bis-video": "Wait until your video is finished",
-    "zum-loslegen": "Just register to get started and create the first team:",
+    "zum-loslegen": "Register now to get started and create the first team:",
     "personalisierung": "Personalization",
     "branding-deines-vereins": "Your club's branding",
     "mach-werbung-fuer-dein-team": "Advertising for your team",
@@ -735,7 +736,8 @@
     "teilnehmer-die-im-video-angezeigt-werden-sollen": "Participants who are to be displayed in the video",
     "video-generieren": "Generate video",
     "video-zusammenstellen": "Create video",
-    "dein-vereinslogo-als-wasserzeichen-im-video-anzeigen": "Show your club logo as a watermark in the video"
+    "dein-vereinslogo-als-wasserzeichen-im-video-anzeigen": "Show your club logo as a watermark in the video",
+    "dein-browser-unterstuetzt-kein-video": "Your browser does not support exporting to a video. Please try a different browser or device."
   },
   "zur-startseite": "To the landing page",
   "zuruecksetzen": "Reset",
