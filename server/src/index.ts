@@ -16,14 +16,19 @@ const permissionsPolicy = require("permissions-policy");
 import db from "./db";
 
 // MIDDLEWARES
-const { errorHandlingMiddleWare } = require("./middlewares/errorHandlingMiddleware");
-import { errorLoggingMiddleWare, loggerMiddleWare } from "./middlewares/loggingMiddleware";
+const {
+  errorHandlingMiddleWare,
+} = require("./middlewares/errorHandlingMiddleware");
+import {
+  errorLoggingMiddleWare,
+  loggerMiddleWare,
+} from "./middlewares/loggingMiddleware";
 
 const favicon = require("serve-favicon");
 
 // LOGGER
 const { logger } = require("./plugins/winston");
-const logConfig = require("./utils/logConfig");
+import logConfig from "@/utils/logConfig";
 
 // ROUTERS
 import { choreoRouter } from "./routes/choreo";
@@ -47,16 +52,19 @@ const app = express();
 const port = 3000;
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
-const corsWhiteList = [process.env.FRONTEND_DOMAIN, "http://localhost:8080"]
+const corsWhiteList = [process.env.FRONTEND_DOMAIN, "http://localhost:8080"];
 app.use(
   cors({
-    origin: function (origin: string | undefined, callback: { (err: Error | null, allow?: boolean): void }) {
+    origin: function (
+      origin: string | undefined,
+      callback: { (err: Error | null, allow?: boolean): void }
+    ) {
       if (corsWhiteList.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
         callback(null, false);
       }
-    }
+    },
   })
 );
 app.use(robots(__dirname + "/public/robots.txt"));
@@ -84,7 +92,13 @@ app.use(
           (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`,
         ],
         "worker-src": ["'self'", "https:", "blob:"],
-        "connect-src": ["'self'", "https:", "blob:", process.env.FRONTED_DOMAIN, "ws:"],
+        "connect-src": [
+          "'self'",
+          "https:",
+          "blob:",
+          process.env.FRONTED_DOMAIN,
+          "ws:",
+        ],
         upgradeInsecureRequests: null,
       },
     },
@@ -254,7 +268,7 @@ app.use(errorHandlingMiddleWare);
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
-const swaggerFileExtension = process.env.NODE_ENV == "production" ? "js" : "ts"
+const swaggerFileExtension = process.env.NODE_ENV == "production" ? "js" : "ts";
 const swaggerOptions = {
   definition: {
     openapi: "3.1.1",
@@ -333,7 +347,15 @@ app.use(
  *       200:
  *         description: JsDoc documentation
  */
-app.use("/docs", express.static(path.join(__dirname, process.env.NODE_ENV == "production" ? "docs" : "../dist/docs")));
+app.use(
+  "/docs",
+  express.static(
+    path.join(
+      __dirname,
+      process.env.NODE_ENV == "production" ? "docs" : "../dist/docs"
+    )
+  )
+);
 
 function startServer() {
   logConfig();

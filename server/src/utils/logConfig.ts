@@ -1,7 +1,7 @@
-const { logger } = require("../plugins/winston");
+import logger from "../plugins/winston";
 
 function logConfig() {
-  logger.debug("Starting logging the configuration variables")
+  logger.debug("Starting logging the configuration variables");
   const dbName = process.env.POSTGRES_DB || "not defined";
   const dbUsername = process.env.POSTGRES_USER || "not defined";
   const dbHost = process.env.DB_HOST || "not defined";
@@ -30,7 +30,8 @@ function logConfig() {
 
   const backendDomain = process.env.BACKEND_DOMAIN || "not defined";
 
-  const LogIngestingHost = process.env.BETTERSTACK_LOG_INGESTING_HOST || "not defined";
+  const LogIngestingHost =
+    process.env.BETTERSTACK_LOG_INGESTING_HOST || "not defined";
   const LogSourceToken = process.env.BETTERSTACK_LOG_SOURCE_TOKEN
     ? "<redacted>"
     : "not defined"; // njsscan-ignore: node_password
@@ -42,27 +43,27 @@ function logConfig() {
   logger.info(`  Database username:     ${dbUsername}`);
   logger.info(`  Database host:         ${dbHost}`);
   logger.info(`  Database password:     ${dbPassword}`);
-  logger.info();
+  logger.info("");
   logger.info(`  JWT token secret:      ${tokenSecret}`);
   logger.info(`  JWT expires in:        ${jwtExpiresIn}`);
   logger.info(`  SSO token expires in:  ${ssoTokenExpiresIn}`);
-  logger.info();
+  logger.info("");
   logger.info(`  Default admin:         ${adminUsername}`);
   logger.info(`  Default admin pass:    ${adminPassword}`);
-  logger.info();
+  logger.info("");
   logger.info(`  SMTP Server:           ${smtpServer}`);
   logger.info(`  SMTP User:             ${smtpUser}`);
   logger.info(`  SMTP Port:             ${smtpPort}`);
   logger.info(`  SMTP Password:         ${smtpPassword}`);
-  logger.info();
+  logger.info("");
   logger.info(`  Admin emails:          ${emailAdminAddresses}`);
-  logger.info();
+  logger.info("");
   logger.info(`  Frontend Domain:       ${frontendDomain}`);
   logger.info(`  Backend Domain:        ${backendDomain}`);
-  logger.info();
+  logger.info("");
   logger.info(`  Log Source Token:      ${LogSourceToken}`);
   logger.info(`  Log Ingesting Host:    ${LogIngestingHost}`);
   logger.info("################");
 }
 
-module.exports = logConfig;
+export default logConfig;

@@ -19,7 +19,9 @@ export default defineConfig([
     "**/dist",
     "**/node_modules",
     "**/docs",
+    "**/coverage",
     "./eslint.config.mjs", // ignore this file
+    "./jest.config.ts", // ignore this file
   ]),
   // Override for config files to avoid TS project errors
   {
@@ -38,7 +40,7 @@ export default defineConfig([
       sourceType: "commonjs",
 
       parserOptions: {
-        project: "eslint.tsconfig.json",
+        project: "tsconfig.json",
       },
     },
 
