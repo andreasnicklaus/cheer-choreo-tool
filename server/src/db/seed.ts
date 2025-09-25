@@ -1,3 +1,4 @@
+import logger from "@/plugins/winston";
 import AdminService from "../services/AdminService";
 import ChoreoService from "../services/ChoreoService";
 import ClubService from "../services/ClubService";
@@ -20,82 +21,81 @@ import User from "./models/user";
 const data: seedData = require("./seed.json");
 
 type seasonSeedData = {
-  year: number,
-  name: string,
-  usersSpecific?: boolean
-}
+  year: number;
+  name: string;
+  usersSpecific?: boolean;
+};
 
 type userSeedData = {
-  username: string,
-  password: string,
-  clubs: clubSeedData[],
-  notifications: notificationSeedData[]
-}
+  username: string;
+  password: string;
+  clubs: clubSeedData[];
+  notifications: notificationSeedData[];
+};
 type clubSeedData = {
-  name: string,
-  Teams: teamSeedData[]
-}
+  name: string;
+  Teams: teamSeedData[];
+};
 
 type teamSeedData = {
-  name: string,
-  SeasonTeams: seasonTeamData[]
-}
+  name: string;
+  SeasonTeams: seasonTeamData[];
+};
 
 type seasonTeamData = {
-  SeasonName: string,
-  Members: memberSeedData[],
-  Choreos: choreoSeedData[]
-}
+  SeasonName: string;
+  Members: memberSeedData[];
+  Choreos: choreoSeedData[];
+};
 
 type memberSeedData = {
-  name: string,
-  nickname: string,
-  abbreviation: string,
+  name: string;
+  nickname: string;
+  abbreviation: string;
   // color?: string
-}
+};
 
 type choreoSeedData = {
-  name: string,
-  counts: number,
-  matType: MatType,
-  Hits: hitSeedData[],
-  Lineups: lineupSeedData[],
-  Participants: string[]
-}
+  name: string;
+  counts: number;
+  matType: MatType;
+  Hits: hitSeedData[];
+  Lineups: lineupSeedData[];
+  Participants: string[];
+};
 
 type hitSeedData = {
-  name: string,
-  count: number,
-  memberIndices: number[]
-}
+  name: string;
+  count: number;
+  memberIndices: number[];
+};
 
 type lineupSeedData = {
-  startCount: number,
-  endCount: number,
-  Positions: positionSeedData[]
-}
+  startCount: number;
+  endCount: number;
+  Positions: positionSeedData[];
+};
 
 type positionSeedData = {
-  x: number,
-  y: number,
-  memberAbbreviation?: string
-}
+  x: number;
+  y: number;
+  memberAbbreviation?: string;
+};
 
 type notificationSeedData = {
-  title: string,
-  message: string,
-  read?: boolean
-}
-
+  title: string;
+  message: string;
+  read?: boolean;
+};
 
 type seedData = {
-  users: userSeedData[],
-  seasons: seasonSeedData[],
+  users: userSeedData[];
+  seasons: seasonSeedData[];
   admins: {
-    username: string,
-    password: string
-  }[]
-}
+    username: string;
+    password: string;
+  }[];
+};
 
 function seed() {
   Promise.all(
@@ -104,11 +104,15 @@ function seed() {
         Promise.all([
           Promise.all(
             data.seasons.map(async (s) => {
-              const whereParams: { year: number, name: string, UserId?: string } = {
+              const whereParams: {
+                year: number;
+                name: string;
+                UserId?: string;
+              } = {
                 year: s.year,
                 name: s.name,
-              }
-              if (s.usersSpecific) whereParams.UserId = user.id
+              };
+              if (s.usersSpecific) whereParams.UserId = user.id;
               const [season, _created] = await Season.findOrCreate({
                 where: whereParams,
               });
@@ -144,102 +148,116 @@ function seed() {
                                     (s) => s.name == st.SeasonName
                                   );
                                   if (!season) {
-                                    logger.error(`Season with name ${st.SeasonName} not found`);
-                                    throw new Error(`Season with name ${st.SeasonName} not found`);
+                                    logger.error(
+                                      `Season with name ${st.SeasonName} not found`
+                                    );
+                                    throw new Error(
+                                      `Season with name ${st.SeasonName} not found`
+                                    );
                                   }
                                   return season.id;
                                 })(),
                                 TeamId: team.id,
                                 UserId: user.id,
                               },
-                            }).then(([seasonTeam, _created]: [SeasonTeam, boolean]) =>
-                              Promise.all(
-                                st.Members.map((m) =>
-                                  MemberService.findOrCreate(
-                                    m.name,
-                                    m.nickname,
-                                    m.abbreviation,
-                                    // m.color,
-                                    seasonTeam.id,
-                                    user.id
-                                  )
-                                )
-                              ).then((members) =>
+                            }).then(
+                              ([seasonTeam, _created]: [SeasonTeam, boolean]) =>
                                 Promise.all(
-                                  st.Choreos.map((ch) =>
-                                    ChoreoService.findOrCreate(
-                                      ch.name,
-                                      ch.counts,
-                                      ch.matType,
+                                  st.Members.map((m) =>
+                                    MemberService.findOrCreate(
+                                      m.name,
+                                      m.nickname,
+                                      m.abbreviation,
+                                      // m.color,
                                       seasonTeam.id,
                                       user.id
-                                    ).then((choreo: Choreo) => {
-                                      Promise.all(
-                                        ch.Hits.map((h) =>
-                                          HitService.findOrCreate(
-                                            h.name,
-                                            h.count,
-                                            choreo.id,
-                                            h.memberIndices.map(
-                                              (i) => members[i]?.id
-                                            ),
-                                            user.id
-                                          )
-                                        )
-                                      );
-                                      Promise.all(
-                                        ch.Lineups.map((l) =>
-                                          LineupService.findOrCreate(
-                                            l.startCount,
-                                            l.endCount,
-                                            choreo.id,
-                                            user.id
-                                          ).then((lineup: Lineup) =>
-                                            Promise.all(
-                                              l.Positions.map((p) => {
-                                                const member = members.find(
-                                                  (m) =>
-                                                    m.abbreviation ==
-                                                    p.memberAbbreviation
-                                                );
-                                                if (!member) {
-                                                  logger.error(`Member with abbreviation ${p.memberAbbreviation} not found`);
-                                                  throw new Error(`Member with abbreviation ${p.memberAbbreviation} not found`);
-                                                }
-                                                return PositionService.findOrCreate(
-                                                  p.x,
-                                                  p.y,
-                                                  lineup.id,
-                                                  member.id,
-                                                  user.id
-                                                );
-                                              })
+                                    )
+                                  )
+                                ).then((members) =>
+                                  Promise.all(
+                                    st.Choreos.map((ch) =>
+                                      ChoreoService.findOrCreate(
+                                        ch.name,
+                                        ch.counts,
+                                        ch.matType,
+                                        seasonTeam.id,
+                                        user.id
+                                      ).then((choreo: Choreo) => {
+                                        Promise.all(
+                                          ch.Hits.map((h) =>
+                                            HitService.findOrCreate(
+                                              h.name,
+                                              h.count,
+                                              choreo.id,
+                                              h.memberIndices.map(
+                                                (i) => members[i]?.id
+                                              ),
+                                              user.id
                                             )
                                           )
-                                        )
-                                      );
-                                      Promise.all(
-                                        ch.Participants.map((p) =>
-                                          ChoreoService.addParticipant(
-                                            choreo.id,
-                                            (() => {
-                                              const participant = members.find(
-                                                (m) => m.abbreviation == p
-                                              );
-                                              if (!participant) {
-                                                logger.error(`Participant with abbreviation ${p} not found`);
-                                                throw new Error(`Participant with abbreviation ${p} not found`);
-                                              }
-                                              return participant.id;
-                                            })(),
-                                            user.id
+                                        );
+                                        Promise.all(
+                                          ch.Lineups.map((l) =>
+                                            LineupService.findOrCreate(
+                                              l.startCount,
+                                              l.endCount,
+                                              choreo.id,
+                                              user.id
+                                            ).then((lineup: Lineup) =>
+                                              Promise.all(
+                                                l.Positions.map((p) => {
+                                                  const member = members.find(
+                                                    (m) =>
+                                                      m.abbreviation ==
+                                                      p.memberAbbreviation
+                                                  );
+                                                  if (!member) {
+                                                    logger.error(
+                                                      `Member with abbreviation ${p.memberAbbreviation} not found`
+                                                    );
+                                                    throw new Error(
+                                                      `Member with abbreviation ${p.memberAbbreviation} not found`
+                                                    );
+                                                  }
+                                                  return PositionService.findOrCreate(
+                                                    p.x,
+                                                    p.y,
+                                                    lineup.id,
+                                                    member.id,
+                                                    user.id
+                                                  );
+                                                })
+                                              )
+                                            )
                                           )
-                                        )
-                                      );
-                                    })
+                                        );
+                                        Promise.all(
+                                          ch.Participants.map((p) =>
+                                            ChoreoService.addParticipant(
+                                              choreo.id,
+                                              (() => {
+                                                const participant =
+                                                  members.find(
+                                                    (m) => m.abbreviation == p
+                                                  );
+                                                if (!participant) {
+                                                  logger.error(
+                                                    `Participant with abbreviation ${p} not found`
+                                                  );
+                                                  throw new Error(
+                                                    `Participant with abbreviation ${p} not found`
+                                                  );
+                                                }
+                                                return participant.id;
+                                              })(),
+                                              user.id
+                                            )
+                                          )
+                                        );
+                                      })
+                                    )
                                   )
                                 )
-                              )
                             )
                           )
                         )
@@ -258,11 +276,11 @@ function seed() {
       AdminService.findOrCreate(a.username, a.password)
     ) || []),
     process.env.DEFAULT_ADMIN_USERNAME &&
-    process.env.DEFAULT_ADMIN_PASSWORD &&
-    AdminService.findOrCreate(
-      process.env.DEFAULT_ADMIN_USERNAME,
-      process.env.DEFAULT_ADMIN_PASSWORD
-    ),
+      process.env.DEFAULT_ADMIN_PASSWORD &&
+      AdminService.findOrCreate(
+        process.env.DEFAULT_ADMIN_USERNAME,
+        process.env.DEFAULT_ADMIN_PASSWORD
+      ),
   ]);
 }
 
