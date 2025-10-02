@@ -1,5 +1,3 @@
-
-
 import db from "./db";
 import Choreo from "./models/choreo";
 import ChoreoParticipation from "./models/choreoParticipation";
@@ -123,10 +121,11 @@ User.hasMany(Feedback);
 NotificationModel.belongsTo(User);
 User.hasMany(NotificationModel);
 
-db.sync({
-  alter: true,
-}).then(() => {
-  seed()
-});
+const syncPromise = db
+  .sync({
+    alter: true,
+  })
+  .then(() => (process.env.IsTest ? null : seed()));
 
+export { syncPromise };
 export default db;

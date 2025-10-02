@@ -30,7 +30,7 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
 
 type jwtContent = {
   UserId: string;
-}
+};
 
 declare module "express-serve-static-core" {
   interface Request {
@@ -58,8 +58,13 @@ class AuthService {
    * @param {string | undefined | null} [options.expiresIn=null]
    * @returns {string}
    */
-  generateAccessToken(UserId: string, { expiresIn = null }: { expiresIn?: string | null } = {}) {
-    logger.debug(`AuthService generateAccessToken ${JSON.stringify({ UserId, expiresIn })}`)
+  generateAccessToken(
+    UserId: string,
+    { expiresIn = null }: { expiresIn?: string | null } = {}
+  ) {
+    logger.debug(
+      `AuthService generateAccessToken ${JSON.stringify({ UserId, expiresIn })}`
+    );
     return jwt.sign({ UserId }, TOKEN_SECRET, {
       expiresIn: expiresIn || JWT_EXPIRES_IN,
     });
@@ -87,28 +92,32 @@ class AuthService {
         return res.status(401).send();
       }
 
-      jwt.verify(token, TOKEN_SECRET, async (err: Error, content: jwtContent) => {
-        if (err) {
-          if (!failIfNotLoggedIn) return next();
-          return res.status(403);
+      jwt.verify(
+        token,
+        TOKEN_SECRET,
+        async (err: Error, content: jwtContent) => {
+          if (err) {
+            if (!failIfNotLoggedIn) return next();
+            return res.status(403);
+          }
+
+          User.findByPk(content.UserId)
+            .then((user: User | null) => {
+              if (!user) {
+                if (!failIfNotLoggedIn) return next();
+                return res.status(403).send();
+              }
+
+              logger.debug(
+                `User ${user.username} with id ${user.id} used this token: ${token}`
+              );
+              req.UserId = user.id;
+              req.User = user;
+              next();
+            })
+            .catch((e) => next(e));
         }
-
-        User.findByPk(content.UserId)
-          .then((user: User | null) => {
-            if (!user) {
-              if (!failIfNotLoggedIn) return next();
-              return res.status(403).send();
-            }
-
-            logger.debug(
-              `User ${user.username} with id ${user.id} used this token: ${token}`
-            );
-            req.UserId = user.id;
-            req.User = user;
-            next();
-          })
-          .catch((e) => next(e));
-      });
+      );
     };
   }
 
@@ -123,28 +132,32 @@ class AuthService {
    */
   resolveSsoToken(token: string, locale = "en") {
     return new Promise((resolve, reject) => {
-      jwt.verify(token, TOKEN_SECRET, async (err: Error | null, content: jwtContent) => {
-        if (err) {
-          return reject(
-            new Error(i18n.__({ phrase: "errors.invalid-sso-token", locale }))
-          );
-        }
-
-        return User.findByPk(content.UserId).then((user) => {
-          if (!user) {
+      jwt.verify(
+        token,
+        TOKEN_SECRET,
+        async (err: Error | null, content: jwtContent) => {
+          if (err) {
             return reject(
-              new Error(
-                i18n.__({ phrase: "errors.sso-token-user-missing", locale })
-              )
+              new Error(i18n.__({ phrase: "errors.invalid-sso-token", locale }))
             );
           }
 
-          logger.debug(
-            `User ${user.username} with id ${user.id} used this SSO token: ${token}`
-          );
-          resolve(user);
-        });
-      });
+          return User.findByPk(content.UserId).then((user) => {
+            if (!user) {
+              return reject(
+                new Error(
+                  i18n.__({ phrase: "errors.sso-token-user-missing", locale })
+                )
+              );
+            }
+
+            logger.debug(
+              `User ${user.username} with id ${user.id} used this SSO token: ${token}`
+            );
+            resolve(user);
+          });
+        }
+      );
     });
   }
 
@@ -158,43 +171,50 @@ class AuthService {
    * @throws {Error} User with given username has to have an email address
    */
   generateSsoToken(email: string, locale = "en") {
-    logger.debug(`AuthService generateSsoToken ${JSON.stringify({ email, locale })}`)
-    return UserService.findByUsernameOrEmail(email).then((user: User | null) => {
-      if (!user) {
-        logger.warn(`No user with email ${email} found`)
-        throw new Error(
-          i18n.__(
-            { phrase: "errors.entity-not-found", locale },
-            { entity: "user" }
+    logger.debug(
+      `AuthService generateSsoToken ${JSON.stringify({ email, locale })}`
+    );
+    return UserService.findByUsernameOrEmail(email).then(
+      (user: User | null) => {
+        if (!user) {
+          logger.warn(`No user with email ${email} found`);
+          throw new Error(
+            i18n.__(
+              { phrase: "errors.entity-not-found", locale },
+              { entity: "user" }
+            )
+          );
+        }
+        if (!user.email) {
+          logger.warn("Found user has no email");
+          throw new Error(
+            i18n.__({ phrase: "errors.user-has-no-email", locale })
+          );
+        }
+
+        const token = this.generateAccessToken(user.id, {
+          expiresIn: process.env.SSO_TOKEN_EXPIRES_IN,
+        });
+        return MailService.sendSsoEmail(
+          user.email,
+          user.username,
+          token,
+          locale
+        ).then(() =>
+          NotificationService.createOne(
+            i18n.__({
+              phrase: "notifications.sso-link-was-sent.title",
+              locale,
+            }),
+            i18n.__({
+              phrase: "notifications.sso-link-was-sent.message",
+              locale,
+            }),
+            user.id
           )
         );
       }
-      if (!user.email) {
-        logger.warn("Found user has no email")
-        throw new Error(
-          i18n.__({ phrase: "errors.user-has-no-email", locale })
-        );
-      }
-
-      const token = this.generateAccessToken(user.id, {
-        expiresIn: process.env.SSO_TOKEN_EXPIRES_IN,
-      });
-      return MailService.sendSsoEmail(
-        user.email,
-        user.username,
-        token,
-        locale
-      ).then(() =>
-        NotificationService.createOne(
-          i18n.__({ phrase: "notifications.sso-link-was-sent.title", locale }),
-          i18n.__({
-            phrase: "notifications.sso-link-was-sent.message",
-            locale,
-          }),
-          user.id
-        )
-      );
-    });
+    );
   }
 
   /**

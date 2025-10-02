@@ -19,7 +19,7 @@ class UserService {
    * @returns {Promise<Array>} Array of user objects.
    */
   async getAll() {
-    logger.debug(`UserService getAll`)
+    logger.debug(`UserService getAll`);
     return User.findAll();
   }
 
@@ -29,7 +29,7 @@ class UserService {
    * @returns {Promise<Object>} The user object.
    */
   async findById(id: string) {
-    logger.debug(`UserService findById ${JSON.stringify({ id })}`)
+    logger.debug(`UserService findById ${JSON.stringify({ id })}`);
     return User.findByPk(id, { include: ["Clubs"] });
   }
 
@@ -44,7 +44,12 @@ class UserService {
     usernameOrEmail: string,
     { scope = "defaultScope" } = {}
   ) {
-    logger.debug(`UserService findByUsernameOrEmail ${JSON.stringify({ usernameOrEmail, scope })}`)
+    logger.debug(
+      `UserService findByUsernameOrEmail ${JSON.stringify({
+        usernameOrEmail,
+        scope,
+      })}`
+    );
     return User.scope(scope).findOne({
       where: {
         [Op.or]: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
@@ -57,7 +62,7 @@ class UserService {
    * @returns {Promise<number>} The total count of users.
    */
   getCount() {
-    logger.debug(`UserService getCount`)
+    logger.debug(`UserService getCount`);
     return User.count();
   }
 
@@ -66,16 +71,20 @@ class UserService {
    * @returns {Promise<number>} The trend value.
    */
   getTrend() {
-    logger.debug(`UserService getTrend`)
+    logger.debug(`UserService getTrend`);
     return Promise.all([
       User.count({
         where: {
-          createdAt: { [Op.gt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30 },
+          createdAt: {
+            [Op.gt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30,
+          },
         },
       }),
       User.count({
         where: {
-          deletedAt: { [Op.gt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30 },
+          deletedAt: {
+            [Op.gt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30,
+          },
         },
       }),
     ]).then(([created, deleted]) => created - deleted);
@@ -90,8 +99,22 @@ class UserService {
    * @param {string} locale - The locale for notifications.
    * @returns {Promise<Object>} The created user object.
    */
-  async create(username: string, password: string, email: string, emailConfirmed: boolean, locale: string) {
-    logger.debug(`UserService create ${JSON.stringify({ username, password: password ? '<redacted>' : 'undefined', email, emailConfirmed, locale })}`)
+  async create(
+    username: string,
+    password: string,
+    email: string,
+    emailConfirmed: boolean,
+    locale: string
+  ) {
+    logger.debug(
+      `UserService create ${JSON.stringify({
+        username,
+        password: password ? "<redacted>" : "undefined",
+        email,
+        emailConfirmed,
+        locale,
+      })}`
+    );
     return User.create({ username, password, email, emailConfirmed }).then(
       (user) => {
         MailService.sendUserRegistrationNotice(
@@ -151,7 +174,7 @@ class UserService {
    * @returns {Promise<Object>} The updated user object.
    */
   async update(id: string, data: Record<string, unknown>) {
-    const { password, ...logData } = data
+    const { password, ...logData } = data;
     logger.debug(`UserService update ${JSON.stringify({ id, data: logData })}`);
     return User.findByPk(id).then(async (foundUser) => {
       if (foundUser) {
@@ -187,7 +210,7 @@ class UserService {
    * @returns {Promise<number>} The percentage of logged-in users.
    */
   getLoggedInPercentage() {
-    logger.debug(`UserService getLoggedInPercentage`)
+    logger.debug(`UserService getLoggedInPercentage`);
     return Promise.all([
       this.getCount(),
       User.count({

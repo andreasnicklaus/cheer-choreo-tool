@@ -28,7 +28,7 @@ export function verify() {
       process.env.BACKEND_DOMAIN
     )
   ) {
-    mailLogger.error("Not all needed environment variables are specified.")
+    mailLogger.error("Not all needed environment variables are specified.");
     throw new Error("Not all needed environment variables are specified.");
   }
 
