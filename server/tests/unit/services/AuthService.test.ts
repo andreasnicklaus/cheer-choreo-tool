@@ -299,5 +299,82 @@ describe("AuthService", () => {
     expect(nextMock).not.toHaveBeenCalled();
   });
 
-  // TODO: test resolveAdmin
+  test("resolveAdmin should set AdminId and Admin of the request", async () => {
+    const admin = await Admin.create({
+      username: "test-user",
+      password: "test-password",
+    });
+
+    const base64Auth = "dGVzdC11c2VyOnRlc3QtcGFzc3dvcmQ=";
+
+    const requestObject = {
+      headers: { authorization: `Basic ${base64Auth}` },
+    } as Request;
+    const nextMock = jest.fn();
+
+    await AuthService.resolveAdmin(
+      requestObject,
+      {} as unknown as Response,
+      nextMock
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    expect(nextMock).toHaveBeenCalled();
+    expect(requestObject.AdminId).toBe(admin.id);
+    expect(requestObject.Admin.id).toBe(admin.id);
+    expect(requestObject.Admin.username).toBe(admin.username);
+  });
+
+  test("resolveAdmin should throw an error for an missing authorization token", async () => {
+    const requestObject = {
+      headers: { authorization: `Basic` },
+    } as Request;
+    const nextMock = jest.fn();
+
+    await AuthService.resolveAdmin(
+      requestObject,
+      {} as unknown as Response,
+      nextMock
+    );
+
+    expect(nextMock).toHaveBeenCalledWith(expect.any(Error));
+  });
+
+  test("resolveAdmin should skip resolving for an invalid authorization token", async () => {
+    const base64Auth = "dGVzdC11c2VyOnRlc3QtcGFzc3dv";
+
+    const requestObject = {
+      headers: { authorization: `Basic ${base64Auth}` },
+    } as Request;
+    const nextMock = jest.fn();
+
+    await AuthService.resolveAdmin(
+      requestObject,
+      {} as unknown as Response,
+      nextMock
+    );
+
+    expect(nextMock).toHaveBeenCalledWith();
+    expect(requestObject.AdminId).toBeUndefined();
+    expect(requestObject.Admin).toBeUndefined();
+  });
+
+  test("resolveAdmin should skip resolving for a non-existent admin", async () => {
+    const base64Auth = "dGVzdC11c2VyOnRlc3QtcGFzc3dvcmQ=";
+
+    const requestObject = {
+      headers: { authorization: `Basic ${base64Auth}` },
+    } as Request;
+    const nextMock = jest.fn();
+
+    await AuthService.resolveAdmin(
+      requestObject,
+      {} as unknown as Response,
+      nextMock
+    );
+
+    expect(nextMock).toHaveBeenCalledWith();
+    expect(requestObject.AdminId).toBeUndefined();
+    expect(requestObject.Admin).toBeUndefined();
+  });
 });
