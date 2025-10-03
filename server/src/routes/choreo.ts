@@ -3,7 +3,6 @@ import Choreo from "../db/models/choreo";
 import ChoreoService from "../services/ChoreoService";
 const { default: AuthService } = require("../services/AuthService");
 
-
 /**
  * @swagger
  * tags:
@@ -50,24 +49,28 @@ const router = Router();
  *              type: string
  *              example: Not found
  */
-router.get("/:id?", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  if (req.params.id)
-    ChoreoService.findById(req.params.id, req.UserId)
-      .then((foundChoreo: Choreo) => {
-        if (!foundChoreo) res.status(404).send(req.t("responses.not-found"));
-        else res.send(foundChoreo);
-        return next();
-      })
-      .catch((e: Error) => next(e));
-  else {
-    ChoreoService.getAll(req.UserId)
-      .then((choreoList: Choreo[]) => {
-        res.send(choreoList);
-        return next();
-      })
-      .catch((e: Error) => next(e));
+router.get(
+  "/:id?",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    if (req.params.id)
+      ChoreoService.findById(req.params.id, req.UserId)
+        .then((foundChoreo: Choreo) => {
+          if (!foundChoreo) res.status(404).send(req.t("responses.not-found"));
+          else res.send(foundChoreo);
+          return next();
+        })
+        .catch((e: Error) => next(e));
+    else {
+      ChoreoService.getAll(req.UserId)
+        .then((choreoList: Choreo[]) => {
+          res.send(choreoList);
+          return next();
+        })
+        .catch((e: Error) => next(e));
+    }
   }
-});
+);
 
 /**
  * @openapi
@@ -112,22 +115,26 @@ router.get("/:id?", AuthService.authenticateUser(), (req: Request, res: Response
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  */
-router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  const { name, counts, matType, seasonTeamId, participants } = req.body;
-  return ChoreoService.create(
-    name,
-    counts,
-    matType,
-    seasonTeamId,
-    participants,
-    req.UserId
-  )
-    .then((choreo: Choreo) => {
-      res.send(choreo);
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.post(
+  "/",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    const { name, counts, matType, seasonTeamId, participants } = req.body;
+    return ChoreoService.create(
+      name,
+      counts,
+      matType,
+      seasonTeamId,
+      participants,
+      req.UserId
+    )
+      .then((choreo: Choreo) => {
+        res.send(choreo);
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  }
+);
 
 /**
  * @openapi
@@ -162,14 +169,18 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *       404:
  *         description: Choreo not found
  */
-router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  return ChoreoService.update(req.params.id, req.body, req.UserId)
-    .then((choreo: Choreo) => {
-      res.send(choreo);
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.put(
+  "/:id",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    return ChoreoService.update(req.params.id, req.body, req.UserId)
+      .then((choreo: Choreo) => {
+        res.send(choreo);
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  }
+);
 
 /**
  * @openapi
@@ -194,14 +205,18 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *       404:
  *         description: Choreo not found
  */
-router.delete("/:id", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  return ChoreoService.remove(req.params.id, req.UserId)
-    .then(() => {
-      res.send();
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.delete(
+  "/:id",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    return ChoreoService.remove(req.params.id, req.UserId)
+      .then(() => {
+        res.send();
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  }
+);
 
 /**
  * @openapi
@@ -288,7 +303,7 @@ router.delete(
   (req: Request, res: Response, next: NextFunction) => {
     return ChoreoService.removeParticipant(
       req.params.id,
-      req.params.participationId,
+      req.params.participationId
     )
       .then(() => {
         res.send();
@@ -392,7 +407,7 @@ router.patch(
  *         description: Color changed successfully
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
-*/
+ */
 router.patch(
   "/:id/participants/:participantId",
   AuthService.authenticateUser(),
@@ -401,8 +416,7 @@ router.patch(
     return ChoreoService.changeParticipationColor(
       req.params.id,
       req.params.participantId,
-      color,
-      req.UserId
+      color
     )
       .then(() => {
         res.send();
