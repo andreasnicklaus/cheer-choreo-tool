@@ -1,9 +1,9 @@
 import Feedback from "../db/models/feedback";
 import logger from "../plugins/winston";
+import MailService from "./MailService";
+import UserService from "./UserService";
 
 const { Sequelize, Op } = require("sequelize");
-const MailService = require("./MailService");
-const UserService = require("./UserService");
 
 /**
  * Service for handling user feedback.
@@ -27,12 +27,15 @@ class FeedbackService {
     return Feedback.create({ stars, text, UserId }).then(async (feedback) => {
       let user = null;
       if (UserId) user = await UserService.findById(UserId).catch(() => null);
-      MailService.sendFeedbackNotice(
-        user?.username,
-        user?.email,
-        feedback.stars,
-        feedback.text,
-      );
+      if (!user)
+        throw new Error("User does not exist in order to create this feedback");
+      if (user.email)
+        MailService.sendFeedbackNotice(
+          user?.username,
+          user?.email,
+          feedback.stars,
+          feedback.text,
+        );
       return feedback;
     });
   }

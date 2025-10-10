@@ -45,7 +45,7 @@ class Feedback extends Model<
 > {
   declare id: CreationOptional<string>;
   declare stars: number;
-  declare text?: string;
+  declare text: string;
 
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;

@@ -42,7 +42,6 @@ describe("ClubService", () => {
   });
 
   afterEach(async () => {
-    console.log("🚀 ~ afterEach:", afterEach);
     await Club.destroy({ where: {} });
     await User.destroy({ where: {} });
     await Team.destroy({ where: {} });
