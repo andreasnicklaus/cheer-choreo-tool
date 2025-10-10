@@ -43,32 +43,36 @@ const router = Router();
  *       404:
  *         description: Team not found
  */
-router.get("/:id?", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  if (req.params.id)
-    return TeamService.findById(req.params.id, req.UserId)
-      .then((team: Team | null) => {
-        res.send(team);
-        return next();
-      })
-      .catch((e: Error) => next(e));
-  else {
-    if (req.query.name)
-      return TeamService.findByName(req.query.name as string, req.UserId)
-        .then((foundTeams: Team[]) => {
-          if (!foundTeams) res.status(404).send(req.t("responses.not-found"));
-          else res.send(foundTeams);
+router.get(
+  "/:id?",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    if (req.params.id)
+      return TeamService.findById(req.params.id, req.UserId)
+        .then((team: Team | null) => {
+          res.send(team);
           return next();
         })
         .catch((e: Error) => next(e));
-    else
-      return TeamService.getAll(req.UserId)
-        .then((foundTeams: Team[]) => {
-          res.send(foundTeams);
-          return next();
-        })
-        .catch((e: Error) => next(e));
-  }
-});
+    else {
+      if (req.query.name)
+        return TeamService.findByName(req.query.name as string, req.UserId)
+          .then((foundTeams: Team[]) => {
+            if (!foundTeams) res.status(404).send(req.t("responses.not-found"));
+            else res.send(foundTeams);
+            return next();
+          })
+          .catch((e: Error) => next(e));
+      else
+        return TeamService.getAll(req.UserId)
+          .then((foundTeams: Team[]) => {
+            res.send(foundTeams);
+            return next();
+          })
+          .catch((e: Error) => next(e));
+    }
+  },
+);
 
 /**
  * @openapi
@@ -105,24 +109,28 @@ router.get("/:id?", AuthService.authenticateUser(), (req: Request, res: Response
  *               $ref: '#/components/schemas/Team'
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
-  */
-router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  const { name, clubId, seasonId } = req.body;
-  return TeamService.create(name, clubId, seasonId, req.UserId)
-    .then((team: Team) => {
-      NotificationService.createOne(
-        req.t("notifications.team-created.title"),
-        req.t("notifications.team-created.message", {
-          name,
-          teamId: team.id,
-        }),
-        req.UserId
-      );
-      res.send(team);
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+ */
+router.post(
+  "/",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    const { name, clubId, seasonId } = req.body;
+    return TeamService.create(name, clubId, seasonId, req.UserId)
+      .then((team: Team) => {
+        NotificationService.createOne(
+          req.t("notifications.team-created.title"),
+          req.t("notifications.team-created.message", {
+            name,
+            teamId: team.id,
+          }),
+          req.UserId,
+        );
+        res.send(team);
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 /**
  * @openapi
@@ -157,14 +165,18 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *       404:
  *         description: Team not found
  */
-router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  return TeamService.update(req.params.id, req.body, req.UserId)
-    .then((team: Team) => {
-      res.send(team);
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.put(
+  "/:id",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    return TeamService.update(req.params.id, req.body, req.UserId)
+      .then((team: Team) => {
+        res.send(team);
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 /**
  * @openapi
@@ -189,13 +201,17 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *       404:
  *         description: Team not found
  */
-router.delete("/:id", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  return TeamService.remove(req.params.id, req.UserId)
-    .then(() => {
-      res.send();
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.delete(
+  "/:id",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    return TeamService.remove(req.params.id, req.UserId)
+      .then(() => {
+        res.send();
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 export { router as teamRouter };

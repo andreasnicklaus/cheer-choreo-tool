@@ -47,9 +47,9 @@ class ClubService {
    * @returns {Club[]}
    */
   async getAll(UserId: string | null, options = { all: false }) {
-    logger.debug(`ClubService getAll ${JSON.stringify({ UserId, options })}`)
+    logger.debug(`ClubService getAll ${JSON.stringify({ UserId, options })}`);
     return Club.findAll({
-      where: options.all ? {} : (UserId ? { UserId } : {}),
+      where: options.all ? {} : UserId ? { UserId } : {},
       include: defaultInclude,
       order: [
         ["createdAt", "ASC"],
@@ -77,7 +77,7 @@ class ClubService {
    * @returns {number}
    */
   getCount() {
-    logger.debug(`ClubService getCount`)
+    logger.debug(`ClubService getCount`);
     return Club.count();
   }
 
@@ -87,16 +87,20 @@ class ClubService {
    * @returns {number}
    */
   getTrend() {
-    logger.debug(`ClubService getTrend`)
+    logger.debug(`ClubService getTrend`);
     return Promise.all([
       Club.count({
         where: {
-          createdAt: { [Op.gt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30 },
+          createdAt: {
+            [Op.gt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30,
+          },
         },
       }),
       Club.count({
         where: {
-          deletedAt: { [Op.gt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30 },
+          deletedAt: {
+            [Op.gt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30,
+          },
         },
       }),
     ]).then(([created, deleted]) => created - deleted);
@@ -111,7 +115,7 @@ class ClubService {
    * @returns {Club}
    */
   async findById(id: string, UserId: string) {
-    logger.debug(`ClubService findById ${JSON.stringify({ id, UserId })}`)
+    logger.debug(`ClubService findById ${JSON.stringify({ id, UserId })}`);
     return Club.findOne({
       where: { id, UserId },
       include: defaultInclude,
@@ -143,7 +147,7 @@ class ClubService {
    * @returns {Club}
    */
   async findByName(name: string, UserId: string) {
-    logger.debug(`ClubService findByName ${JSON.stringify({ name, UserId })}`)
+    logger.debug(`ClubService findByName ${JSON.stringify({ name, UserId })}`);
     return Club.findAll({
       where: { name, UserId },
       include: defaultInclude,
@@ -172,7 +176,7 @@ class ClubService {
           club = foundClub;
         }
         return club;
-      })
+      }),
     );
   }
 
@@ -185,10 +189,11 @@ class ClubService {
    * @returns {void}
    */
   async seedDemo(club: Club, UserId: string) {
-    logger.debug(`ClubService seedDemo ${JSON.stringify({ club, UserId })}`)
+    logger.debug(`ClubService seedDemo ${JSON.stringify({ club, UserId })}`);
+    console.log("🚀 ~ ClubService ~ seedDemo ~ SeasonService:", SeasonService);
     SeasonService.getAll(null).then((seasons: Season[]) => {
       const currentSeason = seasons.find(
-        (s) => s.year == new Date().getFullYear()
+        (s) => s.year == new Date().getFullYear(),
       ) as Season;
       TeamService.create("Demo-Team", club.id, currentSeason.id, UserId).then(
         (team: Team) => {
@@ -199,21 +204,21 @@ class ClubService {
               "Tini",
               "T",
               seasonTeam.id,
-              UserId
+              UserId,
             ),
             MemberService.create(
               "Zoe Zuverlässig",
               "Zoe",
               "Z",
               seasonTeam.id,
-              UserId
+              UserId,
             ),
             MemberService.create(
               "Fenja Flyer",
               "Fipsi",
               "F",
               seasonTeam.id,
-              UserId
+              UserId,
             ),
           ]).then((members) =>
             ChoreoService.create(
@@ -222,7 +227,7 @@ class ClubService {
               undefined,
               seasonTeam.id,
               members.map((m) => ({ id: m.id })),
-              UserId
+              UserId,
             ).then((choreo: Choreo) => {
               Promise.all([
                 HitService.create(
@@ -230,19 +235,19 @@ class ClubService {
                   0,
                   choreo.id,
                   members.map((m) => m.id),
-                  UserId
+                  UserId,
                 ),
                 HitService.create(
                   "Flick-Flack",
                   2,
                   choreo.id,
                   [members[0].id],
-                  UserId
+                  UserId,
                 ),
               ]);
-            })
+            }),
           );
-        }
+        },
       );
     });
   }
@@ -257,7 +262,7 @@ class ClubService {
    */
   async findOrCreate(name: string, UserId: string) {
     logger.debug(
-      `ClubService findOrCreate ${JSON.stringify({ name, UserId })}`
+      `ClubService findOrCreate ${JSON.stringify({ name, UserId })}`,
     );
     const [club, _created] = await Club.findOrCreate({
       where: { name, UserId },
@@ -276,9 +281,18 @@ class ClubService {
    * @param {boolean} [options.all=false]
    * @returns {Club}
    */
-  async update(id: string, data: object, UserId: string | null, options = { all: false }) {
-    logger.debug(`ClubService update ${JSON.stringify({ id, data, UserId, options })}`);
-    return Club.findOne({ where: options.all || !UserId ? { id } : { id, UserId } }) // njsscan-ignore: node_nosqli_injection
+  async update(
+    id: string,
+    data: object,
+    UserId: string | null,
+    options = { all: false },
+  ) {
+    logger.debug(
+      `ClubService update ${JSON.stringify({ id, data, UserId, options })}`,
+    );
+    return Club.findOne({
+      where: options.all || !UserId ? { id } : { id, UserId },
+    }) // njsscan-ignore: node_nosqli_injection
       .then(async (foundClub) => {
         if (foundClub) {
           await foundClub.update(data);
@@ -301,8 +315,12 @@ class ClubService {
    * @returns {Promise<void>}
    */
   async remove(id: string, UserId: string | null, options = { all: false }) {
-    logger.debug(`ClubService remove ${JSON.stringify({ id, UserId, options })}`);
-    return Club.findOne({ where: options.all || !UserId ? { id } : { id, UserId } }) // njsscan-ignore: node_nosqli_injection
+    logger.debug(
+      `ClubService remove ${JSON.stringify({ id, UserId, options })}`,
+    );
+    return Club.findOne({
+      where: options.all || !UserId ? { id } : { id, UserId },
+    }) // njsscan-ignore: node_nosqli_injection
       .then((foundClub) => {
         if (foundClub) {
           return foundClub.destroy();

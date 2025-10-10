@@ -1,4 +1,12 @@
-import { CreationOptional, DataTypes, ForeignKey, InferAttributes, InferCreationAttributes, Model, NonAttribute } from "sequelize";
+import {
+  CreationOptional,
+  DataTypes,
+  ForeignKey,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  NonAttribute,
+} from "sequelize";
 import User from "./user";
 import db from "../db";
 
@@ -35,7 +43,10 @@ import db from "../db";
  * @property {UUID} UserId
  * @memberof module:Models
  */
-class NotificationModel extends Model<InferAttributes<NotificationModel>, InferCreationAttributes<NotificationModel>> {
+class NotificationModel extends Model<
+  InferAttributes<NotificationModel>,
+  InferCreationAttributes<NotificationModel>
+> {
   declare id: CreationOptional<string>;
   declare title?: CreationOptional<string>;
   declare message: string;
@@ -82,7 +93,7 @@ NotificationModel.init(
   {
     sequelize: db,
     paranoid: true,
-  }
+  },
 );
 
 export default NotificationModel;

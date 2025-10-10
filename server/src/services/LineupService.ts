@@ -17,14 +17,19 @@ class LineupService {
    * @param {string} UserId - The user ID.
    * @returns {Promise<Object>} The created lineup.
    */
-  async create(startCount: number, endCount: number, ChoreoId: string, UserId: string) {
+  async create(
+    startCount: number,
+    endCount: number,
+    ChoreoId: string,
+    UserId: string,
+  ) {
     logger.debug(
       `LineupService create ${JSON.stringify({
         startCount,
         endCount,
         ChoreoId,
         UserId,
-      })}`
+      })}`,
     );
     return Lineup.create({ startCount, endCount, ChoreoId, UserId });
   }
@@ -37,14 +42,19 @@ class LineupService {
    * @param {string} UserId - The user ID.
    * @returns {Promise<Object>} The found or created lineup.
    */
-  async findOrCreate(startCount: number, endCount: number, ChoreoId: string, UserId: string) {
+  async findOrCreate(
+    startCount: number,
+    endCount: number,
+    ChoreoId: string,
+    UserId: string,
+  ) {
     logger.debug(
       `LineupService findOrCreate ${JSON.stringify({
         startCount,
         endCount,
         ChoreoId,
         UserId,
-      })}`
+      })}`,
     );
     const [lineup, _created] = await Lineup.findOrCreate({
       where: { startCount, endCount, ChoreoId, UserId },
@@ -61,7 +71,7 @@ class LineupService {
    */
   async update(id: string, data: object, UserId: string) {
     logger.debug(
-      `LineupService update ${JSON.stringify({ id, data, UserId })}`
+      `LineupService update ${JSON.stringify({ id, data, UserId })}`,
     );
     return Lineup.findOne({ where: { id, UserId } }) // njsscan-ignore: node_nosqli_injection
       .then(async (foundLineup: Lineup | null) => {
@@ -82,12 +92,8 @@ class LineupService {
             ],
           }); // njsscan-ignore: node_nosqli_injection
         } else {
-          logger.error(
-            `No lineup found with ID ${id} when updating`
-          );
-          throw new Error(
-            `No lineup found with ID ${id} when updating`
-          );
+          logger.error(`No lineup found with ID ${id} when updating`);
+          throw new Error(`No lineup found with ID ${id} when updating`);
         }
       });
   }
@@ -99,7 +105,7 @@ class LineupService {
    * @returns {Promise<Object>} The found lineup.
    */
   async findById(id: string, UserId: string) {
-    logger.debug(`LineupService findById ${JSON.stringify({ id, UserId })}`)
+    logger.debug(`LineupService findById ${JSON.stringify({ id, UserId })}`);
     return Lineup.findOne({ where: { id, UserId } }); // njsscan-ignore: node_nosqli_injection
   }
 
@@ -109,7 +115,9 @@ class LineupService {
    * @returns {Promise<Array>} List of lineups.
    */
   async findByChoreoId(ChoreoId: string) {
-    logger.debug(`LineupService findByChoreoId ${JSON.stringify({ ChoreoId })}`)
+    logger.debug(
+      `LineupService findByChoreoId ${JSON.stringify({ ChoreoId })}`,
+    );
     return Lineup.findAll({ where: { ChoreoId } });
   }
 
@@ -120,20 +128,14 @@ class LineupService {
    * @returns {Promise<void>} Resolves when the lineup is removed.
    */
   async remove(id: string, UserId: string) {
-    logger.debug(
-      `LineupService remove ${JSON.stringify({ id, UserId })}`
-    );
+    logger.debug(`LineupService remove ${JSON.stringify({ id, UserId })}`);
     return Lineup.findOne({ where: { id, UserId } }) // njsscan-ignore: node_nosqli_injection
       .then((foundLineup: Lineup | null) => {
         if (foundLineup) {
           return foundLineup.destroy();
         } else {
-          logger.error(
-            `No lineup found with ID ${id} when deleting`
-          );
-          throw new Error(
-            `No lineup found with ID ${id} when deleting`
-          );
+          logger.error(`No lineup found with ID ${id} when deleting`);
+          throw new Error(`No lineup found with ID ${id} when deleting`);
         }
       });
   }

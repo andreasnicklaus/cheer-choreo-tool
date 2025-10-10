@@ -57,7 +57,7 @@ app.use(
   cors({
     origin: function (
       origin: string | undefined,
-      callback: { (err: Error | null, allow?: boolean): void }
+      callback: { (err: Error | null, allow?: boolean): void },
     ) {
       if (corsWhiteList.indexOf(origin) !== -1) {
         callback(null, true);
@@ -65,7 +65,7 @@ app.use(
         callback(null, false);
       }
     },
-  })
+  }),
 );
 app.use(robots(__dirname + "/public/robots.txt"));
 
@@ -74,7 +74,7 @@ app.use(
   rateLimit({
     windowMs: 1 * 60 * 1000, // 1 minutes
     max: 100,
-  })
+  }),
 );
 
 app.use((_req: Request, res: Response, next: NextFunction) => {
@@ -105,7 +105,7 @@ app.use(
     referrerPolicy: {
       policy: ["strict-origin-when-cross-origin"],
     },
-  })
+  }),
 );
 
 const permPolicy = ["self", `"${process.env.FRONTEND_DOMAIN}"`];
@@ -157,7 +157,7 @@ app.use(
       // xr: permPolicy,
       xrSpatialTracking: permPolicy,
     },
-  })
+  }),
 );
 
 app.use(loggerMiddleWare);
@@ -172,14 +172,14 @@ app.use(
         "script-src": ["'self'", "https:", "'unsafe-inline'"],
       },
     },
-  })
+  }),
 );
 app.use(
   require("express-status-monitor")({
     title: "Choreo Planer Server",
     path: "/status",
     ignoreStartsWith: "/admin",
-  })
+  }),
 );
 
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
@@ -322,7 +322,7 @@ app.use(
   swaggerUi.setup(specs, {
     customSiteTitle: "Choreo Planer API Docs",
     customfavIcon: "/favicon.ico",
-  })
+  }),
 );
 
 app.use(
@@ -334,7 +334,7 @@ app.use(
         "img-src": ["'self'", "https:", "data:"],
       },
     },
-  })
+  }),
 );
 /**
  * @openapi
@@ -352,9 +352,9 @@ app.use(
   express.static(
     path.join(
       __dirname,
-      process.env.NODE_ENV == "production" ? "docs" : "../dist/docs"
-    )
-  )
+      process.env.NODE_ENV == "production" ? "docs" : "../dist/docs",
+    ),
+  ),
 );
 
 function startServer() {
@@ -370,7 +370,7 @@ function startServer() {
     })
     .catch(() => {
       logger.error(
-        "Unable to authenticate with the database. Restarting in 1 sec"
+        "Unable to authenticate with the database. Restarting in 1 sec",
       );
       setTimeout(startServer, 1000);
     });

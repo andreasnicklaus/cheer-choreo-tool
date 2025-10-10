@@ -7,13 +7,18 @@ import logger from "../plugins/winston";
  * @param {Response} res Outgoing response object
  * @param {Function} next Next handler function
  */
-export function loggerMiddleWare(req: Request, _res: Response, next: NextFunction) {
+export function loggerMiddleWare(
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+) {
   if (req.path == "/health") return next();
   const { password, ...requestBody } = req.body;
 
   logger.info(
-    `${req.method} ${req.url} ; Referrer: ${req.get("Referrer") || null
-    } ; Body: ${JSON.stringify(requestBody)};`
+    `${req.method} ${req.url} ; Referrer: ${
+      req.get("Referrer") || null
+    } ; Body: ${JSON.stringify(requestBody)};`,
   );
   next();
 }
@@ -25,7 +30,12 @@ export function loggerMiddleWare(req: Request, _res: Response, next: NextFunctio
  * @param {Response} res Outgoing response object
  * @param {Function} next Next handler function (not called)
  */
-export function errorLoggingMiddleWare(err: Error, _req: Request, _res: Response, next: NextFunction) {
+export function errorLoggingMiddleWare(
+  err: Error,
+  _req: Request,
+  _res: Response,
+  next: NextFunction,
+) {
   // Log the error message at the error level
 
   logger.error(err.message);

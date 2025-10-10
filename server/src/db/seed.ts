@@ -18,10 +18,11 @@ import SeasonTeam from "./models/seasonTeam";
 import Team from "./models/team";
 import User from "./models/user";
 
-const data: seedData = require("./seed.json");
+import seedData from "./seed.json";
+const data: seedData = seedData;
 
 type seasonSeedData = {
-  year: number;
+  year: number | null;
   name: string;
   usersSpecific?: boolean;
 };
@@ -50,15 +51,15 @@ type seasonTeamData = {
 
 type memberSeedData = {
   name: string;
-  nickname: string;
-  abbreviation: string;
+  nickname: string | null;
+  abbreviation: string | null;
   // color?: string
 };
 
 type choreoSeedData = {
   name: string;
   counts: number;
-  matType: MatType;
+  matType: string;
   Hits: hitSeedData[];
   Lineups: lineupSeedData[];
   Participants: string[];
@@ -100,7 +101,7 @@ type seedData = {
 async function seed() {
   const adminPromises = [
     ...(data.admins?.map((a) =>
-      AdminService.findOrCreate(a.username, a.password)
+      AdminService.findOrCreate(a.username, a.password),
     ) || []),
   ];
 
@@ -108,8 +109,8 @@ async function seed() {
     adminPromises.push(
       AdminService.findOrCreate(
         process.env.DEFAULT_ADMIN_USERNAME,
-        process.env.DEFAULT_ADMIN_PASSWORD
-      )
+        process.env.DEFAULT_ADMIN_PASSWORD,
+      ),
     );
 
   await Promise.all([
@@ -120,34 +121,36 @@ async function seed() {
             Promise.all(
               data.seasons.map(async (s) => {
                 const whereParams: {
-                  year: number;
+                  year?: number;
                   name: string;
                   UserId?: string;
                 } = {
-                  year: s.year,
                   name: s.name,
                 };
+                if (s.year !== null && s.year !== undefined) {
+                  whereParams.year = s.year;
+                }
                 if (s.usersSpecific) whereParams.UserId = user.id;
                 const [season, _created] = await Season.findOrCreate({
                   where: whereParams,
                 });
                 return season;
-              })
+              }),
             ),
             Promise.all(
               u.notifications.map((n) =>
                 NotificationService.findOrCreate(
                   n.title,
                   n.message,
-                  user.id
+                  user.id,
                 ).then((notification: NotificationModel) => {
                   if (n.read)
                     return NotificationService.markRead(
                       notification.id,
-                      user.id
+                      user.id,
                     );
-                })
-              )
+                }),
+              ),
             ),
           ]).then(([seasons, _notifications]) =>
             Promise.all(
@@ -163,14 +166,14 @@ async function seed() {
                                 where: {
                                   SeasonId: (() => {
                                     const season = seasons.find(
-                                      (s) => s.name == st.SeasonName
+                                      (s) => s.name == st.SeasonName,
                                     );
                                     if (!season) {
                                       logger.error(
-                                        `Season with name ${st.SeasonName} not found`
+                                        `Season with name ${st.SeasonName} not found`,
                                       );
                                       throw new Error(
-                                        `Season with name ${st.SeasonName} not found`
+                                        `Season with name ${st.SeasonName} not found`,
                                       );
                                     }
                                     return season.id;
@@ -181,7 +184,7 @@ async function seed() {
                               }).then(
                                 ([seasonTeam, _created]: [
                                   SeasonTeam,
-                                  boolean
+                                  boolean,
                                 ]) =>
                                   Promise.all(
                                     st.Members.map((m) =>
@@ -191,18 +194,18 @@ async function seed() {
                                         m.abbreviation,
                                         // m.color,
                                         seasonTeam.id,
-                                        user.id
-                                      )
-                                    )
+                                        user.id,
+                                      ),
+                                    ),
                                   ).then((members) =>
                                     Promise.all(
                                       st.Choreos.map((ch) =>
                                         ChoreoService.findOrCreate(
                                           ch.name,
                                           ch.counts,
-                                          ch.matType,
+                                          ch.matType as MatType,
                                           seasonTeam.id,
-                                          user.id
+                                          user.id,
                                         ).then((choreo: Choreo) => {
                                           Promise.all([
                                             ...ch.Hits.map((h) =>
@@ -211,31 +214,31 @@ async function seed() {
                                                 h.count,
                                                 choreo.id,
                                                 h.memberIndices.map(
-                                                  (i) => members[i]?.id
+                                                  (i) => members[i]?.id,
                                                 ),
-                                                user.id
-                                              )
+                                                user.id,
+                                              ),
                                             ),
                                             ...ch.Lineups.map((l) =>
                                               LineupService.findOrCreate(
                                                 l.startCount,
                                                 l.endCount,
                                                 choreo.id,
-                                                user.id
+                                                user.id,
                                               ).then((lineup: Lineup) =>
                                                 Promise.all(
                                                   l.Positions.map((p) => {
                                                     const member = members.find(
                                                       (m) =>
                                                         m.abbreviation ==
-                                                        p.memberAbbreviation
+                                                        p.memberAbbreviation,
                                                     );
                                                     if (!member) {
                                                       logger.error(
-                                                        `Member with abbreviation ${p.memberAbbreviation} not found`
+                                                        `Member with abbreviation ${p.memberAbbreviation} not found`,
                                                       );
                                                       throw new Error(
-                                                        `Member with abbreviation ${p.memberAbbreviation} not found`
+                                                        `Member with abbreviation ${p.memberAbbreviation} not found`,
                                                       );
                                                     }
                                                     return PositionService.findOrCreate(
@@ -243,11 +246,11 @@ async function seed() {
                                                       p.y,
                                                       lineup.id,
                                                       member.id,
-                                                      user.id
+                                                      user.id,
                                                     );
-                                                  })
-                                                )
-                                              )
+                                                  }),
+                                                ),
+                                              ),
                                             ),
                                             ...ch.Participants.map((p) =>
                                               ChoreoService.addParticipant(
@@ -255,38 +258,39 @@ async function seed() {
                                                 (() => {
                                                   const participant =
                                                     members.find(
-                                                      (m) => m.abbreviation == p
+                                                      (m) =>
+                                                        m.abbreviation == p,
                                                     );
                                                   if (!participant) {
                                                     logger.error(
-                                                      `Participant with abbreviation ${p} not found`
+                                                      `Participant with abbreviation ${p} not found`,
                                                     );
                                                     throw new Error(
-                                                      `Participant with abbreviation ${p} not found`
+                                                      `Participant with abbreviation ${p} not found`,
                                                     );
                                                   }
                                                   return participant.id;
                                                 })(),
-                                                user.id
-                                              )
+                                                user.id,
+                                              ),
                                             ),
                                           ]);
-                                        })
-                                      )
-                                    )
-                                  )
-                              )
-                            )
-                          )
-                      )
-                    )
-                  )
-                )
-              )
-            )
-          )
-        )
-      )
+                                        }),
+                                      ),
+                                    ),
+                                  ),
+                              ),
+                            ),
+                          ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     ),
     Promise.all(adminPromises),
   ]);

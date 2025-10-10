@@ -22,7 +22,9 @@ class NotificationService {
    * @returns {Promise<Array>} List of notifications.
    */
   getAll(UserId: string | null, options = { all: false }) {
-    logger.debug(`NotificationService getAll ${JSON.stringify({ UserId, options })}`)
+    logger.debug(
+      `NotificationService getAll ${JSON.stringify({ UserId, options })}`,
+    );
     return NotificationModel.findAll({
       where: options.all || !UserId ? {} : { UserId },
       order: [["createdAt", "DESC"]],
@@ -36,7 +38,9 @@ class NotificationService {
    * @returns {Promise<Object|null>} The notification object or null.
    */
   findById(id: string, UserId: string) {
-    logger.debug(`NotificationService findById ${JSON.stringify({ id, UserId })}`)
+    logger.debug(
+      `NotificationService findById ${JSON.stringify({ id, UserId })}`,
+    );
     return Position.findOne({ where: { id, UserId } });
   }
 
@@ -47,10 +51,12 @@ class NotificationService {
    * @returns {Promise<Array>} List of created notifications.
    */
   createForAll(title: string, message: string) {
-    logger.debug(`NotificationService createForAll ${JSON.stringify({ title, message })}`)
+    logger.debug(
+      `NotificationService createForAll ${JSON.stringify({ title, message })}`,
+    );
     return UserService.getAll().then((users: User[]) => {
       return Promise.all(
-        users.map((user) => this.createOne(title, message, user.id))
+        users.map((user) => this.createOne(title, message, user.id)),
       );
     });
   }
@@ -63,7 +69,9 @@ class NotificationService {
    * @returns {Promise<Object>} The created notification object.
    */
   createOne(title: string, message: string, UserId: string) {
-    logger.debug(`NotificationService createOne ${JSON.stringify({ title, message, UserId })}`)
+    logger.debug(
+      `NotificationService createOne ${JSON.stringify({ title, message, UserId })}`,
+    );
     return NotificationModel.create({
       title,
       message,
@@ -79,7 +87,9 @@ class NotificationService {
    * @returns {Promise<Object>} The notification object.
    */
   async findOrCreate(title: string, message: string, UserId: string) {
-    logger.debug(`NotificationService findOrCreate ${JSON.stringify({ title, message, UserId })}`)
+    logger.debug(
+      `NotificationService findOrCreate ${JSON.stringify({ title, message, UserId })}`,
+    );
     const [notification, _created] = await NotificationModel.findOrCreate({
       where: {
         title,
@@ -97,7 +107,9 @@ class NotificationService {
    * @returns {Promise<Object>} The updated notification object.
    */
   markRead(id: string, UserId: string) {
-    logger.debug(`NotificationService markRead ${JSON.stringify({ id, UserId })}`)
+    logger.debug(
+      `NotificationService markRead ${JSON.stringify({ id, UserId })}`,
+    );
     return this.update(id, UserId, { read: true });
   }
 
@@ -108,7 +120,9 @@ class NotificationService {
    * @returns {Promise<Object>} The updated notification object.
    */
   markUnread(id: string, UserId: string) {
-    logger.debug(`NotificationService markUnread ${JSON.stringify({ id, UserId })}`)
+    logger.debug(
+      `NotificationService markUnread ${JSON.stringify({ id, UserId })}`,
+    );
     return this.update(id, UserId, { read: false });
   }
 
@@ -125,7 +139,7 @@ class NotificationService {
         id,
         data,
         UserId,
-      })}`
+      })}`,
     );
     return NotificationModel.findOne({
       where: { id, UserId },
@@ -134,12 +148,8 @@ class NotificationService {
         await foundNotification.update(data);
         return foundNotification.save();
       } else {
-        logger.error(
-          `No notification found with ID ${id} when updating`
-        );
-        throw new Error(
-          `No notification found with ID ${id} when updating`
-        );
+        logger.error(`No notification found with ID ${id} when updating`);
+        throw new Error(`No notification found with ID ${id} when updating`);
       }
     });
   }
@@ -154,7 +164,7 @@ class NotificationService {
    */
   remove(id: string, UserId: string | null, options = { all: false }) {
     logger.debug(
-      `NotificationService remove ${JSON.stringify({ id, UserId })}`
+      `NotificationService remove ${JSON.stringify({ id, UserId })}`,
     );
     return NotificationModel.findOne({
       where: options.all || !UserId ? { id } : { id, UserId },
@@ -163,12 +173,8 @@ class NotificationService {
         if (foundNotification) {
           return foundNotification.destroy();
         } else {
-          logger.error(
-            `No notification found with ID ${id} when deleting`
-          );
-          throw new Error(
-            `No notification found with ID ${id} when deleting`
-          );
+          logger.error(`No notification found with ID ${id} when deleting`);
+          throw new Error(`No notification found with ID ${id} when deleting`);
         }
       });
   }
@@ -178,24 +184,28 @@ class NotificationService {
    * @returns {Promise<number>} The percentage of read notifications.
    */
   getReadPercentage() {
-    logger.debug(`NotificationService getReadPercentage`)
+    logger.debug(`NotificationService getReadPercentage`);
     return Promise.all([
       NotificationModel.count({
         where: {
           read: true,
-          createdAt: { [Op.gt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30 },
+          createdAt: {
+            [Op.gt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30,
+          },
         },
       }),
       NotificationModel.count({
         where: {
-          createdAt: { [Op.gt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30 },
+          createdAt: {
+            [Op.gt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30,
+          },
         },
       }),
     ]).then(([readNoticationsCount, allNoticiationsCount]) => {
       if (allNoticiationsCount == 0) return 100;
       return roundToDecimals(
         (readNoticationsCount / allNoticiationsCount) * 100,
-        1
+        1,
       );
     });
   }
@@ -205,28 +215,36 @@ class NotificationService {
    * @returns {Promise<number>} The trend percentage of read notifications.
    */
   getReadTrend() {
-    logger.debug(`NotificationService getReadTrend`)
+    logger.debug(`NotificationService getReadTrend`);
     return Promise.all([
       NotificationModel.count({
         where: {
           read: true,
-          createdAt: { [Op.gt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30 },
+          createdAt: {
+            [Op.gt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30,
+          },
         },
       }),
       NotificationModel.count({
         where: {
-          createdAt: { [Op.gt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30 },
+          createdAt: {
+            [Op.gt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30,
+          },
         },
       }),
       NotificationModel.count({
         where: {
           read: true,
-          createdAt: { [Op.lt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30 },
+          createdAt: {
+            [Op.lt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30,
+          },
         },
       }),
       NotificationModel.count({
         where: {
-          createdAt: { [Op.lt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30 },
+          createdAt: {
+            [Op.lt]: new Date().valueOf() - 1000 * 60 * 60 * 24 * 30,
+          },
         },
       }),
     ]).then(
@@ -246,10 +264,10 @@ class NotificationService {
           (readNoticationsCountBeforeLastMonth /
             allNoticationsCountBeforeLastMonth -
             readNoticationsCountLastMonth / allNoticiationsCountLastMonth) *
-          100,
-          1
+            100,
+          1,
         );
-      }
+      },
     );
   }
 }

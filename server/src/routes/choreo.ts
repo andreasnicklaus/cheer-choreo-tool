@@ -69,7 +69,7 @@ router.get(
         })
         .catch((e: Error) => next(e));
     }
-  }
+  },
 );
 
 /**
@@ -126,14 +126,14 @@ router.post(
       matType,
       seasonTeamId,
       participants,
-      req.UserId
+      req.UserId,
     )
       .then((choreo: Choreo) => {
         res.send(choreo);
         return next();
       })
       .catch((e: Error) => next(e));
-  }
+  },
 );
 
 /**
@@ -179,7 +179,7 @@ router.put(
         return next();
       })
       .catch((e: Error) => next(e));
-  }
+  },
 );
 
 /**
@@ -215,7 +215,7 @@ router.delete(
         return next();
       })
       .catch((e: Error) => next(e));
-  }
+  },
 );
 
 /**
@@ -261,14 +261,14 @@ router.post(
       req.params.id,
       MemberId,
       req.UserId,
-      color
+      color,
     )
       .then(() => {
         res.send();
         return next();
       })
       .catch((e: Error) => next(e));
-  }
+  },
 );
 
 /**
@@ -303,14 +303,14 @@ router.delete(
   (req: Request, res: Response, next: NextFunction) => {
     return ChoreoService.removeParticipant(
       req.params.id,
-      req.params.participationId
+      req.params.participationId,
     )
       .then(() => {
         res.send();
         return next();
       })
       .catch((e: Error) => next(e));
-  }
+  },
 );
 
 /**
@@ -361,14 +361,14 @@ router.patch(
       req.params.id,
       memberToAddId,
       memberToRemoveId,
-      req.UserId
+      req.UserId,
     )
       .then((choreo: Choreo) => {
         res.send(choreo);
         return next();
       })
       .catch((e: Error) => next(e));
-  }
+  },
 );
 
 /**
@@ -416,14 +416,14 @@ router.patch(
     return ChoreoService.changeParticipationColor(
       req.params.id,
       req.params.participantId,
-      color
+      color,
     )
       .then(() => {
         res.send();
         return next();
       })
       .catch((e: Error) => next(e));
-  }
+  },
 );
 
 export { router as choreoRouter };

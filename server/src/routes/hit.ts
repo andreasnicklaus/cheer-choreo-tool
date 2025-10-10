@@ -37,24 +37,28 @@ const router = Router();
  *       404:
  *         description: Hit not found
  */
-router.get("/:id?", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  if (req.params.id)
-    return HitService.findById(req.params.id, req.UserId)
-      .then((foundHit: Hit | null) => {
-        if (!foundHit) res.status(404).send(req.t("responses.not-found"));
-        else res.send(foundHit);
-        return next();
-      })
-      .catch((e: Error) => next(e));
-  else {
-    return HitService.getAll(req.UserId)
-      .then((hitList: Hit[]) => {
-        res.send(hitList);
-        return next();
-      })
-      .catch((e: Error) => next(e));
-  }
-});
+router.get(
+  "/:id?",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    if (req.params.id)
+      return HitService.findById(req.params.id, req.UserId)
+        .then((foundHit: Hit | null) => {
+          if (!foundHit) res.status(404).send(req.t("responses.not-found"));
+          else res.send(foundHit);
+          return next();
+        })
+        .catch((e: Error) => next(e));
+    else {
+      return HitService.getAll(req.UserId)
+        .then((hitList: Hit[]) => {
+          res.send(hitList);
+          return next();
+        })
+        .catch((e: Error) => next(e));
+    }
+  },
+);
 
 /**
  * @openapi
@@ -96,15 +100,19 @@ router.get("/:id?", AuthService.authenticateUser(), (req: Request, res: Response
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  */
-router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  const { name, count, choreoId, memberIds = [] } = req.body;
-  return HitService.create(name, count, choreoId, memberIds, req.UserId)
-    .then((hit: Hit | null) => {
-      res.send(hit);
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.post(
+  "/",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    const { name, count, choreoId, memberIds = [] } = req.body;
+    return HitService.create(name, count, choreoId, memberIds, req.UserId)
+      .then((hit: Hit | null) => {
+        res.send(hit);
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 /**
  * @openapi
@@ -139,14 +147,18 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *       404:
  *         description: Hit not found
  */
-router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  return HitService.update(req.params.id, req.body, req.UserId)
-    .then((hit: Hit | null) => {
-      res.send(hit);
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.put(
+  "/:id",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    return HitService.update(req.params.id, req.body, req.UserId)
+      .then((hit: Hit | null) => {
+        res.send(hit);
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 /**
  * @openapi
@@ -171,13 +183,17 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *       404:
  *         description: Hit not found
  */
-router.delete("/:id", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  return HitService.remove(req.params.id, req.UserId)
-    .then(() => {
-      res.send();
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.delete(
+  "/:id",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    return HitService.remove(req.params.id, req.UserId)
+      .then(() => {
+        res.send();
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 export { router as hitRouter };

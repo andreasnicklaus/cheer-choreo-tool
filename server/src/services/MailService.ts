@@ -33,14 +33,14 @@ class MailService {
   sendUserRegistrationNotice(
     username: string,
     userId: string,
-    userEmail: string
+    userEmail: string,
   ) {
     logger.debug(
       `MailService sendUserRegistrationNotice ${JSON.stringify({
         username,
         userId,
         userEmail,
-      })}`
+      })}`,
     );
     return Promise.all(
       this.adminEmails.map((recipient) => {
@@ -60,9 +60,9 @@ class MailService {
               cid: "choreo-planer-icon",
             },
           ],
-          "de"
+          "de",
         );
-      })
+      }),
     );
   }
 
@@ -78,7 +78,7 @@ class MailService {
     username: string,
     userId: string,
     userEmail: string,
-    locale: string
+    locale: string,
   ) {
     logger.debug(
       `MailService sendWelcomeEmail ${JSON.stringify({
@@ -86,7 +86,7 @@ class MailService {
         userId,
         userEmail,
         locale,
-      })}`
+      })}`,
     );
     return sendMail(
       userEmail,
@@ -104,7 +104,7 @@ class MailService {
           cid: "choreo-planer-icon",
         },
       ],
-      locale
+      locale,
     );
   }
 
@@ -120,7 +120,7 @@ class MailService {
     username: string,
     userId: string,
     userEmail: string,
-    locale: string
+    locale: string,
   ) {
     logger.debug(
       `MailService sendEmailConfirmationEmail ${JSON.stringify({
@@ -128,7 +128,7 @@ class MailService {
         userId,
         userEmail,
         locale,
-      })}`
+      })}`,
     );
     return sendMail(
       userEmail,
@@ -150,7 +150,7 @@ class MailService {
           cid: "choreo-planer-icon",
         },
       ],
-      locale
+      locale,
     );
   }
 
@@ -166,7 +166,7 @@ class MailService {
     username: string,
     userEmail: string,
     stars: number,
-    text: string
+    text: string,
   ) {
     logger.debug(
       `MailService sendFeebackNotice ${JSON.stringify({
@@ -174,7 +174,7 @@ class MailService {
         userEmail,
         stars,
         text,
-      })}`
+      })}`,
     );
     return Promise.all(
       this.adminEmails.map((recipient) => {
@@ -195,9 +195,9 @@ class MailService {
               cid: "choreo-planer-icon",
             },
           ],
-          "en"
+          "en",
         );
-      })
+      }),
     );
   }
 
@@ -213,7 +213,7 @@ class MailService {
     userEmail: string,
     username: string,
     ssoToken: string,
-    locale: string
+    locale: string,
   ) {
     logger.debug(
       `MailService sendSsoEmail ${JSON.stringify({
@@ -221,7 +221,7 @@ class MailService {
         username,
         ssoToken,
         locale,
-      })}`
+      })}`,
     );
     return sendMail(
       userEmail,
@@ -233,7 +233,7 @@ class MailService {
         frontendDomain: process.env.FRONTEND_DOMAIN,
         expirationDate: new Date(
           new Date().valueOf() +
-            timeStringToMillis(process.env.SSO_TOKEN_EXPIRES_IN)
+            timeStringToMillis(process.env.SSO_TOKEN_EXPIRES_IN),
         ).toLocaleString(locale, {
           weekday: "long",
           year: "numeric",
@@ -250,7 +250,7 @@ class MailService {
           cid: "choreo-planer-icon",
         },
       ],
-      locale
+      locale,
     );
   }
 
@@ -268,7 +268,7 @@ class MailService {
     username: string,
     ssoToken: string,
     notificationTitle: string | null = null,
-    locale: string
+    locale: string,
   ) {
     logger.debug(
       `MailService sendNotificationNotice ${JSON.stringify({
@@ -277,7 +277,7 @@ class MailService {
         ssoToken,
         notificationTitle,
         locale,
-      })}`
+      })}`,
     );
     return sendMail(
       userEmail,
@@ -290,7 +290,7 @@ class MailService {
         frontendDomain: process.env.FRONTEND_DOMAIN,
         expirationDate: new Date(
           new Date().valueOf() +
-            timeStringToMillis(process.env.SSO_TOKEN_EXPIRES_IN)
+            timeStringToMillis(process.env.SSO_TOKEN_EXPIRES_IN),
         ).toLocaleString(locale, {
           weekday: "long",
           year: "numeric",
@@ -307,7 +307,7 @@ class MailService {
           cid: "choreo-planer-icon",
         },
       ],
-      locale
+      locale,
     );
   }
 }

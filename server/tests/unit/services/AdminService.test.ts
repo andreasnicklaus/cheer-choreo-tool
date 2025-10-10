@@ -39,7 +39,7 @@ describe("AdminServices", () => {
   beforeEach(async () => {
     const admins = await Admin.findAll();
     admins.forEach(
-      async (admin: Admin) => await admin.destroy({ force: true })
+      async (admin: Admin) => await admin.destroy({ force: true }),
     );
   });
 
@@ -111,7 +111,7 @@ describe("AdminServices", () => {
 
   test("update on non-existing admin should throw", async () => {
     expect(() =>
-      AdminService.update("non-existing-id", { username: "x" })
+      AdminService.update("non-existing-id", { username: "x" }),
     ).rejects.toThrow();
   });
 

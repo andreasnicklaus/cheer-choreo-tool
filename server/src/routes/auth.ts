@@ -135,7 +135,7 @@ router.post("/", (req: Request, res: Response, next: NextFunction) => {
             Object.keys(ue.fields).includes("username") ||
               Object.keys(ue.fields).includes("email")
               ? req.t("errors.user-already-exists")
-              : null
+              : null,
           );
         return next();
       } else if (e instanceof ValidationError) {
@@ -214,20 +214,23 @@ router.post("/login", (req: Request, res: Response, next: NextFunction) => {
  *              type: string
  *              example: An email address is required.
  */
-router.post("/ssoRequest", (req: Request, res: Response, next: NextFunction) => {
-  const { email } = req.body;
-  if (!email) {
-    res.status(400).send(req.t("responses.email-required"));
-    return next();
-  }
-
-  AuthService.generateSsoToken(email, req.locale)
-    .then(() => {
-      res.send(req.t("responses.sso-link-sent")); // njsscan-ignore: express_xss
+router.post(
+  "/ssoRequest",
+  (req: Request, res: Response, next: NextFunction) => {
+    const { email } = req.body;
+    if (!email) {
+      res.status(400).send(req.t("responses.email-required"));
       return next();
-    })
-    .catch((e: Error) => next(e));
-});
+    }
+
+    AuthService.generateSsoToken(email, req.locale)
+      .then(() => {
+        res.send(req.t("responses.sso-link-sent")); // njsscan-ignore: express_xss
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 /**
  * @openapi
@@ -295,14 +298,18 @@ router.post("/sso", (req: Request, res: Response, next: NextFunction) => {
  *      401:
  *        $ref: '#/components/responses/UnauthorizedError'
  */
-router.get("/me", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  UserService.findById(req.UserId)
-    .then((user: User | null) => {
-      res.send(user);
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.get(
+  "/me",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    UserService.findById(req.UserId)
+      .then((user: User | null) => {
+        res.send(user);
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 /**
  * @openapi
@@ -323,27 +330,31 @@ router.get("/me", AuthService.authenticateUser(), (req: Request, res: Response, 
  *      404:
  *        description: User was not found
  */
-router.put("/me", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  const { username, email, emailConfirmed } = req.body;
-  const data = { username, email, emailConfirmed };
-  if (email && email != req.User.email) data.emailConfirmed = false;
-  UserService.update(req.UserId, data)
-    .then((user: User | null) => {
-      if (user && email != req.User.email)
-        return MailService.sendEmailConfirmationEmail(
-          user.username,
-          user.id,
-          user.email as string,
-          req.locale
-        ).then(() => {
-          res.send();
-          return next();
-        });
-      res.send(user);
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.put(
+  "/me",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    const { username, email, emailConfirmed } = req.body;
+    const data = { username, email, emailConfirmed };
+    if (email && email != req.User.email) data.emailConfirmed = false;
+    UserService.update(req.UserId, data)
+      .then((user: User | null) => {
+        if (user && email != req.User.email)
+          return MailService.sendEmailConfirmationEmail(
+            user.username,
+            user.id,
+            user.email as string,
+            req.locale,
+          ).then(() => {
+            res.send();
+            return next();
+          });
+        res.send(user);
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 /**
  * @openapi
@@ -386,13 +397,13 @@ router.put(
       }).then((user: User | null) => {
         FileService.clearProfilePictureFolder(
           req.UserId,
-          profilePictureExtension
+          profilePictureExtension,
         );
         res.send(user);
         return next();
       });
     }
-  }
+  },
 );
 
 /**
@@ -431,7 +442,7 @@ router.get(
       return res.sendFile(filename, { root });
 
     return next();
-  }
+  },
 );
 
 /**
@@ -460,7 +471,7 @@ router.delete(
         return next();
       })
       .catch((e: Error) => next(e));
-  }
+  },
 );
 
 /**
@@ -492,19 +503,19 @@ router.get(
           user.username,
           user.id,
           user.email as string,
-          req.locale
+          req.locale,
         ).then(() => {
           NotificationService.createOne(
             req.t("notifications.confirm-email.title"),
             req.t("notifications.confirm-email.message"),
-            user.id
+            user.id,
           );
           res.send();
           return next();
         });
       })
       .catch((e: Error) => next(e));
-  }
+  },
 );
 
 export { router as authRouter };

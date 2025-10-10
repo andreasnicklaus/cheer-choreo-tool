@@ -1,4 +1,10 @@
-import { DataTypes, CreationOptional, InferAttributes, InferCreationAttributes, Model } from "sequelize";
+import {
+  DataTypes,
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+} from "sequelize";
 import db from "../db";
 const bcrypt = require("bcrypt");
 
@@ -28,7 +34,10 @@ const bcrypt = require("bcrypt");
  * @property {string} username
  * @memberof module:Models
  */
-class Admin extends Model<InferAttributes<Admin>, InferCreationAttributes<Admin>> {
+class Admin extends Model<
+  InferAttributes<Admin>,
+  InferCreationAttributes<Admin>
+> {
   declare id: CreationOptional<string>;
   declare username: string;
   declare password: string;
@@ -79,12 +88,12 @@ Admin.init(
     scopes: {
       withPasswordHash: {
         attributes: {
-          exclude: []
+          exclude: [],
         },
       },
     },
     paranoid: true,
-  }
+  },
 );
 
 export default Admin;

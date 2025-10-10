@@ -46,7 +46,7 @@ router.get(
           return next();
         })
         .catch((e: Error) => next(e));
-  }
+  },
 );
 
 /**
@@ -99,19 +99,19 @@ router.post(
         return Promise.all([
           position.setMember(MemberId),
           LineupService.findById(lineupId, req.UserId).then(
-            (lineup: Lineup | null) => lineup?.addPosition(position)
+            (lineup: Lineup | null) => lineup?.addPosition(position),
           ),
         ]).then(() =>
           PositionService.findById(position.id, req.UserId).then(
             (p: Position | null) => {
               res.send(p);
               next();
-            }
-          )
+            },
+          ),
         );
       })
       .catch((e: Error) => next(e));
-  }
+  },
 );
 
 /**
@@ -157,7 +157,7 @@ router.put(
         next();
       })
       .catch((e: Error) => next(e));
-  }
+  },
 );
 
 /**
@@ -193,7 +193,7 @@ router.delete(
         next();
       })
       .catch((e: Error) => next(e));
-  }
+  },
 );
 
 export { router as positionRouter };

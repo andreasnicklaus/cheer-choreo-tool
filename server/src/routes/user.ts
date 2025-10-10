@@ -31,14 +31,18 @@ const router = Router();
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  */
-router.put("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  UserService.update(req.UserId, req.body)
-    .then((user: User | null) => {
-      res.send(user);
-      next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.put(
+  "/",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    UserService.update(req.UserId, req.body)
+      .then((user: User | null) => {
+        res.send(user);
+        next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 /**
  * @openapi
@@ -55,14 +59,18 @@ router.put("/", AuthService.authenticateUser(), (req: Request, res: Response, ne
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  */
-router.delete("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  UserService.remove(req.UserId)
-    .then(() => {
-      res.send();
-      next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.delete(
+  "/",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    UserService.remove(req.UserId)
+      .then(() => {
+        res.send();
+        next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 /**
  * @openapi
@@ -81,23 +89,26 @@ router.delete("/", AuthService.authenticateUser(), (req: Request, res: Response,
  *       200:
  *         description: Email revoked (renders a page)
  */
-router.get("/revokeEmail/:id", (req: Request, res: Response, next: NextFunction) => {
-  UserService.remove(req.params.id)
-    .then(() => {
-      res.render("../src/views/emailRevoked.ejs", {
-        frontendDomain: process.env.FRONTEND_DOMAIN,
-      }); // njsscan-ignore: express_lfr_warning
-      next();
-    })
-    .catch((e: Error) => {
-      res.render("../src/views/error.ejs", {
-        action: "email-revocation",
-        data: JSON.stringify({ userId: req.params.id }),
-        error: e,
-        timestamp: new Date().toLocaleString(req.locale),
-      }); // njsscan-ignore: express_lfr_warning
-    });
-});
+router.get(
+  "/revokeEmail/:id",
+  (req: Request, res: Response, next: NextFunction) => {
+    UserService.remove(req.params.id)
+      .then(() => {
+        res.render("../src/views/emailRevoked.ejs", {
+          frontendDomain: process.env.FRONTEND_DOMAIN,
+        }); // njsscan-ignore: express_lfr_warning
+        next();
+      })
+      .catch((e: Error) => {
+        res.render("../src/views/error.ejs", {
+          action: "email-revocation",
+          data: JSON.stringify({ userId: req.params.id }),
+          error: e,
+          timestamp: new Date().toLocaleString(req.locale),
+        }); // njsscan-ignore: express_lfr_warning
+      });
+  },
+);
 
 /**
  * @openapi
@@ -116,22 +127,25 @@ router.get("/revokeEmail/:id", (req: Request, res: Response, next: NextFunction)
  *       200:
  *         description: Email confirmed (renders a page)
  */
-router.get("/confirmEmail/:id", (req: Request, res: Response, next: NextFunction) => {
-  UserService.update(req.params.id, { emailConfirmed: true })
-    .then((_user: User | null) => {
-      res.render("../src/views/emailConfirmed.ejs", {
-        frontendDomain: process.env.FRONTEND_DOMAIN,
-      }); // njsscan-ignore: express_lfr_warning
-      next();
-    })
-    .catch((e: Error) => {
-      res.render("../src/views/error.ejs", {
-        action: "email-confirmation",
-        data: JSON.stringify({ userId: req.params.id }),
-        error: e,
-        timestamp: new Date().toLocaleString(req.locale),
-      }); // njsscan-ignore: express_lfr_warning
-    });
-});
+router.get(
+  "/confirmEmail/:id",
+  (req: Request, res: Response, next: NextFunction) => {
+    UserService.update(req.params.id, { emailConfirmed: true })
+      .then((_user: User | null) => {
+        res.render("../src/views/emailConfirmed.ejs", {
+          frontendDomain: process.env.FRONTEND_DOMAIN,
+        }); // njsscan-ignore: express_lfr_warning
+        next();
+      })
+      .catch((e: Error) => {
+        res.render("../src/views/error.ejs", {
+          action: "email-confirmation",
+          data: JSON.stringify({ userId: req.params.id }),
+          error: e,
+          timestamp: new Date().toLocaleString(req.locale),
+        }); // njsscan-ignore: express_lfr_warning
+      });
+  },
+);
 
 export { router as userRouter };

@@ -22,7 +22,7 @@ class AdminService {
       `AdminService findOrCreate ${JSON.stringify({
         username,
         password: password ? "<redacted>" : "undefined",
-      })}`
+      })}`,
     );
     const [admin, _created] = await Admin.findOrCreate({
       where: { username },
@@ -43,7 +43,7 @@ class AdminService {
    */
   findByUsername(username: string, { scope = "defaultScope" } = {}) {
     logger.debug(
-      `AdminService findByUsername ${JSON.stringify({ username, scope })}`
+      `AdminService findByUsername ${JSON.stringify({ username, scope })}`,
     );
     return Admin.scope(scope).findOne({ where: { username } }); // njsscan-ignore: node_nosqli_injection
   }
@@ -117,7 +117,7 @@ class AdminService {
       `AdminService update ${JSON.stringify({
         id,
         data: { ...logdata, password: password ? "<redacted>" : "undefined" },
-      })}`
+      })}`,
     );
     return this.findById(id).then(async (admin: Admin | null) => {
       if (admin) {

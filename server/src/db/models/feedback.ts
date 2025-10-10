@@ -1,4 +1,12 @@
-import { CreationOptional, DataTypes, ForeignKey, InferAttributes, InferCreationAttributes, Model, NonAttribute } from "sequelize";
+import {
+  CreationOptional,
+  DataTypes,
+  ForeignKey,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  NonAttribute,
+} from "sequelize";
 import User from "./user";
 import db from "../db";
 
@@ -31,7 +39,10 @@ import db from "../db";
  * @property {UUID} [UserId]
  * @memberof module:Models
  */
-class Feedback extends Model<InferAttributes<Feedback>, InferCreationAttributes<Feedback>> {
+class Feedback extends Model<
+  InferAttributes<Feedback>,
+  InferCreationAttributes<Feedback>
+> {
   declare id: CreationOptional<string>;
   declare stars: number;
   declare text?: string;
@@ -70,7 +81,7 @@ Feedback.init(
   {
     sequelize: db,
     paranoid: true,
-  }
+  },
 );
 
 export default Feedback;

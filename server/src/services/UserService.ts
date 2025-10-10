@@ -42,13 +42,13 @@ class UserService {
    */
   async findByUsernameOrEmail(
     usernameOrEmail: string,
-    { scope = "defaultScope" } = {}
+    { scope = "defaultScope" } = {},
   ) {
     logger.debug(
       `UserService findByUsernameOrEmail ${JSON.stringify({
         usernameOrEmail,
         scope,
-      })}`
+      })}`,
     );
     return User.scope(scope).findOne({
       where: {
@@ -104,7 +104,7 @@ class UserService {
     password: string,
     email: string,
     emailConfirmed: boolean,
-    locale: string
+    locale: string,
   ) {
     logger.debug(
       `UserService create ${JSON.stringify({
@@ -113,19 +113,19 @@ class UserService {
         email,
         emailConfirmed,
         locale,
-      })}`
+      })}`,
     );
     return User.create({ username, password, email, emailConfirmed }).then(
       (user) => {
         MailService.sendUserRegistrationNotice(
           user.username,
           user.id,
-          user.email
+          user.email,
         ).catch(logger.error);
         NotificationService.createOne(
           i18n.__({ phrase: "notifications.welcome.title", locale }),
           i18n.__({ phrase: "notifications.welcome.message", locale }),
-          user.id
+          user.id,
         );
 
         if (email) {
@@ -133,17 +133,17 @@ class UserService {
             user.username,
             user.id,
             user.email,
-            locale
+            locale,
           ).catch(logger.error);
           MailService.sendWelcomeEmail(
             user.username,
             user.id,
             user.email,
-            locale
+            locale,
           ).catch(logger.error);
         }
         return user;
-      }
+      },
     );
   }
 
@@ -155,7 +155,7 @@ class UserService {
    */
   async findOrCreate(username: string, password: string) {
     logger.debug(
-      `UserService findOrCreate ${JSON.stringify({ username, password })}`
+      `UserService findOrCreate ${JSON.stringify({ username, password })}`,
     );
     const [user, _created] = await User.findOrCreate({
       where: { username },
@@ -221,7 +221,7 @@ class UserService {
     ]).then(([totalCount, notLoggedInCount]) => {
       return roundToDecimals(
         ((totalCount - notLoggedInCount) / totalCount) * 100,
-        1
+        1,
       );
     });
   }

@@ -89,7 +89,7 @@ class ChoreoService {
    */
   async findBySeasonTeamId(SeasonTeamId: string, UserId: string) {
     logger.debug(
-      `ChoreoService findBySeasonTeamId ${JSON.stringify({ SeasonTeamId, UserId })}`
+      `ChoreoService findBySeasonTeamId ${JSON.stringify({ SeasonTeamId, UserId })}`,
     );
     return Choreo.findAll({
       where: { SeasonTeamId, UserId },
@@ -144,7 +144,7 @@ class ChoreoService {
    */
   async findById(id: string, UserId: string | null, options = { all: false }) {
     logger.debug(
-      `ChoreoService findById ${JSON.stringify({ id, UserId, options })}`
+      `ChoreoService findById ${JSON.stringify({ id, UserId, options })}`,
     );
     return Choreo.findOne({
       where: options.all ? { id } : UserId !== null ? { id, UserId } : { id },
@@ -164,8 +164,8 @@ class ChoreoService {
               (lineup.dataValues as Record<string, unknown>).Positions =
                 await PositionService.findByLineupId(lineup.id, UserId);
               return lineup;
-            }
-          )
+            },
+          ),
         );
         return choreo;
       });
@@ -189,7 +189,7 @@ class ChoreoService {
     matType: MatType = defaultMatType,
     SeasonTeamId: string,
     participants: ChoreoParticipation[],
-    UserId: string
+    UserId: string,
   ) {
     logger.debug(
       `ChoreoService create ${JSON.stringify({
@@ -199,7 +199,7 @@ class ChoreoService {
         SeasonTeamId,
         participants,
         UserId,
-      })}`
+      })}`,
     );
     return Choreo.create({
       name,
@@ -210,9 +210,9 @@ class ChoreoService {
     }).then((choreo) =>
       Promise.all(
         participants.map((p) =>
-          this.addParticipant(choreo.id, p.id, UserId, p.color)
-        )
-      ).then(() => this.findById(choreo.id, UserId))
+          this.addParticipant(choreo.id, p.id, UserId, p.color),
+        ),
+      ).then(() => this.findById(choreo.id, UserId)),
     );
   }
 
@@ -232,7 +232,7 @@ class ChoreoService {
     counts: number,
     matType = defaultMatType,
     SeasonTeamId: string,
-    UserId: string
+    UserId: string,
   ) {
     logger.debug(
       `ChoreoService findOrCreate ${JSON.stringify({
@@ -241,7 +241,7 @@ class ChoreoService {
         matType,
         SeasonTeamId,
         UserId,
-      })}`
+      })}`,
     );
     const [choreo, _created] = await Choreo.findOrCreate({
       where: { name, counts, matType, SeasonTeamId, UserId },
@@ -263,7 +263,7 @@ class ChoreoService {
     choreoId: string,
     MemberId: string,
     UserId: string,
-    color: string | null = null
+    color: string | null = null,
   ) {
     logger.debug(
       `ChoreoService addParticipant ${JSON.stringify({
@@ -271,7 +271,7 @@ class ChoreoService {
         MemberId,
         UserId,
         color,
-      })}`
+      })}`,
     );
     return this.findById(choreoId, UserId).then((choreo) =>
       MemberService.findById(MemberId, UserId).then((member) => {
@@ -286,7 +286,7 @@ class ChoreoService {
               defaultColors[Math.floor(Math.random() * defaultColors.length)], // njsscan-ignore: node_insecure_random_generator
           },
         });
-      })
+      }),
     );
   }
 
@@ -303,7 +303,7 @@ class ChoreoService {
       `ChoreoService removeParticipant ${JSON.stringify({
         ChoreoId,
         MemberId,
-      })}`
+      })}`,
     );
     return ChoreoParticipation.findOne({
       where: { MemberId, ChoreoId },
@@ -328,7 +328,7 @@ class ChoreoService {
     ChoreoId: string,
     memberToAddId: string,
     memberToRemoveId: string,
-    UserId: string
+    UserId: string,
   ) {
     logger.debug(
       `ChoreoService replaceParticipant ${JSON.stringify({
@@ -336,7 +336,7 @@ class ChoreoService {
         memberToAddId,
         memberToRemoveId,
         UserId,
-      })}`
+      })}`,
     );
     return ChoreoParticipation.findOne({
       where: { ChoreoId, MemberId: memberToRemoveId },
@@ -344,10 +344,10 @@ class ChoreoService {
       .then(async (foundChoreoParticipation: ChoreoParticipation | null) => {
         if (!foundChoreoParticipation) {
           logger.error(
-            `ChoreoParticipation with ChoreoId ${ChoreoId} and MemberId ${memberToRemoveId} not found`
+            `ChoreoParticipation with ChoreoId ${ChoreoId} and MemberId ${memberToRemoveId} not found`,
           );
           throw new Error(
-            `ChoreoParticipation with ChoreoId ${ChoreoId} and MemberId ${memberToRemoveId} not found`
+            `ChoreoParticipation with ChoreoId ${ChoreoId} and MemberId ${memberToRemoveId} not found`,
           );
         }
         const color = foundChoreoParticipation.color;
@@ -360,8 +360,8 @@ class ChoreoService {
             where: { UserId, MemberId: memberToRemoveId },
           }).then((positionList: Position[]) =>
             Promise.all(
-              positionList.map((position) => position.setMember(memberToAddId))
-            )
+              positionList.map((position) => position.setMember(memberToAddId)),
+            ),
           ),
           // Update all Hits
           Hit.findAll({
@@ -369,15 +369,15 @@ class ChoreoService {
             include: "Members",
           }).then((hitList: Hit[]) => {
             hitList = hitList.filter((hit) =>
-              hit.Members.some((m: Member) => m.id == memberToRemoveId)
+              hit.Members.some((m: Member) => m.id == memberToRemoveId),
             );
             return Promise.all(
               hitList.map(async (hit) =>
                 Promise.all([
                   hit.removeMember(memberToRemoveId),
                   hit.addMember(memberToAddId),
-                ])
-              )
+                ]),
+              ),
             );
           }),
         ]);
@@ -398,14 +398,14 @@ class ChoreoService {
   changeParticipationColor(
     ChoreoId: string,
     participantId: string,
-    color: string
+    color: string,
   ) {
     logger.debug(
       `ChoreoService changeParticipationColor ${JSON.stringify({
         ChoreoId,
         participantId,
         color,
-      })}`
+      })}`,
     );
     return ChoreoParticipation.findOne({
       where: { ChoreoId, MemberId: participantId },
@@ -413,10 +413,10 @@ class ChoreoService {
       .then(async (foundChoreoParticipation: ChoreoParticipation | null) => {
         if (!foundChoreoParticipation) {
           logger.error(
-            `ChoreoParticipation with ChoreoId ${ChoreoId} and MemberId ${participantId} not found`
+            `ChoreoParticipation with ChoreoId ${ChoreoId} and MemberId ${participantId} not found`,
           );
           throw new Error(
-            `ChoreoParticipation with ChoreoId ${ChoreoId} and MemberId ${participantId} not found`
+            `ChoreoParticipation with ChoreoId ${ChoreoId} and MemberId ${participantId} not found`,
           );
         }
         await foundChoreoParticipation.update({ color });
@@ -439,10 +439,10 @@ class ChoreoService {
     id: string,
     data: object,
     UserId: string | null,
-    options = { all: false }
+    options = { all: false },
   ) {
     logger.debug(
-      `ChoreoService update ${JSON.stringify({ id, data, UserId, options })}`
+      `ChoreoService update ${JSON.stringify({ id, data, UserId, options })}`,
     );
     return Choreo.findOne({
       where: options.all || !UserId ? { id } : { id, UserId },
@@ -471,7 +471,7 @@ class ChoreoService {
    */
   async remove(id: string, UserId: string | null, options = { all: false }) {
     logger.debug(
-      `ChoreoService remove ${JSON.stringify({ id, UserId, options })}`
+      `ChoreoService remove ${JSON.stringify({ id, UserId, options })}`,
     );
     return Choreo.findOne({
       where: options.all || !UserId ? { id } : { id, UserId },

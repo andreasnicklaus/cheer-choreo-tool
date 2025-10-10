@@ -1,4 +1,13 @@
-import { BelongsToManyCreateAssociationMixin, CreationOptional, DataTypes, ForeignKey, InferAttributes, InferCreationAttributes, Model, NonAttribute } from "sequelize";
+import {
+  BelongsToManyCreateAssociationMixin,
+  CreationOptional,
+  DataTypes,
+  ForeignKey,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  NonAttribute,
+} from "sequelize";
 import User from "./user";
 import SeasonTeam from "./seasonTeam";
 import ChoreoParticipation from "./choreoParticipation";
@@ -36,7 +45,10 @@ import db from "../db";
  * @property {UUID} UserId
  * @memberof module:Models
  */
-class Member extends Model<InferAttributes<Member>, InferCreationAttributes<Member>> {
+class Member extends Model<
+  InferAttributes<Member>,
+  InferCreationAttributes<Member>
+> {
   declare id: CreationOptional<string>;
   declare name: string;
   declare nickname?: string;
@@ -52,8 +64,7 @@ class Member extends Model<InferAttributes<Member>, InferCreationAttributes<Memb
   declare SeasonTeam: NonAttribute<SeasonTeam>;
   declare SeasonTeamId: ForeignKey<SeasonTeam["id"]>;
 
-  declare addParticipation: BelongsToManyCreateAssociationMixin<ChoreoParticipation>
-
+  declare addParticipation: BelongsToManyCreateAssociationMixin<ChoreoParticipation>;
 }
 
 Member.init(
@@ -81,7 +92,7 @@ Member.init(
   {
     sequelize: db,
     paranoid: true,
-  }
+  },
 );
 
 export default Member;

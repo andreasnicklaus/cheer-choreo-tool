@@ -1,10 +1,19 @@
-import { DataTypes, CreationOptional, InferAttributes, InferCreationAttributes, Model, NonAttribute, ForeignKey, BelongsToManyCreateAssociationMixin } from "sequelize";
+import {
+  DataTypes,
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  NonAttribute,
+  ForeignKey,
+  BelongsToManyCreateAssociationMixin,
+} from "sequelize";
 import Team from "./team";
 import Lineup from "./lineup";
 import Hit from "./hit";
 import User from "./user";
-import SeasonTeam from './seasonTeam';
-import ChoreoParticipation from './choreoParticipation';
+import SeasonTeam from "./seasonTeam";
+import ChoreoParticipation from "./choreoParticipation";
 import Member from "./member";
 import db from "../db";
 
@@ -53,7 +62,10 @@ export const defaultMatType: MatType = "cheer";
  * @typedef {('cheer'|'square'|'1:2'|'3:4')} MatType
  * @memberof module:Models
  */
-class Choreo extends Model<InferAttributes<Choreo>, InferCreationAttributes<Choreo>> {
+class Choreo extends Model<
+  InferAttributes<Choreo>,
+  InferCreationAttributes<Choreo>
+> {
   declare id: CreationOptional<string>;
   declare name: string;
   declare counts: number;
@@ -72,8 +84,8 @@ class Choreo extends Model<InferAttributes<Choreo>, InferCreationAttributes<Chor
   declare user: NonAttribute<User>;
   declare UserId: ForeignKey<User["id"]>;
 
-  declare Lineups: NonAttribute<Lineup[]>
-  declare Hits: NonAttribute<Hit[]>
+  declare Lineups: NonAttribute<Lineup[]>;
+  declare Hits: NonAttribute<Hit[]>;
   declare Participants: NonAttribute<ChoreoParticipation[]>;
 
   declare addParticipant: BelongsToManyCreateAssociationMixin<Member>;
@@ -109,7 +121,7 @@ Choreo.init(
   {
     sequelize: db,
     paranoid: true,
-  }
+  },
 );
 
 export default Choreo;

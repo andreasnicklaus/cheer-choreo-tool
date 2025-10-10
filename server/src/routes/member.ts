@@ -43,15 +43,19 @@ const router = Router();
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  */
-router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  const { name, nickname, abbreviation, seasonTeamId } = req.body;
-  MemberService.create(name, nickname, abbreviation, seasonTeamId, req.UserId)
-    .then((member: Member) => {
-      res.send(member);
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.post(
+  "/",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    const { name, nickname, abbreviation, seasonTeamId } = req.body;
+    MemberService.create(name, nickname, abbreviation, seasonTeamId, req.UserId)
+      .then((member: Member) => {
+        res.send(member);
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 /**
  * @openapi
@@ -86,14 +90,18 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *       404:
  *         description: Member not found
  */
-router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  MemberService.update(req.params.id, req.body, req.UserId)
-    .then((member: Member | null) => {
-      res.send(member);
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.put(
+  "/:id",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    MemberService.update(req.params.id, req.body, req.UserId)
+      .then((member: Member | null) => {
+        res.send(member);
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 /**
  * @openapi
@@ -118,13 +126,17 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *       404:
  *         description: Member not found
  */
-router.delete("/:id", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  MemberService.remove(req.params.id, req.UserId)
-    .then(() => {
-      res.send();
-      next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.delete(
+  "/:id",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    MemberService.remove(req.params.id, req.UserId)
+      .then(() => {
+        res.send();
+        next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 export { router as memberRouter };

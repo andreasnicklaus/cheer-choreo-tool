@@ -27,14 +27,18 @@ const router = Router();
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  */
-router.get("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  NotificationService.getAll(req.UserId)
-    .then((notificationList: NotificationModel[]) => {
-      res.send(notificationList);
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.get(
+  "/",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    NotificationService.getAll(req.UserId)
+      .then((notificationList: NotificationModel[]) => {
+        res.send(notificationList);
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 /**
  * @openapi
@@ -57,14 +61,18 @@ router.get("/", AuthService.authenticateUser(), (req: Request, res: Response, ne
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  */
-router.post("/:id/read", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  return NotificationService.markRead(req.params.id, req.UserId)
-    .then((notification: NotificationModel) => {
-      res.send(notification);
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.post(
+  "/:id/read",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    return NotificationService.markRead(req.params.id, req.UserId)
+      .then((notification: NotificationModel) => {
+        res.send(notification);
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 /**
  * @openapi
@@ -87,14 +95,18 @@ router.post("/:id/read", AuthService.authenticateUser(), (req: Request, res: Res
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  */
-router.post("/:id/unread", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  return NotificationService.markUnread(req.params.id, req.UserId)
-    .then((notification: NotificationModel) => {
-      res.send(notification);
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.post(
+  "/:id/unread",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    return NotificationService.markUnread(req.params.id, req.UserId)
+      .then((notification: NotificationModel) => {
+        res.send(notification);
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 /**
  * @openapi
@@ -117,13 +129,17 @@ router.post("/:id/unread", AuthService.authenticateUser(), (req: Request, res: R
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  */
-router.delete("/:id", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  return NotificationService.remove(req.params.id, req.UserId)
-    .then(() => {
-      res.send();
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.delete(
+  "/:id",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    return NotificationService.remove(req.params.id, req.UserId)
+      .then(() => {
+        res.send();
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 export { router as notificationRouter };

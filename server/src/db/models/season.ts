@@ -1,4 +1,12 @@
-import { CreationOptional, DataTypes, ForeignKey, InferAttributes, InferCreationAttributes, Model, NonAttribute } from "sequelize";
+import {
+  CreationOptional,
+  DataTypes,
+  ForeignKey,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  NonAttribute,
+} from "sequelize";
 import User from "./user";
 import SeasonTeam from "./seasonTeam";
 import db from "../db";
@@ -30,7 +38,10 @@ import db from "../db";
  * @property {UUID} UserId
  * @memberof module:Models
  */
-class Season extends Model<InferAttributes<Season>, InferCreationAttributes<Season>> {
+class Season extends Model<
+  InferAttributes<Season>,
+  InferCreationAttributes<Season>
+> {
   declare id: CreationOptional<string>;
   declare year?: number;
   declare name: string;
@@ -70,7 +81,7 @@ Season.init(
   },
   {
     sequelize: db,
-  }
+  },
 );
 
 export default Season;

@@ -60,10 +60,10 @@ class AuthService {
    */
   generateAccessToken(
     UserId: string,
-    { expiresIn = null }: { expiresIn?: string | null } = {}
+    { expiresIn = null }: { expiresIn?: string | null } = {},
   ) {
     logger.debug(
-      `AuthService generateAccessToken ${JSON.stringify({ UserId, expiresIn })}`
+      `AuthService generateAccessToken ${JSON.stringify({ UserId, expiresIn })}`,
     );
     return jwt.sign({ UserId }, TOKEN_SECRET, {
       expiresIn: expiresIn || JWT_EXPIRES_IN,
@@ -109,14 +109,14 @@ class AuthService {
               }
 
               logger.debug(
-                `User ${user.username} with id ${user.id} used this token: ${token}`
+                `User ${user.username} with id ${user.id} used this token: ${token}`,
               );
               req.UserId = user.id;
               req.User = user;
               next();
             })
             .catch((e) => next(e));
-        }
+        },
       );
     };
   }
@@ -138,7 +138,9 @@ class AuthService {
         async (err: Error | null, content: jwtContent) => {
           if (err) {
             return reject(
-              new Error(i18n.__({ phrase: "errors.invalid-sso-token", locale }))
+              new Error(
+                i18n.__({ phrase: "errors.invalid-sso-token", locale }),
+              ),
             );
           }
 
@@ -146,17 +148,17 @@ class AuthService {
             if (!user) {
               return reject(
                 new Error(
-                  i18n.__({ phrase: "errors.sso-token-user-missing", locale })
-                )
+                  i18n.__({ phrase: "errors.sso-token-user-missing", locale }),
+                ),
               );
             }
 
             logger.debug(
-              `User ${user.username} with id ${user.id} used this SSO token: ${token}`
+              `User ${user.username} with id ${user.id} used this SSO token: ${token}`,
             );
             resolve(user);
           });
-        }
+        },
       );
     });
   }
@@ -172,7 +174,7 @@ class AuthService {
    */
   generateSsoToken(email: string, locale = "en") {
     logger.debug(
-      `AuthService generateSsoToken ${JSON.stringify({ email, locale })}`
+      `AuthService generateSsoToken ${JSON.stringify({ email, locale })}`,
     );
     return UserService.findByUsernameOrEmail(email).then(
       (user: User | null) => {
@@ -181,14 +183,14 @@ class AuthService {
           throw new Error(
             i18n.__(
               { phrase: "errors.entity-not-found", locale },
-              { entity: "user" }
-            )
+              { entity: "user" },
+            ),
           );
         }
         if (!user.email) {
           logger.warn("Found user has no email");
           throw new Error(
-            i18n.__({ phrase: "errors.user-has-no-email", locale })
+            i18n.__({ phrase: "errors.user-has-no-email", locale }),
           );
         }
 
@@ -199,7 +201,7 @@ class AuthService {
           user.email,
           user.username,
           token,
-          locale
+          locale,
         ).then(() =>
           NotificationService.createOne(
             i18n.__({
@@ -210,10 +212,10 @@ class AuthService {
               phrase: "notifications.sso-link-was-sent.message",
               locale,
             }),
-            user.id
-          )
+            user.id,
+          ),
         );
-      }
+      },
     );
   }
 
@@ -233,7 +235,7 @@ class AuthService {
     function myAuthorizer(
       username: string,
       password: string,
-      callback: (err: Error | null, authorized: boolean) => void
+      callback: (err: Error | null, authorized: boolean) => void,
     ) {
       return AdminService.findByUsername(username, {
         scope: "withPasswordHash",

@@ -1,4 +1,16 @@
-import { CreationOptional, DataTypes, ForeignKey, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, HasManyRemoveAssociationMixin, HasManySetAssociationsMixin, InferAttributes, InferCreationAttributes, Model, NonAttribute } from "sequelize";
+import {
+  CreationOptional,
+  DataTypes,
+  ForeignKey,
+  HasManyAddAssociationMixin,
+  HasManyGetAssociationsMixin,
+  HasManyRemoveAssociationMixin,
+  HasManySetAssociationsMixin,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  NonAttribute,
+} from "sequelize";
 import User from "./user";
 import Choreo from "./choreo";
 import Member from "./member";
@@ -77,9 +89,10 @@ Hit.init(
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
     deletedAt: DataTypes.DATE,
-  }, {
-  sequelize: db,
-}
+  },
+  {
+    sequelize: db,
+  },
 );
 
 export default Hit;

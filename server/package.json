@@ -4,18 +4,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=production node dist/index.js",
+    "start": "node dist/index.js",
     "dev": "nodemon -L --exec tsx src/index.ts",
     "reset": "node src/resetDB.js",
     "docs": "jsdoc -c jsdoc.json",
     "docs-dev": "concurrently --kill-others \"live-server --wait=1000 dist/docs\" \"nodemon --exec npm run docs\"",
     "build": "npm run clean && npm run lint && npm run build:ts",
-    "build:ts": "tsc --project compile.tsconfig.json && tscp --project compile.tsconfig.json",
+    "build:ts": "tsc --project compile.tsconfig.json && tsc-alias --project compile.tsconfig.json && tscp --project compile.tsconfig.json",
     "test": "npm run test:prep && npm run test:unit",
     "test:prep": "npm run lint && tsc --noEmit",
     "test:unit": "jest",
     "clean": "rimraf dist",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "format-check": "prettier --check .",
+    "format": "prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -64,6 +66,7 @@
     "swagger-docs": "^0.0.0-alpha2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
+    "tsc-alias": "^1.8.16",
     "typescript": "^5.8.3",
     "typescript-cp": "^0.1.9",
     "winston": "^3.14.2"

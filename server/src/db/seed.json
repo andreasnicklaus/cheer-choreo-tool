@@ -1196,6 +1196,7 @@
                     {
                       "name": "LM 2023",
                       "counts": 377,
+                      "matType": "square",
                       "Participants": ["AO", "AG", "AB", "AE", "DM", "EJ"],
                       "Hits": [],
                       "Lineups": []
@@ -1300,6 +1301,7 @@
                     {
                       "name": "RM 2025",
                       "counts": 12,
+                      "matType": "square",
                       "Participants": ["AO", "AG", "AB", "AE", "DM", "EJ"],
                       "Hits": [],
                       "Lineups": []
@@ -1433,5 +1435,6 @@
         }
       ]
     }
-  ]
+  ],
+  "admins": []
 }

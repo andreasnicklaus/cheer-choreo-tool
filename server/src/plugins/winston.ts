@@ -1,13 +1,13 @@
 import winston from "winston";
-import { Logtail } from "@logtail/node"
-import { LogtailTransport } from "@logtail/winston"
+import { Logtail } from "@logtail/node";
+import { LogtailTransport } from "@logtail/winston";
 
-const $SOURCE_TOKEN = process.env.BETTERSTACK_LOG_SOURCE_TOKEN as string
-const $INGESTING_HOST = process.env.BETTERSTACK_LOG_INGESTING_HOST
+const $SOURCE_TOKEN = process.env.BETTERSTACK_LOG_SOURCE_TOKEN as string;
+const $INGESTING_HOST = process.env.BETTERSTACK_LOG_INGESTING_HOST;
 
 const betterStackLogTail = new Logtail($SOURCE_TOKEN, {
   endpoint: `https://${$INGESTING_HOST}`,
-})
+});
 
 const logger = winston.createLogger({
   level: "debug",
@@ -15,8 +15,8 @@ const logger = winston.createLogger({
   format: winston.format.combine(
     winston.format.timestamp(),
     winston.format.printf(
-      (info: Record<string, string>) => `${info.timestamp} ${info.level}: ${info.message}`
-    )
+      (info) => `${info.timestamp} ${info.level}: ${info.message}`,
+    ),
   ),
   // Log to the console and a file
   transports: [
@@ -43,8 +43,8 @@ const dbLogger = winston.createLogger({
   format: winston.format.combine(
     winston.format.timestamp(),
     winston.format.printf(
-      (info: Record<string, string>) => `${info.timestamp} ${info.level}: ${info.message}`
-    )
+      (info) => `${info.timestamp} ${info.level}: ${info.message}`,
+    ),
   ),
   // Log to the console and a file
   transports: [
@@ -59,8 +59,8 @@ const mailLogger = winston.createLogger({
   format: winston.format.combine(
     winston.format.timestamp(),
     winston.format.printf(
-      (info: Record<string, string>) => `${info.timestamp} ${info.level}: ${info.message}`
-    )
+      (info) => `${info.timestamp} ${info.level}: ${info.message}`,
+    ),
   ),
   // Log to the console and a file
   transports: [

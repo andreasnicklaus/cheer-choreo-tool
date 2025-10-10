@@ -21,7 +21,7 @@ class SeasonTeamService {
    */
   async findById(id: string, UserId: string) {
     logger.debug(
-      `SeasonTeamService findById ${JSON.stringify({ id, UserId })}`
+      `SeasonTeamService findById ${JSON.stringify({ id, UserId })}`,
     );
     return SeasonTeam.findOne({
       where: { id, UserId },
@@ -89,7 +89,7 @@ class SeasonTeamService {
     TeamId: string,
     SeasonId: string,
     memberIds: string[],
-    UserId: string
+    UserId: string,
   ) {
     logger.debug(
       `SeasonTeamService create ${JSON.stringify({
@@ -97,14 +97,14 @@ class SeasonTeamService {
         SeasonId,
         memberIds,
         UserId,
-      })}`
+      })}`,
     );
     return SeasonTeam.create({ TeamId, SeasonId, UserId }).then((seasonTeam) =>
       Promise.all(
         memberIds.map((mId) =>
-          this.copyMemberIntoSeasonTeam(seasonTeam.id, mId, UserId)
-        )
-      ).then(() => this.findById(seasonTeam.id, UserId))
+          this.copyMemberIntoSeasonTeam(seasonTeam.id, mId, UserId),
+        ),
+      ).then(() => this.findById(seasonTeam.id, UserId)),
     );
   }
 
@@ -118,14 +118,14 @@ class SeasonTeamService {
   async copyMemberIntoSeasonTeam(
     SeasonTeamId: string,
     MemberId: string,
-    UserId: string
+    UserId: string,
   ) {
     logger.debug(
       `SeasonTeamService copyMemberIntoSeasonTeam ${JSON.stringify({
         SeasonTeamId,
         MemberId,
         UserId,
-      })}`
+      })}`,
     );
     return MemberService.findById(MemberId, UserId).then((member: Member) =>
       MemberService.create(
@@ -133,8 +133,8 @@ class SeasonTeamService {
         member.nickname,
         member.abbreviation,
         SeasonTeamId,
-        UserId
-      )
+        UserId,
+      ),
     );
   }
 
@@ -148,19 +148,19 @@ class SeasonTeamService {
   async copyMembersIntoSeasonTeam(
     seasonTeamId: string,
     memberIds: string[],
-    UserId: string
+    UserId: string,
   ) {
     logger.debug(
       `SeasonTeamService copyMembersIntoSeasonTeam ${JSON.stringify({
         seasonTeamId,
         memberIds,
         UserId,
-      })}`
+      })}`,
     );
     return Promise.all(
       memberIds.map((mId) =>
-        this.copyMemberIntoSeasonTeam(seasonTeamId, mId, UserId)
-      )
+        this.copyMemberIntoSeasonTeam(seasonTeamId, mId, UserId),
+      ),
     );
   }
 

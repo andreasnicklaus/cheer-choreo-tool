@@ -36,7 +36,7 @@ describe("Winston Logger Plugin", () => {
           "debug",
           "silly",
         ],
-      }
+      },
     );
   });
 
@@ -51,7 +51,7 @@ describe("Winston Logger Plugin", () => {
         timestamp: expect.any(String),
         [Symbol.for("level")]: expect.stringMatching("debug"),
         [Symbol.for("message")]: expect.stringContaining(
-          "debug: Debug message"
+          "debug: Debug message",
         ),
       }),
       {
@@ -66,7 +66,7 @@ describe("Winston Logger Plugin", () => {
           "debug",
           "silly",
         ],
-      }
+      },
     );
   });
 });

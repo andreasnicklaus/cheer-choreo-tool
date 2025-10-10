@@ -1,4 +1,13 @@
-import { CreationOptional, DataTypes, ForeignKey, HasManyGetAssociationsMixin, InferAttributes, InferCreationAttributes, Model, NonAttribute } from "sequelize";
+import {
+  CreationOptional,
+  DataTypes,
+  ForeignKey,
+  HasManyGetAssociationsMixin,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  NonAttribute,
+} from "sequelize";
 import Team from "./team";
 import User from "./user";
 import db from "../db";
@@ -71,14 +80,13 @@ Club.init(
     sequelize: db,
     paranoid: true,
     hooks: {
-
       afterDestroy: function (instance: Club, _options) {
         instance
           .getTeams()
           .then((teamList) => teamList.forEach((team) => team.destroy()));
       },
-    }
-  }
+    },
+  },
 );
 
 export default Club;

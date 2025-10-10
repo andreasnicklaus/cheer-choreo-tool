@@ -12,6 +12,7 @@ services:
     env_file:
       - .server.dev.env
     volumes:
+      - ./server/tsconfig.json:/usr/src/app/tsconfig.json
       - ./server/src:/usr/src/app/src
       - ./server/dist:/usr/src/app/dist
 

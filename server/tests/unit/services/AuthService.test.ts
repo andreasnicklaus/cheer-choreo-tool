@@ -76,7 +76,7 @@ describe("AuthService", () => {
     middleWareFunction(
       { headers: { authorization: `Bearer ${authToken}` } } as Request,
       { status: statusMock } as unknown as Response,
-      nextMock
+      nextMock,
     );
 
     await new Promise((resolve) => setTimeout(resolve, 200));
@@ -93,7 +93,7 @@ describe("AuthService", () => {
     middleWareFunction(
       { headers: { authorization: "Bearer" } } as Request,
       { status: statusMock } as unknown as Response,
-      nextMock
+      nextMock,
     );
 
     expect(statusMock).toHaveBeenCalled();
@@ -109,7 +109,7 @@ describe("AuthService", () => {
     middleWareFunction(
       { headers: { authorization: "Bearer" } } as Request,
       { status: statusMock } as unknown as Response,
-      nextMock
+      nextMock,
     );
 
     expect(nextMock).toHaveBeenCalled();
@@ -124,7 +124,7 @@ describe("AuthService", () => {
     middleWareFunction(
       { headers: { authorization: "Bearer asdfjkalsfjdlk" } } as Request,
       { status: statusMock } as unknown as Response,
-      nextMock
+      nextMock,
     );
 
     expect(statusMock).toHaveBeenCalled();
@@ -140,7 +140,7 @@ describe("AuthService", () => {
     middleWareFunction(
       { headers: { authorization: "Bearer asdfjkalsfjdlk" } } as Request,
       { status: statusMock } as unknown as Response,
-      nextMock
+      nextMock,
     );
 
     expect(nextMock).toHaveBeenCalled();
@@ -148,7 +148,7 @@ describe("AuthService", () => {
 
   test("authenticateUser should return a function that sends 403 on a invalid user", async () => {
     const authToken = AuthService.generateAccessToken(
-      "46ac9a72-c184-4c23-ae77-5650ed5c959c"
+      "46ac9a72-c184-4c23-ae77-5650ed5c959c",
     );
     const middleWareFunction = AuthService.authenticateUser();
     const nextMock = jest.fn();
@@ -158,7 +158,7 @@ describe("AuthService", () => {
     middleWareFunction(
       { headers: { authorization: `Bearer ${authToken}` } } as Request,
       { status: statusMock } as unknown as Response,
-      nextMock
+      nextMock,
     );
 
     await new Promise((resolve) => setTimeout(resolve, 200));
@@ -169,7 +169,7 @@ describe("AuthService", () => {
 
   test("authenticateUser should return a function that passes on a invalid user if failIfNotLoggedIn is false", async () => {
     const authToken = AuthService.generateAccessToken(
-      "46ac9a72-c184-4c23-ae77-5650ed5c959c"
+      "46ac9a72-c184-4c23-ae77-5650ed5c959c",
     );
     const middleWareFunction = AuthService.authenticateUser(false);
     const nextMock = jest.fn();
@@ -179,7 +179,7 @@ describe("AuthService", () => {
     middleWareFunction(
       { headers: { authorization: `Bearer ${authToken}` } } as Request,
       { status: statusMock } as unknown as Response,
-      nextMock
+      nextMock,
     );
 
     await new Promise((resolve) => setTimeout(resolve, 200));
@@ -204,7 +204,7 @@ describe("AuthService", () => {
 
   test("resolveSsoToken should reject on a non-existing user", async () => {
     const ssoToken = await AuthService.generateAccessToken(
-      "102f3f1c-fd81-46ee-bf67-2c52fc441ef2"
+      "102f3f1c-fd81-46ee-bf67-2c52fc441ef2",
     );
     expect(AuthService.resolveSsoToken(ssoToken)).rejects.toThrow();
   });
@@ -249,7 +249,7 @@ describe("AuthService", () => {
     middleWareFunction(
       { headers: { authorization: `Basic ${base64Auth}` } } as Request,
       { status: statusMock, set: setMock } as unknown as Response,
-      nextMock
+      nextMock,
     );
 
     await new Promise((resolve) => setTimeout(resolve, 200));
@@ -274,7 +274,7 @@ describe("AuthService", () => {
     middleWareFunction(
       { headers: { authorization: `Basic ${base64Auth}` } } as Request,
       { status: statusMock, set: setMock } as unknown as Response,
-      nextMock
+      nextMock,
     );
 
     expect(nextMock).not.toHaveBeenCalled();
@@ -293,7 +293,7 @@ describe("AuthService", () => {
     middleWareFunction(
       { headers: { authorization: `Basic ${base64Auth}` } } as Request,
       { status: statusMock, set: setMock } as unknown as Response,
-      nextMock
+      nextMock,
     );
 
     expect(nextMock).not.toHaveBeenCalled();
@@ -315,7 +315,7 @@ describe("AuthService", () => {
     await AuthService.resolveAdmin(
       requestObject,
       {} as unknown as Response,
-      nextMock
+      nextMock,
     );
 
     await new Promise((resolve) => setTimeout(resolve, 200));
@@ -334,7 +334,7 @@ describe("AuthService", () => {
     await AuthService.resolveAdmin(
       requestObject,
       {} as unknown as Response,
-      nextMock
+      nextMock,
     );
 
     expect(nextMock).toHaveBeenCalledWith(expect.any(Error));
@@ -351,7 +351,7 @@ describe("AuthService", () => {
     await AuthService.resolveAdmin(
       requestObject,
       {} as unknown as Response,
-      nextMock
+      nextMock,
     );
 
     expect(nextMock).toHaveBeenCalledWith();
@@ -370,7 +370,7 @@ describe("AuthService", () => {
     await AuthService.resolveAdmin(
       requestObject,
       {} as unknown as Response,
-      nextMock
+      nextMock,
     );
 
     expect(nextMock).toHaveBeenCalledWith();

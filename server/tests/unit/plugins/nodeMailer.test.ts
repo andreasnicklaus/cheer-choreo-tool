@@ -59,7 +59,7 @@ describe("Nodemailer Plugin  with environment", () => {
         userId: "testUserId",
         backendDomain: "testDomain",
       },
-      []
+      [],
     );
 
     expect(mailLogger.info).toHaveBeenCalledTimes(1);
