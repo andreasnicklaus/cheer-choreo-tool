@@ -64,7 +64,7 @@ class HitService {
     name: string,
     count: number,
     ChoreoId: string,
-    memberIds = [],
+    memberIds: Array<string> = [],
     UserId: string,
   ) {
     logger.debug(

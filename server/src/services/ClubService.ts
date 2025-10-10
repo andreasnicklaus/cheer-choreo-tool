@@ -3,14 +3,14 @@ import Club from "../db/models/club";
 import Season from "../db/models/season";
 import SeasonTeam from "../db/models/seasonTeam";
 import Team from "../db/models/team";
+import ChoreoService from "./ChoreoService";
+import HitService from "./HitService";
+import MemberService from "./MemberService";
+import SeasonService from "./SeasonService";
+import TeamService from "./TeamService";
 
 const { Op } = require("sequelize");
 const { logger } = require("../plugins/winston");
-const ChoreoService = require("./ChoreoService");
-const HitService = require("./HitService");
-const MemberService = require("./MemberService");
-const SeasonService = require("./SeasonService");
-const TeamService = require("./TeamService");
 
 const defaultInclude = [
   {
@@ -190,65 +190,68 @@ class ClubService {
    */
   async seedDemo(club: Club, UserId: string) {
     logger.debug(`ClubService seedDemo ${JSON.stringify({ club, UserId })}`);
-    console.log("🚀 ~ ClubService ~ seedDemo ~ SeasonService:", SeasonService);
-    SeasonService.getAll(null).then((seasons: Season[]) => {
+    return SeasonService.getAll(null).then((seasons: Season[]) => {
       const currentSeason = seasons.find(
         (s) => s.year == new Date().getFullYear(),
       ) as Season;
-      TeamService.create("Demo-Team", club.id, currentSeason.id, UserId).then(
-        (team: Team) => {
-          const seasonTeam = team.SeasonTeams[0];
-          Promise.all([
-            MemberService.create(
-              "Tina Turnerin",
-              "Tini",
-              "T",
-              seasonTeam.id,
-              UserId,
-            ),
-            MemberService.create(
-              "Zoe Zuverlässig",
-              "Zoe",
-              "Z",
-              seasonTeam.id,
-              UserId,
-            ),
-            MemberService.create(
-              "Fenja Flyer",
-              "Fipsi",
-              "F",
-              seasonTeam.id,
-              UserId,
-            ),
-          ]).then((members) =>
-            ChoreoService.create(
-              "Demo-Choreo",
-              25,
-              undefined,
-              seasonTeam.id,
-              members.map((m) => ({ id: m.id })),
-              UserId,
-            ).then((choreo: Choreo) => {
-              Promise.all([
-                HitService.create(
-                  "Pose",
-                  0,
-                  choreo.id,
-                  members.map((m) => m.id),
-                  UserId,
-                ),
-                HitService.create(
-                  "Flick-Flack",
-                  2,
-                  choreo.id,
-                  [members[0].id],
-                  UserId,
-                ),
-              ]);
-            }),
-          );
-        },
-      );
+      return TeamService.create(
+        "Demo-Team",
+        club.id,
+        currentSeason.id,
+        UserId,
+      ).then((team: Team | null) => {
+        if (!team) return;
+        const seasonTeam = team.SeasonTeams[0];
+        Promise.all([
+          MemberService.create(
+            "Tina Turnerin",
+            "Tini",
+            "T",
+            seasonTeam.id,
+            UserId,
+          ),
+          MemberService.create(
+            "Zoe Zuverlässig",
+            "Zoe",
+            "Z",
+            seasonTeam.id,
+            UserId,
+          ),
+          MemberService.create(
+            "Fenja Flyer",
+            "Fipsi",
+            "F",
+            seasonTeam.id,
+            UserId,
+          ),
+        ]).then((members) =>
+          ChoreoService.create(
+            "Demo-Choreo",
+            25,
+            undefined,
+            seasonTeam.id,
+            members.map((m) => ({ id: m.id })),
+            UserId,
+          ).then((choreo: Choreo) => {
+            Promise.all([
+              HitService.create(
+                "Pose",
+                0,
+                choreo.id,
+                members.map((m) => m.id),
+                UserId,
+              ),
+              HitService.create(
+                "Flick-Flack",
+                2,
+                choreo.id,
+                [members[0].id],
+                UserId,
+              ),
+            ]);
+          }),
+        );
+      });
     });
   }
 

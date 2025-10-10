@@ -116,7 +116,8 @@ router.post(
   (req: Request, res: Response, next: NextFunction) => {
     const { name, clubId, seasonId } = req.body;
     return TeamService.create(name, clubId, seasonId, req.UserId)
-      .then((team: Team) => {
+      .then((team: Team | null) => {
+        if (!team) throw new Error("Unknown error: Team could not be created");
         NotificationService.createOne(
           req.t("notifications.team-created.title"),
           req.t("notifications.team-created.message", {

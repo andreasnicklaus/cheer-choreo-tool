@@ -1,9 +1,9 @@
 import SeasonTeam from "../db/models/seasonTeam";
 import Team from "../db/models/team";
+import SeasonTeamService from "./SeasonTeamService";
 
 const { Op } = require("sequelize");
 const { logger } = require("../plugins/winston");
-const SeasonTeamService = require("./SeasonTeamService");
 
 const defaultInclude = [
   {
@@ -105,13 +105,18 @@ class TeamService {
    */
   async create(name: string, ClubId: string, SeasonId: string, UserId: string) {
     logger.debug(
-      `TeamService create ${JSON.stringify({ name, ClubId, SeasonId, UserId })}`,
+      `TeamService create ${JSON.stringify({
+        name,
+        ClubId,
+        SeasonId,
+        UserId,
+      })}`,
     );
-    return Team.create({ name, ClubId, UserId }).then((team: Team) =>
-      SeasonTeamService.create(team.id, SeasonId, [], UserId).then(
-        (_seasonTeam: SeasonTeam) => this.findById(team.id, UserId),
-      ),
-    );
+    return Team.create({ name, ClubId, UserId }).then((team: Team) => {
+      return SeasonTeamService.create(team.id, SeasonId, [], UserId).then(
+        (_seasonTeam: SeasonTeam | null) => this.findById(team.id, UserId),
+      );
+    });
   }
 
   /**

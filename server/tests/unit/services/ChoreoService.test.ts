@@ -5,6 +5,8 @@ import User from "@/db/models/user";
 import Member from "@/db/models/member";
 import ChoreoParticipation from "@/db/models/choreoParticipation";
 import SeasonTeam from "@/db/models/seasonTeam";
+import Team from "@/db/models/team";
+import Hit from "@/db/models/hit";
 
 jest.mock("@/plugins/winston", () => ({
   logger: {
@@ -46,6 +48,8 @@ describe("ChoreoService", () => {
       Choreo.destroy({ where: {} }),
       Member.destroy({ where: {} }),
       SeasonTeam.destroy({ where: {} }),
+      Team.destroy({ where: {} }),
+      Hit.destroy({ where: {} }),
     ]);
   });
 

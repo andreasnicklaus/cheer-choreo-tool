@@ -89,7 +89,10 @@ class ChoreoService {
    */
   async findBySeasonTeamId(SeasonTeamId: string, UserId: string) {
     logger.debug(
-      `ChoreoService findBySeasonTeamId ${JSON.stringify({ SeasonTeamId, UserId })}`,
+      `ChoreoService findBySeasonTeamId ${JSON.stringify({
+        SeasonTeamId,
+        UserId,
+      })}`,
     );
     return Choreo.findAll({
       where: { SeasonTeamId, UserId },
@@ -188,7 +191,7 @@ class ChoreoService {
     counts: number,
     matType: MatType = defaultMatType,
     SeasonTeamId: string,
-    participants: ChoreoParticipation[],
+    participants: { id: string; color?: string }[],
     UserId: string,
   ) {
     logger.debug(
