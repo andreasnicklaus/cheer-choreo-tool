@@ -112,7 +112,10 @@ class FileService {
     fileExtension: string | null = null,
   ) {
     logger.debug(
-      `FileService clearProfilePictureFolder ${JSON.stringify({ userId, fileExtension })}`,
+      `FileService clearProfilePictureFolder ${JSON.stringify({
+        userId,
+        fileExtension,
+      })}`,
     );
     return readdir(path.join(__dirname, "../..", "uploads", "profilePictures"))
       .then((files: string[]) => {
@@ -140,7 +143,10 @@ class FileService {
    */
   clearClubLogoFolder(clubId: string, fileExtension: string | null = null) {
     logger.debug(
-      `FileService clearClubLogoFolder ${JSON.stringify({ clubId, fileExtension })}`,
+      `FileService clearClubLogoFolder ${JSON.stringify({
+        clubId,
+        fileExtension,
+      })}`,
     );
     return readdir(path.join(__dirname, "../..", "uploads", "clubLogos"))
       .then((files: string[]) => {
