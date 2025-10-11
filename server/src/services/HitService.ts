@@ -31,7 +31,7 @@ class HitService {
     logger.debug(`HitService findById ${JSON.stringify({ id, UserId })}`);
     return Hit.findOne({
       where: { id, UserId },
-      include: { all: true, nested: true },
+      include: { all: true },
     }); // njsscan-ignore: node_nosqli_injection
   }
 
@@ -46,7 +46,7 @@ class HitService {
     logger.debug(`HitService findByName ${JSON.stringify({ name, UserId })}`);
     return Hit.findAll({
       where: { name, UserId },
-      include: { all: true, nested: true },
+      include: { all: true },
     });
   }
 
@@ -132,7 +132,7 @@ class HitService {
    */
   async update(
     id: string,
-    data: Hit & { memberIds: string[] },
+    data: { id?: string; name?: string; memberIds?: Array<string> },
     UserId: string,
   ) {
     logger.debug(`HitService update ${JSON.stringify({ id, data, UserId })}`);
