@@ -6,8 +6,8 @@ import Choreo from "@/db/models/choreo";
 
 jest.mock("@/plugins/winston", () => ({
   logger: {
-    debug: console.log,
-    error: console.error,
+    debug: jest.fn(),
+    error: jest.fn(),
   },
   debug: jest.fn(),
 }));
