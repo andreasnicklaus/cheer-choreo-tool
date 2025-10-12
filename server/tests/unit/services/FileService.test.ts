@@ -5,7 +5,7 @@ import { unlink } from "node:fs/promises";
 
 jest.mock("@/plugins/winston", () => ({
   logger: {
-    debug: console.log,
+    debug: jest.fn(),
     error: jest.fn(),
   },
   debug: jest.fn(),
