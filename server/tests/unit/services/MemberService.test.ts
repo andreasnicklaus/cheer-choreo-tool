@@ -131,7 +131,7 @@ describe("MemberService", () => {
     expect(member.name).toBe("TestMember");
   });
 
-  test("update updates a ,ember", async () => {
+  test("update updates a member", async () => {
     const member = await Member.create({
       name: "TestMember",
       abbreviation: "TM",
