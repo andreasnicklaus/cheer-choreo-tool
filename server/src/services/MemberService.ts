@@ -78,7 +78,7 @@ class MemberService {
   async create(
     name: string,
     nickname: string,
-    abbreviation: string,
+    abbreviation: string | null,
     SeasonTeamId: string,
     UserId: string,
   ) {
@@ -187,8 +187,8 @@ class MemberService {
             where: options.all
               ? { id }
               : UserId !== null
-                ? { id, UserId }
-                : { id },
+              ? { id, UserId }
+              : { id },
           }); // njsscan-ignore: node_nosqli_injection
         } else {
           logger.error(`No member found with ID ${id} when updating`);
