@@ -1,11 +1,10 @@
 import NotificationModel from "../db/models/notification";
 import User from "../db/models/user";
+import UserService from "./UserService";
 
 const { Op } = require("sequelize");
 const { logger } = require("../plugins/winston");
 const roundToDecimals = require("../utils/numbers");
-const UserService = require("./UserService");
-const Position = require("../db/models/position");
 
 /**
  * Service for managing notifications.
@@ -41,7 +40,7 @@ class NotificationService {
     logger.debug(
       `NotificationService findById ${JSON.stringify({ id, UserId })}`,
     );
-    return Position.findOne({ where: { id, UserId } });
+    return NotificationModel.findOne({ where: { id, UserId } });
   }
 
   /**
@@ -70,7 +69,11 @@ class NotificationService {
    */
   createOne(title: string, message: string, UserId: string) {
     logger.debug(
-      `NotificationService createOne ${JSON.stringify({ title, message, UserId })}`,
+      `NotificationService createOne ${JSON.stringify({
+        title,
+        message,
+        UserId,
+      })}`,
     );
     return NotificationModel.create({
       title,
@@ -88,7 +91,11 @@ class NotificationService {
    */
   async findOrCreate(title: string, message: string, UserId: string) {
     logger.debug(
-      `NotificationService findOrCreate ${JSON.stringify({ title, message, UserId })}`,
+      `NotificationService findOrCreate ${JSON.stringify({
+        title,
+        message,
+        UserId,
+      })}`,
     );
     const [notification, _created] = await NotificationModel.findOrCreate({
       where: {
