@@ -126,7 +126,8 @@ const syncPromise = db
     alter: true,
   })
   .then(() => {
-    console.log("🚀 ~ process.env.IsTest:", process.env.IsTest);
+    if (process.env.IsTest)
+      console.log("🚀 ~ process.env.IsTest:", process.env.IsTest);
     return process.env.IsTest == "true" ? Promise.resolve() : seed();
   });
 
