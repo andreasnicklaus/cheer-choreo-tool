@@ -34,7 +34,8 @@ jest.mock("@/services/MailService", () => ({
 
 jest.mock("@/services/NotificationService", () => ({
   createOne: jest.fn(),
-  findOrCreate: jest.fn(),
+  findOrCreate: jest.fn().mockResolvedValue({ id: "notification.id" }),
+  markRead: jest.fn(),
 }));
 
 jest.mock("i18n", () => ({
