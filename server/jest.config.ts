@@ -118,7 +118,7 @@ const config: Config = {
   // projects: undefined,
 
   // Use this configuration option to add custom reporters to Jest
-  // reporters: undefined,
+  reporters: ["default", "jest-github-actions-reporter"],
 
   // Automatically reset mock state before every test
   // resetMocks: false,
@@ -162,7 +162,7 @@ const config: Config = {
   // testEnvironmentOptions: {},
 
   // Adds a location field to test results
-  // testLocationInResults: false,
+  testLocationInResults: true,
 
   // The glob patterns Jest uses to detect test files
   // testMatch: [
