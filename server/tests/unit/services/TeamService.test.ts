@@ -46,6 +46,8 @@ describe("TeamService", () => {
   afterEach(async () => {
     await Team.destroy({ where: {} });
     await User.destroy({ where: {}, force: true });
+    await Club.destroy({ where: {} });
+    await Season.destroy({ where: {} });
   });
 
   test("getAll returns teams for valid user", async () => {
