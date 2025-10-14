@@ -1,9 +1,9 @@
 import Member from "../db/models/member";
 import SeasonTeam from "../db/models/seasonTeam";
+import MemberService from "./MemberService";
+import SeasonService from "./SeasonService";
 
-const SeasonService = require("./SeasonService");
 const { logger } = require("../plugins/winston");
-const MemberService = require("./MemberService");
 const { Op } = require("sequelize");
 
 /**
@@ -127,14 +127,17 @@ class SeasonTeamService {
         UserId,
       })}`,
     );
-    return MemberService.findById(MemberId, UserId).then((member: Member) =>
-      MemberService.create(
-        member.name,
-        member.nickname,
-        member.abbreviation,
-        SeasonTeamId,
-        UserId,
-      ),
+    return MemberService.findById(MemberId, UserId).then(
+      (member: Member | null) =>
+        member
+          ? MemberService.create(
+              member.name,
+              member.nickname as string,
+              member.abbreviation,
+              SeasonTeamId,
+              UserId,
+            )
+          : null,
     );
   }
 

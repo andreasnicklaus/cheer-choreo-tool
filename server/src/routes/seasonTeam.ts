@@ -1,6 +1,5 @@
 import { NextFunction, Response, Request, Router } from "express";
 import SeasonTeam from "../db/models/seasonTeam";
-import Member from "../db/models/member";
 import SeasonTeamService from "../services/SeasonTeamService";
 
 const { default: AuthService } = require("../services/AuthService");
@@ -106,7 +105,7 @@ router.put(
       memberIds,
       req.UserId,
     )
-      .then((memberList: Member[]) => {
+      .then((memberList) => {
         res.send(memberList);
         next();
       })
