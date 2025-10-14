@@ -6,8 +6,8 @@ import { Sequelize } from "sequelize";
 process.env.TOKEN_SECRET = "testsecret";
 process.env.JWT_EXPIRES_IN = "1h";
 
-// import Admin from "@/db/models/admin";
-// import User from "@/db/models/user";
+import Admin from "@/db/models/admin";
+import User from "@/db/models/user";
 import AuthService from "@/services/AuthService";
 // import MailService from "@/services/MailService";
 // import NotificationService from "@/services/NotificationService";
@@ -44,20 +44,18 @@ jest.mock("@/plugins/nodemailer", () => ({
 // }));
 
 describe("AuthService", () => {
-  //   beforeAll(async () => {
-  //     process.env.isTest = "true";
-  //     const { syncPromise } = require("@/db");
-  //     await syncPromise;
-  //   });
+  beforeAll(async () => {
+    process.env.isTest = "true";
+    const { syncPromise } = require("@/db");
+    await syncPromise;
+  });
 
-  //   beforeEach(async () => {
-  //     const users = await User.findAll();
-  //     const admins = await Admin.findAll();
-  //     await Promise.all([
-  //       ...users.map((user: User) => user.destroy({ force: true })),
-  //       ...admins.map((admin: Admin) => admin.destroy({ force: true })),
-  //     ]);
-  //   });
+  afterEach(async () => {
+    await Promise.all([
+      User.destroy({ force: true }),
+      Admin.destroy({ force: true }),
+    ]);
+  });
 
   test("generateAccessToken should return a token", () => {
     const token = AuthService.generateAccessToken("test-user-id");
