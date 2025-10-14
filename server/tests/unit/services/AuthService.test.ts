@@ -1,16 +1,16 @@
 import { describe, test, expect } from "@jest/globals";
+import { Request, Response } from "express";
 import { Sequelize } from "sequelize";
 const _i18n = require("@/plugins/i18n");
 
 process.env.TOKEN_SECRET = "testsecret";
 process.env.JWT_EXPIRES_IN = "1h";
 
-import AuthService from "@/services/AuthService";
-import { Request, Response } from "express";
+import Admin from "@/db/models/admin";
 import User from "@/db/models/user";
+import AuthService from "@/services/AuthService";
 import MailService from "@/services/MailService";
 import NotificationService from "@/services/NotificationService";
-import Admin from "@/db/models/admin";
 
 jest.mock("@/plugins/winston", () => ({
   logger: {
