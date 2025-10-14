@@ -45,7 +45,6 @@ jest.mock("i18n", () => ({
 
 describe("UserService", () => {
   beforeAll(async () => {
-    process.env.IsTest = "true";
     const { syncPromise } = require("@/db");
     await syncPromise;
   });

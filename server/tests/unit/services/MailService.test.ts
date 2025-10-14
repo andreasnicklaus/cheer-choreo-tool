@@ -33,7 +33,6 @@ jest.mock("i18n", () => ({
 
 describe("MailService", () => {
   beforeAll(async () => {
-    process.env.IsTest = "true";
     process.env.BACKEND_DOMAIN = "Backend-Domain";
     process.env.FRONTEND_DOMAIN = "Frontend-Domain";
     process.env.SSO_TOKEN_EXPIRES_IN = "1h";

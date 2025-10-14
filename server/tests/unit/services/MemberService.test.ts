@@ -30,7 +30,6 @@ let user = { id: "test-id" };
 
 describe("MemberService", () => {
   beforeAll(async () => {
-    process.env.IsTest = "true";
     const { syncPromise } = require("@/db");
     await syncPromise;
 

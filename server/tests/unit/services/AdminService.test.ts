@@ -31,7 +31,6 @@ describe("AdminServices", () => {
   beforeAll(async () => {
     process.env.DEFAULT_ADMIN_USERNAME = adminName;
     process.env.DEFAULT_ADMIN_PASSWORD = adminPw;
-    process.env.IsTest = "true";
     const { syncPromise } = require("@/db");
     await syncPromise;
   });

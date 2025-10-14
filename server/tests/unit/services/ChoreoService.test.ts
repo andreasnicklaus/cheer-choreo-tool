@@ -33,7 +33,6 @@ let user = { id: "test-id" };
 
 describe("ChoreoService", () => {
   beforeAll(async () => {
-    process.env.IsTest = "true";
     const { syncPromise } = require("@/db");
     await syncPromise;
 
