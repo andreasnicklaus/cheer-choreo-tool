@@ -127,7 +127,7 @@ const syncPromise = db
   })
   .then(() => {
     console.log("🚀 ~ process.env.IsTest:", process.env.IsTest);
-    return process.env.IsTest ? Promise.resolve() : seed();
+    return process.env.IsTest == "true" ? Promise.resolve() : seed();
   });
 
 export { syncPromise };
