@@ -52,8 +52,8 @@ describe("AuthService", () => {
 
   afterEach(async () => {
     await Promise.all([
-      User.destroy({ force: true }),
-      Admin.destroy({ force: true }),
+      User.destroy({ where: {}, force: true }),
+      Admin.destroy({ where: {}, force: true }),
     ]);
   });
 
