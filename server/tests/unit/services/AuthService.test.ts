@@ -39,6 +39,7 @@ jest.mock("@/services/MailService", () => ({
 
 jest.mock("@/services/NotificationService", () => ({
   createOne: jest.fn(),
+  findOrCreate: jest.fn(),
 }));
 
 describe("AuthService", () => {
