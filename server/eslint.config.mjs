@@ -18,10 +18,9 @@ export default defineConfig([
   globalIgnores([
     "**/dist",
     "**/node_modules",
-    "**/docs",
     "**/coverage",
-    "./eslint.config.mjs", // ignore this file
-    "./jest.config.ts", // ignore this file
+    "./eslint.config.mjs",
+    "./jest.config.ts",
   ]),
   // Override for config files to avoid TS project errors
   {
