@@ -30,3 +30,6 @@ docs
 
 # typescript
 dist
+
+# jest
+coverage

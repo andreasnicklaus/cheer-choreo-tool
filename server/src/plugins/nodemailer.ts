@@ -28,7 +28,7 @@ export function verify() {
       process.env.BACKEND_DOMAIN
     )
   ) {
-    mailLogger.error("Not all needed environment variables are specified.")
+    mailLogger.error("Not all needed environment variables are specified.");
     throw new Error("Not all needed environment variables are specified.");
   }
 
@@ -47,7 +47,7 @@ export async function sendMail(
   templateName: string,
   variables = {},
   attachments: object[] = [],
-  locale = "en"
+  locale = "en",
 ) {
   variables = { ...variables, t: i18n.__, locale };
 
@@ -58,7 +58,7 @@ export async function sendMail(
       templateName,
       variables,
       attachments,
-    })}`
+    })}`,
   );
 
   ejs.renderFile(
@@ -83,7 +83,7 @@ export async function sendMail(
             throw err;
           });
       }
-    }
+    },
   );
 }
 

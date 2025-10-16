@@ -1,9 +1,18 @@
-import { CreationOptional, DataTypes, ForeignKey, HasManyAddAssociationMixin, InferAttributes, InferCreationAttributes, Model, NonAttribute } from "sequelize";
+import {
+  CreationOptional,
+  DataTypes,
+  ForeignKey,
+  HasManyAddAssociationMixin,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  NonAttribute,
+} from "sequelize";
 import User from "./user";
 import Choreo from "./choreo";
 import Position from "./position";
 import db from "../db";
-import logger from "../../plugins/winston";
+import logger from "@/plugins/winston";
 
 /**
  * @openapi
@@ -34,7 +43,10 @@ import logger from "../../plugins/winston";
  * @property {UUID} UserId
  * @memberof module:Models
  */
-class Lineup extends Model<InferAttributes<Lineup>, InferCreationAttributes<Lineup>> {
+class Lineup extends Model<
+  InferAttributes<Lineup>,
+  InferCreationAttributes<Lineup>
+> {
   declare id: CreationOptional<string>;
   declare startCount: number;
   declare endCount: number;
@@ -85,15 +97,15 @@ Lineup.init(
       endIsAfterStart(this: Lineup) {
         if (this.startCount > this.endCount) {
           logger.error(
-            `endCount (count: ${this.endCount}) cannot be before startCount (count: ${this.startCount})`
+            `endCount (count: ${this.endCount}) cannot be before startCount (count: ${this.startCount})`,
           );
           throw new Error(
-            `endCount (count: ${this.endCount}) cannot be before startCount (count: ${this.startCount})`
+            `endCount (count: ${this.endCount}) cannot be before startCount (count: ${this.startCount})`,
           );
         }
       },
     },
-  }
+  },
 );
 
 export default Lineup;

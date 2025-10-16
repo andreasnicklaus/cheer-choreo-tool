@@ -31,7 +31,7 @@ class HitService {
     logger.debug(`HitService findById ${JSON.stringify({ id, UserId })}`);
     return Hit.findOne({
       where: { id, UserId },
-      include: { all: true, nested: true },
+      include: { all: true },
     }); // njsscan-ignore: node_nosqli_injection
   }
 
@@ -46,7 +46,7 @@ class HitService {
     logger.debug(`HitService findByName ${JSON.stringify({ name, UserId })}`);
     return Hit.findAll({
       where: { name, UserId },
-      include: { all: true, nested: true },
+      include: { all: true },
     });
   }
 
@@ -64,8 +64,8 @@ class HitService {
     name: string,
     count: number,
     ChoreoId: string,
-    memberIds = [],
-    UserId: string
+    memberIds: Array<string> = [],
+    UserId: string,
   ) {
     logger.debug(
       `HitService create ${JSON.stringify({
@@ -74,13 +74,13 @@ class HitService {
         ChoreoId,
         memberIds,
         UserId,
-      })}`
+      })}`,
     );
     return Hit.create({ name, count, ChoreoId, UserId }).then(
       async (hit: Hit) => {
         if (memberIds.length > 0) await hit.setMembers(memberIds);
         return Hit.findByPk(hit.id, { include: "Members" });
-      }
+      },
     );
   }
 
@@ -99,7 +99,7 @@ class HitService {
     count: number,
     ChoreoId: string,
     memberIds: string[] = [],
-    UserId: string
+    UserId: string,
   ) {
     logger.debug(
       `HitService findOrCreate ${JSON.stringify({
@@ -108,7 +108,7 @@ class HitService {
         ChoreoId,
         memberIds,
         UserId,
-      })}`
+      })}`,
     );
     const [hit, _created] = await Hit.findOrCreate({
       where: {
@@ -132,8 +132,8 @@ class HitService {
    */
   async update(
     id: string,
-    data: Hit & { memberIds: string[] },
-    UserId: string
+    data: { id?: string; name?: string; memberIds?: Array<string> },
+    UserId: string,
   ) {
     logger.debug(`HitService update ${JSON.stringify({ id, data, UserId })}`);
     return Hit.findOne({ where: { id, UserId } }) // njsscan-ignore: node_nosqli_injection

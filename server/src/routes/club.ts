@@ -45,32 +45,36 @@ const router = Router();
  *       404:
  *         description: Club not found
  */
-router.get("/:id?", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  if (req.params.id)
-    return ClubService.findById(req.params.id, req.UserId)
-      .then((foundClub: Club | null) => {
-        if (!foundClub) res.status(404).send(req.t("responses.not-found"));
-        else res.send(foundClub);
-        return next();
-      })
-      .catch((e: Error) => next(e));
-  else {
-    if (req.query.name)
-      return ClubService.findByName(req.query.name as string, req.UserId)
-        .then((clubList: Club[]) => {
-          res.send(clubList);
+router.get(
+  "/:id?",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    if (req.params.id)
+      return ClubService.findById(req.params.id, req.UserId)
+        .then((foundClub: Club | null) => {
+          if (!foundClub) res.status(404).send(req.t("responses.not-found"));
+          else res.send(foundClub);
           return next();
         })
         .catch((e: Error) => next(e));
-    else
-      return ClubService.getAll(req.UserId)
-        .then((clubList: Club[]) => {
-          res.send(clubList);
-          return next();
-        })
-        .catch((e: Error) => next(e));
-  }
-});
+    else {
+      if (req.query.name)
+        return ClubService.findByName(req.query.name as string, req.UserId)
+          .then((clubList: Club[]) => {
+            res.send(clubList);
+            return next();
+          })
+          .catch((e: Error) => next(e));
+      else
+        return ClubService.getAll(req.UserId)
+          .then((clubList: Club[]) => {
+            res.send(clubList);
+            return next();
+          })
+          .catch((e: Error) => next(e));
+    }
+  },
+);
 
 /**
  * @openapi
@@ -102,20 +106,24 @@ router.get("/:id?", AuthService.authenticateUser(), (req: Request, res: Response
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  */
-router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  const { name } = req.body;
-  return ClubService.create(name, req.UserId)
-    .then((club: Club) => {
-      NotificationService.createOne(
-        req.t("notifications.club-created.title"),
-        req.t("notifications.club-created.message", { name }),
-        req.UserId
-      );
-      res.send(club);
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.post(
+  "/",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    const { name } = req.body;
+    return ClubService.create(name, req.UserId)
+      .then((club: Club) => {
+        NotificationService.createOne(
+          req.t("notifications.club-created.title"),
+          req.t("notifications.club-created.message", { name }),
+          req.UserId,
+        );
+        res.send(club);
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 /**
  * @openapi
@@ -150,14 +158,18 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *       404:
  *         description: Club not found
  */
-router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  return ClubService.update(req.params.id, req.body, req.UserId)
-    .then((club: Club) => {
-      res.send(club);
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.put(
+  "/:id",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    return ClubService.update(req.params.id, req.body, req.UserId)
+      .then((club: Club) => {
+        res.send(club);
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 /**
  * @openapi
@@ -182,14 +194,18 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *       404:
  *         description: Club not found
  */
-router.delete("/:id", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  return ClubService.remove(req.params.id, req.UserId)
-    .then(() => {
-      res.send();
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.delete(
+  "/:id",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    return ClubService.remove(req.params.id, req.UserId)
+      .then(() => {
+        res.send();
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 /**
  * @openapi
@@ -242,14 +258,14 @@ router.put(
         {
           logoExtension,
         },
-        req.UserId
+        req.UserId,
       ).then((club: Club) => {
         FileService.clearClubLogoFolder(club.id, logoExtension as string);
         res.send(club);
         return next();
       });
     }
-  }
+  },
 );
 
 /**
@@ -293,7 +309,7 @@ router.get(
         return next();
       })
       .catch((e: Error) => next(e));
-  }
+  },
 );
 
 /**
@@ -329,7 +345,7 @@ router.delete(
         return next();
       })
       .catch((e: Error) => next(e));
-  }
+  },
 );
 
 export { router as clubRouter };

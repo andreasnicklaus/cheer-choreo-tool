@@ -3,12 +3,18 @@
     "allowJs": true,
     "target": "ES2020",
     "module": "CommonJS",
-    "rootDir": "./src",
+    "rootDir": ".",
     "outDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "removeComments": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "isolatedModules": true
   },
-  "include": ["src/**/*", "src/public/*.{ico}"]
+  "include": ["src/**/*", "src/public/*.{ico}", "tests/**/*"]
 }

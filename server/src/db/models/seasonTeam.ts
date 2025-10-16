@@ -1,4 +1,13 @@
-import { CreationOptional, DataTypes, ForeignKey, HasManyGetAssociationsMixin, InferAttributes, InferCreationAttributes, Model, NonAttribute } from "sequelize";
+import {
+  CreationOptional,
+  DataTypes,
+  ForeignKey,
+  HasManyGetAssociationsMixin,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  NonAttribute,
+} from "sequelize";
 import Member from "./member";
 import Choreo from "./choreo";
 import User from "./user";
@@ -29,7 +38,10 @@ import db from "../db";
  * @property {UUID} UserId
  * @memberof module:Models
  */
-class SeasonTeam extends Model<InferAttributes<SeasonTeam>, InferCreationAttributes<SeasonTeam>> {
+class SeasonTeam extends Model<
+  InferAttributes<SeasonTeam>,
+  InferCreationAttributes<SeasonTeam>
+> {
   declare id: CreationOptional<string>;
 
   declare createdAt: CreationOptional<Date>;
@@ -76,7 +88,7 @@ SeasonTeam.init(
         });
       },
     },
-  }
+  },
 );
 
 export default SeasonTeam;

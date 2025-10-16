@@ -1,9 +1,16 @@
-import { CreationOptional, DataTypes, ForeignKey, InferAttributes, InferCreationAttributes, Model, NonAttribute } from "sequelize";
+import {
+  CreationOptional,
+  DataTypes,
+  ForeignKey,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  NonAttribute,
+} from "sequelize";
 import User from "./user";
 import Choreo from "./choreo";
 import Member from "./member";
 import db from "../db";
-
 
 /**
  * @typedef ChoreoParticipation
@@ -11,7 +18,10 @@ import db from "../db";
  * @property {string} color
  * @memberof module:Models
  */
-class ChoreoParticipation extends Model<InferAttributes<ChoreoParticipation>, InferCreationAttributes<ChoreoParticipation>> {
+class ChoreoParticipation extends Model<
+  InferAttributes<ChoreoParticipation>,
+  InferCreationAttributes<ChoreoParticipation>
+> {
   declare id: string;
   declare color?: string;
 
@@ -45,7 +55,7 @@ ChoreoParticipation.init(
     updatedAt: DataTypes.DATE,
     deletedAt: DataTypes.DATE,
   },
-  { sequelize: db }
+  { sequelize: db },
 );
 
 export default ChoreoParticipation;

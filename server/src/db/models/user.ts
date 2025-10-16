@@ -1,4 +1,12 @@
-import { CreationOptional, DataTypes, HasManyGetAssociationsMixin, InferAttributes, InferCreationAttributes, Model, NonAttribute } from "sequelize";
+import {
+  CreationOptional,
+  DataTypes,
+  HasManyGetAssociationsMixin,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  NonAttribute,
+} from "sequelize";
 import Club from "./club";
 import Team from "./team";
 import SeasonTeam from "./seasonTeam";
@@ -81,7 +89,7 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare feedbacks: NonAttribute<Feedback[]>;
   declare notifications: NonAttribute<NotificationModel[]>;
 
-  declare getClubs: HasManyGetAssociationsMixin<Club>
+  declare getClubs: HasManyGetAssociationsMixin<Club>;
 }
 
 User.init(
@@ -158,8 +166,8 @@ User.init(
           .getClubs()
           .then((clubList) => clubList.forEach((club) => club.destroy()));
       },
-    }
-  }
+    },
+  },
 );
 
 export default User;

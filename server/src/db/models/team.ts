@@ -1,4 +1,13 @@
-import { CreationOptional, DataTypes, ForeignKey, HasManyGetAssociationsMixin, InferAttributes, InferCreationAttributes, Model, NonAttribute } from "sequelize";
+import {
+  CreationOptional,
+  DataTypes,
+  ForeignKey,
+  HasManyGetAssociationsMixin,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  NonAttribute,
+} from "sequelize";
 import SeasonTeam from "./seasonTeam";
 import User from "./user";
 import Club from "./club";
@@ -72,7 +81,7 @@ Team.init(
         });
       },
     },
-  }
+  },
 );
 
 export default Team;

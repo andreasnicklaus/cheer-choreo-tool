@@ -55,7 +55,7 @@ router.post(
         return next();
       })
       .catch((e: Error) => next(e));
-  }
+  },
 );
 
 /**
@@ -101,7 +101,7 @@ router.put(
         return next();
       })
       .catch((e: Error) => next(e));
-  }
+  },
 );
 
 /**
@@ -156,19 +156,19 @@ router.post(
         return Promise.all([
           position.setMember(MemberId),
           LineupService.findById(req.params.id, req.UserId).then(
-            (lineup: Lineup | null) => lineup?.addPosition(position)
+            (lineup: Lineup | null) => lineup?.addPosition(position),
           ),
         ]).then(() =>
           PositionService.findById(position.id, req.UserId).then(
             (p: Position | null) => {
               res.send(p);
               next();
-            }
-          )
+            },
+          ),
         );
       })
       .catch((e: Error) => next(e));
-  }
+  },
 );
 
 /**
@@ -217,14 +217,14 @@ router.put(
       req.params.positionId,
       req.params.id,
       req.body,
-      req.UserId
+      req.UserId,
     )
       .then((position: Position) => {
         res.send(position);
         next();
       })
       .catch((e: Error) => next(e));
-  }
+  },
 );
 
 /**
@@ -260,7 +260,7 @@ router.delete(
         next();
       })
       .catch((e: Error) => next(e));
-  }
+  },
 );
 
 export { router as lineupRouter };

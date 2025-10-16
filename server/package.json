@@ -4,16 +4,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "NODE_ENV=production node dist/index.js",
+    "start": "node dist/index.js",
     "dev": "nodemon -L --exec tsx src/index.ts",
     "reset": "node src/resetDB.js",
     "docs": "jsdoc -c jsdoc.json",
     "docs-dev": "concurrently --kill-others \"live-server --wait=1000 dist/docs\" \"nodemon --exec npm run docs\"",
     "build": "npm run clean && npm run lint && npm run build:ts",
-    "build:ts": "tsc && tscp",
+    "build:ts": "tsc --project compile.tsconfig.json && tsc-alias --project compile.tsconfig.json && tscp --project compile.tsconfig.json",
+    "test": "npm run test:prep && npm run test:unit",
+    "test:prep": "npm run lint && tsc --noEmit",
+    "test:unit": "jest",
     "clean": "rimraf dist",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "format-check": "prettier --check .",
+    "format": "prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -39,7 +43,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
-    "eslint": "^9.27.0",
+    "eslint": "^9.36.0",
     "express": "^4.21.0",
     "express-basic-auth": "^1.2.1",
     "express-rate-limit": "^7.5.0",
@@ -62,6 +66,7 @@
     "swagger-docs": "^0.0.0-alpha2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
+    "tsc-alias": "^1.8.16",
     "typescript": "^5.8.3",
     "typescript-cp": "^0.1.9",
     "winston": "^3.14.2"
@@ -69,11 +74,16 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.27.0",
+    "@jest/globals": "^30.1.2",
+    "@sequelize/sqlite3": "^7.0.0-alpha.46",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.15.21",
     "@types/sequelize": "^4.28.20",
     "concurrently": "^9.1.2",
+    "jest-github-actions-reporter": "^1.0.3",
     "live-server": "^1.2.2",
     "nodemon": "^3.1.4",
+    "ts-jest": "^29.4.4",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.4"
   },

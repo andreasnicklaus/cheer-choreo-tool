@@ -18,14 +18,15 @@ export default defineConfig([
   globalIgnores([
     "**/dist",
     "**/node_modules",
-    "**/docs",
-    "./eslint.config.mjs", // ignore this file
+    "**/coverage",
+    "./eslint.config.mjs",
+    "./jest.config.ts",
   ]),
   // Override for config files to avoid TS project errors
   {
     extends: compat.extends(
       "eslint:recommended",
-      "plugin:@typescript-eslint/recommended"
+      "plugin:@typescript-eslint/recommended",
     ),
 
     languageOptions: {

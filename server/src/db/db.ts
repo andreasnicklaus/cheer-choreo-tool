@@ -15,4 +15,4 @@ const db = new Sequelize(dbName, dbUsername, dbPassword, {
   logging: dbLogger.debug.bind(dbLogger),
 });
 
-export default db
+export default db;

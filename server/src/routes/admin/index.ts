@@ -23,17 +23,20 @@ router.use(function (req: Request, res: Response, next: NextFunction) {
 
   // Remove empty query parameters
   const cleanedQuery = Object.fromEntries(
-    Object.entries(req.query).filter(([_, v]) => v != null && v !== "")
+    Object.entries(req.query).filter(([_, v]) => v != null && v !== ""),
   );
   if (Object.keys(cleanedQuery).length !== Object.keys(req.query).length) {
     const url = new URL(
       req.originalUrl,
-      `${req.protocol}://${req.get("host")}`
+      `${req.protocol}://${req.get("host")}`,
     );
     url.search = new URLSearchParams(
       Object.fromEntries(
-        Object.entries(cleanedQuery).map(([k, v]) => [k, Array.isArray(v) ? v.join(",") : String(v)])
-      )
+        Object.entries(cleanedQuery).map(([k, v]) => [
+          k,
+          Array.isArray(v) ? v.join(",") : String(v),
+        ]),
+      ),
     ).toString();
     return res.redirect(url.toString()); // njsscan-ignore: express_open_redirect
   }
@@ -116,7 +119,7 @@ async function renderDashboard(req: Request, res: Response) {
         notificationPercentage,
         notificationTrend,
       }); // njsscan-ignore: express_lfr_warning
-    }
+    },
   );
 }
 
@@ -128,22 +131,32 @@ router.get(
     return renderDashboard(req, res)
       .then(() => next())
       .catch((e) => next(e));
-  }
+  },
 );
 
-router.use("/db", AuthService.authenticateAdmin(), AuthService.resolveAdmin, dbRouter);
-router.use("/users", AuthService.authenticateAdmin(), AuthService.resolveAdmin, userRouter);
+router.use(
+  "/db",
+  AuthService.authenticateAdmin(),
+  AuthService.resolveAdmin,
+  dbRouter,
+);
+router.use(
+  "/users",
+  AuthService.authenticateAdmin(),
+  AuthService.resolveAdmin,
+  userRouter,
+);
 router.use(
   "/admins",
   AuthService.authenticateAdmin(),
   AuthService.resolveAdmin,
-  adminsRouter
+  adminsRouter,
 );
 router.use(
   "/notifications",
   AuthService.authenticateAdmin(),
   AuthService.resolveAdmin,
-  notificationRouter
+  notificationRouter,
 );
 
 export { router as adminRouter };

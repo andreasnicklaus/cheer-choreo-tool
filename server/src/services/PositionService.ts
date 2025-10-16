@@ -22,7 +22,7 @@ class PositionService {
         x,
         y,
         UserId,
-      })}`
+      })}`,
     );
     return Position.create({ x, y, UserId });
   }
@@ -36,7 +36,13 @@ class PositionService {
    * @param {string} UserId - The user ID associated with the position.
    * @returns {Promise<Object>} The found or created position.
    */
-  async findOrCreate(x: number, y: number, LineupId: string, MemberId: string, UserId: string) {
+  async findOrCreate(
+    x: number,
+    y: number,
+    LineupId: string,
+    MemberId: string,
+    UserId: string,
+  ) {
     logger.debug(
       `PositionService findOrCreate ${JSON.stringify({
         x,
@@ -44,7 +50,7 @@ class PositionService {
         LineupId,
         MemberId,
         UserId,
-      })}`
+      })}`,
     );
     const [position, _created] = await Position.findOrCreate({
       where: { x, y, LineupId, MemberId, UserId },
@@ -59,10 +65,10 @@ class PositionService {
    * @returns {Promise<Array>} List of positions.
    */
   async findByLineupId(LineupId: string, UserId: string | null) {
-    logger.debug(`PositionService  ${JSON.stringify({ LineupId, UserId })}`)
+    logger.debug(`PositionService  ${JSON.stringify({ LineupId, UserId })}`);
     return Position.findAll({
       where: UserId ? { LineupId, UserId } : { LineupId },
-      include: "Member"
+      include: "Member",
     });
   }
 
@@ -73,7 +79,7 @@ class PositionService {
    * @returns {Promise<Object|null>} The found position or null if not found.
    */
   async findById(id: string, UserId: string) {
-    logger.debug(`PositionService findById ${JSON.stringify({ id, UserId })}`)
+    logger.debug(`PositionService findById ${JSON.stringify({ id, UserId })}`);
     return Position.findOne({ where: { id, UserId }, include: "Member" }); // njsscan-ignore: node_nosqli_injection
   }
 
@@ -86,13 +92,18 @@ class PositionService {
    * @returns {Promise<Object>} The updated position.
    * @throws Will throw an error if the position is not found.
    */
-  async update(id: string, LineupId: string | null, data: object, UserId: string) {
+  async update(
+    id: string,
+    LineupId: string | null,
+    data: object,
+    UserId: string,
+  ) {
     logger.debug(
       `PositionService update ${JSON.stringify({
         id,
         data,
         UserId,
-      })}`
+      })}`,
     );
     return Position.findOne({
       where: LineupId ? { LineupId, id, UserId } : { id, UserId },
@@ -117,9 +128,7 @@ class PositionService {
    * @throws Will throw an error if the position is not found.
    */
   async remove(id: string, UserId: string) {
-    logger.debug(
-      `PositionService remove ${JSON.stringify({ id, UserId })}`
-    );
+    logger.debug(`PositionService remove ${JSON.stringify({ id, UserId })}`);
     return Position.findOne({ where: { id, UserId } }) // njsscan-ignore: node_nosqli_injection
       .then((foundPosition) => {
         if (foundPosition) {

@@ -8,26 +8,50 @@ const { logger } = require("../plugins/winston");
 const _express = require("express");
 
 const profilePictureStorage = multer.diskStorage({
-  destination: (_req: Request, _file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
+  destination: (
+    _req: Request,
+    _file: Express.Multer.File,
+    cb: (error: Error | null, destination: string) => void,
+  ) => {
     cb(null, "uploads/profilePictures/");
   },
-  filename: (req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
+  filename: (
+    req: Request,
+    file: Express.Multer.File,
+    cb: (error: Error | null, filename: string) => void,
+  ) => {
     cb(null, `${req.UserId}.${file.originalname.split(".").pop()}`);
   },
 });
 const clubLogoStorage = multer.diskStorage({
-  destination: (_req: Request, _file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
+  destination: (
+    _req: Request,
+    _file: Express.Multer.File,
+    cb: (error: Error | null, destination: string) => void,
+  ) => {
     cb(null, "uploads/clubLogos/");
   },
-  filename: (req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
+  filename: (
+    req: Request,
+    file: Express.Multer.File,
+    cb: (error: Error | null, filename: string) => void,
+  ) => {
     cb(null, `${req.params.id}.${file.originalname.split(".").pop()}`);
   },
 });
 const generalStorage = multer.diskStorage({
-  destination: (_req: Request, _file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
+  destination: (
+    _req: Request,
+    _file: Express.Multer.File,
+    cb: (error: Error | null, destination: string) => void,
+  ) => {
     cb(null, "uploads/");
   },
-  filename: (req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
+  filename: (
+    req: Request,
+    file: Express.Multer.File,
+    cb: (error: Error | null, filename: string) => void,
+  ) => {
     cb(null, `${req.UserId}.${file.originalname.split(".").pop()}`);
   },
 });
@@ -83,17 +107,27 @@ class FileService {
    * @param {string} fileExtension
    * @returns {Promise<void>}
    */
-  clearProfilePictureFolder(userId: string, fileExtension: string | null = null) {
-    logger.debug(`FileService clearProfilePictureFolder ${JSON.stringify({ userId, fileExtension })}`)
+  clearProfilePictureFolder(
+    userId: string,
+    fileExtension: string | null = null,
+  ) {
+    logger.debug(
+      `FileService clearProfilePictureFolder ${JSON.stringify({
+        userId,
+        fileExtension,
+      })}`,
+    );
     return readdir(path.join(__dirname, "../..", "uploads", "profilePictures"))
       .then((files: string[]) => {
         files
           .filter(
-            (file) => file.startsWith(userId) && (fileExtension == null || !file.endsWith(fileExtension))
+            (file) =>
+              file.startsWith(userId) &&
+              (fileExtension == null || !file.endsWith(fileExtension)),
           )
           .forEach((file) => {
             unlink(
-              path.join(__dirname, "../..", "uploads", "profilePictures", file)
+              path.join(__dirname, "../..", "uploads", "profilePictures", file),
             );
           });
       })
@@ -108,12 +142,19 @@ class FileService {
    * @returns {Promise<void>}
    */
   clearClubLogoFolder(clubId: string, fileExtension: string | null = null) {
-    logger.debug(`FileService clearClubLogoFolder ${JSON.stringify({ clubId, fileExtension })}`)
+    logger.debug(
+      `FileService clearClubLogoFolder ${JSON.stringify({
+        clubId,
+        fileExtension,
+      })}`,
+    );
     return readdir(path.join(__dirname, "../..", "uploads", "clubLogos"))
       .then((files: string[]) => {
         files
           .filter(
-            (file) => file.startsWith(clubId) && (!fileExtension || !file.endsWith(fileExtension))
+            (file) =>
+              file.startsWith(clubId) &&
+              (!fileExtension || !file.endsWith(fileExtension)),
           )
           .forEach((file) => {
             unlink(path.join(__dirname, "../..", "uploads", "clubLogos", file));

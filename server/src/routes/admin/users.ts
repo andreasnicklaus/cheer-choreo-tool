@@ -2,7 +2,6 @@ import { NextFunction, Request, Response, Router } from "express";
 import User from "../../db/models/user";
 import UserService from "../../services/UserService";
 
-
 const router = Router();
 
 router.get("/", (req: Request, res: Response, next: NextFunction) => {
@@ -27,7 +26,7 @@ router.post("/", (req: Request, res: Response, next: NextFunction) => {
     password,
     email,
     emailConfirmed,
-    req.locale
+    req.locale,
   )
     .then(() => {
       return res.redirect(req.baseUrl); // njsscan-ignore: express_open_redirect

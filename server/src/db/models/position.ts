@@ -1,4 +1,13 @@
-import { BelongsToSetAssociationMixin, CreationOptional, DataTypes, ForeignKey, InferAttributes, InferCreationAttributes, Model, NonAttribute } from "sequelize";
+import {
+  BelongsToSetAssociationMixin,
+  CreationOptional,
+  DataTypes,
+  ForeignKey,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+  NonAttribute,
+} from "sequelize";
 import User from "./user";
 import Lineup from "./lineup";
 import Member from "./member";
@@ -33,7 +42,10 @@ import db from "../db";
  * @memberof module:Models
  */
 
-class Position extends Model<InferAttributes<Position>, InferCreationAttributes<Position>> {
+class Position extends Model<
+  InferAttributes<Position>,
+  InferCreationAttributes<Position>
+> {
   declare id: CreationOptional<string>;
   declare x: number;
   declare y: number;
@@ -83,6 +95,7 @@ Position.init(
   },
   {
     sequelize: db,
-  });
+  },
+);
 
 export default Position;

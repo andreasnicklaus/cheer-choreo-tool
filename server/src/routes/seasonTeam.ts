@@ -1,6 +1,5 @@
 import { NextFunction, Response, Request, Router } from "express";
 import SeasonTeam from "../db/models/seasonTeam";
-import Member from "../db/models/member";
 import SeasonTeamService from "../services/SeasonTeamService";
 
 const { default: AuthService } = require("../services/AuthService");
@@ -44,15 +43,19 @@ const router = Router();
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  */
-router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  const { teamId, seasonId, memberIds = [] } = req.body;
-  return SeasonTeamService.create(teamId, seasonId, memberIds, req.UserId)
-    .then((seasonTeam: SeasonTeam | null) => {
-      res.send(seasonTeam);
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.post(
+  "/",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    const { teamId, seasonId, memberIds = [] } = req.body;
+    return SeasonTeamService.create(teamId, seasonId, memberIds, req.UserId)
+      .then((seasonTeam: SeasonTeam | null) => {
+        res.send(seasonTeam);
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 /**
  * @openapi
@@ -62,7 +65,7 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *     tags:
  *       - SeasonTeams
  *     security:
- *       - userAuthentication: [] 
+ *       - userAuthentication: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -92,19 +95,23 @@ router.post("/", AuthService.authenticateUser(), (req: Request, res: Response, n
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  */
-router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  const { memberIds } = req.body;
-  return SeasonTeamService.copyMembersIntoSeasonTeam(
-    req.params.id,
-    memberIds,
-    req.UserId
-  )
-    .then((memberList: Member[]) => {
-      res.send(memberList);
-      next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.put(
+  "/:id",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    const { memberIds } = req.body;
+    return SeasonTeamService.copyMembersIntoSeasonTeam(
+      req.params.id,
+      memberIds,
+      req.UserId,
+    )
+      .then((memberList) => {
+        res.send(memberList);
+        next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 /**
  * @openapi
@@ -127,13 +134,17 @@ router.put("/:id", AuthService.authenticateUser(), (req: Request, res: Response,
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  */
-router.delete("/:id", AuthService.authenticateUser(), (req: Request, res: Response, next: NextFunction) => {
-  return SeasonTeamService.remove(req.params.id, req.UserId)
-    .then(() => {
-      res.send();
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.delete(
+  "/:id",
+  AuthService.authenticateUser(),
+  (req: Request, res: Response, next: NextFunction) => {
+    return SeasonTeamService.remove(req.params.id, req.UserId)
+      .then(() => {
+        res.send();
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 export { router as seasonTeamRouter };

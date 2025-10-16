@@ -23,8 +23,7 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.post("/", (req: Request, res: Response, next: NextFunction) => {
-  const { message, notifyViaEmail, sendToAllUsers } =
-    req.body;
+  const { message, notifyViaEmail, sendToAllUsers } = req.body;
   let { title, targetUsers } = req.body;
 
   if (typeof targetUsers == "string") targetUsers = [targetUsers];
@@ -36,8 +35,8 @@ router.post("/", (req: Request, res: Response, next: NextFunction) => {
   else {
     notificationSendPromise = Promise.all(
       targetUsers.map((userId: string) =>
-        NotificationService.createOne(title, message, userId)
-      )
+        NotificationService.createOne(title, message, userId),
+      ),
     );
   }
 
@@ -61,11 +60,11 @@ router.post("/", (req: Request, res: Response, next: NextFunction) => {
                   user.username,
                   token,
                   title,
-                  req.locale
+                  req.locale,
                 );
               }
             });
-          })
+          }),
         );
       }
 
