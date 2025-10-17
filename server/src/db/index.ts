@@ -125,7 +125,7 @@ const syncPromise = db
   .sync({
     alter: true,
   })
-  .then(() => (process.env.IsTest == "true" ? Promise.resolve() : seed()));
+  .then(() => (process.env.NODE_ENV == "test" ? Promise.resolve() : seed()));
 
 export { syncPromise };
 export default db;

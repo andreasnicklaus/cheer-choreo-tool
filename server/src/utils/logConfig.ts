@@ -2,6 +2,9 @@ import logger from "../plugins/winston";
 
 function logConfig() {
   logger.debug("Starting logging the configuration variables");
+
+  const nodeEnv = process.env.NODE_ENV || "not defined";
+
   const dbName = process.env.POSTGRES_DB || "not defined";
   const dbUsername = process.env.POSTGRES_USER || "not defined";
   const dbHost = process.env.DB_HOST || "not defined";
@@ -39,6 +42,8 @@ function logConfig() {
   logger.info("################");
   logger.info("Configuration:");
   logger.info("################");
+  logger.info(`  Node Environment:      ${nodeEnv}`);
+  logger.info("");
   logger.info(`  Database name:         ${dbName}`);
   logger.info(`  Database username:     ${dbUsername}`);
   logger.info(`  Database host:         ${dbHost}`);

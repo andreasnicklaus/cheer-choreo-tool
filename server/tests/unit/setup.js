@@ -1,3 +1,3 @@
 module.exports = async function () {
-  process.env.IsTest = "true";
+  process.env.NODE_ENV = "test";
 };

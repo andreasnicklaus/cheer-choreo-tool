@@ -2,6 +2,7 @@ FROM node:22-alpine
 WORKDIR /usr/src/app
 
 ENV TZ=Europe/Amsterdam
+ENV NODE_ENV=development
 
 RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
 

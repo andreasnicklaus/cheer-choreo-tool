@@ -31,8 +31,8 @@ jest.mock("@/db/seed", () => ({
 }));
 
 describe("db/index", () => {
-  test("should run", async () => {
-    process.env.IsTest = "false";
+  test("should run seed in production", async () => {
+    process.env.NODE_ENV = "production";
     const { syncPromise } = require("@/db");
     await syncPromise;
     expect(seed).toHaveBeenCalledTimes(1);
