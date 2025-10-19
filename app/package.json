@@ -15,7 +15,9 @@
     "test:e2e:pretest": "tsc --noEmit",
     "test:e2e": "npm run test:e2e:pretest && playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:unit": "jest"
+    "test:unit": "jest",
+    "format-check": "prettier --check .",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@babel/eslint-parser": "^7.28.0",
