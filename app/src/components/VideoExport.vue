@@ -201,6 +201,9 @@
               <div class="text-center" :style="{ minWidth: '70vw' }">
                 <b-spinner />
                 <p>{{ waitingSlogan || "Dein Video wird generiert!" }}</p>
+                <b-alert :show="true" variant="danger">
+                  {{ $t("video-export-comp.do-not-leave-this-page") }}
+                </b-alert>
                 <b-progress
                   :value="count"
                   :max="choreo?.counts"
@@ -593,7 +596,7 @@ export default {
 
       const stream = this.$refs.videoCanvas.captureStream(1000);
       this.mediaRecorder = new MediaRecorder(stream, {
-        mimeType: "video/webm",
+        mimeType: "video/webm; codecs=vp9",
       });
       this.mediaRecorder.ondataavailable = (event) => {
         this.recordingChunks.push(event.data);
