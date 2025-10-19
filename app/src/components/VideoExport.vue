@@ -131,6 +131,45 @@
               </b-form-group>
             </b-skeleton-wrapper>
           </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :description="$t('video-export-comp.playback-length')"
+            >
+              <b-row>
+                <b-col cols="6">
+                  <b-input-group>
+                    <b-form-input
+                      v-model="animationMinutes"
+                      type="number"
+                      min="0"
+                    />
+                    <b-input-group-append
+                      v-b-tooltip.hover
+                      :title="$t('video-export-comp.minutes')"
+                    >
+                      <b-input-group-text>Min</b-input-group-text>
+                    </b-input-group-append>
+                  </b-input-group>
+                </b-col>
+                <b-col cols="6">
+                  <b-input-group>
+                    <b-form-input
+                      v-model="animationSeconds"
+                      type="number"
+                      min="0"
+                      max="59"
+                    />
+                    <b-input-group-append
+                      v-b-tooltip.hover
+                      :title="$t('video-export-comp.seconds')"
+                    >
+                      <b-input-group-text>Sec</b-input-group-text>
+                    </b-input-group-append>
+                  </b-input-group>
+                </b-col>
+              </b-row>
+            </b-form-group>
+          </b-col>
           <b-col cols="auto">
             <b-button-group>
               <b-button
@@ -250,6 +289,7 @@ import MessagingService from "@/services/MessagingService";
 import ClubService from "@/services/ClubService";
 import { debug, error } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
+import { roundToDecimals } from "@/utils/numbers";
 
 /**
  * @module Component:VideoExport
@@ -260,7 +300,7 @@ import ERROR_CODES from "@/utils/error_codes";
  * @vue-data {Array} recordingChunks - The chunks of video data recorded.
  * @vue-data {Number|null} count=null - The current count in the video, used for choreography timing.
  * @vue-data {gsap.timeline|null} animationTimeline=null - The GSAP timeline for controlling the animation of the video.
- * @vue-data {Number} bps=2.51 - Beats per second for the choreography.
+ * @vue-data {Number} bps=2.5 - Beats per second for the choreography.
  * @vue-data {Object|null} user=null - The authenticated user object.
  * @vue-data {Object|null} choreo=null - The choreography object being exported.
  * @vue-data {Array} teamMembers - The members of the team participating in the choreography.
@@ -296,7 +336,7 @@ export default {
     recordingChunks: [],
     count: null,
     animationTimeline: null,
-    bps: 2.51,
+    bps: 2.5,
     user: null,
     choreo: null,
     teamMembers: [],
@@ -322,6 +362,8 @@ export default {
     ],
     ffmpeg: null,
     mp4Url: null,
+    animationMinutes: 0,
+    animationSeconds: 0,
   }),
   methods: {
     startPreview() {
@@ -667,6 +709,21 @@ export default {
         });
       });
     },
+    calculateAnimationTime() {
+      const totalSeconds = roundToDecimals(this.choreo.counts / this.bps, 0);
+      this.animationMinutes = Math.floor(totalSeconds / 60);
+      this.animationSeconds = totalSeconds % 60;
+    },
+    adaptBpsFromTime() {
+      const totalSeconds = roundToDecimals(
+        this.animationMinutes * 60 + this.animationSeconds,
+        0
+      );
+      if (totalSeconds > 0 && this.choreo?.counts) {
+        const targetBps = roundToDecimals(this.choreo.counts / totalSeconds, 1);
+        if (this.bps !== targetBps) this.bps = targetBps;
+      }
+    },
   },
   watch: {
     count: {
@@ -704,11 +761,27 @@ export default {
         setTimeout(this.drawCanvas, 100);
       },
     },
+    bps: {
+      handler() {
+        this.addAnimationsFromChoreo();
+      },
+    },
+    animationSeconds: {
+      handler() {
+        this.adaptBpsFromTime();
+      },
+    },
+    animationMinutes: {
+      handler() {
+        this.adaptBpsFromTime();
+      },
+    },
   },
   mounted() {
-    Promise.all([this.loadUserInfo(), this.loadChoreo()]).then(
-      this.drawCanvas()
-    );
+    Promise.all([this.loadUserInfo(), this.loadChoreo()]).then(() => {
+      this.drawCanvas();
+      this.calculateAnimationTime();
+    });
     this.ffmpeg = new FFmpeg();
     this.initializeFfmpeg();
   },

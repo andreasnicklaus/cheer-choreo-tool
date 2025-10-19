@@ -738,7 +738,10 @@
     "video-zusammenstellen": "Create video",
     "dein-vereinslogo-als-wasserzeichen-im-video-anzeigen": "Show your club logo as a watermark in the video",
     "dein-browser-unterstuetzt-kein-video": "Your browser does not support exporting to a video. Please try a different browser or device.",
-    "do-not-leave-this-page": "Do not leave this page while the video is being generated!"
+    "do-not-leave-this-page": "Do not leave this page while the video is being generated!",
+    "playback-length": "Playback length",
+    "minutes": "Minutes",
+    "seconds": "Seconds"
   },
   "zur-startseite": "To the landing page",
   "zuruecksetzen": "Reset",
