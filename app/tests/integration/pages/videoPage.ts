@@ -50,7 +50,7 @@ export default class VideoPage extends TestPage {
         name: "download Download",
       });
       // Wait for the video generation to finish
-      await expect(downloadButton).toBeVisible({ timeout: 90_000 });
+      await expect(downloadButton).toBeVisible({ timeout: 30_000 });
 
       await this.iClickButton(downloadButton);
 

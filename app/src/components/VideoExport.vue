@@ -287,7 +287,7 @@ import VideoDownloadModal from "./modals/VideoDownloadModal.vue";
 import AuthService from "@/services/AuthService";
 import MessagingService from "@/services/MessagingService";
 import ClubService from "@/services/ClubService";
-import { debug, error } from "@/utils/logging";
+import { debug, error, warn } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
 import { roundToDecimals } from "@/utils/numbers";
 
@@ -637,9 +637,16 @@ export default {
       }
 
       const stream = this.$refs.videoCanvas.captureStream(1000);
-      this.mediaRecorder = new MediaRecorder(stream, {
-        mimeType: "video/webm; codecs=vp9",
-      });
+      try {
+        this.mediaRecorder = new MediaRecorder(stream, {
+          mimeType: "video/webm; codecs=vp9",
+        });
+      } catch (e) {
+        warn("VP9 not supported, falling back to VP8");
+        this.mediaRecorder = new MediaRecorder(stream, {
+          mimeType: "video/webm; codecs=vp8",
+        });
+      }
       this.mediaRecorder.ondataavailable = (event) => {
         this.recordingChunks.push(event.data);
       };
