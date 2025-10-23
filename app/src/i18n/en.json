@@ -583,7 +583,16 @@
     },
     "video-download": {
       "format": "Format",
-      "video-herunterladen": "Download video"
+      "video-herunterladen": "Download video",
+      "stocking-video": "My video is jerky",
+      "video-file-issues": "Issues with the video file",
+      "other-issue": "Other issue",
+      "jerky-video": "Your video is jerky?",
+      "jerky-video-answer": "The video is created in your browser, i.e. the performance of your device affects the quality of the video. Try closing other applications or restarting your browser.",
+      "file-issues": "Issues with the video file?",
+      "file-issues-answer": "If the video does not play on your device or a required format is missing or not compatible, there is nothing for you to do, unfortunately. Please check the help page for any information or contact us.",
+      "other-issue-question": "Other issue?",
+      "other-issue-answer": "Take a look at our help page to perhaps solve your problem yourself."
     },
     "delete-club": {
       "verein-loeschen": "Delete club?"
