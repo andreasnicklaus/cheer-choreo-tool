@@ -110,7 +110,7 @@
               v-b-toggle.collapse-technical-issues
               variant="light"
               v-b-tooltip.hover
-              title="{{ $t('general.help') }}"
+              :title="$t('general.help')"
             >
               <b-icon-question-circle />
             </b-button>
