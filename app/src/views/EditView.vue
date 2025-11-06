@@ -214,6 +214,7 @@
           :transitionMs="transitionMs"
           :teamMembers="teamMembers"
           :snapping="snapping"
+          :proposedPositions="proposedPositions"
           :matType="choreo?.matType"
           @positionChange="onPositionChange"
         />
@@ -232,6 +233,30 @@
           @updateCount="onUpdateCount"
           @openCreateHitModal="openCreateHitModal"
         />
+        <b-card
+          sub-title="Do you want to use the proposed lineup?"
+          border-variant="light"
+          align="right"
+          class="mt-2"
+          v-if="proposedPositions && proposedPositions.length > 0"
+        >
+          <b-button
+            variant="light"
+            v-b-tooltip.hover
+            title="No"
+            @click="rejectProposedLineup"
+            class="mr-2"
+          >
+            <b-icon-x />
+          </b-button>
+          <b-button
+            variant="outline-success"
+            v-b-tooltip.hover
+            title="Yes"
+            @click="acceptProposedLineup"
+            ><b-icon-check class="mr-2" />Accept</b-button
+          >
+        </b-card>
       </b-col>
     </b-row>
 
@@ -415,6 +440,7 @@ import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import MessagingService from "@/services/MessagingService";
 import { debug, error } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
+import { roundToDecimals } from "@/utils/numbers";
 
 /**
  * @vue-data {string|null} choreoId=null - The ID of the choreo being edited.
@@ -492,6 +518,7 @@ export default {
       countStartButtonHasNeverBeenUsed: true,
       countNextButtonHasNeverBeenUsed: true,
       countEndButtonHasNeverBeenUsed: true,
+      proposedPositions: [],
     };
   },
   mounted() {
@@ -511,6 +538,16 @@ export default {
       },
       immediate: true,
     },
+    choreo: {
+      handler() {
+        this.updateProposedPositions();
+      },
+    },
+    count: {
+      handler() {
+        this.updateProposedPositions();
+      },
+    },
   },
   methods: {
     loadChoreo() {
@@ -522,6 +559,8 @@ export default {
 
           if (choreo.Lineups.length == 0 && choreo.Hits.length == 0)
             this.$refs.howToModal.open();
+
+          this.updateProposedPositions();
         })
         .catch((e) => {
           error(e, ERROR_CODES.CLUB_QUERY_FAILED);
@@ -562,6 +601,7 @@ export default {
               pos.x = x;
               pos.y = y;
               this.showSuccessMessage(this.$tc("lineup", 1));
+              this.updateProposedPositions();
             });
         }, 1000);
       } else {
@@ -589,6 +629,7 @@ export default {
               this.lineupCreationInProgress = false;
 
               this.showSuccessMessage(this.$tc("lineup", 1));
+              this.updateProposedPositions();
             }
           );
         } else {
@@ -627,6 +668,7 @@ export default {
                 this.choreo.Lineups = lineupCopy;
                 this.positionUpdates[MemberId] = null;
                 this.showSuccessMessage(this.$tc("lineup", 1));
+                this.updateProposedPositions();
               }
             );
           }, 0);
@@ -690,6 +732,7 @@ export default {
       this.count = count;
       if (this.$refs.Mat)
         this.$refs.Mat.animatePositions(oldPositions, this.currentPositions);
+      this.updateProposedPositions();
     },
     playPause() {
       if (!this.playInterval) {
@@ -721,15 +764,7 @@ export default {
       this.showSuccessMessage(this.$tc("countsheet", 1));
     },
     onUpdateLineups(lineups) {
-      console.log(
-        "🚀 ~ onUpdateLineups ~ lineups:",
-        JSON.stringify(lineups, null, 2)
-      );
-      this.choreo.Lineups = lineups;
-      console.log(
-        "🚀 ~ onUpdateLineups ~ this.choreo.Lineups:",
-        JSON.stringify(this.choreo.Lineups)
-      );
+      // TODO: wtf is this?
       this.showSuccessMessage(this.$tc("lineup", 1));
     },
     onUpdateCount(count) {
@@ -822,6 +857,7 @@ export default {
     },
     onSubstitution(choreo) {
       this.choreo = choreo;
+      this.updateProposedPositions();
     },
     changeColor(participantId, color) {
       ChoreoService.changeParticipantColor(
@@ -833,6 +869,88 @@ export default {
           (p) => p.id == participantId
         ).ChoreoParticipation.color = color;
       });
+    },
+    findPreviousPosition(memberId) {
+      const previousRelevantLineups = this.choreo.Lineups.filter(
+        (lineup) =>
+          lineup.endCount < this.count &&
+          lineup.Positions.some((position) => position.MemberId == memberId)
+      ).sort((a, b) => b.endCount - a.endCount);
+      if (previousRelevantLineups.length == 0) return null;
+
+      const previousRelevantLineup =
+        previousRelevantLineups[previousRelevantLineups.length - 1];
+      const previousPosition = previousRelevantLineup.Positions.find(
+        (pos) => pos.MemberId == memberId
+      );
+      if (!previousPosition) return null;
+      return previousPosition;
+    },
+    updateProposedPositions() {
+      const currentlyPositionedMembers = this.lineupsForCurrentCount
+        .map((lineup) => lineup.Positions.map((pos) => pos.Member))
+        .flat();
+      if (currentlyPositionedMembers.length == 0) {
+        this.proposedPositions = [];
+        return;
+      }
+      if (currentlyPositionedMembers.length == 1) {
+        const currentRelevantLineup = this.lineupsForCurrentCount.find(
+          (lineup) =>
+            lineup.Positions.some(
+              (pos) => pos.MemberId == currentlyPositionedMembers[0].id
+            )
+        );
+        if (!currentRelevantLineup) {
+          this.proposedPositions = [];
+          return;
+        }
+
+        const currentPosition = currentRelevantLineup.Positions.find(
+          (pos) => pos.MemberId == currentlyPositionedMembers[0].id
+        );
+
+        const previousPosition = this.findPreviousPosition(
+          currentlyPositionedMembers[0].id
+        );
+        if (!previousPosition) {
+          this.proposedPositions = [];
+          return;
+        }
+        const movementX = currentPosition.x - previousPosition.x;
+        const movementy = currentPosition.y - previousPosition.y;
+
+        const proposedPositions = this.teamMembers
+          .filter((member) => {
+            return (
+              !currentlyPositionedMembers.some((m) => m.id == member.id) &&
+              Boolean(this.findPreviousPosition(member.id))
+            );
+          })
+          .map((member) => {
+            const previousPosition = this.findPreviousPosition(member.id);
+            if (!previousPosition) return null;
+
+            return {
+              MemberId: member.id,
+              x: roundToDecimals(previousPosition.x + movementX, 1),
+              y: roundToDecimals(previousPosition.y + movementy, 1),
+              Member: member,
+            };
+          });
+        this.proposedPositions = proposedPositions;
+        return;
+      }
+      this.proposedPositions = [];
+      return;
+    },
+    acceptProposedLineup() {
+      console.log("🚀 ~ methods.acceptProposedLineup:");
+      // TODO: save the positions of proposedPositions in the current lineup
+    },
+    rejectProposedLineup() {
+      this.proposedPositions = [];
+      // TODO: store the rejected situation for proposed positions so it doesn't show up again
     },
   },
   computed: {
