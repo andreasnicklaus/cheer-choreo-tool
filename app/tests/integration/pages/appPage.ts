@@ -85,7 +85,6 @@ export default class AppPage extends TestPage {
         this.page.getByRole("link", {
           name: "Log in",
           exact: true,
-          includeHidden: true,
         })
       ).toHaveAttribute("href", "/en/login"),
     ]);
@@ -184,7 +183,9 @@ export default class AppPage extends TestPage {
   }
 
   async iOpenAccountDropDown() {
-    const accountDropDown = this.page.locator('[id="__BVID__44__BV_toggle_"]');
+    const accountDropDown = this.page
+      .getByRole("button")
+      .filter({ hasText: "Default User" });
     await expect(accountDropDown).toBeVisible();
     return accountDropDown.click();
   }
@@ -198,14 +199,7 @@ export default class AppPage extends TestPage {
         expect(
           this.page.getByRole("menuitem", { name: "door open Log out" })
         ).toBeVisible(),
-        expect(
-          this.page
-            .getByLabel(defaultUser.username, {
-              exact: true,
-            })
-            .or(this.page.getByLabel("", { exact: true }))
-            .getByText("Clubs")
-        ).toBeVisible(),
+        expect(this.page.getByRole("menu").getByText("Clubs")).toBeVisible(),
         defaultClubs.map((club) =>
           expect(
             this.page.getByRole("menuitem", { name: club.name, exact: true })
@@ -283,9 +277,7 @@ export default class AppPage extends TestPage {
   }
 
   async iSwitchLanguageTo(language: string) {
-    const languageSelectButton = this.page.locator(
-      '[id="__BVID__26__BV_toggle_"]'
-    );
+    const languageSelectButton = this.page.getByTestId("locale-switch");
     await this.iClickButton(languageSelectButton);
 
     const languageButton = this.page.getByRole("menuitem", { name: language });

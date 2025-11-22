@@ -235,7 +235,11 @@
           </b-dropdown-text>
         </b-nav-item-dropdown>
 
-        <b-nav-item-dropdown variant="link" no-caret>
+        <b-nav-item-dropdown
+          variant="link"
+          no-caret
+          data-testid="locale-switch"
+        >
           <template #button-content>
             <flag
               :squared="false"
