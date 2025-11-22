@@ -13,11 +13,11 @@ export function loggerMiddleWare(
   next: NextFunction,
 ) {
   if (req.path == "/health") return next();
-  const { password, ...requestBody } = req.body;
+  if (!req.body) req.body = {}
+  const { _password = null, ...requestBody } = req.body;
 
   logger.info(
-    `${req.method} ${req.url} ; Referrer: ${
-      req.get("Referrer") || null
+    `${req.method} ${req.url} ; Referrer: ${req.get("Referrer") || null
     } ; Body: ${JSON.stringify(requestBody)};`,
   );
   next();

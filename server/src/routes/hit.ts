@@ -38,7 +38,7 @@ const router = Router();
  *         description: Hit not found
  */
 router.get(
-  "/:id?",
+  "/{:id}",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.params.id)

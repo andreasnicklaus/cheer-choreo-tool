@@ -50,7 +50,7 @@ const router = Router();
  *              example: Not found
  */
 router.get(
-  "/:id?",
+  "/{:id}",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.params.id)

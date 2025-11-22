@@ -34,19 +34,19 @@
     "@logtail/winston": "^0.5.6",
     "@sequelize/postgres": "^7.0.0-alpha.47",
     "@types/express": "^5.0.5",
-    "@types/multer": "^1.4.12",
+    "@types/multer": "^2.0.0",
     "@typescript-eslint/eslint-plugin": "^8.47.0",
     "@typescript-eslint/parser": "^8.47.0",
-    "bcrypt": "^5.1.1",
-    "body-parser": "^1.20.3",
+    "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.0",
     "clean-jsdoc-theme": "^4.3.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
+    "dotenv": "^17.2.3",
     "ejs": "^3.1.10",
     "eslint": "^9.39.1",
-    "express": "^4.21.0",
+    "express": "^5.1.0",
     "express-basic-auth": "^1.2.1",
-    "express-rate-limit": "^7.5.0",
+    "express-rate-limit": "^8.2.1",
     "express-robots-txt": "^1.0.0",
     "express-status-monitor": "^1.3.4",
     "fuse.js": "^7.1.0",
@@ -57,7 +57,7 @@
     "jsonc.min": "^1.1.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
-    "nodemailer": "^6.9.16",
+    "nodemailer": "^7.0.10",
     "permissions-policy": "^0.6.0",
     "pg": "^8.16.3",
     "rimraf": "^6.1.2",
@@ -77,8 +77,8 @@
     "@jest/globals": "^30.2.0",
     "@sequelize/sqlite3": "^7.0.0-alpha.47",
     "@types/jest": "^30.0.0",
-    "@types/node": "^22.15.21",
-    "@types/sequelize": "^4.28.20",
+    "@types/node": "^24.10.1",
+    "@types/sequelize": "^6.12.0",
     "concurrently": "^9.2.1",
     "jest-github-actions-reporter": "^1.0.3",
     "live-server": "^1.2.2",
@@ -86,6 +86,11 @@
     "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.6"
+  },
+  "overrides": {
+    "express-robots-txt": {
+      "express": "^5"
+    }
   },
   "nodemonConfig": {
     "ignore": [

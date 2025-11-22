@@ -50,7 +50,7 @@ import { adminRouter } from "./routes/admin/index";
 
 const app = express();
 const port = 3000;
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
 const corsWhiteList = [process.env.FRONTEND_DOMAIN, "http://localhost:8080"];
 app.use(
@@ -261,9 +261,6 @@ app.use("/notifications", notificationRouter);
 
 app.use("/admin", adminRouter);
 
-app.use(errorLoggingMiddleWare);
-app.use(errorHandlingMiddleWare);
-
 // SWAGGER DOC
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
@@ -354,8 +351,12 @@ app.use(
       __dirname,
       process.env.NODE_ENV == "production" ? "docs" : "../dist/docs",
     ),
+    { dotfiles: "allow" }
   ),
 );
+
+app.use(errorLoggingMiddleWare);
+app.use(errorHandlingMiddleWare);
 
 function startServer() {
   logConfig();
@@ -364,7 +365,8 @@ function startServer() {
     .then(() => {
       logger.info("DB Connection established");
 
-      app.listen(port, () => {
+      app.listen(port, (error) => {
+        if (error) throw error
         logger.info(`App listening on http://localhost:${port}`);
       });
     })
