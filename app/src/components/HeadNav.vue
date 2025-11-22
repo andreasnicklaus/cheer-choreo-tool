@@ -83,7 +83,7 @@
           <b-dropdown-item
             variant="success"
             @click="() => $refs.createChoreoModal.open()"
-            v-if="$store.state.clubId"
+            v-show="$store.state.clubId"
           >
             <b-icon-plus />
             {{ $t("nav.neue-choreo") }}
@@ -105,11 +105,11 @@
           >
             {{ team.name }}
           </b-dropdown-item>
-          <b-dropdown-divider v-if="teams && teams.length > 0" />
+          <b-dropdown-divider v-show="teams && teams.length > 0" />
           <b-dropdown-item
             variant="success"
             @click="() => $refs.createTeamModal.open()"
-            v-if="$store.state.clubId"
+            v-show="$store.state.clubId"
           >
             <b-icon-plus />
             {{ $t("nav.neues-team") }}
@@ -132,7 +132,7 @@
             <b-badge
               pill
               variant="danger"
-              v-if="notifications.filter((n) => !n.read).length > 0"
+              v-show="notifications.filter((n) => !n.read).length > 0"
               :style="{
                 position: 'absolute',
                 right: 0,
@@ -144,7 +144,7 @@
           <b-dropdown-text
             style="width: 400px"
             class="text-center"
-            v-if="
+            v-show="
               notifications.filter((n) => showAllNotifications || !n.read)
                 .length == 0
             "
@@ -168,7 +168,7 @@
                       pill
                       variant="success"
                       class="mr-1"
-                      v-if="!notification.read"
+                      v-show="!notification.read"
                       >{{ $t("nav.neu-0") }}</b-badge
                     >
                     <b-badge pill variant="primary">{{
@@ -195,8 +195,8 @@
                           : markNotificationAsRead(notification.id)
                     "
                   >
-                    <b-icon-envelope v-if="notification.read" />
-                    <b-icon-envelope-open v-else />
+                    <b-icon-envelope v-show="notification.read" />
+                    <b-icon-envelope-open v-show="!notification.read" />
                   </b-button>
                   <b-button
                     variant="link"
@@ -215,7 +215,7 @@
               </vue-markdown>
             </b-card>
           </b-dropdown-text>
-          <b-dropdown-text v-if="!showAllNotifications">
+          <b-dropdown-text v-show="!showAllNotifications">
             <b-button
               block
               @click="() => (showAllNotifications = true)"
@@ -224,7 +224,7 @@
               >{{ $t("nav.alte-nachrichten-anzeigen") }}</b-button
             ></b-dropdown-text
           >
-          <b-dropdown-text v-else>
+          <b-dropdown-text v-show="showAllNotifications">
             <b-button
               block
               @click="() => (showAllNotifications = false)"
@@ -302,13 +302,13 @@
           <b-button
             variant="primary"
             :style="{ color: 'white' }"
-            v-if="!$store.state.loggedIn"
+            v-show="!$store.state.loggedIn"
             :block="$store.state.isMobile"
           >
             {{ $t("anmelden") }}
           </b-button>
           <b-dropdown
-            v-else
+            v-show="$store.state.loggedIn"
             :variant="$store.state.isMobile ? 'outline-secondary' : 'light'"
             right
             :block="$store.state.isMobile"
@@ -319,7 +319,7 @@
                 variant="light"
                 :src="currentProfilePictureBlob"
               />
-              <span v-if="$store.state.isMobile" class="mx-2">{{
+              <span v-show="$store.state.isMobile" class="mx-2">{{
                 user?.username
               }}</span>
             </template>

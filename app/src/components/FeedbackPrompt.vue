@@ -21,11 +21,11 @@
           >
             <b-icon-star-fill
               variant="primary"
-              v-if="hoverStars != null ? hoverStars >= i : stars >= i"
+              v-show="hoverStars != null ? hoverStars >= i : stars >= i"
               :style="{ pointerEvents: 'none' }"
             />
             <b-icon-star
-              v-else
+              v-show="hoverStars != null ? hoverStars < i : stars < i"
               variant="primary"
               :style="{ pointerEvents: 'none' }"
             />
@@ -62,8 +62,8 @@
                 :disabled="stars < 0 || stars > 4 || !feedbackText"
                 to="#"
               >
-                <b-spinner small v-if="sending" />
-                <span v-else> {{ $t("feedback.abschicken") }} </span>
+                <b-spinner small v-show="sending" />
+                <span v-show="!sending"> {{ $t("feedback.abschicken") }} </span>
               </b-button>
             </b-col>
             <b-col cols="auto">

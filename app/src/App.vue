@@ -113,7 +113,7 @@
             <span
               v-b-tooltip.hover
               :title="`Die Version der Webseite (${applicationVersion}) entspricht nicht der Version der Server (${serverVersion})!`"
-              v-if="serverVersion && serverVersion != applicationVersion"
+              v-show="serverVersion && serverVersion != applicationVersion"
             >
               <b-icon-exclamation-triangle-fill />
             </span>
