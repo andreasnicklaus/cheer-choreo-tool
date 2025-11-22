@@ -132,11 +132,10 @@ export default class ChoreoPage extends TestPage {
           ).toBeVisible(),
           expect(
             this.page.locator(
-              `tr:nth-child(${Math.floor(hit.count / 8) + 1}) > td:nth-child(${
-                (hit.count % 8) + 2
+              `tr:nth-child(${Math.floor(hit.count / 8) + 1}) > td:nth-child(${(hit.count % 8) + 2
               }) > .btn`
             )
-          ).toHaveText(hit.name),
+          ).toHaveText(hit.name, { useInnerText: true }),
         ])
         .flat()
     );
@@ -213,10 +212,8 @@ export default class ChoreoPage extends TestPage {
         .map((lineup) => [
           expect(
             this.page.getByText(
-              `Counts: ${Math.floor(lineup.startCount / 8) + 1} / ${
-                (lineup.startCount % 8) + 1
-              } - ${Math.floor(lineup.endCount / 8) + 1} / ${
-                (lineup.endCount % 8) + 1
+              `Counts: ${Math.floor(lineup.startCount / 8) + 1} / ${(lineup.startCount % 8) + 1
+              } - ${Math.floor(lineup.endCount / 8) + 1} / ${(lineup.endCount % 8) + 1
               }`
             )
           ).toBeVisible(),
@@ -323,7 +320,7 @@ export default class ChoreoPage extends TestPage {
     // hit is moved to count 8 of the first eight
     await expect(
       this.page.locator("td:nth-child(9) > .btn").first()
-    ).toHaveText(defaultHits[1].name);
+    ).toHaveText(defaultHits[1].name, { useInnerText: true });
 
     // the current count is 8 in the first eight
     await expect(
@@ -347,7 +344,7 @@ export default class ChoreoPage extends TestPage {
     // hit is moved to count 2 of the second eight
     await expect(
       this.page.locator("tr:nth-child(2) > td:nth-child(3) > .btn")
-    ).toHaveText(defaultHits[1].name);
+    ).toHaveText(defaultHits[1].name, { useInnerText: true });
 
     // the current count is 2 in the second eight
     await expect(
@@ -391,7 +388,7 @@ export default class ChoreoPage extends TestPage {
 
     await expect(
       this.page.locator("tr:nth-child(2) > td:nth-child(4) > .btn")
-    ).toHaveText(newName);
+    ).toHaveText(newName, { useInnerText: true });
     await expect(
       this.page.locator("tr:nth-child(1) > td:nth-child(5) > .btn")
     ).toHaveText("-");
@@ -463,8 +460,7 @@ export default class ChoreoPage extends TestPage {
     await this.iClickButton(saveButton);
 
     const switchToCountButton = this.page.locator(
-      `tr:nth-child(${newStartAchter}) > td:nth-child(${
-        newStartCount + 1
+      `tr:nth-child(${newStartAchter}) > td:nth-child(${newStartCount + 1
       }) > .btn`
     );
     await this.iClickButton(switchToCountButton);
