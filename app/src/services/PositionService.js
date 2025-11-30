@@ -12,10 +12,16 @@ class PositionService {
    * @param {number} x - X coordinate of the position
    * @param {number} y - Y coordinate of the position
    * @param {string} MemberId - ID of the member for this position
+   * @param {string} timeOfManualUpdate - manually specified time of update
    * @returns {Promise<Object>} Created position
    */
-  create(lineupId, x, y, MemberId) {
-    const timeOfManualUpdate = new Date().toISOString();
+  create(
+    lineupId,
+    x,
+    y,
+    MemberId,
+    timeOfManualUpdate = new Date().toISOString()
+  ) {
     debug("Creating new position", {
       lineupId,
       x,
@@ -55,10 +61,16 @@ class PositionService {
    * @param {string} positionId - ID of the position to update
    * @param {number} x - X coordinate of the position
    * @param {number} y - Y coordinate of the position
+   * @param {string} {timeOfManualUpdate} - manually specified time of update
    * @returns {Promise<Object>} Updated position
    */
-  update(lineupId, positionId, x, y) {
-    const timeOfManualUpdate = new Date().toISOString();
+  update(
+    lineupId,
+    positionId,
+    x,
+    y,
+    timeOfManualUpdate = new Date().toISOString()
+  ) {
     debug("Updating position", {
       lineupId,
       positionId,

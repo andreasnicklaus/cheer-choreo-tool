@@ -35,10 +35,10 @@
     "@sequelize/postgres": "^7.0.0-alpha.47",
     "@types/express": "^5.0.5",
     "@types/multer": "^2.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.47.0",
-    "@typescript-eslint/parser": "^8.47.0",
+    "@typescript-eslint/eslint-plugin": "^8.48.0",
+    "@typescript-eslint/parser": "^8.48.0",
     "bcrypt": "^6.0.0",
-    "body-parser": "^2.2.0",
+    "body-parser": "^2.2.1",
     "clean-jsdoc-theme": "^4.3.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
@@ -57,7 +57,7 @@
     "jsonc.min": "^1.1.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
-    "nodemailer": "^7.0.10",
+    "nodemailer": "^7.0.11",
     "p-queue": "^9.0.1",
     "permissions-policy": "^0.6.0",
     "pg": "^8.16.3",
@@ -73,7 +73,7 @@
     "winston": "^3.18.3"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/eslintrc": "^3.3.3",
     "@eslint/js": "^9.39.1",
     "@jest/globals": "^30.2.0",
     "@sequelize/sqlite3": "^7.0.0-alpha.47",
@@ -86,7 +86,7 @@
     "nodemon": "^3.1.11",
     "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",
-    "tsx": "^4.20.6"
+    "tsx": "^4.21.0"
   },
   "overrides": {
     "express-robots-txt": {

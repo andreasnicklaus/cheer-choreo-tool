@@ -10,7 +10,7 @@ export function requestQueue(identifier: string) {
     queue = new PQueue({ concurrency: 1, timeout: 10000 })
     queues.set(identifier, queue);
   }
-  return async function (req: Request, res: Response, next: NextFunction) {
+  return async function (_req: Request, _res: Response, next: NextFunction) {
     await queue.add(async () =>
       await next()
     )

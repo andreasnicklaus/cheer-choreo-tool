@@ -14,6 +14,8 @@ export function loggerMiddleWare(
 ) {
   if (req.path == "/health") return next();
   if (!req.body) req.body = {}
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { password = null, ...requestBody } = req.body;
 
   logger.info(

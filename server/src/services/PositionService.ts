@@ -98,7 +98,7 @@ class PositionService {
   async update(
     id: string,
     LineupId: string | null,
-    data: { timeOfManualUpdate?: Date },
+    data: { timeOfManualUpdate?: Date, y?: number, x?: number },
     UserId: string,
   ) {
     logger.debug(
