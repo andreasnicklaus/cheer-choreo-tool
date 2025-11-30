@@ -1,3 +1,5 @@
+import { MisconfigurationError } from "@/utils/errors";
+
 const nodemailer = require("nodemailer");
 const ejs = require("ejs");
 const { mailLogger } = require("./winston");
@@ -29,7 +31,7 @@ export function verify() {
     )
   ) {
     mailLogger.error("Not all needed environment variables are specified.");
-    throw new Error("Not all needed environment variables are specified.");
+    throw new MisconfigurationError("Not all needed environment variables are specified.");
   }
 
   client.verify((error: Error, success: boolean) => {

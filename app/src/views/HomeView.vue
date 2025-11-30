@@ -46,11 +46,19 @@
         <b-button
           id="registerButton"
           variant="primary"
-          :to="{ name: 'Login', params: { locale: $root.$i18n.locale } }"
+          :to="
+            $store.state.loggedIn
+              ? { name: 'Start', params: { locale: $root.$i18n.locale } }
+              : { name: 'Login', params: { locale: $root.$i18n.locale } }
+          "
           class="my-4"
           :style="{ textWrap: 'no-wrap' }"
         >
-          {{ $t("anmelden") }} / {{ $t("registrieren") }}
+          {{
+            $store.state.loggedIn
+              ? $t("Home.zur-uebersicht")
+              : `${$t("anmelden")} / ${$t("registrieren")}`
+          }}
         </b-button>
         <router-link
           id="helpLink"
@@ -445,6 +453,7 @@
         marginBottom: '10vh',
         borderRadius: '4px',
       }"
+      v-show="!$store.state.loggedIn"
       class="text-center py-5 px-3"
       id="interestedSection"
     >
@@ -457,7 +466,8 @@
         class="pulse-button"
         :to="{ name: 'Login', params: { locale: $root.$i18n.locale } }"
       >
-        {{ $t("anmelden") }} / {{ $t("registrieren") }}
+        {{ $t("anmelden") }} /
+        {{ $t("registrieren") }}
       </b-button>
     </div>
   </b-container>

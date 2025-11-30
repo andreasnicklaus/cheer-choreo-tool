@@ -15,9 +15,21 @@ class PositionService {
    * @returns {Promise<Object>} Created position
    */
   create(lineupId, x, y, MemberId) {
-    debug("Creating new position", { lineupId, x, y, MemberId });
+    const timeOfManualUpdate = new Date().toISOString();
+    debug("Creating new position", {
+      lineupId,
+      x,
+      y,
+      MemberId,
+      timeOfManualUpdate,
+    });
     return ax
-      .post(`/lineup/${lineupId}/position`, { x, y, MemberId })
+      .post(`/lineup/${lineupId}/position`, {
+        x,
+        y,
+        MemberId,
+        timeOfManualUpdate,
+      })
       .then((res) => {
         debug("Successfully created position");
         return res.data;
@@ -46,9 +58,20 @@ class PositionService {
    * @returns {Promise<Object>} Updated position
    */
   update(lineupId, positionId, x, y) {
-    debug("Updating position", { lineupId, positionId, x, y });
+    const timeOfManualUpdate = new Date().toISOString();
+    debug("Updating position", {
+      lineupId,
+      positionId,
+      x,
+      y,
+      timeOfManualUpdate,
+    });
     return ax
-      .put(`/lineup/${lineupId}/position/${positionId}`, { x, y })
+      .put(`/lineup/${lineupId}/position/${positionId}`, {
+        x,
+        y,
+        timeOfManualUpdate,
+      })
       .then((res) => {
         debug("Successfully updated position");
         return res.data;

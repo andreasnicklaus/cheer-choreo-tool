@@ -1,3 +1,4 @@
+import { NotFoundError } from "@/utils/errors";
 import Member from "../db/models/member";
 import SeasonTeam from "../db/models/seasonTeam";
 import MemberService from "./MemberService";
@@ -131,12 +132,12 @@ class SeasonTeamService {
       (member: Member | null) =>
         member
           ? MemberService.create(
-              member.name,
-              member.nickname as string,
-              member.abbreviation,
-              SeasonTeamId,
-              UserId,
-            )
+            member.name,
+            member.nickname as string,
+            member.abbreviation,
+            SeasonTeamId,
+            UserId,
+          )
           : null,
     );
   }
@@ -195,7 +196,7 @@ class SeasonTeamService {
           return foundSeasonTeam.destroy();
         } else {
           logger.error(`No seasonTeam found with ID ${id} when deleting`);
-          throw new Error(`No seasonTeam found with ID ${id} when deleting`);
+          throw new NotFoundError(`No seasonTeam found with ID ${id} when deleting`);
         }
       });
   }

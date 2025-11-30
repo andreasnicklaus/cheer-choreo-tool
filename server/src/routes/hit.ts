@@ -1,6 +1,7 @@
 import { NextFunction, Response, Request, Router } from "express";
 import Hit from "../db/models/hit";
 import HitService from "../services/HitService";
+import { NotFoundError } from "@/utils/errors";
 
 const { default: AuthService } = require("../services/AuthService");
 
@@ -44,7 +45,7 @@ router.get(
     if (req.params.id)
       return HitService.findById(req.params.id, req.UserId)
         .then((foundHit: Hit | null) => {
-          if (!foundHit) res.status(404).send(req.t("responses.not-found"));
+          if (!foundHit) throw new NotFoundError()
           else res.send(foundHit);
           return next();
         })

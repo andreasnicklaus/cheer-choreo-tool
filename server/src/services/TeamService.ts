@@ -1,3 +1,4 @@
+import { NotFoundError } from "@/utils/errors";
 import SeasonTeam from "../db/models/seasonTeam";
 import Team from "../db/models/team";
 import SeasonTeamService from "./SeasonTeamService";
@@ -161,7 +162,7 @@ class TeamService {
           return foundTeam.save();
         } else {
           logger.error(`No team found with ID ${id} when updating`);
-          throw new Error(`No team found with ID ${id} when updating`);
+          throw new NotFoundError(`No team found with ID ${id} when updating`);
         }
       });
   }
@@ -186,7 +187,7 @@ class TeamService {
           return foundTeam.destroy();
         } else {
           logger.error(`No team found with ID ${id} when deleting`);
-          throw new Error(`No team found with ID ${id} when deleting`);
+          throw new NotFoundError(`No team found with ID ${id} when deleting`);
         }
       });
   }

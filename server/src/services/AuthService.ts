@@ -5,6 +5,7 @@ import UserService from "./UserService";
 import MailService from "./MailService";
 import NotificationService from "./NotificationService";
 import AdminService from "./AdminService";
+import { AuthorizationError, FaultyInputError, NotFoundError } from "@/utils/errors";
 
 const jwt = require("jsonwebtoken");
 const { logger } = require("../plugins/winston");
@@ -138,7 +139,7 @@ class AuthService {
         async (err: Error | null, content: jwtContent) => {
           if (err) {
             return reject(
-              new Error(
+              new AuthorizationError(
                 i18n.__({ phrase: "errors.invalid-sso-token", locale }),
               ),
             );
@@ -147,7 +148,7 @@ class AuthService {
           return User.findByPk(content.UserId).then((user) => {
             if (!user) {
               return reject(
-                new Error(
+                new AuthorizationError(
                   i18n.__({ phrase: "errors.sso-token-user-missing", locale }),
                 ),
               );
@@ -180,7 +181,7 @@ class AuthService {
       (user: User | null) => {
         if (!user) {
           logger.warn(`No user with email ${email} found`);
-          throw new Error(
+          throw new NotFoundError(
             i18n.__(
               { phrase: "errors.entity-not-found", locale },
               { entity: "user" },
@@ -189,7 +190,7 @@ class AuthService {
         }
         if (!user.email) {
           logger.warn("Found user has no email");
-          throw new Error(
+          throw new FaultyInputError(
             i18n.__({ phrase: "errors.user-has-no-email", locale }),
           );
         }
@@ -276,7 +277,7 @@ class AuthService {
     const authHeader = req.headers?.authorization;
     const token = authHeader && authHeader.split(" ")[1];
     if (!token) {
-      return next(new Error("No token provided"));
+      return next(new AuthorizationError("No token provided"));
     }
     const [username, ..._] = atob(token).split(":");
 

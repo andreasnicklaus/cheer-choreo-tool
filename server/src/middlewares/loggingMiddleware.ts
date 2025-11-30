@@ -14,7 +14,7 @@ export function loggerMiddleWare(
 ) {
   if (req.path == "/health") return next();
   if (!req.body) req.body = {}
-  const { _password = null, ...requestBody } = req.body;
+  const { password = null, ...requestBody } = req.body;
 
   logger.info(
     `${req.method} ${req.url} ; Referrer: ${req.get("Referrer") || null
@@ -37,7 +37,6 @@ export function errorLoggingMiddleWare(
   next: NextFunction,
 ) {
   // Log the error message at the error level
-
-  logger.error(err.message);
+  logger.error(`${err.name}: ${err.message || "No error message provided"}`);
   next(err);
 }

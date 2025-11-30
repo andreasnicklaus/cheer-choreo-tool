@@ -1,3 +1,4 @@
+import { NotFoundError } from "@/utils/errors";
 import Member from "../db/models/member";
 
 const { Op } = require("sequelize");
@@ -192,7 +193,7 @@ class MemberService {
           }); // njsscan-ignore: node_nosqli_injection
         } else {
           logger.error(`No member found with ID ${id} when updating`);
-          throw new Error(`No member found with ID ${id} when updating`);
+          throw new NotFoundError(`No member found with ID ${id} when updating`);
         }
       });
   }
@@ -215,7 +216,7 @@ class MemberService {
           return foundMember.destroy();
         } else {
           logger.error(`No member found with ID ${id} when deleting`);
-          throw new Error(`No member found with ID ${id} when deleting`);
+          throw new NotFoundError(`No member found with ID ${id} when deleting`);
         }
       });
   }

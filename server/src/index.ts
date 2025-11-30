@@ -51,6 +51,7 @@ import { adminRouter } from "./routes/admin/index";
 const app = express();
 const port = 3000;
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 const corsWhiteList = [process.env.FRONTEND_DOMAIN, "http://localhost:8080"];
 app.use(

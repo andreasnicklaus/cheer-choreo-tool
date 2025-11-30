@@ -1,3 +1,4 @@
+import { NotFoundError } from "@/utils/errors";
 import Lineup from "../db/models/lineup";
 
 const { logger } = require("../plugins/winston");
@@ -93,7 +94,7 @@ class LineupService {
           }); // njsscan-ignore: node_nosqli_injection
         } else {
           logger.error(`No lineup found with ID ${id} when updating`);
-          throw new Error(`No lineup found with ID ${id} when updating`);
+          throw new NotFoundError(`No lineup found with ID ${id} when updating`);
         }
       });
   }
@@ -135,7 +136,7 @@ class LineupService {
           return foundLineup.destroy();
         } else {
           logger.error(`No lineup found with ID ${id} when deleting`);
-          throw new Error(`No lineup found with ID ${id} when deleting`);
+          throw new NotFoundError(`No lineup found with ID ${id} when deleting`);
         }
       });
   }

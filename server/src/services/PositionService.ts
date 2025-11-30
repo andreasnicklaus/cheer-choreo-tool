@@ -1,3 +1,4 @@
+import { NotFoundError, RequestOrderError } from './../utils/errors';
 import Position from "../db/models/position";
 
 const { logger } = require("../plugins/winston");
@@ -16,7 +17,7 @@ class PositionService {
    * @param {string} UserId - The user ID associated with the position.
    * @returns {Promise<Object>} The created position.
    */
-  async create(x: number, y: number, UserId: string) {
+  async create(x: number, y: number, UserId: string, timeOfManualUpdate: Date = new Date()) {
     logger.debug(
       `PositionService create ${JSON.stringify({
         x,
@@ -24,7 +25,7 @@ class PositionService {
         UserId,
       })}`,
     );
-    return Position.create({ x, y, UserId });
+    return Position.create({ x, y, timeOfManualUpdate, UserId });
   }
 
   /**
@@ -42,6 +43,7 @@ class PositionService {
     LineupId: string,
     MemberId: string,
     UserId: string,
+    timeOfManualUpdate: Date = new Date()
   ) {
     logger.debug(
       `PositionService findOrCreate ${JSON.stringify({
@@ -54,6 +56,7 @@ class PositionService {
     );
     const [position, _created] = await Position.findOrCreate({
       where: { x, y, LineupId, MemberId, UserId },
+      defaults: { x, y, LineupId, MemberId, UserId, timeOfManualUpdate }
     });
     return position;
   }
@@ -95,7 +98,7 @@ class PositionService {
   async update(
     id: string,
     LineupId: string | null,
-    data: object,
+    data: { timeOfManualUpdate?: Date },
     UserId: string,
   ) {
     logger.debug(
@@ -111,11 +114,17 @@ class PositionService {
     }) // njsscan-ignore: node_nosqli_injection
       .then(async (foundPosition) => {
         if (foundPosition) {
+          if (data.timeOfManualUpdate) {
+            if (foundPosition.timeOfManualUpdate && new Date(data.timeOfManualUpdate) <= foundPosition.timeOfManualUpdate) {
+              throw new RequestOrderError(`Ignoring update to position ${id} as timeOfManualUpdate is not more recent`);
+            }
+          }
+          else (data.timeOfManualUpdate = new Date());
           await foundPosition.update(data);
           return foundPosition.save();
         } else {
           logger.error(`No position found with ID ${id} when updating`);
-          throw new Error(`No position found with ID ${id} when updating`);
+          throw new NotFoundError(`No position found with ID ${id} when updating`);
         }
       });
   }
@@ -135,7 +144,7 @@ class PositionService {
           return foundPosition.destroy();
         } else {
           logger.error(`No position found with ID ${id} when deleting`);
-          throw new Error(`No position found with ID ${id} when deleting`);
+          throw new NotFoundError(`No position found with ID ${id} when deleting`);
         }
       });
   }

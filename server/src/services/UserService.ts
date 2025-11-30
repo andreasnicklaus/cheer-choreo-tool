@@ -1,3 +1,4 @@
+import { NotFoundError } from "@/utils/errors";
 import User from "../db/models/user";
 
 const { Op } = require("sequelize");
@@ -183,7 +184,7 @@ class UserService {
         return User.findByPk(id);
       } else {
         logger.error(`No user found with ID ${id} when updating`);
-        throw new Error(`No user found with ID ${id} when updating`);
+        throw new NotFoundError(`No user found with ID ${id} when updating`);
       }
     });
   }
@@ -200,7 +201,7 @@ class UserService {
         return foundUser.destroy();
       } else {
         logger.error(`No user found with ID ${id} when deleting`);
-        throw new Error(`No user found with ID ${id} when deleting`);
+        throw new NotFoundError(`No user found with ID ${id} when deleting`);
       }
     });
   }

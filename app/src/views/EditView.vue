@@ -538,7 +538,7 @@ export default {
             });
         });
     },
-    onPositionChange(MemberId, x, y) {
+    onPositionChange(MemberId, x, y, isRetry = false) {
       const positionToUpdate = this.lineupsForCurrentCount
         .map((l) => l.Positions.filter((p) => p.MemberId == MemberId))
         .flat()[0];
@@ -547,6 +547,14 @@ export default {
         const memberTimeout = this.positionUpdates[MemberId];
         if (memberTimeout) clearTimeout(memberTimeout);
 
+        const pos = this.choreo.Lineups.find(
+          (l) => l.id == positionToUpdate.LineupId
+        ).Positions.find((p) => p.id == positionToUpdate.id);
+
+        // Store original position to revert in case of error
+        const originalX = pos.x;
+        const originalY = pos.y;
+
         this.positionUpdates[MemberId] = setTimeout(() => {
           if (positionToUpdate.id)
             PositionService.update(
@@ -554,15 +562,30 @@ export default {
               positionToUpdate.id,
               x,
               y
-            ).then(() => {
-              const pos = this.choreo.Lineups.find(
-                (l) => l.id == positionToUpdate.LineupId
-              ).Positions.find((p) => p.id == positionToUpdate.id);
+            )
+              .then(() => {
+                this.showSuccessMessage(this.$tc("lineup", 1));
+              })
+              .catch((e) => {
+                if (e.status === 409) {
+                  if (!isRetry) {
+                    MessagingService.showWarning(
+                      "If you go too fast, position updates might be saved out of order. Please go slower.",
+                      "Slow down please :("
+                    );
+                    this.onPositionChange(MemberId, x, y, true);
+                  }
+                } else {
+                  MessagingService.showError(e.message);
+                }
 
-              pos.x = x;
-              pos.y = y;
-              this.showSuccessMessage(this.$tc("lineup", 1));
-            });
+                // Set temporarily to (0,0) to trigger update
+                pos.x = 0;
+                pos.y = 0;
+                // Revert position
+                pos.x = originalX;
+                pos.y = originalY;
+              });
         }, 1000);
       } else {
         let lineupToUpdate;
@@ -721,15 +744,7 @@ export default {
       this.showSuccessMessage(this.$tc("countsheet", 1));
     },
     onUpdateLineups(lineups) {
-      console.log(
-        "🚀 ~ onUpdateLineups ~ lineups:",
-        JSON.stringify(lineups, null, 2)
-      );
       this.choreo.Lineups = lineups;
-      console.log(
-        "🚀 ~ onUpdateLineups ~ this.choreo.Lineups:",
-        JSON.stringify(this.choreo.Lineups)
-      );
       this.showSuccessMessage(this.$tc("lineup", 1));
     },
     onUpdateCount(count) {
