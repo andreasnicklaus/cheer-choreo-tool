@@ -106,7 +106,8 @@ export default {
       this.memberToSubInId = memberToSubInId;
     },
     reset() {
-      (this.memberToReplaceId = null), (this.memberToSubInId = null);
+      this.memberToReplaceId = null;
+      this.memberToSubInId = null;
     },
     substituteParticipants() {
       ChoreoService.replaceParticipant(

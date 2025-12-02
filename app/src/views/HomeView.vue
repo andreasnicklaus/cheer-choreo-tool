@@ -17,8 +17,8 @@
             $store.getters.isChristmasTime
               ? '/Icon-Christmas.png'
               : $store.getters.isEasterTime
-              ? '/Icon-Easter.png'
-              : '/Icon.png'
+                ? '/Icon-Easter.png'
+                : '/Icon.png'
           "
           :alt="$t('choreo-planer-icon')"
           width="200"
