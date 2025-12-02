@@ -108,7 +108,15 @@ See [LICENSE](LICENSE) for the license of this project.
 
 ## :sparkles: Version history
 
-### 0.11.1 - 2025-16-10
+### 0.11.2 - 2025-12-02
+
+- Added ability to control the video length by time rather than BPS
+- Added help section for video exports
+- Error handling for faulty mp4 video codec
+- Error handling for stuck page load
+- Increased security by updating dependencies and fixing vulnerabilities
+
+### 0.11.1 - 2025-10-16
 
 - Log ingestion for better observability
 - Switched to Typescript and added documentation
