@@ -94,7 +94,9 @@ class LineupService {
           }); // njsscan-ignore: node_nosqli_injection
         } else {
           logger.error(`No lineup found with ID ${id} when updating`);
-          throw new NotFoundError(`No lineup found with ID ${id} when updating`);
+          throw new NotFoundError(
+            `No lineup found with ID ${id} when updating`,
+          );
         }
       });
   }
@@ -136,7 +138,9 @@ class LineupService {
           return foundLineup.destroy();
         } else {
           logger.error(`No lineup found with ID ${id} when deleting`);
-          throw new NotFoundError(`No lineup found with ID ${id} when deleting`);
+          throw new NotFoundError(
+            `No lineup found with ID ${id} when deleting`,
+          );
         }
       });
   }

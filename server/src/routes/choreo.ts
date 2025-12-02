@@ -57,7 +57,7 @@ router.get(
     if (req.params.id)
       ChoreoService.findById(req.params.id, req.UserId)
         .then((foundChoreo: Choreo) => {
-          if (!foundChoreo) throw new NotFoundError()
+          if (!foundChoreo) throw new NotFoundError();
           else res.send(foundChoreo);
           return next();
         })

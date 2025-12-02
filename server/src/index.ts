@@ -352,7 +352,7 @@ app.use(
       __dirname,
       process.env.NODE_ENV == "production" ? "docs" : "../dist/docs",
     ),
-    { dotfiles: "allow" }
+    { dotfiles: "allow" },
   ),
 );
 
@@ -367,7 +367,7 @@ function startServer() {
       logger.info("DB Connection established");
 
       app.listen(port, (error) => {
-        if (error) throw error
+        if (error) throw error;
         logger.info(`App listening on http://localhost:${port}`);
       });
     })

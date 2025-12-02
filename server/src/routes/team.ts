@@ -59,7 +59,7 @@ router.get(
       if (req.query.name)
         return TeamService.findByName(req.query.name as string, req.UserId)
           .then((foundTeams: Team[]) => {
-            if (!foundTeams) throw new NotFoundError()
+            if (!foundTeams) throw new NotFoundError();
             else res.send(foundTeams);
             return next();
           })

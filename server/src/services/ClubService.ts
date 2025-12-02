@@ -172,7 +172,9 @@ class ClubService {
           const foundClub = await this.findById(club.id, UserId);
           if (!foundClub) {
             logger.error(`Club with id ${club.id} not found after creation`);
-            throw new NotFoundError(`Club with id ${club.id} not found after creation`);
+            throw new NotFoundError(
+              `Club with id ${club.id} not found after creation`,
+            );
           }
           club = foundClub;
         }

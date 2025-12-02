@@ -31,7 +31,9 @@ export function verify() {
     )
   ) {
     mailLogger.error("Not all needed environment variables are specified.");
-    throw new MisconfigurationError("Not all needed environment variables are specified.");
+    throw new MisconfigurationError(
+      "Not all needed environment variables are specified.",
+    );
   }
 
   client.verify((error: Error, success: boolean) => {

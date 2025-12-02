@@ -237,7 +237,10 @@ export default class AppPage extends TestPage {
   }
 
   async iCheckOverviewMenuItem() {
-    const overviewMenuItem = this.page.getByRole("link", { name: "Overview", exact: true });
+    const overviewMenuItem = this.page.getByRole("link", {
+      name: "Overview",
+      exact: true,
+    });
     await expect(overviewMenuItem).toBeVisible();
     await overviewMenuItem.click();
     return expect(this.page).toHaveURL("/en/start");

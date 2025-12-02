@@ -45,7 +45,7 @@ router.get(
     if (req.params.id)
       return HitService.findById(req.params.id, req.UserId)
         .then((foundHit: Hit | null) => {
-          if (!foundHit) throw new NotFoundError()
+          if (!foundHit) throw new NotFoundError();
           else res.send(foundHit);
           return next();
         })

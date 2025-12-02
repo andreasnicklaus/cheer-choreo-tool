@@ -102,7 +102,9 @@ class SeasonService {
           return foundSeason.save();
         } else {
           logger.error(`No season found with ID ${id} when updating`);
-          throw new NotFoundError(`No season found with ID ${id} when updating`);
+          throw new NotFoundError(
+            `No season found with ID ${id} when updating`,
+          );
         }
       });
   }
@@ -126,7 +128,9 @@ class SeasonService {
           return foundSeason.destroy();
         } else {
           logger.error(`No season found with ID ${id} when deleting`);
-          throw new NotFoundError(`No season found with ID ${id} when deleting`);
+          throw new NotFoundError(
+            `No season found with ID ${id} when deleting`,
+          );
         }
       });
   }

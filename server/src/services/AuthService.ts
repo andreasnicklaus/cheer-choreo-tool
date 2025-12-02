@@ -5,7 +5,11 @@ import UserService from "./UserService";
 import MailService from "./MailService";
 import NotificationService from "./NotificationService";
 import AdminService from "./AdminService";
-import { AuthorizationError, FaultyInputError, NotFoundError } from "@/utils/errors";
+import {
+  AuthorizationError,
+  FaultyInputError,
+  NotFoundError,
+} from "@/utils/errors";
 
 const jwt = require("jsonwebtoken");
 const { logger } = require("../plugins/winston");

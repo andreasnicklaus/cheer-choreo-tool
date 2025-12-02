@@ -53,7 +53,7 @@ router.get(
     if (req.params.id)
       return ClubService.findById(req.params.id, req.UserId)
         .then((foundClub: Club | null) => {
-          if (!foundClub) throw new NotFoundError()
+          if (!foundClub) throw new NotFoundError();
           else res.send(foundClub);
           return next();
         })

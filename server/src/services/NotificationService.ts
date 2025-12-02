@@ -157,7 +157,9 @@ class NotificationService {
         return foundNotification.save();
       } else {
         logger.error(`No notification found with ID ${id} when updating`);
-        throw new NotFoundError(`No notification found with ID ${id} when updating`);
+        throw new NotFoundError(
+          `No notification found with ID ${id} when updating`,
+        );
       }
     });
   }
@@ -182,7 +184,9 @@ class NotificationService {
           return foundNotification.destroy();
         } else {
           logger.error(`No notification found with ID ${id} when deleting`);
-          throw new NotFoundError(`No notification found with ID ${id} when deleting`);
+          throw new NotFoundError(
+            `No notification found with ID ${id} when deleting`,
+          );
         }
       });
   }
@@ -272,7 +276,7 @@ class NotificationService {
           (readNoticationsCountBeforeLastMonth /
             allNoticationsCountBeforeLastMonth -
             readNoticationsCountLastMonth / allNoticiationsCountLastMonth) *
-          100,
+            100,
           1,
         );
       },

@@ -458,7 +458,9 @@ class ChoreoService {
           return this.findById(id, UserId, options);
         } else {
           logger.error(`No choreo found with ID ${id} when updating`);
-          throw new NotFoundError(`No choreo found with ID ${id} when updating`);
+          throw new NotFoundError(
+            `No choreo found with ID ${id} when updating`,
+          );
         }
       });
   }
@@ -485,7 +487,9 @@ class ChoreoService {
           return foundChoreo.destroy();
         } else {
           logger.error(`No choreo found with ID ${id} when deleting`);
-          throw new NotFoundError(`No choreo found with ID ${id} when deleting`);
+          throw new NotFoundError(
+            `No choreo found with ID ${id} when deleting`,
+          );
         }
       });
   }

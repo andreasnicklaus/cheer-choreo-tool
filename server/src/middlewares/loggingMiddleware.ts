@@ -13,13 +13,14 @@ export function loggerMiddleWare(
   next: NextFunction,
 ) {
   if (req.path == "/health") return next();
-  if (!req.body) req.body = {}
+  if (!req.body) req.body = {};
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { password = null, ...requestBody } = req.body;
 
   logger.info(
-    `${req.method} ${req.url} ; Referrer: ${req.get("Referrer") || null
+    `${req.method} ${req.url} ; Referrer: ${
+      req.get("Referrer") || null
     } ; Body: ${JSON.stringify(requestBody)};`,
   );
   next();

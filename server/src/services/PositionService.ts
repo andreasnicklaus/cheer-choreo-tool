@@ -1,4 +1,4 @@
-import { NotFoundError, RequestOrderError } from './../utils/errors';
+import { NotFoundError, RequestOrderError } from "./../utils/errors";
 import Position from "../db/models/position";
 
 const { logger } = require("../plugins/winston");
@@ -17,7 +17,12 @@ class PositionService {
    * @param {string} UserId - The user ID associated with the position.
    * @returns {Promise<Object>} The created position.
    */
-  async create(x: number, y: number, UserId: string, timeOfManualUpdate: Date = new Date()) {
+  async create(
+    x: number,
+    y: number,
+    UserId: string,
+    timeOfManualUpdate: Date = new Date(),
+  ) {
     logger.debug(
       `PositionService create ${JSON.stringify({
         x,
@@ -43,7 +48,7 @@ class PositionService {
     LineupId: string,
     MemberId: string,
     UserId: string,
-    timeOfManualUpdate: Date = new Date()
+    timeOfManualUpdate: Date = new Date(),
   ) {
     logger.debug(
       `PositionService findOrCreate ${JSON.stringify({
@@ -56,7 +61,7 @@ class PositionService {
     );
     const [position, _created] = await Position.findOrCreate({
       where: { x, y, LineupId, MemberId, UserId },
-      defaults: { x, y, LineupId, MemberId, UserId, timeOfManualUpdate }
+      defaults: { x, y, LineupId, MemberId, UserId, timeOfManualUpdate },
     });
     return position;
   }
@@ -98,7 +103,7 @@ class PositionService {
   async update(
     id: string,
     LineupId: string | null,
-    data: { timeOfManualUpdate?: Date, y?: number, x?: number },
+    data: { timeOfManualUpdate?: Date; y?: number; x?: number },
     UserId: string,
   ) {
     logger.debug(
@@ -115,16 +120,23 @@ class PositionService {
       .then(async (foundPosition) => {
         if (foundPosition) {
           if (data.timeOfManualUpdate) {
-            if (foundPosition.timeOfManualUpdate && new Date(data.timeOfManualUpdate) <= foundPosition.timeOfManualUpdate) {
-              throw new RequestOrderError(`Ignoring update to position ${id} as timeOfManualUpdate is not more recent`);
+            if (
+              foundPosition.timeOfManualUpdate &&
+              new Date(data.timeOfManualUpdate) <=
+                foundPosition.timeOfManualUpdate
+            ) {
+              throw new RequestOrderError(
+                `Ignoring update to position ${id} as timeOfManualUpdate is not more recent`,
+              );
             }
-          }
-          else (data.timeOfManualUpdate = new Date());
+          } else data.timeOfManualUpdate = new Date();
           await foundPosition.update(data);
           return foundPosition.save();
         } else {
           logger.error(`No position found with ID ${id} when updating`);
-          throw new NotFoundError(`No position found with ID ${id} when updating`);
+          throw new NotFoundError(
+            `No position found with ID ${id} when updating`,
+          );
         }
       });
   }
@@ -144,7 +156,9 @@ class PositionService {
           return foundPosition.destroy();
         } else {
           logger.error(`No position found with ID ${id} when deleting`);
-          throw new NotFoundError(`No position found with ID ${id} when deleting`);
+          throw new NotFoundError(
+            `No position found with ID ${id} when deleting`,
+          );
         }
       });
   }

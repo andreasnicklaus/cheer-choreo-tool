@@ -79,8 +79,9 @@ router.get(
           .map((seasonTeam: SeasonTeam) => {
             return {
               value: seasonTeam.id,
-              name: `${seasonTeam.User.username} - ${seasonTeam.Team.name} (${seasonTeam.Season?.name
-                }${seasonTeam.Season?.year ? `, ${seasonTeam.Season?.year}` : ""})`,
+              name: `${seasonTeam.User.username} - ${seasonTeam.Team.name} (${
+                seasonTeam.Season?.name
+              }${seasonTeam.Season?.year ? `, ${seasonTeam.Season?.year}` : ""})`,
             };
           });
         break;
@@ -93,8 +94,9 @@ router.get(
           .map((seasonTeam: SeasonTeam) => {
             return {
               value: seasonTeam.id,
-              name: `${seasonTeam.User.username} - ${seasonTeam.Team.name} (${seasonTeam.Season?.name
-                }${seasonTeam.Season?.year ? `, ${seasonTeam.Season?.year}` : ""})`,
+              name: `${seasonTeam.User.username} - ${seasonTeam.Team.name} (${
+                seasonTeam.Season?.name
+              }${seasonTeam.Season?.year ? `, ${seasonTeam.Season?.year}` : ""})`,
             };
           });
         extraData.matTypeList = (
