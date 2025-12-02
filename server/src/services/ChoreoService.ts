@@ -157,7 +157,7 @@ class ChoreoService {
       .then(async (choreo: Choreo | null) => {
         if (!choreo) {
           logger.error(`Choreo with ID ${id} not found`);
-          throw new NotFoundError();
+          throw new NotFoundError(`Choreo with ID ${id} not found`);
         }
         const lineups = await LineupService.findByChoreoId(choreo.id);
         // Add Lineups property dynamically to dataValues
