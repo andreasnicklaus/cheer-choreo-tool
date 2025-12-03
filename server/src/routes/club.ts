@@ -3,6 +3,7 @@ import Club from "../db/models/club";
 import ClubService from "../services/ClubService";
 import NotificationService from "../services/NotificationService";
 import FileService from "../services/FileService";
+import { NotFoundError } from "@/utils/errors";
 
 const path = require("node:path");
 const { default: AuthService } = require("../services/AuthService");
@@ -46,13 +47,13 @@ const router = Router();
  *         description: Club not found
  */
 router.get(
-  "/:id?",
+  "/{:id}",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.params.id)
       return ClubService.findById(req.params.id, req.UserId)
         .then((foundClub: Club | null) => {
-          if (!foundClub) res.status(404).send(req.t("responses.not-found"));
+          if (!foundClub) throw new NotFoundError();
           else res.send(foundClub);
           return next();
         })

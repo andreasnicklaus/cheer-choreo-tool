@@ -20,14 +20,14 @@ export default class LoginPage extends TestPage {
 
   async iInputUserName(userName: string) {
     const userNameInput = this.page.getByRole("textbox", { name: "Username" });
-    await this.iFillInput(userNameInput, userName)
+    await this.iFillInput(userNameInput, userName);
   }
 
   async iInputEmail(email: string) {
     const emailInput = this.page.getByRole("textbox", {
       name: "E-mail address",
     });
-    await this.iFillInput(emailInput, email)
+    await this.iFillInput(emailInput, email);
   }
 
   async iInputPassword(password: string) {
@@ -35,14 +35,14 @@ export default class LoginPage extends TestPage {
       name: "Password",
       exact: true,
     });
-    await this.iFillInput(passwordInput, password)
+    await this.iFillInput(passwordInput, password);
   }
 
   async iInputPasswordRepetition(password: string) {
     const passwordInput = this.page.getByRole("textbox", {
       name: "Repeat password",
     });
-    await this.iFillInput(passwordInput, password)
+    await this.iFillInput(passwordInput, password);
   }
 
   async iClickOnLoginButton() {

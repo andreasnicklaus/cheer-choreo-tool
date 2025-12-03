@@ -1,3 +1,4 @@
+import { NotFoundError } from "@/utils/errors";
 import Hit from "../db/models/hit";
 
 const { logger } = require("../plugins/winston");
@@ -148,7 +149,7 @@ class HitService {
           }); // njsscan-ignore: node_nosqli_injection
         } else {
           logger.error(`No hit found with ID ${id} when updating`);
-          throw new Error(`No hit found with ID ${id} when updating`);
+          throw new NotFoundError(`No hit found with ID ${id} when updating`);
         }
       });
   }
@@ -168,7 +169,7 @@ class HitService {
           return foundHit.destroy();
         } else {
           logger.error(`No hit found with ID ${id} when deleting`);
-          throw new Error(`No hit found with ID ${id} when deleting`);
+          throw new NotFoundError(`No hit found with ID ${id} when deleting`);
         }
       });
   }

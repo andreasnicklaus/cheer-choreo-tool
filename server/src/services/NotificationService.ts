@@ -1,3 +1,4 @@
+import { NotFoundError } from "@/utils/errors";
 import NotificationModel from "../db/models/notification";
 import User from "../db/models/user";
 import UserService from "./UserService";
@@ -156,7 +157,9 @@ class NotificationService {
         return foundNotification.save();
       } else {
         logger.error(`No notification found with ID ${id} when updating`);
-        throw new Error(`No notification found with ID ${id} when updating`);
+        throw new NotFoundError(
+          `No notification found with ID ${id} when updating`,
+        );
       }
     });
   }
@@ -181,7 +184,9 @@ class NotificationService {
           return foundNotification.destroy();
         } else {
           logger.error(`No notification found with ID ${id} when deleting`);
-          throw new Error(`No notification found with ID ${id} when deleting`);
+          throw new NotFoundError(
+            `No notification found with ID ${id} when deleting`,
+          );
         }
       });
   }

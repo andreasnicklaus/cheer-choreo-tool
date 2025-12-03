@@ -53,11 +53,13 @@
             // border: 'none',
           }"
         >
-          <span v-if="label == $t('achter')">
+          <span v-show="label == $t('achter')">
             {{ acht[label] + 1 }}
           </span>
           <b-button
-            v-else-if="i * 8 + parseInt(label) <= choreo.counts"
+            v-show="
+              label != $t('achter') && i * 8 + parseInt(label) <= choreo.counts
+            "
             :disabled="!interactive"
             class="p-1 py-2"
             squared
@@ -81,12 +83,12 @@
                 : 'outline-primary'
             "
           >
-            <span v-if="acht[label].length > 0">
+            <span v-show="acht[label].length > 0">
               <p class="mb-0" v-for="hit in acht[label]" :key="hit.name">
                 {{ hit.name }}
               </p>
             </span>
-            <span v-else>-</span>
+            <span v-show="acht[label].length == 0">-</span>
           </b-button>
         </b-td>
       </b-tr>

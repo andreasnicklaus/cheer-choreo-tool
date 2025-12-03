@@ -3,6 +3,7 @@ import Position from "../db/models/position";
 import Lineup from "../db/models/lineup";
 import PositionService from "../services/PositionService";
 import LineupService from "../services/LineupService";
+import { requestQueue } from "@/middlewares/requestQueue";
 
 const { default: AuthService } = require("../services/AuthService");
 
@@ -150,6 +151,7 @@ router.post(
 router.put(
   "/:id",
   AuthService.authenticateUser(),
+  requestQueue("positionUpdate"),
   (req: Request, res: Response, next: NextFunction) => {
     PositionService.update(req.params.id, null, req.body, req.UserId)
       .then((position: Position) => {

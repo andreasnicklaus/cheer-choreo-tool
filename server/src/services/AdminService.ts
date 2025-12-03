@@ -1,3 +1,4 @@
+import { NotFoundError } from "@/utils/errors";
 import Admin from "../db/models/admin";
 
 const { Op } = require("sequelize");
@@ -127,7 +128,7 @@ class AdminService {
         return this.findById(id);
       } else {
         logger.error(`No admin found with ID ${id} when updating`);
-        throw new Error(`No admin found with ID ${id} when updating`);
+        throw new NotFoundError(`No admin found with ID ${id} when updating`);
       }
     });
   }
@@ -147,7 +148,7 @@ class AdminService {
         return admin.destroy();
       } else {
         logger.error(`No admin found with ID ${id} when deleting`);
-        throw new Error(`No admin found with ID ${id} when deleting`);
+        throw new NotFoundError(`No admin found with ID ${id} when deleting`);
       }
     });
   }

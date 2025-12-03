@@ -12,12 +12,30 @@ class PositionService {
    * @param {number} x - X coordinate of the position
    * @param {number} y - Y coordinate of the position
    * @param {string} MemberId - ID of the member for this position
+   * @param {string} timeOfManualUpdate - manually specified time of update
    * @returns {Promise<Object>} Created position
    */
-  create(lineupId, x, y, MemberId) {
-    debug("Creating new position", { lineupId, x, y, MemberId });
+  create(
+    lineupId,
+    x,
+    y,
+    MemberId,
+    timeOfManualUpdate = new Date().toISOString()
+  ) {
+    debug("Creating new position", {
+      lineupId,
+      x,
+      y,
+      MemberId,
+      timeOfManualUpdate,
+    });
     return ax
-      .post(`/lineup/${lineupId}/position`, { x, y, MemberId })
+      .post(`/lineup/${lineupId}/position`, {
+        x,
+        y,
+        MemberId,
+        timeOfManualUpdate,
+      })
       .then((res) => {
         debug("Successfully created position");
         return res.data;
@@ -43,12 +61,29 @@ class PositionService {
    * @param {string} positionId - ID of the position to update
    * @param {number} x - X coordinate of the position
    * @param {number} y - Y coordinate of the position
+   * @param {string} {timeOfManualUpdate} - manually specified time of update
    * @returns {Promise<Object>} Updated position
    */
-  update(lineupId, positionId, x, y) {
-    debug("Updating position", { lineupId, positionId, x, y });
+  update(
+    lineupId,
+    positionId,
+    x,
+    y,
+    timeOfManualUpdate = new Date().toISOString()
+  ) {
+    debug("Updating position", {
+      lineupId,
+      positionId,
+      x,
+      y,
+      timeOfManualUpdate,
+    });
     return ax
-      .put(`/lineup/${lineupId}/position/${positionId}`, { x, y })
+      .put(`/lineup/${lineupId}/position/${positionId}`, {
+        x,
+        y,
+        timeOfManualUpdate,
+      })
       .then((res) => {
         debug("Successfully updated position");
         return res.data;

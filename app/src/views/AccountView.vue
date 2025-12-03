@@ -499,8 +499,8 @@
                 user?.Clubs.length <= 1
                   ? $t('accountView.cant-delete-only-club')
                   : $store.state.clubId == club.id
-                  ? $t('accountView.cant-delete-active-club')
-                  : null
+                    ? $t('accountView.cant-delete-active-club')
+                    : null
               "
             >
               <b-button

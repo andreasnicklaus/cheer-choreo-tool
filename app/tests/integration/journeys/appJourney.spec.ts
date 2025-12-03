@@ -17,7 +17,8 @@ test.describe("App contents for unauthenticated users", () => {
     await appPage.iCheckFooterContents();
   });
 
-  test("displays header contents", async () => {
+  test("displays header contents", async ({}, testInfo) => {
+    if (Boolean(testInfo.project.use.isMobile)) await appPage.iOpenMobileMenu();
     await appPage.iCheckHeaderContents();
   });
 

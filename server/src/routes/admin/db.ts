@@ -15,6 +15,7 @@ import SeasonTeamService from "../../services/SeasonTeamService";
 import ChoreoService from "../../services/ChoreoService";
 import search from "../../utils/fuzzySearch";
 import sequelizeDataTypeToHtmlInputType from "../../utils/datatypeConverter";
+import { FaultyInputError } from "@/utils/errors";
 
 type entityList = { value: string; name: string }[];
 
@@ -199,7 +200,7 @@ router.post(
           }
           break;
         default:
-          return next(new Error(req.t("errors.invalid-entity")));
+          return next(new FaultyInputError(req.t("errors.invalid-entity")));
       }
 
       res.redirect(`${req.baseUrl}/${entity}`); // njsscan-ignore: express_open_redirect
@@ -242,7 +243,7 @@ router.post(
         service = ChoreoService;
         break;
       default:
-        return next(new Error(req.t("errors.invalid-entity")));
+        return next(new FaultyInputError(req.t("errors.invalid-entity")));
     }
     try {
       await service.update(id, data, null, { all: true });
@@ -276,7 +277,7 @@ router.delete(
         service = ChoreoService;
         break;
       default:
-        return next(new Error(req.t("errors.invalid-entity")));
+        return next(new FaultyInputError(req.t("errors.invalid-entity")));
     }
 
     try {

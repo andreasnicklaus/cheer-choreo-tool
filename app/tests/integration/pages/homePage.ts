@@ -34,7 +34,7 @@ export default class HomePage extends TestPage {
       expect(this.page.locator("#logoImg")).toBeVisible(),
       expect(this.page.locator("#logoImg")).toHaveAttribute(
         "src",
-        /\/Icon*.png/
+        /\/Icon.*\.png/
       ),
       expect(this.page.locator("#logoImg")).toHaveAttribute(
         "alt",

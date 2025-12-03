@@ -105,7 +105,11 @@ class MessagingService {
   showWarning(message, title = null, options = {}) {
     debug("Showing warning message", { message, title, options });
     if (!title) title = i18n.t("warnung");
-    return this._showMessage(message, { title, variant: "warn", ...options });
+    return this._showMessage(message, {
+      title,
+      variant: "warning",
+      ...options,
+    });
   }
 }
 

@@ -18,13 +18,13 @@ export default class AppPage extends TestPage {
     const footerLinks = this.page.locator("footer a");
     return Promise.all([
       expect(
-        this.page.getByRole("heading", { name: "Internal Links" }),
+        this.page.getByRole("heading", { name: "Internal Links" })
       ).toBeVisible(),
       expect(
-        this.page.getByRole("heading", { name: "External Links" }),
+        this.page.getByRole("heading", { name: "External Links" })
       ).toBeVisible(),
       expect(this.page.locator("footer")).toContainText(
-        `Andreas Nicklaus @${new Date().getFullYear()}`,
+        `Andreas Nicklaus @${new Date().getFullYear()}`
       ),
 
       // Internal Links
@@ -43,17 +43,17 @@ export default class AppPage extends TestPage {
       expect(footerLinks.nth(5)).toHaveText("Instagram"),
       expect(footerLinks.nth(5)).toHaveAttribute(
         "href",
-        "https://www.instagram.com/choreoplaner/",
+        "https://www.instagram.com/choreoplaner/"
       ),
       expect(footerLinks.nth(6)).toHaveText("Facebook"),
       expect(footerLinks.nth(6)).toHaveAttribute(
         "href",
-        "https://www.facebook.com/choreoplaner/",
+        "https://www.facebook.com/choreoplaner/"
       ),
       expect(footerLinks.nth(7)).toHaveText("Github"),
       expect(footerLinks.nth(7)).toHaveAttribute(
         "href",
-        "https://github.com/andreasnicklaus/cheer-choreo-tool",
+        "https://github.com/andreasnicklaus/cheer-choreo-tool"
       ),
     ]);
   }
@@ -66,7 +66,7 @@ export default class AppPage extends TestPage {
       expect(this.page.locator(".navbar-brand > img")).toBeVisible(),
       expect(this.page.locator(".navbar-brand > img")).toHaveAttribute(
         "src",
-        /\/Icon*.png/g,
+        /\/Icon.*\.png/g
       ),
       expect(nav).toContainText("Start"),
       expect(nav).toContainText("Choreos"),
@@ -85,15 +85,14 @@ export default class AppPage extends TestPage {
         this.page.getByRole("link", {
           name: "Log in",
           exact: true,
-          includeHidden: true,
-        }),
+        })
       ).toHaveAttribute("href", "/en/login"),
     ]);
   }
 
   iCheckAppVersion() {
     return Promise.all([
-      expect(this.page.getByText("Version:")).toContainText("0.11.1"),
+      expect(this.page.getByText("Version:")).toContainText("0.11.2"),
     ]);
   }
 
@@ -106,15 +105,15 @@ export default class AppPage extends TestPage {
     await new Promise((resolve) => setTimeout(resolve, 2000));
     await expect(this.page.getByTestId("serverStatus")).toHaveAttribute(
       "title",
-      expectedTitle,
+      expectedTitle
     );
   }
 
   iCheckVersionMismatchErrorMessage(serverVersion: string) {
     return expect(
       this.page.getByTitle(
-        `Die Version der Webseite (0.11.1) entspricht nicht der Version der Server (${serverVersion})!`,
-      ),
+        `Die Version der Webseite (0.11.2) entspricht nicht der Version der Server (${serverVersion})!`
+      )
     ).toBeVisible();
   }
 
@@ -122,10 +121,10 @@ export default class AppPage extends TestPage {
     return Promise.all([
       expect(this.page.getByText("Download the app! The app")).toBeVisible(),
       expect(
-        this.page.getByRole("button", { name: "No thanks!" }),
+        this.page.getByRole("button", { name: "No thanks!" })
       ).toBeVisible(),
       expect(
-        this.page.getByRole("button", { name: "download INSTALL" }),
+        this.page.getByRole("button", { name: "download INSTALL" })
       ).toBeVisible(),
     ]);
   }
@@ -135,7 +134,7 @@ export default class AppPage extends TestPage {
     await this.iClickButton(dismissButton);
 
     return expect(
-      this.page.getByText("Download the app! The app"),
+      this.page.getByText("Download the app! The app")
     ).not.toBeVisible();
   }
 
@@ -146,7 +145,7 @@ export default class AppPage extends TestPage {
     await this.iClickButton(installButton);
 
     return expect(
-      this.page.getByText("Download the app! The app"),
+      this.page.getByText("Download the app! The app")
     ).not.toBeVisible();
   }
 
@@ -157,7 +156,7 @@ export default class AppPage extends TestPage {
 
   iShouldSeeEmptyNotificationNotice() {
     return expect(
-      this.page.getByText("You have not received any notifications yet."),
+      this.page.getByText("You have not received any notifications yet.")
     ).toBeVisible();
   }
 
@@ -166,13 +165,13 @@ export default class AppPage extends TestPage {
       defaultNotifications.map((notification) => {
         return Promise.all([
           expect(
-            this.page.getByText(notification.title, { exact: true }),
+            this.page.getByText(notification.title, { exact: true })
           ).toBeVisible(),
           expect(
-            this.page.getByText(notification.message, { exact: true }),
+            this.page.getByText(notification.message, { exact: true })
           ).toBeVisible(),
         ]);
-      }),
+      })
     );
   }
 
@@ -184,7 +183,9 @@ export default class AppPage extends TestPage {
   }
 
   async iOpenAccountDropDown() {
-    const accountDropDown = this.page.locator('[id="__BVID__44__BV_toggle_"]');
+    const accountDropDown = this.page
+      .getByRole("button")
+      .filter({ hasText: "Default User" });
     await expect(accountDropDown).toBeVisible();
     return accountDropDown.click();
   }
@@ -193,31 +194,24 @@ export default class AppPage extends TestPage {
     return Promise.all(
       [
         expect(
-          this.page.getByRole("menuitem", { name: defaultUser.username }),
+          this.page.getByRole("menuitem", { name: defaultUser.username })
         ).toBeVisible(),
         expect(
-          this.page.getByRole("menuitem", { name: "door open Log out" }),
+          this.page.getByRole("menuitem", { name: "door open Log out" })
         ).toBeVisible(),
-        expect(
-          this.page
-            .getByLabel(defaultUser.username, {
-              exact: true,
-            })
-            .or(this.page.getByLabel("", { exact: true }))
-            .getByText("Clubs"),
-        ).toBeVisible(),
+        expect(this.page.getByRole("menu").getByText("Clubs")).toBeVisible(),
         defaultClubs.map((club) =>
           expect(
-            this.page.getByRole("menuitem", { name: club.name, exact: true }),
-          ).toBeVisible(),
+            this.page.getByRole("menuitem", { name: club.name, exact: true })
+          ).toBeVisible()
         ),
         expect(
-          this.page.getByRole("menuitem", { name: "plus New club" }),
+          this.page.getByRole("menuitem", { name: "plus New club" })
         ).toBeVisible(),
         ...defaultClubs.map((club) => {
           expect(this.page.getByText(club.name, { exact: true })).toBeVisible();
         }),
-      ].flat(),
+      ].flat()
     );
   }
 
@@ -243,7 +237,10 @@ export default class AppPage extends TestPage {
   }
 
   async iCheckOverviewMenuItem() {
-    const overviewMenuItem = this.page.getByRole("link", { name: "Overview" });
+    const overviewMenuItem = this.page.getByRole("link", {
+      name: "Overview",
+      exact: true,
+    });
     await expect(overviewMenuItem).toBeVisible();
     await overviewMenuItem.click();
     return expect(this.page).toHaveURL("/en/start");
@@ -283,9 +280,7 @@ export default class AppPage extends TestPage {
   }
 
   async iSwitchLanguageTo(language: string) {
-    const languageSelectButton = this.page.locator(
-      '[id="__BVID__26__BV_toggle_"]',
-    );
+    const languageSelectButton = this.page.getByTestId("locale-switch");
     await this.iClickButton(languageSelectButton);
 
     const languageButton = this.page.getByRole("menuitem", { name: language });
@@ -296,10 +291,10 @@ export default class AppPage extends TestPage {
 
   async iCheckGermanLocalization() {
     await expect(
-      this.page.getByRole("heading", { name: "Dein Choreo Planer" }),
+      this.page.getByRole("heading", { name: "Dein Choreo Planer" })
     ).toBeVisible();
     await expect(this.page).toHaveTitle(
-      "Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport",
+      "Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport"
     );
   }
 }

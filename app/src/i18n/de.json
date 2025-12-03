@@ -337,7 +337,8 @@
     "garde": "Garde",
     "stage-3-4": "Bühne (3:4)",
     "stage-1-1": "Bühne (1:1)",
-    "choose-the-layout-of-your-stage": "Wähle das Layout deiner Bühne"
+    "choose-the-layout-of-your-stage": "Wähle das Layout deiner Bühne",
+    "zur-uebersicht": "Zur Übersicht"
   },
   "impressumView": {
     "angaben-gemaess-5-tmg": "Angaben gemäß § 5 TMG",
@@ -583,7 +584,16 @@
     },
     "video-download": {
       "format": "Format",
-      "video-herunterladen": "Video herunterladen"
+      "video-herunterladen": "Video herunterladen",
+      "stocking-video": "Mein Video ruckelt",
+      "file-issues": "Probleme mit der Videodatei?",
+      "file-issues-answer": "Wenn das Video auf Ihrem Gerät nicht abgespielt werden kann oder ein erforderliches Format fehlt oder nicht kompatibel ist, kannst du leider nichts tun. Weitere Informationen findest du auf der Hilfeseite oder kontaktiere uns direkt.",
+      "jerky-video": "Dein Video ruckelt?",
+      "jerky-video-answer": "Das Video wird in deinem Browser erstellt, d.h. die Leistung Ihres Geräts beeinflusst die Qualität des Videos. Versuche, andere Anwendungen zu schließen oder deinen Browser neu zu starten.",
+      "other-issue": "Anderes Problem",
+      "other-issue-answer": "Schaue einmal auf unserer Hilfe-Seite, um vielleicht doch dein Problem selbst zu lösen.",
+      "other-issue-question": "Anderes Problem?",
+      "video-file-issues": "Probleme mit der Videodatei"
     },
     "delete-club": {
       "verein-loeschen": "Verein löschen?"
@@ -737,7 +747,11 @@
     "video-generieren": "Video generieren",
     "video-zusammenstellen": "Video zusammenstellen",
     "dein-vereinslogo-als-wasserzeichen-im-video-anzeigen": "Dein Vereinslogo als Wasserzeichen im Video anzeigen",
-    "dein-browser-unterstuetzt-kein-video": "Dein Browser unterstützt nicht den Exportieren in ein Video. Bitte versuche es mit einem anderen Browser oder Gerät."
+    "dein-browser-unterstuetzt-kein-video": "Dein Browser unterstützt nicht den Exportieren in ein Video. Bitte versuche es mit einem anderen Browser oder Gerät.",
+    "do-not-leave-this-page": "Verlasse diese Seite nicht, während das Video erstellt wird!",
+    "playback-length": "Wiedergabelänge",
+    "minutes": "Minuten",
+    "seconds": "Sekunden"
   },
   "zur-startseite": "Zur Startseite",
   "zuruecksetzen": "Zurücksetzen",

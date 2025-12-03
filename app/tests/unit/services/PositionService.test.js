@@ -21,17 +21,20 @@ describe("PositionService", () => {
       const mockResponse = { data: { id: "1", name: "Position1" } };
       ax.post.mockResolvedValue(mockResponse);
 
+      const timeOfManualUpdate = new Date().toISOString();
       const result = await PositionService.create(
         "test-lineupId",
         0,
         1,
-        "test-memberId"
+        "test-memberId",
+        timeOfManualUpdate
       );
 
       expect(ax.post).toHaveBeenCalledWith("/lineup/test-lineupId/position", {
         MemberId: "test-memberId",
         x: 0,
         y: 1,
+        timeOfManualUpdate,
       });
       expect(result).toEqual(mockResponse.data);
     });
@@ -40,14 +43,22 @@ describe("PositionService", () => {
       const mockError = new Error("Network Error");
       ax.post.mockRejectedValue(mockError);
 
+      const timeOfManualUpdate = new Date().toISOString();
       await expect(
-        PositionService.create("test-lineupId", 0, 1, "test-memberId")
+        PositionService.create(
+          "test-lineupId",
+          0,
+          1,
+          "test-memberId",
+          timeOfManualUpdate
+        )
       ).rejects.toThrow("Network Error");
 
       expect(ax.post).toHaveBeenCalledWith("/lineup/test-lineupId/position", {
         MemberId: "test-memberId",
         x: 0,
         y: 1,
+        timeOfManualUpdate,
       });
     });
   });
@@ -84,11 +95,19 @@ describe("PositionService", () => {
       const mockResponse = { data: { id: "1", name: "UpdatedPosition" } };
       ax.put.mockResolvedValue(mockResponse);
 
-      const result = await PositionService.update("1", "2", 0, 1);
+      const timeOfManualUpdate = new Date().toISOString();
+      const result = await PositionService.update(
+        "1",
+        "2",
+        0,
+        1,
+        timeOfManualUpdate
+      );
 
       expect(ax.put).toHaveBeenCalledWith("/lineup/1/position/2", {
         x: 0,
         y: 1,
+        timeOfManualUpdate,
       });
       expect(result).toEqual(mockResponse.data);
     });
@@ -97,13 +116,15 @@ describe("PositionService", () => {
       const mockError = new Error("Network Error");
       ax.put.mockRejectedValue(mockError);
 
-      await expect(PositionService.update("1", "2", 0, 1)).rejects.toThrow(
-        "Network Error"
-      );
+      const timeOfManualUpdate = new Date().toISOString();
+      await expect(
+        PositionService.update("1", "2", 0, 1, timeOfManualUpdate)
+      ).rejects.toThrow("Network Error");
 
       expect(ax.put).toHaveBeenCalledWith("/lineup/1/position/2", {
         x: 0,
         y: 1,
+        timeOfManualUpdate,
       });
     });
   });

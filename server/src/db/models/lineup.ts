@@ -13,6 +13,7 @@ import Choreo from "./choreo";
 import Position from "./position";
 import db from "../db";
 import logger from "@/plugins/winston";
+import { FaultyInputError } from "@/utils/errors";
 
 /**
  * @openapi
@@ -99,7 +100,7 @@ Lineup.init(
           logger.error(
             `endCount (count: ${this.endCount}) cannot be before startCount (count: ${this.startCount})`,
           );
-          throw new Error(
+          throw new FaultyInputError(
             `endCount (count: ${this.endCount}) cannot be before startCount (count: ${this.startCount})`,
           );
         }
