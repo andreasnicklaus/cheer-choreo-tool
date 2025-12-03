@@ -142,7 +142,7 @@ describe("MessagingService", () => {
       await MessagingService.showWarning("This is a warning");
 
       expect(mockHandler).toHaveBeenCalledWith("This is a warning", {
-        variant: "warn",
+        variant: "warning",
         title: "Warning",
         solid: true,
       });
@@ -155,7 +155,7 @@ describe("MessagingService", () => {
       await MessagingService.showWarning("This is a warning", "Custom Title");
 
       expect(mockHandler).toHaveBeenCalledWith("This is a warning", {
-        variant: "warn",
+        variant: "warning",
         title: "Custom Title",
         solid: true,
       });

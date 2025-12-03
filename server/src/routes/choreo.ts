@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 import Choreo from "../db/models/choreo";
 import ChoreoService from "../services/ChoreoService";
+import { NotFoundError } from "@/utils/errors";
 const { default: AuthService } = require("../services/AuthService");
 
 /**
@@ -50,13 +51,13 @@ const router = Router();
  *              example: Not found
  */
 router.get(
-  "/:id?",
+  "/{:id}",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.params.id)
       ChoreoService.findById(req.params.id, req.UserId)
         .then((foundChoreo: Choreo) => {
-          if (!foundChoreo) res.status(404).send(req.t("responses.not-found"));
+          if (!foundChoreo) throw new NotFoundError();
           else res.send(foundChoreo);
           return next();
         })

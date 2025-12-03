@@ -3,6 +3,7 @@ import Lineup from "../db/models/lineup";
 import Position from "../db/models/position";
 import LineupService from "../services/LineupService";
 import PositionService from "../services/PositionService";
+import { requestQueue } from "@/middlewares/requestQueue";
 
 const { default: AuthService } = require("../services/AuthService");
 
@@ -150,8 +151,8 @@ router.post(
   "/:id/position",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    const { x, y, MemberId } = req.body;
-    PositionService.create(x, y, req.UserId)
+    const { x, y, MemberId, timeOfManualUpdate } = req.body;
+    PositionService.create(x, y, req.UserId, timeOfManualUpdate)
       .then(async (position: Position) => {
         return Promise.all([
           position.setMember(MemberId),
@@ -212,6 +213,7 @@ router.post(
 router.put(
   "/:id/position/:positionId",
   AuthService.authenticateUser(),
+  requestQueue("positionUpdate"),
   (req: Request, res: Response, next: NextFunction) => {
     PositionService.update(
       req.params.positionId,

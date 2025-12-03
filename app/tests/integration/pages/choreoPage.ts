@@ -136,7 +136,7 @@ export default class ChoreoPage extends TestPage {
                 (hit.count % 8) + 2
               }) > .btn`
             )
-          ).toHaveText(hit.name),
+          ).toHaveText(hit.name, { useInnerText: true }),
         ])
         .flat()
     );
@@ -323,7 +323,7 @@ export default class ChoreoPage extends TestPage {
     // hit is moved to count 8 of the first eight
     await expect(
       this.page.locator("td:nth-child(9) > .btn").first()
-    ).toHaveText(defaultHits[1].name);
+    ).toHaveText(defaultHits[1].name, { useInnerText: true });
 
     // the current count is 8 in the first eight
     await expect(
@@ -347,7 +347,7 @@ export default class ChoreoPage extends TestPage {
     // hit is moved to count 2 of the second eight
     await expect(
       this.page.locator("tr:nth-child(2) > td:nth-child(3) > .btn")
-    ).toHaveText(defaultHits[1].name);
+    ).toHaveText(defaultHits[1].name, { useInnerText: true });
 
     // the current count is 2 in the second eight
     await expect(
@@ -391,7 +391,7 @@ export default class ChoreoPage extends TestPage {
 
     await expect(
       this.page.locator("tr:nth-child(2) > td:nth-child(4) > .btn")
-    ).toHaveText(newName);
+    ).toHaveText(newName, { useInnerText: true });
     await expect(
       this.page.locator("tr:nth-child(1) > td:nth-child(5) > .btn")
     ).toHaveText("-");

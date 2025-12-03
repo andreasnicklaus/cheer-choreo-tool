@@ -25,7 +25,7 @@
             editHitId != null ? (editHitId != hit.id ? 'light' : null) : null
           "
         >
-          <div v-if="hit.id != editHitId">
+          <div v-show="hit.id != editHitId">
             <h5>
               <b-row align-h="between" align-v="center">
                 <b-col>
@@ -77,7 +77,7 @@
             </h5>
 
             <b-col
-              v-if="
+              v-show="
                 hit.Members &&
                 hit.Members.length > 0 &&
                 hit.Members.length != teamMembers.length
@@ -103,12 +103,18 @@
                 {{ member.nickname || member.name }}
               </b-row>
             </b-col>
-            <p v-else>
+            <p
+              v-show="
+                !hit.Members ||
+                hit.Members.length <= 0 ||
+                hit.Members.length == teamMembers.length
+              "
+            >
               <b-badge variant="info">{{ $t("countOverview.alle") }}</b-badge>
             </p>
           </div>
 
-          <div v-else>
+          <div v-show="hit.id == editHitId">
             <h5 class="mb-4">
               <b-row align-h="between" align-v="center">
                 <b-col>
@@ -297,14 +303,14 @@
           :key="lineup.id"
           :variant="editLineupId == lineup.id ? null : 'light'"
         >
-          <div v-if="lineup.id != editLineupId">
+          <div v-show="lineup.id != editLineupId">
             <h5>
               <b-row align-h="between" align-v="center">
                 <b-col>{{ $tc("lineup", 1) }}</b-col>
                 <b-col cols="auto">
                   <b-button-group class="mr-2">
                     <b-button
-                      v-if="lineup.Positions.length != teamMembers.length"
+                      v-show="lineup.Positions.length != teamMembers.length"
                       variant="outline-primary"
                       v-b-tooltip.hover
                       :title="
@@ -353,7 +359,7 @@
             </p>
 
             <b-col
-              v-if="
+              v-show="
                 lineup.Positions &&
                 lineup.Positions.length > 0 &&
                 lineup.Positions.length != teamMembers.length
@@ -389,12 +395,18 @@
                 {{ position.Member.name }}
               </b-row>
             </b-col>
-            <p v-else>
+            <p
+              v-show="
+                !lineup.Positions ||
+                lineup.Positions.length <= 0 ||
+                lineup.Positions.length == teamMembers.length
+              "
+            >
               <b-badge variant="info">{{ $t("countOverview.alle") }}</b-badge>
             </p>
           </div>
 
-          <div v-else>
+          <div v-show="lineup.id == editLineupId">
             <h5>
               <b-row align-h="between" align-v="center">
                 <b-col> {{ $tc("lineup", 1) }} </b-col>
@@ -594,7 +606,7 @@
           </b-list-group-item>
         </template>
         <b-list-group-item
-          v-if="
+          v-show="
             hitsForCurrentCount.length == 0 &&
             lineupsForCurrentCount.length == 0
           "

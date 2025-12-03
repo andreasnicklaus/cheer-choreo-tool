@@ -50,6 +50,7 @@ class Position extends Model<
   declare x: number;
   declare y: number;
 
+  declare timeOfManualUpdate: CreationOptional<Date>;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
   declare deletedAt: CreationOptional<Date>;
@@ -89,6 +90,7 @@ Position.init(
         max: 100,
       },
     },
+    timeOfManualUpdate: DataTypes.DATE,
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
     deletedAt: DataTypes.DATE,

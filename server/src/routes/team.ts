@@ -2,6 +2,7 @@ import { NextFunction, Response, Request, Router } from "express";
 import Team from "../db/models/team";
 import TeamService from "../services/TeamService";
 import NotificationService from "../services/NotificationService";
+import { NotFoundError } from "@/utils/errors";
 
 const { default: AuthService } = require("../services/AuthService");
 
@@ -44,7 +45,7 @@ const router = Router();
  *         description: Team not found
  */
 router.get(
-  "/:id?",
+  "/{:id}",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.params.id)
@@ -58,7 +59,7 @@ router.get(
       if (req.query.name)
         return TeamService.findByName(req.query.name as string, req.UserId)
           .then((foundTeams: Team[]) => {
-            if (!foundTeams) res.status(404).send(req.t("responses.not-found"));
+            if (!foundTeams) throw new NotFoundError();
             else res.send(foundTeams);
             return next();
           })

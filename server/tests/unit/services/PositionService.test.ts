@@ -138,7 +138,7 @@ describe("PositionService", () => {
     const updatedPosition = await PositionService.update(
       position.id,
       lineup.id,
-      { y: 2 },
+      { y: 2, timeOfManualUpdate: new Date() },
       user.id,
     );
     expect(updatedPosition).toBeDefined();

@@ -13,7 +13,10 @@ export function loggerMiddleWare(
   next: NextFunction,
 ) {
   if (req.path == "/health") return next();
-  const { password, ...requestBody } = req.body;
+  if (!req.body) req.body = {};
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { password = null, ...requestBody } = req.body;
 
   logger.info(
     `${req.method} ${req.url} ; Referrer: ${
@@ -37,7 +40,6 @@ export function errorLoggingMiddleWare(
   next: NextFunction,
 ) {
   // Log the error message at the error level
-
-  logger.error(err.message);
+  logger.error(`${err.name}: ${err.message || "No error message provided"}`);
   next(err);
 }

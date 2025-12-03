@@ -1,3 +1,4 @@
+import { NotFoundError } from "@/utils/errors";
 import Choreo from "../db/models/choreo";
 import Club from "../db/models/club";
 import Season from "../db/models/season";
@@ -171,7 +172,9 @@ class ClubService {
           const foundClub = await this.findById(club.id, UserId);
           if (!foundClub) {
             logger.error(`Club with id ${club.id} not found after creation`);
-            throw new Error(`Club with id ${club.id} not found after creation`);
+            throw new NotFoundError(
+              `Club with id ${club.id} not found after creation`,
+            );
           }
           club = foundClub;
         }
@@ -302,7 +305,7 @@ class ClubService {
           return foundClub.save();
         } else {
           logger.error(`No club found with ID ${id} when updating`);
-          throw new Error(`No club found with ID ${id} when updating`);
+          throw new NotFoundError(`No club found with ID ${id} when updating`);
         }
       });
   }
@@ -329,7 +332,7 @@ class ClubService {
           return foundClub.destroy();
         } else {
           logger.error(`No club found with ID ${id} when deleting`);
-          throw new Error(`No club found with ID ${id} when deleting`);
+          throw new NotFoundError(`No club found with ID ${id} when deleting`);
         }
       });
   }

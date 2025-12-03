@@ -1,3 +1,4 @@
+import { NotFoundError } from "@/utils/errors";
 import Feedback from "../db/models/feedback";
 import logger from "../plugins/winston";
 import MailService from "./MailService";
@@ -28,7 +29,9 @@ class FeedbackService {
       let user = null;
       if (UserId) user = await UserService.findById(UserId).catch(() => null);
       if (!user)
-        throw new Error("User does not exist in order to create this feedback");
+        throw new NotFoundError(
+          "User does not exist in order to create this feedback",
+        );
       if (user.email)
         MailService.sendFeedbackNotice(
           user?.username,

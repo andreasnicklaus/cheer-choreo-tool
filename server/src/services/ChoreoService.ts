@@ -1,3 +1,4 @@
+import { NotFoundError } from "@/utils/errors";
 import Choreo, { defaultMatType, MatType } from "../db/models/choreo";
 import ChoreoParticipation from "../db/models/choreoParticipation";
 import Hit from "../db/models/hit";
@@ -156,7 +157,7 @@ class ChoreoService {
       .then(async (choreo: Choreo | null) => {
         if (!choreo) {
           logger.error(`Choreo with ID ${id} not found`);
-          throw new Error(`Choreo with ID ${id} not found`);
+          throw new NotFoundError(`Choreo with ID ${id} not found`);
         }
         const lineups = await LineupService.findByChoreoId(choreo.id);
         // Add Lineups property dynamically to dataValues
@@ -280,7 +281,7 @@ class ChoreoService {
       MemberService.findById(MemberId, UserId).then((member) => {
         if (!member) {
           logger.error(`Member with ID ${MemberId} not found`);
-          throw new Error(`Member with ID ${MemberId} not found`);
+          throw new NotFoundError(`Member with ID ${MemberId} not found`);
         }
         return choreo.addParticipant(member, {
           through: {
@@ -349,7 +350,7 @@ class ChoreoService {
           logger.error(
             `ChoreoParticipation with ChoreoId ${ChoreoId} and MemberId ${memberToRemoveId} not found`,
           );
-          throw new Error(
+          throw new NotFoundError(
             `ChoreoParticipation with ChoreoId ${ChoreoId} and MemberId ${memberToRemoveId} not found`,
           );
         }
@@ -418,7 +419,7 @@ class ChoreoService {
           logger.error(
             `ChoreoParticipation with ChoreoId ${ChoreoId} and MemberId ${participantId} not found`,
           );
-          throw new Error(
+          throw new NotFoundError(
             `ChoreoParticipation with ChoreoId ${ChoreoId} and MemberId ${participantId} not found`,
           );
         }
@@ -457,7 +458,9 @@ class ChoreoService {
           return this.findById(id, UserId, options);
         } else {
           logger.error(`No choreo found with ID ${id} when updating`);
-          throw new Error(`No choreo found with ID ${id} when updating`);
+          throw new NotFoundError(
+            `No choreo found with ID ${id} when updating`,
+          );
         }
       });
   }
@@ -484,7 +487,9 @@ class ChoreoService {
           return foundChoreo.destroy();
         } else {
           logger.error(`No choreo found with ID ${id} when deleting`);
-          throw new Error(`No choreo found with ID ${id} when deleting`);
+          throw new NotFoundError(
+            `No choreo found with ID ${id} when deleting`,
+          );
         }
       });
   }
