@@ -584,7 +584,7 @@ export default {
 
       if (positionToUpdate) {
         const memberTimeout = this.positionUpdates[MemberId];
-        if (memberTimeout) clearTimeout(memberTimeout);
+        if (memberTimeout) clearTimeout(memberTimeout.timeout);
 
         const pos = this.choreo.Lineups.find(
           (l) => l.id == positionToUpdate.LineupId
@@ -594,39 +594,55 @@ export default {
         const originalX = pos.x;
         const originalY = pos.y;
 
-        this.positionUpdates[MemberId] = setTimeout(() => {
-          if (positionToUpdate.id)
-            PositionService.update(
-              positionToUpdate.LineupId,
-              positionToUpdate.id,
-              x,
-              y
-            )
-              .then(() => {
-                this.showSuccessMessage(this.$tc("lineup", 1));
-                this.updateProposedPositions();
-              })
-              .catch((e) => {
-                if (e.status === 409) {
-                  if (!isRetry) {
-                    MessagingService.showWarning(
-                      "If you go too fast, position updates might be saved out of order. Please go slower.",
-                      "Slow down please :("
-                    );
-                    this.onPositionChange(MemberId, x, y, true);
+        this.positionUpdates[MemberId] = {
+          timeout: setTimeout(() => {
+            if (positionToUpdate.id)
+              PositionService.update(
+                positionToUpdate.LineupId,
+                positionToUpdate.id,
+                x,
+                y
+              )
+                .then(() => {
+                  this.showSuccessMessage(this.$tc("lineup", 1));
+                  this.updateProposedPositions();
+                })
+                .catch((e) => {
+                  if (e.status === 409) {
+                    if (!isRetry) {
+                      MessagingService.showWarning(
+                        "If you go too fast, position updates might be saved out of order. Please go slower.",
+                        "Slow down please :("
+                      );
+                      this.onPositionChange(MemberId, x, y, true);
+                    }
+                  } else {
+                    console.error(e);
+                    MessagingService.showError(e.message);
                   }
-                } else {
-                  MessagingService.showError(e.message);
-                }
 
-                // Set temporarily to (0,0) to trigger update
-                pos.x = 0;
-                pos.y = 0;
-                // Revert position
-                pos.x = originalX;
-                pos.y = originalY;
-              });
-        }, 1000);
+                  // Set temporarily to (0,0) to trigger update
+                  pos.x = 0;
+                  pos.y = 0;
+                  // Revert position
+                  pos.x = originalX;
+                  pos.y = originalY;
+                })
+                .finally(() => {
+                  // TODO: is this needed? if yes, also somewhere else?
+                  // this.positionUpdates = { ...this.positionUpdates };
+                });
+          }, 1000),
+          x,
+          y,
+        };
+
+        // TODO: actually write the positions update to this.choreo at some point
+
+        console.log(
+          "🚀 ~ this.positionUpdates[MemberId]:",
+          this.positionUpdates[MemberId]
+        );
       } else {
         let lineupToUpdate;
         if (this.lineupsForCurrentCount.length == 1) {
@@ -657,44 +673,49 @@ export default {
           );
         } else {
           const memberTimeout = this.positionUpdates[MemberId];
-          if (memberTimeout) clearTimeout(memberTimeout);
+          if (memberTimeout) clearTimeout(memberTimeout.timeout);
 
-          this.positionUpdates[MemberId] = setTimeout(() => {
-            let lineupCopy = this.choreo.Lineups;
-            let positionsCopy = lineupCopy.find(
-              (l) => l.id == lineupToUpdate.id
-            ).Positions;
-            positionsCopy = positionsCopy.filter((p) => p.MemberId != MemberId);
-            positionsCopy.push({
-              LineupId: lineupToUpdate.id,
-              MemberId: MemberId,
-              Member: this.teamMembers.find((m) => m.id == MemberId),
-              x,
-              y,
-            });
-            lineupCopy.find((l) => l.id == lineupToUpdate.id).Positions =
-              positionsCopy;
-            this.choreo.Lineups = lineupCopy;
+          this.positionUpdates[MemberId] = {
+            timeout: setTimeout(() => {
+              let lineupCopy = this.choreo.Lineups;
+              let positionsCopy = lineupCopy.find(
+                (l) => l.id == lineupToUpdate.id
+              ).Positions;
+              positionsCopy = positionsCopy.filter(
+                (p) => p.MemberId != MemberId
+              );
+              positionsCopy.push({
+                LineupId: lineupToUpdate.id,
+                MemberId: MemberId,
+                Member: this.teamMembers.find((m) => m.id == MemberId),
+                x,
+                y,
+              });
+              lineupCopy.find((l) => l.id == lineupToUpdate.id).Positions =
+                positionsCopy;
+              this.choreo.Lineups = lineupCopy;
 
-            PositionService.create(lineupToUpdate.id, x, y, MemberId).then(
-              (position) => {
-                let lineupCopy = this.choreo.Lineups;
-                let positionsCopy = lineupCopy.find(
-                  (l) => l.id == lineupToUpdate.id
-                ).Positions;
-                positionsCopy = positionsCopy.filter(
-                  (p) => p.MemberId != MemberId
-                );
-                positionsCopy.push(position);
-                lineupCopy.find((l) => l.id == lineupToUpdate.id).Positions =
-                  positionsCopy;
-                this.choreo.Lineups = lineupCopy;
-                this.positionUpdates[MemberId] = null;
-                this.showSuccessMessage(this.$tc("lineup", 1));
-                this.updateProposedPositions();
-              }
-            );
-          }, 0);
+              PositionService.create(lineupToUpdate.id, x, y, MemberId).then(
+                (position) => {
+                  let lineupCopy = this.choreo.Lineups;
+                  let positionsCopy = lineupCopy.find(
+                    (l) => l.id == lineupToUpdate.id
+                  ).Positions;
+                  positionsCopy = positionsCopy.filter(
+                    (p) => p.MemberId != MemberId
+                  );
+                  positionsCopy.push(position);
+                  lineupCopy.find((l) => l.id == lineupToUpdate.id).Positions =
+                    positionsCopy;
+                  this.choreo.Lineups = lineupCopy;
+                  this.showSuccessMessage(this.$tc("lineup", 1));
+                  this.updateProposedPositions();
+                }
+              );
+            }, 0),
+            x,
+            y,
+          };
         }
       }
     },
@@ -751,11 +772,36 @@ export default {
       }
     },
     setCounter(count) {
+      this.resetPositionUpdates();
+
       const oldPositions = this.currentPositions;
       this.count = count;
+
       if (this.$refs.Mat)
         this.$refs.Mat.animatePositions(oldPositions, this.currentPositions);
       this.updateProposedPositions();
+    },
+    resetPositionUpdates() {
+      Object.entries(this.positionUpdates).forEach(
+        ([MemberId, positionUpdate]) => {
+          if (positionUpdate.timeout) clearTimeout(positionUpdate.timeout);
+
+          // store the inflight position updates from this.positionUpdates to this.choreo.Lineups
+          const positionToUpdate = this.lineupsForCurrentCount
+            .map((l) => l.Positions.filter((p) => p.MemberId == MemberId))
+            .flat()[0];
+
+          if (positionToUpdate) {
+            const pos = this.choreo.Lineups.find(
+              (l) => l.id == positionToUpdate.LineupId
+            ).Positions.find((p) => p.id == positionToUpdate.id);
+
+            pos.x = roundToDecimals(positionUpdate.x, 2);
+            pos.y = roundToDecimals(positionUpdate.y, 2);
+          }
+        }
+      );
+      this.positionUpdates = {};
     },
     playPause() {
       if (!this.playInterval) {
@@ -910,9 +956,13 @@ export default {
       return previousPosition;
     },
     updateProposedPositions() {
+      console.log("🚀 ~ methods.updateProposedPositions");
       const currentlyPositionedMembers = this.lineupsForCurrentCount
         .map((lineup) => lineup.Positions.map((pos) => pos.Member))
         .flat();
+
+      // TODO: include inflight position updates
+
       if (currentlyPositionedMembers.length == 0) {
         this.proposedPositions = [];
         return;
@@ -941,7 +991,12 @@ export default {
           return;
         }
         const movementX = currentPosition.x - previousPosition.x;
-        const movementy = currentPosition.y - previousPosition.y;
+        const movementY = currentPosition.y - previousPosition.y;
+
+        if (Math.abs(movementX) < 1 && Math.abs(movementY) < 1) {
+          this.proposedPositions = [];
+          return;
+        }
 
         const proposedPositions = this.teamMembers
           .filter((member) => {
@@ -956,8 +1011,14 @@ export default {
 
             return {
               MemberId: member.id,
-              x: roundToDecimals(previousPosition.x + movementX, 1),
-              y: roundToDecimals(previousPosition.y + movementy, 1),
+              x: Math.min(
+                Math.max(roundToDecimals(previousPosition.x + movementX, 1), 0),
+                100
+              ),
+              y: Math.min(
+                Math.max(roundToDecimals(previousPosition.y + movementY, 1), 0),
+                100
+              ),
               Member: member,
             };
           });
@@ -993,7 +1054,8 @@ export default {
       return ChoreoService.getPositionsFromChoreoAndCount(
         this.choreo,
         this.count,
-        this.teamMembers
+        this.teamMembers,
+        this.positionUpdates
       );
     },
     hitsForCurrentCount() {
