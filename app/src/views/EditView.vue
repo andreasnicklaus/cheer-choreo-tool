@@ -636,13 +636,6 @@ export default {
           x,
           y,
         };
-
-        // TODO: actually write the positions update to this.choreo at some point
-
-        console.log(
-          "🚀 ~ this.positionUpdates[MemberId]:",
-          this.positionUpdates[MemberId]
-        );
       } else {
         let lineupToUpdate;
         if (this.lineupsForCurrentCount.length == 1) {
@@ -784,6 +777,7 @@ export default {
     resetPositionUpdates() {
       Object.entries(this.positionUpdates).forEach(
         ([MemberId, positionUpdate]) => {
+          // clear all stored timeouts
           if (positionUpdate.timeout) clearTimeout(positionUpdate.timeout);
 
           // store the inflight position updates from this.positionUpdates to this.choreo.Lineups
