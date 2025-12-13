@@ -596,42 +596,37 @@ export default {
 
         this.positionUpdates[MemberId] = {
           timeout: setTimeout(() => {
-            if (positionToUpdate.id)
-              PositionService.update(
-                positionToUpdate.LineupId,
-                positionToUpdate.id,
-                x,
-                y
-              )
-                .then(() => {
-                  this.showSuccessMessage(this.$tc("lineup", 1));
-                  this.updateProposedPositions();
-                })
-                .catch((e) => {
-                  if (e.status === 409) {
-                    if (!isRetry) {
-                      MessagingService.showWarning(
-                        "If you go too fast, position updates might be saved out of order. Please go slower.",
-                        "Slow down please :("
-                      );
-                      this.onPositionChange(MemberId, x, y, true);
-                    }
-                  } else {
-                    console.error(e);
-                    MessagingService.showError(e.message);
+            if (positionToUpdate.id) this.updateProposedPositions();
+            PositionService.update(
+              positionToUpdate.LineupId,
+              positionToUpdate.id,
+              x,
+              y
+            )
+              .then(() => {
+                this.showSuccessMessage(this.$tc("lineup", 1));
+              })
+              .catch((e) => {
+                if (e.status === 409) {
+                  if (!isRetry) {
+                    MessagingService.showWarning(
+                      "If you go too fast, position updates might be saved out of order. Please go slower.",
+                      "Slow down please :("
+                    );
+                    this.onPositionChange(MemberId, x, y, true);
                   }
+                } else {
+                  console.error(e);
+                  MessagingService.showError(e.message);
+                }
 
-                  // Set temporarily to (0,0) to trigger update
-                  pos.x = 0;
-                  pos.y = 0;
-                  // Revert position
-                  pos.x = originalX;
-                  pos.y = originalY;
-                })
-                .finally(() => {
-                  // TODO: is this needed? if yes, also somewhere else?
-                  // this.positionUpdates = { ...this.positionUpdates };
-                });
+                // Set temporarily to (0,0) to trigger update
+                pos.x = 0;
+                pos.y = 0;
+                // Revert position
+                pos.x = originalX;
+                pos.y = originalY;
+              });
           }, 1000),
           x,
           y,
@@ -950,12 +945,18 @@ export default {
       return previousPosition;
     },
     updateProposedPositions() {
-      console.log("🚀 ~ methods.updateProposedPositions");
       const currentlyPositionedMembers = this.lineupsForCurrentCount
         .map((lineup) => lineup.Positions.map((pos) => pos.Member))
         .flat();
 
-      // TODO: include inflight position updates
+      Object.keys(this.positionUpdates).forEach((MemberId) => {
+        const member = this.teamMembers.find((m) => m.id == MemberId);
+        if (
+          member &&
+          !currentlyPositionedMembers.some((m) => m.id == member.id)
+        )
+          currentlyPositionedMembers.push(member);
+      });
 
       if (currentlyPositionedMembers.length == 0) {
         this.proposedPositions = [];
@@ -973,9 +974,17 @@ export default {
           return;
         }
 
-        const currentPosition = currentRelevantLineup.Positions.find(
+        let currentPosition = currentRelevantLineup.Positions.find(
           (pos) => pos.MemberId == currentlyPositionedMembers[0].id
         );
+
+        if (this.positionUpdates[currentlyPositionedMembers[0].id]) {
+          currentPosition = {
+            ...currentPosition,
+            x: this.positionUpdates[currentlyPositionedMembers[0].id].x,
+            y: this.positionUpdates[currentlyPositionedMembers[0].id].y,
+          };
+        }
 
         const previousPosition = this.findPreviousPosition(
           currentlyPositionedMembers[0].id
