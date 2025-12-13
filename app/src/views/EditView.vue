@@ -234,7 +234,7 @@
           @openCreateHitModal="openCreateHitModal"
         />
         <b-card
-          sub-title="Do you want to use the proposed lineup?"
+          :sub-title="$t('editView.acceptProposal')"
           border-variant="light"
           align="right"
           class="mt-2"
@@ -243,18 +243,14 @@
           <b-button
             variant="light"
             v-b-tooltip.hover
-            title="No"
+            :title="$t('general.reject')"
             @click="rejectProposedLineup"
             class="mr-2"
           >
             <b-icon-x />
           </b-button>
-          <b-button
-            variant="outline-success"
-            v-b-tooltip.hover
-            title="Yes"
-            @click="acceptProposedLineup"
-            ><b-icon-check class="mr-2" />Accept</b-button
+          <b-button variant="outline-success" @click="acceptProposedLineup"
+            ><b-icon-check class="mr-2" />{{ $t("general.accept") }}</b-button
           >
         </b-card>
       </b-col>
@@ -440,7 +436,8 @@ import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import MessagingService from "@/services/MessagingService";
 import { debug, error } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
-import { roundToDecimals } from "@/utils/numbers";
+import { roundToDecimals, clamp } from "@/utils/numbers";
+import all from "gsap/all";
 
 /**
  * @vue-data {string|null} choreoId=null - The ID of the choreo being edited.
@@ -610,8 +607,8 @@ export default {
                 if (e.status === 409) {
                   if (!isRetry) {
                     MessagingService.showWarning(
-                      "If you go too fast, position updates might be saved out of order. Please go slower.",
-                      "Slow down please :("
+                      this.$t("editView.too-fast-message"),
+                      this.$t("editView.too-fast-callout")
                     );
                     this.onPositionChange(MemberId, x, y, true);
                   }
@@ -824,6 +821,7 @@ export default {
     onUpdateLineups(lineups) {
       this.choreo.Lineups = lineups;
       this.showSuccessMessage(this.$tc("lineup", 1));
+      this.updateProposedPositions();
     },
     onUpdateCount(count) {
       if (this.moveWithCountEdit) this.setCounter(count);
@@ -961,83 +959,291 @@ export default {
       if (currentlyPositionedMembers.length == 0) {
         this.proposedPositions = [];
         return;
-      }
-      if (currentlyPositionedMembers.length == 1) {
-        const currentRelevantLineup = this.lineupsForCurrentCount.find(
-          (lineup) =>
-            lineup.Positions.some(
-              (pos) => pos.MemberId == currentlyPositionedMembers[0].id
-            )
+        // } else if (currentlyPositionedMembers.length == 1) {
+        //   const currentRelevantLineup = this.lineupsForCurrentCount.find(
+        //     (lineup) =>
+        //       lineup.Positions.some(
+        //         (pos) => pos.MemberId == currentlyPositionedMembers[0].id
+        //       )
+        //   );
+        //   if (!currentRelevantLineup) {
+        //     this.proposedPositions = [];
+        //     return;
+        //   }
+
+        //   let currentPosition = currentRelevantLineup.Positions.find(
+        //     (pos) => pos.MemberId == currentlyPositionedMembers[0].id
+        //   );
+
+        //   if (this.positionUpdates[currentlyPositionedMembers[0].id]) {
+        //     currentPosition = {
+        //       ...currentPosition,
+        //       x: this.positionUpdates[currentlyPositionedMembers[0].id].x,
+        //       y: this.positionUpdates[currentlyPositionedMembers[0].id].y,
+        //     };
+        //   }
+
+        //   const previousPosition = this.findPreviousPosition(
+        //     currentlyPositionedMembers[0].id
+        //   );
+        //   if (!previousPosition) {
+        //     this.proposedPositions = [];
+        //     return;
+        //   }
+        //   const movementX = currentPosition.x - previousPosition.x;
+        //   const movementY = currentPosition.y - previousPosition.y;
+
+        //   if (Math.abs(movementX) < 1 && Math.abs(movementY) < 1) {
+        //     this.proposedPositions = [];
+        //     return;
+        //   }
+
+        //   const proposedPositions = this.teamMembers
+        //     .filter((member) => {
+        //       return (
+        //         !currentlyPositionedMembers.some((m) => m.id == member.id) &&
+        //         Boolean(this.findPreviousPosition(member.id))
+        //       );
+        //     })
+        //     .map((member) => {
+        //       const previousPosition = this.findPreviousPosition(member.id);
+        //       if (!previousPosition) return null;
+
+        //       return {
+        //         MemberId: member.id,
+        //         x: Math.min(
+        //           Math.max(roundToDecimals(previousPosition.x + movementX, 1), 0),
+        //           100
+        //         ),
+        //         y: Math.min(
+        //           Math.max(roundToDecimals(previousPosition.y + movementY, 1), 0),
+        //           100
+        //         ),
+        //         Member: member,
+        //       };
+        //     });
+        //   this.proposedPositions = proposedPositions;
+        //   return;
+      } else if (currentlyPositionedMembers.length > 0) {
+        const movements = this.calculateMovementsForCurrentlyPositionedMembers(
+          currentlyPositionedMembers
         );
-        if (!currentRelevantLineup) {
-          this.proposedPositions = [];
-          return;
-        }
 
-        let currentPosition = currentRelevantLineup.Positions.find(
-          (pos) => pos.MemberId == currentlyPositionedMembers[0].id
-        );
+        // if all movements are the same, propose new positions based on that movement
+        const allMovementsEqual = movements.every((movement) => {
+          return (
+            movement &&
+            Math.abs(movement.movementX - movements[0].movementX) < 1 &&
+            Math.abs(movement.movementY - movements[0].movementY) < 1
+          );
+        });
 
-        if (this.positionUpdates[currentlyPositionedMembers[0].id]) {
-          currentPosition = {
-            ...currentPosition,
-            x: this.positionUpdates[currentlyPositionedMembers[0].id].x,
-            y: this.positionUpdates[currentlyPositionedMembers[0].id].y,
-          };
-        }
-
-        const previousPosition = this.findPreviousPosition(
-          currentlyPositionedMembers[0].id
-        );
-        if (!previousPosition) {
-          this.proposedPositions = [];
-          return;
-        }
-        const movementX = currentPosition.x - previousPosition.x;
-        const movementY = currentPosition.y - previousPosition.y;
-
-        if (Math.abs(movementX) < 1 && Math.abs(movementY) < 1) {
-          this.proposedPositions = [];
-          return;
-        }
-
-        const proposedPositions = this.teamMembers
-          .filter((member) => {
-            return (
-              !currentlyPositionedMembers.some((m) => m.id == member.id) &&
-              Boolean(this.findPreviousPosition(member.id))
+        if (allMovementsEqual) {
+          this.proposedPositions =
+            this.calculateProposedPositionsBasedOnMovement(
+              currentlyPositionedMembers,
+              movements
             );
-          })
-          .map((member) => {
-            const previousPosition = this.findPreviousPosition(member.id);
-            if (!previousPosition) return null;
+          return;
+        } else {
+          if (currentlyPositionedMembers.length > 1) {
+            const proposedPositions =
+              this.calculateProposedPositionsBasedOnLine(
+                currentlyPositionedMembers
+              );
+            if (proposedPositions) {
+              this.proposedPositions = proposedPositions;
+              return;
+            }
+          }
+        }
 
-            return {
-              MemberId: member.id,
-              x: Math.min(
-                Math.max(roundToDecimals(previousPosition.x + movementX, 1), 0),
-                100
-              ),
-              y: Math.min(
-                Math.max(roundToDecimals(previousPosition.y + movementY, 1), 0),
-                100
-              ),
-              Member: member,
-            };
-          });
-        this.proposedPositions = proposedPositions;
+        this.proposedPositions = [];
         return;
       }
-      this.proposedPositions = [];
-      return;
     },
     acceptProposedLineup() {
       console.log("🚀 ~ methods.acceptProposedLineup:");
-      // TODO: save the positions of proposedPositions in the current lineup
+      this.proposedPositions.forEach((proposedPosition) => {
+        this.onPositionChange(
+          proposedPosition.MemberId,
+          proposedPosition.x,
+          proposedPosition.y
+        );
+      });
+      this.updateProposedPositions();
     },
     rejectProposedLineup() {
       this.proposedPositions = [];
       // TODO: store the rejected situation for proposed positions so it doesn't show up again
+    },
+    calculateMovementsForCurrentlyPositionedMembers(
+      currentlyPositionedMembers
+    ) {
+      const movements = currentlyPositionedMembers.map((member) => {
+        const currentRelevantLineup = this.lineupsForCurrentCount.find(
+          (lineup) => lineup.Positions.some((pos) => pos.MemberId == member.id)
+        );
+        if (!currentRelevantLineup) return null;
+
+        let currentPosition = currentRelevantLineup.Positions.find(
+          (pos) => pos.MemberId == member.id
+        );
+
+        if (this.positionUpdates[member.id]) {
+          currentPosition = {
+            ...currentPosition,
+            x: this.positionUpdates[member.id].x,
+            y: this.positionUpdates[member.id].y,
+          };
+        }
+
+        const previousPosition = this.findPreviousPosition(member.id);
+        if (!previousPosition) return null;
+
+        return {
+          MemberId: member.id,
+          movementX: currentPosition.x - previousPosition.x,
+          movementY: currentPosition.y - previousPosition.y,
+        };
+      });
+      return movements;
+    },
+    calculateProposedPositionsBasedOnMovement(
+      currentlyPositionedMembers,
+      movements
+    ) {
+      const proposedPositions = this.teamMembers
+        .filter((member) => {
+          return (
+            !currentlyPositionedMembers.some((m) => m.id == member.id) &&
+            Boolean(this.findPreviousPosition(member.id))
+          );
+        })
+        .map((member) => {
+          const previousPosition = this.findPreviousPosition(member.id);
+          if (!previousPosition) return null;
+
+          return {
+            MemberId: member.id,
+            x: clamp(previousPosition.x + movements[0].movementX, 0, 100, 1),
+            y: clamp(previousPosition.y + movements[0].movementY, 0, 100, 1),
+            Member: member,
+          };
+        });
+      return proposedPositions;
+    },
+    calculateProposedPositionsBasedOnLine(currentlyPositionedMembers) {
+      const currentPosition1 = this.currentPositions.find(
+        (p) => p.MemberId == currentlyPositionedMembers[0].id
+      );
+
+      if (this.positionUpdates[currentPosition1.MemberId]) {
+        currentPosition1.x = this.positionUpdates[currentPosition1.MemberId].x;
+        currentPosition1.y = this.positionUpdates[currentPosition1.MemberId].y;
+      }
+
+      const currentPosition2 = this.currentPositions.find((p) => {
+        return p.MemberId == currentlyPositionedMembers[1].id;
+      });
+
+      if (this.positionUpdates[currentPosition2.MemberId]) {
+        currentPosition2.x = this.positionUpdates[currentPosition2.MemberId].x;
+        currentPosition2.y = this.positionUpdates[currentPosition2.MemberId].y;
+      }
+
+      const xDiff = roundToDecimals(currentPosition1.x - currentPosition2.x, 2);
+      const yDiff = roundToDecimals(currentPosition1.y - currentPosition2.y, 2);
+
+      const allCurrentPositionInLine = currentlyPositionedMembers.every(
+        (member) => {
+          const currentPosition = this.currentPositions.find(
+            (p) => p.MemberId == member.id
+          );
+
+          if (this.positionUpdates[currentPosition.MemberId]) {
+            currentPosition.x =
+              this.positionUpdates[currentPosition.MemberId].x;
+            currentPosition.y =
+              this.positionUpdates[currentPosition.MemberId].y;
+          }
+
+          if (
+            member.id == currentPosition1.MemberId ||
+            member.id == currentPosition2.MemberId
+          )
+            return true;
+
+          const currentDiffX = roundToDecimals(
+            Math.abs(currentPosition.x - currentPosition2.x),
+            2
+          );
+          const xIsMultipleOfDiff =
+            Math.abs((currentDiffX / xDiff) % 1) < 0.15 ||
+            (xDiff == 0 && currentDiffX == 0);
+
+          const currentDiffY = roundToDecimals(
+            Math.abs(currentPosition.y - currentPosition2.y),
+            2
+          );
+          const yIsMultipleOfDiff =
+            Math.abs((currentDiffY / yDiff) % 1) < 0.15 ||
+            (yDiff == 0 && currentDiffY == 0);
+
+          return xIsMultipleOfDiff && yIsMultipleOfDiff;
+        }
+      );
+      if (!allCurrentPositionInLine) return null;
+
+      const membersToPosition = this.teamMembers.filter((member) => {
+        return (
+          !currentlyPositionedMembers.some((m) => m.id == member.id) &&
+          Boolean(this.findPreviousPosition(member.id))
+        );
+      });
+
+      const additor = currentlyPositionedMembers.filter((m) => {
+        let isBetweenPositions = false;
+        const currentMember = this.currentPositions.find(
+          (p) => p.MemberId == m.id
+        );
+        if (yDiff > 0)
+          isBetweenPositions = currentMember.y >= currentPosition2.y;
+        else if (yDiff < 0)
+          isBetweenPositions = currentMember.y <= currentPosition1.y;
+
+        if (isBetweenPositions) return true;
+
+        if (xDiff >= 0)
+          isBetweenPositions = currentMember.x > currentPosition2.x;
+        else if (xDiff <= 0)
+          isBetweenPositions = currentMember.x < currentPosition1.x;
+        return isBetweenPositions;
+      }).length;
+
+      const proposedPositions = membersToPosition.map((member, i) => {
+        const factor = i + 1 + additor;
+
+        return {
+          Member: member,
+          MemberId: member.id,
+          x: Math.min(
+            Math.max(
+              roundToDecimals(currentPosition1.x + factor * xDiff, 1),
+              0
+            ),
+            100
+          ),
+          y: Math.min(
+            Math.max(
+              roundToDecimals(currentPosition1.y + factor * yDiff, 1),
+              0
+            ),
+            100
+          ),
+        };
+      });
+      return proposedPositions;
     },
   },
   computed: {
