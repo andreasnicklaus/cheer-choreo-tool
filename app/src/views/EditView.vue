@@ -437,7 +437,6 @@ import MessagingService from "@/services/MessagingService";
 import { debug, error } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
 import { roundToDecimals, clamp } from "@/utils/numbers";
-import all from "gsap/all";
 
 /**
  * @vue-data {string|null} choreoId=null - The ID of the choreo being edited.
@@ -897,6 +896,7 @@ export default {
         this.choreo.Participants = this.choreo.Participants.filter(
           (p) => p.id != MemberId
         );
+        this.updateProposedPositions();
       });
     },
     addParticipant(MemberId) {
@@ -909,6 +909,7 @@ export default {
           ChoreoParticipation: { color },
         };
         this.choreo.Participants = [...this.choreo.Participants, memberToAdd];
+        this.updateProposedPositions();
       });
     },
     onSubstitution(choreo) {
@@ -957,73 +958,16 @@ export default {
       });
 
       if (currentlyPositionedMembers.length == 0) {
-        this.proposedPositions = [];
+        try {
+          const proposedPositions = LineupService.proposeLineup(
+            this.teamMembers
+          );
+          this.proposedPositions = proposedPositions;
+        } catch (e) {
+          error(e);
+          this.proposedPositions = [];
+        }
         return;
-        // } else if (currentlyPositionedMembers.length == 1) {
-        //   const currentRelevantLineup = this.lineupsForCurrentCount.find(
-        //     (lineup) =>
-        //       lineup.Positions.some(
-        //         (pos) => pos.MemberId == currentlyPositionedMembers[0].id
-        //       )
-        //   );
-        //   if (!currentRelevantLineup) {
-        //     this.proposedPositions = [];
-        //     return;
-        //   }
-
-        //   let currentPosition = currentRelevantLineup.Positions.find(
-        //     (pos) => pos.MemberId == currentlyPositionedMembers[0].id
-        //   );
-
-        //   if (this.positionUpdates[currentlyPositionedMembers[0].id]) {
-        //     currentPosition = {
-        //       ...currentPosition,
-        //       x: this.positionUpdates[currentlyPositionedMembers[0].id].x,
-        //       y: this.positionUpdates[currentlyPositionedMembers[0].id].y,
-        //     };
-        //   }
-
-        //   const previousPosition = this.findPreviousPosition(
-        //     currentlyPositionedMembers[0].id
-        //   );
-        //   if (!previousPosition) {
-        //     this.proposedPositions = [];
-        //     return;
-        //   }
-        //   const movementX = currentPosition.x - previousPosition.x;
-        //   const movementY = currentPosition.y - previousPosition.y;
-
-        //   if (Math.abs(movementX) < 1 && Math.abs(movementY) < 1) {
-        //     this.proposedPositions = [];
-        //     return;
-        //   }
-
-        //   const proposedPositions = this.teamMembers
-        //     .filter((member) => {
-        //       return (
-        //         !currentlyPositionedMembers.some((m) => m.id == member.id) &&
-        //         Boolean(this.findPreviousPosition(member.id))
-        //       );
-        //     })
-        //     .map((member) => {
-        //       const previousPosition = this.findPreviousPosition(member.id);
-        //       if (!previousPosition) return null;
-
-        //       return {
-        //         MemberId: member.id,
-        //         x: Math.min(
-        //           Math.max(roundToDecimals(previousPosition.x + movementX, 1), 0),
-        //           100
-        //         ),
-        //         y: Math.min(
-        //           Math.max(roundToDecimals(previousPosition.y + movementY, 1), 0),
-        //           100
-        //         ),
-        //         Member: member,
-        //       };
-        //     });
-        //   this.proposedPositions = proposedPositions;
-        //   return;
       } else if (currentlyPositionedMembers.length > 0) {
         const movements = this.calculateMovementsForCurrentlyPositionedMembers(
           currentlyPositionedMembers
@@ -1063,7 +1007,6 @@ export default {
       }
     },
     acceptProposedLineup() {
-      console.log("🚀 ~ methods.acceptProposedLineup:");
       this.proposedPositions.forEach((proposedPosition) => {
         this.onPositionChange(
           proposedPosition.MemberId,

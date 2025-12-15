@@ -21,12 +21,12 @@
         :r="dotRadius"
         :stroke="
           teamMembers.find((tm) => tm.id == position.MemberId)
-            .ChoreoParticipation.color
+            ?.ChoreoParticipation.color
         "
         stroke-width="2"
         :fill="
           teamMembers.find((tm) => tm.id == position.MemberId)
-            .ChoreoParticipation.color + '55'
+            ?.ChoreoParticipation.color + '55'
         "
         :style="{
           opacity: 0.2,
