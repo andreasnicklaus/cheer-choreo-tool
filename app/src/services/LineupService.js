@@ -50,7 +50,27 @@ class LineupService {
     });
   }
 
-  proposeLineup(teamMembers) {
+  filterRejectedProposals(proposals, rejectedPositionProposals) {
+    function isProposalNotRejected(proposal) {
+      const alreadyRejected = rejectedPositionProposals.some(
+        (rejectedProposal) => {
+          return proposal.every((p) =>
+            rejectedProposal.some(
+              (rp) => Math.abs(rp.x - p.x) < 1 && Math.abs(rp.y - p.y) < 1
+            )
+          );
+        }
+      );
+
+      return !alreadyRejected;
+    }
+
+    if (Array.isArray(proposals[0]))
+      return proposals.filter((proposal) => isProposalNotRejected(proposal));
+    else return isProposalNotRejected(proposals) ? proposals : [];
+  }
+
+  proposeLineup(teamMembers, rejectedPositionProposals) {
     function createLinePositions(members, lineNumber = 0) {
       const spacing = 100 / 7;
       const ySpacing = spacing / 2;
@@ -107,7 +127,10 @@ class LineupService {
     if (teamMembers.length === 0 || teamMembers.length === 1) {
       return [];
     } else if (teamMembers.length > 0 && teamMembers.length <= 7) {
-      return createLinePositions(teamMembers);
+      return this.filterRejectedProposals(
+        createLinePositions(teamMembers),
+        rejectedPositionProposals
+      );
     } else if (teamMembers.length > 7 && teamMembers.length <= 25) {
       let lines = getLinesForNumberOfMembers(teamMembers.length);
       if (
@@ -128,7 +151,10 @@ class LineupService {
           lineNumber
         );
       });
-      return linePositions.flat();
+      return this.filterRejectedProposals(
+        linePositions.flat(),
+        rejectedPositionProposals
+      );
     }
     return [];
   }

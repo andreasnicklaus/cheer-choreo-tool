@@ -536,6 +536,7 @@ export default {
       countNextButtonHasNeverBeenUsed: true,
       countEndButtonHasNeverBeenUsed: true,
       proposedPositions: [],
+      rejectedPositionProposals: [],
     };
   },
   mounted() {
@@ -998,7 +999,8 @@ export default {
         if (this.count > lastLineupEnd) {
           try {
             const proposedPositions = LineupService.proposeLineup(
-              this.teamMembers
+              this.teamMembers,
+              this.rejectedPositionProposals
             );
             this.proposedPositions = proposedPositions;
           } catch (e) {
@@ -1022,18 +1024,22 @@ export default {
         });
 
         if (allMovementsEqual) {
-          this.proposedPositions =
+          this.proposedPositions = LineupService.filterRejectedProposals(
             this.calculateProposedPositionsBasedOnMovement(
               currentlyPositionedMembers,
               movements
-            );
+            ),
+            this.rejectedPositionProposals
+          );
           return;
         } else {
           if (currentlyPositionedMembers.length > 1) {
-            const proposedPositions =
+            const proposedPositions = LineupService.filterRejectedProposals(
               this.calculateProposedPositionsBasedOnLine(
                 currentlyPositionedMembers
-              );
+              ),
+              this.rejectedPositionProposals
+            );
             if (proposedPositions) {
               this.proposedPositions = proposedPositions;
               return;
@@ -1056,8 +1062,8 @@ export default {
       this.updateProposedPositions();
     },
     rejectProposedLineup() {
+      this.rejectedPositionProposals.push(this.proposedPositions);
       this.proposedPositions = [];
-      // TODO: store the rejected situation for proposed positions so it doesn't show up again
     },
     calculateMovementsForCurrentlyPositionedMembers(
       currentlyPositionedMembers
