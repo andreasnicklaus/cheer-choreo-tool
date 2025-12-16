@@ -377,10 +377,10 @@ export default class ChoreoPage extends TestPage {
     });
     await this.iFillInput(nameInput, newName);
 
-    const eightInput = this.page.locator("input").nth(3);
+    const eightInput = this.page.getByTestId("editHitAchterInput");
     await this.iFillInput(eightInput, newEight.toString());
 
-    const countInput = this.page.locator("input").nth(4);
+    const countInput = this.page.getByTestId("editHitCountInput");
     await this.iFillInput(countInput, newCount.toString());
 
     const saveButton = this.page.getByRole("button", {
@@ -444,16 +444,18 @@ export default class ChoreoPage extends TestPage {
     const newEndAchter = 2;
     const newEndCount = 1;
 
-    const startAchterInput = this.page.locator("input").nth(2);
+    const startAchterInput = this.page.getByTestId(
+      "editLineupStartAchterInput"
+    );
     await this.iFillInput(startAchterInput, newStartAchter.toString());
 
-    const startCountInput = this.page.locator("input").nth(3);
+    const startCountInput = this.page.getByTestId("editLineupStartCountInput");
     await this.iFillInput(startCountInput, newStartCount.toString());
 
-    const endAchterInput = this.page.locator("input").nth(4);
+    const endAchterInput = this.page.getByTestId("editLineupEndAchterInput");
     await this.iFillInput(endAchterInput, newEndAchter.toString());
 
-    const endCountInput = this.page.locator("input").nth(5);
+    const endCountInput = this.page.getByTestId("editLineupEndCountInput");
     await this.iFillInput(endCountInput, newEndCount.toString());
 
     const saveButton = this.page.getByRole("button", {
