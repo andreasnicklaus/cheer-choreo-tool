@@ -123,7 +123,8 @@
     "bearbeitung": "Editing",
     "acceptProposal": "Do you want to use the proposed lineup?",
     "too-fast-message": "If you go too fast, position updates might be saved out of order. Please go slower.",
-    "too-fast-callout": "Slow down please :("
+    "too-fast-callout": "Slow down please :(",
+    "reject-and-disable": "Reject and disable"
   },
   "erfolgreich": "Successful",
   "erforderlich": "Required",

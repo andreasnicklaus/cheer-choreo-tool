@@ -123,7 +123,8 @@
     "bearbeitung": "Bearbeitung",
     "too-fast-callout": " Mach langsamer :(",
     "too-fast-message": "Wenn du zu schnell bist, werden Updates möglicherweise nicht in der richtigen Reihenfolge gespeichert.",
-    "acceptProposal": "Möchten Sie die vorgeschlagene Aufstellung verwenden?"
+    "acceptProposal": "Möchten Sie die vorgeschlagene Aufstellung verwenden?",
+    "reject-and-disable": "Ablehnen und ausschalten"
   },
   "erfolgreich": "Erfolgreich",
   "erforderlich": "Erforderlich",

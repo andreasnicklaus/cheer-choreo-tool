@@ -185,6 +185,11 @@
                   }}
                 </b-checkbox>
               </b-dropdown-text>
+              <b-dropdown-text style="width: 250px">
+                <b-checkbox switch v-model="proposalEnabled">
+                  Propose positions
+                </b-checkbox>
+              </b-dropdown-text>
               <b-dropdown-text>
                 <b-checkbox switch v-model="moveWithCountEdit">
                   {{ $t("editView.beim-bearbeiten-den-count-mitwechseln") }}
@@ -240,18 +245,32 @@
           class="mt-2"
           v-if="proposedPositions && proposedPositions.length > 0"
         >
-          <b-button
+          <b-dropdown
+            split
             variant="light"
             v-b-tooltip.hover
             :title="$t('general.reject')"
             @click="rejectProposedLineup"
             class="mr-2"
+            right
           >
-            <b-icon-x />
+            <template #button-content>
+              <b-icon-x />
+            </template>
+            <b-dropdown-item
+              @click="
+                () => {
+                  proposalEnabled = false;
+                  rejectProposedLineup();
+                }
+              "
+              >{{ $t("editView.reject-and-disable") }}</b-dropdown-item
+            >
+          </b-dropdown>
+          <b-button variant="outline-success" @click="acceptProposedLineup">
+            <b-icon-check class="mr-2" />
+            {{ $t("general.accept") }}
           </b-button>
-          <b-button variant="outline-success" @click="acceptProposedLineup"
-            ><b-icon-check class="mr-2" />{{ $t("general.accept") }}</b-button
-          >
         </b-card>
       </b-col>
     </b-row>
@@ -443,6 +462,7 @@ import { roundToDecimals, clamp } from "@/utils/numbers";
  * @vue-data {number} matHeight=500 - The height of the mat in pixels.
  * @vue-data {number} matWidth=500 - The width of the mat in pixels.
  * @vue-data {boolean} snapping=true - Whether positions should snap to a grid.
+ * @vue-data {boolean} proposalEnabled=true - Whether positions new be proposed.
  * @vue-data {boolean} moveWithCountEdit=true - Whether the mat should move with count edits.
  * @vue-data {number} count=0 - The current count being edited.
  * @vue-data {Array} team_table_fields - Fields for the team table.
@@ -489,6 +509,7 @@ export default {
       matHeight: 500,
       matWidth: 500,
       snapping: true,
+      proposalEnabled: true,
       moveWithCountEdit: true,
       count: 0,
       team_table_fields: [
@@ -540,6 +561,11 @@ export default {
       },
     },
     count: {
+      handler() {
+        this.updateProposedPositions();
+      },
+    },
+    proposalEnabled: {
       handler() {
         this.updateProposedPositions();
       },
@@ -756,9 +782,12 @@ export default {
       }
     },
     setCounter(count) {
-      this.resetPositionUpdates();
-
+      // the order does matter!
+      // 1. store the old positions for animation
+      // 2. persist the inflight position updates in the local choreo copy and reset the object
+      // 3. change to the next count
       const oldPositions = this.currentPositions;
+      this.resetPositionUpdates();
       this.count = count;
 
       if (this.$refs.Mat)
@@ -944,6 +973,11 @@ export default {
       return previousPosition;
     },
     updateProposedPositions() {
+      if (!this.proposalEnabled) {
+        this.proposedPositions = [];
+        return;
+      }
+
       const currentlyPositionedMembers = this.lineupsForCurrentCount
         .map((lineup) => lineup.Positions.map((pos) => pos.Member))
         .flat();
@@ -958,14 +992,19 @@ export default {
       });
 
       if (currentlyPositionedMembers.length == 0) {
-        try {
-          const proposedPositions = LineupService.proposeLineup(
-            this.teamMembers
-          );
-          this.proposedPositions = proposedPositions;
-        } catch (e) {
-          error(e);
-          this.proposedPositions = [];
+        const lastLineupEnd = Math.max(
+          ...this.choreo.Lineups.map((l) => l.endCount)
+        );
+        if (this.count > lastLineupEnd) {
+          try {
+            const proposedPositions = LineupService.proposeLineup(
+              this.teamMembers
+            );
+            this.proposedPositions = proposedPositions;
+          } catch (e) {
+            error(e);
+            this.proposedPositions = [];
+          }
         }
         return;
       } else if (currentlyPositionedMembers.length > 0) {
