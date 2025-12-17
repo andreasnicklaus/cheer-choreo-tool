@@ -1239,8 +1239,7 @@ export default {
       return ChoreoService.getPositionsFromChoreoAndCount(
         this.choreo,
         this.count,
-        this.teamMembers,
-        this.positionUpdates
+        this.teamMembers
       );
     },
     hitsForCurrentCount() {
