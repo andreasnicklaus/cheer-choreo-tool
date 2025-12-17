@@ -1215,20 +1215,8 @@ export default {
         return {
           Member: member,
           MemberId: member.id,
-          x: Math.min(
-            Math.max(
-              roundToDecimals(currentPosition1.x + factor * xDiff, 1),
-              0
-            ),
-            100
-          ),
-          y: Math.min(
-            Math.max(
-              roundToDecimals(currentPosition1.y + factor * yDiff, 1),
-              0
-            ),
-            100
-          ),
+          x: clamp(currentPosition1.x + factor * xDiff, 0, 100, 1),
+          y: clamp(currentPosition1.y + factor * yDiff, 0, 100, 1),
         };
       });
       return proposedPositions;
