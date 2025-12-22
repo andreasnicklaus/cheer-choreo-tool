@@ -108,6 +108,12 @@ See [LICENSE](LICENSE) for the license of this project.
 
 ## :sparkles: Version history
 
+### 0.12.0 - 2025-12-22
+
+- Added automatic proposals for lineups and positions
+- Improved position update performance
+- Fixed various bugs and improved stability
+
 ### 0.11.2 - 2025-12-02
 
 - Added ability to control the video length by time rather than BPS
