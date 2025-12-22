@@ -120,7 +120,11 @@
     "change-mat-layout": "Change mat layout",
     "exportieren": "Export",
     "choreo-einstellungen": "Choreo settings",
-    "bearbeitung": "Editing"
+    "bearbeitung": "Editing",
+    "acceptProposal": "Do you want to use the proposed lineup?",
+    "too-fast-message": "If you go too fast, position updates might be saved out of order. Please go slower.",
+    "too-fast-callout": "Slow down please :(",
+    "reject-and-disable": "Reject and disable"
   },
   "erfolgreich": "Successful",
   "erforderlich": "Required",
@@ -200,7 +204,9 @@
   "general": {
     "ChoreoPlaner": "Choreo Planner",
     "help": "Help",
-    "offline": "Offline"
+    "offline": "Offline",
+    "reject": "Reject",
+    "accept": "Accept"
   },
   "HelpView": {
     "fuer-deine-suche-gibt-es-keine-ergebnisse": "There are no results for your search \"{searchTerm}\"",

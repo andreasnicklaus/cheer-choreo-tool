@@ -15,6 +15,29 @@
       @mouseleave="mouseLeave"
     >
       <circle
+        v-for="position in proposedPositions"
+        :id="'c' + position.MemberId + '-proposed'"
+        :key="'c' + position.MemberId + '-proposed'"
+        :r="dotRadius"
+        :stroke="
+          teamMembers.find((tm) => tm.id == position.MemberId)
+            ?.ChoreoParticipation.color
+        "
+        stroke-width="2"
+        :fill="
+          teamMembers.find((tm) => tm.id == position.MemberId)
+            ?.ChoreoParticipation.color + '55'
+        "
+        :style="{
+          opacity: 0.2,
+          cx: (position.x * width) / 100 + 'px',
+          cy: (position.y * _height) / 100 + 'px',
+        }"
+        @click="
+          acceptProposedPosition(position.MemberId, position.x, position.y)
+        "
+      />
+      <circle
         v-for="position in positions || currentPositions"
         :id="'c' + position.MemberId"
         :key="'c' + position.MemberId"
@@ -41,7 +64,28 @@
           cx: (position.x * width) / 100 + 'px',
           cy: (position.y * _height) / 100 + 'px',
         }"
-      ></circle>
+      />
+      <text
+        v-for="position in proposedPositions"
+        :id="'t' + position.MemberId + '-proposed'"
+        :key="'t' + position.MemberId + '-proposed'"
+        text-anchor="middle"
+        alignment-baseline="central"
+        :font-size="dotRadius / 20 + 'em'"
+        :transform="`matrix(1,0,0,1,${(position.x * width) / 100},${
+          (position.y * _height) / 100
+        })`"
+        :style="{
+          'pointer-events': 'none',
+          opacity: 0.2,
+        }"
+      >
+        {{
+          position.Member.abbreviation ||
+          position.Member.nickname ||
+          position.Member.name
+        }}
+      </text>
       <text
         v-for="position in positions || currentPositions"
         :id="'t' + position.MemberId"
@@ -100,13 +144,14 @@ import gsap from "gsap";
  * @vue-prop {Number} [transitionMs=1000] - The transition duration for movements in milliseconds.
  * @vue-prop {Boolean} [interactive=true] - Whether the mat is interactive (allows dragging).
  * @vue-prop {String} [matType="square"] - The type/layout of the mat (e.g., 'square', 'cheer').
+ * @vue-prop {Array} [proposedPositions] - the proposed positions of unpositioned members.
  *
  * @vue-computed {Number} _height - The computed height of the mat based on type and width
  *
  * @vue-event {Array} positionChange - Emitted when a member's position is changed. [selectedMemberId, xNew, yNew]
  *
  * @example <Mat :currentPositions="positions" :teamMembers="members" @positionChange="handler" />
- * @example <Mat :currentPositions="positions" :teamMembers="members" :width="800" :height="400" :dotRadius="30" :snapping="false" :transitionMs="500" :interactive="false" matType="cheer" @positionChange="handler" />
+ * @example <Mat :currentPositions="positions" :teamMembers="members" :width="800" :height="400" :dotRadius="30" :snapping="false" :transitionMs="500" :interactive="false" matType="cheer" :proposedPositions="proposedPositions" @positionChange="handler" />
  */
 export default {
   name: "MatComponent",
@@ -151,6 +196,10 @@ export default {
     matType: {
       type: String,
       default: "square",
+    },
+    proposedPositions: {
+      type: Array,
+      default: () => [],
     },
   },
   mounted() {
@@ -260,6 +309,9 @@ export default {
             );
           }
         });
+    },
+    acceptProposedPosition(memberId, x, y) {
+      this.$emit("positionChange", memberId, x, y);
     },
   },
   watch: {

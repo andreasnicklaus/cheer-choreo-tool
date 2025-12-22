@@ -120,7 +120,11 @@
     "change-mat-layout": "Mattenlayout ändern",
     "exportieren": "Exportieren",
     "choreo-einstellungen": "Choreo Einstellungen",
-    "bearbeitung": "Bearbeitung"
+    "bearbeitung": "Bearbeitung",
+    "too-fast-callout": " Mach langsamer :(",
+    "too-fast-message": "Wenn du zu schnell bist, werden Updates möglicherweise nicht in der richtigen Reihenfolge gespeichert.",
+    "acceptProposal": "Möchten Sie die vorgeschlagene Aufstellung verwenden?",
+    "reject-and-disable": "Ablehnen und ausschalten"
   },
   "erfolgreich": "Erfolgreich",
   "erforderlich": "Erforderlich",
@@ -200,7 +204,9 @@
   "general": {
     "ChoreoPlaner": "Choreo Planer",
     "help": "Hilfe",
-    "offline": "Offline"
+    "offline": "Offline",
+    "accept": "Akzeptieren",
+    "reject": "Ablehnen"
   },
   "HelpView": {
     "fuer-deine-suche-gibt-es-keine-ergebnisse": "Für deine Suche \"{searchTerm}\" gibt es keine Ergebnisse",

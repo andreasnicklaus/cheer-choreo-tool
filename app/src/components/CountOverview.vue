@@ -188,6 +188,7 @@
                       :invalid-feedback="editHitAchterStateFeedback"
                     >
                       <b-form-input
+                        data-testid="editHitAchterInput"
                         type="number"
                         min="1"
                         v-model="editHitAchter"
@@ -202,6 +203,7 @@
                       :invalid-feedback="editHitCountStateFeedback"
                     >
                       <b-form-input
+                        data-testid="editHitCountInput"
                         type="number"
                         min="1"
                         max="8"
@@ -454,6 +456,7 @@
                       :invalid-feedback="editLineupStartAchterStateFeedback"
                     >
                       <b-form-input
+                        data-testid="editLineupStartAchterInput"
                         type="number"
                         min="1"
                         v-model="editLineupStartAchter"
@@ -468,6 +471,7 @@
                       :invalid-feedback="editLineupStartCountStateFeedback"
                     >
                       <b-form-input
+                        data-testid="editLineupStartCountInput"
                         type="number"
                         min="1"
                         max="8"
@@ -493,6 +497,7 @@
                       :invalid-feedback="editLineupEndAchterStateFeedback"
                     >
                       <b-form-input
+                        data-testid="editLineupEndAchterInput"
                         type="number"
                         min="1"
                         v-model="editLineupEndAchter"
@@ -507,6 +512,7 @@
                       :invalid-feedback="editLineupEndCountStateFeedback"
                     >
                       <b-form-input
+                        data-testid="editLineupEndCountInput"
                         type="number"
                         min="1"
                         max="8"
