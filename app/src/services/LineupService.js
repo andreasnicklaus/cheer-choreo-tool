@@ -65,6 +65,7 @@ class LineupService {
       return !alreadyRejected;
     }
 
+    if (!proposals || proposals.length === 0) return [];
     if (Array.isArray(proposals[0]))
       return proposals.filter((proposal) => isProposalNotRejected(proposal));
     else return isProposalNotRejected(proposals) ? proposals : [];
