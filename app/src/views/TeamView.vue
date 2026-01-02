@@ -252,6 +252,22 @@ import DeleteSeasonTeamModal from "@/components/modals/DeleteSeasonTeamModal.vue
 import DeleteTeamModal from "@/components/modals/DeleteTeamModal.vue";
 import ImportMemberModal from "@/components/modals/ImportMemberModal.vue";
 import TeamService from "@/services/TeamService";
+import ERROR_CODES from "@/utils/error_codes";
+import { error } from "@/utils/logging";
+
+/**
+ * @vue-data {string} presentation=table - The current presentation mode, either 'table' or 'list'.
+ * @vue-data {string|null} teamId=null - The ID of the currently selected team.
+ * @vue-data {Array} teams - An array of all teams.
+ * @vue-data {number} seasonTabIndex=0 - The index of the currently selected season tab.
+ * @vue-data {Array} tableFields - The fields to display in the team members table.
+ * @vue-data {number|null} editMemberId=null - The ID of the member currently being edited, or null if no member is being edited.
+ *
+ * @vue-computed {Object|null} currentTeam - The currently selected team based on `teamId`.
+ * @vue-computed {Array} sortedMembersOfCurrentTeam - An array of members of the current team, sorted by name.
+ *
+ * @vue-computed {MetaInfo} metaInfo
+ */
 
 export default {
   name: "TeamView",
@@ -330,10 +346,10 @@ export default {
     requestMemberRemoval(id) {
       this.$refs.deleteMemberModal.open(id);
     },
-    onMemberDeletion(memberId) {
+    onMemberDeletion(MemberId) {
       this.currentTeam.SeasonTeams[this.seasonTabIndex].Members =
         this.currentTeam.SeasonTeams[this.seasonTabIndex].Members.filter(
-          (m) => m.id != memberId
+          (m) => m.id != MemberId
         );
     },
     editMember(id) {
@@ -356,14 +372,24 @@ export default {
               locale: this.$root.$i18n.locale,
             },
           })
-          .catch(() => {});
+          .catch(() => {
+            error(
+              "Redundant navigation to team",
+              ERROR_CODES.REDUNDANT_ROUTING
+            );
+          });
       else
         this.$router
           .push({
             name: "Start",
             params: { locale: this.$root.$i18n.locale },
           })
-          .catch(() => {});
+          .catch(() => {
+            error(
+              "Redundant navigation to start",
+              ERROR_CODES.REDUNDANT_ROUTING
+            );
+          });
     },
     onSeasonTeamCreation() {
       this.load();
@@ -372,7 +398,6 @@ export default {
       this.load();
     },
     onMemberImport(newMembers) {
-      console.table(newMembers);
       this.currentTeam?.SeasonTeams[this.seasonTabIndex]?.Members.push(
         ...newMembers
       );

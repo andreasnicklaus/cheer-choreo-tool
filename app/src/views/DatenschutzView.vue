@@ -53,6 +53,9 @@
 </template>
 
 <script>
+/**
+ * @vue-computed {MetaInfo} metaInfo
+ */
 export default {
   name: "DatenschutzView",
   metaInfo() {

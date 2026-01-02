@@ -185,6 +185,11 @@
                   }}
                 </b-checkbox>
               </b-dropdown-text>
+              <b-dropdown-text style="width: 250px">
+                <b-checkbox switch v-model="proposalEnabled">
+                  Propose positions
+                </b-checkbox>
+              </b-dropdown-text>
               <b-dropdown-text>
                 <b-checkbox switch v-model="moveWithCountEdit">
                   {{ $t("editView.beim-bearbeiten-den-count-mitwechseln") }}
@@ -214,6 +219,7 @@
           :transitionMs="transitionMs"
           :teamMembers="teamMembers"
           :snapping="snapping"
+          :proposedPositions="proposedPositions"
           :matType="choreo?.matType"
           @positionChange="onPositionChange"
         />
@@ -232,6 +238,40 @@
           @updateCount="onUpdateCount"
           @openCreateHitModal="openCreateHitModal"
         />
+        <b-card
+          :sub-title="$t('editView.acceptProposal')"
+          border-variant="light"
+          align="right"
+          class="mt-2"
+          v-if="proposedPositions && proposedPositions.length > 0"
+        >
+          <b-dropdown
+            split
+            variant="light"
+            v-b-tooltip.hover
+            :title="$t('general.reject')"
+            @click="rejectProposedLineup"
+            class="mr-2"
+            right
+          >
+            <template #button-content>
+              <b-icon-x />
+            </template>
+            <b-dropdown-item
+              @click="
+                () => {
+                  proposalEnabled = false;
+                  rejectProposedLineup();
+                }
+              "
+              >{{ $t("editView.reject-and-disable") }}</b-dropdown-item
+            >
+          </b-dropdown>
+          <b-button variant="outline-success" @click="acceptProposedLineup">
+            <b-icon-check class="mr-2" />
+            {{ $t("general.accept") }}
+          </b-button>
+        </b-card>
       </b-col>
     </b-row>
 
@@ -413,7 +453,39 @@ import ParticipantSubstitutionModal from "@/components/modals/ParticipantSubstit
 import MobileChoreoEditModal from "@/components/modals/MobileChoreoEditModal.vue";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import MessagingService from "@/services/MessagingService";
+import { debug, error } from "@/utils/logging";
+import ERROR_CODES from "@/utils/error_codes";
+import { roundToDecimals, clamp } from "@/utils/numbers";
 
+/**
+ * @vue-data {string|null} choreoId=null - The ID of the choreo being edited.
+ * @vue-data {number} matHeight=500 - The height of the mat in pixels.
+ * @vue-data {number} matWidth=500 - The width of the mat in pixels.
+ * @vue-data {boolean} snapping=true - Whether positions should snap to a grid.
+ * @vue-data {boolean} proposalEnabled=true - Whether positions new be proposed.
+ * @vue-data {boolean} moveWithCountEdit=true - Whether the mat should move with count edits.
+ * @vue-data {number} count=0 - The current count being edited.
+ * @vue-data {Array} team_table_fields - Fields for the team table.
+ * @vue-data {Array} participants_table_fields - Fields for the participants table.
+ * @vue-data {Object|null} choreo=null - The current choreo object being edited.
+ * @vue-data {Object|null} lastKeyEvent=null - The last key event captured for keyboard shortcuts.
+ * @vue-data {number} transitionMs=800 - The transition duration for movements in milliseconds.
+ * @vue-data {Object} positionUpdates={} - A map of member IDs to their position update timeouts.
+ * @vue-data {boolean} lineupCreationInProgress=false - Whether a lineup creation is currently in progress.
+ * @vue-data {number|null} playInterval=null - The interval ID for playing the counts automatically.
+ * @vue-data {boolean} countBackButtonHasNeverBeenUsed=true - Whether the back button has been used before.
+ * @vue-data {boolean} countStartButtonHasNeverBeenUsed=true - Whether the start button has been used before.
+ * @vue-data {boolean} countNextButtonHasNeverBeenUsed=true - Whether the next button has been used before.
+ * @vue-data {boolean} countEndButtonHasNeverBeenUsed=true - Whether the end button has been used before.
+ *
+ * @vue-computed {Array} teamMembers - The list of team members participating in the choreo.
+ * @vue-computed {Array} notParticipatingMembers - The list of team members not participating in the choreo.
+ * @vue-computed {Array} currentPositions - The current positions of all members on the mat.
+ * @vue-computed {Array} hitsForCurrentCount - The hits for the current count being edited.
+ * @vue-computed {Array} lineupsForCurrentCount - The lineups for the current count being edited.
+ *
+ * @vue-computed {MetaInfo} metaInfo
+ */
 export default {
   name: "EditView",
   components: {
@@ -437,6 +509,7 @@ export default {
       matHeight: 500,
       matWidth: 500,
       snapping: true,
+      proposalEnabled: true,
       moveWithCountEdit: true,
       count: 0,
       team_table_fields: [
@@ -462,6 +535,8 @@ export default {
       countStartButtonHasNeverBeenUsed: true,
       countNextButtonHasNeverBeenUsed: true,
       countEndButtonHasNeverBeenUsed: true,
+      proposedPositions: [],
+      rejectedPositionProposals: [],
     };
   },
   mounted() {
@@ -481,6 +556,21 @@ export default {
       },
       immediate: true,
     },
+    choreo: {
+      handler() {
+        this.updateProposedPositions();
+      },
+    },
+    count: {
+      handler() {
+        this.updateProposedPositions();
+      },
+    },
+    proposalEnabled: {
+      handler() {
+        this.updateProposedPositions();
+      },
+    },
   },
   methods: {
     loadChoreo() {
@@ -492,50 +582,78 @@ export default {
 
           if (choreo.Lineups.length == 0 && choreo.Hits.length == 0)
             this.$refs.howToModal.open();
+
+          this.updateProposedPositions();
         })
-        .catch(() => {
+        .catch((e) => {
+          error(e, ERROR_CODES.CLUB_QUERY_FAILED);
           this.$router
             .push({
               name: "Start",
               params: { locale: this.$root.$i18n.locale },
             })
-            .catch(() => {});
+            .catch(() => {
+              error(
+                "Redundant navigation to start",
+                ERROR_CODES.REDUNDANT_ROUTING
+              );
+            });
         });
     },
-    onPositionChange(memberId, x, y) {
+    onPositionChange(MemberId, x, y, isRetry = false) {
       const positionToUpdate = this.lineupsForCurrentCount
-        .map((l) => l.Positions.filter((p) => p.MemberId == memberId))
+        .map((l) => l.Positions.filter((p) => p.MemberId == MemberId))
         .flat()[0];
 
       if (positionToUpdate) {
-        const memberTimeout = this.positionUpdates[memberId];
-        if (memberTimeout) clearTimeout(memberTimeout);
+        const memberTimeout = this.positionUpdates[MemberId];
+        if (memberTimeout) clearTimeout(memberTimeout.timeout);
 
-        this.positionUpdates[memberId] = setTimeout(() => {
-          if (positionToUpdate.id)
+        const pos = this.choreo.Lineups.find(
+          (l) => l.id == positionToUpdate.LineupId
+        ).Positions.find((p) => p.id == positionToUpdate.id);
+
+        // Store original position to revert in case of error
+        const originalX = pos.x;
+        const originalY = pos.y;
+
+        this.positionUpdates[MemberId] = {
+          timeout: setTimeout(() => {
+            if (positionToUpdate.id) this.updateProposedPositions();
             PositionService.update(
               positionToUpdate.LineupId,
               positionToUpdate.id,
               x,
               y
-            ).then((position) => {
-              let lineupCopy = this.choreo.Lineups;
-              let positionsCopy = lineupCopy.find(
-                (l) => l.id == positionToUpdate.LineupId
-              ).Positions;
-              positionsCopy = positionsCopy.filter(
-                (p) => p.id != positionToUpdate.id
-              );
-              positionsCopy.push(position);
-              lineupCopy.find(
-                (l) => l.id == positionToUpdate.LineupId
-              ).Positions = positionsCopy;
-              this.choreo.Lineups = lineupCopy;
-              this.positionUpdates[memberId] = null;
+            )
+              .then(() => {
+                this.showSuccessMessage(this.$tc("lineup", 1));
+              })
+              .catch((e) => {
+                if (e.status === 409) {
+                  if (!isRetry) {
+                    MessagingService.showWarning(
+                      this.$t("editView.too-fast-message"),
+                      this.$t("editView.too-fast-callout")
+                    );
+                    this.onPositionChange(MemberId, x, y, true);
+                  }
+                } else {
+                  console.error(e);
+                  MessagingService.showError(e.message);
+                }
 
-              this.showSuccessMessage(this.$tc("lineup", 1));
-            });
-        }, 1000);
+                // Set temporarily to (0,0) to trigger update
+                pos.x = 0;
+                pos.y = 0;
+                // Revert position
+                pos.x = originalX;
+                pos.y = originalY;
+              });
+          }, 1000),
+          x,
+          y,
+        };
       } else {
         let lineupToUpdate;
         if (this.lineupsForCurrentCount.length == 1) {
@@ -561,47 +679,54 @@ export default {
               this.lineupCreationInProgress = false;
 
               this.showSuccessMessage(this.$tc("lineup", 1));
+              this.updateProposedPositions();
             }
           );
         } else {
-          const memberTimeout = this.positionUpdates[memberId];
-          if (memberTimeout) clearTimeout(memberTimeout);
+          const memberTimeout = this.positionUpdates[MemberId];
+          if (memberTimeout) clearTimeout(memberTimeout.timeout);
 
-          this.positionUpdates[memberId] = setTimeout(() => {
-            let lineupCopy = this.choreo.Lineups;
-            let positionsCopy = lineupCopy.find(
-              (l) => l.id == lineupToUpdate.id
-            ).Positions;
-            positionsCopy = positionsCopy.filter((p) => p.MemberId != memberId);
-            positionsCopy.push({
-              LineupId: lineupToUpdate.id,
-              MemberId: memberId,
-              Member: this.teamMembers.find((m) => m.id == memberId),
-              x,
-              y,
-            });
-            lineupCopy.find((l) => l.id == lineupToUpdate.id).Positions =
-              positionsCopy;
-            this.choreo.Lineups = lineupCopy;
+          this.positionUpdates[MemberId] = {
+            timeout: setTimeout(() => {
+              let lineupCopy = this.choreo.Lineups;
+              let positionsCopy = lineupCopy.find(
+                (l) => l.id == lineupToUpdate.id
+              ).Positions;
+              positionsCopy = positionsCopy.filter(
+                (p) => p.MemberId != MemberId
+              );
+              positionsCopy.push({
+                LineupId: lineupToUpdate.id,
+                MemberId: MemberId,
+                Member: this.teamMembers.find((m) => m.id == MemberId),
+                x,
+                y,
+              });
+              lineupCopy.find((l) => l.id == lineupToUpdate.id).Positions =
+                positionsCopy;
+              this.choreo.Lineups = lineupCopy;
 
-            PositionService.create(lineupToUpdate.id, x, y, memberId).then(
-              (position) => {
-                let lineupCopy = this.choreo.Lineups;
-                let positionsCopy = lineupCopy.find(
-                  (l) => l.id == lineupToUpdate.id
-                ).Positions;
-                positionsCopy = positionsCopy.filter(
-                  (p) => p.MemberId != memberId
-                );
-                positionsCopy.push(position);
-                lineupCopy.find((l) => l.id == lineupToUpdate.id).Positions =
-                  positionsCopy;
-                this.choreo.Lineups = lineupCopy;
-                this.positionUpdates[memberId] = null;
-                this.showSuccessMessage(this.$tc("lineup", 1));
-              }
-            );
-          }, 0);
+              PositionService.create(lineupToUpdate.id, x, y, MemberId).then(
+                (position) => {
+                  let lineupCopy = this.choreo.Lineups;
+                  let positionsCopy = lineupCopy.find(
+                    (l) => l.id == lineupToUpdate.id
+                  ).Positions;
+                  positionsCopy = positionsCopy.filter(
+                    (p) => p.MemberId != MemberId
+                  );
+                  positionsCopy.push(position);
+                  lineupCopy.find((l) => l.id == lineupToUpdate.id).Positions =
+                    positionsCopy;
+                  this.choreo.Lineups = lineupCopy;
+                  this.showSuccessMessage(this.$tc("lineup", 1));
+                  this.updateProposedPositions();
+                }
+              );
+            }, 0),
+            x,
+            y,
+          };
         }
       }
     },
@@ -658,10 +783,40 @@ export default {
       }
     },
     setCounter(count) {
+      // the order does matter!
+      // 1. store the old positions for animation
+      // 2. persist the inflight position updates in the local choreo copy and reset the object
+      // 3. change to the next count
       const oldPositions = this.currentPositions;
+      this.resetPositionUpdates();
       this.count = count;
+
       if (this.$refs.Mat)
         this.$refs.Mat.animatePositions(oldPositions, this.currentPositions);
+      this.updateProposedPositions();
+    },
+    resetPositionUpdates() {
+      Object.entries(this.positionUpdates).forEach(
+        ([MemberId, positionUpdate]) => {
+          // clear all stored timeouts
+          if (positionUpdate.timeout) clearTimeout(positionUpdate.timeout);
+
+          // store the inflight position updates from this.positionUpdates to this.choreo.Lineups
+          const positionToUpdate = this.lineupsForCurrentCount
+            .map((l) => l.Positions.filter((p) => p.MemberId == MemberId))
+            .flat()[0];
+
+          if (positionToUpdate) {
+            const pos = this.choreo.Lineups.find(
+              (l) => l.id == positionToUpdate.LineupId
+            ).Positions.find((p) => p.id == positionToUpdate.id);
+
+            pos.x = roundToDecimals(positionUpdate.x, 2);
+            pos.y = roundToDecimals(positionUpdate.y, 2);
+          }
+        }
+      );
+      this.positionUpdates = {};
     },
     playPause() {
       if (!this.playInterval) {
@@ -695,6 +850,7 @@ export default {
     onUpdateLineups(lineups) {
       this.choreo.Lineups = lineups;
       this.showSuccessMessage(this.$tc("lineup", 1));
+      this.updateProposedPositions();
     },
     onUpdateCount(count) {
       if (this.moveWithCountEdit) this.setCounter(count);
@@ -732,6 +888,7 @@ export default {
       this.$refs.countOverview.$el.scrollIntoView({ behavior: "smooth" });
     },
     showSuccessMessage(savedType) {
+      debug("Saved successfully");
       MessagingService.showSuccess(
         savedType
           ? `${savedType} ${this.$t("editView.wurde-gespeichert")}`
@@ -758,36 +915,38 @@ export default {
       this.setCounter(this.choreo.counts - 1);
       this.countEndButtonHasNeverBeenUsed = false;
     },
-    subOutParticipant(memberId) {
-      this.$refs.participantSubstitutionModal.open(memberId, null);
+    subOutParticipant(MemberId) {
+      this.$refs.participantSubstitutionModal.open(MemberId, null);
     },
-    subInMember(memberId) {
-      this.$refs.participantSubstitutionModal.open(null, memberId);
+    subInMember(MemberId) {
+      this.$refs.participantSubstitutionModal.open(null, MemberId);
     },
-    removeParticipant(memberId) {
-      ChoreoService.removeParticipant(this.choreoId, memberId).then(() => {
+    removeParticipant(MemberId) {
+      ChoreoService.removeParticipant(this.choreoId, MemberId).then(() => {
         this.choreo.Participants = this.choreo.Participants.filter(
-          (p) => p.id != memberId
+          (p) => p.id != MemberId
         );
+        this.updateProposedPositions();
       });
     },
-    addParticipant(memberId) {
+    addParticipant(MemberId) {
       const color = ColorService.getRandom(
         this.choreo.Participants.map((p) => p.ChoreoParticipation.color)
       );
-      ChoreoService.addParticipant(this.choreoId, memberId, color).then(() => {
+      ChoreoService.addParticipant(this.choreoId, MemberId, color).then(() => {
         const memberToAdd = {
-          ...this.choreo.SeasonTeam.Members.find((m) => m.id == memberId),
+          ...this.choreo.SeasonTeam.Members.find((m) => m.id == MemberId),
           ChoreoParticipation: { color },
         };
         this.choreo.Participants = [...this.choreo.Participants, memberToAdd];
+        this.updateProposedPositions();
       });
     },
     onSubstitution(choreo) {
       this.choreo = choreo;
+      this.updateProposedPositions();
     },
     changeColor(participantId, color) {
-      console.log(participantId, color);
       ChoreoService.changeParticipantColor(
         this.choreoId,
         participantId,
@@ -797,6 +956,270 @@ export default {
           (p) => p.id == participantId
         ).ChoreoParticipation.color = color;
       });
+    },
+    findPreviousPosition(memberId) {
+      const previousRelevantLineups = this.choreo.Lineups.filter(
+        (lineup) =>
+          lineup.endCount < this.count &&
+          lineup.Positions.some((position) => position.MemberId == memberId)
+      ).sort((a, b) => b.endCount - a.endCount);
+      if (previousRelevantLineups.length == 0) return null;
+
+      const previousRelevantLineup =
+        previousRelevantLineups[previousRelevantLineups.length - 1];
+      const previousPosition = previousRelevantLineup.Positions.find(
+        (pos) => pos.MemberId == memberId
+      );
+      if (!previousPosition) return null;
+      return previousPosition;
+    },
+    updateProposedPositions() {
+      if (!this.proposalEnabled) {
+        this.proposedPositions = [];
+        return;
+      }
+
+      const currentlyPositionedMembers = this.lineupsForCurrentCount
+        .map((lineup) => lineup.Positions.map((pos) => pos.Member))
+        .flat();
+
+      Object.keys(this.positionUpdates).forEach((MemberId) => {
+        const member = this.teamMembers.find((m) => m.id == MemberId);
+        if (
+          member &&
+          !currentlyPositionedMembers.some((m) => m.id == member.id)
+        )
+          currentlyPositionedMembers.push(member);
+      });
+
+      if (currentlyPositionedMembers.length == 0) {
+        const lastLineupEnd = Math.max(
+          ...this.choreo.Lineups.map((l) => l.endCount)
+        );
+        if (this.count > lastLineupEnd) {
+          try {
+            const proposedPositions = LineupService.proposeLineup(
+              this.teamMembers,
+              this.rejectedPositionProposals
+            );
+            this.proposedPositions = proposedPositions;
+          } catch (e) {
+            error(e);
+            this.proposedPositions = [];
+          }
+        }
+        return;
+      } else if (currentlyPositionedMembers.length > 0) {
+        const movements = this.calculateMovementsForCurrentlyPositionedMembers(
+          currentlyPositionedMembers
+        );
+
+        // if all movements are the same, propose new positions based on that movement
+        const allMovementsEqual = movements.every((movement) => {
+          return (
+            movement &&
+            Math.abs(movement.movementX - movements[0].movementX) < 1 &&
+            Math.abs(movement.movementY - movements[0].movementY) < 1
+          );
+        });
+
+        if (allMovementsEqual) {
+          this.proposedPositions = LineupService.filterRejectedProposals(
+            this.calculateProposedPositionsBasedOnMovement(
+              currentlyPositionedMembers,
+              movements
+            ),
+            this.rejectedPositionProposals
+          );
+          return;
+        } else {
+          if (currentlyPositionedMembers.length > 1) {
+            const proposedPositions = LineupService.filterRejectedProposals(
+              this.calculateProposedPositionsBasedOnLine(
+                currentlyPositionedMembers
+              ),
+              this.rejectedPositionProposals
+            );
+            if (proposedPositions) {
+              this.proposedPositions = proposedPositions;
+              return;
+            }
+          }
+        }
+
+        this.proposedPositions = [];
+        return;
+      }
+    },
+    acceptProposedLineup() {
+      this.proposedPositions.forEach((proposedPosition) => {
+        this.onPositionChange(
+          proposedPosition.MemberId,
+          proposedPosition.x,
+          proposedPosition.y
+        );
+      });
+      this.updateProposedPositions();
+    },
+    rejectProposedLineup() {
+      this.rejectedPositionProposals.push(this.proposedPositions);
+      this.proposedPositions = [];
+    },
+    calculateMovementsForCurrentlyPositionedMembers(
+      currentlyPositionedMembers
+    ) {
+      const movements = currentlyPositionedMembers.map((member) => {
+        const currentRelevantLineup = this.lineupsForCurrentCount.find(
+          (lineup) => lineup.Positions.some((pos) => pos.MemberId == member.id)
+        );
+        if (!currentRelevantLineup) return null;
+
+        let currentPosition = currentRelevantLineup.Positions.find(
+          (pos) => pos.MemberId == member.id
+        );
+
+        if (this.positionUpdates[member.id]) {
+          currentPosition = {
+            ...currentPosition,
+            x: this.positionUpdates[member.id].x,
+            y: this.positionUpdates[member.id].y,
+          };
+        }
+
+        const previousPosition = this.findPreviousPosition(member.id);
+        if (!previousPosition) return null;
+
+        return {
+          MemberId: member.id,
+          movementX: currentPosition.x - previousPosition.x,
+          movementY: currentPosition.y - previousPosition.y,
+        };
+      });
+      return movements;
+    },
+    calculateProposedPositionsBasedOnMovement(
+      currentlyPositionedMembers,
+      movements
+    ) {
+      const proposedPositions = this.teamMembers
+        .filter((member) => {
+          return (
+            !currentlyPositionedMembers.some((m) => m.id == member.id) &&
+            Boolean(this.findPreviousPosition(member.id))
+          );
+        })
+        .map((member) => {
+          const previousPosition = this.findPreviousPosition(member.id);
+          if (!previousPosition) return null;
+
+          return {
+            MemberId: member.id,
+            x: clamp(previousPosition.x + movements[0].movementX, 0, 100, 1),
+            y: clamp(previousPosition.y + movements[0].movementY, 0, 100, 1),
+            Member: member,
+          };
+        });
+      return proposedPositions;
+    },
+    calculateProposedPositionsBasedOnLine(currentlyPositionedMembers) {
+      const currentPosition1 = this.currentPositions.find(
+        (p) => p.MemberId == currentlyPositionedMembers[0].id
+      );
+
+      if (this.positionUpdates[currentPosition1.MemberId]) {
+        currentPosition1.x = this.positionUpdates[currentPosition1.MemberId].x;
+        currentPosition1.y = this.positionUpdates[currentPosition1.MemberId].y;
+      }
+
+      const currentPosition2 = this.currentPositions.find((p) => {
+        return p.MemberId == currentlyPositionedMembers[1].id;
+      });
+
+      if (this.positionUpdates[currentPosition2.MemberId]) {
+        currentPosition2.x = this.positionUpdates[currentPosition2.MemberId].x;
+        currentPosition2.y = this.positionUpdates[currentPosition2.MemberId].y;
+      }
+
+      const xDiff = roundToDecimals(currentPosition1.x - currentPosition2.x, 2);
+      const yDiff = roundToDecimals(currentPosition1.y - currentPosition2.y, 2);
+
+      const allCurrentPositionInLine = currentlyPositionedMembers.every(
+        (member) => {
+          const currentPosition = this.currentPositions.find(
+            (p) => p.MemberId == member.id
+          );
+
+          if (this.positionUpdates[currentPosition.MemberId]) {
+            currentPosition.x =
+              this.positionUpdates[currentPosition.MemberId].x;
+            currentPosition.y =
+              this.positionUpdates[currentPosition.MemberId].y;
+          }
+
+          if (
+            member.id == currentPosition1.MemberId ||
+            member.id == currentPosition2.MemberId
+          )
+            return true;
+
+          const currentDiffX = roundToDecimals(
+            Math.abs(currentPosition.x - currentPosition2.x),
+            2
+          );
+          const xIsMultipleOfDiff =
+            Math.abs((currentDiffX / xDiff) % 1) < 0.15 ||
+            (xDiff == 0 && currentDiffX == 0);
+
+          const currentDiffY = roundToDecimals(
+            Math.abs(currentPosition.y - currentPosition2.y),
+            2
+          );
+          const yIsMultipleOfDiff =
+            Math.abs((currentDiffY / yDiff) % 1) < 0.15 ||
+            (yDiff == 0 && currentDiffY == 0);
+
+          return xIsMultipleOfDiff && yIsMultipleOfDiff;
+        }
+      );
+      if (!allCurrentPositionInLine) return null;
+
+      const membersToPosition = this.teamMembers.filter((member) => {
+        return (
+          !currentlyPositionedMembers.some((m) => m.id == member.id) &&
+          Boolean(this.findPreviousPosition(member.id))
+        );
+      });
+
+      const additor = currentlyPositionedMembers.filter((m) => {
+        let isBetweenPositions = false;
+        const currentMember = this.currentPositions.find(
+          (p) => p.MemberId == m.id
+        );
+        if (yDiff > 0)
+          isBetweenPositions = currentMember.y >= currentPosition2.y;
+        else if (yDiff < 0)
+          isBetweenPositions = currentMember.y <= currentPosition1.y;
+
+        if (isBetweenPositions) return true;
+
+        if (xDiff >= 0)
+          isBetweenPositions = currentMember.x > currentPosition2.x;
+        else if (xDiff <= 0)
+          isBetweenPositions = currentMember.x < currentPosition1.x;
+        return isBetweenPositions;
+      }).length;
+
+      const proposedPositions = membersToPosition.map((member, i) => {
+        const factor = i + 1 + additor;
+
+        return {
+          Member: member,
+          MemberId: member.id,
+          x: clamp(currentPosition1.x + factor * xDiff, 0, 100, 1),
+          y: clamp(currentPosition1.y + factor * yDiff, 0, 100, 1),
+        };
+      });
+      return proposedPositions;
     },
   },
   computed: {

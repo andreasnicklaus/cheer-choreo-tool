@@ -8,8 +8,8 @@
           $store.getters.isChristmasTime
             ? '/Icon-Christmas.png'
             : $store.getters.isEasterTime
-            ? '/Icon-Easter.png'
-            : '/Icon.png'
+              ? '/Icon-Easter.png'
+              : '/Icon.png'
         "
         :alt="$t('choreo-planer-icon')"
         width="50"
@@ -83,7 +83,7 @@
           <b-dropdown-item
             variant="success"
             @click="() => $refs.createChoreoModal.open()"
-            v-if="$store.state.clubId"
+            v-show="$store.state.clubId"
           >
             <b-icon-plus />
             {{ $t("nav.neue-choreo") }}
@@ -105,11 +105,11 @@
           >
             {{ team.name }}
           </b-dropdown-item>
-          <b-dropdown-divider v-if="teams && teams.length > 0" />
+          <b-dropdown-divider v-show="teams && teams.length > 0" />
           <b-dropdown-item
             variant="success"
             @click="() => $refs.createTeamModal.open()"
-            v-if="$store.state.clubId"
+            v-show="$store.state.clubId"
           >
             <b-icon-plus />
             {{ $t("nav.neues-team") }}
@@ -122,17 +122,17 @@
           no-caret
           right
           :class="{ 'mr-3': $store.state.isMobile }"
-          v-if="$store.state.loggedIn"
+          v-show="$store.state.loggedIn"
         >
           <template #button-content>
             <b-icon-bell />
-            <span v-if="$store.state.isMobile" class="ml-2">{{
+            <span v-show="$store.state.isMobile" class="ml-2">{{
               $t("nav.benachrichtigungen")
             }}</span>
             <b-badge
               pill
               variant="danger"
-              v-if="notifications.filter((n) => !n.read).length > 0"
+              v-show="notifications.filter((n) => !n.read).length > 0"
               :style="{
                 position: 'absolute',
                 right: 0,
@@ -144,7 +144,7 @@
           <b-dropdown-text
             style="width: 400px"
             class="text-center"
-            v-if="
+            v-show="
               notifications.filter((n) => showAllNotifications || !n.read)
                 .length == 0
             "
@@ -168,7 +168,7 @@
                       pill
                       variant="success"
                       class="mr-1"
-                      v-if="!notification.read"
+                      v-show="!notification.read"
                       >{{ $t("nav.neu-0") }}</b-badge
                     >
                     <b-badge pill variant="primary">{{
@@ -195,8 +195,8 @@
                           : markNotificationAsRead(notification.id)
                     "
                   >
-                    <b-icon-envelope v-if="notification.read" />
-                    <b-icon-envelope-open v-else />
+                    <b-icon-envelope v-show="notification.read" />
+                    <b-icon-envelope-open v-show="!notification.read" />
                   </b-button>
                   <b-button
                     variant="link"
@@ -215,7 +215,7 @@
               </vue-markdown>
             </b-card>
           </b-dropdown-text>
-          <b-dropdown-text v-if="!showAllNotifications">
+          <b-dropdown-text v-show="!showAllNotifications">
             <b-button
               block
               @click="() => (showAllNotifications = true)"
@@ -224,7 +224,7 @@
               >{{ $t("nav.alte-nachrichten-anzeigen") }}</b-button
             ></b-dropdown-text
           >
-          <b-dropdown-text v-else>
+          <b-dropdown-text v-show="showAllNotifications">
             <b-button
               block
               @click="() => (showAllNotifications = false)"
@@ -235,13 +235,17 @@
           </b-dropdown-text>
         </b-nav-item-dropdown>
 
-        <b-nav-item-dropdown variant="link" no-caret>
+        <b-nav-item-dropdown
+          variant="link"
+          no-caret
+          data-testid="locale-switch"
+        >
           <template #button-content>
             <flag
               :squared="false"
               :iso="flags.find((f) => f.lang == $root.$i18n.locale)?.flag"
             />
-            <span v-if="$store.state.isMobile">
+            <span v-show="$store.state.isMobile">
               {{ flags.find((f) => f.lang == $root.$i18n.locale)?.localName }}
             </span>
           </template>
@@ -260,24 +264,29 @@
           @click="share"
           v-b-tooltip.hover
           :title="$t('nav.teilen')"
-          v-if="shareable"
+          v-show="shareable"
         >
           <b-icon-share />
           <span class="d-sm-none ml-2">{{ $t("nav.teilen") }}</span>
         </b-nav-item>
+
         <b-nav-item
           class="d-sm-block d-none"
-          v-if="onlineStatus != null"
+          v-show="onlineStatus != null"
           v-b-tooltip.hover
           :title="
             onlineStatus
               ? $t('nav.server-sind-online') +
-                (serverVersion && ` (${serverVersion})`)
+                (serverVersion && ` (${serverVersion || $t('errors.unknown')})`)
               : $t('nav.server-sind-offline')
           "
+          data-testid="serverStatus"
         >
-          <b-icon-check-circle variant="success" v-if="onlineStatus === true" />
-          <b-icon-x-circle variant="danger" v-if="onlineStatus === false" />
+          <b-icon-check-circle
+            variant="success"
+            v-show="onlineStatus === true"
+          />
+          <b-icon-x-circle variant="danger" v-show="onlineStatus === false" />
         </b-nav-item>
         <b-nav-item
           :to="{ name: 'Help', params: { locale: $root.$i18n.locale } }"
@@ -297,13 +306,13 @@
           <b-button
             variant="primary"
             :style="{ color: 'white' }"
-            v-if="!$store.state.loggedIn"
+            v-show="!$store.state.loggedIn"
             :block="$store.state.isMobile"
           >
             {{ $t("anmelden") }}
           </b-button>
           <b-dropdown
-            v-else
+            v-show="$store.state.loggedIn"
             :variant="$store.state.isMobile ? 'outline-secondary' : 'light'"
             right
             :block="$store.state.isMobile"
@@ -314,7 +323,7 @@
                 variant="light"
                 :src="currentProfilePictureBlob"
               />
-              <span v-if="$store.state.isMobile" class="mx-2">{{
+              <span v-show="$store.state.isMobile" class="mx-2">{{
                 user?.username
               }}</span>
             </template>
@@ -391,7 +400,32 @@ import MessagingService from "@/services/MessagingService";
 import NotificationService from "@/services/NotificationService";
 import VueMarkdown from "vue-markdown-v2";
 import toTimeAgo from "@/utils/time";
+import { error, warn } from "@/utils/logging";
+import ERROR_CODES from "@/utils/error_codes";
 
+/**
+ * @module Component:HeadNav
+ *
+ * @vue-data {Array} teams - List of teams the user owns.
+ * @vue-data {Array} choreos - List of choreographies associated with the user.
+ * @vue-data {Array} clubs - List of clubs the user owns.
+ * @vue-data {Object} user=null - The currently logged-in user object.
+ * @vue-data {Boolean} shareable=false - Whether the current page can be shared using the Web Share API.
+ * @vue-data {Array} flags - List of available languages with their flags and local names.
+ * @vue-data {Object} currentProfilePictureBlob=null - Blob URL for the user's profile picture.
+ * @vue-data {Object} loadInterval=null
+ * @vue-data {Object} loadNotificationsInterval=null
+ * @vue-data {Array} notifications
+ * @vue-data {Boolean} showAllNotifications=false
+ * @vue-data {Boolean} showNotificationsDropdown=false
+ *
+ * @vue-prop {Boolean} onlineStatus - Indicates if the server is online.
+ * @vue-prop {String} [serverVersion=null] - The version of the server software.
+ *
+ * @vue-computed {Object} shareData - Data used for sharing the current page.
+ *
+ * @example <HeadNav :teams="teams" />
+ */
 export default {
   name: "HeadNav",
   components: {
@@ -439,7 +473,12 @@ export default {
             this.user = user;
             this.loadProfileImage();
           })
-          .catch(() => {});
+          .catch(() => {
+            error(
+              "Could not load user info",
+              ERROR_CODES.USER_INFO_QUERY_FAILED
+            );
+          });
 
         if (this.$store.state.clubId) {
           ClubService.getById(this.$store.state.clubId)
@@ -449,7 +488,12 @@ export default {
                 .map((t) => t.SeasonTeams.map((st) => st.Choreos))
                 .flat(Infinity);
             })
-            .catch(() => {});
+            .catch(() => {
+              error(
+                "Could not find club" + this.$store.state.clubId,
+                ERROR_CODES.CLUB_QUERY_FAILED
+              );
+            });
         }
 
         ClubService.getAll()
@@ -460,9 +504,14 @@ export default {
             if (!this.$store.state.clubId)
               this.$store.commit("setClubId", club.id);
             this.teams = club?.Teams || [];
-            this.choreos = this.teams.map((t) => t.Choreos).flat();
+            // TODO: check if this still works outside of DEV
+            this.choreos = this.teams
+              .map((t) => t.SeasonTeams.map((st) => st.Choreos))
+              .flat(Infinity);
           })
-          .catch(() => {});
+          .catch(() => {
+            error("Could not load clubs", ERROR_CODES.CLUB_QUERY_FAILED);
+          });
 
         this.loadNotifications();
       }
@@ -473,10 +522,18 @@ export default {
           .then((notifications) => {
             this.notifications = notifications;
           })
-          .catch(() => {});
+          .catch(() => {
+            error(
+              "Could not load notifications",
+              ERROR_CODES.NOTIFICATION_QUERY_FAILED
+            );
+          });
     },
     checkEmailConfirmation() {
       if (this.user?.email && !this.user?.emailConfirmed) {
+        warn(
+          "You logged into an account without email or without confirmed email address. Please add and confirm your email address to ensure that all features work properly."
+        );
         MessagingService.showWarning(
           this.$t("nav.checkEmail.text"),
           this.$t("nav.checkEmail.title"),

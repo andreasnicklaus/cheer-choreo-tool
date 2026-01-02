@@ -21,11 +21,11 @@
           >
             <b-icon-star-fill
               variant="primary"
-              v-if="hoverStars != null ? hoverStars >= i : stars >= i"
+              v-show="hoverStars != null ? hoverStars >= i : stars >= i"
               :style="{ pointerEvents: 'none' }"
             />
             <b-icon-star
-              v-else
+              v-show="hoverStars != null ? hoverStars < i : stars < i"
               variant="primary"
               :style="{ pointerEvents: 'none' }"
             />
@@ -62,8 +62,8 @@
                 :disabled="stars < 0 || stars > 4 || !feedbackText"
                 to="#"
               >
-                <b-spinner small v-if="sending" />
-                <span v-else> {{ $t("feedback.abschicken") }} </span>
+                <b-spinner small v-show="sending" />
+                <span v-show="!sending"> {{ $t("feedback.abschicken") }} </span>
               </b-button>
             </b-col>
             <b-col cols="auto">
@@ -99,8 +99,31 @@
 
 <script>
 import FeedbackService from "@/services/FeedbackService";
+import { error } from "@/utils/logging";
+import ERROR_CODES from "@/utils/error_codes";
 
 const feedbackDeclinedCookieName = "feedback-declined";
+
+/**
+ * @module Component:FeedbackPrompt
+ *
+ * @vue-data {String} id
+ * @vue-data {Number} stars=4
+ * @vue-data {String|null} feedbackText=null
+ * @vue-data {Number|null} hoverStars=null
+ * @vue-data {Boolean} sending=false
+ * @vue-data {Boolean} feedbackAlreadyGiven=false
+ * @vue-data {Boolean} forced=false
+ * @vue-data {Number|null} showTimer=null
+ *
+ * @vue-event {Object} feedbackSent - Emitted when feedback is successfully sent.
+ *
+ * @example
+ * <template>
+ *   <FeedbackPrompt ref="feedbackPrompt" @feedbackSent="handler" />
+ *   <Button @click="() => $refs.feedbackPrompt.open()" />
+ * </template>
+ */
 
 export default {
   name: "FeedbackPrompt",
@@ -122,6 +145,10 @@ export default {
           this.feedbackAlreadyGiven = feedbacks?.length > 0;
         })
         .catch(() => {
+          error(
+            "Feedback could not be queried",
+            ERROR_CODES.FEEDBACK_QUERY_FAILED
+          );
           this.feedbackAlreadyGiven = false;
         });
     }
@@ -150,6 +177,10 @@ export default {
         parseInt(this.stars) + 1,
         this.feedbackText
       ).then(() => {
+        this.$emit("feedbackSent", {
+          stars: this.stars,
+          feedbackText: this.feedbackText,
+        });
         this.$bvModal.show(`feedback-thankyou-modal-${this.id}`);
         this.feedbackAlreadyGiven = true;
       });
@@ -166,7 +197,6 @@ export default {
       this.close();
     },
     close() {
-      console.log("custom close");
       this.$bvModal.hide(`feedback-modal-${this.id}`);
       this.$bvModal.hide(`feedback-thankyou-modal-${this.id}`);
     },

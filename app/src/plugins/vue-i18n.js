@@ -37,7 +37,7 @@ const dateTimeFormats = {
 };
 
 const i18n = new VueI18n({
-  locale: LanguageService.loadLanguage(Object.keys(messages)) || "de",
+  locale: LanguageService?.loadLanguage(Object.keys(messages)) || "de",
   fallbackLocale: "de",
   messages,
   dateTimeFormats,

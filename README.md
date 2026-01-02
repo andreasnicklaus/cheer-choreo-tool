@@ -31,6 +31,73 @@
 
 [![](https://img.shields.io/badge/Visit%20www.choreo--planer.de-orange?style=for-the-badge&logo=googlechrome&logoColor=white)](https://www.choreo-planer.de)
 
+## Architecture
+
+```mermaid
+graph
+
+  subgraph Github
+    subgraph pages[Github Pages]
+      subgraph vue[Vue JS UI]
+        VueMatomo
+        bootstrap-vue
+        vue-18n
+        vue-meta
+      end
+    end
+    githubactions(Github Actions)
+  end
+
+
+
+  subgraph On-Premise
+    Router --port forwarding--> ReverseProxy
+    subgraph HomeServer
+      subgraph Docker
+        ReverseProxy
+        Matomo
+        Watchtower
+        ReverseProxy[Reverse Proxy]
+        sequelize
+        db[(Postgres Database)]
+        dba[(Analytics Database)]
+        subgraph api[Choreo Planer API]
+          sequelize
+          i18n
+          winston
+          nodemailer
+        end
+      end
+    end
+  end
+
+  ReverseProxy --> api
+  ReverseProxy --> Watchtower
+  ReverseProxy --> Matomo
+
+  sequelize --> db
+  Matomo --> dba
+
+  VueMatomo --IPv4/IPv6,https--> aws
+
+  User --IPv4/IPv6,https--> aws(AWS EC2 as Reverse Proxy)
+  User --IPv4/IPv6,https--> pages
+  aws --IPv6,https--> Router
+
+  BetterStack --IPv4/Ipv6--> aws
+  BetterStack --IPv4/IPv6,https--> pages
+
+  githubactions --update docker images--> dockerhub([Docker Hub])
+  githubactions --update UI--> pages
+  githubactions --trigger watchtower update--> aws
+
+  Watchtower --fetch image versions--> dockerhub
+
+  nodemailer --https---> GoogleMail(Google Mail)
+  mailProxy(DNS provider) --forward emails to *@choreo-planer.de--> GoogleMail
+  GoogleMail --send emails as *@choreo-planer.de--> Brevo(Brevo)
+```
+
 ## :+1: Collaborators
 
 - [Andreas Nicklaus](https://github.com/andreasnicklaus) <br/> [![](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/andreasnicklaus/) [![](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/andreasnicklaus) [![](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/andreasnicklaus)
@@ -40,6 +107,27 @@
 See [LICENSE](LICENSE) for the license of this project.
 
 ## :sparkles: Version history
+
+### 0.12.0 - 2025-12-22
+
+- Added automatic proposals for lineups and positions
+- Improved position update performance
+- Fixed various bugs and improved stability
+
+### 0.11.2 - 2025-12-02
+
+- Added ability to control the video length by time rather than BPS
+- Added help section for video exports
+- Error handling for faulty mp4 video codec
+- Error handling for stuck page load
+- Increased security by updating dependencies and fixing vulnerabilities
+
+### 0.11.1 - 2025-10-16
+
+- Log ingestion for better observability
+- Switched to Typescript and added documentation
+- UI Testing: added unit tests and integration test to ensure a acceptable user experience on most common browsers
+- Backend Testing: added unit tests to ensure that services are compatible with the implementation of the REST server
 
 ### 0.11.0 - 2025-05-09 (alias: 0.10.3)
 

@@ -45,6 +45,9 @@
           >
             {{ $tc("navigation.feedback-geben") }} </b-button
           ><br />
+          <b-button variant="link" href="/docs/" target="_blank">
+            {{ $t("HelpView.documentation_capitalized") }}
+          </b-button>
         </b-col>
         <b-col cols="auto">
           <h5>
@@ -110,7 +113,7 @@
             <span
               v-b-tooltip.hover
               :title="`Die Version der Webseite (${applicationVersion}) entspricht nicht der Version der Server (${serverVersion})!`"
-              v-if="serverVersion && serverVersion != applicationVersion"
+              v-show="serverVersion && serverVersion != applicationVersion"
             >
               <b-icon-exclamation-triangle-fill />
             </span>
@@ -149,10 +152,19 @@ import AppInstallWindow from "./components/AppInstallWindow.vue";
 import ConsentWindow from "./components/ConsentWindow.vue";
 import FeedbackPrompt from "./components/FeedbackPrompt.vue";
 import HeadNav from "./components/HeadNav.vue";
-import ax, { getApiDomain } from "./services/RequestService";
+import { getApiDomain } from "./services/RequestService";
 import breakpoints from "@/utils/breakpoints";
 import MessagingService from "./services/MessagingService";
+import { debug, error, logWelcomeMessage } from "@/utils/logging";
+import VersionService from "./services/VersionService";
 
+/**
+ * @vue-data {boolean} online
+ * @vue-data {string} serverVersion
+ * @vue-data {string} applicationVersion
+ * @vue-data {Breakpoints} breakpoints
+ * @vue-computed {MetaInfo} metaInfo
+ */
 export default {
   components: { HeadNav, ConsentWindow, AppInstallWindow, FeedbackPrompt },
   data: () => ({
@@ -247,20 +259,31 @@ export default {
     };
   },
   mounted() {
+    debug("Started App", {
+      VUE_APP_VERSION: process.env.VUE_APP_VERSION,
+    });
     MessagingService.subscribe("App", (message, options) =>
       this.$bvToast.toast(message, options)
     );
 
+    logWelcomeMessage();
+
     if (!window.__PRERENDER_INJECTED)
-      ax.get("/version")
-        .then((res) => {
+      VersionService.getServerVersion().then((version) => {
+        if (version) {
           this.online = true;
-          this.serverVersion = res.data;
-        })
-        .catch(() => {
+          this.serverVersion = version;
+        } else {
           this.online = false;
-          MessagingService.showError(this.$t("errors.offline"), "Offline");
-        });
+          error(
+            "The servers are currently offline. Please refresh or try again later."
+          );
+          MessagingService.showError(
+            this.$t("errors.offline"),
+            this.$t("general.offline")
+          );
+        }
+      });
   },
   watch: {
     "breakpoints.screen.mobile": {
@@ -280,6 +303,9 @@ html {
 }
 .modal-open {
   padding: 0 !important;
+}
+.b-toaster {
+  z-index: 9999999;
 }
 </style>
 

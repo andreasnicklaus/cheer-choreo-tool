@@ -17,8 +17,8 @@
             $store.getters.isChristmasTime
               ? '/Icon-Christmas.png'
               : $store.getters.isEasterTime
-              ? '/Icon-Easter.png'
-              : '/Icon.png'
+                ? '/Icon-Easter.png'
+                : '/Icon.png'
           "
           :alt="$t('choreo-planer-icon')"
           width="200"
@@ -46,11 +46,19 @@
         <b-button
           id="registerButton"
           variant="primary"
-          :to="{ name: 'Login', params: { locale: $root.$i18n.locale } }"
+          :to="
+            $store.state.loggedIn
+              ? { name: 'Start', params: { locale: $root.$i18n.locale } }
+              : { name: 'Login', params: { locale: $root.$i18n.locale } }
+          "
           class="my-4"
           :style="{ textWrap: 'no-wrap' }"
         >
-          {{ $t("anmelden") }} / {{ $t("registrieren") }}
+          {{
+            $store.state.loggedIn
+              ? $t("Home.zur-uebersicht")
+              : `${$t("anmelden")} / ${$t("registrieren")}`
+          }}
         </b-button>
         <router-link
           id="helpLink"
@@ -445,7 +453,9 @@
         marginBottom: '10vh',
         borderRadius: '4px',
       }"
+      v-show="!$store.state.loggedIn"
       class="text-center py-5 px-3"
+      id="interestedSection"
     >
       <h2 class="mb-1">{{ $t("Home.interesse-geweckt") }}</h2>
       <p class="mb-4">
@@ -456,7 +466,8 @@
         class="pulse-button"
         :to="{ name: 'Login', params: { locale: $root.$i18n.locale } }"
       >
-        {{ $t("anmelden") }} / {{ $t("registrieren") }}
+        {{ $t("anmelden") }} /
+        {{ $t("registrieren") }}
       </b-button>
     </div>
   </b-container>
@@ -469,6 +480,19 @@ import Mat from "@/components/Mat.vue";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
+
+/**
+ * @vue-data {Number} count=0 - The current count value, used to highlight the selected cell.
+ * @vue-data {Array} teamMembers - List of team members with their details.
+ * @vue-data {Object} choreo - The choreography object containing hits and counts.
+ * @vue-data {Array} currentPositions - The current positions of all members on the mat.
+ * @vue-data {Array} selectedTeamMembers - The currently selected team members for video export.
+ *
+ * @vue-computed {Array} hitsForCurrentCount - The hits for the current count, filtered from the choreo object.
+ * @vue-computed {Number} matWidth - The width of the mat, calculated based on the window size.
+ *
+ * @vue-meta {MetaInfo} metaInfo
+ */
 
 export default {
   name: "HomeView",

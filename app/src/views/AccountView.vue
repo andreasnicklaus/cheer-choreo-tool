@@ -499,8 +499,8 @@
                 user?.Clubs.length <= 1
                   ? $t('accountView.cant-delete-only-club')
                   : $store.state.clubId == club.id
-                  ? $t('accountView.cant-delete-active-club')
-                  : null
+                    ? $t('accountView.cant-delete-active-club')
+                    : null
               "
             >
               <b-button
@@ -661,10 +661,47 @@ import ClubService from "@/services/ClubService";
 import CreateClubModal from "@/components/modals/CreateClubModal.vue";
 import MessagingService from "@/services/MessagingService";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
+import { error, log } from "@/utils/logging";
+import ERROR_CODES from "@/utils/error_codes";
 
 const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 const MB = 1_048_576;
 const MAX_IMAGE_MB = 2;
+
+/**
+ * @vue-data {Number} MAX_IMAGE_MB=2 - Maximum size for profile and club images in MB.
+ * @vue-data {Boolean} loading=true - Indicates if the view is loading.
+ * @vue-data {Object} user=null - The user object containing user information.
+ * @vue-data {string|null} newProfilePicture=null - The new profile picture file to be uploaded.
+ * @vue-data {Blob|null} currentProfilePictureBlob=null - The current profile picture as a Blob.
+ * @vue-data {string|null} username=null - The username of the user.
+ * @vue-data {string|null} email=null - The email address of the user.
+ * @vue-data {string|null} newClubLogo=null - The new club logo file to be uploaded.
+ * @vue-data {Blob|null} currentClubLogoBlob=null - The current club logo as a Blob.
+ * @vue-data {string|null} clubName=null - The name of the club.
+ * @vue-data {Boolean} tracking=false - Indicates if tracking is enabled.
+ * @vue-data {Boolean} profilePictureIsHovered=false - Whether the profile picture is hovered.
+ * @vue-data {Boolean} clubLogoIsHovered=false - Whether the club logo is hovered.
+ * @vue-data {Boolean} profilePictureDeletion=false - Whether the profile picture is marked for deletion.
+ * @vue-data {Boolean} clubLogoDeletion=false - Whether the club logo is marked for deletion.
+ * @vue-data {Number} clubTabIndex=0 - The index of the currently selected club tab.
+ *
+ * @vue-computed {Blob|null} newProfilePictureBlob - The new profile picture as a Blob.
+ * @vue-computed {Object} currentClub - The currently selected club object.
+ * @vue-computed {Blob|null} newClubLogoBlob - The new club logo as a Blob.
+ * @vue-computed {Boolean} usernameIsValid - Whether the username is valid.
+ * @vue-computed {string|null} usernameError - Error message for username validation.
+ * @vue-computed {Boolean} emailIsValid - Whether the email is valid.
+ * @vue-computed {string|null} emailError - Error message for email validation.
+ * @vue-computed {Boolean} clubNameIsValid - Whether the club name is valid.
+ * @vue-computed {string|null} clubNameError - Error message for club name validation.
+ * @vue-computed {Boolean} newProfilePictureIsValid - Whether the new profile picture is valid.
+ * @vue-computed {string|null} newProfilePictureError - Error message for new profile picture validation.
+ * @vue-computed {Boolean} newClubLogoIsValid - Whether the new club logo is valid.
+ * @vue-computed {string|null} newClubLogoError - Error message for new club logo validation.
+ *
+ * @vue-computed {MetaInfo} metaInfo
+ */
 
 export default {
   components: {
@@ -716,6 +753,7 @@ export default {
           this.loadProfileImage();
         })
         .catch(() => {
+          error("Cannot get user info", ERROR_CODES.USER_INFO_QUERY_FAILED);
           MessagingService.showError(
             this.$t("accountView.unbekannter-fehler"),
             this.$t("accountView.das-hat-nicht-funktioniert")
@@ -759,6 +797,10 @@ export default {
       } else {
         window._paq.push(["rememberConsentGiven"]);
       }
+      MessagingService.showSuccess(
+        this.$t("accountView.settings-saved"),
+        this.$t("editView.gespeichert")
+      );
     },
     resetSettings() {
       this.tracking = Boolean(this.$cookie.get("mtm_consent"));
@@ -791,12 +833,14 @@ export default {
         .then(() => {
           this.init();
 
+          log("Your user information was saved!");
           MessagingService.showSuccess(
             this.$t("accountView.deine-nutzerinformationen-wurden-gespeichert"),
             this.$t("editView.gespeichert")
           );
         })
-        .catch(() => {
+        .catch((e) => {
+          error(e, ERROR_CODES.USER_UPDATE_FAILED);
           MessagingService.showError(
             this.$t("accountView.unbekannter-fehler"),
             this.$t("accountView.das-hat-nicht-funktioniert")
@@ -828,6 +872,7 @@ export default {
         .then(() => {
           this.init();
 
+          log("Your club information was saved!");
           MessagingService.showSuccess(
             this.$t(
               "accountView.deine-vereinsinformationen-wurden-gespeichert"
@@ -835,7 +880,8 @@ export default {
             this.$t("editView.gespeichert")
           );
         })
-        .catch(() => {
+        .catch((e) => {
+          error(e, ERROR_CODES.CLUB_UPDATE_FAILED);
           MessagingService.showError(
             this.$t("accountView.unbekannter-fehler"),
             this.$t("accountView.das-hat-nicht-funktioniert")
@@ -858,6 +904,7 @@ export default {
     },
     resendEmailConfirmationLink() {
       return AuthService.resendEmailConfirmationLink().then(() => {
+        log("An email was sent with a link to confirm your email address.");
         MessagingService.showSuccess(
           this.$t(
             "accountView.die-e-mail-zur-bestaetigung-deiner-e-mail-adresse-wurde-erneut-verschickt-check-dein-postfach"

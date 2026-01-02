@@ -53,6 +53,22 @@
 </template>
 
 <script>
+/**
+ * @module Modal:MobileChoreoEditModal
+ *
+ * @vue-data {String} id
+ *
+ * @vue-prop {String} choreoId
+ *
+ * @vue-event {string} open
+ * @vue-event {string} close
+ *
+ * @example
+ * <template>
+ *   <MobileChoreoEditModal ref="mobileChoreoEditModal" choreoId="123" @open="handler" @close="handler" />
+ *   <Button @click="() => $refs.mobileChoreoEditModal.open()" />
+ * </template>
+ */
 export default {
   name: "MobileChoreoEditModal",
   data: () => ({

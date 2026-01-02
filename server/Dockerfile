@@ -14,5 +14,9 @@ ENV NODE_ENV=production
 COPY package*.json ./
 RUN npm i --omit=dev
 
-COPY ./src ./src
+COPY ./ ./
+RUN npm run build
+
+RUN npm run docs
+
 CMD [ "npm", "run", "start" ]

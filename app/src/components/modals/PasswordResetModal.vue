@@ -57,9 +57,29 @@
 import AuthService from "@/services/AuthService";
 import MessagingService from "@/services/MessagingService";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
+import { error } from "@/utils/logging";
+import ERROR_CODES from "@/utils/error_codes";
 
 const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 
+/**
+ * @module Modal:PasswordResetModal
+ *
+ * @vue-data {String} id
+ * @vue-data {String|null} email=null
+ * @vue-data {Boolean} loading=false
+ *
+ * @vue-computed {Boolean} emailIsValid
+ * @vue-computed {String|null} emailError
+ *
+ * @vue-event {null} passwordResetRequested
+ *
+ * @example
+ * <template>
+ *  <PasswordResetModal ref="passwordResetModal" @passwordResetRequested="handler" />
+ *  <Button @click="() => $refs.passwordResetModal.open()" />
+ * </template>
+ */
 export default {
   name: "LoadingModal",
   components: { NewVersionBadge },
@@ -89,6 +109,7 @@ export default {
           this.close();
         })
         .catch((e) => {
+          error(e, ERROR_CODES.SSO_REQUEST_FAILED);
           this.loading = false;
           MessagingService.showError(e.response.data, this.$t("fehler"), {
             autoHideDelay: 5_000,

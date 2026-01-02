@@ -67,6 +67,9 @@
         >
         {{ $t("HelpView.und-beschreibe-dein-problem") }}
       </p>
+      <i18n path="HelpView.documentation-text" tag="p">
+        <a href="/docs/" target="_blank">{{ $t("HelpView.documentation") }}</a>
+      </i18n>
     </b-card>
 
     <script type="application/ld+json">
@@ -95,6 +98,14 @@
 <script>
 import VueMarkdown from "vue-markdown-v2";
 
+/**
+ * @vue-data {string} searchTerm - The search term entered by the user.
+ *
+ * @vue-computed {Array} faqCategories - An array of FAQ categories, each containing a name, order, and an array of FAQs.
+ * @vue-computed {Array} filteredFaqCategories - An array of FAQ categories filtered by the search term.
+ *
+ * @vue-computed {MetaInfo} metaInfo
+ */
 export default {
   name: "HelpView",
   data: function () {

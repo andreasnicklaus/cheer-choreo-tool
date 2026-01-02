@@ -25,7 +25,7 @@
             editHitId != null ? (editHitId != hit.id ? 'light' : null) : null
           "
         >
-          <div v-if="hit.id != editHitId">
+          <div v-show="hit.id != editHitId">
             <h5>
               <b-row align-h="between" align-v="center">
                 <b-col>
@@ -77,7 +77,7 @@
             </h5>
 
             <b-col
-              v-if="
+              v-show="
                 hit.Members &&
                 hit.Members.length > 0 &&
                 hit.Members.length != teamMembers.length
@@ -103,12 +103,18 @@
                 {{ member.nickname || member.name }}
               </b-row>
             </b-col>
-            <p v-else>
+            <p
+              v-show="
+                !hit.Members ||
+                hit.Members.length <= 0 ||
+                hit.Members.length == teamMembers.length
+              "
+            >
               <b-badge variant="info">{{ $t("countOverview.alle") }}</b-badge>
             </p>
           </div>
 
-          <div v-else>
+          <div v-show="hit.id == editHitId">
             <h5 class="mb-4">
               <b-row align-h="between" align-v="center">
                 <b-col>
@@ -177,11 +183,12 @@
                 <b-row>
                   <b-col>
                     <b-form-group
-                      description="Achter"
+                      :description="$t('achter')"
                       :state="editHitAchterIsValid"
                       :invalid-feedback="editHitAchterStateFeedback"
                     >
                       <b-form-input
+                        data-testid="editHitAchterInput"
                         type="number"
                         min="1"
                         v-model="editHitAchter"
@@ -191,11 +198,12 @@
                   </b-col>
                   <b-col>
                     <b-form-group
-                      description="Count"
+                      :description="$tc('count', 1)"
                       :state="editHitCountIsValid"
                       :invalid-feedback="editHitCountStateFeedback"
                     >
                       <b-form-input
+                        data-testid="editHitCountInput"
                         type="number"
                         min="1"
                         max="8"
@@ -297,14 +305,14 @@
           :key="lineup.id"
           :variant="editLineupId == lineup.id ? null : 'light'"
         >
-          <div v-if="lineup.id != editLineupId">
+          <div v-show="lineup.id != editLineupId">
             <h5>
               <b-row align-h="between" align-v="center">
                 <b-col>{{ $tc("lineup", 1) }}</b-col>
                 <b-col cols="auto">
                   <b-button-group class="mr-2">
                     <b-button
-                      v-if="lineup.Positions.length != teamMembers.length"
+                      v-show="lineup.Positions.length != teamMembers.length"
                       variant="outline-primary"
                       v-b-tooltip.hover
                       :title="
@@ -353,7 +361,7 @@
             </p>
 
             <b-col
-              v-if="
+              v-show="
                 lineup.Positions &&
                 lineup.Positions.length > 0 &&
                 lineup.Positions.length != teamMembers.length
@@ -389,12 +397,18 @@
                 {{ position.Member.name }}
               </b-row>
             </b-col>
-            <p v-else>
+            <p
+              v-show="
+                !lineup.Positions ||
+                lineup.Positions.length <= 0 ||
+                lineup.Positions.length == teamMembers.length
+              "
+            >
               <b-badge variant="info">{{ $t("countOverview.alle") }}</b-badge>
             </p>
           </div>
 
-          <div v-else>
+          <div v-show="lineup.id == editLineupId">
             <h5>
               <b-row align-h="between" align-v="center">
                 <b-col> {{ $tc("lineup", 1) }} </b-col>
@@ -437,11 +451,12 @@
                 <b-row>
                   <b-col>
                     <b-form-group
-                      description="Achter"
+                      :description="$t('achter')"
                       :state="editLineupStartAchterIsValid"
                       :invalid-feedback="editLineupStartAchterStateFeedback"
                     >
                       <b-form-input
+                        data-testid="editLineupStartAchterInput"
                         type="number"
                         min="1"
                         v-model="editLineupStartAchter"
@@ -451,11 +466,12 @@
                   </b-col>
                   <b-col>
                     <b-form-group
-                      description="Count"
+                      :description="$tc('count', 1)"
                       :state="editLineupStartCountIsValid"
                       :invalid-feedback="editLineupStartCountStateFeedback"
                     >
                       <b-form-input
+                        data-testid="editLineupStartCountInput"
                         type="number"
                         min="1"
                         max="8"
@@ -476,11 +492,12 @@
                 <b-row>
                   <b-col>
                     <b-form-group
-                      description="Achter"
+                      :description="$t('achter')"
                       :state="editLineupEndAchterIsValid"
                       :invalid-feedback="editLineupEndAchterStateFeedback"
                     >
                       <b-form-input
+                        data-testid="editLineupEndAchterInput"
                         type="number"
                         min="1"
                         v-model="editLineupEndAchter"
@@ -490,11 +507,12 @@
                   </b-col>
                   <b-col>
                     <b-form-group
-                      description="Count"
+                      :description="$tc('count', 1)"
                       :state="editLineupEndCountIsValid"
                       :invalid-feedback="editLineupEndCountStateFeedback"
                     >
                       <b-form-input
+                        data-testid="editLineupEndCountInput"
                         type="number"
                         min="1"
                         max="8"
@@ -594,7 +612,7 @@
           </b-list-group-item>
         </template>
         <b-list-group-item
-          v-if="
+          v-show="
             hitsForCurrentCount.length == 0 &&
             lineupsForCurrentCount.length == 0
           "
@@ -661,6 +679,37 @@ import CreateLineupModal from "./modals/CreateLineupModal.vue";
 import DeleteLineupModal from "./modals/DeleteLineupModal.vue";
 import DeleteHitModal from "./modals/DeleteHitModal.vue";
 
+/**
+ * @module Component:CountOverview
+ *
+ * @vue-data {Number|null} editHitId=null - The ID of the hit currently being edited, or null if none.
+ * @vue-data {String|null} editHitName=null - The name of the hit currently being edited.
+ * @vue-data {Number} editHitAchter=1 - The 'Achter' value for the hit being edited.
+ * @vue-data {Number} editHitCount=1 - The count value for the hit being edited.
+ * @vue-data {Array} editHitMembers - The members assigned to the hit being edited.
+ * @vue-data {String|null} editLineupId=null - The ID of the lineup currently being edited, or null if none.
+ * @vue-data {Number} editLineupStartAchter=1 - The starting 'Achter' value for the lineup being edited.
+ * @vue-data {Number} editLineupStartCount=1 - The starting count value for the lineup being edited.
+ * @vue-data {Number} editLineupEndAchter=1 - The ending 'Achter' value for the lineup being edited.
+ * @vue-data {Number} editLineupEndCount=1 - The ending count value for the lineup being edited.
+ * @vue-data {Array} editLineupMembers - The members assigned to the lineup being edited.
+ *
+ * @vue-prop {Number} count - The current count value for the overview.
+ * @vue-prop {Array} hitsForCurrentCount - The list of hits for the current count.
+ * @vue-prop {Array} lineupsForCurrentCount - The list of lineups for the current count.
+ * @vue-prop {Array} teamMembers - The list of team members.
+ * @vue-prop {Object} choreo - The choreography object.
+ * @vue-prop {Array} currentPositions - The current positions of team members.
+ * @vue-prop {Boolean} [interactive=true] - Whether the overview is interactive.
+ *
+ * @vue-event {Array} updateHits - Emitted when hits are updated.
+ * @vue-event {Array} updateLineups - Emitted when lineups are updated.
+ * @vue-event {Number} updateCount - Emitted when the count is updated.
+ * @vue-event {null} openCreateHitModal - Notifies parent component to call <code>open()</code> on {@link Modal:CreateHitModal CreateHitModal}.
+ *
+ * @example <CountOverview :count="0" :choreo="choreoObj" :teamMembers="members" @updateHits="handler" @updateLineups="handler" @updateCount="handler" @openCreateHitModal="handler" />
+ * @example <CountOverview :count="0" :choreo="choreoObj" :teamMembers="members" :interactive="false"  @updateHits="handler" @updateLineups="handler" @updateCount="handler" @openCreateHitModal="handler" />
+ */
 export default {
   name: "CountOverview",
   components: { CreateLineupModal, DeleteLineupModal, DeleteHitModal },

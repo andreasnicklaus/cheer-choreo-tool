@@ -15,7 +15,7 @@
   >
     <b-form>
       <b-form-group
-        description="Achter"
+        :description="$t('achter')"
         :state="achterIsValid"
         :invalid-feedback="lengthStateFeedback"
       >
@@ -61,6 +61,29 @@
 <script>
 import ChoreoService from "@/services/ChoreoService";
 
+/**
+ * @module Modal:ChangeChoreoLengthModal
+ *
+ * @vue-data {String} id
+ * @vue-data {Number} newChoreoAchter=1
+ * @vue-data {Number} newChoreoCount=0
+ *
+ * @vue-prop {Object} choreo
+ *
+ * @vue-computed {String} timeEstimationString
+ * @vue-computed {Boolean} achterIsValid
+ * @vue-computed {Boolean} countIsValid
+ * @vue-computed {Boolean} newCountIsValid
+ * @vue-computed {String|null} lengthStateFeedback
+ *
+ * @vue-event {Number} countUpdate
+ *
+ * @example
+ * <template>
+ *  <ChangeChoreoLengthModal :choreo="choreoObj" ref="changeChoreoLengthModal" @countUpdate="handler" />
+ *  <Button @click="() => $refs.changeChoreoLengthModal.open()" />
+ * </template>
+ */
 export default {
   name: "ChangeChoreoLengthModal",
   data: () => ({

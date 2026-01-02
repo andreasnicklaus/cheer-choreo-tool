@@ -31,7 +31,8 @@
     "lade-ein-bild-hoch-max-mb": "Upload a picture: max. {0} MB",
     "es-ist-nicht-moeglich-bilder-hochzuladen-die-groesser-al-mb-gross-sind": "It is not possible to upload images that are larger than {0} MB. Select a smaller file!",
     "die-e-mail-zur-bestaetigung-deiner-e-mail-adresse-wurde-erneut-verschickt-check-dein-postfach": "The email to confirm your email address has been sent. Check your mailbox!",
-    "e-mail-versandt": "Email sent"
+    "e-mail-versandt": "Email sent",
+    "settings-saved": "Your settings were saved!"
   },
   "achter": "Eight",
   "alle-auswaehlen": "Select all",
@@ -119,13 +120,18 @@
     "change-mat-layout": "Change mat layout",
     "exportieren": "Export",
     "choreo-einstellungen": "Choreo settings",
-    "bearbeitung": "Editing"
+    "bearbeitung": "Editing",
+    "acceptProposal": "Do you want to use the proposed lineup?",
+    "too-fast-message": "If you go too fast, position updates might be saved out of order. Please go slower.",
+    "too-fast-callout": "Slow down please :(",
+    "reject-and-disable": "Reject and disable"
   },
   "erfolgreich": "Successful",
   "erforderlich": "Required",
   "errors": {
     "offline": "The servers are currently offline. Please try again later!",
-    "unerwarteter-fehler": "Unexpected error. Please contact us."
+    "unerwarteter-fehler": "Unexpected error. Please contact us.",
+    "unknown": "unknown"
   },
   "erstellen": "Create",
   "failMessages": {
@@ -197,14 +203,20 @@
   },
   "general": {
     "ChoreoPlaner": "Choreo Planner",
-    "help": "Help"
+    "help": "Help",
+    "offline": "Offline",
+    "reject": "Reject",
+    "accept": "Accept"
   },
   "HelpView": {
     "fuer-deine-suche-gibt-es-keine-ergebnisse": "There are no results for your search \"{searchTerm}\"",
     "hilfe-bekommen": "Get help",
     "nicht-die-richtige-antwort-dabei": "Not the correct answer? Contact us at",
     "oder-auf-instagram": "or on Instagram",
-    "und-beschreibe-dein-problem": "and describe your problem."
+    "und-beschreibe-dein-problem": "and describe your problem.",
+    "documentation": "documentation",
+    "documentation_capitalized": "@.capitalize:HelpView.documentation",
+    "documentation-text": "Tech experts are wholeheartedly invited to take a look at the {0}."
   },
   "hits": {
     "arabesque": "Arabesque",
@@ -323,7 +335,7 @@
     "waehle-aus-wer-soll": "Select who should appear on the video",
     "waehle-mit-allen-aus": "Choose whether you want to have a video with everybody on the mat or selected people",
     "warte-bis-video": "Wait until your video is finished",
-    "zum-loslegen": "Just register to get started and create the first team:",
+    "zum-loslegen": "Register now to get started and create the first team:",
     "personalisierung": "Personalization",
     "branding-deines-vereins": "Your club's branding",
     "mach-werbung-fuer-dein-team": "Advertising for your team",
@@ -331,7 +343,8 @@
     "garde": "Guard Dance",
     "stage-3-4": "Stage (3:4)",
     "stage-1-1": "Stage (1:1)",
-    "choose-the-layout-of-your-stage": "Choose the layout of your stage"
+    "choose-the-layout-of-your-stage": "Choose the layout of your stage",
+    "zur-uebersicht": "To the overview"
   },
   "impressumView": {
     "angaben-gemaess-5-tmg": "Information according to § 5 TMG",
@@ -577,7 +590,16 @@
     },
     "video-download": {
       "format": "Format",
-      "video-herunterladen": "Download video"
+      "video-herunterladen": "Download video",
+      "stocking-video": "My video is jerky",
+      "video-file-issues": "Issues with the video file",
+      "other-issue": "Other issue",
+      "jerky-video": "Your video is jerky?",
+      "jerky-video-answer": "The video is created in your browser, i.e. the performance of your device affects the quality of the video. Try closing other applications or restarting your browser.",
+      "file-issues": "Issues with the video file?",
+      "file-issues-answer": "If the video does not play on your device or a required format is missing or not compatible, there is nothing for you to do, unfortunately. Please check the help page for any information or contact us.",
+      "other-issue-question": "Other issue?",
+      "other-issue-answer": "Take a look at our help page to perhaps solve your problem yourself."
     },
     "delete-club": {
       "verein-loeschen": "Delete club?"
@@ -694,8 +716,8 @@
     "filtere-die-choreos-nach-season": "Filter the choreos by season",
     "filtere-die-choreos-nach-teams": "Filter the choreos by teams",
     "hier-kannst-du-noch-nichts-finden": "You can't find anything here yet...",
-    "max-laenge": "Max. Length:",
-    "min-laenge": "Min. Length:",
+    "max-laenge": "Max. Length",
+    "min-laenge": "Min. Length",
     "noch-kein-team-angelegt": "You currently have nothing to see here because you have not yet created any teams.",
     "pdf-erstellen": "Create PDF",
     "saison-anfangen": "Start season",
@@ -730,7 +752,12 @@
     "teilnehmer-die-im-video-angezeigt-werden-sollen": "Participants who are to be displayed in the video",
     "video-generieren": "Generate video",
     "video-zusammenstellen": "Create video",
-    "dein-vereinslogo-als-wasserzeichen-im-video-anzeigen": "Show your club logo as a watermark in the video"
+    "dein-vereinslogo-als-wasserzeichen-im-video-anzeigen": "Show your club logo as a watermark in the video",
+    "dein-browser-unterstuetzt-kein-video": "Your browser does not support exporting to a video. Please try a different browser or device.",
+    "do-not-leave-this-page": "Do not leave this page while the video is being generated!",
+    "playback-length": "Playback length",
+    "minutes": "Minutes",
+    "seconds": "Seconds"
   },
   "zur-startseite": "To the landing page",
   "zuruecksetzen": "Reset",
@@ -761,5 +788,14 @@
     "by-stage": "By stage form (no lines)"
   },
   "mat": "Mat/Stage",
-  "cheerleading": "Cheerleading"
+  "cheerleading": "Cheerleading",
+  "logging": {
+    "app-version": "App Version",
+    "server-version": "Server Version",
+    "user-agent": "User Agent",
+    "current-locale": "Current Locale",
+    "available-locales": "Available Locales",
+    "warning": "%cAttention: %cThis console could be used to obtain information about your browser or device. Only give out information if you can independently verify that you are in contact with a representative of Choreo Planer.",
+    "welcome": "%cWelcome to Choreo Planner\n%cThank you for your commitment to choreo sports! You can use this console to find out some information about the application and your browser.\n\nHere are a few helpful links:\nChoreo Planner on IG:     https://www.instagram.com/choreoplaner\nGet help:                           https://www.choreo-planer.de/hilfe\nContact us:                       info@choreo-planer.de"
+  }
 }

@@ -121,6 +121,45 @@
 import SeasonService from "@/services/SeasonService";
 import SeasonTeamService from "@/services/SeasonTeamService";
 
+/**
+ * @module Modal:CreateSeasonModal
+ *
+ * @vue-data {String} id
+ * @vue-data {Number} tabIndex=0
+ * @vue-data {String|null} newSeasonName=null
+ * @vue-data {Number|null} newSeasonYear=null
+ * @vue-data {Array} seasons
+ * @vue-data {Number|null} seasonId=null
+ * @vue-data {Number|null} teamId=null
+ * @vue-data {Array} seasonsToCopy
+ * @vue-data {Number|null} seasonToCopyMembersFromId=null
+ * @vue-data {Array} newSeasonMemberIds
+ *
+ * @vue-prop {Array} teams
+ *
+ * @vue-computed {Object} team
+ * @vue-computed {Array} seasonSelectOptions
+ * @vue-computed {Array} seasonToCopySelectOptions
+ * @vue-computed {Array} newMemberOptions
+ * @vue-computed {Boolean} inputIsValid
+ * @vue-computed {Boolean} seasonIsValid
+ * @vue-computed {String|null} seasonStateFeedback
+ * @vue-computed {Boolean} newSeasonIsValid
+ * @vue-computed {Boolean} newSeasonNameIsValid
+ * @vue-computed {String|null} newSeasonNameStateFeedback
+ * @vue-computed {Boolean} newSeasonYearIsValid
+ * @vue-computed {String|null} newSeasonYearStateFeedback
+ * @vue-computed {Boolean} newSeasonMembersIsValid
+ * @vue-computed {String|null} newSeasonMembersStateFeedback
+ *
+ * @vue-event {Object} seasonTeamCreated
+ *
+ * @example
+ * <template>
+ *  <CreateSeasonModal ref=createSeasonModal :teams="teams" @seasonTeamCreated="handler" />
+ *  <Button @click="() => $refs.createSeasonModal.open()" />
+ * </template>
+ */
 export default {
   name: "CreateSeasonModal",
   data: () => ({

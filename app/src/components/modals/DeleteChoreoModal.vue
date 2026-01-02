@@ -17,7 +17,22 @@
 
 <script>
 import ChoreoService from "@/services/ChoreoService";
+import ERROR_CODES from "@/utils/error_codes";
+import { error } from "@/utils/logging";
 
+/**
+ * @module Modal:DeleteChoreoModal
+ *
+ * @vue-data {String} id
+ *
+ * @vue-prop {String} choreoId
+ *
+ * @example
+ * <template>
+ *  <DeleteChoreoModal ref="deleteChoreoModal" choreoId="abc" />
+ *  <Button @click="() => $refs.deleteChoreoModal.open()" />
+ * </template>
+ */
 export default {
   name: "DeleteChoreoModal",
   data: () => ({
@@ -39,7 +54,12 @@ export default {
             name: "Start",
             params: { locale: this.$root.$i18n.locale },
           })
-          .catch(() => {});
+          .catch(() => {
+            error(
+              "Redundant navigation to start",
+              ERROR_CODES.REDUNDANT_ROUTING
+            );
+          });
       });
     },
   },

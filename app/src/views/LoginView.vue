@@ -196,9 +196,32 @@ import PasswordResetModal from "@/components/modals/PasswordResetModal.vue";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import AuthService from "@/services/AuthService";
 import MessagingService from "@/services/MessagingService";
+import ERROR_CODES from "@/utils/error_codes";
+import { error, log } from "@/utils/logging";
 
 const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 
+/**
+ * @vue-data {string|null} username=null - The username for login or registration.
+ * @vue-data {string|null} email=null - The email address for login or registration.
+ * @vue-data {string|null} password=null - The password for login or registration.
+ * @vue-data {string|null} passwordRepetition=null - The repeated password for registration.
+ * @vue-data {number} tabIndex=0 - The index of the currently active tab (0 for login, 1 for registration).
+ * @vue-data {boolean} loading=false - Whether a login or registration request is in progress.
+ *
+ * @vue-computed {string[]} failMessages - An array of random failure messages to show on error.
+ * @vue-computed {boolean} usernameIsValid - Whether the username is valid (at least 6 characters).
+ * @vue-computed {string|null} usernameError - Error message for invalid username.
+ * @vue-computed {boolean} emailIsValid - Whether the email is valid (matches email regex).
+ * @vue-computed {string|null} emailError - Error message for invalid email.
+ * @vue-computed {boolean} passwordIsValid - Whether the password is valid (at least 6 characters).
+ * @vue-computed {string|null} passwordError - Error message for invalid password.
+ * @vue-computed {boolean} passwordRepetitionIsValid - Whether the password repetition matches the password.
+ * @vue-computed {string|null} passwordRepetitionError - Error message for mismatched password repetition.
+ * @vue-computed {boolean} isWelcome - Whether the current route is the welcome page.
+ *
+ * @vue-computed {MetaInfo} metaInfo
+ */
 export default {
   name: "LoginView",
   components: { ConfirmEmailModal, PasswordResetModal, NewVersionBadge },
@@ -211,23 +234,36 @@ export default {
     loading: false,
   }),
   mounted() {
+    if (this.$store.state.loggedIn) {
+      this.redirect();
+      return;
+    }
+
     const query = this.$route.query;
     if (query?.sso)
       AuthService.ssoLogin(query.sso)
         .then(() => {
           window._paq.push(["trackGoal", 2]);
-          this.$router
-            .push(
-              this.$route.query?.redirectUrl ||
-                `/${this.$root.$i18n.locale}/start`
-            )
-            .catch(() => {});
+          this.redirect();
         })
         .catch((e) => {
+          error(e, ERROR_CODES.SSO_LOGIN_FAILED);
           this.showFailMessage(e.response.data);
         });
   },
   methods: {
+    redirect() {
+      this.$router
+        .push(
+          this.$route.query?.redirectUrl || `/${this.$root.$i18n.locale}/start`
+        )
+        .catch(() => {
+          error(
+            "Redundant navigation to redirect url or start",
+            ERROR_CODES.REDUNDANT_ROUTING
+          );
+        });
+    },
     showFailMessage(message, title = null) {
       MessagingService.showError(message, title);
     },
@@ -253,15 +289,19 @@ export default {
               this.$route.query?.redirectUrl ||
                 `/${this.$root.$i18n.locale}/start`
             )
-            .catch(() => {});
+            .catch(() => {
+              error(
+                "Redundant navigation to redirect url or start",
+                ERROR_CODES.REDUNDANT_ROUTING
+              );
+            });
         })
         .catch((e) => {
-          console.warn(e);
+          error(e, ERROR_CODES.LOGIN_FAILED);
           this.loading = false;
           if (e.status == 400 && e.response.data.type == "EmailUnconfirmed")
             this.$refs.confirmEmailModal.open(true);
           else {
-            console.warn(e.code);
             if (e.code == "ERR_NETWORK")
               return this.showFailMessage(
                 e.response?.data || this.$t("login.server-offline")
@@ -290,10 +330,15 @@ export default {
               this.$route.query?.redirectUrl ||
                 `/${this.$root.$i18n.locale}/start`
             )
-            .catch(() => {});
+            .catch(() => {
+              error(
+                "Redundant navigation to redirect url or start",
+                ERROR_CODES.REDUNDANT_ROUTING
+              );
+            });
         })
         .catch((e) => {
-          console.warn(e);
+          error(e, ERROR_CODES.REGISTRATION_FAILED);
           this.loading = false;
           if (e.code == "ERR_NETWORK")
             return this.showFailMessage(
@@ -303,6 +348,7 @@ export default {
         });
     },
     onPasswordReset() {
+      log("A password link was sent to your email address. Check your inbox!");
       MessagingService.showSuccess(
         this.$t("login.login-link-was-sent"),
         this.$t("login.erfolg"),

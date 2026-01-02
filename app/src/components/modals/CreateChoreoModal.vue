@@ -233,6 +233,46 @@ import ChoreoService from "@/services/ChoreoService";
 import ColorService from "@/services/ColorService";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
 
+/**
+ * @module Modal:CreateChoreoModal
+ *
+ * @vue-data {String} id
+ * @vue-data {String|null} newChoreoName=null
+ * @vue-data {Number} newChoreoAchter=1
+ * @vue-data {Number} newChoreoCount=0
+ * @vue-data {String} newChoreoMatType="cheer"
+ * @vue-data {Number|null} newChoreoTeamId=null
+ * @vue-data {Number|null} newChoreoSeasonId=null
+ * @vue-data {Array} newChoreoParticipantIds
+ * @vue-data {Array} participantOptions
+ *
+ * @vue-prop {Array} teams
+ *
+ * @vue-computed {Object} selectedTeam
+ * @vue-computed {Object} selectedSeasonTeam
+ * @vue-computed {String} timeEstimationString
+ * @vue-computed {Array} matTypeOptions
+ * @vue-computed {Boolean} newChoreoNameIsValid
+ * @vue-computed {String|null} newChoreoNameStateFeedback
+ * @vue-computed {Boolean} newChoreoCountIsValid
+ * @vue-computed {String|null} newChoreoCountStateFeedback
+ * @vue-computed {Boolean} newChoreoAchterIsValid
+ * @vue-computed {String|null} newChoreoAchterStateFeedback
+ * @vue-computed {Boolean} newChoreoTeamIsValid
+ * @vue-computed {String|null} newChoreoTeamStateFeedback
+ * @vue-computed {Boolean} newChoreoMatTypeIsValid
+ * @vue-computed {String|null} newChoreoMatTypeStateFeedback
+ * @vue-computed {Boolean} newChoreoSeasonIsValid
+ * @vue-computed {String|null} newChoreoSeasonStateFeedback
+ *
+ * @vue-event {Object} addChoreo
+ *
+ * @example
+ * <template>
+ *  <CreateChoreoModal :teams="teams" ref="createChoreoModal" @addChoreo="handler" />
+ *  <Button @click="() => $refs.createChoreoModal.open()" />
+ * </template>
+ */
 export default {
   name: "CreateChoreoModal",
   components: { NewVersionBadge },

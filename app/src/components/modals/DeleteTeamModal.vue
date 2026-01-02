@@ -19,6 +19,20 @@
 <script>
 import TeamService from "@/services/TeamService";
 
+/**
+ * @module Modal:DeleteTeamModal
+ *
+ * @vue-data {String} id
+ * @vue-data {String|null} deleteTeamId=null
+ *
+ * @vue-event {string} teamDeleted
+ *
+ * @example
+ * <template>
+ *  <DeleteTeamModal ref="deleteTeamModal" @teamDeleted="handler" />
+ *  <Button @click="() => $refs.deleteTeamModal.open('abc')" />
+ * </template>
+ */
 export default {
   name: "DeleteTeamModal",
   data: () => ({

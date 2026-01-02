@@ -1,0 +1,18 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "localhost:3000",
+      "localStorage": [
+        {
+          "name": "isTestEnvironment",
+          "value": "true"
+        },
+        {
+          "name": "choreo-planer-token",
+          "value": "test-auth-token"
+        }
+      ]
+    }
+  ]
+}

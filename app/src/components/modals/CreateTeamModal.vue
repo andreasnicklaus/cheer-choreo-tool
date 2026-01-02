@@ -55,6 +55,28 @@
 import SeasonService from "@/services/SeasonService";
 import TeamService from "@/services/TeamService";
 
+/**
+ * @module Modal:CreateTeamModal
+ *
+ * @vue-data {String} id
+ * @vue-data {String|null} newTeamName=null
+ * @vue-data {Array} seasons
+ * @vue-data {String|null} seasonId=null
+ *
+ * @vue-computed {Boolean} newTeamNameIsValid
+ * @vue-computed {String|null} newTeamNameStateFeedback
+ * @vue-computed {Array} seasonSelectOptions
+ * @vue-computed {Boolean} seasonIsValid
+ * @vue-computed {String|null} seasonStateFeedback
+ *
+ * @vue-event {string} teamCreated
+ *
+ * @example
+ * <template>
+ *  <CreateTeamModal ref="createTeamModal" @teamCreated="handler" />
+ *  <Button @click="() => $refs.createTeamModal.open()" />
+ * </template>
+ */
 export default {
   name: "CreateTeamModal",
   data: () => ({

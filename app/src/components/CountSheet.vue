@@ -15,7 +15,17 @@
     <b-thead head-variant="light">
       <b-tr>
         <b-th
-          v-for="field in ['Achter', '1', '2', '3', '4', '5', '6', '7', '8']"
+          v-for="field in [
+            $t('achter'),
+            '1',
+            '2',
+            '3',
+            '4',
+            '5',
+            '6',
+            '7',
+            '8',
+          ]"
           :key="field"
         >
           {{ field }}
@@ -25,7 +35,17 @@
     <b-tbody>
       <b-tr v-for="(acht, i) in achter" :key="i" :style="{ height: '1px' }">
         <b-td
-          v-for="label in ['achter', '1', '2', '3', '4', '5', '6', '7', '8']"
+          v-for="label in [
+            $t('achter'),
+            '1',
+            '2',
+            '3',
+            '4',
+            '5',
+            '6',
+            '7',
+            '8',
+          ]"
           :key="label"
           :style="{
             height: 'inherit',
@@ -33,11 +53,13 @@
             // border: 'none',
           }"
         >
-          <span v-if="label == 'achter'">
+          <span v-show="label == $t('achter')">
             {{ acht[label] + 1 }}
           </span>
           <b-button
-            v-else-if="i * 8 + parseInt(label) <= choreo.counts"
+            v-show="
+              label != $t('achter') && i * 8 + parseInt(label) <= choreo.counts
+            "
             :disabled="!interactive"
             class="p-1 py-2"
             squared
@@ -61,12 +83,12 @@
                 : 'outline-primary'
             "
           >
-            <span v-if="acht[label].length > 0">
+            <span v-show="acht[label].length > 0">
               <p class="mb-0" v-for="hit in acht[label]" :key="hit.name">
                 {{ hit.name }}
               </p>
             </span>
-            <span v-else>-</span>
+            <span v-show="acht[label].length == 0">-</span>
           </b-button>
         </b-td>
       </b-tr>
@@ -75,6 +97,26 @@
 </template>
 
 <script>
+/**
+ * @module Component:CountSheet
+ *
+ * @vue-prop {Number} count - The current count value, used to highlight the selected cell.
+ * @vue-prop {Object} [choreo] - The choreography object containing hits and counts.
+ * @vue-prop {Boolean} [interactive=true] - Whether the table is interactive (clickable).
+ * @vue-prop {Boolean} [stickyHeader=true] - Whether the header should stick to the top when scrolling.
+ * @vue-prop {Number} fontSize - The font size for the table cells.
+ * @vue-prop {Number} [startCount=0] - The starting count for the table, used to calculate the achter values.
+ * @vue-prop {Boolean} [fixed=false] - Whether the table should have fixed headers and footers.
+ *
+ * @vue-computed {Array} achter - An array of objects representing the "achter" rows, each containing counts and hits.
+ * @vue-computed {String} tableHeight - The height of the table, calculated based on the window height.
+ *
+ * @vue-event {Number} setCounter - Emitted when a count is set by clicking a button. The value is calculated as `achter * 8 + count`.
+ * @vue-event {null} openCreateHitModal - Notifies parent component to call <code>open()</code> on {@link Modal:CreateHitModal CreateHitModal}
+ *
+ * @example <CountSheet :count="0" :fontSize="16" @setCounter="handler" @openCreateHitModal="handler" />
+ * @example <CountSheet :count="0" :choreo="choreoObj" :interactive="false" :stickyHeader="false" :fontSize="18" :startCount="2" :fixed="true" @setCounter="handler" @openCreateHitModal="handler" />
+ */
 export default {
   name: "CountSheet",
   props: {
@@ -121,7 +163,7 @@ export default {
       else {
         const achterLength = Math.ceil(this.choreo.counts / 8);
         const achter = new Array(achterLength).fill(null).map((_, i) => ({
-          achter: Math.floor(this.startCount / 8) + i,
+          [this.$t("achter")]: Math.floor(this.startCount / 8) + i,
           1: this.findActionsForCount(this.startCount + i * 8 + 0),
           2: this.findActionsForCount(this.startCount + i * 8 + 1),
           3: this.findActionsForCount(this.startCount + i * 8 + 2),

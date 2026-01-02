@@ -209,6 +209,43 @@
 import LineupService from "@/services/LineupService";
 import PositionService from "@/services/PositionService";
 
+/**
+ * @module Modal:CreateLineupModal
+ *
+ * @vue-data {String} id
+ * @vue-data {Number} editLineupStartAchter=1
+ * @vue-data {Number} editLineupStartCount=1
+ * @vue-data {Number} editLineupEndAchter=1
+ * @vue-data {Number} editLineupEndCount=1
+ * @vue-data {Array} editLineupMembers
+ *
+ * @vue-prop {Number} count
+ * @vue-prop {Object} choreo
+ * @vue-prop {Array} teamMembers
+ * @vue-prop {Array} lineupsForCurrentCount
+ * @vue-prop {Array} currentPositions
+ *
+ * @vue-computed {Boolean} startIsBeforeEnd
+ * @vue-computed {String|null} startIsBeforeEndStateFeedback
+ * @vue-computed {Boolean} editLineupEndAchterIsValid
+ * @vue-computed {String|null} editLineupEndAchterStateFeedback
+ * @vue-computed {Boolean} editLineupStartAchterIsValid
+ * @vue-computed {String|null} editLineupStartAchterStateFeedback
+ * @vue-computed {Boolean} editLineupStartCountIsValid
+ * @vue-computed {String|null} editLineupStartCountStateFeedback
+ * @vue-computed {Boolean} editLineupEndCountIsValid
+ * @vue-computed {String|null} editLineupEndCountStateFeedback
+ * @vue-computed {Boolean} editLineupMembersIsValid
+ * @vue-computed {String|null} editLineupMembersStateFeedback
+ *
+ * @vue-event {Object} updateLineups
+ *
+ * @example
+ * <template>
+ *  <CreateLineupModal ref="createLineupModal" :count="1" :choreo="choreoObj" :teamMembers="members" :lineupsForCurrentCount="lineups" :currentPositions="positions" @updateLineups="handler" />
+ *  <Button @click="() => $refs.createLineupModal.open()" />
+ * </template>
+ */
 export default {
   name: "CreateLineupModal",
   data: () => ({

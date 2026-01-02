@@ -1,5 +1,10 @@
 import i18n from "@/plugins/vue-i18n";
+import { debug } from "@/utils/logging";
 
+/**
+ * Service for displaying messages and notifications to the user.
+ * @class MessagingService
+ */
 const DEFAULT_OPTIONS = {
   variant: "info",
   title: "Info",
@@ -11,11 +16,24 @@ const DEFAULT_OPTIONS = {
 class MessagingService {
   handlers = {};
 
+  /**
+   * Subscribe a handler for message display.
+   * @param {string} key - Unique key for the handler
+   * @param {Function} handler - Function to handle message display
+   */
   subscribe(key, handler) {
+    debug("Message handler registered", { key });
     this.handlers[key] = handler;
   }
 
+  /**
+   * Show a generic message with options.
+   * @param {string} message - The message to display
+   * @param {Object} options - Options for the message display
+   * @returns {Promise}
+   */
   _showMessage(message, options) {
+    debug("_showMessage", { message, options });
     return Promise.all(
       Object.values(this.handlers).map((handler) =>
         handler(message, { ...DEFAULT_OPTIONS, ...options })
@@ -23,12 +41,28 @@ class MessagingService {
     );
   }
 
+  /**
+   * Show an info message.
+   * @param {string} message - The message to display
+   * @param {string|null} title - The title of the message (optional)
+   * @param {Object} [options] - Options for the message display
+   * @returns {Promise}
+   */
   showInfo(message, title = null, options = {}) {
+    debug("Showing Info message", { message, title, options });
     if (!title) title = i18n.t("info");
     return this._showMessage(message, { title, ...options });
   }
 
+  /**
+   * Show a success message.
+   * @param {string} message - The message to display
+   * @param {string|null} [title] - The title of the message
+   * @param {Object} [options] - Options for the message display
+   * @returns {Promise}
+   */
   showSuccess(message, title = null, options = {}) {
+    debug("Showing success message", { message, title, options });
     if (!title) title = i18n.t("login.erfolg");
     return this._showMessage(message, {
       title,
@@ -37,7 +71,15 @@ class MessagingService {
     });
   }
 
+  /**
+   * Show an error message.
+   * @param {string} message - The error message to display
+   * @param {string|null} [title] - The title of the error message
+   * @param {Object} [options] - Options for the message display
+   * @returns {Promise}
+   */
   showError(message, title = null, options = {}) {
+    debug("Showing error message", { message, title, options });
     // ERROR_MESSAGES must be within this function to ensure that the right locale is used when it is called
     const ERROR_MESSAGES = [
       i18n.t("failMessages.oh-oh"),
@@ -53,9 +95,21 @@ class MessagingService {
     return this._showMessage(message, { title, variant: "danger", ...options });
   }
 
+  /**
+   * Show a warning message.
+   * @param {string} message - The warning message to display
+   * @param {string|null} [title] - The title of the warning message
+   * @param {Object} [options] - Options for the message display
+   * @returns {Promise}
+   */
   showWarning(message, title = null, options = {}) {
+    debug("Showing warning message", { message, title, options });
     if (!title) title = i18n.t("warnung");
-    return this._showMessage(message, { title, variant: "warn", ...options });
+    return this._showMessage(message, {
+      title,
+      variant: "warning",
+      ...options,
+    });
   }
 }
 

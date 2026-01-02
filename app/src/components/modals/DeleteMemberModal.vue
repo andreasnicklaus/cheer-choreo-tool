@@ -19,6 +19,20 @@
 <script>
 import MemberService from "@/services/MemberService";
 
+/**
+ * @module Modal:DeleteMemberModal
+ *
+ * @vue-data {String} id
+ * @vue-data {String|null} deleteMemberId=null
+ *
+ * @vue-event {string} memberDeleted
+ *
+ * @example
+ * <template>
+ *  <DeleteMemberModal ref="deleteMemberModal" @memberDeleted="handler" />
+ *  <Button @click="() => $refs.deleteMemberModal.open('abc')" />
+ * </template>
+ */
 export default {
   name: "DeleteMemberModal",
   data: () => ({

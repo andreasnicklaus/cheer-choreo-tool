@@ -1,0 +1,38 @@
+{
+  "plugins": ["node_modules/jsdoc-vuejs", "plugins/markdown"],
+  "source": {
+    "include": ["src"],
+    "exclude": ["public/docs"],
+    "includePattern": "\\.(vue|js)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "opts": {
+    "destination": "./public/docs/",
+    "recurse": true,
+    "template": "./node_modules/clean-jsdoc-theme",
+    "encoding": "utf8",
+    "readme": "./README.md",
+    "verbose": true,
+    "theme_opts": {
+      "homepageTitle": "Choreo Planer",
+      "title": "Choreo Planer",
+      "base_url": "./docs/",
+      "menu": [
+        {
+          "title": "API Documentation",
+          "link": "https://api.choreo-planer.de/api-docs",
+          "target": "_blank"
+        },
+        {
+          "title": "Server Documentation",
+          "link": "https://api.choreo-planer.de/docs",
+          "target": "_blank"
+        }
+      ]
+    }
+  },
+  "markdown": {
+    "hardwrap": false,
+    "idInHeadings": true
+  }
+}

@@ -131,6 +131,45 @@
               </b-form-group>
             </b-skeleton-wrapper>
           </b-col>
+          <b-col cols="12">
+            <b-form-group
+              :description="$t('video-export-comp.playback-length')"
+            >
+              <b-row>
+                <b-col cols="6">
+                  <b-input-group>
+                    <b-form-input
+                      v-model="animationMinutes"
+                      type="number"
+                      min="0"
+                    />
+                    <b-input-group-append
+                      v-b-tooltip.hover
+                      :title="$t('video-export-comp.minutes')"
+                    >
+                      <b-input-group-text>Min</b-input-group-text>
+                    </b-input-group-append>
+                  </b-input-group>
+                </b-col>
+                <b-col cols="6">
+                  <b-input-group>
+                    <b-form-input
+                      v-model="animationSeconds"
+                      type="number"
+                      min="0"
+                      max="59"
+                    />
+                    <b-input-group-append
+                      v-b-tooltip.hover
+                      :title="$t('video-export-comp.seconds')"
+                    >
+                      <b-input-group-text>Sec</b-input-group-text>
+                    </b-input-group-append>
+                  </b-input-group>
+                </b-col>
+              </b-row>
+            </b-form-group>
+          </b-col>
           <b-col cols="auto">
             <b-button-group>
               <b-button
@@ -201,6 +240,9 @@
               <div class="text-center" :style="{ minWidth: '70vw' }">
                 <b-spinner />
                 <p>{{ waitingSlogan || "Dein Video wird generiert!" }}</p>
+                <b-alert :show="true" variant="danger">
+                  {{ $t("video-export-comp.do-not-leave-this-page") }}
+                </b-alert>
                 <b-progress
                   :value="count"
                   :max="choreo?.counts"
@@ -243,7 +285,46 @@ import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
 import VideoDownloadModal from "./modals/VideoDownloadModal.vue";
 import AuthService from "@/services/AuthService";
+import MessagingService from "@/services/MessagingService";
 import ClubService from "@/services/ClubService";
+import { debug, error, warn } from "@/utils/logging";
+import ERROR_CODES from "@/utils/error_codes";
+import { roundToDecimals } from "@/utils/numbers";
+
+/**
+ * @module Component:VideoExport
+ *
+ * @vue-data {Number} width=1800 - The width of the video canvas.
+ * @vue-data {String|null} downloadUrl=null - The URL for the downloaded video.
+ * @vue-data {MediaRecorder|null} mediaRecorder=null - The MediaRecorder instance for recording the video.
+ * @vue-data {Array} recordingChunks - The chunks of video data recorded.
+ * @vue-data {Number|null} count=null - The current count in the video, used for choreography timing.
+ * @vue-data {gsap.timeline|null} animationTimeline=null - The GSAP timeline for controlling the animation of the video.
+ * @vue-data {Number} bps=2.5 - Beats per second for the choreography.
+ * @vue-data {Object|null} user=null - The authenticated user object.
+ * @vue-data {Object|null} choreo=null - The choreography object being exported.
+ * @vue-data {Array} teamMembers - The members of the team participating in the choreography.
+ * @vue-data {Boolean} animationIsRunning=false - Whether the animation is currently running.
+ * @vue-data {Boolean} recordingIsRunning=false - Whether the recording is currently running.
+ * @vue-data {Boolean} includeCount=true - Whether to include the count in the video.
+ * @vue-data {Boolean} includeTeamName=true - Whether to include the team name in the video.
+ * @vue-data {Boolean} includeChoreoName=true - Whether to include the choreography name in the video.
+ * @vue-data {Array} includedMembers - The names of team members to include in the video.
+ * @vue-data {Boolean} includeClubLogo=false - Whether to include the club logo in the video.
+ * @vue-data {Blob|null} currentClubLogoBlob=null - The Blob URL of the current club's logo, if available.
+ * @vue-data {Array} downloadOptions=[{id: 'webm', ext: '.webm', name: 'Webm'}, {id: 'mp4', ext: '.mp4', name: 'MP4'}] - The available download options for the video.
+ * @vue-data {FFmpeg|null} ffmpeg=null - The FFmpeg instance for video processing.
+ * @vue-data {String|null} mp4Url=null - The URL for the MP4 version of the video, if available.
+ *
+ * @vue-computed {Object} currentClub - The current club of the user, based on the store state.
+ * @vue-computed {String} waitingSlogan - A random slogan displayed while the video is being generated.
+ * @vue-computed {Number} height - The height of the video canvas, calculated based on the width and the aspect ratio.
+ *
+ * @vue-computed {MetaInfo} metaInfo
+ *
+ * @example <VideoExport :width="800" />
+ * @example <VideoExport />
+ */
 
 export default {
   name: "VideoExport",
@@ -255,7 +336,7 @@ export default {
     recordingChunks: [],
     count: null,
     animationTimeline: null,
-    bps: 2.51,
+    bps: 2.5,
     user: null,
     choreo: null,
     teamMembers: [],
@@ -281,6 +362,8 @@ export default {
     ],
     ffmpeg: null,
     mp4Url: null,
+    animationMinutes: 0,
+    animationSeconds: 0,
   }),
   methods: {
     startPreview() {
@@ -296,7 +379,7 @@ export default {
       this.animationTimeline.time(0);
     },
     startRecording() {
-      this.mediaRecorder.stop();
+      this.mediaRecorder?.stop();
       this.animationTimeline.pause();
 
       this.count = 0;
@@ -326,7 +409,10 @@ export default {
           this.addAnimationsFromChoreo();
           this.initializeRecorder();
         })
-        .catch((e) => console.warn(e));
+        .catch((e) => {
+          error("Could not load choreo", ERROR_CODES.CHOREO_QUERY_FAILED);
+          MessagingService.showError(e.response.data, this.$t("fehler"));
+        });
     },
     loadUserInfo() {
       return AuthService.getUserInfo().then((user) => {
@@ -542,10 +628,25 @@ export default {
         return setTimeout(this.initializeRecorder, 50);
       }
 
+      if (!this.$refs.videoCanvas.captureStream) {
+        MessagingService.showError(
+          this.$t("video-export-comp.dein-browser-unterstuetzt-kein-video"),
+          this.$t("fehler")
+        );
+        return;
+      }
+
       const stream = this.$refs.videoCanvas.captureStream(1000);
-      this.mediaRecorder = new MediaRecorder(stream, {
-        mimeType: "video/webm",
-      });
+      try {
+        this.mediaRecorder = new MediaRecorder(stream, {
+          mimeType: "video/webm; codecs=vp9",
+        });
+      } catch (e) {
+        warn("VP9 not supported, falling back to VP8");
+        this.mediaRecorder = new MediaRecorder(stream, {
+          mimeType: "video/webm; codecs=vp8",
+        });
+      }
       this.mediaRecorder.ondataavailable = (event) => {
         this.recordingChunks.push(event.data);
       };
@@ -561,10 +662,10 @@ export default {
     initializeFfmpeg() {
       const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
       this.ffmpeg.on("log", ({ message }) => {
-        console.debug(message);
+        debug(message);
       });
       this.ffmpeg.on("progress", ({ progress, time }) => {
-        console.debug({ progress, time });
+        debug({ progress, time });
       });
 
       return Promise.all([
@@ -615,6 +716,21 @@ export default {
         });
       });
     },
+    calculateAnimationTime() {
+      const totalSeconds = roundToDecimals(this.choreo.counts / this.bps, 0);
+      this.animationMinutes = Math.floor(totalSeconds / 60);
+      this.animationSeconds = totalSeconds % 60;
+    },
+    adaptBpsFromTime() {
+      const totalSeconds = roundToDecimals(
+        this.animationMinutes * 60 + this.animationSeconds,
+        0
+      );
+      if (totalSeconds > 0 && this.choreo?.counts) {
+        const targetBps = roundToDecimals(this.choreo.counts / totalSeconds, 1);
+        if (this.bps !== targetBps) this.bps = targetBps;
+      }
+    },
   },
   watch: {
     count: {
@@ -652,11 +768,27 @@ export default {
         setTimeout(this.drawCanvas, 100);
       },
     },
+    bps: {
+      handler() {
+        this.addAnimationsFromChoreo();
+      },
+    },
+    animationSeconds: {
+      handler() {
+        this.adaptBpsFromTime();
+      },
+    },
+    animationMinutes: {
+      handler() {
+        this.adaptBpsFromTime();
+      },
+    },
   },
   mounted() {
-    Promise.all([this.loadUserInfo(), this.loadChoreo()]).then(
-      this.drawCanvas()
-    );
+    Promise.all([this.loadUserInfo(), this.loadChoreo()]).then(() => {
+      this.drawCanvas();
+      this.calculateAnimationTime();
+    });
     this.ffmpeg = new FFmpeg();
     this.initializeFfmpeg();
   },

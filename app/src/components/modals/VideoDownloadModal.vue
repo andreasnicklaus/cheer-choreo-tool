@@ -16,6 +16,59 @@
         ></video>
       </b-col>
       <b-col>
+        <b-collapse id="collapse-technical-issues" class="mb-2">
+          <b-card
+            title="Probleme?"
+            sub-title="Klicke auf die beste Beschreibung deines Problems"
+          >
+            <b-button v-b-toggle.collapse-stocking-video>
+              {{ $t("modals.video-download.stocking-video") }}
+            </b-button>
+            <b-button v-b-toggle.collapse-video-format>
+              {{ $t("modals.video-download.video-file-issues") }}
+            </b-button>
+            <b-col>
+              <b-button v-b-toggle.collapse-other>{{
+                $t("modals.video-download.other-issue")
+              }}</b-button>
+            </b-col>
+
+            <b-collapse
+              id="collapse-stocking-video"
+              accordion="technical-issues-accordion"
+            >
+              <b-card-text>
+                <b>{{ $t("modals.video-download.jerky-video") }}</b>
+                {{ $t("modals.video-download.jerky-video-answer") }}
+              </b-card-text>
+            </b-collapse>
+            <b-collapse
+              id="collapse-video-format"
+              accordion="technical-issues-accordion"
+            >
+              <b-card-text>
+                <b>{{ $t("modals.video-download.file-issues") }}</b>
+                {{ $t("modals.video-download.file-issues-answer") }}
+              </b-card-text>
+            </b-collapse>
+            <b-collapse
+              id="collapse-other"
+              accordion="technical-issues-accordion"
+            >
+              <b-card-text>
+                <b>{{ $t("modals.video-download.other-issue-question") }}</b>
+                {{ $t("modals.video-download.other-issue-answer") }}
+              </b-card-text>
+              <b-card-text>
+                <router-link
+                  :to="{ name: 'Help', params: { locale: $root.$i18n.locale } }"
+                >
+                  {{ $t("general.help") }}
+                </router-link>
+              </b-card-text>
+            </b-collapse>
+          </b-card>
+        </b-collapse>
         <b-row class="mb-1" no-gutters>
           <b-col>
             <b-button
@@ -52,6 +105,16 @@
               </b-dropdown-item>
             </b-dropdown>
           </b-col>
+          <b-col cols="auto">
+            <b-button
+              v-b-toggle.collapse-technical-issues
+              variant="light"
+              v-b-tooltip.hover
+              :title="$t('general.help')"
+            >
+              <b-icon-question-circle />
+            </b-button>
+          </b-col>
         </b-row>
       </b-col>
     </b-row>
@@ -59,6 +122,29 @@
 </template>
 
 <script>
+/**
+ * @module Modal:VideoDownloadModal
+ *
+ * @vue-data {String} id
+ * @vue-data {String} selectedDownloadOptionId="mp4"
+ *
+ * @vue-prop {Object} choreo
+ * @vue-prop {Number} [width=500]
+ * @vue-prop {String} downloadUrl
+ * @vue-prop {Array} downloadOptions
+ *
+ * @vue-computed {Object} selectedDownloadOption
+ *
+ * @vue-event {String} downloadOptionChanged
+ *
+ * @example
+ * <template>
+ *   <VideoDownloadModal ref="videoDownloadModal" :choreo="choreoObj" :width="800" :downloadUrl="url" :downloadOptions="options" @downloadOptionChanged="handler" />
+ *   <Button @click="() => $refs.videoDownloadModal.open()" />
+ * </template>
+ * @example <VideoDownloadModal :choreo="choreoObj" :width="800" :downloadUrl="url" :downloadOptions="options" @downloadOptionChanged="handler" />
+ * @example <VideoDownloadModal :downloadUrl="url" :downloadOptions="options" @downloadOptionChanged="handler" />
+ */
 export default {
   name: "VideoDownloadModal",
   data: () => ({
