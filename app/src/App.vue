@@ -329,6 +329,7 @@ div:has(.betteruptime-announcement)
   ~ .betteruptime-announcement__placeholder
   ~ .betteruptime-announcement__placeholder {
   display: none !important;
+
 }
 </style>
 
