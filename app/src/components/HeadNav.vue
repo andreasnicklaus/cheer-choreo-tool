@@ -262,7 +262,7 @@
 
         <b-nav-item
           @click="share"
-          v-b-tooltip.hover
+          v-b-tooltip.hover.bottom
           :title="$t('nav.teilen')"
           v-show="shareable"
         >
@@ -273,7 +273,7 @@
         <b-nav-item
           class="d-sm-block d-none"
           v-show="onlineStatus != null"
-          v-b-tooltip.hover
+          v-b-tooltip.hover.bottom
           :title="
             onlineStatus
               ? $t('nav.server-sind-online') +
@@ -290,7 +290,7 @@
         </b-nav-item>
         <b-nav-item
           :to="{ name: 'Help', params: { locale: $root.$i18n.locale } }"
-          v-b-tooltip.hover
+          v-b-tooltip.hover.bottom
           :title="$t('general.help')"
         >
           <b-icon-question-circle />
