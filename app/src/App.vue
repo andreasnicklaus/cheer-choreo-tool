@@ -314,8 +314,21 @@ html {
   content: ":";
 }
 
-.betteruptime-announcement__placeholder:nth-of-type(n + 3) {
-  display: none;
+/* Hide all placeholders by default */
+.betteruptime-announcement__placeholder {
+  display: none !important;
+}
+
+/* Re-enable placeholders that come after a div containing the announcement */
+div:has(.betteruptime-announcement) ~ .betteruptime-announcement__placeholder {
+  display: block !important;
+}
+
+/* But only allow the FIRST such placeholder */
+div:has(.betteruptime-announcement)
+  ~ .betteruptime-announcement__placeholder
+  ~ .betteruptime-announcement__placeholder {
+  display: none !important;
 }
 </style>
 
