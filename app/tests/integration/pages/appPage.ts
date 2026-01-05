@@ -92,7 +92,7 @@ export default class AppPage extends TestPage {
 
   iCheckAppVersion() {
     return Promise.all([
-      expect(this.page.getByText("Version:")).toContainText("0.12.0"),
+      expect(this.page.getByText("Version:")).toContainText("0.12.1"),
     ]);
   }
 
@@ -112,7 +112,7 @@ export default class AppPage extends TestPage {
   iCheckVersionMismatchErrorMessage(serverVersion: string) {
     return expect(
       this.page.getByTitle(
-        `Die Version der Webseite (0.12.0) entspricht nicht der Version der Server (${serverVersion})!`
+        `Die Version der Webseite (0.12.1) entspricht nicht der Version der Server (${serverVersion})!`
       )
     ).toBeVisible();
   }
