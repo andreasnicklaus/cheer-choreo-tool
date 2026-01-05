@@ -187,7 +187,7 @@
               </b-dropdown-text>
               <b-dropdown-text style="width: 250px">
                 <b-checkbox switch v-model="proposalEnabled">
-                  Propose positions
+                  {{ $t("editView.propose-positions") }}
                 </b-checkbox>
               </b-dropdown-text>
               <b-dropdown-text>
