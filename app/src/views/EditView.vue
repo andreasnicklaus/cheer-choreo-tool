@@ -670,18 +670,19 @@ export default {
           if (this.lineupCreationInProgress) return;
 
           this.lineupCreationInProgress = true;
-          LineupService.create(this.count, this.count, this.choreoId).then(
-            (lineup) => {
-              let lineupCopy = this.choreo.Lineups;
-              if (!lineup.Positions) lineup.Positions = [];
-              lineupCopy.push(lineup);
-              this.choreo.Lineups = lineupCopy;
-              this.lineupCreationInProgress = false;
+          return LineupService.create(
+            this.count,
+            this.count,
+            this.choreoId
+          ).then((lineup) => {
+            let lineupCopy = this.choreo.Lineups;
+            if (!lineup.Positions) lineup.Positions = [];
+            lineupCopy.push(lineup);
+            this.choreo.Lineups = lineupCopy;
+            this.lineupCreationInProgress = false;
 
-              this.showSuccessMessage(this.$tc("lineup", 1));
-              this.updateProposedPositions();
-            }
-          );
+            return this.createPositionOnExistingLineup(lineup, x, y, MemberId);
+          });
         } else {
           const memberTimeout = this.positionUpdates[MemberId];
           if (memberTimeout) clearTimeout(memberTimeout.timeout);
@@ -706,22 +707,11 @@ export default {
                 positionsCopy;
               this.choreo.Lineups = lineupCopy;
 
-              PositionService.create(lineupToUpdate.id, x, y, MemberId).then(
-                (position) => {
-                  let lineupCopy = this.choreo.Lineups;
-                  let positionsCopy = lineupCopy.find(
-                    (l) => l.id == lineupToUpdate.id
-                  ).Positions;
-                  positionsCopy = positionsCopy.filter(
-                    (p) => p.MemberId != MemberId
-                  );
-                  positionsCopy.push(position);
-                  lineupCopy.find((l) => l.id == lineupToUpdate.id).Positions =
-                    positionsCopy;
-                  this.choreo.Lineups = lineupCopy;
-                  this.showSuccessMessage(this.$tc("lineup", 1));
-                  this.updateProposedPositions();
-                }
+              return this.createPositionOnExistingLineup(
+                lineupToUpdate,
+                x,
+                y,
+                MemberId
               );
             }, 0),
             x,
@@ -729,6 +719,23 @@ export default {
           };
         }
       }
+    },
+    createPositionOnExistingLineup(lineupToUpdate, x, y, MemberId) {
+      return PositionService.create(lineupToUpdate.id, x, y, MemberId).then(
+        (position) => {
+          let lineupCopy = this.choreo.Lineups;
+          let positionsCopy = lineupCopy.find(
+            (l) => l.id == lineupToUpdate.id
+          ).Positions;
+          positionsCopy = positionsCopy.filter((p) => p.MemberId != MemberId);
+          positionsCopy.push(position);
+          lineupCopy.find((l) => l.id == lineupToUpdate.id).Positions =
+            positionsCopy;
+          this.choreo.Lineups = lineupCopy;
+          this.showSuccessMessage(this.$tc("lineup", 1));
+          this.updateProposedPositions();
+        }
+      );
     },
     onKeyPress(event) {
       // Prevent keyboard shortcuts if the user is typing in a text input field
@@ -965,8 +972,7 @@ export default {
       ).sort((a, b) => b.endCount - a.endCount);
       if (previousRelevantLineups.length == 0) return null;
 
-      const previousRelevantLineup =
-        previousRelevantLineups[previousRelevantLineups.length - 1];
+      const previousRelevantLineup = previousRelevantLineups[0];
       const previousPosition = previousRelevantLineup.Positions.find(
         (pos) => pos.MemberId == memberId
       );
@@ -1002,17 +1008,17 @@ export default {
               this.teamMembers,
               this.rejectedPositionProposals
             );
-            this.proposedPositions = proposedPositions;
+            this.setProposedPositions(proposedPositions);
           } catch (e) {
             error(e);
-            this.proposedPositions = [];
+            this.setProposedPositions([]);
           }
         }
         return;
       } else if (currentlyPositionedMembers.length > 0) {
         const movements = this.calculateMovementsForCurrentlyPositionedMembers(
           currentlyPositionedMembers
-        );
+        ).filter((movement) => movement !== null);
 
         // if all movements are the same, propose new positions based on that movement
         const allMovementsEqual = movements.every((movement) => {
@@ -1024,12 +1030,14 @@ export default {
         });
 
         if (allMovementsEqual) {
-          this.proposedPositions = LineupService.filterRejectedProposals(
-            this.calculateProposedPositionsBasedOnMovement(
-              currentlyPositionedMembers,
-              movements
-            ),
-            this.rejectedPositionProposals
+          this.setProposedPositions(
+            LineupService.filterRejectedProposals(
+              this.calculateProposedPositionsBasedOnMovement(
+                currentlyPositionedMembers,
+                movements
+              ),
+              this.rejectedPositionProposals
+            )
           );
           return;
         } else {
@@ -1041,18 +1049,37 @@ export default {
               this.rejectedPositionProposals
             );
             if (proposedPositions) {
-              this.proposedPositions = proposedPositions;
+              this.setProposedPositions(proposedPositions);
               return;
             }
           }
         }
 
-        this.proposedPositions = [];
+        this.setProposedPositions([]);
         return;
       }
     },
-    acceptProposedLineup() {
-      this.proposedPositions.forEach((proposedPosition) => {
+    setProposedPositions(proposedPositions) {
+      if (proposedPositions.length == 0) {
+        this.proposedPositions = [];
+        return;
+      }
+      if (
+        !proposedPositions.every((p) =>
+          this.currentPositions.some(
+            (cp) => cp.MemberId == p.MemberId && cp.x == p.x && cp.y == p.y
+          )
+        )
+      ) {
+        this.proposedPositions = proposedPositions;
+      } else {
+        this.proposedPositions = [];
+      }
+    },
+    async acceptProposedLineup() {
+      const [first, ...rest] = this.proposedPositions;
+      await this.onPositionChange(first.MemberId, first.x, first.y);
+      rest.forEach((proposedPosition) => {
         this.onPositionChange(
           proposedPosition.MemberId,
           proposedPosition.x,
