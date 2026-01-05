@@ -313,6 +313,10 @@ html {
 .label-with-colon::after {
   content: ":";
 }
+
+.betteruptime-announcement__placeholder:nth-of-type(n + 3) {
+  display: none;
+}
 </style>
 
 <style lang="scss" scoped>
