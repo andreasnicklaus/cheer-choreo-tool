@@ -1,10 +1,10 @@
 import { NotFoundError } from "@/utils/errors";
 import User from "../db/models/user";
+import MailService from "./MailService";
+import NotificationService from "./NotificationService";
 
 const { Op } = require("sequelize");
 const { logger } = require("../plugins/winston");
-const MailService = require("./MailService");
-const NotificationService = require("./NotificationService");
 const i18n = require("i18n");
 const roundToDecimals = require("../utils/numbers");
 
@@ -121,7 +121,7 @@ class UserService {
         MailService.sendUserRegistrationNotice(
           user.username,
           user.id,
-          user.email,
+          email,
         ).catch(logger.error);
         NotificationService.createOne(
           i18n.__({ phrase: "notifications.welcome.title", locale }),
@@ -133,13 +133,13 @@ class UserService {
           MailService.sendEmailConfirmationEmail(
             user.username,
             user.id,
-            user.email,
+            email,
             locale,
           ).catch(logger.error);
           MailService.sendWelcomeEmail(
             user.username,
             user.id,
-            user.email,
+            email,
             locale,
           ).catch(logger.error);
         }
