@@ -12,11 +12,7 @@ export default class ChoreoPage extends TestPage {
     super(page);
   }
 
-  iCheckTitle(isMobile: Boolean) {
-    if (isMobile)
-      return expect(this.page).toHaveTitle(
-        `Loading choreo - Choreo Planner | The best free online tool for choreo sport`
-      );
+  iCheckTitle() {
     return expect(this.page).toHaveTitle(
       `${defaultChoreos[0].name} - Choreo Planner | The best free online tool for choreo sport`
     );
@@ -132,8 +128,7 @@ export default class ChoreoPage extends TestPage {
           ).toBeVisible(),
           expect(
             this.page.locator(
-              `tr:nth-child(${Math.floor(hit.count / 8) + 1}) > td:nth-child(${
-                (hit.count % 8) + 2
+              `tr:nth-child(${Math.floor(hit.count / 8) + 1}) > td:nth-child(${(hit.count % 8) + 2
               }) > .btn`
             )
           ).toHaveText(hit.name, { useInnerText: true }),
@@ -213,10 +208,8 @@ export default class ChoreoPage extends TestPage {
         .map((lineup) => [
           expect(
             this.page.getByText(
-              `Counts: ${Math.floor(lineup.startCount / 8) + 1} / ${
-                (lineup.startCount % 8) + 1
-              } - ${Math.floor(lineup.endCount / 8) + 1} / ${
-                (lineup.endCount % 8) + 1
+              `Counts: ${Math.floor(lineup.startCount / 8) + 1} / ${(lineup.startCount % 8) + 1
+              } - ${Math.floor(lineup.endCount / 8) + 1} / ${(lineup.endCount % 8) + 1
               }`
             )
           ).toBeVisible(),
@@ -465,8 +458,7 @@ export default class ChoreoPage extends TestPage {
     await this.iClickButton(saveButton);
 
     const switchToCountButton = this.page.locator(
-      `tr:nth-child(${newStartAchter}) > td:nth-child(${
-        newStartCount + 1
+      `tr:nth-child(${newStartAchter}) > td:nth-child(${newStartCount + 1
       }) > .btn`
     );
     await this.iClickButton(switchToCountButton);
