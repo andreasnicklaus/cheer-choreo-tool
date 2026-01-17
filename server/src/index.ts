@@ -272,7 +272,7 @@ const swaggerOptions = {
     openapi: "3.1.1",
     info: {
       title: "Choreo Planer",
-      description: "This is the Choreo Planer API documentation",
+      description: "This is the official Choreo Planer API documentation. Use this documentation as reference to integrate with the Choreo Planer backend.",
       license: {
         name: "MIT",
         url: "https://mit-license.org/",
@@ -282,6 +282,10 @@ const swaggerOptions = {
         email: "admin@choreo-planer.de",
       },
       version,
+    },
+    externalDocs: {
+      description: "Backend Code Documentation",
+      url: "https://api.choreo-planer.de/docs/"
     },
     servers: [
       {
