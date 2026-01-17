@@ -39,6 +39,10 @@ function logConfig() {
     ? "<redacted>"
     : "not defined"; // njsscan-ignore: node_password
 
+  const FeatureFlagApiKey = process.env.UNLEASH_API_KEY
+    ? "<redacted>"
+    : "not defined";
+
   logger.info("################");
   logger.info("Configuration:");
   logger.info("################");
@@ -68,6 +72,8 @@ function logConfig() {
   logger.info("");
   logger.info(`  Log Source Token:      ${LogSourceToken}`);
   logger.info(`  Log Ingesting Host:    ${LogIngestingHost}`);
+  logger.info("");
+  logger.info(`  Feature Flag API Key:  ${FeatureFlagApiKey}`);
   logger.info("################");
 }
 

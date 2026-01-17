@@ -70,6 +70,7 @@
     "tsc-alias": "^1.8.16",
     "typescript": "^5.9.3",
     "typescript-cp": "^0.1.9",
+    "unleash-client": "^6.9.0",
     "winston": "^3.18.3"
   },
   "devDependencies": {
