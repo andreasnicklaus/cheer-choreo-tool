@@ -15,6 +15,7 @@ import {
   mockVersion,
 } from "./requests";
 import { mockTrackingRequests } from "./trackingRequests";
+import { mockFeatureFlagRequests } from "./featureFlagRequests";
 
 export async function mockDefaultStartRequests(page: Page) {
   await Promise.all([
@@ -32,5 +33,6 @@ export async function mockDefaultStartRequests(page: Page) {
     mockLineups(page),
     mockHits(page),
     mockTrackingRequests(page),
+    mockFeatureFlagRequests(page)
   ]);
 }

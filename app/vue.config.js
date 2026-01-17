@@ -8,6 +8,8 @@ process.env.VUE_APP_BETTERSTACK_INGESTING_HOST =
   require("./betterstackconfig.json").INGESTING_HOST;
 process.env.VUE_APP_BETTERSTACK_SOURCE_TOKEN =
   require("./betterstackconfig.json").SOURCE_TOKEN;
+process.env.VUE_APP_FEATURE_FLAG_API_KEY =
+  require("./featureFlagConfig.json").FEATURE_FLAG_API_KEY;
 
 const langPrefixes = ["de", "en"];
 
