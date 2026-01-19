@@ -40,11 +40,17 @@ jest.mock("@/plugins/nodemailer", () => ({
 }));
 
 jest.mock("i18n", () => ({
-  __: jest.fn().mockImplementation((opts: { phrase?: string } | string | undefined) => {
-    if (opts && typeof opts === "object" && (opts as { phrase?: string }).phrase)
-      return (opts as { phrase?: string }).phrase;
-    return String(opts || "");
-  }),
+  __: jest
+    .fn()
+    .mockImplementation((opts: { phrase?: string } | string | undefined) => {
+      if (
+        opts &&
+        typeof opts === "object" &&
+        (opts as { phrase?: string }).phrase
+      )
+        return (opts as { phrase?: string }).phrase;
+      return String(opts || "");
+    }),
 }));
 
 jest.mock("express-basic-auth", () => {
@@ -58,7 +64,8 @@ jest.mock("express-basic-auth", () => {
   };
   return (opts: BasicAuthOpts) => {
     // expose last options so tests can call the authorizer directly
-    (global as unknown as Record<string, unknown>)["__lastBasicAuthOpts"] = opts;
+    (global as unknown as Record<string, unknown>)["__lastBasicAuthOpts"] =
+      opts;
     return (req: Request, res: Response, next: NextFunction) => {
       try {
         const authHeader = req.headers && req.headers.authorization;
@@ -66,16 +73,38 @@ jest.mock("express-basic-auth", () => {
         const decoded = token ? Buffer.from(token, "base64").toString() : ":";
         const [username, password] = decoded.split(":");
         if (opts && opts.authorizeAsync) {
-          return opts.authorizer(username, password, (_err: Error | null, authorized: boolean) => {
-            if (authorized) return next();
-            return res.status && res.status(401) && res.status(401).send && res.status(401).send();
-          });
+          return opts.authorizer(
+            username,
+            password,
+            (_err: Error | null, authorized: boolean) => {
+              if (authorized) return next();
+              return (
+                res.status &&
+                res.status(401) &&
+                res.status(401).send &&
+                res.status(401).send()
+              );
+            },
+          );
         }
-        const ok = opts.authorizer(username, password as string) as unknown as boolean;
+        const ok = opts.authorizer(
+          username,
+          password as string,
+        ) as unknown as boolean;
         if (ok) return next();
-        return res.status && res.status(401) && res.status(401).send && res.status(401).send();
+        return (
+          res.status &&
+          res.status(401) &&
+          res.status(401).send &&
+          res.status(401).send()
+        );
       } catch (_e) {
-        return res.status && res.status(500) && res.status(500).send && res.status(500).send();
+        return (
+          res.status &&
+          res.status(500) &&
+          res.status(500).send &&
+          res.status(500).send()
+        );
       }
     };
   };
@@ -111,9 +140,9 @@ describe("AuthService", () => {
   });
 
   test("resolveSsoToken should reject with invalid token", async () => {
-    await expect(AuthService.resolveSsoToken("invalid.token.here")).rejects.toBeInstanceOf(
-      AuthorizationError,
-    );
+    await expect(
+      AuthService.resolveSsoToken("invalid.token.here"),
+    ).rejects.toBeInstanceOf(AuthorizationError);
   });
 
   test("resolveSsoToken should reject when user not found", async () => {
@@ -130,7 +159,9 @@ describe("AuthService", () => {
       email: "sso@example.com",
     });
 
-    jest.spyOn(UserService, "findByUsernameOrEmail").mockResolvedValue(testUser);
+    jest
+      .spyOn(UserService, "findByUsernameOrEmail")
+      .mockResolvedValue(testUser);
     const mailSpy = jest.spyOn(MailService, "sendSsoEmail").mockResolvedValue();
     const notifSpy = jest
       .spyOn(NotificationService, "createOne")
@@ -150,9 +181,9 @@ describe("AuthService", () => {
   test("generateSsoToken should throw when user not found", async () => {
     jest.spyOn(UserService, "findByUsernameOrEmail").mockResolvedValue(null);
 
-    await expect(AuthService.generateSsoToken("missing@example.com")).rejects.toBeInstanceOf(
-      NotFoundError,
-    );
+    await expect(
+      AuthService.generateSsoToken("missing@example.com"),
+    ).rejects.toBeInstanceOf(NotFoundError);
   });
 
   test("generateSsoToken should throw when user has no email", async () => {
@@ -161,39 +192,45 @@ describe("AuthService", () => {
       password: "hashedpass",
     });
 
-    jest.spyOn(UserService, "findByUsernameOrEmail").mockResolvedValue(testUser);
+    jest
+      .spyOn(UserService, "findByUsernameOrEmail")
+      .mockResolvedValue(testUser);
 
-    await expect(AuthService.generateSsoToken("noemailuser")).rejects.toBeInstanceOf(
-      FaultyInputError,
-    );
+    await expect(
+      AuthService.generateSsoToken("noemailuser"),
+    ).rejects.toBeInstanceOf(FaultyInputError);
   });
 
   test("authenticateUser should set UserId and User on valid token", (done) => {
-    User.create({ username: "authuser", password: "hashedpass" }).then((user) => {
-      const token = AuthService.generateAccessToken(user.id);
-      const req = {
-        headers: { authorization: `Bearer ${token}` },
-      } as unknown as Request;
-      const res = {} as Response;
-      const next = jest.fn(() => {
-        try {
-          expect(req.UserId).toBe(user.id);
-          expect(req.User).toBeDefined();
-          done();
-        } catch (e) {
-          done(e as Error);
-        }
-      });
+    User.create({ username: "authuser", password: "hashedpass" }).then(
+      (user) => {
+        const token = AuthService.generateAccessToken(user.id);
+        const req = {
+          headers: { authorization: `Bearer ${token}` },
+        } as unknown as Request;
+        const res = {} as Response;
+        const next = jest.fn(() => {
+          try {
+            expect(req.UserId).toBe(user.id);
+            expect(req.User).toBeDefined();
+            done();
+          } catch (e) {
+            done(e as Error);
+          }
+        });
 
-      const middleware = AuthService.authenticateUser();
-      middleware(req, res, next as unknown as NextFunction);
-    });
+        const middleware = AuthService.authenticateUser();
+        middleware(req, res, next as unknown as NextFunction);
+      },
+    );
   });
 
   test("authenticateUser should return 401 when no token provided", () => {
     const req = { headers: {} } as unknown as Request;
     const sendMock = jest.fn();
-    const res = { status: jest.fn().mockReturnValue({ send: sendMock }) } as unknown as Response;
+    const res = {
+      status: jest.fn().mockReturnValue({ send: sendMock }),
+    } as unknown as Response;
     const next = jest.fn();
 
     const middleware = AuthService.authenticateUser();
@@ -207,7 +244,9 @@ describe("AuthService", () => {
     const req = {
       headers: { authorization: "Bearer invalid.token" },
     } as unknown as Request;
-    const res = { status: jest.fn().mockReturnValue({ send: jest.fn() }) } as unknown as Response;
+    const res = {
+      status: jest.fn().mockReturnValue({ send: jest.fn() }),
+    } as unknown as Response;
     const next = jest.fn();
 
     const middleware = AuthService.authenticateUser();
@@ -236,22 +275,33 @@ describe("AuthService", () => {
 
   test("authenticateAdmin authorizer accepts valid credentials", async () => {
     const passwordPlain = "adminpass";
-    const admin = await Admin.create({ username: "adminuser", password: passwordPlain });
+    const admin = await Admin.create({
+      username: "adminuser",
+      password: passwordPlain,
+    });
 
-    jest.spyOn(AdminService, "findByUsername").mockResolvedValue(admin as unknown as Admin);
+    jest
+      .spyOn(AdminService, "findByUsername")
+      .mockResolvedValue(admin as unknown as Admin);
 
-    const found = await AdminService.findByUsername("adminuser", { scope: "withPasswordHash" });
+    const found = await AdminService.findByUsername("adminuser", {
+      scope: "withPasswordHash",
+    });
     expect(found).toBeDefined();
-    expect(bcrypt.compareSync(passwordPlain, (found as unknown as Admin).password)).toBe(true);
+    expect(
+      bcrypt.compareSync(passwordPlain, (found as unknown as Admin).password),
+    ).toBe(true);
   });
-
-
 
   test("authenticateUser should return 403 when token belongs to missing user", (done) => {
     const token = AuthService.generateAccessToken("does-not-exist");
-    const req = { headers: { authorization: `Bearer ${token}` } } as unknown as Request;
+    const req = {
+      headers: { authorization: `Bearer ${token}` },
+    } as unknown as Request;
     const sendMock = jest.fn();
-    const res = { status: jest.fn().mockReturnValue({ send: sendMock }) } as unknown as Response;
+    const res = {
+      status: jest.fn().mockReturnValue({ send: sendMock }),
+    } as unknown as Response;
     const next = jest.fn();
 
     const middleware = AuthService.authenticateUser();
@@ -270,13 +320,23 @@ describe("AuthService", () => {
 
   test("authenticateAdmin middleware should call next on valid credentials", async () => {
     const passwordPlain = "adminpass2";
-    const admin = await Admin.create({ username: "adminok", password: passwordPlain });
-    jest.spyOn(AdminService, "findByUsername").mockResolvedValue(admin as unknown as Admin);
+    const admin = await Admin.create({
+      username: "adminok",
+      password: passwordPlain,
+    });
+    jest
+      .spyOn(AdminService, "findByUsername")
+      .mockResolvedValue(admin as unknown as Admin);
 
     const middleware = AuthService.authenticateAdmin();
     const token = Buffer.from(`adminok:${passwordPlain}`).toString("base64");
-    const req = { headers: { authorization: `Basic ${token}` } } as unknown as Request;
-    const res = ({ set: jest.fn(), status: jest.fn().mockReturnValue({ send: jest.fn() }) } as unknown) as Response;
+    const req = {
+      headers: { authorization: `Basic ${token}` },
+    } as unknown as Request;
+    const res = {
+      set: jest.fn(),
+      status: jest.fn().mockReturnValue({ send: jest.fn() }),
+    } as unknown as Response;
 
     await new Promise<void>((resolve, reject) => {
       const next = jest.fn(() => resolve());
@@ -286,20 +346,29 @@ describe("AuthService", () => {
   });
 
   test("authenticateAdmin middleware should respond 401 on invalid credentials", async () => {
-    jest.spyOn(AdminService, "findByUsername").mockResolvedValue(null as unknown as Admin);
+    jest
+      .spyOn(AdminService, "findByUsername")
+      .mockResolvedValue(null as unknown as Admin);
 
     const middleware = AuthService.authenticateAdmin();
     const token = Buffer.from(`nouser:bad`).toString("base64");
     const sendMock = jest.fn();
-    const res = { set: jest.fn(), status: jest.fn().mockReturnValue({ send: sendMock }) } as unknown as Response;
-    const req = { headers: { authorization: `Basic ${token}` } } as unknown as Request;
+    const res = {
+      set: jest.fn(),
+      status: jest.fn().mockReturnValue({ send: sendMock }),
+    } as unknown as Response;
+    const req = {
+      headers: { authorization: `Basic ${token}` },
+    } as unknown as Request;
 
     await new Promise<void>((resolve, reject) => {
       const next = jest.fn();
       middleware(req, res, next as unknown as NextFunction);
       setTimeout(() => {
         try {
-          expect((res as unknown as { status: jest.Mock }).status).toHaveBeenCalledWith(401);
+          expect(
+            (res as unknown as { status: jest.Mock }).status,
+          ).toHaveBeenCalledWith(401);
           resolve();
         } catch (e) {
           reject(e);
@@ -309,21 +378,33 @@ describe("AuthService", () => {
   });
 
   test("authenticateAdmin middleware should respond 401 when password mismatches", async () => {
-    const admin = await Admin.create({ username: "mismatch", password: "rightpass" });
-    jest.spyOn(AdminService, "findByUsername").mockResolvedValue(admin as unknown as Admin);
+    const admin = await Admin.create({
+      username: "mismatch",
+      password: "rightpass",
+    });
+    jest
+      .spyOn(AdminService, "findByUsername")
+      .mockResolvedValue(admin as unknown as Admin);
 
     const middleware = AuthService.authenticateAdmin();
     const token = Buffer.from(`mismatch:wrongpass`).toString("base64");
     const sendMock = jest.fn();
-    const res = { set: jest.fn(), status: jest.fn().mockReturnValue({ send: sendMock }) } as unknown as Response;
-    const req = { headers: { authorization: `Basic ${token}` } } as unknown as Request;
+    const res = {
+      set: jest.fn(),
+      status: jest.fn().mockReturnValue({ send: sendMock }),
+    } as unknown as Response;
+    const req = {
+      headers: { authorization: `Basic ${token}` },
+    } as unknown as Request;
 
     await new Promise<void>((resolve, reject) => {
       const next = jest.fn();
       middleware(req, res, next as unknown as NextFunction);
       setTimeout(() => {
         try {
-          expect((res as unknown as { status: jest.Mock }).status).toHaveBeenCalledWith(401);
+          expect(
+            (res as unknown as { status: jest.Mock }).status,
+          ).toHaveBeenCalledWith(401);
           resolve();
         } catch (e) {
           reject(e);
@@ -333,20 +414,29 @@ describe("AuthService", () => {
   });
 
   test("authenticateAdmin middleware should respond 401 when AdminService errors", async () => {
-    jest.spyOn(AdminService, "findByUsername").mockRejectedValue(new Error("db fail"));
+    jest
+      .spyOn(AdminService, "findByUsername")
+      .mockRejectedValue(new Error("db fail"));
 
     const middleware = AuthService.authenticateAdmin();
     const token = Buffer.from(`any:val`).toString("base64");
     const sendMock = jest.fn();
-    const res = { set: jest.fn(), status: jest.fn().mockReturnValue({ send: sendMock }) } as unknown as Response;
-    const req = { headers: { authorization: `Basic ${token}` } } as unknown as Request;
+    const res = {
+      set: jest.fn(),
+      status: jest.fn().mockReturnValue({ send: sendMock }),
+    } as unknown as Response;
+    const req = {
+      headers: { authorization: `Basic ${token}` },
+    } as unknown as Request;
 
     await new Promise<void>((resolve, reject) => {
       const next = jest.fn();
       middleware(req, res, next as unknown as NextFunction);
       setTimeout(() => {
         try {
-          expect((res as unknown as { status: jest.Mock }).status).toHaveBeenCalledWith(401);
+          expect(
+            (res as unknown as { status: jest.Mock }).status,
+          ).toHaveBeenCalledWith(401);
           resolve();
         } catch (e) {
           reject(e);
@@ -375,12 +465,19 @@ describe("AuthService", () => {
   test("resolveAdmin should set Admin and AdminId when token valid", (done) => {
     (async () => {
       const hashed = bcrypt.hashSync("irrelevant", 1);
-      const admin = await Admin.create({ username: "admuser", password: hashed });
+      const admin = await Admin.create({
+        username: "admuser",
+        password: hashed,
+      });
 
-      jest.spyOn(AdminService, "findByUsername").mockResolvedValue(admin as unknown as Admin);
+      jest
+        .spyOn(AdminService, "findByUsername")
+        .mockResolvedValue(admin as unknown as Admin);
 
       const token = Buffer.from(`admuser:whatever`).toString("base64");
-      const req: Partial<Request> = { headers: { authorization: `Bearer ${token}` } };
+      const req: Partial<Request> = {
+        headers: { authorization: `Bearer ${token}` },
+      };
       const res = {} as Response;
       const next = jest.fn(() => {
         try {
@@ -392,7 +489,11 @@ describe("AuthService", () => {
         }
       });
 
-      AuthService.resolveAdmin(req as Request, res, next as unknown as NextFunction);
+      AuthService.resolveAdmin(
+        req as Request,
+        res,
+        next as unknown as NextFunction,
+      );
     })();
   });
 
