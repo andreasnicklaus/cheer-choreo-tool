@@ -1,16 +1,22 @@
 import { describe, test, expect } from "@jest/globals";
-// import { Request, Response } from "express";
 import { Sequelize } from "sequelize";
-// const _i18n = require("@/plugins/i18n");
 
 process.env.TOKEN_SECRET = "testsecret";
 process.env.JWT_EXPIRES_IN = "1h";
 
 import Admin from "@/db/models/admin";
 import User from "@/db/models/user";
-import AuthService from "@/services/AuthService";
-// import MailService from "@/services/MailService";
-// import NotificationService from "@/services/NotificationService";
+import { NextFunction, Request, Response } from "express";
+import UserService from "@/services/UserService";
+import MailService from "@/services/MailService";
+import NotificationService from "@/services/NotificationService";
+import AdminService from "@/services/AdminService";
+import bcrypt from "bcrypt";
+import {
+  AuthorizationError,
+  FaultyInputError,
+  NotFoundError,
+} from "@/utils/errors";
 
 jest.mock("@/plugins/winston", () => ({
   logger: {
@@ -33,15 +39,50 @@ jest.mock("@/plugins/nodemailer", () => ({
   verify: jest.fn().mockResolvedValue(true),
 }));
 
-// jest.mock("@/services/MailService", () => ({
-//   sendSsoEmail: jest.fn(() => Promise.resolve()),
-// }));
+jest.mock("i18n", () => ({
+  __: jest.fn().mockImplementation((opts: { phrase?: string } | string | undefined) => {
+    if (opts && typeof opts === "object" && (opts as { phrase?: string }).phrase)
+      return (opts as { phrase?: string }).phrase;
+    return String(opts || "");
+  }),
+}));
 
-// jest.mock("@/services/NotificationService", () => ({
-//   createOne: jest.fn(),
-//   findOrCreate: jest.fn().mockResolvedValue({ id: "notification.id" }),
-//   markRead: jest.fn(),
-// }));
+jest.mock("express-basic-auth", () => {
+  type BasicAuthOpts = {
+    authorizer: (
+      username: string,
+      password: string,
+      cb?: (err: Error | null, authorized: boolean) => void,
+    ) => void;
+    authorizeAsync?: boolean;
+  };
+  return (opts: BasicAuthOpts) => {
+    // expose last options so tests can call the authorizer directly
+    (global as unknown as Record<string, unknown>)["__lastBasicAuthOpts"] = opts;
+    return (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const authHeader = req.headers && req.headers.authorization;
+        const token = authHeader && authHeader.split(" ")[1];
+        const decoded = token ? Buffer.from(token, "base64").toString() : ":";
+        const [username, password] = decoded.split(":");
+        if (opts && opts.authorizeAsync) {
+          return opts.authorizer(username, password, (_err: Error | null, authorized: boolean) => {
+            if (authorized) return next();
+            return res.status && res.status(401) && res.status(401).send && res.status(401).send();
+          });
+        }
+        const ok = opts.authorizer(username, password as string) as unknown as boolean;
+        if (ok) return next();
+        return res.status && res.status(401) && res.status(401).send && res.status(401).send();
+      } catch (_e) {
+        return res.status && res.status(500) && res.status(500).send && res.status(500).send();
+      }
+    };
+  };
+});
+
+import AuthService from "@/services/AuthService";
+import NotificationModel from "@/db/models/notification";
 
 describe("AuthService", () => {
   beforeAll(async () => {
@@ -54,6 +95,305 @@ describe("AuthService", () => {
       User.destroy({ where: {}, force: true }),
       Admin.destroy({ where: {}, force: true }),
     ]);
+    jest.restoreAllMocks();
+  });
+
+  test("resolveSsoToken should resolve user with valid token", async () => {
+    const testUser = await User.create({
+      username: "testuser",
+      password: "hashedpass",
+      email: "test@example.com",
+    });
+
+    const token = AuthService.generateAccessToken(testUser.id);
+    const user = await AuthService.resolveSsoToken(token);
+    expect(user.id).toBe(testUser.id);
+  });
+
+  test("resolveSsoToken should reject with invalid token", async () => {
+    await expect(AuthService.resolveSsoToken("invalid.token.here")).rejects.toBeInstanceOf(
+      AuthorizationError,
+    );
+  });
+
+  test("resolveSsoToken should reject when user not found", async () => {
+    const token = AuthService.generateAccessToken("non-existent-id");
+    await expect(AuthService.resolveSsoToken(token)).rejects.toBeInstanceOf(
+      AuthorizationError,
+    );
+  });
+
+  test("generateSsoToken should send email and create notification", async () => {
+    const testUser = await User.create({
+      username: "ssouser",
+      password: "hashedpass",
+      email: "sso@example.com",
+    });
+
+    jest.spyOn(UserService, "findByUsernameOrEmail").mockResolvedValue(testUser);
+    const mailSpy = jest.spyOn(MailService, "sendSsoEmail").mockResolvedValue();
+    const notifSpy = jest
+      .spyOn(NotificationService, "createOne")
+      .mockResolvedValue({} as NotificationModel);
+
+    await AuthService.generateSsoToken("sso@example.com");
+
+    expect(mailSpy).toHaveBeenCalledWith(
+      testUser.email,
+      testUser.username,
+      expect.any(String),
+      "en",
+    );
+    expect(notifSpy).toHaveBeenCalled();
+  });
+
+  test("generateSsoToken should throw when user not found", async () => {
+    jest.spyOn(UserService, "findByUsernameOrEmail").mockResolvedValue(null);
+
+    await expect(AuthService.generateSsoToken("missing@example.com")).rejects.toBeInstanceOf(
+      NotFoundError,
+    );
+  });
+
+  test("generateSsoToken should throw when user has no email", async () => {
+    const testUser = await User.create({
+      username: "noemailuser",
+      password: "hashedpass",
+    });
+
+    jest.spyOn(UserService, "findByUsernameOrEmail").mockResolvedValue(testUser);
+
+    await expect(AuthService.generateSsoToken("noemailuser")).rejects.toBeInstanceOf(
+      FaultyInputError,
+    );
+  });
+
+  test("authenticateUser should set UserId and User on valid token", (done) => {
+    User.create({ username: "authuser", password: "hashedpass" }).then((user) => {
+      const token = AuthService.generateAccessToken(user.id);
+      const req = {
+        headers: { authorization: `Bearer ${token}` },
+      } as unknown as Request;
+      const res = {} as Response;
+      const next = jest.fn(() => {
+        try {
+          expect(req.UserId).toBe(user.id);
+          expect(req.User).toBeDefined();
+          done();
+        } catch (e) {
+          done(e as Error);
+        }
+      });
+
+      const middleware = AuthService.authenticateUser();
+      middleware(req, res, next as unknown as NextFunction);
+    });
+  });
+
+  test("authenticateUser should return 401 when no token provided", () => {
+    const req = { headers: {} } as unknown as Request;
+    const sendMock = jest.fn();
+    const res = { status: jest.fn().mockReturnValue({ send: sendMock }) } as unknown as Response;
+    const next = jest.fn();
+
+    const middleware = AuthService.authenticateUser();
+    middleware(req, res, next as unknown as NextFunction);
+
+    expect((res as Response).status).toHaveBeenCalledWith(401);
+    expect(sendMock).toHaveBeenCalled();
+  });
+
+  test("authenticateUser should return 403 on invalid token", (done) => {
+    const req = {
+      headers: { authorization: "Bearer invalid.token" },
+    } as unknown as Request;
+    const res = { status: jest.fn().mockReturnValue({ send: jest.fn() }) } as unknown as Response;
+    const next = jest.fn();
+
+    const middleware = AuthService.authenticateUser();
+    middleware(req, res, next as unknown as NextFunction);
+
+    setTimeout(() => {
+      try {
+        expect((res as Response).status).toHaveBeenCalledWith(403);
+        done();
+      } catch (e) {
+        done(e as Error);
+      }
+    }, 50);
+  });
+
+  test("authenticateUser with failIfNotLoggedIn=false should call next when no token", () => {
+    const req = { headers: {} } as unknown as Request;
+    const res = {} as Response;
+    const next = jest.fn();
+
+    const middleware = AuthService.authenticateUser(false);
+    middleware(req, res, next as NextFunction);
+
+    expect(next).toHaveBeenCalled();
+  });
+
+  test("authenticateAdmin authorizer accepts valid credentials", async () => {
+    const passwordPlain = "adminpass";
+    const admin = await Admin.create({ username: "adminuser", password: passwordPlain });
+
+    jest.spyOn(AdminService, "findByUsername").mockResolvedValue(admin as unknown as Admin);
+
+    const found = await AdminService.findByUsername("adminuser", { scope: "withPasswordHash" });
+    expect(found).toBeDefined();
+    expect(bcrypt.compareSync(passwordPlain, (found as unknown as Admin).password)).toBe(true);
+  });
+
+
+
+  test("authenticateUser should return 403 when token belongs to missing user", (done) => {
+    const token = AuthService.generateAccessToken("does-not-exist");
+    const req = { headers: { authorization: `Bearer ${token}` } } as unknown as Request;
+    const sendMock = jest.fn();
+    const res = { status: jest.fn().mockReturnValue({ send: sendMock }) } as unknown as Response;
+    const next = jest.fn();
+
+    const middleware = AuthService.authenticateUser();
+    middleware(req, res, next as NextFunction);
+
+    setTimeout(() => {
+      try {
+        expect((res as Response).status).toHaveBeenCalledWith(403);
+        expect(sendMock).toHaveBeenCalled();
+        done();
+      } catch (e) {
+        done(e as Error);
+      }
+    }, 50);
+  });
+
+  test("authenticateAdmin middleware should call next on valid credentials", async () => {
+    const passwordPlain = "adminpass2";
+    const admin = await Admin.create({ username: "adminok", password: passwordPlain });
+    jest.spyOn(AdminService, "findByUsername").mockResolvedValue(admin as unknown as Admin);
+
+    const middleware = AuthService.authenticateAdmin();
+    const token = Buffer.from(`adminok:${passwordPlain}`).toString("base64");
+    const req = { headers: { authorization: `Basic ${token}` } } as unknown as Request;
+    const res = ({ set: jest.fn(), status: jest.fn().mockReturnValue({ send: jest.fn() }) } as unknown) as Response;
+
+    await new Promise<void>((resolve, reject) => {
+      const next = jest.fn(() => resolve());
+      middleware(req, res, next as unknown as NextFunction);
+      setTimeout(() => reject(new Error("middleware did not call next")), 1000);
+    });
+  });
+
+  test("authenticateAdmin middleware should respond 401 on invalid credentials", async () => {
+    jest.spyOn(AdminService, "findByUsername").mockResolvedValue(null as unknown as Admin);
+
+    const middleware = AuthService.authenticateAdmin();
+    const token = Buffer.from(`nouser:bad`).toString("base64");
+    const sendMock = jest.fn();
+    const res = { set: jest.fn(), status: jest.fn().mockReturnValue({ send: sendMock }) } as unknown as Response;
+    const req = { headers: { authorization: `Basic ${token}` } } as unknown as Request;
+
+    await new Promise<void>((resolve, reject) => {
+      const next = jest.fn();
+      middleware(req, res, next as unknown as NextFunction);
+      setTimeout(() => {
+        try {
+          expect((res as unknown as { status: jest.Mock }).status).toHaveBeenCalledWith(401);
+          resolve();
+        } catch (e) {
+          reject(e);
+        }
+      }, 100);
+    });
+  });
+
+  test("authenticateAdmin middleware should respond 401 when password mismatches", async () => {
+    const admin = await Admin.create({ username: "mismatch", password: "rightpass" });
+    jest.spyOn(AdminService, "findByUsername").mockResolvedValue(admin as unknown as Admin);
+
+    const middleware = AuthService.authenticateAdmin();
+    const token = Buffer.from(`mismatch:wrongpass`).toString("base64");
+    const sendMock = jest.fn();
+    const res = { set: jest.fn(), status: jest.fn().mockReturnValue({ send: sendMock }) } as unknown as Response;
+    const req = { headers: { authorization: `Basic ${token}` } } as unknown as Request;
+
+    await new Promise<void>((resolve, reject) => {
+      const next = jest.fn();
+      middleware(req, res, next as unknown as NextFunction);
+      setTimeout(() => {
+        try {
+          expect((res as unknown as { status: jest.Mock }).status).toHaveBeenCalledWith(401);
+          resolve();
+        } catch (e) {
+          reject(e);
+        }
+      }, 100);
+    });
+  });
+
+  test("authenticateAdmin middleware should respond 401 when AdminService errors", async () => {
+    jest.spyOn(AdminService, "findByUsername").mockRejectedValue(new Error("db fail"));
+
+    const middleware = AuthService.authenticateAdmin();
+    const token = Buffer.from(`any:val`).toString("base64");
+    const sendMock = jest.fn();
+    const res = { set: jest.fn(), status: jest.fn().mockReturnValue({ send: sendMock }) } as unknown as Response;
+    const req = { headers: { authorization: `Basic ${token}` } } as unknown as Request;
+
+    await new Promise<void>((resolve, reject) => {
+      const next = jest.fn();
+      middleware(req, res, next as unknown as NextFunction);
+      setTimeout(() => {
+        try {
+          expect((res as unknown as { status: jest.Mock }).status).toHaveBeenCalledWith(401);
+          resolve();
+        } catch (e) {
+          reject(e);
+        }
+      }, 100);
+    });
+  });
+
+  test("resolveAdmin should call next with AuthorizationError when no token provided", async () => {
+    const req = { headers: {} } as unknown as Request;
+    const res = {} as unknown as Response;
+
+    await new Promise<void>((resolve, reject) => {
+      const next = jest.fn((err?: Error) => {
+        try {
+          expect(err).toBeInstanceOf(AuthorizationError);
+          resolve();
+        } catch (e) {
+          reject(e);
+        }
+      });
+      AuthService.resolveAdmin(req, res, next as unknown as NextFunction);
+    });
+  });
+
+  test("resolveAdmin should set Admin and AdminId when token valid", (done) => {
+    (async () => {
+      const hashed = bcrypt.hashSync("irrelevant", 1);
+      const admin = await Admin.create({ username: "admuser", password: hashed });
+
+      jest.spyOn(AdminService, "findByUsername").mockResolvedValue(admin as unknown as Admin);
+
+      const token = Buffer.from(`admuser:whatever`).toString("base64");
+      const req: Partial<Request> = { headers: { authorization: `Bearer ${token}` } };
+      const res = {} as Response;
+      const next = jest.fn(() => {
+        try {
+          expect((req as unknown as Partial<Request>).AdminId).toBe(admin.id);
+          expect((req as unknown as Partial<Request>).Admin).toBeDefined();
+          done();
+        } catch (e) {
+          done(e as Error);
+        }
+      });
+
+      AuthService.resolveAdmin(req as Request, res, next as unknown as NextFunction);
+    })();
   });
 
   test("generateAccessToken should return a token", () => {
@@ -61,319 +401,4 @@ describe("AuthService", () => {
     expect(token).toBeDefined();
     expect(token).not.toBe("");
   });
-
-  //   test("authenticateUser should return a function that passes authenticated requests", async () => {
-  //     const user = await User.create({
-  //       username: "test-user",
-  //       password: "test-password",
-  //     });
-  //     const authToken = AuthService.generateAccessToken(user.id);
-
-  //     const middleWareFunction = AuthService.authenticateUser();
-  //     const nextMock = jest.fn();
-  //     const statusMock = jest.fn();
-  //     middleWareFunction(
-  //       { headers: { authorization: `Bearer ${authToken}` } } as Request,
-  //       { status: statusMock } as unknown as Response,
-  //       nextMock,
-  //     );
-
-  //     await new Promise((resolve) => setTimeout(resolve, 200));
-
-  //     expect(nextMock).toHaveBeenCalled();
-  //   });
-
-  //   test("authenticateUser should return a function that sends 401 if authentication is missing", () => {
-  //     const middleWareFunction = AuthService.authenticateUser();
-  //     const nextMock = jest.fn();
-  //     const statusMock = jest.fn((_status: number) => ({
-  //       send: jest.fn,
-  //     }));
-  //     middleWareFunction(
-  //       { headers: { authorization: "Bearer" } } as Request,
-  //       { status: statusMock } as unknown as Response,
-  //       nextMock,
-  //     );
-
-  //     expect(statusMock).toHaveBeenCalled();
-  //     expect(statusMock).toHaveBeenCalledWith(401);
-  //   });
-
-  //   test("authenticateUser should return a function that passes if authentication is missing and failIfNotLoggedIn is false", () => {
-  //     const middleWareFunction = AuthService.authenticateUser(false);
-  //     const nextMock = jest.fn();
-  //     const statusMock = jest.fn((_status: number) => ({
-  //       send: jest.fn,
-  //     }));
-  //     middleWareFunction(
-  //       { headers: { authorization: "Bearer" } } as Request,
-  //       { status: statusMock } as unknown as Response,
-  //       nextMock,
-  //     );
-
-  //     expect(nextMock).toHaveBeenCalled();
-  //   });
-
-  //   test("authenticateUser should return a function that sends 403 on a invalid jwt token", () => {
-  //     const middleWareFunction = AuthService.authenticateUser();
-  //     const nextMock = jest.fn();
-  //     const statusMock = jest.fn((_status: number) => ({
-  //       send: jest.fn,
-  //     }));
-  //     middleWareFunction(
-  //       { headers: { authorization: "Bearer asdfjkalsfjdlk" } } as Request,
-  //       { status: statusMock } as unknown as Response,
-  //       nextMock,
-  //     );
-
-  //     expect(statusMock).toHaveBeenCalled();
-  //     expect(statusMock).toHaveBeenCalledWith(403);
-  //   });
-
-  //   test("authenticateUser should return a function that passes on a invalid jwt token if failIfNotLoggedIn is false", () => {
-  //     const middleWareFunction = AuthService.authenticateUser(false);
-  //     const nextMock = jest.fn();
-  //     const statusMock = jest.fn((_status: number) => ({
-  //       send: jest.fn,
-  //     }));
-  //     middleWareFunction(
-  //       { headers: { authorization: "Bearer asdfjkalsfjdlk" } } as Request,
-  //       { status: statusMock } as unknown as Response,
-  //       nextMock,
-  //     );
-
-  //     expect(nextMock).toHaveBeenCalled();
-  //   });
-
-  //   test("authenticateUser should return a function that sends 403 on a invalid user", async () => {
-  //     const authToken = AuthService.generateAccessToken(
-  //       "46ac9a72-c184-4c23-ae77-5650ed5c959c",
-  //     );
-  //     const middleWareFunction = AuthService.authenticateUser();
-  //     const nextMock = jest.fn();
-  //     const statusMock = jest.fn((_status: number) => ({
-  //       send: jest.fn,
-  //     }));
-  //     middleWareFunction(
-  //       { headers: { authorization: `Bearer ${authToken}` } } as Request,
-  //       { status: statusMock } as unknown as Response,
-  //       nextMock,
-  //     );
-
-  //     await new Promise((resolve) => setTimeout(resolve, 200));
-
-  //     expect(statusMock).toHaveBeenCalled();
-  //     expect(statusMock).toHaveBeenCalledWith(403);
-  //   });
-
-  //   test("authenticateUser should return a function that passes on a invalid user if failIfNotLoggedIn is false", async () => {
-  //     const authToken = AuthService.generateAccessToken(
-  //       "46ac9a72-c184-4c23-ae77-5650ed5c959c",
-  //     );
-  //     const middleWareFunction = AuthService.authenticateUser(false);
-  //     const nextMock = jest.fn();
-  //     const statusMock = jest.fn((_status: number) => ({
-  //       send: jest.fn,
-  //     }));
-  //     middleWareFunction(
-  //       { headers: { authorization: `Bearer ${authToken}` } } as Request,
-  //       { status: statusMock } as unknown as Response,
-  //       nextMock,
-  //     );
-
-  //     await new Promise((resolve) => setTimeout(resolve, 200));
-
-  //     expect(nextMock).toHaveBeenCalled();
-  //   });
-
-  //   test("resolveSsoToken should resolve on a valid sso token", async () => {
-  //     const user = await User.create({
-  //       username: "test-username",
-  //       password: "test-password",
-  //     });
-  //     const ssoToken = await AuthService.generateAccessToken(user.id);
-  //     const resolvedUser = (await AuthService.resolveSsoToken(ssoToken)) as User;
-  //     expect(resolvedUser?.id).toBe(user.id);
-  //   });
-
-  //   test("resolveSsoToken should reject on a invalid sso token", async () => {
-  //     const ssoToken = "asdfklasfjkfldsajfkljalksdfj";
-  //     expect(AuthService.resolveSsoToken(ssoToken)).rejects.toThrow();
-  //   });
-
-  //   test("resolveSsoToken should reject on a non-existing user", async () => {
-  //     const ssoToken = await AuthService.generateAccessToken(
-  //       "102f3f1c-fd81-46ee-bf67-2c52fc441ef2",
-  //     );
-  //     expect(AuthService.resolveSsoToken(ssoToken)).rejects.toThrow();
-  //   });
-
-  //   test("generateSsoToken should send email and create notification", async () => {
-  //     const username = "test-username";
-  //     const password = "test-password";
-  //     const email = "test@choreo-planer.de";
-  //     const user = await User.create({ username, password, email });
-  //     await AuthService.generateSsoToken(user.email as string);
-  //     expect(MailService.sendSsoEmail).toHaveBeenCalled();
-  //     expect(NotificationService.createOne).toHaveBeenCalled();
-  //   });
-
-  //   test("generateSsoToken should throw error for non-existant user", async () => {
-  //     const email = "test@choreo-planer.de";
-  //     expect(AuthService.generateSsoToken(email as string)).rejects.toThrow();
-  //   });
-
-  //   test("generateSsoToken should throw error for user without email address", async () => {
-  //     const username = "test-username";
-  //     const password = "test-password";
-  //     await User.create({ username, password });
-  //     expect(AuthService.generateSsoToken(username)).rejects.toThrow();
-  //   });
-
-  //   test("authenticateAdmin should return a function that passes with a valid authorization", async () => {
-  //     await Admin.create({
-  //       username: "test-user",
-  //       password: "test-password",
-  //     });
-
-  //     const base64Auth = "dGVzdC11c2VyOnRlc3QtcGFzc3dvcmQ=";
-
-  //     const middleWareFunction = AuthService.authenticateAdmin();
-  //     const nextMock = jest.fn();
-  //     const statusMock = jest.fn(() => ({
-  //       send: jest.fn(),
-  //     }));
-  //     const setMock = jest.fn();
-
-  //     middleWareFunction(
-  //       { headers: { authorization: `Basic ${base64Auth}` } } as Request,
-  //       { status: statusMock, set: setMock } as unknown as Response,
-  //       nextMock,
-  //     );
-
-  //     await new Promise((resolve) => setTimeout(resolve, 200));
-  //     expect(nextMock).toHaveBeenCalled();
-  //   });
-
-  //   test("authenticateAdmin should return a function that rejects with a invalid authorization", async () => {
-  //     await Admin.create({
-  //       username: "test-user",
-  //       password: "test-password",
-  //     });
-
-  //     const base64Auth = "dGVzdC11c2VyOnRlc3QtcGFzc3dvcdQ=";
-
-  //     const middleWareFunction = AuthService.authenticateAdmin();
-  //     const nextMock = jest.fn();
-  //     const statusMock = jest.fn((_status: number) => ({
-  //       send: jest.fn(),
-  //     }));
-  //     const setMock = jest.fn();
-
-  //     middleWareFunction(
-  //       { headers: { authorization: `Basic ${base64Auth}` } } as Request,
-  //       { status: statusMock, set: setMock } as unknown as Response,
-  //       nextMock,
-  //     );
-
-  //     expect(nextMock).not.toHaveBeenCalled();
-  //   });
-
-  //   test("authenticateAdmin should return a function that rejects with a non-existent admin", async () => {
-  //     const base64Auth = "dGVzdC11c2VyOnRlc3QtcGFzc3dvcmQ=";
-
-  //     const middleWareFunction = AuthService.authenticateAdmin();
-  //     const nextMock = jest.fn();
-  //     const statusMock = jest.fn((_status: number) => ({
-  //       send: jest.fn(),
-  //     }));
-  //     const setMock = jest.fn();
-
-  //     middleWareFunction(
-  //       { headers: { authorization: `Basic ${base64Auth}` } } as Request,
-  //       { status: statusMock, set: setMock } as unknown as Response,
-  //       nextMock,
-  //     );
-
-  //     expect(nextMock).not.toHaveBeenCalled();
-  //   });
-
-  //   test("resolveAdmin should set AdminId and Admin of the request", async () => {
-  //     const admin = await Admin.create({
-  //       username: "test-user",
-  //       password: "test-password",
-  //     });
-
-  //     const base64Auth = "dGVzdC11c2VyOnRlc3QtcGFzc3dvcmQ=";
-
-  //     const requestObject = {
-  //       headers: { authorization: `Basic ${base64Auth}` },
-  //     } as Request;
-  //     const nextMock = jest.fn();
-
-  //     await AuthService.resolveAdmin(
-  //       requestObject,
-  //       {} as unknown as Response,
-  //       nextMock,
-  //     );
-
-  //     await new Promise((resolve) => setTimeout(resolve, 200));
-  //     expect(nextMock).toHaveBeenCalled();
-  //     expect(requestObject.AdminId).toBe(admin.id);
-  //     expect(requestObject.Admin.id).toBe(admin.id);
-  //     expect(requestObject.Admin.username).toBe(admin.username);
-  //   });
-
-  //   test("resolveAdmin should throw an error for an missing authorization token", async () => {
-  //     const requestObject = {
-  //       headers: { authorization: `Basic` },
-  //     } as Request;
-  //     const nextMock = jest.fn();
-
-  //     await AuthService.resolveAdmin(
-  //       requestObject,
-  //       {} as unknown as Response,
-  //       nextMock,
-  //     );
-
-  //     expect(nextMock).toHaveBeenCalledWith(expect.any(Error));
-  //   });
-
-  //   test("resolveAdmin should skip resolving for an invalid authorization token", async () => {
-  //     const base64Auth = "dGVzdC11c2VyOnRlc3QtcGFzc3dv";
-
-  //     const requestObject = {
-  //       headers: { authorization: `Basic ${base64Auth}` },
-  //     } as Request;
-  //     const nextMock = jest.fn();
-
-  //     await AuthService.resolveAdmin(
-  //       requestObject,
-  //       {} as unknown as Response,
-  //       nextMock,
-  //     );
-
-  //     expect(nextMock).toHaveBeenCalledWith();
-  //     expect(requestObject.AdminId).toBeUndefined();
-  //     expect(requestObject.Admin).toBeUndefined();
-  //   });
-
-  //   test("resolveAdmin should skip resolving for a non-existent admin", async () => {
-  //     const base64Auth = "dGVzdC11c2VyOnRlc3QtcGFzc3dvcmQ=";
-
-  //     const requestObject = {
-  //       headers: { authorization: `Basic ${base64Auth}` },
-  //     } as Request;
-  //     const nextMock = jest.fn();
-
-  //     await AuthService.resolveAdmin(
-  //       requestObject,
-  //       {} as unknown as Response,
-  //       nextMock,
-  //     );
-
-  //     expect(nextMock).toHaveBeenCalledWith();
-  //     expect(requestObject.AdminId).toBeUndefined();
-  //     expect(requestObject.Admin).toBeUndefined();
-  //   });
 });

@@ -135,7 +135,7 @@ class AuthService {
    * @throws {Error} Token has to be a valid and not-expired JWT token
    * @throws {Error} User the token belongs to has to (still) exist
    */
-  resolveSsoToken(token: string, locale = "en") {
+  resolveSsoToken(token: string, locale = "en"): Promise<User> {
     return new Promise((resolve, reject) => {
       jwt.verify(
         token,
