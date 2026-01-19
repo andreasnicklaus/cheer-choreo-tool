@@ -6,11 +6,15 @@
       class="mb-4"
       @input="onNameEdit"
       :placeholder="`${$t('loading')}...`"
-      v-if="!$store.state.isMobile"
+      v-if="!$store.state.isMobile || mobileEditingEnabled"
     />
 
     <!-- Controls -->
-    <b-row align-v="center" class="mb-4" v-if="!$store.state.isMobile">
+    <b-row
+      align-v="center"
+      class="mb-4"
+      v-if="!$store.state.isMobile || mobileEditingEnabled"
+    >
       <b-col>
         <b-row
           align-h="center"
@@ -211,7 +215,10 @@
     </b-row>
 
     <!-- Main: Mat + CountOverview -->
-    <b-row align-h="around" v-if="!$store.state.isMobile">
+    <b-row
+      align-h="around"
+      v-if="!$store.state.isMobile || mobileEditingEnabled"
+    >
       <b-col cols="auto">
         <Mat
           ref="Mat"
@@ -280,7 +287,7 @@
       content-class="mt-3"
       class="mt-5"
       fill
-      v-if="!$store.state.isMobile"
+      v-if="!$store.state.isMobile || mobileEditingEnabled"
     >
       <b-tab :title="$tc('countsheet', 1)" active>
         <CountSheet
@@ -456,6 +463,8 @@ import MessagingService from "@/services/MessagingService";
 import { debug, error } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
 import { roundToDecimals, clamp } from "@/utils/numbers";
+import FeatureFlagService from "@/services/FeatureFlagService";
+import { FeatureFlagKeys } from "@/services/FeatureFlagService";
 
 /**
  * @vue-data {string|null} choreoId=null - The ID of the choreo being edited.
@@ -477,6 +486,7 @@ import { roundToDecimals, clamp } from "@/utils/numbers";
  * @vue-data {boolean} countStartButtonHasNeverBeenUsed=true - Whether the start button has been used before.
  * @vue-data {boolean} countNextButtonHasNeverBeenUsed=true - Whether the next button has been used before.
  * @vue-data {boolean} countEndButtonHasNeverBeenUsed=true - Whether the end button has been used before.
+ * @vue-data {boolean} mobileEditingEnabled=false - Whether editing on mobile devices is enabled.
  *
  * @vue-computed {Array} teamMembers - The list of team members participating in the choreo.
  * @vue-computed {Array} notParticipatingMembers - The list of team members not participating in the choreo.
@@ -537,19 +547,26 @@ export default {
       countEndButtonHasNeverBeenUsed: true,
       proposedPositions: [],
       rejectedPositionProposals: [],
+      mobileEditingEnabled: true,
     };
   },
   mounted() {
-    if (this.$store.state.isMobile) {
-      if (this.$refs.mobileChoreoEditModal)
-        this.$refs.mobileChoreoEditModal.open(this.choreoId);
-    } else this.loadChoreo();
+    FeatureFlagService.isEnabled(FeatureFlagKeys.MOBILE_EDITING).then(
+      (enabled) => {
+        this.mobileEditingEnabled = enabled;
+
+        if (this.$store.state.isMobile && !this.mobileEditingEnabled) {
+          if (this.$refs.mobileChoreoEditModal)
+            this.$refs.mobileChoreoEditModal.open(this.choreoId);
+        } else this.loadChoreo();
+      }
+    );
   },
   watch: {
     "$route.params": {
       handler() {
         this.choreoId = this.$route.params.choreoId;
-        if (this.$store.state.isMobile) {
+        if (this.$store.state.isMobile && !this.mobileEditingEnabled) {
           if (this.$refs.mobileChoreoEditModal)
             this.$refs.mobileChoreoEditModal.open(this.choreoId);
         } else this.loadChoreo();
