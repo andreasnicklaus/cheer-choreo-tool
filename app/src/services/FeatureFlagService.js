@@ -9,18 +9,44 @@ const unleash = new UnleashClient({
   appName: "choreo-planer-ui",
 });
 
+/**
+ * Known feature flag keys used by the UI.
+ * @readonly
+ * @enum {string}
+ */
 export const FeatureFlagKeys = {
   MOBILE_EDITING: "mobile-editing",
   SOCIAL_LOGIN: "social-login",
 };
 
+/**
+ * Client-side FeatureFlagService using the a proxy client.
+ *
+ * The service starts the client once and exposes helper methods
+ * to check whether flags are enabled. Consumers should await the
+ * initialization before querying flags to ensure the client has fetched
+ * the current toggle state.
+ */
 class FeatureFlagService {
+  /**
+   * Initialize the service and start background polling.
+   * @constructor
+   */
   constructor() {
     this.unleash = unleash;
     // Start the background polling
     this.initialization = this.unleash.start();
   }
 
+  /**
+   * Check whether a feature flag is enabled.
+   *
+   * Waits for the client to finish initial startup before querying.
+   * Logs a warning for unknown flags.
+   *
+   * @param {string} flagName - The feature flag key to check.
+   * @returns {Promise<boolean>} Resolves to true when the flag is enabled.
+   */
   async isEnabled(flagName) {
     await this.initialization;
     if (!Object.values(FeatureFlagKeys).includes(flagName))
