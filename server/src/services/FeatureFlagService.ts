@@ -80,7 +80,7 @@ class FeatureFlagService {
    *
    * Filters out stale flags and returns an array of simplified flag states.
    *
-   * @returns {Promise<Array<{name: string; enabled: boolean}>>}
+   * @returns {Promise<{name: string; enabled: boolean}[]>}
    *          Array of feature flag states.
    */
   async getAll() {
