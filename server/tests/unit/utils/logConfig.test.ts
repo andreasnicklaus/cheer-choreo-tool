@@ -38,9 +38,10 @@ describe("logConfig with environment", () => {
     process.env.BACKEND_DOMAIN = "test";
     process.env.BETTERSTACK_LOG_INGESTING_HOST = "test";
     process.env.BETTERSTACK_LOG_SOURCE_TOKEN = "test";
+    process.env.UNLEASH_API_KEY = "test";
     logConfig();
 
-    expect(logger.info).toHaveBeenCalledTimes(30);
+    expect(logger.info).toHaveBeenCalledTimes(32);
     expect(logger.debug).toHaveBeenCalledTimes(1);
   });
 });
@@ -48,7 +49,7 @@ describe("logConfi w/o environment", () => {
   test("logConfig logs the configuration variables", async () => {
     logConfig();
 
-    expect(logger.info).toHaveBeenCalledTimes(30);
+    expect(logger.info).toHaveBeenCalledTimes(32);
     expect(logger.debug).toHaveBeenCalledTimes(1);
   });
 });

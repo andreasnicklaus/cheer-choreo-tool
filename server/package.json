@@ -70,6 +70,7 @@
     "tsc-alias": "^1.8.16",
     "typescript": "^5.9.3",
     "typescript-cp": "^0.1.9",
+    "unleash-client": "^6.9.0",
     "winston": "^3.18.3"
   },
   "devDependencies": {
@@ -77,6 +78,7 @@
     "@eslint/js": "^9.39.1",
     "@jest/globals": "^30.2.0",
     "@sequelize/sqlite3": "^7.0.0-alpha.47",
+    "@types/bcrypt": "^6.0.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.10.1",
     "@types/sequelize": "^6.12.0",
