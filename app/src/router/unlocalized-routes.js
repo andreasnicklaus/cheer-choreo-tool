@@ -55,6 +55,12 @@ module.exports = [
     meta: { prerender: true },
   },
   {
+    path: "contact",
+    name: "Contact",
+    component: () => import("../views/ContactView.vue"),
+    meta: { prerender: true },
+  },
+  {
     path: "impressum",
     name: "Impressum",
     component: () => import("../views/ImpressumView.vue"),

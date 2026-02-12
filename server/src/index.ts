@@ -8,7 +8,6 @@ import express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const helmet = require("helmet");
-const { rateLimit } = require("express-rate-limit");
 const robots = require("express-robots-txt");
 const permissionsPolicy = require("permissions-policy");
 
@@ -23,6 +22,7 @@ import {
   errorLoggingMiddleWare,
   loggerMiddleWare,
 } from "./middlewares/loggingMiddleware";
+import { totalRateLimit } from "./middlewares/rateLimitMiddleware";
 
 const favicon = require("serve-favicon");
 
@@ -44,6 +44,7 @@ import { seasonRouter } from "./routes/season";
 import { seasonTeamRouter } from "./routes/seasonTeam";
 import { feedbackRouter } from "./routes/feedback";
 import { notificationRouter } from "./routes/notification";
+import { contactRouter } from "./routes/contact";
 
 // ADMIN ROUTER
 import { adminRouter } from "./routes/admin/index";
@@ -71,12 +72,7 @@ app.use(
 app.use(robots(__dirname + "/public/robots.txt"));
 
 app.set("trust proxy", 1);
-app.use(
-  rateLimit({
-    windowMs: 1 * 60 * 1000, // 1 minutes
-    max: 100,
-  }),
-);
+app.use(totalRateLimit);
 
 app.use((_req: Request, res: Response, next: NextFunction) => {
   res.locals.cspNonce = require("crypto").randomBytes(32).toString("hex");
@@ -259,6 +255,7 @@ app.use("/season", seasonRouter);
 app.use("/seasonTeam", seasonTeamRouter);
 app.use("/feedback", feedbackRouter);
 app.use("/notifications", notificationRouter);
+app.use("/contact", contactRouter);
 
 app.use("/admin", adminRouter);
 
@@ -272,7 +269,8 @@ const swaggerOptions = {
     openapi: "3.1.1",
     info: {
       title: "Choreo Planer",
-      description: "This is the official Choreo Planer API documentation. Use this documentation as reference to integrate with the Choreo Planer backend.",
+      description:
+        "This is the official Choreo Planer API documentation. Use this documentation as reference to integrate with the Choreo Planer backend.",
       license: {
         name: "MIT",
         url: "https://mit-license.org/",
@@ -285,7 +283,7 @@ const swaggerOptions = {
     },
     externalDocs: {
       description: "Backend Code Documentation",
-      url: "https://api.choreo-planer.de/docs/"
+      url: "https://api.choreo-planer.de/docs/",
     },
     servers: [
       {

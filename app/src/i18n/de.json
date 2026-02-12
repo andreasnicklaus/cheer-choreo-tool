@@ -207,7 +207,8 @@
     "help": "Hilfe",
     "offline": "Offline",
     "accept": "Akzeptieren",
-    "reject": "Ablehnen"
+    "reject": "Ablehnen",
+    "contact-email": "info@choreo-planer.de"
   },
   "HelpView": {
     "fuer-deine-suche-gibt-es-keine-ergebnisse": "Für deine Suche \"{searchTerm}\" gibt es keine Ergebnisse",
@@ -449,6 +450,9 @@
     },
     "video": {
       "description": "Exportiere die Aufstellungen deiner Choreo als Video!"
+    },
+    "contact": {
+      "description": "Sende eine Nachricht an das Choreo Planer Team für Hilfe oder Anfragen. \nSchicke uns eine E-Mail an info@choreo-planer.de."
     }
   },
   "modals": {
@@ -614,6 +618,35 @@
     "change-mat": {
       "layout-der-buehne-matte-aendern": "Layout der Bühne / Matte ändern",
       "layout-aendern": "Layout ändern"
+    },
+    "contact": {
+      "something-went-wrong": "Etwas ist schief gelaufen",
+      "thank-you": "Dankeschön!",
+      "send-us-a-message": "Sende eine Nachricht",
+      "success": "Erfolg!",
+      "try-again": "Versuche es nochmal",
+      "ups": "Ups...",
+      "your-message-was-sent-successfully": "Deine Nachricht wurde erfolgreich gesendet!",
+      "ask-a-question": "Eine Frage stellen",
+      "category": "Kategorie:",
+      "email-address": "E-Mail-Adresse:",
+      "enter-email": "Gib deine E-Mail-Adresse ein",
+      "enter-name": "Dein Name",
+      "enter-your-message-to-us": "Gib deine Nachricht an uns ein",
+      "let-us-know-what-youre-concerned-about": "Teile uns mit, worüber wir uns Gedanken machen sollen",
+      "message": "Nachricht:",
+      "other": "Sonstiges",
+      "please-enter-a-valid-email-address": "Bitte gib eine gültige E-Mail-Adresse ein",
+      "report-a-bug": "Melde einen Fehler",
+      "request-a-feature": "Fordere eine Funktion an",
+      "subject": "Betreff:",
+      "subject-of-your-message": "Betreff deiner Nachricht",
+      "there-was-an-error-with-your-message": "Bei deiner Nachricht ist ein Fehler aufgetreten.",
+      "well-never-share-your-email-with-anyone-else": "Wir geben deine E-Mail-Adresse niemals an Dritte weiter.",
+      "what-do-you-need-help-with": "Wobei benötigst du Hilfe?",
+      "what-should-we-call-you": "Wie sollen wir dich nennen?",
+      "which-expertise-should-the-respondent-have": "In welchem Feld sollte dein Kontakt Experte sein?",
+      "your-name": "Dein Name:"
     }
   },
   "name": "Name",
@@ -798,5 +831,30 @@
     "user-agent": "User Agent",
     "warning": "%cAchtung: %cDiese Konsole könnte genutzt werden, um Informationen über deinen Browser oder dein Gerät zu erfahren. Gib nur Informationen heraus, wenn du selbstständig nachvollziehen kannst, dass du mit einem Vertreter von Choreo Planer im Kontakt stehst.",
     "welcome": "%cWillkommen beim Choreo Planer\n%cVielen Dank für deine Engagement im Choreo-Sport! Über diese Konsole kannst du einige Informationen über die Anwendung und deinen Browser erfahren.\n\nHier sind ein paar hilfreiche Links:\nChoreo Planer bei IG:     https://www.instagram.com/choreoplaner\nHilfe bekommen:             https://www.choreo-planer.de/hilfe\nKontakt aufnehmen:        info@choreo-planer.de"
+  },
+  "contact": {
+    "contact": "Kontakt",
+    "contact-and-support": "Kontakt und Support",
+    "help-and-support": "Hilfe und Support",
+    "compose-an-email-to-our-support-team": "Verfasse eine E-Mail an unser Support-Team",
+    "documentation-and-faq": "Dokumentation",
+    "fill-out-our-contact-form": "Fülle ein Kontaktformular aus, um uns eine kurze Nachricht zu senden",
+    "got-questions": "Hast du Fragen?",
+    "help-and-quick-fixes": "Hilfe und Lösungen",
+    "learn-about-the-choreo-planer": "Erfahre mehr über den Choreo Planer und finde Antworten auf häufig gestellte Fragen",
+    "looking-for-a-contact-form": "Suchst du ein Kontaktformular?",
+    "send-a-message": "Sende eine Nachricht!",
+    "send-an-email": "Sende eine E-Mail",
+    "to-write-a-direct-message-to-the-developer-team": "um eine direkte Nachricht an das Entwicklerteam zu schreiben.",
+    "well-get-back-to-you": "Wir werden uns so schnell wie möglich bei dir melden, in der Regel innerhalb von 24 Stunden!",
+    "write-an-email": "Schreibe eine E-Mail",
+    "you-can-reach-us-at": "Du erreichst uns unter"
+  },
+  "services": {
+    "ContactService": {
+      "best-regards": "\nBeste grüße!",
+      "best-regards-username": "\nLiebe Grüße\n{username}",
+      "dear-choreo-planer-team": "Liebes Choreo Planer-Team,\n\n"
+    }
   }
 }

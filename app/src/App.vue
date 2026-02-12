@@ -23,6 +23,12 @@
           ><br />
           <b-button
             variant="link"
+            :to="{ name: 'Contact', params: { locale: $root.$i18n.locale } }"
+          >
+            {{ $t("contact.contact-and-support") }} </b-button
+          ><br />
+          <b-button
+            variant="link"
             :to="{
               name: 'Impressum',
               params: { locale: $root.$i18n.locale },
@@ -329,7 +335,6 @@ div:has(.betteruptime-announcement)
   ~ .betteruptime-announcement__placeholder
   ~ .betteruptime-announcement__placeholder {
   display: none !important;
-
 }
 </style>
 

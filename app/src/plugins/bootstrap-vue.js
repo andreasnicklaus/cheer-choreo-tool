@@ -28,6 +28,7 @@ import {
   ProgressPlugin,
   AvatarPlugin,
   VBHoverPlugin,
+  FormTextareaPlugin,
 } from "bootstrap-vue";
 
 const bootstrapPlugins = [
@@ -57,6 +58,7 @@ const bootstrapPlugins = [
   ProgressPlugin,
   AvatarPlugin,
   VBHoverPlugin,
+  FormTextareaPlugin,
 ];
 bootstrapPlugins.forEach((plugin) => {
   Vue.use(plugin);
@@ -131,6 +133,8 @@ import {
   BIconBell,
   BIconEnvelopeOpen,
   BIconEnvelope,
+  BIconChatRightText,
+  BIconBook,
 } from "bootstrap-vue";
 
 const icons = [
@@ -202,6 +206,8 @@ const icons = [
   BIconBell,
   BIconEnvelopeOpen,
   BIconEnvelope,
+  BIconChatRightText,
+  BIconBook,
 ];
 icons.forEach((icon) => {
   const componentString = icon.options.name

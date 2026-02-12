@@ -33,6 +33,6 @@ export async function mockDefaultStartRequests(page: Page) {
     mockLineups(page),
     mockHits(page),
     mockTrackingRequests(page),
-    mockFeatureFlagRequests(page)
+    mockFeatureFlagRequests(page),
   ]);
 }

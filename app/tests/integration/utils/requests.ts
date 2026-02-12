@@ -323,3 +323,14 @@ export async function mockHits(page: Page, hits = defaultHits) {
       .flat(),
   ]);
 }
+
+export async function mockContactMessages(page: Page, success: boolean = true) {
+  return page.route(`${API_URL}/contact`, async (route) => {
+    if (success) await route.fulfill({ body: "Message received" });
+    else
+      await route.fulfill({
+        status: 400,
+        body: "Failed to send message",
+      });
+  });
+}

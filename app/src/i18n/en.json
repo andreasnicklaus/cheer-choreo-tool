@@ -207,7 +207,8 @@
     "help": "Help",
     "offline": "Offline",
     "reject": "Reject",
-    "accept": "Accept"
+    "accept": "Accept",
+    "contact-email": "info@choreo-planer.de"
   },
   "HelpView": {
     "fuer-deine-suche-gibt-es-keine-ergebnisse": "There are no results for your search \"{searchTerm}\"",
@@ -449,6 +450,9 @@
     },
     "video": {
       "description": "Export the lineups of your choreo as a video!"
+    },
+    "contact": {
+      "description": "Send a message to the ChoreoPlaner team for support or inquiries. Email us at info@choreo-planer.de."
     }
   },
   "modals": {
@@ -614,6 +618,35 @@
     "change-mat": {
       "layout-der-buehne-matte-aendern": "Change the layout of the mat",
       "layout-aendern": "Change the layout"
+    },
+    "contact": {
+      "thank-you": "Thank you!",
+      "send-us-a-message": "Send us a message",
+      "something-went-wrong": "Something went wrong",
+      "success": "Success!",
+      "ups": "Ups ...",
+      "your-message-was-sent-successfully": "Your message was sent successfully!",
+      "try-again": "Try again",
+      "your-name": "Your Name:",
+      "what-should-we-call-you": "What should we call you?",
+      "enter-name": "Enter name",
+      "email-address": "Email address:",
+      "well-never-share-your-email-with-anyone-else": "We'll never share your email with anyone else.",
+      "enter-email": "Enter email",
+      "category": "Category:",
+      "what-do-you-need-help-with": "What do you need help with?",
+      "ask-a-question": "Ask a question",
+      "report-a-bug": "Report a bug",
+      "request-a-feature": "Request a feature",
+      "other": "Other",
+      "subject": "Subject:",
+      "which-expertise-should-the-respondent-have": "Which expertise should the respondent have?",
+      "subject-of-your-message": "Subject of your message",
+      "message": "Message:",
+      "let-us-know-what-youre-concerned-about": "Let us know what you're concerned about",
+      "enter-your-message-to-us": "Enter your message to us",
+      "there-was-an-error-with-your-message": "There was an error with your message.",
+      "please-enter-a-valid-email-address": "Please enter a valid email address"
     }
   },
   "name": "Name",
@@ -798,5 +831,30 @@
     "available-locales": "Available Locales",
     "warning": "%cAttention: %cThis console could be used to obtain information about your browser or device. Only give out information if you can independently verify that you are in contact with a representative of Choreo Planer.",
     "welcome": "%cWelcome to Choreo Planner\n%cThank you for your commitment to choreo sports! You can use this console to find out some information about the application and your browser.\n\nHere are a few helpful links:\nChoreo Planner on IG:     https://www.instagram.com/choreoplaner\nGet help:                           https://www.choreo-planer.de/hilfe\nContact us:                       info@choreo-planer.de"
+  },
+  "contact": {
+    "contact": "Contact",
+    "help-and-support": "Help & Support",
+    "contact-and-support": "Contact & Support",
+    "got-questions": "Got questions?",
+    "you-can-reach-us-at": "You can reach us at",
+    "well-get-back-to-you": "We'll get back to you as soon we can, typically within 24 hours!",
+    "send-a-message": "Send a message!",
+    "fill-out-our-contact-form": "Fill out our contact form to send us a short message",
+    "write-an-email": "Write an email",
+    "compose-an-email-to-our-support-team": "Compose an email to our support team",
+    "send-an-email": "Send an email",
+    "documentation-and-faq": "Documentation & FAQ",
+    "learn-about-the-choreo-planer": "Learn about the choreo planer and find answers to common questions",
+    "help-and-quick-fixes": "Help & quick fixes",
+    "looking-for-a-contact-form": "Looking for a contact form?",
+    "to-write-a-direct-message-to-the-developer-team": "to write a direct message to the developer team."
+  },
+  "services": {
+    "ContactService": {
+      "dear-choreo-planer-team": "Dear Choreo Planer Team,\n\n",
+      "best-regards": "\nBest regards!",
+      "best-regards-username": "\nBest regards\n{username}"
+    }
   }
 }
