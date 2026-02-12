@@ -36,7 +36,6 @@ export default class ContactPage extends TestPage {
   }
 
   async iFillAndSendMessage() {
-    // TODO: implement filling out the form and sending a message
     const nameInput = this.page.getByLabel("Name");
     await this.iFillInput(nameInput, "Test User");
 
