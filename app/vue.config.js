@@ -48,7 +48,6 @@ const productionPlugins = [
     renderer: new PrerenderSpaPlugin.PuppeteerRenderer({
       inject: {},
       renderAfterElementExists: "[data-view]",
-      headless: false,
     }),
     postProcess: (renderedRoute) => {
       renderedRoute.html = renderedRoute.html
