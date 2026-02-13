@@ -24,8 +24,7 @@
           <b-button
             variant="link"
             :to="{ name: 'Contact', params: { locale: $root.$i18n.locale } }"
-          >
-            {{ $t("contact.contact-and-support") }} </b-button
+            >{{ $t("contact.contact-and-support") }}</b-button
           ><br />
           <b-button
             variant="link"

@@ -32,26 +32,28 @@ export default class AppPage extends TestPage {
       expect(footerLinks.nth(0)).toHaveAttribute("href", "/en/"),
       expect(footerLinks.nth(1)).toHaveText("Help"),
       expect(footerLinks.nth(1)).toHaveAttribute("href", "/en/hilfe"),
-      expect(footerLinks.nth(2)).toHaveText("Imprint"),
-      expect(footerLinks.nth(2)).toHaveAttribute("href", "/en/impressum"),
-      expect(footerLinks.nth(3)).toHaveText("Data protection"),
-      expect(footerLinks.nth(3)).toHaveAttribute("href", "/en/datenschutz"),
-      expect(footerLinks.nth(4)).toHaveText("Documentation"),
-      expect(footerLinks.nth(4)).toHaveAttribute("href", "/docs/"),
+      expect(footerLinks.nth(2)).toHaveText("Contact & Support"),
+      expect(footerLinks.nth(2)).toHaveAttribute("href", "/en/contact"),
+      expect(footerLinks.nth(3)).toHaveText("Imprint"),
+      expect(footerLinks.nth(3)).toHaveAttribute("href", "/en/impressum"),
+      expect(footerLinks.nth(4)).toHaveText("Data protection"),
+      expect(footerLinks.nth(4)).toHaveAttribute("href", "/en/datenschutz"),
+      expect(footerLinks.nth(5)).toHaveText("Documentation"),
+      expect(footerLinks.nth(5)).toHaveAttribute("href", "/docs/"),
 
       // External Links
-      expect(footerLinks.nth(5)).toHaveText("Instagram"),
-      expect(footerLinks.nth(5)).toHaveAttribute(
+      expect(footerLinks.nth(6)).toHaveText("Instagram"),
+      expect(footerLinks.nth(6)).toHaveAttribute(
         "href",
         "https://www.instagram.com/choreoplaner/"
       ),
-      expect(footerLinks.nth(6)).toHaveText("Facebook"),
-      expect(footerLinks.nth(6)).toHaveAttribute(
+      expect(footerLinks.nth(7)).toHaveText("Facebook"),
+      expect(footerLinks.nth(7)).toHaveAttribute(
         "href",
         "https://www.facebook.com/choreoplaner/"
       ),
-      expect(footerLinks.nth(7)).toHaveText("Github"),
-      expect(footerLinks.nth(7)).toHaveAttribute(
+      expect(footerLinks.nth(8)).toHaveText("Github"),
+      expect(footerLinks.nth(8)).toHaveAttribute(
         "href",
         "https://github.com/andreasnicklaus/cheer-choreo-tool"
       ),
