@@ -3,10 +3,7 @@ import ContactService from "@/services/ContactService";
 import ax from "@/services/RequestService";
 
 jest.mock("@/services/RequestService", () => ({
-  get: jest.fn(),
   post: jest.fn(),
-  put: jest.fn(),
-  delete: jest.fn(),
 }));
 
 describe("ContactService", () => {
