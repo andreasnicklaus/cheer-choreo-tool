@@ -17,6 +17,6 @@ i18n.configure({
   mustacheConfig: {
     disable: false,
   },
-  extension: ".jsonc",
+  extension: ".json5",
   parser: JSONC,
 });

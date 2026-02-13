@@ -68,6 +68,7 @@ const productionPlugins = [
 ];
 
 module.exports = defineConfig({
+  transpileDependencies: ["axios-cache-interceptor"],
   configureWebpack: (config) => {
     if (process.env.NODE_ENV === "production") {
       config.plugins.push(...productionPlugins);

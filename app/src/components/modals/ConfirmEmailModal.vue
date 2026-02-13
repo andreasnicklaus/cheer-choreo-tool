@@ -31,7 +31,7 @@
  * @example <ConfirmEmailModal />
  */
 export default {
-  name: "HowToModal",
+  name: "ConfirmEmailModal",
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     isError: false,
