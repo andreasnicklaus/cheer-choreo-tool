@@ -1,5 +1,6 @@
 <template>
-  <b-modal
+  <BModal
+    ref="modal"
     :id="`changeLengthModal-${id}`"
     centered
     :title="$t('modals.change-length.laenge-der-choreo-aendern')"
@@ -13,49 +14,47 @@
     "
     @ok="changeChoreoLength"
   >
-    <b-form>
-      <b-form-group
+    <BForm>
+      <BFormGroup
         :description="$t('achter')"
         :state="achterIsValid"
         :invalid-feedback="lengthStateFeedback"
       >
-        <b-form-input
+        <BFormInput
           type="number"
           min="0"
           v-model="newChoreoAchter"
           :state="achterIsValid"
           autofocus
         />
-      </b-form-group>
-      <b-form-group
+      </BFormGroup>
+      <BFormGroup
         :description="
           $t('modals.change-length.counts-zusaetzliche-counts-nach-den-achtern')
         "
         :state="countIsValid"
         :invalid-feedback="lengthStateFeedback"
       >
-        <b-form-input
+        <BFormInput
           type="number"
           min="0"
           max="7"
           v-model="newChoreoCount"
           :state="countIsValid"
         />
-      </b-form-group>
+      </BFormGroup>
       <p class="text-muted">
         {{ $t("modals.change-length.geschaetzte-zeit") }}
         {{ timeEstimationString }}
       </p>
-    </b-form>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="success" :disabled="!newCountIsValid">
+    </BForm>
+    <template #footer="{ ok, cancel }">
+      <BButton @click="ok" variant="success" :disabled="!newCountIsValid">
         {{ $t("modals.change-length.laenge-aendern") }}
-      </b-button>
-      <b-button @click="cancel" variant="danger">{{
-        $t("abbrechen")
-      }}</b-button>
+      </BButton>
+      <BButton @click="cancel" variant="danger">{{ $t("abbrechen") }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -98,7 +97,7 @@ export default {
   },
   methods: {
     open() {
-      this.$bvModal.show(`changeLengthModal-${this.id}`);
+      this.$refs.modal.show();
     },
     changeChoreoLength() {
       const counts =

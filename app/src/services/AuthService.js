@@ -33,7 +33,7 @@ class AuthService {
           throw new Error("No token received");
         }
 
-        debug("Succesfully logged in as", username);
+        debug("Successfully logged in as", username);
         localStorage.setItem(tokenStorageKey, token);
         store.commit("setLoginState", true);
         return true;
@@ -139,9 +139,9 @@ class AuthService {
     debug("Logging out.");
     this.removeToken();
     store.commit("setLoginState", false);
-    if (router.currentRoute.meta.private)
+    if (router.currentRoute.value.meta.private)
       router
-        .push({ name: "Login", params: { locale: i18n.locale } })
+        .push({ name: "Login", params: { locale: i18n.global.locale.value } })
         .catch(() => {
           error("Redundant navigation to login", ERROR_CODES.REDUNDANT_ROUTING);
         });

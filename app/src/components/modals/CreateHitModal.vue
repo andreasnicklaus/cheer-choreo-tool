@@ -1,5 +1,6 @@
 <template>
-  <b-modal
+  <BModal
+    ref="modal"
     :id="`modal-newHit-${id}`"
     :title="$t('shortcut-tutorial.neuer-eintrag')"
     centered
@@ -8,15 +9,15 @@
     @hidden="resetModal"
     @ok="createHit"
   >
-    <b-form>
-      <b-form-group
+    <BForm>
+      <BFormGroup
         :label="$t('name')"
         label-class="label-with-colon"
         :state="newHitNameIsValid"
         :invalid-feedback="newHitNameStateFeedback"
-        valid-feedback="Gültig!"
+        :valid-feedback="$t('login.gueltig')"
       >
-        <b-form-input
+        <BFormInput
           v-model="newHitName"
           :placeholder="$t('modals.create-hit.wie-heisst-der-neue-eintrag')"
           autofocus
@@ -37,68 +38,68 @@
             {{ proposal }}
           </option>
         </datalist>
-      </b-form-group>
-      <b-row>
-        <b-col cols="6">
-          <b-form-group
+      </BFormGroup>
+      <BRow>
+        <BCol cols="6">
+          <BFormGroup
             :description="$t('achter')"
             :state="newHitAchterIsValid"
             :invalid-feedback="newHitAchterStateFeedback"
             :valid-feedback="$t('login.gueltig')"
           >
-            <b-form-input
+            <BFormInput
               v-model="newHitAchter"
               type="number"
               min="1"
               :max="Math.ceil(maxCount / 8)"
               :state="newHitAchterIsValid"
             />
-          </b-form-group>
-        </b-col>
-        <b-col cols="6">
-          <b-form-group
-            :description="$tc('count', 1)"
+          </BFormGroup>
+        </BCol>
+        <BCol cols="6">
+          <BFormGroup
+            :description="$t('count', 1)"
             :state="newHitCountIsValid"
             :invalid-feedback="newHitCountStateFeedback"
             :valid-feedback="$t('login.gueltig')"
           >
-            <b-form-input
+            <BFormInput
               v-model="newHitCount"
               type="number"
               min="1"
               :max="8"
               :state="newHitCountIsValid"
             />
-          </b-form-group>
-        </b-col>
-      </b-row>
+          </BFormGroup>
+        </BCol>
+      </BRow>
 
       <hr />
 
-      <b-form-group
+      <BFormGroup
         :label="$t('teilnehmer')"
         label-class="label-with-colon"
         :state="newHitMembersIsValid"
         :invalid-feedback="newHitMembersStateFeedback"
         :valid-feedback="$t('login.gueltig')"
       >
-        <b-button-group>
-          <b-button
+        <BButtonGroup>
+          <BButton
             variant="light"
             @click="() => (this.newHitMembers = teamMembers.map((m) => m.id))"
             :disabled="newHitMembers?.length == teamMembers?.length"
           >
-            <b-icon-check-all />
+            <IBiCheckAll />
             {{ $t("alle-auswaehlen") }}
-          </b-button>
-          <b-button
+          </BButton>
+          <BButton
             variant="light"
             @click="() => (this.newHitMembers = [])"
             :disabled="newHitMembers?.length == 0"
           >
-            <b-icon-slash /> {{ $t("keine-auswaehlen") }}
-          </b-button>
-          <b-button
+            <IBiSlash /> {{ $t("keine-auswaehlen") }}
+          </BButton>
+          <BButton
             variant="light"
             @click="
               () =>
@@ -111,24 +112,24 @@
               newHitMembers?.length == teamMembers?.length
             "
           >
-            <b-icon-arrow-repeat />
+            <IBiArrowRepeat />
             {{ $t("auswahl-wechseln") }}
-          </b-button>
-        </b-button-group>
-        <b-form-checkbox-group
+          </BButton>
+        </BButtonGroup>
+        <BFormCheckbox-group
           id="memberSelection"
           v-model="newHitMembers"
           stacked
           :style="{ columnCount: 2 }"
         >
-          <b-form-checkbox
+          <BFormCheckbox
             v-for="member in teamMembers"
             :key="member.id"
             :value="member.id"
           >
-            <b-row no-gutters class="mb-1">
+            <BRow no-gutters class="mb-1">
               <div
-                class="mr-2"
+                class="me-2"
                 :style="{
                   height: '24px',
                   width: '24px',
@@ -138,13 +139,13 @@
                 }"
               ></div>
               {{ member.nickname || member.name }}
-            </b-row>
-          </b-form-checkbox>
-        </b-form-checkbox-group>
-      </b-form-group>
-    </b-form>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button
+            </BRow>
+          </BFormCheckbox>
+        </BFormCheckbox-group>
+      </BFormGroup>
+    </BForm>
+    <template #footer="{ ok, cancel }">
+      <BButton
         type="submit"
         @click="ok"
         variant="success"
@@ -156,12 +157,10 @@
         "
       >
         {{ $t("speichern") }}
-      </b-button>
-      <b-button @click="cancel" variant="danger">{{
-        $t("abbrechen")
-      }}</b-button>
+      </BButton>
+      <BButton @click="cancel" variant="danger">{{ $t("abbrechen") }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -323,7 +322,7 @@ export default {
   },
   methods: {
     open() {
-      this.$bvModal.show(`modal-newHit-${this.id}`);
+      this.$refs.modal.show();
     },
     resetModal() {
       this.newHitAchter = Math.floor(this.count / 8) + 1;

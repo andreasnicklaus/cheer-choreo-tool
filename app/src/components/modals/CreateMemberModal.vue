@@ -1,5 +1,6 @@
 <template>
-  <b-modal
+  <BModal
+    ref="modal"
     :id="`modal-newMember-${id}`"
     :title="
       editMemberId
@@ -11,32 +12,32 @@
     @hidden="resetMemberModal"
     @ok="saveMember"
   >
-    <b-form>
-      <b-row>
-        <b-col cols="7">
-          <b-form-group
+    <BForm>
+      <BRow>
+        <BCol cols="7">
+          <BFormGroup
             :label="$t('name')"
             label-class="label-with-colon"
             :state="newMemberNameIsValid"
             :invalid-feedback="newMemberNameStateFeedback"
           >
-            <b-form-input
+            <BFormInput
               v-model="newMemberName"
               :placeholder="$t('name')"
               autofocus
               required
               :state="newMemberNameIsValid"
             />
-          </b-form-group>
-        </b-col>
-        <b-col>
-          <b-form-group
+          </BFormGroup>
+        </BCol>
+        <BCol>
+          <BFormGroup
             :label="$t('abkuerzung')"
             label-class="label-with-colon"
             :state="abbreviationIsValid"
             :invalid-feedback="abbreviationStateFeedback"
           >
-            <b-form-input
+            <BFormInput
               v-model="newMemberAbbreviation"
               :placeholder="
                 proposedAbbreviation == -1 || !proposedAbbreviation
@@ -45,35 +46,33 @@
               "
               :state="abbreviationIsValid"
             />
-          </b-form-group>
-        </b-col>
-      </b-row>
-      <b-form-group
+          </BFormGroup>
+        </BCol>
+      </BRow>
+      <BFormGroup
         :label="$t('spitzname')"
         label-class="label-with-colon"
         :state="true"
       >
-        <b-form-input
+        <BFormInput
           v-model="newMemberNickname"
           :placeholder="$t('spitzname')"
           :state="true"
         />
-      </b-form-group>
-    </b-form>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button
+      </BFormGroup>
+    </BForm>
+    <template #footer="{ ok, cancel }">
+      <BButton
         type="submit"
         @click="ok"
         variant="success"
         :disabled="!newMemberName || !abbreviationIsValid"
       >
         {{ $t("speichern") }}
-      </b-button>
-      <b-button @click="cancel" variant="danger">{{
-        $t("abbrechen")
-      }}</b-button>
+      </BButton>
+      <BButton @click="cancel" variant="danger">{{ $t("abbrechen") }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -133,7 +132,7 @@ export default {
   },
   methods: {
     open() {
-      this.$bvModal.show(`modal-newMember-${this.id}`);
+      this.$refs.modal.show();
     },
     resetMemberModal() {
       if (!this.editMemberId) {

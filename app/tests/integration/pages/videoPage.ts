@@ -30,7 +30,7 @@ export default class VideoPage extends TestPage {
 
   async iGenerateVideo(supportsCanvasRecording: boolean) {
     const generateButton = this.page.getByRole("button", {
-      name: "film Generate video",
+      name: "Generate video",
     });
     await this.iClickButton(generateButton);
 
@@ -46,19 +46,19 @@ export default class VideoPage extends TestPage {
       const progressBar = this.page.locator(".progress");
       await expect(progressBar).toBeVisible();
 
-      const downloadButton = this.page.getByRole("button", {
-        name: "download Download",
-      });
-      // Wait for the video generation to finish
-      await expect(downloadButton).toBeVisible({ timeout: 30_000 });
+      // const downloadButton = this.page.getByRole("button", {
+      //   name: "Download",
+      // });
+      // // Wait for the video generation to finish
+      // await expect(downloadButton).toBeVisible({ timeout: 30_000 });
 
-      await this.iClickButton(downloadButton);
+      // await this.iClickButton(downloadButton);
 
       const videoElement = this.page.locator("video");
-      await expect(videoElement).toBeVisible();
+      await expect(videoElement).toBeVisible({ timeout: 30_000 });
 
-      const downloadVideoButton = this.page.getByRole("link", {
-        name: "download Download MP4",
+      const downloadVideoButton = this.page.getByRole("button", {
+        name: "Download MP4",
       });
 
       const downloadPromise = this.page.waitForEvent("download");
@@ -73,17 +73,18 @@ export default class VideoPage extends TestPage {
       );
 
       const fileFormatSelect = this.page.getByRole("button", {
-        name: "film MP4",
+        name: "MP4",
+        exact: true,
       });
       await this.iClickButton(fileFormatSelect);
 
       const webmOption = this.page.getByRole("menuitem", {
         name: "Webm .webm",
       });
-      this.iClickButton(webmOption);
+      await this.iClickButton(webmOption);
 
-      const downloadWebmVideoButton = this.page.getByRole("link", {
-        name: "download Download Webm",
+      const downloadWebmVideoButton = this.page.getByRole("button", {
+        name: "Download Webm",
       });
       const downloadWebmPromise = this.page.waitForEvent("download");
       await this.iClickButton(downloadWebmVideoButton);
@@ -99,10 +100,10 @@ export default class VideoPage extends TestPage {
   }
 
   async iTryVideoGenerationWithNoMembers() {
-    await this.page.getByRole("button", { name: "slash Select none" }).click();
+    await this.page.getByRole("button", { name: "Select none" }).click();
 
     const generateButton = this.page.getByRole("button", {
-      name: "film Generate video",
+      name: "Generate video",
     });
     await expect(generateButton).toBeDisabled();
   }

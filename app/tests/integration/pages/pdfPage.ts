@@ -30,7 +30,7 @@ export default class PdfPage extends TestPage {
 
   async iGeneratePdf() {
     const generateButton = this.page.getByRole("button", {
-      name: "file pdf Generate PDF",
+      name: "Generate PDF",
     });
     await this.iClickButton(generateButton);
 
@@ -43,9 +43,9 @@ export default class PdfPage extends TestPage {
   }
 
   async iTryPdfGenerationWithNoMembers() {
-    await this.page.getByRole("button", { name: "slash Select none" }).click();
+    await this.page.getByRole("button", { name: "Select none" }).click();
     const generateButton = this.page.getByRole("button", {
-      name: "file pdf Generate PDF",
+      name: "Generate PDF",
     });
     await expect(generateButton).toBeDisabled();
   }

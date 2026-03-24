@@ -1,24 +1,25 @@
 <template>
-  <b-modal
+  <BModal
+    ref="modal"
     :id="`loading-modal-${id}`"
     centered
     no-close-on-backdrop
     no-close-on-esc
-    hide-footer
-    hide-header
+    no-footer
+    no-header
     @close="(event) => event.preventDefault()"
   >
-    <b-row align-h="center">
-      <b-col cols="auto" class="text-center my-5">
-        <b-spinner />
+    <BRow align-h="center">
+      <BCol cols="auto" class="text-center my-5">
+        <BSpinner />
         <p class="m-0">
           <slot>
             {{ description }}
           </slot>
         </p>
-      </b-col>
-    </b-row>
-  </b-modal>
+      </BCol>
+    </BRow>
+  </BModal>
 </template>
 
 <script>
@@ -53,10 +54,10 @@ export default {
   },
   methods: {
     open() {
-      this.$bvModal.show(`loading-modal-${this.id}`);
+      this.$refs.modal?.show();
     },
     close() {
-      this.$bvModal.hide(`loading-modal-${this.id}`);
+      this.$refs.modal?.hide();
     },
   },
 };

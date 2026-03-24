@@ -1,5 +1,6 @@
 <template>
-  <b-modal
+  <BModal
+    ref="modal"
     :id="`modal-participation-substitution-${id}`"
     centered
     @show="reset"
@@ -7,47 +8,47 @@
     :title="$t('modals.substitution.teilnehmer-auswechseln')"
   >
     <p class="text-muted">
-      {{ $tc("choreo", 1) }}: {{ choreo?.name }} ({{
+      {{ $t("choreo", 1) }}: {{ choreo?.name }} ({{
         choreo?.SeasonTeam.Team.name
       }}, {{ choreo?.SeasonTeam.Season.name }})
     </p>
-    <b-form-group
+    <BFormGroup
       :label="$t('modals.substitution.auswechseln')"
       label-class="label-with-colon"
       :state="memberToReplaceIdIsValid"
       :invalid-feedback="memberToReplaceIdStateFeedback"
     >
-      <b-form-select
+      <BFormSelect
         v-model="memberToReplaceId"
         :state="memberToReplaceIdIsValid"
         required
         :options="participantOptions"
         :autofocus="memberToReplaceId == null"
       />
-    </b-form-group>
-    <b-form-group
+    </BFormGroup>
+    <BFormGroup
       :label="$t('modals.substitution.einwechseln')"
       label-class="label-with-colon"
       :state="memberToSubInIdIsValid"
       :invalid-feedback="memberToSubInIdStateFeedback"
     >
-      <b-form-select
+      <BFormSelect
         v-model="memberToSubInId"
         :state="memberToSubInIdIsValid"
         required
         :options="nonParticipantOptions"
         :autofocus="memberToSubInId == null"
       />
-    </b-form-group>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="success">{{
+    </BFormGroup>
+    <template #footer="{ ok, cancel }">
+      <BButton @click="ok" variant="success">{{
         $t("modals.substitution.auswechseln")
-      }}</b-button>
-      <b-button @click="cancel" variant="outline-danger">{{
+      }}</BButton>
+      <BButton @click="cancel" variant="outline-danger">{{
         $t("abbrechen")
-      }}</b-button>
+      }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -101,7 +102,7 @@ export default {
   },
   methods: {
     open(memberToReplaceId = null, memberToSubInId = null) {
-      this.$bvModal.show(`modal-participation-substitution-${this.id}`);
+      this.$refs.modal.show();
       this.memberToReplaceId = memberToReplaceId;
       this.memberToSubInId = memberToSubInId;
     },

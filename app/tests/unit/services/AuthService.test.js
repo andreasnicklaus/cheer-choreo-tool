@@ -1,22 +1,32 @@
-import { test, expect, beforeEach, jest } from "@jest/globals";
-import { describe } from "node:test";
+import { describe, test, expect, beforeEach, vi } from "vitest";
 
 import AuthService from "@/services/AuthService";
 import store from "@/store";
 import ax from "@/services/RequestService";
 import router from "@/router";
 
-jest.mock("@/services/RequestService", () => ({
-  get: jest.fn(),
-  post: jest.fn(),
-  put: jest.fn(),
-  delete: jest.fn(),
+vi.mock("@/services/RequestService", () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    delete: vi.fn(),
+  },
+}));
+
+vi.mock("@/router", () => ({
+  default: {
+    push: vi.fn(),
+    currentRoute: {
+      meta: { private: true },
+    },
+  },
 }));
 
 describe("AuthService", () => {
   beforeEach(() => {
     localStorage.clear();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("logout", () => {
@@ -27,10 +37,8 @@ describe("AuthService", () => {
       expect(AuthService.getAuthToken()).toBeNull();
     });
     test("should route if the current route is private", () => {
-      router.currentRoute.meta.private = true;
-      const mockPushRoute = jest.spyOn(router, "push");
       AuthService.logout();
-      expect(mockPushRoute).toHaveBeenCalledTimes(1);
+      expect(router.push).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -301,7 +309,7 @@ describe("AuthService", () => {
 
   describe("deleteAccount", () => {
     test("should call the delete account endpoint and call logout", async () => {
-      const logoutSpy = jest
+      const logoutSpy = vi
         .spyOn(AuthService, "logout")
         .mockImplementation(() => {});
       ax.delete.mockResolvedValue({

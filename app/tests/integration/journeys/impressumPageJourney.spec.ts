@@ -15,6 +15,6 @@ test("should have the correct title", async () => {
 });
 
 test("should display the first section with the title", async () => {
-  impressumPage.iCheckSectionHeading("Imprint");
-  impressumPage.iCheckSectionContent("Information according to § 5 TMG");
+  await impressumPage.iCheckSectionHeading("Imprint");
+  await impressumPage.iCheckSectionContent("Information according to § 5 TMG");
 });

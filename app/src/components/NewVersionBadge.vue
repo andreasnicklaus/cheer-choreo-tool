@@ -1,7 +1,7 @@
 <template>
-  <b-badge v-show="show" variant="success" class="newVersionBadge px-2">{{
+  <BBadge v-show="show" variant="success" class="newVersionBadge px-2">{{
     $t("neu").toUpperCase()
-  }}</b-badge>
+  }}</BBadge>
 </template>
 
 <script>

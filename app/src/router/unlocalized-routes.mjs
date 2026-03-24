@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     path: "",
     name: "Home",
@@ -8,7 +8,7 @@ module.exports = [
   {
     path: "login",
     name: "Login",
-    alias: "willkommen",
+    alias: ["willkommen"],
     component: () => import("../views/LoginView.vue"),
     meta: { prerender: true },
   },

@@ -36,7 +36,7 @@ export default class ContactPage extends TestPage {
   }
 
   async iFillAndSendMessage() {
-    const nameInput = this.page.getByLabel("Name");
+    const nameInput = this.page.getByRole("textbox", { name: "Your Name:" });
     await this.iFillInput(nameInput, "Test User");
 
     const emailInput = this.page.getByLabel("Email");
@@ -55,7 +55,8 @@ export default class ContactPage extends TestPage {
     await this.iFillInput(messageInput, "This is a test message.");
 
     const sendButton = this.page.getByRole("button", {
-      name: "chat right text Send",
+      name: "Send",
+      exact: true,
     });
     await this.iClickButton(sendButton);
   }
@@ -78,7 +79,7 @@ export default class ContactPage extends TestPage {
   }
 
   iCheckPrefilledName(expectedName: string) {
-    const nameInput = this.page.getByLabel("Name");
+    const nameInput = this.page.getByRole("textbox", { name: "Your Name:" });
     return expect(nameInput).toHaveValue(expectedName);
   }
 

@@ -1,5 +1,6 @@
 <template>
-  <b-modal
+  <BModal
+    ref="modal"
     :id="`deleteAccountModal-${id}`"
     :title="$t('accountView.konto-loeschen')"
     centered
@@ -8,43 +9,44 @@
     <p>
       {{ $t("modals.delete-account.info") }}
     </p>
-    <b-form-checkbox
+    <BFormCheckbox
       v-model="accountDeletionApproval"
       :state="accountDeletionApproval"
       autofocus
     >
       {{ $t("modals.delete-account.verstanden") }}
-    </b-form-checkbox>
-    <template #modal-footer="{ cancel }">
-      <b-button
-        v-b-modal="`confirmDeletionModal-${id}`"
+    </BFormCheckbox>
+    <template #footer="{ cancel }">
+      <BButton
+        @click="openConfirmModal"
         variant="danger"
         :disabled="!accountDeletionApproval"
       >
         {{ $t("modals.delete-account.account-loeschen") }}
-      </b-button>
-      <b-button @click="cancel" variant="outline-secondary">
+      </BButton>
+      <BButton @click="cancel" variant="outline-secondary">
         {{ $t("abbrechen") }}
-      </b-button>
+      </BButton>
     </template>
 
-    <b-modal
+    <BModal
+      ref="confirmModal"
       :id="`confirmDeletionModal-${id}`"
       :title="$t('bist-du-sicher')"
       centered
       @ok="deleteMember"
     >
       <p>{{ $t("du-kannst-diese-aktion-nicht-rueckgaengig-machen") }}</p>
-      <template #modal-footer="{ ok, cancel }">
-        <b-button @click="ok" variant="danger">{{
+      <template #footer="{ ok, cancel }">
+        <BButton @click="ok" variant="danger">{{
           $t("jetzt-loeschen")
-        }}</b-button>
-        <b-button @click="cancel" variant="outline-secondary">
+        }}</BButton>
+        <BButton @click="cancel" variant="outline-secondary">
           {{ $t("abbrechen") }}
-        </b-button>
+        </BButton>
       </template>
-    </b-modal>
-  </b-modal>
+    </BModal>
+  </BModal>
 </template>
 
 <script>
@@ -70,7 +72,10 @@ export default {
   }),
   methods: {
     open() {
-      this.$bvModal.show(`deleteAccountModal-${this.id}`);
+      this.$refs.modal.show();
+    },
+    openConfirmModal() {
+      this.$refs.confirmModal.show();
     },
     deleteMember() {
       AuthService.deleteAccount();

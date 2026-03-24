@@ -1,5 +1,5 @@
 <template>
-  <b-container id="editView" @keydown="onKeyPress" data-view>
+  <BContainer id="editView" @keydown="onKeyPress" data-view>
     <EditableNameHeading
       name="Choreo"
       :value="choreo?.name"
@@ -10,93 +10,95 @@
     />
 
     <!-- Controls -->
-    <b-row
+    <BRow
       align-v="center"
       class="mb-4"
       v-if="!$store.state.isMobile || mobileEditingEnabled"
     >
-      <b-col>
-        <b-row
+      <BCol>
+        <BRow
           align-h="center"
           align-v="center"
           class="mx-auto"
           :style="{ flexWrap: 'nowrap' }"
         >
-          <b-col cols="auto">
-            <b-button-group>
-              <b-button
+          <BCol cols="auto">
+            <BButtonGroup>
+              <BButton
                 variant="outline-secondary"
                 @click="skipToStart"
                 :disabled="count <= 0"
                 id="tooltip-target-skipToStart"
               >
-                <b-icon-chevron-double-left />
-              </b-button>
-              <b-button
+                <IBiChevronDoubleLeft />
+              </BButton>
+              <BButton
                 variant="outline-secondary"
                 @click="previousCount"
                 :disabled="count <= 0"
                 id="tooltip-target-previousCount"
               >
-                <b-icon-chevron-left />
-              </b-button>
-            </b-button-group>
-            <b-tooltip
+                <IBiChevronLeft />
+              </BButton>
+            </BButtonGroup>
+            <BTooltip
               v-if="count > 0 && countBackButtonHasNeverBeenUsed"
               target="tooltip-target-previousCount"
               triggers="hover"
             >
               {{ $t("editView.zum-vorigen-count-springen") }}
-            </b-tooltip>
-            <b-tooltip
+            </BTooltip>
+            <BTooltip
               v-if="count > 0 && countStartButtonHasNeverBeenUsed"
               target="tooltip-target-skipToStart"
               triggers="hover"
             >
               {{ $t("editView.zum-anfang-springen") }}
-            </b-tooltip>
-          </b-col>
-          <b-col cols="auto">
-            <b-row align-v="center">
-              <b-button
-                :variant="playInterval ? 'danger' : 'outline-success'"
-                class="mr-2"
-                @click="playPause"
-              >
-                <b-icon-pause v-if="playInterval" />
-                <b-icon-play v-else />
-              </b-button>
-              <div>
+            </BTooltip>
+          </BCol>
+          <BCol cols="auto">
+            <BRow align-v="center" no-gutters>
+              <BCol>
+                <BButton
+                  :variant="playInterval ? 'danger' : 'outline-success'"
+                  class="me-2"
+                  @click="playPause"
+                >
+                  <IBiPause v-if="playInterval" />
+                  <IBiPlay v-else />
+                </BButton>
+              </BCol>
+              <BCol :style="{ whiteSpace: 'nowrap' }">
                 <p class="mb-0">
                   {{ $t("achter") }}:
                   <b>{{ Math.floor(count / 8) + 1 }}</b>
                 </p>
                 <p class="mb-0">
-                  {{ $tc("count", 1) }}: <b>{{ (count % 8) + 1 }}</b>
+                  {{ $t("count", 1) }}: <b>{{ (count % 8) + 1 }}</b>
                 </p>
-              </div>
-            </b-row>
-          </b-col>
-          <b-col cols="auto">
-            <b-button-group>
-              <b-button
+              </BCol>
+            </BRow>
+          </BCol>
+          <BCol cols="auto">
+            <BButtonGroup>
+              <BButton
                 variant="outline-secondary"
                 @click="nextCount"
                 :disabled="choreo ? count >= choreo.counts - 1 : true"
                 id="tooltip-target-nextCount"
               >
-                <b-icon-chevron-right />
-              </b-button>
-              <b-button
+                <IBiChevronRight />
+              </BButton>
+              <BButton
                 variant="outline-secondary"
                 @click="skipToEnd"
                 :disabled="choreo ? count >= choreo.counts - 1 : true"
                 id="tooltip-target-endCount"
               >
-                <b-icon-chevron-double-right />
-              </b-button>
-            </b-button-group>
-            <b-tooltip
+                <IBiChevronDoubleRight />
+              </BButton>
+            </BButtonGroup>
+            <BTooltip
               v-if="
                 choreo &&
                 count < choreo.counts - 1 &&
@@ -106,8 +108,8 @@
               triggers="hover"
             >
               {{ $t("editView.zum-naechsten-count-springen") }}
-            </b-tooltip>
-            <b-tooltip
+            </BTooltip>
+            <BTooltip
               v-if="
                 choreo &&
                 count < choreo.counts - 1 &&
@@ -117,109 +119,109 @@
               triggers="hover"
             >
               {{ $t("editView.zum-ende-springen") }}
-            </b-tooltip>
-          </b-col>
-        </b-row>
-      </b-col>
-      <b-col cols="auto" class="h3">
-        <b-button-group>
-          <b-button
+            </BTooltip>
+          </BCol>
+        </BRow>
+      </BCol>
+      <BCol cols="auto" class="h3">
+        <BButtonGroup>
+          <BButton
             variant="light"
-            v-b-tooltip.hover
-            :title="$t('editView.anleitung')"
+            v-b-tooltip.hover="$t('editView.anleitung')"
             @click="() => $refs.howToModal.open()"
+            data-testid="instructions-button"
           >
-            <b-icon-question />
-          </b-button>
-          <b-dropdown
+            <IBiQuestion />
+          </BButton>
+          <BDropdown
             right
             no-caret
             variant="light"
-            v-b-tooltip.hover
-            :title="$t('optionen')"
+            v-b-tooltip.hover="$t('optionen')"
+            data-testid="menu-button"
           >
             <template #button-content>
-              <b-icon-three-dots-vertical />
+              <IBiThreeDotsVertical />
             </template>
-            <b-dropdown-group :header="$t('editView.exportieren')">
-              <b-dropdown-item
+            <BDropdownGroup :header="$t('editView.exportieren')">
+              <BDropdownItem
                 :to="{
                   name: 'PDF',
-                  params: { choreoId, locale: $root.$i18n.localele },
+                  params: { choreoId, locale: $i18n.locale },
                 }"
               >
-                <b-icon-file-pdf class="mr-2" />
+                <IBiFilePdf class="me-2" />
                 {{ $t("Home.countsheet-als-pdf") }}
-              </b-dropdown-item>
-              <b-dropdown-item
+              </BDropdownItem>
+              <BDropdownItem
                 :to="{
                   name: 'Video',
-                  params: { choreoId, locale: $root.$i18n.locale },
+                  params: { choreoId, locale: $i18n.locale },
                 }"
               >
-                <b-icon-film class="mr-2" />
+                <IBiFilm class="me-2" />
                 {{ $t("editView.video-exportieren") }}
-              </b-dropdown-item>
-            </b-dropdown-group>
-            <b-dropdown-divider />
-            <b-dropdown-group :header="$t('editView.choreo-einstellungen')">
-              <b-dropdown-item
+              </BDropdownItem>
+            </BDropdownGroup>
+            <BDropdownDivider />
+            <BDropdownGroup :header="$t('editView.choreo-einstellungen')">
+              <BDropdownItem
                 @click="() => $refs.changeChoreoLengthModal.open()"
                 :disabled="!choreo"
               >
-                <b-icon-hash class="mr-2" />
+                <IBiHash class="me-2" />
                 {{ $t("editView.laenge-anpassen") }}
-              </b-dropdown-item>
-              <b-dropdown-item
+              </BDropdownItem>
+              <BDropdownItem
                 @click="() => $refs.changeMatLayoutModal.open()"
                 :disabled="!choreo"
               >
-                <b-icon-layout-three-columns class="mr-2" />
+                <IBiLayoutThreeColumns class="me-2" />
                 {{ $t("editView.change-mat-layout") }}
                 <NewVersionBadge
                   :versions="['0.10.3', '0.11.0']"
-                /> </b-dropdown-item
-            ></b-dropdown-group>
-            <b-dropdown-divider />
-            <b-dropdown-group :header="$t('editView.bearbeitung')">
-              <b-dropdown-text style="width: 250px">
-                <b-checkbox switch v-model="snapping">
+                /> </BDropdownItem
+            ></BDropdownGroup>
+            <BDropdownDivider />
+            <BDropdownGroup :header="$t('editView.bearbeitung')">
+              <BDropdownText style="width: 250px">
+                <BFormCheckbox switch v-model="snapping">
                   {{
                     $t("editView.positionen-horizontal-und-vertikal-ausrichten")
                   }}
-                </b-checkbox>
-              </b-dropdown-text>
-              <b-dropdown-text style="width: 250px">
-                <b-checkbox switch v-model="proposalEnabled">
+                </BFormCheckbox>
+              </BDropdownText>
+              <BDropdownText style="width: 250px">
+                <BFormCheckbox switch v-model="proposalEnabled">
                   {{ $t("editView.propose-positions") }}
-                </b-checkbox>
-              </b-dropdown-text>
-              <b-dropdown-text>
-                <b-checkbox switch v-model="moveWithCountEdit">
+                </BFormCheckbox>
+              </BDropdownText>
+              <BDropdownText>
+                <BFormCheckbox switch v-model="moveWithCountEdit">
                   {{ $t("editView.beim-bearbeiten-den-count-mitwechseln") }}
-                </b-checkbox>
-              </b-dropdown-text>
-            </b-dropdown-group>
-            <b-dropdown-divider />
-            <b-dropdown-item
+                </BFormCheckbox>
+              </BDropdownText>
+            </BDropdownGroup>
+            <BDropdownDivider />
+            <BDropdownItem
               @click="() => $refs.deleteChoreoModal.open()"
               :disabled="!choreo"
               variant="danger"
             >
-              <b-icon-trash class="mr-2" />
+              <IBiTrash class="me-2" />
               {{ $t("editView.choreo-loeschen") }}
-            </b-dropdown-item>
-          </b-dropdown>
-        </b-button-group>
-      </b-col>
-    </b-row>
+            </BDropdownItem>
+          </BDropdown>
+        </BButtonGroup>
+      </BCol>
+    </BRow>
 
     <!-- Main: Mat + CountOverview -->
-    <b-row
+    <BRow
       align-h="around"
       v-if="!$store.state.isMobile || mobileEditingEnabled"
     >
-      <b-col cols="auto">
+      <BCol cols="auto">
         <Mat
           ref="Mat"
           :currentPositions="currentPositions"
@@ -230,8 +232,8 @@
           :matType="choreo?.matType"
           @positionChange="onPositionChange"
         />
-      </b-col>
-      <b-col cols="12" lg="6">
+      </BCol>
+      <BCol cols="12" lg="6">
         <CountOverview
           :count="count"
           :choreo="choreo"
@@ -245,51 +247,50 @@
           @updateCount="onUpdateCount"
           @openCreateHitModal="openCreateHitModal"
         />
-        <b-card
+        <BCard
           :sub-title="$t('editView.acceptProposal')"
           border-variant="light"
           align="right"
           class="mt-2"
           v-if="proposedPositions && proposedPositions.length > 0"
         >
-          <b-dropdown
+          <BDropdown
             split
             variant="light"
-            v-b-tooltip.hover
-            :title="$t('general.reject')"
+            v-b-tooltip.hover="$t('general.reject')"
             @click="rejectProposedLineup"
-            class="mr-2"
+            class="me-2"
             right
           >
             <template #button-content>
-              <b-icon-x />
+              <IBiX />
             </template>
-            <b-dropdown-item
+            <BDropdownItem
               @click="
                 () => {
                   proposalEnabled = false;
                   rejectProposedLineup();
                 }
               "
-              >{{ $t("editView.reject-and-disable") }}</b-dropdown-item
+              >{{ $t("editView.reject-and-disable") }}</BDropdownItem
             >
-          </b-dropdown>
-          <b-button variant="outline-success" @click="acceptProposedLineup">
-            <b-icon-check class="mr-2" />
+          </BDropdown>
+          <BButton variant="outline-success" @click="acceptProposedLineup">
+            <IBiCheck class="me-2" />
             {{ $t("general.accept") }}
-          </b-button>
-        </b-card>
-      </b-col>
-    </b-row>
+          </BButton>
+        </BCard>
+      </BCol>
+    </BRow>
 
     <!-- Tabs: Countsheet + Team -->
-    <b-tabs
+    <BTabs
       content-class="mt-3"
       class="mt-5"
       fill
       v-if="!$store.state.isMobile || mobileEditingEnabled"
     >
-      <b-tab :title="$tc('countsheet', 1)" active>
+      <BTab :title="$t('countsheet', 1)" active>
         <CountSheet
           v-if="choreo && choreo.Hits"
           :count="count"
@@ -297,52 +298,49 @@
           @setCounter="setCounter"
           @openCreateHitModal="openCreateHitModal"
         />
-      </b-tab>
-      <b-tab :title="$tc('team', 1)">
-        <b-table
+      </BTab>
+      <BTab :title="$t('team', 1)">
+        <BTable
           striped
           hover
           :items="teamMembers.map((m) => ({ ...m, actions: null }))"
           :fields="participants_table_fields"
-          sort-by="name"
+          :sort-by="[{ key: 'name', order: 'desc' }]"
         >
-          <!-- TODO: Mit einem Member wechseln, der bereits auf der Matte steht -->
           <template #cell(color)="data">
-            <b-input
+            <BInput
               type="color"
               :value="data.item.ChoreoParticipation.color"
               @input="(event) => changeColor(data.item.id, event)"
             />
           </template>
           <template #cell(actions)="data">
-            <b-button-group>
-              <b-button
+            <BButtonGroup>
+              <BButton
                 variant="light"
-                v-b-tooltip.hover
-                :title="
+                v-b-tooltip.hover.left="
                   $t('editView.auswechseln', {
                     name: data.item.nickname || data.item.name.split(' ')[0],
                   })
                 "
                 @click="subOutParticipant(data.item.id)"
               >
-                <b-icon-arrow-repeat />
-              </b-button>
-              <b-button
+                <IBiArrowRepeat />
+              </BButton>
+              <BButton
                 variant="outline-danger"
-                v-b-tooltip.hover
-                :title="
+                v-b-tooltip.hover.right="
                   $t('editView.von-der-matte-nehmen', {
                     name: data.item.nickname || data.item.name.split(' ')[0],
                   })
                 "
                 @click="removeParticipant(data.item.id)"
               >
-                <b-icon-box-arrow-right />
-              </b-button>
-            </b-button-group>
+                <IBiBoxArrowRight />
+              </BButton>
+            </BButtonGroup>
           </template>
-        </b-table>
+        </BTable>
         <p class="text-muted" v-if="teamMembers.length == 0">
           {{ $t("editView.bisher-steht-noch-kein-teammitglied-auf-der-matte") }}
         </p>
@@ -355,43 +353,41 @@
             choreo?.SeasonTeam.Season.name
           }})
         </p>
-        <b-table
+        <BTable
           striped
           hover
           :items="notParticipatingMembers.map((m) => ({ ...m, actions: null }))"
           :fields="team_table_fields"
-          sort-by="name"
+          :sort-by="[{ key: 'name', order: 'desc' }]"
           class="text-muted"
         >
           <template #cell(actions)="data">
-            <b-button-group>
-              <b-button
+            <BButtonGroup>
+              <BButton
                 variant="light"
-                v-b-tooltip.hover
-                :title="
+                v-b-tooltip.hover.left="
                   $t('editView.einwechseln', {
                     name: data.item.nickname || data.item.name.split(' ')[0],
                   })
                 "
                 @click="subInMember(data.item.id)"
               >
-                <b-icon-arrow-repeat />
-              </b-button>
-              <b-button
+                <IBiArrowRepeat />
+              </BButton>
+              <BButton
                 variant="outline-success"
-                v-b-tooltip.hover
-                :title="
+                v-b-tooltip.hover.right="
                   $t('editView.auf-die-matte-stellen', {
                     name: data.item.nickname || data.item.name.split(' ')[0],
                   })
                 "
                 @click="addParticipant(data.item.id)"
               >
-                <b-icon-box-arrow-in-right />
-              </b-button>
-            </b-button-group>
+                <IBiBoxArrowInRight />
+              </BButton>
+            </BButtonGroup>
           </template>
-        </b-table>
+        </BTable>
         <p class="text-muted" v-if="notParticipatingMembers.length == 0">
           {{
             $t(
@@ -399,8 +395,8 @@
             )
           }}
         </p>
-      </b-tab>
-    </b-tabs>
+      </BTab>
+    </BTabs>
 
     <CreateHitModal
       ref="createHitModal"
@@ -438,10 +434,12 @@
       @substitution="onSubstitution"
     />
     <MobileChoreoEditModal :choreoId="choreoId" ref="mobileChoreoEditModal" />
-  </b-container>
+  </BContainer>
 </template>
 
 <script>
+import { useHead } from "@unhead/vue";
+import { computed, getCurrentInstance } from "vue";
 import Mat from "@/components/Mat.vue";
 import ChoreoService from "@/services/ChoreoService";
 import CountSheet from "@/components/CountSheet.vue";
@@ -523,17 +521,17 @@ export default {
       moveWithCountEdit: true,
       count: 0,
       team_table_fields: [
-        { key: "name", sortable: true, class: "text-left" },
+        { key: "name", sortable: true, class: "text-start" },
         { key: "nickname", label: this.$t("spitzname") },
         { key: "abbreviation", label: this.$t("abkuerzung") },
-        { key: "actions", label: "", class: "text-right" },
+        { key: "actions", label: "", class: "text-end" },
       ],
       participants_table_fields: [
-        { key: "name", sortable: true, class: "text-left" },
+        { key: "name", sortable: true, class: "text-start" },
         { key: "nickname", label: this.$t("spitzname") },
         { key: "abbreviation", label: this.$t("abkuerzung") },
         { key: "color", label: this.$t("editView.farbe") },
-        { key: "actions", label: "", class: "text-right" },
+        { key: "actions", label: "", class: "text-end" },
       ],
       choreo: null,
       lastKeyEvent: null,
@@ -561,6 +559,51 @@ export default {
         } else this.loadChoreo();
       }
     );
+
+    const { proxy } = getCurrentInstance();
+
+    useHead({
+      title: computed(() => this.choreo?.name || proxy.$t("pdf.laedt-choreo")),
+      meta: [
+        {
+          vmid: "description",
+          name: "description",
+          content: computed(() => proxy.$t("meta.editView.description")),
+        },
+        {
+          vmid: "twitter:description",
+          name: "twitter:description",
+          content: computed(() => proxy.$t("meta.editView.description")),
+        },
+        {
+          vmid: "og:description",
+          property: "og:description",
+          content: computed(() => proxy.$t("meta.editView.description")),
+        },
+        {
+          vmid: "og:title",
+          property: "og:title",
+          content: computed(
+            () =>
+              (proxy.choreo?.name || proxy.$t("pdf.laedt-choreo")) +
+              ` - ${proxy.$t("general.ChoreoPlaner")} | ${proxy.$t(
+                "meta.defaults.title"
+              )}`
+          ),
+        },
+        {
+          vmid: "twitter:title",
+          name: "twitter:title",
+          content: computed(
+            () =>
+              (proxy.choreo?.name || proxy.$t("pdf.laedt-choreo")) +
+              ` - ${proxy.$t("general.ChoreoPlaner")} | ${proxy.$t(
+                "meta.defaults.title"
+              )}`
+          ),
+        },
+      ],
+    });
   },
   watch: {
     "$route.params": {
@@ -607,7 +650,7 @@ export default {
           this.$router
             .push({
               name: "Start",
-              params: { locale: this.$root.$i18n.locale },
+              params: { locale: this.$i18n.locale },
             })
             .catch(() => {
               error(
@@ -644,7 +687,7 @@ export default {
               y
             )
               .then(() => {
-                this.showSuccessMessage(this.$tc("lineup", 1));
+                this.showSuccessMessage(this.$t("lineup", 1));
               })
               .catch((e) => {
                 if (e.status === 409) {
@@ -749,7 +792,7 @@ export default {
           lineupCopy.find((l) => l.id == lineupToUpdate.id).Positions =
             positionsCopy;
           this.choreo.Lineups = lineupCopy;
-          this.showSuccessMessage(this.$tc("lineup", 1));
+          this.showSuccessMessage(this.$t("lineup", 1));
           this.updateProposedPositions();
         }
       );
@@ -869,11 +912,11 @@ export default {
     },
     onUpdateHits(hits) {
       this.choreo.Hits = hits;
-      this.showSuccessMessage(this.$tc("countsheet", 1));
+      this.showSuccessMessage(this.$t("countsheet", 1));
     },
     onUpdateLineups(lineups) {
       this.choreo.Lineups = lineups;
-      this.showSuccessMessage(this.$tc("lineup", 1));
+      this.showSuccessMessage(this.$t("lineup", 1));
       this.updateProposedPositions();
     },
     onUpdateCount(count) {
@@ -894,7 +937,7 @@ export default {
       let hitsCopy = this.choreo.Hits;
       hitsCopy.push(hit);
       this.choreo.Hits = hitsCopy;
-      this.showSuccessMessage(this.$tc("countsheet", 1));
+      this.showSuccessMessage(this.$t("countsheet", 1));
     },
     initiateHitUpdate() {
       if (this.hitsForCurrentCount.length == 0) return;
@@ -1300,46 +1343,6 @@ export default {
         return a.startCount <= this.count && a.endCount >= this.count;
       });
     },
-  },
-  metaInfo() {
-    return {
-      title: this.choreo?.name || this.$t("pdf.laedt-choreo"),
-      meta: [
-        {
-          vmid: "description",
-          name: "description",
-          content: this.$t("meta.editView.description"),
-        },
-        {
-          vmid: "twitter:description",
-          name: "twitter:description",
-          content: this.$t("meta.editView.description"),
-        },
-        {
-          vmid: "og:description",
-          property: "og:description",
-          content: this.$t("meta.editView.description"),
-        },
-        {
-          vmid: "og:title",
-          property: "og:title",
-          content:
-            (this.choreo?.name || this.$t("pdf.laedt-choreo")) +
-            ` - ${this.$t("general.ChoreoPlaner")} | ${this.$t(
-              "meta.defaults.title"
-            )}`,
-        },
-        {
-          vmid: "twitter:title",
-          name: "twitter:title",
-          content:
-            (this.choreo?.name || this.$t("pdf.laedt-choreo")) +
-            ` - ${this.$t("general.ChoreoPlaner")} | ${this.$t(
-              "meta.defaults.title"
-            )}`,
-        },
-      ],
-    };
   },
 };
 </script>

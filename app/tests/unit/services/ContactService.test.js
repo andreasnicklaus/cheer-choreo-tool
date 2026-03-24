@@ -1,12 +1,18 @@
-import { test, expect, describe, jest } from "@jest/globals";
+import { test, expect, describe, vi, beforeEach } from "vitest";
 import ContactService from "@/services/ContactService";
 import ax from "@/services/RequestService";
 
-jest.mock("@/services/RequestService", () => ({
-  post: jest.fn(),
+vi.mock("@/services/RequestService", () => ({
+  default: {
+    post: vi.fn(),
+  },
 }));
 
 describe("ContactService", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   describe("createMessageAppendix", () => {
     test("should return best regards with username if username is given", () => {
       const result = ContactService.createMessageAppendix("John");

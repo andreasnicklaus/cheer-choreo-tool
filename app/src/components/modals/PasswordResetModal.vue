@@ -1,56 +1,56 @@
 <template>
-  <b-modal
+  <BModal
+    ref="modal"
     :id="`passwordReset-modal-${id}`"
     centered
     @show="resetPasswordResetModal"
-    @ok="initializePasswordReset"
+    @ok.prevent="initializePasswordReset"
     @close="close"
   >
-    <template #modal-title>
+    <template #title>
       {{ $t("modals.reset-password.lost-password") }}
       <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
     </template>
-    <b-form-group
+    <BFormGroup
       :label="$t('e-mail-adresse')"
       label-class="label-with-colon"
       :description="$t('modals.reset-password.no-email-info')"
       :state="emailIsValid"
       :invalid-feedback="emailError"
     >
-      <b-input-group>
-        <b-form-input
+      <BInputGroup>
+        <BFormInput
           v-model="email"
           autofocus
           placeholder="info@choreo-planer.de"
           :state="emailIsValid"
         />
-        <b-input-group-append>
-          <b-input-group-text
-            v-b-tooltip.hover
-            :title="$t('modals.reset-password.email-info')"
+        <template #append>
+          <BInputGroupText
+            v-b-tooltip.hover="$t('modals.reset-password.email-info')"
           >
-            <b-icon-info-circle />
-          </b-input-group-text>
-        </b-input-group-append>
-      </b-input-group>
-    </b-form-group>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button
+            <IBiInfoCircle />
+          </BInputGroupText>
+        </template>
+      </BInputGroup>
+    </BFormGroup>
+    <template #footer="{ ok, cancel }">
+      <BButton
         type="submit"
         @click="ok"
         variant="outline-success"
         :disabled="!emailIsValid"
       >
-        <b-spinner small v-if="loading" />
+        <BSpinner small v-if="loading" />
         <span v-else>{{
           $t("modals.reset-password.login-link-schicken")
         }}</span>
-      </b-button>
-      <b-button @click="cancel" variant="secondary">{{
+      </BButton>
+      <BButton @click="cancel" variant="secondary">{{
         $t("abbrechen")
-      }}</b-button>
+      }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -90,10 +90,10 @@ export default {
   }),
   methods: {
     open() {
-      this.$bvModal.show(`passwordReset-modal-${this.id}`);
+      this.$refs.modal.show();
     },
     close() {
-      this.$bvModal.hide(`passwordReset-modal-${this.id}`);
+      this.$refs.modal.hide();
     },
     resetPasswordResetModal() {
       this.email = null;
@@ -101,7 +101,6 @@ export default {
     },
     initializePasswordReset(event) {
       this.loading = true;
-      event.preventDefault();
       AuthService.requestSSO(this.email)
         .then(() => {
           this.$emit("passwordResetRequested");

@@ -1,5 +1,6 @@
 <template>
-  <b-modal
+  <BModal
+    ref="modal"
     :id="`modal-newLineup-${id}`"
     :title="$t('modals.create-lineup.neue-aufstellung')"
     @show="resetLineupModal"
@@ -7,7 +8,7 @@
     @ok="createLineup"
     size="lg"
   >
-    <b-form
+    <BForm
       @keydown.enter="
         () => {
           if (
@@ -16,115 +17,119 @@
             editLineupEndAchter &&
             editLineupEndCount
           ) {
-            $bvModal.hide('modal-newLineup');
+            $refs.modal.hide();
             createLineup();
           }
         }
       "
     >
-      <b-form-group
+      <BFormGroup
         :label="$t('modals.create-lineup.start')"
         label-cols="2"
         label-class="label-with-colon"
       >
-        <b-row>
-          <b-col>
-            <b-form-group
+        <BRow>
+          <BCol>
+            <BFormGroup
               :description="$t('achter')"
               :state="editLineupStartAchterIsValid"
               :invalid-feedback="editLineupStartAchterStateFeedback"
             >
-              <b-form-input
+              <BFormInput
                 type="number"
                 min="1"
                 v-model="editLineupStartAchter"
                 autofocus
                 :state="editLineupStartAchterIsValid"
+                data-testid="startAchterInput"
               />
-            </b-form-group>
-          </b-col>
-          <b-col>
-            <b-form-group
-              :description="$tc('count', 2)"
+            </BFormGroup>
+          </BCol>
+          <BCol>
+            <BFormGroup
+              :description="$t('count', 2)"
               :state="editLineupStartCountIsValid"
               :invalid-feedback="editLineupStartCountStateFeedback"
             >
-              <b-form-input
+              <BFormInput
                 type="number"
                 min="1"
                 max="8"
                 v-model="editLineupStartCount"
                 :state="editLineupStartCountIsValid"
+                data-testid="startCountInput"
               />
-            </b-form-group>
-          </b-col>
-        </b-row>
-      </b-form-group>
-      <b-form-group
+            </BFormGroup>
+          </BCol>
+        </BRow>
+      </BFormGroup>
+      <BFormGroup
         :label="$t('modals.create-lineup.ende')"
         label-class="label-with-colon"
         label-cols="2"
         :state="startIsBeforeEnd"
         :invalid-feedback="startIsBeforeEndStateFeedback"
       >
-        <b-row>
-          <b-col>
-            <b-form-group
+        <BRow>
+          <BCol>
+            <BFormGroup
               :description="$t('achter')"
               :state="editLineupEndAchterIsValid"
               :invalid-feedback="editLineupEndAchterStateFeedback"
             >
-              <b-form-input
+              <BFormInput
                 type="number"
                 min="1"
                 :max="Math.ceil((choreo?.counts || 0) / 8)"
                 v-model="editLineupEndAchter"
                 :state="editLineupEndAchterIsValid"
+                data-testid="endAchterInput"
               />
-            </b-form-group>
-          </b-col>
-          <b-col>
-            <b-form-group
-              :description="$tc('count', 2)"
+            </BFormGroup>
+          </BCol>
+          <BCol>
+            <BFormGroup
+              :description="$t('count', 2)"
               :state="editLineupEndCountIsValid"
               :invalid-feedback="editLineupEndCountStateFeedback"
             >
-              <b-form-input
+              <BFormInput
                 type="number"
                 min="1"
                 max="8"
                 v-model="editLineupEndCount"
                 :state="editLineupEndCountIsValid"
+                data-testid="endCountInput"
               />
-            </b-form-group>
-          </b-col>
-        </b-row>
-      </b-form-group>
-      <b-form-group
+            </BFormGroup>
+          </BCol>
+        </BRow>
+      </BFormGroup>
+      <BFormGroup
         :label="$t('teilnehmer')"
         label-class="label-with-colon"
         :state="editLineupMembersIsValid"
         :invalid-feedback="editLineupMembersStateFeedback"
       >
-        <b-button-group>
-          <b-button
+        <BButtonGroup>
+          <BButton
             variant="light"
             @click="
               () => (this.editLineupMembers = teamMembers.map((m) => m.id))
             "
             :disabled="editLineupMembers?.length == teamMembers?.length"
           >
-            <b-icon-check-all />
+            <IBiCheckAll />
             {{ $t("alle-auswaehlen") }}
-          </b-button>
-          <b-button
+          </BButton>
+          <BButton
             variant="light"
             @click="() => (this.editLineupMembers = [])"
             :disabled="editLineupMembers?.length == 0"
           >
-            <b-icon-slash /> {{ $t("keine-auswaehlen") }}
-          </b-button>
-          <b-button
+            <IBiSlash /> {{ $t("keine-auswaehlen") }}
+          </BButton>
+          <BButton
             variant="light"
             @click="
               () =>
@@ -137,17 +142,17 @@
               editLineupMembers?.length == teamMembers?.length
             "
           >
-            <b-icon-arrow-repeat />
+            <IBiArrowRepeat />
             {{ $t("auswahl-wechseln") }}
-          </b-button>
-        </b-button-group>
-        <b-form-checkbox-group
+          </BButton>
+        </BButtonGroup>
+        <BFormCheckboxGroup
           id="memberSelection-lineup"
           v-model="editLineupMembers"
           stacked
           :style="{ columnCount: 2 }"
         >
-          <b-form-checkbox
+          <BFormCheckbox
             v-for="member in teamMembers"
             :key="member.id"
             :value="member.id"
@@ -158,9 +163,9 @@
                 .includes(member.id)
             "
           >
-            <b-row no-gutters class="mb-1">
+            <BRow no-gutters class="mb-1">
               <div
-                class="mr-2"
+                class="me-2"
                 :style="{
                   height: '24px',
                   width: '24px',
@@ -178,13 +183,13 @@
                   ? $t("modals.create-lineup.ist-in-anderer-aufstellung")
                   : null
               }}
-            </b-row>
-          </b-form-checkbox>
-        </b-form-checkbox-group>
-      </b-form-group>
-    </b-form>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button
+            </BRow>
+          </BFormCheckbox>
+        </BFormCheckboxGroup>
+      </BFormGroup>
+    </BForm>
+    <template #footer="{ ok, cancel }">
+      <BButton
         type="submit"
         @click="ok"
         variant="success"
@@ -197,12 +202,10 @@
         "
       >
         {{ $t("speichern") }}
-      </b-button>
-      <b-button @click="cancel" variant="danger">{{
-        $t("abbrechen")
-      }}</b-button>
+      </BButton>
+      <BButton @click="cancel" variant="danger">{{ $t("abbrechen") }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -277,7 +280,7 @@ export default {
   },
   methods: {
     open() {
-      this.$bvModal.show(`modal-newLineup-${this.id}`);
+      this.$refs.modal.show();
     },
     resetLineupModal() {
       this.editLineupStartCount = (this.count % 8) + 1;

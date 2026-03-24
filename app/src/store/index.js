@@ -1,11 +1,8 @@
-import Vue from "vue";
-import Vuex from "vuex";
-
-Vue.use(Vuex);
+import { createStore } from "vuex";
 
 const tokenStorageKey = "choreo-planer-token";
 
-export default new Vuex.Store({
+export default createStore({
   state: {
     loggedIn: localStorage.getItem(tokenStorageKey) != null,
     clubId: null,

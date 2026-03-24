@@ -1,5 +1,6 @@
 <template>
-  <b-modal
+  <BModal
+    ref="modal"
     :id="`modal-deleteMember-${id}`"
     :title="$t('modals.delete-member.teilnehmer-loeschen')"
     centered
@@ -7,13 +8,13 @@
     @ok="deleteMember"
   >
     <p class="m-0">{{ $t("du-kannst-das-nicht-rueckgaengig-machen") }}</p>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="danger">{{ $t("loeschen") }}</b-button>
-      <b-button @click="cancel" variant="outline-secondary">
+    <template #footer="{ ok, cancel }">
+      <BButton @click="ok" variant="danger">{{ $t("loeschen") }}</BButton>
+      <BButton @click="cancel" variant="outline-secondary">
         {{ $t("abbrechen") }}
-      </b-button>
+      </BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -41,8 +42,8 @@ export default {
   }),
   methods: {
     open(deleteMemberId) {
-      this.$bvModal.show(`modal-deleteMember-${this.id}`);
       this.deleteMemberId = deleteMemberId;
+      this.$refs.modal.show();
     },
     resetMemberDeleteModal() {
       this.deleteMemberId = null;

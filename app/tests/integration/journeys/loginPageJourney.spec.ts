@@ -26,7 +26,7 @@ test.describe("Not yet logged in", () => {
     await loginPage.iSwitchToRegistration();
     await loginPage.iInputUserName("newUserName");
     await loginPage.iInputEmail("newUserName@gmail.com");
-    await loginPage.iInputPassword("newPassword");
+    await loginPage.iInputPassword("newPassword", "Register");
     await loginPage.iInputPasswordRepetition("newPassword");
     await loginPage.iClickOnRegisterButton();
     await loginPage.iCheckRedirectionToPage();
@@ -36,7 +36,7 @@ test.describe("Not yet logged in", () => {
     await loginPage.iSwitchToRegistration();
     await loginPage.iInputUserName("newUserName");
     await loginPage.iInputEmail("newUserName@gmail.com");
-    await loginPage.iInputPassword("falsePassword");
+    await loginPage.iInputPassword("falsePassword", "Register");
     await loginPage.iInputPasswordRepetition("falsePassword");
     await loginPage.iClickOnRegisterButton();
     await loginPage.iCheckErrorAlert(
@@ -53,7 +53,7 @@ test.describe("Not yet logged in", () => {
     await loginPage.iSwitchToRegistration();
     await loginPage.iInputUserName("newUserName");
     await loginPage.iInputEmail("newUserName@gmail.com");
-    await loginPage.iInputPassword("newPassword");
+    await loginPage.iInputPassword("newPassword", "Register");
     await loginPage.iInputPasswordRepetition("newPassword");
     await loginPage.iClickOnRegisterButton();
     await loginPage.iCheckRedirectionToPage(redirectUrl);
@@ -61,14 +61,14 @@ test.describe("Not yet logged in", () => {
   test("should log in", async () => {
     await mockLoginRequest(loginPage.page);
     await loginPage.iInputUserName("newUserName");
-    await loginPage.iInputPassword("newPassword");
+    await loginPage.iInputPassword("newPassword", "Log in");
     await loginPage.iClickOnLoginButton();
     await loginPage.iCheckRedirectionToPage();
   });
   test("should display an error message on login", async () => {
     await mockLoginRequest(loginPage.page);
     await loginPage.iInputUserName("newUserName");
-    await loginPage.iInputPassword("falsePassword");
+    await loginPage.iInputPassword("falsePassword", "Log in");
     await loginPage.iClickOnLoginButton();
     await loginPage.iCheckErrorAlert();
   });
@@ -80,7 +80,7 @@ test.describe("Not yet logged in", () => {
       `/login?redirectUrl=${encodeURIComponent(redirectUrl)}`
     );
     await loginPage.iInputUserName("newUserName");
-    await loginPage.iInputPassword("newPassword");
+    await loginPage.iInputPassword("newPassword", "Log in");
     await loginPage.iClickOnLoginButton();
     await loginPage.iCheckRedirectionToPage(redirectUrl);
   });

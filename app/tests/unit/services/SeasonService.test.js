@@ -1,19 +1,20 @@
-import { test, expect, jest, beforeEach } from "@jest/globals";
-import { describe } from "node:test";
+import { describe, test, expect, vi, beforeEach } from "vitest";
 import ax from "@/services/RequestService";
 import SeasonService from "@/services/SeasonService";
 
-jest.mock("@/services/RequestService", () => ({
-  get: jest.fn(),
-  post: jest.fn(),
-  put: jest.fn(),
-  patch: jest.fn(),
-  delete: jest.fn(),
+vi.mock("@/services/RequestService", () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    patch: vi.fn(),
+    delete: vi.fn(),
+  },
 }));
 
 describe("SeasonService", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("getAll", () => {

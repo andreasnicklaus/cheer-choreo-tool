@@ -27,36 +27,34 @@ export default class ChoreoPage extends TestPage {
   }
 
   iClickHelpButton() {
-    const helpButton = this.page.getByRole("button", { name: "question" });
+    const helpButton = this.page.getByTestId("instructions-button");
     return this.iClickButton(helpButton);
   }
 
   iSeeChoreoName(name: string) {
     return expect(
-      this.page
-        .getByRole("heading", { name: `Choreo ${name} pen` })
-        .locator("b")
+      this.page.getByText(`Choreo${name}`).locator("b")
     ).toBeVisible();
   }
 
   async iEditChoreoName() {
-    const editButton = this.page.getByRole("button", { name: "pen" });
+    const editButton = this.page.getByTestId("edit-button");
     await this.iClickButton(editButton);
 
-    const input = this.page.getByRole("textbox");
+    const input = this.page.getByTestId("editHeading-input");
     const newChoreoName = "Edited Choreo Name";
     await this.iFillInput(input, newChoreoName);
 
-    const saveButton = this.page.getByRole("button", { name: "check" });
+    const saveButton = this.page.getByTestId("approve-edit-button");
     await this.iClickButton(saveButton);
 
-    await expect(this.page.getByText(newChoreoName)).toBeVisible();
+    await expect(
+      this.page.getByText(newChoreoName, { exact: true })
+    ).toBeVisible();
   }
 
   private async iOpenMenu() {
-    const menuButton = this.page.getByRole("button", {
-      name: "three dots vertical",
-    });
+    const menuButton = this.page.getByTestId("menu-button");
     await this.iClickButton(menuButton);
   }
 
@@ -64,7 +62,7 @@ export default class ChoreoPage extends TestPage {
     await this.iOpenMenu();
 
     const editLengthButton = this.page.getByRole("menuitem", {
-      name: "hash Adjust length",
+      name: "Adjust length",
     });
     await this.iClickButton(editLengthButton);
 
@@ -94,13 +92,10 @@ export default class ChoreoPage extends TestPage {
   }
 
   async iEditChoreoMatType() {
-    const menuButton = this.page.getByRole("button", {
-      name: "three dots vertical",
-    });
-    await this.iClickButton(menuButton);
+    await this.iOpenMenu();
 
     const editMatTypeButton = this.page.getByRole("menuitem", {
-      name: "layout three columns Change",
+      name: "Change mat layout",
     });
     await this.iClickButton(editMatTypeButton);
 
@@ -130,7 +125,7 @@ export default class ChoreoPage extends TestPage {
             this.page.locator(
               `tr:nth-child(${Math.floor(hit.count / 8) + 1}) > td:nth-child(${
                 (hit.count % 8) + 2
-              }) > .btn`
+              }) > .d-grid > .btn`
             )
           ).toHaveText(hit.name, { useInnerText: true }),
         ])
@@ -175,13 +170,13 @@ export default class ChoreoPage extends TestPage {
       this.page.getByRole("heading", { name: "Not possible on a small screen" })
     ).toBeVisible();
     await expect(
-      this.page.getByRole("link", { name: "file pdf Countsheet as PDF" })
+      this.page.getByRole("button", { name: "Countsheet as PDF" })
     ).toBeVisible();
     await expect(
-      this.page.getByRole("link", { name: "film Export video" })
+      this.page.getByRole("button", { name: "Export video" })
     ).toBeVisible();
     await expect(
-      this.page.getByRole("link", { name: "To the landing page" })
+      this.page.getByRole("button", { name: "To the landing page" })
     ).toBeVisible();
   }
 
@@ -199,7 +194,10 @@ export default class ChoreoPage extends TestPage {
     );
 
     const currentCount = 1;
-    await this.page.locator("td:nth-child(3) > .btn").first().click();
+    await this.page
+      .getByRole("button", { name: "-" })
+      .nth(currentCount)
+      .click();
     await Promise.all(
       defaultLineups
         .filter(
@@ -282,7 +280,7 @@ export default class ChoreoPage extends TestPage {
     await this.iOpenMenu();
 
     const videoExportLink = this.page.getByRole("menuitem", {
-      name: "film Export video",
+      name: "Export video",
     });
     await expect(videoExportLink).toBeVisible();
     await expect(videoExportLink).toBeEnabled();
@@ -296,7 +294,7 @@ export default class ChoreoPage extends TestPage {
     await this.iOpenMenu();
 
     const countsheetLink = this.page.getByRole("menuitem", {
-      name: "file pdf Countsheet as PDF",
+      name: "Countsheet as PDF",
     });
     await expect(countsheetLink).toBeVisible();
     await expect(countsheetLink).toBeEnabled();
@@ -313,12 +311,12 @@ export default class ChoreoPage extends TestPage {
     });
     await this.iClickButton(secondHitButton);
 
-    const moveUpButton = this.page.getByTitle("Move to the previous count");
+    const moveUpButton = this.page.getByTestId("moveHitToPreviousCount-button");
     await this.iClickButton(moveUpButton);
 
     // hit is moved to count 8 of the first eight
     await expect(
-      this.page.locator("td:nth-child(9) > .btn").first()
+      this.page.locator("td:nth-child(9) > .d-grid > .btn").first()
     ).toHaveText(defaultHits[1].name, { useInnerText: true });
 
     // the current count is 8 in the first eight
@@ -337,12 +335,12 @@ export default class ChoreoPage extends TestPage {
     });
     await this.iClickButton(secondHitButton);
 
-    const moveDownButton = this.page.getByTitle("Move to the next count");
+    const moveDownButton = this.page.getByTestId("moveHitToNextCount-button");
     await this.iClickButton(moveDownButton);
 
     // hit is moved to count 2 of the second eight
     await expect(
-      this.page.locator("tr:nth-child(2) > td:nth-child(3) > .btn")
+      this.page.locator("tr:nth-child(2) > td:nth-child(3) >  .d-grid > .btn")
     ).toHaveText(defaultHits[1].name, { useInnerText: true });
 
     // the current count is 2 in the second eight
@@ -361,7 +359,7 @@ export default class ChoreoPage extends TestPage {
     });
     await this.iClickButton(firstHitButton);
 
-    const editButton = this.page.getByTitle("edit");
+    const editButton = this.page.getByTestId("editHit-button");
     await this.iClickButton(editButton);
 
     const newEight = 2;
@@ -379,17 +377,14 @@ export default class ChoreoPage extends TestPage {
     const countInput = this.page.getByTestId("editHitCountInput");
     await this.iFillInput(countInput, newCount.toString());
 
-    const saveButton = this.page.getByRole("button", {
-      name: "check",
-      exact: true,
-    });
+    const saveButton = this.page.getByTestId("saveHit-button");
     await this.iClickButton(saveButton);
 
     await expect(
-      this.page.locator("tr:nth-child(2) > td:nth-child(4) > .btn")
+      this.page.locator("tr:nth-child(2) > td:nth-child(4) > .d-grid > .btn")
     ).toHaveText(newName, { useInnerText: true });
     await expect(
-      this.page.locator("tr:nth-child(1) > td:nth-child(5) > .btn")
+      this.page.locator("tr:nth-child(1) > td:nth-child(5) > .d-grid > .btn")
     ).toHaveText("-");
   }
 
@@ -400,7 +395,7 @@ export default class ChoreoPage extends TestPage {
     });
     await this.iClickButton(firstHitButton);
 
-    const deleteButton = this.page.getByRole("button", { name: "trash" });
+    const deleteButton = this.page.getByTestId("deleteHit-button");
     await this.iClickButton(deleteButton);
 
     const confirmDeleteButton = this.page.getByRole("button", {
@@ -413,16 +408,16 @@ export default class ChoreoPage extends TestPage {
     ).toBeVisible();
 
     await expect(
-      this.page.locator("tr:nth-child(1) > td:nth-child(5) > .btn")
+      this.page.locator("tr:nth-child(1) > td:nth-child(5) >  .d-grid > .btn")
     ).toHaveText("-");
   }
 
   async iSelectAllMembersInLineup() {
-    this.page.locator("td:nth-child(3) > .btn").first().click();
+    await this.page.getByRole("button", { name: "-" }).nth(1).click();
 
-    const selectAllButton = this.page.getByRole("button", {
-      name: "people fill",
-    });
+    const selectAllButton = this.page.getByTestId(
+      "selectAllMembersForLineup-button"
+    );
     await this.iClickButton(selectAllButton);
 
     await expect(this.page.getByText("All", { exact: true })).toBeVisible();
@@ -430,9 +425,9 @@ export default class ChoreoPage extends TestPage {
   }
 
   async iEditLineup() {
-    this.page.locator("td:nth-child(3) > .btn").first().click();
+    await this.page.getByRole("button", { name: "-" }).nth(1).click();
 
-    const editButton = this.page.getByTitle("edit");
+    const editButton = this.page.getByTestId("editLineup-button");
     await this.iClickButton(editButton);
 
     const newStartAchter = 2;
@@ -454,16 +449,13 @@ export default class ChoreoPage extends TestPage {
     const endCountInput = this.page.getByTestId("editLineupEndCountInput");
     await this.iFillInput(endCountInput, newEndCount.toString());
 
-    const saveButton = this.page.getByRole("button", {
-      name: "check",
-      exact: true,
-    });
+    const saveButton = this.page.getByTestId("saveLineup-button");
     await this.iClickButton(saveButton);
 
     const switchToCountButton = this.page.locator(
       `tr:nth-child(${newStartAchter}) > td:nth-child(${
         newStartCount + 1
-      }) > .btn`
+      }) > .d-grid > .btn`
     );
     await this.iClickButton(switchToCountButton);
 
@@ -475,9 +467,9 @@ export default class ChoreoPage extends TestPage {
   }
 
   async iDeleteLineup() {
-    this.page.locator("td:nth-child(3) > .btn").first().click();
+    await this.page.getByRole("button", { name: "-" }).nth(1).click();
 
-    const deleteButton = this.page.getByRole("button", { name: "trash" });
+    const deleteButton = this.page.getByTestId("deleteLineup-button");
     await this.iClickButton(deleteButton);
 
     const confirmationButton = this.page.getByRole("button", {
@@ -492,7 +484,7 @@ export default class ChoreoPage extends TestPage {
 
   async iAddLineup() {
     const addLineupButton = this.page.getByRole("button", {
-      name: "plus Add a lineup",
+      name: "Add a lineup",
     });
     await this.iClickButton(addLineupButton);
 
@@ -501,16 +493,24 @@ export default class ChoreoPage extends TestPage {
     const newEndAchter = 2;
     const newEndCount = 2;
 
-    const startAchterInput = this.page.locator("input[type='number']").nth(0);
+    const startAchterInput = this.page
+      .getByRole("group", { name: "Start:" })
+      .getByTestId("startAchterInput");
     await this.iFillInput(startAchterInput, newStartAchter.toString());
 
-    const startCountInput = this.page.locator("input[type='number']").nth(1);
+    const startCountInput = this.page
+      .getByRole("group", { name: "Start:" })
+      .getByTestId("startCountInput");
     await this.iFillInput(startCountInput, newStartCount.toString());
 
-    const endAchterInput = this.page.locator("input[type='number']").nth(2);
+    const endAchterInput = this.page
+      .getByRole("group", { name: "End:" })
+      .getByTestId("endAchterInput");
     await this.iFillInput(endAchterInput, newEndAchter.toString());
 
-    const endCountInput = this.page.locator("input[type='number']").nth(3);
+    const endCountInput = this.page
+      .getByRole("group", { name: "End:" })
+      .getByTestId("endCountInput");
     await this.iFillInput(endCountInput, newEndCount.toString());
 
     const saveButton = this.page.getByRole("button", { name: "Save" });
@@ -525,16 +525,14 @@ export default class ChoreoPage extends TestPage {
 
   async iAddHit() {
     const addHitButton = this.page.getByRole("button", {
-      name: "plus Add count entry",
+      name: "Add count entry",
     });
     await this.iClickButton(addHitButton);
 
     const newName = "New Hit Name";
-    const newNameInput = this.page.getByRole("textbox", {
-      name: "What is the name of the new",
-    });
+    const newNameInput = this.page.getByRole("textbox", { name: "Name:" });
     // iFillInput() is not used because the textbox becomes a combobox after input
-    // await this.iFillInput()
+    // await this.iFillInput(newNameInput, newName);
     await expect(newNameInput).toBeVisible();
     await expect(newNameInput).toBeEnabled();
     await newNameInput.fill(newName);

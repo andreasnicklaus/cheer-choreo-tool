@@ -55,9 +55,10 @@ jobs:
           path: app/node_modules
       - name: Install dependencies
         run: npm i
-      - name: Run Jest tests
+      - name: Run Unit tests
         run: npm run test:unit
-      - name: Upload Jest Coverage Report
+      # TODO: replace test coverage upload
+      - name: Upload Unit Test Coverage Report
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:

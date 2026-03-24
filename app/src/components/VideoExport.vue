@@ -1,59 +1,60 @@
 <template>
   <div>
-    <b-card class="mb-3" :title="$t('video-export-comp.video-zusammenstellen')">
-      <b-card-sub-title v-if="choreo">
+    <BCard class="mb-3" :title="$t('video-export-comp.video-zusammenstellen')">
+      <BCardSubtitle v-if="choreo">
         <p class="m-0">
-          {{ $t("video-export-comp.ausgewaehlte-choreo") }}: {{ choreo.name }}
+          {{ $t("video-export-comp.ausgewaehlte-choreo") }}:
+          {{ choreo.name }}
         </p>
         <p class="m-0">
-          {{ $tc("team", 1) }}: {{ choreo.SeasonTeam.Team.name }} ({{
+          {{ $t("team", 1) }}: {{ choreo.SeasonTeam.Team.name }} ({{
             choreo.SeasonTeam.Season.name
           }})
         </p>
-      </b-card-sub-title>
-      <b-card-sub-title v-else :style="{ height: '38.38px' }">
+      </BCardSubtitle>
+      <BCardSubtitle v-else :style="{ height: '38.38px' }">
         {{ $t("pdf.choreo-laedt") }}
-      </b-card-sub-title>
-      <b-card-body>
-        <b-row class="mb-3" :style="{ rowGap: '16px' }">
-          <b-col md="6" cols="12">
-            <b-form-group
+      </BCardSubtitle>
+      <BCardBody>
+        <BRow class="mb-3" :style="{ rowGap: '16px' }">
+          <BCol md="6" cols="12">
+            <BFormGroup
               :description="$t('video-export-comp.den-count-im-video-anzeigen')"
             >
-              <b-form-checkbox
+              <BFormCheckbox
                 v-model="includeCount"
                 :disabled="recordingIsRunning"
               >
                 {{ $t("video-export-comp.count-anzeigen") }}
-              </b-form-checkbox>
-            </b-form-group>
-            <b-form-group
+              </BFormCheckbox>
+            </BFormGroup>
+            <BFormGroup
               :description="
                 $t('video-export-comp.den-namen-deines-teams-im-video-anzeigen')
               "
             >
-              <b-form-checkbox
+              <BFormCheckbox
                 v-model="includeTeamName"
                 :disabled="recordingIsRunning"
               >
                 {{ $t("pdf.team-name-anzeigen") }}
-              </b-form-checkbox>
-            </b-form-group>
-            <b-form-group
+              </BFormCheckbox>
+            </BFormGroup>
+            <BFormGroup
               :description="
                 $t(
                   'video-export-comp.den-namen-deiner-choreo-im-video-anzeigen'
                 )
               "
             >
-              <b-form-checkbox
+              <BFormCheckbox
                 v-model="includeChoreoName"
                 :disabled="recordingIsRunning"
               >
                 {{ $t("pdf.choreo-name-anzeigen") }}
-              </b-form-checkbox>
-            </b-form-group>
-            <b-form-group
+              </BFormCheckbox>
+            </BFormGroup>
+            <BFormGroup
               :disabled="!currentClub?.logoExtension"
               :description="
                 $t(
@@ -61,28 +62,31 @@
                 )
               "
             >
-              <b-form-checkbox
+              <BFormCheckbox
                 v-model="includeClubLogo"
                 :disabled="recordingIsRunning"
               >
                 {{ $t("pdf.vereinslogo-anzeigen") }}
-              </b-form-checkbox>
-            </b-form-group>
-            <b-avatar
+              </BFormCheckbox>
+            </BFormGroup>
+            <BAvatar
               size="60px"
               :src="currentClubLogoBlob"
               v-if="currentClub?.logoExtension"
               :disabled="!includeClubLogo"
             >
-              <b-icon-house-fill v-if="!currentClubLogoBlob" font-scale="1.5" />
-            </b-avatar>
-          </b-col>
-          <b-col md="6" cols="12" class="mb-3">
-            <b-skeleton-wrapper :loading="!choreo || !choreo.Participants">
+              <IBiHouseFill v-if="!currentClubLogoBlob" font-scale="1.5" />
+            </BAvatar>
+          </BCol>
+          <BCol md="6" cols="12" class="mb-3">
+            <BPlaceholderWrapper :loading="!choreo || !choreo.Participants">
               <template #loading>
-                <b-skeleton v-for="(_, i) in Array(3)" :key="i"></b-skeleton>
+                <BPlaceholder
+                  v-for="(_, i) in Array(3)"
+                  :key="i"
+                ></BPlaceholder>
               </template>
-              <b-form-group
+              <BFormGroup
                 :description="
                   $t(
                     'video-export-comp.teilnehmer-die-im-video-angezeigt-werden-sollen'
@@ -91,8 +95,8 @@
                 :state="includedMembers.length > 0"
                 :invalid-feedback="$t('pdf.min-teilnehmer-erforderlich')"
               >
-                <b-button-group class="mb-2">
-                  <b-button
+                <BButtonGroup class="mb-2">
+                  <BButton
                     variant="light"
                     @click="
                       () => (includedMembers = teamMembers.map((m) => m.id))
@@ -102,21 +106,21 @@
                       includedMembers.length == teamMembers.length
                     "
                   >
-                    <b-icon-check-all />
+                    <IBiCheckAll />
                     {{ $t("alle-auswaehlen") }}
-                  </b-button>
-                  <b-button
+                  </BButton>
+                  <BButton
                     variant="light"
                     @click="() => (includedMembers = [])"
                     :disabled="
                       recordingIsRunning || includedMembers.length == 0
                     "
                   >
-                    <b-icon-slash />
+                    <IBiSlash />
                     {{ $t("keine-auswaehlen") }}
-                  </b-button>
-                </b-button-group>
-                <b-checkbox-group
+                  </BButton>
+                </BButtonGroup>
+                <BFormCheckboxGroup
                   :disabled="recordingIsRunning"
                   v-model="includedMembers"
                   :style="{ columnCount: $store.state.isMobile ? 1 : 2 }"
@@ -128,107 +132,103 @@
                     }))
                   "
                 />
-              </b-form-group>
-            </b-skeleton-wrapper>
-          </b-col>
-          <b-col cols="12">
-            <b-form-group
-              :description="$t('video-export-comp.playback-length')"
-            >
-              <b-row>
-                <b-col cols="6">
-                  <b-input-group>
-                    <b-form-input
+              </BFormGroup>
+            </BPlaceholderWrapper>
+          </BCol>
+          <BCol cols="12">
+            <BFormGroup :description="$t('video-export-comp.playback-length')">
+              <BRow>
+                <BCol cols="6">
+                  <BInputGroup>
+                    <BFormInput
                       v-model="animationMinutes"
                       type="number"
                       min="0"
                     />
-                    <b-input-group-append
-                      v-b-tooltip.hover
-                      :title="$t('video-export-comp.minutes')"
-                    >
-                      <b-input-group-text>Min</b-input-group-text>
-                    </b-input-group-append>
-                  </b-input-group>
-                </b-col>
-                <b-col cols="6">
-                  <b-input-group>
-                    <b-form-input
+                    <template #append>
+                      <BInputGroupText
+                        v-b-tooltip.hover="$t('video-export-comp.minutes')"
+                        >Min</BInputGroupText
+                      >
+                    </template>
+                  </BInputGroup>
+                </BCol>
+                <BCol cols="6">
+                  <BInputGroup>
+                    <BFormInput
                       v-model="animationSeconds"
                       type="number"
                       min="0"
                       max="59"
                     />
-                    <b-input-group-append
-                      v-b-tooltip.hover
-                      :title="$t('video-export-comp.seconds')"
-                    >
-                      <b-input-group-text>Sec</b-input-group-text>
-                    </b-input-group-append>
-                  </b-input-group>
-                </b-col>
-              </b-row>
-            </b-form-group>
-          </b-col>
-          <b-col cols="auto">
-            <b-button-group>
-              <b-button
+                    <template #append>
+                      <BInputGroupText
+                        v-b-tooltip.hover="$t('video-export-comp.seconds')"
+                        >Sec</BInputGroupText
+                      >
+                    </template>
+                  </BInputGroup>
+                </BCol>
+              </BRow>
+            </BFormGroup>
+          </BCol>
+          <BCol cols="auto">
+            <BButtonGroup>
+              <BButton
                 @click="startPreview"
                 variant="outline-success"
                 :disabled="animationIsRunning || recordingIsRunning || !choreo"
               >
-                <b-icon-play />
-              </b-button>
-              <b-button
+                <IBiPlay />
+              </BButton>
+              <BButton
                 @click="pausePreview"
                 variant="outline-danger"
                 :disabled="!animationIsRunning || recordingIsRunning || !choreo"
               >
-                <b-icon-pause />
-              </b-button>
-              <b-button
+                <IBiPause />
+              </BButton>
+              <BButton
                 @click="resetPreview"
                 variant="outline-secondary"
                 :disabled="recordingIsRunning || !choreo || count == 0"
               >
-                <b-icon-skip-start-fill />
-              </b-button>
-            </b-button-group>
-          </b-col>
-          <b-col>
-            <b-button
+                <IBiSkipStartFill />
+              </BButton>
+            </BButtonGroup>
+          </BCol>
+          <BCol class="d-grid">
+            <BButton
               variant="success"
-              block
               @click="startRecording"
               :disabled="
                 !choreo || recordingIsRunning || includedMembers.length == 0
               "
             >
-              <b-icon-film class="mr-2" />
+              <IBiFilm class="me-2" />
               {{ $t("video-export-comp.video-generieren") }}
-            </b-button>
-          </b-col>
-          <b-col md="auto" cols="12" v-if="downloadUrl">
-            <b-button
+            </BButton>
+          </BCol>
+          <BCol md="auto" cols="12" v-if="downloadUrl" class="d-grid">
+            <BButton
               variant="outline-success"
               @click="() => $refs.videoDownloadModal.open()"
-              block
             >
-              <b-icon-download />
+              <IBiDownload />
               {{ $t("video-export-comp.herunterladen") }}
-            </b-button>
-          </b-col>
-        </b-row>
+            </BButton>
+          </BCol>
+        </BRow>
 
-        <b-skeleton-wrapper :loading="!choreo">
+        <BPlaceholderWrapper :loading="!choreo">
           <template #loading>
-            <b-skeleton
+            <BPlaceholder
               :width="width + 'px'"
               :height="height + 'px'"
               class="m-auto"
             />
           </template>
-          <b-overlay :show="recordingIsRunning" class="text-center">
+          <BOverlay :show="recordingIsRunning" class="text-center">
             <canvas
               id="videoCanvas"
               ref="videoCanvas"
@@ -238,26 +238,26 @@
             ></canvas>
             <template #overlay>
               <div class="text-center" :style="{ minWidth: '70vw' }">
-                <b-spinner />
+                <BSpinner />
                 <p>{{ waitingSlogan || "Dein Video wird generiert!" }}</p>
-                <b-alert :show="true" variant="danger">
+                <BAlert :show="true" variant="danger">
                   {{ $t("video-export-comp.do-not-leave-this-page") }}
-                </b-alert>
-                <b-progress
+                </BAlert>
+                <BProgress
                   :value="count"
                   :max="choreo?.counts"
                   height="2rem"
                   class="mb-3"
                 />
-                <b-button variant="outline-danger" @click="stopRecording">
+                <BButton variant="outline-danger" @click="stopRecording">
                   {{ $t("abbrechen") }}
-                </b-button>
+                </BButton>
               </div>
             </template>
-          </b-overlay>
-        </b-skeleton-wrapper>
-      </b-card-body>
-    </b-card>
+          </BOverlay>
+        </BPlaceholderWrapper>
+      </BCardBody>
+    </BCard>
 
     <img
       ref="clubLogo"
@@ -279,6 +279,8 @@
 </template>
 
 <script>
+import { useHead } from "@unhead/vue";
+import { computed, getCurrentInstance } from "vue";
 import ChoreoService from "@/services/ChoreoService";
 import gsap from "gsap";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
@@ -656,26 +658,29 @@ export default {
         this.downloadUrl = URL.createObjectURL(
           new Blob(this.recordingChunks, { type: "video/webm" })
         );
-        this.$bvModal.show("video-download-modal");
+        this.$refs.videoDownloadModal.open();
       };
     },
     initializeFfmpeg() {
-      const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
-      this.ffmpeg.on("log", ({ message }) => {
-        debug(message);
-      });
-      this.ffmpeg.on("progress", ({ progress, time }) => {
-        debug({ progress, time });
-      });
+      const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.10/dist/umd";
 
       return Promise.all([
         toBlobURL(`${baseURL}/ffmpeg-core.js`, "text/javascript"),
         toBlobURL(`${baseURL}/ffmpeg-core.wasm`, "application/wasm"),
       ]).then(([coreURL, wasmURL]) => {
-        this.ffmpeg.load({
-          coreURL,
-          wasmURL,
-        });
+        return this.ffmpeg
+          .load({
+            coreURL,
+            wasmURL,
+          })
+          .then(() => {
+            this.ffmpeg.on("log", ({ message }) => {
+              debug(message);
+            });
+            this.ffmpeg.on("progress", ({ progress, time }) => {
+              debug({ progress, time });
+            });
+          });
       });
     },
     selectDownloadOption(optionId) {
@@ -789,8 +794,63 @@ export default {
       this.drawCanvas();
       this.calculateAnimationTime();
     });
-    this.ffmpeg = new FFmpeg();
-    this.initializeFfmpeg();
+
+    this.$nextTick(() => {
+      this.ffmpeg = new FFmpeg();
+      this.initializeFfmpeg();
+    });
+
+    const { proxy } = getCurrentInstance();
+
+    useHead({
+      title: computed(
+        () =>
+          (this.choreo?.name || proxy.$t("pdf.laedt-choreo")) +
+          " - " +
+          proxy.$t("video")
+      ),
+      meta: [
+        {
+          vmid: "description",
+          name: "description",
+          content: computed(() => proxy.$t("meta.video.description")),
+        },
+        {
+          vmid: "twitter:description",
+          name: "twitter:description",
+          content: computed(() => proxy.$t("meta.video.description")),
+        },
+        {
+          vmid: "og:description",
+          property: "og:description",
+          content: computed(() => proxy.$t("meta.video.description")),
+        },
+        {
+          vmid: "og:title",
+          property: "og:title",
+          content: computed(
+            () =>
+              `${
+                this.choreo?.name || proxy.$t("pdf.laedt-choreo")
+              } - ${proxy.$t("video")} - ${proxy.$t(
+                "general.ChoreoPlaner"
+              )} | ${proxy.$t("meta.defaults.title")}`
+          ),
+        },
+        {
+          vmid: "twitter:title",
+          name: "twitter:title",
+          content: computed(
+            () =>
+              `${
+                this.choreo?.name || proxy.$t("pdf.laedt-choreo")
+              } - ${proxy.$t("video")} - ${proxy.$t(
+                "general.ChoreoPlaner"
+              )} | ${proxy.$t("meta.defaults.title")}`
+          ),
+        },
+      ],
+    });
   },
   computed: {
     currentClub() {
@@ -828,49 +888,6 @@ export default {
           return this.width;
       }
     },
-  },
-  metaInfo() {
-    return {
-      title:
-        (this.choreo?.name || this.$t("pdf.laedt-choreo")) +
-        " - " +
-        this.$t("video"),
-      meta: [
-        {
-          vmid: "description",
-          name: "description",
-          content: this.$t("meta.video.description"),
-        },
-        {
-          vmid: "twitter:description",
-          name: "twitter:description",
-          content: this.$t("meta.video.description"),
-        },
-        {
-          vmid: "og:description",
-          property: "og:description",
-          content: this.$t("meta.video.description"),
-        },
-        {
-          vmid: "og:title",
-          property: "og:title",
-          content: `${
-            this.choreo?.name || this.$t("pdf.laedt-choreo")
-          } - ${this.$t("video")} - ${this.$t(
-            "general.ChoreoPlaner"
-          )} | ${this.$t("meta.defaults.title")}`,
-        },
-        {
-          vmid: "twitter:title",
-          name: "twitter:title",
-          content: `${
-            this.choreo?.name || this.$t("pdf.laedt-choreo")
-          } - ${this.$t("video")} - ${this.$t(
-            "general.ChoreoPlaner"
-          )} | ${this.$t("meta.defaults.title")}`,
-        },
-      ],
-    };
   },
 };
 </script>

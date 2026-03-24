@@ -1,5 +1,6 @@
 <template>
-  <b-modal
+  <BModal
+    ref="modal"
     :id="`modal-newChoreo-${id}`"
     :title="$t('nav.neue-choreo')"
     centered
@@ -8,15 +9,15 @@
     @show="resetChoreoModal"
     @ok="createChoreo"
   >
-    <b-form>
-      <b-form-group
+    <BForm>
+      <BFormGroup
         :label="$t('name')"
         label-class="label-with-colon"
         :state="newChoreoNameIsValid"
         :invalid-feedback="newChoreoNameStateFeedback"
         :valid-feedback="$t('login.gueltig')"
       >
-        <b-form-input
+        <BFormInput
           v-model="newChoreoName"
           :state="newChoreoNameIsValid"
           required
@@ -25,28 +26,28 @@
             $t('modals.create-choreo.example-name', [new Date().getFullYear()])
           "
         />
-      </b-form-group>
-      <b-form-group
+      </BFormGroup>
+      <BFormGroup
         :label="$t('modals.create-choreo.laenge')"
         label-class="label-with-colon"
       >
-        <b-row>
-          <b-col>
-            <b-form-group
+        <BRow>
+          <BCol>
+            <BFormGroup
               :description="$t('achter')"
               :state="newChoreoAchterIsValid"
               :invalid-feedback="newChoreoAchterStateFeedback"
             >
-              <b-form-input
+              <BFormInput
                 type="number"
                 min="1"
                 v-model="newChoreoAchter"
                 :state="newChoreoAchterIsValid"
               />
-            </b-form-group>
-          </b-col>
-          <b-col>
-            <b-form-group
+            </BFormGroup>
+          </BCol>
+          <BCol>
+            <BFormGroup
               :description="
                 $t(
                   'modals.change-length.counts-zusaetzliche-counts-nach-den-achtern'
@@ -55,16 +56,16 @@
               :state="newChoreoCountIsValid"
               :invalid-feedback="newChoreoCountStateFeedback"
             >
-              <b-form-input
+              <BFormInput
                 type="number"
                 min="0"
                 max="7"
                 v-model="newChoreoCount"
                 :state="newChoreoCountIsValid"
               />
-            </b-form-group>
-          </b-col>
-        </b-row>
+            </BFormGroup>
+          </BCol>
+        </BRow>
         <p class="text-muted">
           {{
             $t("modals.create-choreo.geschaetzte-zeit-timeestimationstring", [
@@ -72,9 +73,9 @@
             ])
           }}
         </p>
-      </b-form-group>
+      </BFormGroup>
 
-      <b-form-group
+      <BFormGroup
         label-class="label-with-colon"
         :state="newChoreoMatTypeIsValid"
         :invalid-feedback="newChoreoMatTypeStateFeedback"
@@ -83,35 +84,35 @@
           {{ $t("mat") }}
           <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
         </template>
-        <b-form-select
+        <BFormSelect
           v-model="newChoreoMatType"
           required
           :state="newChoreoMatTypeIsValid"
           :options="matTypeOptions"
         />
-      </b-form-group>
+      </BFormGroup>
 
-      <b-form-group
-        :label="this.$tc('team', 1)"
+      <BFormGroup
+        :label="this.$t('team', 1)"
         label-class="label-with-colon"
         :state="newChoreoTeamIsValid"
         :invalid-feedback="newChoreoTeamStateFeedback"
       >
-        <b-form-select
+        <BFormSelect
           v-model="newChoreoTeamId"
           :state="newChoreoTeamIsValid"
           required
           :options="teams.map((t) => ({ value: t.id, text: t.name }))"
         />
-      </b-form-group>
-      <b-form-group
-        :label="$tc('season', 1)"
+      </BFormGroup>
+      <BFormGroup
+        :label="$t('season', 1)"
         label-class="label-with-colon"
         :state="newChoreoSeasonIsValid"
         :invalid-feedback="newChoreoSeasonStateFeedback"
         :valid-feedback="$t('login.gueltig')"
       >
-        <b-form-select
+        <BFormSelect
           v-model="newChoreoSeasonId"
           :state="newChoreoSeasonIsValid"
           required
@@ -125,16 +126,16 @@
               }))
           "
         />
-      </b-form-group>
-      <b-form-group :label="$t('teilnehmer')" label-class="label-with-colon">
-        <b-skeleton-wrapper
+      </BFormGroup>
+      <BFormGroup :label="$t('teilnehmer')" label-class="label-with-colon">
+        <BPlaceholderWrapper
           :loading="!newChoreoTeamIsValid || !newChoreoSeasonIsValid"
         >
           <template #loading>
-            <b-skeleton v-for="(_, i) in Array(3)" :key="i" />
+            <BPlaceholder v-for="(_, i) in Array(3)" :key="i" />
           </template>
-          <b-button-group>
-            <b-button
+          <BButtonGroup>
+            <BButton
               variant="light"
               @click="
                 () =>
@@ -146,17 +147,17 @@
                 newChoreoParticipantIds?.length == participantOptions?.length
               "
             >
-              <b-icon-check-all />
+              <IBiCheckAll />
               {{ $t("alle-auswaehlen") }}
-            </b-button>
-            <b-button
+            </BButton>
+            <BButton
               variant="light"
               @click="() => (this.newChoreoParticipantIds = [])"
               :disabled="newChoreoParticipantIds?.length == 0"
             >
-              <b-icon-slash /> {{ $t("keine-auswaehlen") }}
-            </b-button>
-            <b-button
+              <IBiSlash /> {{ $t("keine-auswaehlen") }}
+            </BButton>
+            <BButton
               variant="light"
               @click="
                 () =>
@@ -169,45 +170,45 @@
                 newChoreoParticipantIds?.length == participantOptions?.length
               "
             >
-              <b-icon-arrow-repeat />
+              <IBiArrowRepeat />
               {{ $t("auswahl-wechseln") }}
-            </b-button>
-          </b-button-group>
-          <b-checkbox-group
+            </BButton>
+          </BButtonGroup>
+          <BFormCheckboxGroup
             :id="`participant-checkbox-group-${id}`"
             :name="`participant-checkbox-group-${id}`"
             v-model="newChoreoParticipantIds"
             :style="{ columnCount: 2 }"
             stacked
           >
-            <b-form-checkbox
+            <BFormCheckbox
               v-for="option in participantOptions"
               :key="option.value"
               :value="option.value"
             >
-              <b-row
+              <BRow
                 align-h="between"
                 align-v="start"
                 :style="{ minWidth: '300px', minHeight: '38px' }"
               >
-                <b-col cols="auto">
+                <BCol cols="auto">
                   {{ option.text }}
-                </b-col>
-                <b-col :style="{ width: '100px' }" cols="auto">
-                  <b-input
+                </BCol>
+                <BCol :style="{ width: '100px' }" cols="auto">
+                  <BInput
                     type="color"
                     v-model="option.color"
                     v-show="newChoreoParticipantIds.includes(option.value)"
                   />
-                </b-col>
-              </b-row>
-            </b-form-checkbox>
-          </b-checkbox-group>
-        </b-skeleton-wrapper>
-      </b-form-group>
-    </b-form>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button
+                </BCol>
+              </BRow>
+            </BFormCheckbox>
+          </BFormCheckboxGroup>
+        </BPlaceholderWrapper>
+      </BFormGroup>
+    </BForm>
+    <template #footer="{ ok, cancel }">
+      <BButton
         @click="ok"
         variant="success"
         :disabled="
@@ -220,12 +221,10 @@
         "
       >
         {{ $t("erstellen") }}
-      </b-button>
-      <b-button @click="cancel" variant="danger">{{
-        $t("abbrechen")
-      }}</b-button>
+      </BButton>
+      <BButton @click="cancel" variant="danger">{{ $t("abbrechen") }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -297,7 +296,7 @@ export default {
   },
   methods: {
     open(teamId = null, seasonId = null) {
-      this.$bvModal.show(`modal-newChoreo-${this.id}`);
+      this.$refs.modal.show();
       if (teamId) {
         this.newChoreoTeamId = teamId;
 

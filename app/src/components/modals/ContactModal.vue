@@ -1,5 +1,6 @@
 <template>
-  <b-modal
+  <BModal
+    ref="modal"
     :id="`contactModal-${id}`"
     :title="
       messageWasSuccess
@@ -10,7 +11,7 @@
     "
     centered
     scrollable
-    @ok="send"
+    @ok.prevent="send"
     :header-bg-variant="bgVariant"
     :header-text-variant="textVariant"
     :body-bg-variant="bgVariant"
@@ -18,28 +19,28 @@
     :footer-bg-variant="bgVariant"
     :footer-text-variant="textVariant"
   >
-    <b-form v-if="!messageWasSuccess && !messageWasError">
-      <b-row>
-        <b-col cols="12" md="6">
-          <b-form-group
+    <BForm v-if="!messageWasSuccess && !messageWasError">
+      <BRow>
+        <BCol cols="12" md="6">
+          <BFormGroup
             :label="$t('modals.contact.your-name')"
             label-for="name"
             :description="$t('modals.contact.what-should-we-call-you')"
             :state="nameIsValid"
             :invalid-feedback="nameStateFeedback"
           >
-            <b-form-input
+            <BFormInput
               id="name"
               v-model="name"
               :placeholder="$t('modals.contact.enter-name')"
               required
               :autofocus="name === null"
               :disabled="sending"
-            ></b-form-input>
-          </b-form-group>
-        </b-col>
-        <b-col cols="12" md="6">
-          <b-form-group
+            ></BFormInput>
+          </BFormGroup>
+        </BCol>
+        <BCol cols="12" md="6">
+          <BFormGroup
             :label="$t('modals.contact.email-address')"
             label-for="email"
             :description="
@@ -48,23 +49,23 @@
             :state="emailIsValid"
             :invalid-feedback="emailStateFeedback"
           >
-            <b-form-input
+            <BFormInput
               id="email"
               v-model="email"
               type="email"
               :placeholder="$t('modals.contact.enter-email')"
               required
               :disabled="sending"
-            ></b-form-input>
-          </b-form-group> </b-col
-      ></b-row>
+            ></BFormInput>
+          </BFormGroup> </BCol
+      ></BRow>
 
-      <b-form-group
+      <BFormGroup
         :label="$t('modals.contact.category')"
         label-for="category"
         :description="$t('modals.contact.what-do-you-need-help-with')"
       >
-        <b-form-select
+        <BFormSelect
           id="category"
           v-model="category"
           :options="[
@@ -76,10 +77,10 @@
           required
           :autofocus="name !== null"
           :disabled="sending"
-        ></b-form-select>
-      </b-form-group>
+        ></BFormSelect>
+      </BFormGroup>
 
-      <b-form-group
+      <BFormGroup
         :label="$t('modals.contact.subject')"
         label-for="subject"
         :description="
@@ -88,16 +89,16 @@
         :state="subjectIsValid"
         :invalid-feedback="subjectStateFeedback"
       >
-        <b-form-input
+        <BFormInput
           id="subject"
           v-model="subject"
           :placeholder="$t('modals.contact.subject-of-your-message')"
           required
           :disabled="sending"
-        ></b-form-input>
-      </b-form-group>
+        ></BFormInput>
+      </BFormGroup>
 
-      <b-form-group
+      <BFormGroup
         :label="$t('modals.contact.message')"
         label-for="message"
         :description="
@@ -106,7 +107,7 @@
         :state="messageIsValid"
         :invalid-feedback="messageStateFeedback"
       >
-        <b-form-textarea
+        <BFormTextarea
           v-model="message"
           id="message"
           :placeholder="$t('modals.contact.enter-your-message-to-us')"
@@ -115,47 +116,44 @@
           max-rows="8"
           :disabled="sending"
         >
-        </b-form-textarea>
-      </b-form-group>
-    </b-form>
-    <b-container fluid v-if="messageWasSuccess" class="text-center">
-      <b-icon-check-circle-fill
-        style="width: 120px; height: 120px"
-        class="my-4"
-      />
+        </BFormTextarea>
+      </BFormGroup>
+    </BForm>
+    <BContainer fluid v-if="messageWasSuccess" class="text-center">
+      <IBiCheckCircleFill style="width: 120px; height: 120px" class="my-4" />
       <p>
         <b>{{ $t("modals.contact.your-message-was-sent-successfully") }}</b>
       </p>
-    </b-container>
-    <b-container fluid v-if="messageWasError" class="text-center">
-      <b-icon-x-circle style="width: 120px; height: 120px" class="my-4" />
+    </BContainer>
+    <BContainer fluid v-if="messageWasError" class="text-center">
+      <IBiXCircle style="width: 120px; height: 120px" class="my-4" />
       <p>
         <b>{{ $t("modals.contact.there-was-an-error-with-your-message") }}</b>
       </p>
       <p v-if="errorMessage">{{ errorMessage }}</p>
-    </b-container>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button
+    </BContainer>
+    <template #footer="{ ok, cancel }">
+      <BButton
         @click="ok"
         variant="success"
         v-if="!messageWasSuccess && !messageWasError"
         :disabled="!allValid || sending"
       >
-        <b-spinner small v-show="sending" />
+        <BSpinner small v-show="sending" />
         <span v-show="!sending">
-          <b-icon-chat-right-text class="mr-2" />
+          <IBiChatRightText class="me-2" />
           {{ $t("feedback.abschicken") }}
         </span>
-      </b-button>
-      <b-button v-if="messageWasError" variant="light" @click="resetAfterError">
-        <b-icon-arrow-counterclockwise class="mr-2" />
+      </BButton>
+      <BButton v-if="messageWasError" variant="light" @click="resetAfterError">
+        <IBiArrowCounterclockwise class="me-2" />
         {{ $t("modals.contact.try-again") }}
-      </b-button>
-      <b-button @click="cancel" variant="light">
+      </BButton>
+      <BButton @click="cancel" variant="light">
         {{ $t("feedback.schliessen") }}
-      </b-button>
+      </BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -213,12 +211,9 @@ export default {
       this.errorMessage = null;
 
       this.initUserMessage(this.name);
-      this.$bvModal.show(`contactModal-${this.id}`);
+      this.$refs.modal.show();
     },
-    send(bvModalEvent) {
-      // Prevent modal from closing
-      bvModalEvent.preventDefault();
-
+    send() {
       this.sending = true;
       ContactService.sendContactMessage({
         name: this.name,
@@ -269,7 +264,7 @@ export default {
         ContactService.createMessageAppendix(username);
     },
     close() {
-      this.$bvModal.hide(`contactModal-${this.id}`);
+      this.$refs.modal.hide();
     },
     resetAfterError() {
       this.messageWasError = false;

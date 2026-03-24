@@ -1,5 +1,6 @@
 <template>
-  <b-modal
+  <BModal
+    ref="modal"
     :id="`modal-deleteHit-${this.id}`"
     :title="$t('modals.delete-hit.countsheet-eintrag-loeschen')"
     centered
@@ -7,13 +8,13 @@
     @ok="deleteHit"
   >
     <p class="m-0">{{ $t("du-kannst-das-nicht-rueckgaengig-machen") }}</p>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="danger">{{ $t("loeschen") }}</b-button>
-      <b-button @click="cancel" variant="outline-secondary">
+    <template #footer="{ ok, cancel }">
+      <BButton @click="ok" variant="danger">{{ $t("loeschen") }}</BButton>
+      <BButton @click="cancel" variant="outline-secondary">
         {{ $t("abbrechen") }}
-      </b-button>
+      </BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -49,7 +50,7 @@ export default {
   methods: {
     open(deleteHitId) {
       this.deleteHitId = deleteHitId;
-      this.$bvModal.show(`modal-deleteHit-${this.id}`);
+      this.$refs.modal.show();
     },
     resetDeleteHitModal() {
       this.deleteHitId = null;

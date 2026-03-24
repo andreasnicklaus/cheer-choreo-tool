@@ -1,12 +1,13 @@
 <template>
-  <b-modal
-    hide-footer
+  <BModal
+    ref="modal"
+    no-footer
     :id="`video-download-modal-${id}`"
     :title="$t('modals.video-download.video-herunterladen')"
     size="xl"
   >
-    <b-row align-v="end">
-      <b-col>
+    <BRow align-v="end">
+      <BCol>
         <video
           :width="width"
           controls
@@ -14,67 +15,66 @@
           :src="downloadUrl"
           :style="{ width: '100%', minWidth: '100px', aspectRatio: '1/1' }"
         ></video>
-      </b-col>
-      <b-col>
-        <b-collapse id="collapse-technical-issues" class="mb-2">
-          <b-card
+      </BCol>
+      <BCol>
+        <BCollapse id="collapse-technical-issues" class="mb-2">
+          <BCard
             title="Probleme?"
             sub-title="Klicke auf die beste Beschreibung deines Problems"
           >
-            <b-button v-b-toggle.collapse-stocking-video>
+            <BButton v-b-toggle.collapse-stocking-video>
               {{ $t("modals.video-download.stocking-video") }}
-            </b-button>
-            <b-button v-b-toggle.collapse-video-format>
+            </BButton>
+            <BButton v-b-toggle.collapse-video-format>
               {{ $t("modals.video-download.video-file-issues") }}
-            </b-button>
-            <b-col>
-              <b-button v-b-toggle.collapse-other>{{
+            </BButton>
+            <BCol>
+              <BButton v-b-toggle.collapse-other>{{
                 $t("modals.video-download.other-issue")
-              }}</b-button>
-            </b-col>
+              }}</BButton>
+            </BCol>
 
-            <b-collapse
+            <BCollapse
               id="collapse-stocking-video"
               accordion="technical-issues-accordion"
             >
-              <b-card-text>
+              <BCardText>
                 <b>{{ $t("modals.video-download.jerky-video") }}</b>
                 {{ $t("modals.video-download.jerky-video-answer") }}
-              </b-card-text>
-            </b-collapse>
-            <b-collapse
+              </BCardText>
+            </BCollapse>
+            <BCollapse
               id="collapse-video-format"
               accordion="technical-issues-accordion"
             >
-              <b-card-text>
+              <BCardText>
                 <b>{{ $t("modals.video-download.file-issues") }}</b>
                 {{ $t("modals.video-download.file-issues-answer") }}
-              </b-card-text>
-            </b-collapse>
-            <b-collapse
+              </BCardText>
+            </BCollapse>
+            <BCollapse
               id="collapse-other"
               accordion="technical-issues-accordion"
             >
-              <b-card-text>
+              <BCardText>
                 <b>{{ $t("modals.video-download.other-issue-question") }}</b>
                 {{ $t("modals.video-download.other-issue-answer") }}
-              </b-card-text>
-              <b-card-text>
+              </BCardText>
+              <BCardText>
                 <router-link
-                  :to="{ name: 'Help', params: { locale: $root.$i18n.locale } }"
+                  :to="{ name: 'Help', params: { locale: $i18n.locale } }"
                 >
                   {{ $t("general.help") }}
                 </router-link>
-              </b-card-text>
-            </b-collapse>
-          </b-card>
-        </b-collapse>
-        <b-row class="mb-1" no-gutters>
-          <b-col>
-            <b-button
+              </BCardText>
+            </BCollapse>
+          </BCard>
+        </BCollapse>
+        <BRow class="mb-1" no-gutters>
+          <BCol class="d-grid">
+            <BButton
               ref="downloadButton"
               split
-              block
               variant="success"
               :href="downloadUrl"
               :download="
@@ -82,43 +82,42 @@
                 selectedDownloadOption.ext
               "
             >
-              <b-icon-download />
+              <IBiDownload />
               {{ $t("download") }} {{ selectedDownloadOption.name }}
-            </b-button>
-          </b-col>
-          <b-col cols="auto">
-            <b-dropdown variant="light">
+            </BButton>
+          </BCol>
+          <BCol cols="auto">
+            <BDropdown variant="light">
               <template #button-content>
-                <b-icon-film />
+                <IBiFilm />
                 {{
                   selectedDownloadOption.name ||
                   this.$t("modals.video-download.format")
                 }}
               </template>
-              <b-dropdown-item
+              <BDropdownItem
                 v-for="option in downloadOptions"
                 :key="option.id"
                 @click="() => selectDownloadOption(option.id)"
               >
                 {{ option.name }}
                 <span class="text-muted">{{ option.ext }}</span>
-              </b-dropdown-item>
-            </b-dropdown>
-          </b-col>
-          <b-col cols="auto">
-            <b-button
+              </BDropdownItem>
+            </BDropdown>
+          </BCol>
+          <BCol cols="auto">
+            <BButton
               v-b-toggle.collapse-technical-issues
               variant="light"
-              v-b-tooltip.hover
-              :title="$t('general.help')"
+              v-b-tooltip.hover="$t('general.help')"
             >
-              <b-icon-question-circle />
-            </b-button>
-          </b-col>
-        </b-row>
-      </b-col>
-    </b-row>
-  </b-modal>
+              <IBiQuestionCircle />
+            </BButton>
+          </BCol>
+        </BRow>
+      </BCol>
+    </BRow>
+  </BModal>
 </template>
 
 <script>
@@ -168,7 +167,7 @@ export default {
   },
   methods: {
     open() {
-      this.$bvModal.show(`video-download-modal-${this.id}`);
+      this.$refs.modal.show();
     },
     selectDownloadOption(optionId) {
       this.selectedDownloadOptionId = optionId;

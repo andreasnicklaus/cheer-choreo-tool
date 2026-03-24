@@ -15,6 +15,8 @@ test("should have the correct title", async () => {
 });
 
 test("should display the first section with the title", async () => {
-  datenschutzPage.iCheckSectionHeading("General Information");
-  datenschutzPage.iCheckSectionContent("The protection of your personal data");
+  await datenschutzPage.iCheckSectionHeading("General Information");
+  await datenschutzPage.iCheckSectionContent(
+    "The protection of your personal data"
+  );
 });

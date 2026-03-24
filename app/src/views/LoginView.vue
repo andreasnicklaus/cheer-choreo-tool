@@ -1,58 +1,58 @@
 <template>
-  <b-container id="loginView" data-view>
+  <BContainer id="loginView" class="mt-4 my-4" data-view>
     <h1>{{ $t("login.dein-online-zugang") }}</h1>
-    <b-tabs fill v-model="tabIndex">
-      <b-tab :title="$t('anmelden')" class="mt-4">
-        <b-form @submit="onLoginSubmit" @reset="onReset">
-          <b-form-group
+    <BTabs fill v-model="tabIndex">
+      <BTab :title="$t('anmelden')" class="mt-4">
+        <BForm @submit.prevent="onLoginSubmit" @reset.prevent="onReset">
+          <BFormGroup
             :label="$t('username')"
             label-class="label-with-colon"
             :state="usernameIsValid"
             :invalid-feedback="usernameError"
           >
-            <b-form-input
+            <BFormInput
               :placeholder="$t('username')"
               :state="usernameIsValid"
               v-model="username"
-            ></b-form-input>
-          </b-form-group>
-          <b-form-group
+            ></BFormInput>
+          </BFormGroup>
+          <BFormGroup
             :label="$t('passwort')"
             label-class="label-with-colon"
             :state="passwordIsValid"
             :invalid-feedback="passwordError"
           >
-            <b-form-input
+            <BFormInput
               :placeholder="$t('passwort')"
               type="password"
               :state="passwordIsValid"
               v-model="password"
-            ></b-form-input>
-          </b-form-group>
+            ></BFormInput>
+          </BFormGroup>
 
-          <div class="d-flex">
-            <b-button
-              type="submit"
-              :style="{ color: 'white' }"
-              variant="primary"
-              class="mr-2"
-              block
-              :disabled="!usernameIsValid || !passwordIsValid"
-            >
-              <b-spinner small v-if="loading" />
-              <span v-else> {{ $t("anmelden") }} </span>
-            </b-button>
-            <b-button
+          <div class="d-flex my-2">
+            <div class="d-grid" :style="{ width: '100%' }">
+              <BButton
+                type="submit"
+                :style="{ color: 'white' }"
+                variant="primary"
+                class="me-2"
+                :disabled="!usernameIsValid || !passwordIsValid"
+              >
+                <BSpinner small v-if="loading" />
+                <span v-else> {{ $t("anmelden") }} </span>
+              </BButton>
+            </div>
+            <BButton
               type="reset"
               variant="light"
-              v-b-tooltip.hover
-              :title="$t('login.formular-zuruecksetzen')"
+              v-b-tooltip.hover="$t('login.formular-zuruecksetzen')"
             >
-              <b-icon-arrow-counterclockwise />
-            </b-button>
+              <IBiArrowCounterclockwise />
+            </BButton>
           </div>
 
-          <p class="my-3">
+          <p class="mt-3 mb-0">
             {{ $t("login.du-hast-noch-kein-konto") }}
             <a href="#" @click="() => (tabIndex = 1)">
               {{ $t("registrieren") }}
@@ -61,125 +61,122 @@
 
           <a href="#" @click="() => $refs.passwordResetModal.open()"
             >{{ $t("login.passwort-vergessen") }}
-            <NewVersionBadge :versions="['0.10.3', '0.11.0']"
-          /></a>
-        </b-form>
-      </b-tab>
-      <b-tab :title="$t('registrieren')" class="mt-4">
-        <b-form @submit="onRegisterSubmit" @reset="onReset">
-          <b-form-group
+            <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
+          </a>
+        </BForm>
+      </BTab>
+      <BTab :title="$t('registrieren')" class="mt-4">
+        <BForm @submit.prevent="onRegisterSubmit" @reset.prevent="onReset">
+          <BFormGroup
             :label="$t('username')"
             label-class="label-with-colon"
             :state="usernameIsValid"
             :invalid-feedback="usernameError"
             :valid-feedback="$t('login.gueltig')"
           >
-            <b-form-input
+            <BFormInput
               :placeholder="$t('username')"
               :state="usernameIsValid"
               v-model="username"
-            ></b-form-input>
-          </b-form-group>
-          <b-form-group
+            ></BFormInput>
+          </BFormGroup>
+          <BFormGroup
             :label="$t('e-mail-adresse')"
             label-class="label-with-colon"
             :state="emailIsValid"
             :invalid-feedback="emailError"
             :valid-feedback="$t('login.gueltig')"
           >
-            <b-input-group>
-              <b-form-input
+            <BInputGroup>
+              <BFormInput
                 :placeholder="$t('e-mail-adresse')"
                 :state="emailIsValid"
                 v-model="email"
-              ></b-form-input>
+              ></BFormInput>
               <template #append>
-                <b-input-group-text
-                  v-b-tooltip.hover
-                  :title="$t('login.warum-email')"
-                >
-                  <b-icon-info-circle />
-                </b-input-group-text>
+                <BInputGroupText v-b-tooltip.hover="$t('login.warum-email')">
+                  <IBiInfoCircle />
+                </BInputGroupText>
               </template>
-            </b-input-group>
-          </b-form-group>
-          <b-form-group
+            </BInputGroup>
+          </BFormGroup>
+          <BFormGroup
             :label="$t('passwort')"
             label-class="label-with-colon"
             :state="passwordIsValid"
             :invalid-feedback="passwordError"
             :valid-feedback="$t('login.gueltig')"
           >
-            <b-form-input
+            <BFormInput
               :placeholder="$t('passwort')"
               type="password"
               :state="passwordIsValid"
               v-model="password"
-            ></b-form-input>
-          </b-form-group>
-          <b-form-group
+            ></BFormInput>
+          </BFormGroup>
+          <BFormGroup
             :label="$t('passwort')"
             label-class="label-with-colon"
             :state="passwordRepetitionIsValid"
             :invalid-feedback="passwordRepetitionError"
             :valid-feedback="$t('login.gueltig')"
           >
-            <b-form-input
+            <BFormInput
               :placeholder="$t('login.passwort-wiederholen')"
               type="password"
               :state="passwordRepetitionIsValid"
               v-model="passwordRepetition"
-            ></b-form-input>
-          </b-form-group>
+            ></BFormInput>
+          </BFormGroup>
 
-          <div class="d-flex">
-            <b-button
-              type="submit"
-              :style="{ color: 'white' }"
-              variant="primary"
-              class="mr-2"
-              block
-              :disabled="
-                !usernameIsValid ||
-                !emailIsValid ||
-                !passwordIsValid ||
-                !passwordRepetitionIsValid
-              "
-            >
-              <b-spinner small v-if="loading" />
-              <span v-else>{{ $t("registrieren") }}</span>
-            </b-button>
-            <b-button
+          <div class="d-flex my-2">
+            <div class="d-grid" :style="{ width: '100%' }">
+              <BButton
+                type="submit"
+                :style="{ color: 'white' }"
+                variant="primary"
+                class="me-2"
+                :disabled="
+                  !usernameIsValid ||
+                  !emailIsValid ||
+                  !passwordIsValid ||
+                  !passwordRepetitionIsValid
+                "
+              >
+                <BSpinner small v-if="loading" />
+                <span v-else>{{ $t("registrieren") }}</span>
+              </BButton>
+            </div>
+            <BButton
               type="reset"
               variant="light"
-              v-b-tooltip.hover
-              :title="$t('login.formular-zuruecksetzen')"
+              v-b-tooltip.hover="$t('login.formular-zuruecksetzen')"
             >
-              <b-icon-arrow-counterclockwise />
-            </b-button>
+              <IBiArrowCounterclockwise />
+            </BButton>
           </div>
 
           <p class="my-3">
             {{ $t("login.du-hast-schon-ein-konto") }}
             <a href="#" @click="() => (tabIndex = 0)">{{ $t("anmelden") }}</a>
           </p>
-        </b-form>
+        </BForm>
 
-        <b-card :title="$t('login.information')" class="mb-3">
-          <b-card-text>
-            <i18n path="login.information-text-1" tag="p">
+        <BCard :title="$t('login.information')" class="mb-3">
+          <BCardText>
+            <I18n-t keypath="login.information-text-1" tag="p">
               <b>{{ $t("login.information-text-1-highlight") }}</b>
-            </i18n>
-            <i18n path="login.information-text-2" tag="p">
+            </I18n-t>
+            <I18n-t keypath="login.information-text-2" tag="p">
               <b>{{ $t("login.information-text-2-highlight") }}</b>
-            </i18n>
-            <i18n path="login.information-text-3" tag="p">
+            </I18n-t>
+            <I18n-t keypath="login.information-text-3" tag="p">
               <b>{{ $t("login.information-text-3-highlight") }}</b>
-            </i18n>
-          </b-card-text>
-        </b-card>
-      </b-tab>
-    </b-tabs>
+            </I18n-t>
+          </BCardText>
+        </BCard>
+      </BTab>
+    </BTabs>
 
     <ConfirmEmailModal ref="confirmEmailModal" />
 
@@ -187,10 +184,12 @@
       ref="passwordResetModal"
       @passwordResetRequested="onPasswordReset"
     />
-  </b-container>
+  </BContainer>
 </template>
 
 <script>
+import { useHead } from "@unhead/vue";
+import { computed, getCurrentInstance } from "vue";
 import ConfirmEmailModal from "@/components/modals/ConfirmEmailModal.vue";
 import PasswordResetModal from "@/components/modals/PasswordResetModal.vue";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
@@ -250,13 +249,70 @@ export default {
           error(e, ERROR_CODES.SSO_LOGIN_FAILED);
           this.showFailMessage(e.response.data);
         });
+
+    const { proxy } = getCurrentInstance();
+
+    const baseMeta = [
+      {
+        name: "description",
+        content: computed(() => proxy.$t("meta.loginView.description")),
+      },
+      {
+        name: "twitter:description",
+        content: computed(() => proxy.$t("meta.loginView.description")),
+      },
+      {
+        property: "og:description",
+        content: computed(() => proxy.$t("meta.loginView.description")),
+      },
+      {
+        property: "og:title",
+        content: computed(
+          () =>
+            `${proxy.$t("anmelden")} - ${proxy.$t(
+              "general.ChoreoPlaner"
+            )} | ${proxy.$t("login.meta.dein-zugang-zu-allen-funktionen")}`
+        ),
+      },
+      {
+        name: "twitter:title",
+        content: computed(
+          () =>
+            `${proxy.$t("anmelden")} - ${proxy.$t(
+              "general.ChoreoPlaner"
+            )} | ${proxy.$t("login.meta.dein-zugang-zu-allen-funktionen")}`
+        ),
+      },
+    ];
+
+    if (this.isWelcome) {
+      baseMeta.push(
+        {
+          property: "og:image",
+          content: "/Willkommen.png",
+        },
+        {
+          name: "twitter:image",
+          content: "/Willkommen.png",
+        }
+      );
+    }
+
+    useHead({
+      title: computed(
+        () =>
+          `${proxy.$t("anmelden")} - ${proxy.$t(
+            "general.ChoreoPlaner"
+          )} | ${proxy.$t("login.meta.dein-zugang-zu-allen-funktionen")}`
+      ),
+      titleTemplate: null,
+      meta: baseMeta,
+    });
   },
   methods: {
     redirect() {
       this.$router
-        .push(
-          this.$route.query?.redirectUrl || `/${this.$root.$i18n.locale}/start`
-        )
+        .push(this.$route.query?.redirectUrl || `/${this.$i18n.locale}/start`)
         .catch(() => {
           error(
             "Redundant navigation to redirect url or start",
@@ -267,17 +323,14 @@ export default {
     showFailMessage(message, title = null) {
       MessagingService.showError(message, title);
     },
-    onReset(event) {
-      event.preventDefault();
+    onReset() {
       this.username = null;
       this.email = null;
       this.password = null;
       this.passwordRepetition = null;
       this.loading = false;
     },
-    onLoginSubmit(event) {
-      event.preventDefault();
-
+    onLoginSubmit() {
       this.loading = true;
 
       AuthService.login(this.username, this.password, this.email)
@@ -286,8 +339,7 @@ export default {
           window._paq.push(["trackGoal", 2]);
           this.$router
             .push(
-              this.$route.query?.redirectUrl ||
-                `/${this.$root.$i18n.locale}/start`
+              this.$route.query?.redirectUrl || `/${this.$i18n.locale}/start`
             )
             .catch(() => {
               error(
@@ -315,9 +367,7 @@ export default {
           }
         });
     },
-    onRegisterSubmit(event) {
-      event.preventDefault();
-
+    onRegisterSubmit() {
       this.loading = true;
 
       AuthService.register(this.username, this.password, this.email)
@@ -327,8 +377,7 @@ export default {
           // this.$refs.confirmEmailModal.open();
           this.$router
             .push(
-              this.$route.query?.redirectUrl ||
-                `/${this.$root.$i18n.locale}/start`
+              this.$route.query?.redirectUrl || `/${this.$i18n.locale}/start`
             )
             .catch(() => {
               error(
@@ -415,60 +464,6 @@ export default {
     isWelcome() {
       return this.$route.path == "/willkommen";
     },
-  },
-  metaInfo() {
-    const meta = {
-      title: `${this.$t("anmelden")} - ${this.$t(
-        "general.ChoreoPlaner"
-      )} | ${this.$t("login.meta.dein-zugang-zu-allen-funktionen")}`,
-      titleTemplate: null,
-      meta: [
-        {
-          vmid: "description",
-          name: "description",
-          content: this.$t("meta.loginView.description"),
-        },
-        {
-          vmid: "twitter:description",
-          name: "twitter:description",
-          content: this.$t("meta.loginView.description"),
-        },
-        {
-          vmid: "og:description",
-          property: "og:description",
-          content: this.$t("meta.loginView.description"),
-        },
-        {
-          vmid: "og:title",
-          property: "og:title",
-          content: `${this.$t("anmelden")} - ${this.$t(
-            "general.ChoreoPlaner"
-          )} | ${this.$t("login.meta.dein-zugang-zu-allen-funktionen")}`,
-        },
-        {
-          vmid: "twitter:title",
-          name: "twitter:title",
-          content: `${this.$t("anmelden")} - ${this.$t(
-            "general.ChoreoPlaner"
-          )} | ${this.$t("login.meta.dein-zugang-zu-allen-funktionen")}`,
-        },
-      ],
-    };
-    if (this.isWelcome) {
-      meta.meta.push(
-        {
-          vmid: "og:image",
-          property: "og:image",
-          content: "/Willkommen.png",
-        },
-        {
-          vmid: "twitter:image",
-          name: "twitter:image",
-          content: "/Willkommen.png",
-        }
-      );
-    }
-    return meta;
   },
 };
 </script>

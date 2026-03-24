@@ -1,5 +1,6 @@
 <template>
-  <b-modal
+  <BModal
+    ref="modal"
     :id="`modal-newClub-${id}`"
     :title="$t('modals.create-club.neuer-verein')"
     centered
@@ -12,34 +13,34 @@
     "
     :no-close-on-backdrop="preventClosing"
     :no-close-on-esc="preventClosing"
-    :hide-header-close="preventClosing"
+    :no-header-close="preventClosing"
   >
-    <b-form>
-      <b-form-group
+    <BForm>
+      <BFormGroup
         :label="$t('modals.create-club.vereinsname')"
         label-class="label-with-colon"
         :state="newClubNameIsValid"
         :invalid-feedback="newClubNameStateFeedback"
         :valid-feedback="$t('login.gueltig')"
       >
-        <b-form-input
+        <BFormInput
           v-model="newClubName"
           :state="newClubNameIsValid"
           required
           :placeholder="$t('modals.create-club.example-team-names')"
           autofocus
         />
-      </b-form-group>
-    </b-form>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="success" :disabled="!newClubNameIsValid">
+      </BFormGroup>
+    </BForm>
+    <template #footer="{ ok, cancel }">
+      <BButton @click="ok" variant="success" :disabled="!newClubNameIsValid">
         {{ $t("erstellen") }}
-      </b-button>
-      <b-button v-if="!preventClosing" @click="cancel" variant="danger">
+      </BButton>
+      <BButton v-if="!preventClosing" @click="cancel" variant="danger">
         {{ $t("abbrechen") }}
-      </b-button>
+      </BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -83,10 +84,10 @@ export default {
   },
   methods: {
     open() {
-      this.$bvModal.show(`modal-newClub-${this.id}`);
+      this.$refs.modal.show();
     },
     close() {
-      this.$bvModal.hide(`modal-newClub-${this.id}`);
+      this.$refs.modal.hide();
     },
     resetClubModal() {
       this.newClubName = null;

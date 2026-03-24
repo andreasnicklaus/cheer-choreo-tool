@@ -1,5 +1,6 @@
 <template>
-  <b-modal
+  <BModal
+    ref="modal"
     :id="`changeMatLayoutModal-${id}`"
     centered
     @show="
@@ -11,34 +12,32 @@
     "
     @ok="changeMatType"
   >
-    <template #modal-title>
+    <template #title>
       {{ $t("modals.change-mat.layout-der-buehne-matte-aendern") }}
       <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
     </template>
-    <b-form>
-      <b-form-group
+    <BForm>
+      <BFormGroup
         :label="$t('mat')"
         label-class="label-with-colon"
         :state="newMatTypeIsValid"
         :invalid-feedback="newMatTypeStateFeedback"
       >
-        <b-form-select
+        <BFormSelect
           v-model="newMatType"
           required
           :state="newMatTypeIsValid"
           :options="matTypeOptions"
         />
-      </b-form-group>
-    </b-form>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="success" :disabled="!newMatTypeIsValid">
+      </BFormGroup>
+    </BForm>
+    <template #footer="{ ok, cancel }">
+      <BButton @click="ok" variant="success" :disabled="!newMatTypeIsValid">
         {{ $t("modals.change-mat.layout-aendern") }}
-      </b-button>
-      <b-button @click="cancel" variant="danger">{{
-        $t("abbrechen")
-      }}</b-button>
+      </BButton>
+      <BButton @click="cancel" variant="danger">{{ $t("abbrechen") }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -79,7 +78,7 @@ export default {
   },
   methods: {
     open() {
-      this.$bvModal.show(`changeMatLayoutModal-${this.id}`);
+      this.$refs.modal.show();
     },
     changeMatType() {
       ChoreoService.changeMatType(this.choreo.id, this.newMatType).then(() => {

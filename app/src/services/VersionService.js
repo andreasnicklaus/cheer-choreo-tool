@@ -1,6 +1,8 @@
 import { debug, error } from "@/utils/logging";
 import ax from "./RequestService";
 import ERROR_CODES from "@/utils/error_codes";
+import { isPrerender } from "@/utils/isPrerender";
+import env from "../utils/env";
 
 /**
  * List of application versions with their active periods.
@@ -47,7 +49,7 @@ class VersionService {
    * @returns {string} App version
    */
   getAppVersion() {
-    return process.env.VUE_APP_VERSION;
+    return env.VITE_VERSION;
   }
 
   /**
@@ -57,6 +59,11 @@ class VersionService {
   async getServerVersion() {
     debug("Querying serverVersion", { serverVersion: this.serverVersion });
     if (this.serverVersion) return this.serverVersion;
+
+    if (isPrerender()) {
+      debug("Prerendering detected, skipping server version query");
+      return null;
+    }
 
     return ax
       .get("/version")

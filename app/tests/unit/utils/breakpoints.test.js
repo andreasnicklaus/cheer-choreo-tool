@@ -1,5 +1,5 @@
 import state from "@/utils/breakpoints";
-import { test, expect, describe } from "@jest/globals";
+import { test, expect, describe } from "vitest";
 
 describe("breakpoints", () => {
   test("state has screen property", () => {

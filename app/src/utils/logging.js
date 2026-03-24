@@ -5,9 +5,11 @@ import VersionService from "@/services/VersionService";
 import store from "@/store";
 import { Logtail } from "@logtail/browser";
 import ERROR_CODES from "./error_codes";
+import { isPrerender } from "./isPrerender";
+import env from "./env";
 
-const SOURCE_TOKEN = process.env.VUE_APP_BETTERSTACK_SOURCE_TOKEN;
-const INGESTING_HOST = process.env.VUE_APP_BETTERSTACK_INGESTING_HOST;
+const SOURCE_TOKEN = env.VITE_BETTERSTACK_SOURCE_TOKEN;
+const INGESTING_HOST = env.VITE_BETTERSTACK_INGESTING_HOST;
 const isTestEnvironment = localStorage.getItem("isTestEnvironment") == "true";
 
 let logtail;
@@ -17,11 +19,11 @@ if (SOURCE_TOKEN && INGESTING_HOST && !isTestEnvironment)
   });
 
 const SESSION_ID =
-  (process.env.NODE_ENV == "production" ? "PROD-" : "DEV-") +
+  (isPrerender() ? "PRERENDER-" : env.PROD ? "PROD-" : "DEV-") +
   (Math.random() + 1).toString(36).substring(7); // njsscan-ignore: node_insecure_random_generator
 
 const sendLogsToIngest = SOURCE_TOKEN && INGESTING_HOST && !isTestEnvironment;
-// const sendLogsToIngest = process.env.NODE_ENV == "production";
+// const sendLogsToIngest = env.PROD;
 
 console.image = async function (url, size = 100) {
   const img = await fetch("/Icon.png");
@@ -57,37 +59,44 @@ const DEFAULT_TEXT_STYLE =
  * @returns {void}
  */
 export async function logWelcomeMessage() {
-  console.clear();
+  // console.clear();
 
   await console.image("/Icon.png");
 
   console.log(
-    `${i18n.t("logging.welcome")}`,
+    `${i18n.global.t("logging.welcome")}`,
     `${DEFAULT_TEXT_STYLE} font-size: 36px; font-weight: bolder;`,
     `${DEFAULT_TEXT_STYLE}`
   );
 
   console.log(
-    i18n.t("logging.warning"),
+    i18n.global.t("logging.warning"),
     `${DEFAULT_TEXT_STYLE} color: #dc3545; font-weight: bold; font-size: 1.2rem;`,
     `${DEFAULT_TEXT_STYLE} color: #dc3545;`
   );
 
   const details = [
     {
-      key: i18n.t("logging.app-version"),
+      key: i18n.global.t("logging.app-version"),
       value: VersionService.getAppVersion(),
     },
     {
-      key: i18n.t("logging.server-version"),
+      key: i18n.global.t("logging.server-version"),
       value:
-        (await VersionService.getServerVersion()) || i18n.t("errors.unknown"),
+        (await VersionService.getServerVersion()) ||
+        i18n.global.t("errors.unknown"),
     },
-    { key: i18n.t("logging.user-agent"), value: window.navigator.userAgent },
-    { key: i18n.t("logging.current-locale"), value: i18n.locale },
     {
-      key: i18n.t("logging.available-locales"),
-      value: i18n.availableLocales.join(", "),
+      key: i18n.global.t("logging.user-agent"),
+      value: window.navigator.userAgent,
+    },
+    {
+      key: i18n.global.t("logging.current-locale"),
+      value: i18n.global.locale.value,
+    },
+    {
+      key: i18n.global.t("logging.available-locales"),
+      value: i18n.global.availableLocales.join(", "),
     },
   ];
   const styles = [];
@@ -124,7 +133,7 @@ export function log(...messages) {
     logtail.info(messages.join(), {
       state: store?.state,
       version: VersionService.getAppVersion(),
-      user_locale: i18n.locale,
+      user_locale: i18n.global.locale.value,
       SESSION_ID,
     });
   }
@@ -145,7 +154,7 @@ export function debug(...messages) {
     logtail.debug(message, {
       state: store?.state,
       version: VersionService.getAppVersion(),
-      user_locale: i18n.locale,
+      user_locale: i18n.global.locale.value,
       SESSION_ID,
     });
   }
@@ -163,7 +172,7 @@ export function warn(...messages) {
     logtail.warn(messages.join(), {
       state: store?.state,
       version: VersionService.getAppVersion(),
-      user_locale: i18n.locale,
+      user_locale: i18n.global.locale.value,
       SESSION_ID,
     });
   }
@@ -181,7 +190,7 @@ export function error(message, errorCode = ERROR_CODES.UNKNOWN_ERROR) {
     logtail.error(`${errorCode} ${message}`, {
       state: store?.state,
       version: VersionService.getAppVersion(),
-      user_locale: i18n.locale,
+      user_locale: i18n.global.locale.value,
       errorCode,
       SESSION_ID,
     });
@@ -208,7 +217,7 @@ export function logRequest(status, time, url) {
           time,
           url,
         },
-        user_locale: i18n.locale,
+        user_locale: i18n.global.locale.value,
         SESSION_ID,
       });
     }
@@ -223,7 +232,7 @@ export function logRequest(status, time, url) {
           time,
           url,
         },
-        user_locale: i18n.locale,
+        user_locale: i18n.global.locale.value,
         SESSION_ID,
       });
     }

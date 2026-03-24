@@ -13,37 +13,40 @@
   >
     <p>
       🍪
-      <i18n path="consent.info-text">
+      <i18n-t keypath="consent.info-text">
         <router-link
           :to="{
             name: 'Datenschutz',
-            params: { locale: $root.$i18n.locale },
+            params: { locale: $i18n.locale },
           }"
           >{{ $t("datenschutz.datenschutzerklaerung") }}</router-link
         >
-      </i18n>
+      </i18n-t>
     </p>
-    <b-row align-v="center">
-      <b-col>
-        <b-button
-          variant="success"
-          @click="consent"
-          block
-          :style="{ color: 'white' }"
-        >
-          {{ $t("consent.einwilligen") }}
-        </b-button>
-      </b-col>
-      <b-col cols="12" md="auto" class="text-center">
-        <b-button variant="link" @click="closeWithoutConsent">
+    <BRow align-v="center">
+      <BCol>
+        <div class="d-grid gap-2">
+          <BButton
+            variant="success"
+            @click="consent"
+            :style="{ color: 'white' }"
+          >
+            {{ $t("consent.einwilligen") }}
+          </BButton>
+        </div>
+      </BCol>
+      <BCol cols="12" md="auto" class="text-center">
+        <BButton variant="link" @click="closeWithoutConsent">
           {{ $t("consent.ablehnen") }}
-        </b-button>
-      </b-col>
-    </b-row>
+        </BButton>
+      </BCol>
+    </BRow>
   </div>
 </template>
 
 <script>
+import Cookies from "js-cookie";
+
 const cookieName = "mtm_consent";
 const dismissCookieName = "consent-dismissed";
 
@@ -60,12 +63,14 @@ export default {
     showConsentWindow: false,
   }),
   mounted() {
-    const consent = this.$cookie.get(cookieName);
-    if (!consent) {
-      const dismissed = this.$cookie.get(dismissCookieName);
-      if (!dismissed) this.showConsentWindow = true;
-    } else {
-      window._paq.push(["rememberConsentGiven"]);
+    if (localStorage.getItem("isTestEnvironment") !== "true") {
+      const consent = Cookies.get(cookieName);
+      if (!consent) {
+        const dismissed = Cookies.get(dismissCookieName);
+        if (!dismissed) this.showConsentWindow = true;
+      } else {
+        window._paq?.push(["rememberConsentGiven"]);
+      }
     }
   },
   methods: {
@@ -75,7 +80,7 @@ export default {
     },
     closeWithoutConsent() {
       this.showConsentWindow = false;
-      this.$cookie.set(dismissCookieName, true, { expires: 1 });
+      Cookies.set(dismissCookieName, true, { expires: 1 });
     },
   },
 };

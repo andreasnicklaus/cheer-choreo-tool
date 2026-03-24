@@ -1,26 +1,28 @@
 import {
+  describe,
   test,
   expect,
-  jest,
+  vi,
   beforeEach,
   beforeAll,
   afterAll,
-} from "@jest/globals";
-import { describe } from "node:test";
+} from "vitest";
 import ax from "@/services/RequestService";
 import VersionService from "@/services/VersionService";
 
-jest.mock("@/services/RequestService", () => ({
-  get: jest.fn(),
-  post: jest.fn(),
-  put: jest.fn(),
-  patch: jest.fn(),
-  delete: jest.fn(),
+vi.mock("@/services/RequestService", () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    patch: vi.fn(),
+    delete: vi.fn(),
+  },
 }));
 
 describe("VersionService", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     VersionService.resetCache();
   });
 
@@ -43,6 +45,7 @@ describe("VersionService", () => {
 
       expect(ax.get).toHaveBeenCalledWith("/version");
     });
+
     test("should return cached value on second request", async () => {
       ax.get.mockResolvedValueOnce({ data: "1.0.0" });
       const firstResult = await VersionService.getServerVersion();
@@ -55,19 +58,17 @@ describe("VersionService", () => {
   });
 
   describe("getAppVersion", () => {
-    const OLD_ENV = process.env;
-
     beforeEach(() => {
-      jest.resetModules(); // Most important - it clears the cache
-      process.env = { ...OLD_ENV }; // Make a copy
+      vi.resetModules(); // Most important - it clears the cache
+      vi.unstubAllEnvs();
     });
 
     afterAll(() => {
-      process.env = OLD_ENV; // Restore old environment
+      vi.unstubAllEnvs();
     });
 
     test("should retrieve the app version from environment variable", () => {
-      process.env.VUE_APP_VERSION = "1.0.0";
+      vi.stubEnv("VITE_VERSION", "1.0.0");
 
       const result = VersionService.getAppVersion();
 
@@ -77,19 +78,19 @@ describe("VersionService", () => {
 
   describe("isVersionNew", () => {
     beforeAll(() => {
-      jest.useFakeTimers("modern");
+      vi.useFakeTimers("modern");
     });
     afterAll(() => {
-      jest.useRealTimers();
+      vi.useRealTimers();
     });
     test("should return true if app version is within tag time range", () => {
-      jest.setSystemTime(new Date(2025, 6, 15));
+      vi.setSystemTime(new Date(2025, 6, 15));
       const result = VersionService.isVersionNew("0.10.3");
       expect(result).toBeTruthy();
     });
 
     test("should return false if app version is outside of tag time range", () => {
-      jest.setSystemTime(new Date(2025, 6, 16));
+      vi.setSystemTime(new Date(2025, 6, 16));
       const result = VersionService.isVersionNew("0.10.3");
       expect(result).toBeFalsy();
     });

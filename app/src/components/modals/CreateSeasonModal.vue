@@ -1,5 +1,6 @@
 <template>
-  <b-modal
+  <BModal
+    ref="modal"
     :id="`modal-newSeason-${id}`"
     :title="$t('modals.create-season.neue-season')"
     size="xl"
@@ -10,59 +11,59 @@
     <p class="text-muted">
       {{ $t("modals.create-season.team-team-name", [team?.name]) }}
     </p>
-    <b-tabs fill v-model="tabIndex">
-      <b-tab
+    <BTabs fill v-model="tabIndex">
+      <BTab
         :title="$t('modals.create-season.regulaere-season')"
         class="pt-2"
         :disabled="this.seasonSelectOptions.length == 0"
       >
-        <b-form>
-          <b-form-group
-            :label="$tc('season', 1)"
+        <BForm>
+          <BFormGroup
+            :label="$t('season', 1)"
             label-class="label-with-colon"
             :state="seasonIsValid"
             :invalid-feedback="seasonStateFeedback"
           >
-            <b-form-select
+            <BFormSelect
               v-model="seasonId"
               :state="seasonIsValid"
               required
               :options="this.seasonSelectOptions"
             />
-          </b-form-group>
-        </b-form>
-      </b-tab>
-      <b-tab :title="$t('modals.create-season.extra-events')" class="pt-2">
-        <b-form>
-          <b-form-group
+          </BFormGroup>
+        </BForm>
+      </BTab>
+      <BTab :title="$t('modals.create-season.extra-events')" class="pt-2">
+        <BForm>
+          <BFormGroup
             :label="$t('modals.create-season.name-der-event-gruppe')"
             label-class="label-with-colon"
             :state="newSeasonNameIsValid"
             :invalid-feedback="newSeasonNameStateFeedback"
             :valid-feedback="$t('login.gueltig')"
           >
-            <b-form-input
+            <BFormInput
               v-model="newSeasonName"
               required
               :placeholder="$t('modals.create-season.example-event-name')"
               :state="newSeasonNameIsValid"
             />
-          </b-form-group>
-          <b-form-group
+          </BFormGroup>
+          <BFormGroup
             :label="$t('jahr')"
             label-class="label-with-colon"
             :state="newSeasonYearIsValid"
             :invalid-feedback="newSeasonYearStateFeedback"
             :valid-feedback="$t('login.gueltig')"
           >
-            <b-form-input
+            <BFormInput
               v-model="newSeasonYear"
               type="number"
               :placeholder="new Date().getFullYear().toString()"
               :state="newSeasonYearIsValid"
             />
-          </b-form-group>
-        </b-form>
+          </BFormGroup>
+        </BForm>
         <hr />
         <div class="text-muted">
           <p>
@@ -74,18 +75,18 @@
             {{ $t("modals.create-season.jahr-info") }}
           </p>
         </div>
-      </b-tab>
-    </b-tabs>
+      </BTab>
+    </BTabs>
 
     <hr />
 
-    <b-form-group
+    <BFormGroup
       :label="$t('modals.create-season.team-mitglieder')"
       label-class="label-with-colon"
       :state="newSeasonMembersIsValid"
       :invalid-feedback="newSeasonMembersStateFeedback"
     >
-      <b-form-select
+      <BFormSelect
         v-model="seasonToCopyMembersFromId"
         :options="[
           {
@@ -96,7 +97,7 @@
         ]"
         :state="newSeasonMembersIsValid"
       />
-      <b-checkbox-group
+      <BFormCheckboxGroup
         v-model="newSeasonMemberIds"
         :options="newMemberOptions"
         stacked
@@ -104,17 +105,15 @@
         class="mt-2"
         :state="newSeasonMembersIsValid"
       />
-    </b-form-group>
+    </BFormGroup>
 
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="success" :disabled="!inputIsValid">
+    <template #footer="{ ok, cancel }">
+      <BButton @click="ok" variant="success" :disabled="!inputIsValid">
         {{ $t("erstellen") }}
-      </b-button>
-      <b-button @click="cancel" variant="danger">{{
-        $t("abbrechen")
-      }}</b-button>
+      </BButton>
+      <BButton @click="cancel" variant="danger">{{ $t("abbrechen") }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -184,9 +183,11 @@ export default {
   },
   methods: {
     open(teamId) {
-      this.$bvModal.show(`modal-newSeason-${this.id}`);
-      this.teamId = teamId;
-      this.load();
+      this.$refs.modal.show();
+      this.$nextTick(() => {
+        this.teamId = teamId;
+        this.load();
+      });
     },
     load() {
       SeasonService.getAll().then((seasons) => {

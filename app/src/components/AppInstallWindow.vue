@@ -1,41 +1,32 @@
 <template>
-  <b-alert
-    :show="Boolean(installationPrompt)"
+  <BAlert
+    :model-value="Boolean(installationPrompt)"
     class="m-0 py-3 px-4"
     fade
-    :style="{
-      position: 'sticky',
-      top: 0,
-      zIndex: 99,
-      backgroundColor: '#fff',
-      border: 'none',
-      boxShadow: '0px 0px 25px #aaa',
-      color: '#2c3e50',
-    }"
+    variant="light"
+    body-class="w-100 me-2"
   >
-    <b-row align-h="end" align-v="center" :style="{ rowGap: '1rem' }">
-      <b-col cols="12" md="">
+    <BRow align-h="end" align-v="center" :style="{ rowGap: '1rem' }">
+      <BCol cols="12" md="">
         <h4>{{ $t("app-install.app-herunterladen") }}</h4>
         {{ $t("app-install.install-info") }}
-      </b-col>
-      <b-col cols="auto">
-        <b-button @click="dismiss" variant="link" class="mr-2">
+      </BCol>
+      <BCol cols="auto">
+        <BButton @click="dismiss" variant="link" class="me-2">
           <u>{{ $t("app-install.nein-danke") }}</u>
-        </b-button>
-        <b-button
-          @click="install"
-          variant="success"
-          :style="{ color: 'white' }"
-        >
-          <b-icon-download class="mr-2" />
+        </BButton>
+        <BButton @click="install" variant="success" :style="{ color: 'white' }">
+          <IBiDownload class="me-2" />
           {{ $t("app-install.installieren") }}
-        </b-button>
-      </b-col>
-    </b-row>
-  </b-alert>
+        </BButton>
+      </BCol>
+    </BRow>
+  </BAlert>
 </template>
 
 <script>
+import Cookies from "js-cookie";
+
 const cookieName = "install-dismissed";
 
 /**
@@ -61,10 +52,10 @@ export default {
 
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
-      const cookie = this.$cookie.get(cookieName);
+      const cookie = Cookies.get(cookieName);
       if (cookie == null) {
         this.installationPrompt = null;
-        this.$cookie.set(cookieName, "false", { expires: 30 });
+        Cookies.set(cookieName, "false", { expires: 30 });
       }
       if (cookie == "false") {
         this.installationPrompt = e;
@@ -76,7 +67,7 @@ export default {
   },
   methods: {
     async dismiss() {
-      this.$cookie.set(cookieName, "true", { expires: 30 });
+      Cookies.set(cookieName, "true", { expires: 30 });
       this.installationPrompt = null;
     },
     async install() {

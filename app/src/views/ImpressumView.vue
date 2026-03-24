@@ -1,5 +1,5 @@
 <template>
-  <b-container id="impressumView" data-view>
+  <BContainer id="impressumView" data-view class="mt-5 mb-5">
     <h1 class="mb-4">{{ $t("impressumView.impressum") }}</h1>
     <h2>{{ $t("impressumView.angaben-gemaess-5-tmg") }}</h2>
     <p>
@@ -33,50 +33,53 @@
       <br />
       {{ $t("impressumView.online-streitbeilegung-text-2") }}
     </p>
-  </b-container>
+  </BContainer>
 </template>
 
 <script>
-/**
- * @vue-computed {MetaInfo} metaInfo
- */
+import { useHead } from "@unhead/vue";
+import { computed, getCurrentInstance } from "vue";
+
 export default {
   name: "ImpressumView",
-  metaInfo() {
-    return {
-      title: this.$t("impressumView.impressum"),
+  mounted() {
+    const { proxy } = getCurrentInstance();
+
+    useHead({
+      title: computed(() => proxy.$t("impressumView.impressum")),
       meta: [
         {
-          vmid: "description",
           name: "description",
-          content: this.$t("meta.impressum.description"),
+          content: computed(() => proxy.$t("meta.impressum.description")),
         },
         {
-          vmid: "twitter:description",
           name: "twitter:description",
-          content: this.$t("meta.impressum.description"),
+          content: computed(() => proxy.$t("meta.impressum.description")),
         },
         {
-          vmid: "og:description",
           property: "og:description",
-          content: this.$t("meta.impressum.description"),
+          content: computed(() => proxy.$t("meta.impressum.description")),
         },
         {
-          vmid: "og:title",
           property: "og:title",
-          content: `${this.$t("impressumView.impressum")} - ${this.$t(
-            "general.ChoreoPlaner"
-          )} | ${this.$t("meta.defaults.title")}`,
+          content: computed(
+            () =>
+              `${proxy.$t("impressumView.impressum")} - ${proxy.$t(
+                "general.ChoreoPlaner"
+              )} | ${proxy.$t("meta.defaults.title")}`
+          ),
         },
         {
-          vmid: "twitter:title",
           name: "twitter:title",
-          content: `${this.$t("impressumView.impressum")} - ${this.$t(
-            "general.ChoreoPlaner"
-          )} | ${this.$t("meta.defaults.title")}`,
+          content: computed(
+            () =>
+              `${proxy.$t("impressumView.impressum")} - ${proxy.$t(
+                "general.ChoreoPlaner"
+              )} | ${proxy.$t("meta.defaults.title")}`
+          ),
         },
       ],
-    };
+    });
   },
 };
 </script>

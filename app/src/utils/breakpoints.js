@@ -1,7 +1,7 @@
-import Vue from "vue";
+import { reactive } from "vue";
 import { debug } from "./logging";
 
-const state = Vue.observable({
+const state = reactive({
   screen: {},
 });
 

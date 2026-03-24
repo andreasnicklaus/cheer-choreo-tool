@@ -1,7 +1,7 @@
 <template>
-  <b-container data-view>
+  <BContainer data-view>
     <VideoExport />
-  </b-container>
+  </BContainer>
 </template>
 
 <script>

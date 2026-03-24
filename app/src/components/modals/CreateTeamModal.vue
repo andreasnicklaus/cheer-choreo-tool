@@ -1,54 +1,53 @@
 <template>
-  <b-modal
+  <BModal
+    ref="modal"
     :id="`modal-newTeam-${id}`"
     :title="$t('nav.neues-team')"
     centered
     @show="resetTeamModal"
     @ok="createTeam"
   >
-    <b-form>
-      <b-form-group
+    <BForm>
+      <BFormGroup
         :label="$t('name')"
         label-class="label-with-colon"
         :state="newTeamNameIsValid"
         :invalid-feedback="newTeamNameStateFeedback"
         :valid-feedback="$t('login.gueltig')"
       >
-        <b-form-input
+        <BFormInput
           v-model="newTeamName"
           :state="newTeamNameIsValid"
           required
           :placeholder="$t('modals.create-team.example-team-names')"
           autofocus
         />
-      </b-form-group>
-      <b-form-group
-        :label="$tc('season', 1)"
+      </BFormGroup>
+      <BFormGroup
+        :label="$t('season', 1)"
         label-class="label-with-colon"
         :state="seasonIsValid"
         :invalid-feedback="seasonStateFeedback"
       >
-        <b-form-select
+        <BFormSelect
           v-model="seasonId"
           :state="seasonIsValid"
           required
           :options="this.seasonSelectOptions"
         />
-      </b-form-group>
-    </b-form>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button
+      </BFormGroup>
+    </BForm>
+    <template #footer="{ ok, cancel }">
+      <BButton
         @click="ok"
         variant="success"
         :disabled="!newTeamNameIsValid || !seasonIsValid"
       >
         {{ $t("erstellen") }}
-      </b-button>
-      <b-button @click="cancel" variant="danger">{{
-        $t("abbrechen")
-      }}</b-button>
+      </BButton>
+      <BButton @click="cancel" variant="danger">{{ $t("abbrechen") }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -91,7 +90,7 @@ export default {
   methods: {
     open() {
       this.load();
-      this.$bvModal.show(`modal-newTeam-${this.id}`);
+      this.$refs.modal.show();
     },
     load() {
       SeasonService.getAll().then((seasons) => {

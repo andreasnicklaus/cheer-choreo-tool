@@ -1,18 +1,19 @@
 <template>
-  <b-modal
+  <BModal
+    ref="modal"
     :id="`deleteModal-${id}`"
     centered
     @ok="removeChoreo"
     :title="$t('bist-du-sicher')"
   >
     {{ $t("du-kannst-das-nicht-rueckgaengig-machen") }}
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="danger">{{ $t("loeschen") }}</b-button>
-      <b-button @click="cancel" variant="outline-secondary">
+    <template #footer="{ ok, cancel }">
+      <BButton @click="ok" variant="danger">{{ $t("loeschen") }}</BButton>
+      <BButton @click="cancel" variant="outline-secondary">
         {{ $t("abbrechen") }}
-      </b-button>
+      </BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -45,14 +46,14 @@ export default {
   },
   methods: {
     open() {
-      this.$bvModal.show(`deleteModal-${this.id}`);
+      this.$refs.modal.show();
     },
     removeChoreo() {
       ChoreoService.remove(this.choreoId).then(() => {
         this.$router
           .push({
             name: "Start",
-            params: { locale: this.$root.$i18n.locale },
+            params: { locale: this.$i18n.locale },
           })
           .catch(() => {
             error(

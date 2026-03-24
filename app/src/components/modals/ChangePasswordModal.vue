@@ -1,5 +1,6 @@
 <template>
-  <b-modal
+  <BModal
+    ref="modal"
     :id="`changePasswordModal-${id}`"
     :title="$t('accountView.passwort-aendern')"
     centered
@@ -11,23 +12,24 @@
       }
     "
   >
-    <b-form>
-      <b-form-group
+    <BForm>
+      <BFormGroup
         :state="newPasswordIsValid"
         :invalid-feedback="newPasswordStateFeedback"
         :valid-feedback="$t('modals.change-password.dein-passwort-ist-gueltig')"
         :label="$t('modals.change-password.neues-passwort')"
         label-class="label-with-colon"
       >
-        <b-form-input
+        <BFormInput
           v-model="newPassword"
           :placeholder="$t('modals.change-password.neues-passwort')"
+          type="password"
           autofocus
           required
           :state="newPasswordIsValid"
         />
-      </b-form-group>
-      <b-form-group
+      </BFormGroup>
+      <BFormGroup
         :state="passwordRepetitionIsValid"
         :invalid-feedback="passwordRepetitionStateFeedback"
         :valid-feedback="
@@ -38,27 +40,26 @@
         :label="$t('modals.change-password.wiederholung')"
         label-class="label-with-colon"
       >
-        <b-form-input
+        <BFormInput
           v-model="passwordRepetition"
           :placeholder="$t('modals.change-password.neues-passwort')"
           required
+          type="password"
           :state="passwordRepetitionIsValid"
         />
-      </b-form-group>
-    </b-form>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button
+      </BFormGroup>
+    </BForm>
+    <template #footer="{ ok, cancel }">
+      <BButton
         @click="ok"
         variant="success"
         :disabled="!newPasswordIsValid || !passwordRepetitionIsValid"
       >
         {{ $t("modals.change-password.password-aendern") }}
-      </b-button>
-      <b-button @click="cancel" variant="danger">{{
-        $t("abbrechen")
-      }}</b-button>
+      </BButton>
+      <BButton @click="cancel" variant="danger">{{ $t("abbrechen") }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -90,7 +91,7 @@ export default {
   }),
   methods: {
     open() {
-      this.$bvModal.show(`changePasswordModal-${this.id}`);
+      this.$refs.modal.show();
     },
     changePassword() {
       AuthService.changePassword(this.newPassword)

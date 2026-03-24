@@ -1,7 +1,8 @@
 <template>
-  <b-skeleton-wrapper :loading="!currentPositions">
+  <BPlaceholderWrapper :loading="!currentPositions">
     <template #loading>
-      <b-skeleton :width="width + 'px'" :height="_height + 'px'"> </b-skeleton>
+      <BPlaceholder :width="width + 'px'" :height="_height + 'px'">
+      </BPlaceholder>
     </template>
     <svg
       ref="svgCanvas"
@@ -122,7 +123,7 @@
         {{ i + 1 }}
       </text>
     </svg>
-  </b-skeleton-wrapper>
+  </BPlaceholderWrapper>
 </template>
 
 <script>
@@ -155,6 +156,7 @@ import gsap from "gsap";
  */
 export default {
   name: "MatComponent",
+  emits: ["positionChange"],
   data: () => ({
     selectedMemberId: null,
     snappingDistance: 2,
@@ -331,7 +333,6 @@ export default {
   background-color: #e5e5f7;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
-  -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
