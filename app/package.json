@@ -80,5 +80,8 @@
       "./public/docs"
     ],
     "ext": "vue,js,md"
+  },
+  "overrides": {
+    "node-sass": "npm:sass@^1.77.0"
   }
 }
