@@ -65,6 +65,7 @@ jobs:
           path: app/node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('app/package-lock.json') }}
       - name: Cache Puppeteer browsers
+        id: puppeteer-cache
         uses: actions/cache@v4
         with:
           path: ~/.cache/puppeteer
@@ -72,6 +73,9 @@ jobs:
       - name: Install dependencies
         if: steps.cache-node-modules-build.outputs.cache-hit != 'true'
         run: npm ci
+      - name: Install Puppeteer browser
+        if: steps.puppeteer-cache.outputs.cache-hit != 'true'
+        run: npx puppeteer browsers install chrome
 
       - name: Build app
         run: npm run build
