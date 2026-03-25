@@ -4,7 +4,7 @@
     :id="`modal-deleteSeasonTeam-${id}`"
     :title="$t('modals.delete-season.season-loeschen')"
     centered
-    @show="reset"
+    @hidden="reset"
     @ok="deleteSeasonTeam"
   >
     <p class="m-0">{{ $t("du-kannst-das-nicht-rueckgaengig-machen") }}</p>

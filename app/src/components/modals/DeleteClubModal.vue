@@ -4,7 +4,7 @@
     :id="`modal-deleteClub-${id}`"
     :title="$t('modals.delete-club.verein-loeschen')"
     centered
-    @show="reset"
+    @hidden="reset"
     @ok="deleteClub"
   >
     <p class="m-0">{{ $t("du-kannst-das-nicht-rueckgaengig-machen") }}</p>

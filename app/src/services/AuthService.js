@@ -139,7 +139,7 @@ class AuthService {
     debug("Logging out.");
     this.removeToken();
     store.commit("setLoginState", false);
-    if (router.currentRoute.meta.private)
+    if (router.currentRoute.value.meta.private)
       try {
         router.push({
           name: "Login",

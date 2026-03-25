@@ -300,7 +300,7 @@ export default class ChoreoPage extends TestPage {
     await expect(countsheetLink).toBeEnabled();
     return expect(countsheetLink).toHaveAttribute(
       "href",
-      `/pdf/${defaultChoreos[0].id}`
+      `/en/pdf/${defaultChoreos[0].id}`
     );
   }
 

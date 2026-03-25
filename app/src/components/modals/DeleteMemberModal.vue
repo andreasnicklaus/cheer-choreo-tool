@@ -4,7 +4,7 @@
     :id="`modal-deleteMember-${id}`"
     :title="$t('modals.delete-member.teilnehmer-loeschen')"
     centered
-    @show="resetMemberDeleteModal"
+    @hidden="resetMemberDeleteModal"
     @ok="deleteMember"
   >
     <p class="m-0">{{ $t("du-kannst-das-nicht-rueckgaengig-machen") }}</p>

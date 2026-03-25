@@ -4,7 +4,7 @@
     :id="`modal-deleteTeam-${id}`"
     :title="$t('modals.delete-team.team-loeschen')"
     centered
-    @show="reset"
+    @hidden="reset"
     @ok="deleteTeam"
   >
     <p class="m-0">{{ $t("du-kannst-das-nicht-rueckgaengig-machen") }}</p>
