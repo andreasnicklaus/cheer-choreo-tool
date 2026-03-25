@@ -25,15 +25,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
-          cache: "npm"
-          cache-dependency-path: app/package-lock.json
+      - name: Cache node_modules
+        id: cache-node-modules-unit
+        uses: actions/cache@v4
+        with:
+          path: app/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('app/package-lock.json') }}
       - name: Install dependencies
+        if: steps.cache-node-modules-unit.outputs.cache-hit != 'true'
         run: npm ci
         env:
           PUPPETEER_SKIP_DOWNLOAD: true
       - name: Run Unit tests
         run: npm run test:unit
-      # TODO: replace test coverage upload
       - name: Upload Unit Test Coverage Report
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
@@ -54,10 +58,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
-          cache: "npm"
-          cache-dependency-path: app/package-lock.json
-
+      - name: Cache node_modules
+        id: cache-node-modules-build
+        uses: actions/cache@v4
+        with:
+          path: app/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('app/package-lock.json') }}
+      - name: Cache Puppeteer browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/puppeteer
+          key: ${{ runner.os }}-puppeteer-${{ hashFiles('app/package-lock.json') }}
       - name: Install dependencies
+        if: steps.cache-node-modules-build.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Build app
@@ -110,9 +123,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
-          cache: "npm"
-          cache-dependency-path: app/package-lock.json
+      - name: Cache node_modules
+        id: cache-node-modules-integration
+        uses: actions/cache@v4
+        with:
+          path: app/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('app/package-lock.json') }}
       - name: Install dependencies
+        if: steps.cache-node-modules-integration.outputs.cache-hit != 'true'
         run: npm ci
         env:
           PUPPETEER_SKIP_DOWNLOAD: true
