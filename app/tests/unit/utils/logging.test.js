@@ -1,5 +1,12 @@
 import VersionService from "@/services/VersionService";
-import { debug, error, log, logWelcomeMessage, warn } from "@/utils/logging";
+import {
+  debug,
+  error,
+  log,
+  logRequest,
+  logWelcomeMessage,
+  warn,
+} from "@/utils/logging";
 import {
   test,
   expect,
@@ -66,5 +73,12 @@ describe("logging", () => {
   test("console.error is called in warn function", async () => {
     error();
     expect(consoleError).toHaveBeenCalledTimes(1);
+  });
+
+  test("logRequest logs correct success message", () => {
+    logRequest(200, 150, "/test-endpoint");
+    expect(consoleDebug).toHaveBeenCalledWith(
+      "/test-endpoint responded with status 200 in 150 ms"
+    );
   });
 });

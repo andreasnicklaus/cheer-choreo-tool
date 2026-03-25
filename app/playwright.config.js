@@ -46,6 +46,8 @@ export default defineConfig({
     trace: "on-first-retry", // Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer
     locale: "en-GB",
     storageState: "tests/integration/testData/.localstorage-dev.json",
+    trace: "retain-on-failure",
+    video: "retain-on-failure",
   },
 
   /* Configure projects for major browsers */

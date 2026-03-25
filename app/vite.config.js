@@ -160,6 +160,7 @@ export default defineConfig({
         "src/plugins/bootstrap-vue.js",
         "src/plugins/vue-meta.js",
         "src/i18n/**",
+        "src/router/index.js",
       ],
       thresholds: {
         branches: 80,
