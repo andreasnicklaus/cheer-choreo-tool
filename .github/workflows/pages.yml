@@ -75,7 +75,7 @@ jobs:
         run: npm ci
       - name: Install Puppeteer browser
         if: steps.puppeteer-cache.outputs.cache-hit != 'true'
-        run: node node_modules/puppeteer/install.mjs
+        run: node node_modules/puppeteer/install.js
 
       - name: Build app
         run: npm run build
