@@ -1,6 +1,7 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import MessagingService from "@/services/MessagingService";
 
+describe("MessagingService", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });

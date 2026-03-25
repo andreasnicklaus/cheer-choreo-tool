@@ -7,34 +7,12 @@ on:
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  install-dependencies:
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./app
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-          cache: "npm"
-          cache-dependency-path: "**/package.json"
-      - name: Install dependencies
-        run: npm i
-      - name: Upload node_modules
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: app-dev-node-modules
-          path: "app/node_modules/"
-          retention-days: 1
-          compression-level: 6
-
   test-unit:
-    needs: install-dependencies
     timeout-minutes: 60
     runs-on: ubuntu-latest
 
@@ -46,15 +24,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: "lts/*"
           cache: "npm"
-          cache-dependency-path: "**/package.json"
-      - uses: actions/download-artifact@v4
-        with:
-          name: app-dev-node-modules
-          path: app/node_modules
+          cache-dependency-path: app/package-lock.json
       - name: Install dependencies
-        run: npm i
+        run: npm ci
       - name: Run Unit tests
         run: npm run test:unit
       # TODO: replace test coverage upload
@@ -67,7 +41,6 @@ jobs:
           retention-days: 30
 
   build:
-    needs: install-dependencies
     runs-on: ubuntu-latest
 
     defaults:
@@ -75,19 +48,15 @@ jobs:
         working-directory: ./app
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: "lts/*"
           cache: "npm"
-          cache-dependency-path: "**/package.json"
+          cache-dependency-path: app/package-lock.json
 
-      - uses: actions/download-artifact@v4
-        with:
-          name: app-dev-node-modules
       - name: Install dependencies
-        run: npm i
+        run: npm ci
 
       - name: Build app
         run: npm run build
@@ -121,7 +90,6 @@ jobs:
 
   test-integration:
     needs:
-      - install-dependencies
       - build
     timeout-minutes: 60
     runs-on: ubuntu-latest
@@ -139,15 +107,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: "lts/*"
           cache: "npm"
-          cache-dependency-path: "**/package.json"
-      - uses: actions/download-artifact@v4
-        with:
-          name: app-dev-node-modules
-          path: app/node_modules
+          cache-dependency-path: app/package-lock.json
       - name: Install dependencies
-        run: npm i
+        run: npm ci
       - uses: actions/download-artifact@v4
         with:
           name: github-pages
@@ -155,8 +119,15 @@ jobs:
       - name: Unpack dist
         run: tar -xvf artifact.tar
         working-directory: app/dist/
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('app/package-lock.json') }}
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
       - name: Run Playwright tests
         run: npm run test:e2e -- --shard=${{ matrix.shardIndex }}/7
       - name: Upload Playwright Report

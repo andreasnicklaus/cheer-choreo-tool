@@ -139,12 +139,15 @@ class AuthService {
     debug("Logging out.");
     this.removeToken();
     store.commit("setLoginState", false);
-    if (router.currentRoute.value.meta.private)
-      router
-        .push({ name: "Login", params: { locale: i18n.global.locale.value } })
-        .catch(() => {
-          error("Redundant navigation to login", ERROR_CODES.REDUNDANT_ROUTING);
+    if (router.currentRoute.meta.private)
+      try {
+        router.push({
+          name: "Login",
+          params: { locale: i18n.global.locale.value },
         });
+      } catch (e) {
+        error("Redundant navigation to login", ERROR_CODES.REDUNDANT_ROUTING);
+      }
     debug("Successfully logged out");
   }
 
