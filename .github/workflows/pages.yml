@@ -75,7 +75,7 @@ jobs:
         run: npm ci
       - name: Install Puppeteer browser
         if: steps.puppeteer-cache.outputs.cache-hit != 'true'
-        run: npx puppeteer browsers install chrome
+        run: node node_modules/puppeteer/install.mjs
 
       - name: Build app
         run: npm run build
