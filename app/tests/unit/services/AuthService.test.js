@@ -18,7 +18,9 @@ vi.mock("@/router", () => ({
   default: {
     push: vi.fn(),
     currentRoute: {
-      meta: { private: true },
+      value: {
+        meta: { private: true },
+      },
     },
   },
 }));
