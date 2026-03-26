@@ -21,13 +21,14 @@ jobs:
         working-directory: ./app
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: "lts/*"
+          package-manager-cache: false
       - name: Cache node_modules
         id: cache-node-modules-unit
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: app/node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('app/package-lock.json') }}
@@ -39,7 +40,7 @@ jobs:
       - name: Run Unit tests
         run: npm run test:unit
       - name: Upload Unit Test Coverage Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: ${{ !cancelled() }}
         with:
           name: jest-coverage-report
@@ -54,13 +55,14 @@ jobs:
         working-directory: ./app
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: "lts/*"
+          package-manager-cache: false
       - name: Cache node_modules
         id: cache-node-modules-build
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: app/node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('app/package-lock.json') }}
@@ -95,7 +97,7 @@ jobs:
           INPUT_PATH: dist
 
       - name: Upload Built files
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: github-pages
           path: ${{ runner.temp }}/artifact.tar
@@ -116,13 +118,14 @@ jobs:
         shardIndex: [1, 2, 3, 4, 5, 6, 7]
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: "lts/*"
+          package-manager-cache: false
       - name: Cache node_modules
         id: cache-node-modules-integration
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: app/node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('app/package-lock.json') }}
@@ -131,7 +134,7 @@ jobs:
         run: npm ci
         env:
           PUPPETEER_SKIP_DOWNLOAD: true
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: github-pages
           path: app/dist
@@ -140,7 +143,7 @@ jobs:
         working-directory: app/dist/
       - name: Cache Playwright browsers
         id: playwright-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('app/package-lock.json') }}
@@ -153,7 +156,7 @@ jobs:
       - name: Run Playwright tests
         run: npm run test:e2e -- --shard=${{ matrix.shardIndex }}/7
       - name: Upload Playwright Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: ${{ !cancelled() }}
         with:
           name: playwright-report-${{ matrix.shardIndex }}
