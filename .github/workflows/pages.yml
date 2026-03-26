@@ -12,35 +12,64 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test-unit:
-    timeout-minutes: 60
+  install:
+    timeout-minutes: 30
     runs-on: ubuntu-latest
-
     defaults:
       run:
         working-directory: ./app
-
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           node-version: "lts/*"
-          package-manager-cache: false
+      - name: Cache npm
+        uses: actions/cache@v5
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('app/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
       - name: Cache node_modules
-        id: cache-node-modules-unit
+        id: cache-node-modules
         uses: actions/cache@v5
         with:
           path: app/node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('app/package-lock.json') }}
       - name: Install dependencies
-        if: steps.cache-node-modules-unit.outputs.cache-hit != 'true'
-        run: npm ci
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: npm ci --prefer-offline
         env:
           PUPPETEER_SKIP_DOWNLOAD: true
+
+  test-unit:
+    needs: install
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./app
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "lts/*"
+      - name: Cache npm
+        uses: actions/cache@v5
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('app/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+      - name: Restore node_modules
+        uses: actions/cache@v5
+        with:
+          path: app/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('app/package-lock.json') }}
       - name: Run Unit tests
         run: npm run test:unit
       - name: Upload Unit Test Coverage Report
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
         with:
           name: jest-coverage-report
@@ -48,28 +77,29 @@ jobs:
           retention-days: 30
 
   build:
+    timeout-minutes: 15
+    needs: install
     runs-on: ubuntu-latest
-
     defaults:
       run:
         working-directory: ./app
-
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           node-version: "lts/*"
-          package-manager-cache: false
-      - name: Cache node_modules
-        id: cache-node-modules-build
+      - name: Cache npm
+        uses: actions/cache@v5
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('app/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+      - name: Restore node_modules
         uses: actions/cache@v5
         with:
           path: app/node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('app/package-lock.json') }}
-      - name: Install dependencies
-        if: steps.cache-node-modules-build.outputs.cache-hit != 'true'
-        run: npm ci
-
       - name: Build app
         run: npm run build
         env:
@@ -81,33 +111,16 @@ jobs:
       - name: Create CNAME file
         run: echo www.choreo-planer.de > dist/CNAME
 
-      - name: Archive artifact
-        shell: sh
-        run: |
-          echo ::group::Archive artifact
-          tar \
-            --dereference --hard-dereference \
-            --directory "$INPUT_PATH" \
-            -cvf "$RUNNER_TEMP/artifact.tar" \
-            --exclude=.git \
-            --exclude=.github \
-            .
-          echo ::endgroup::
-        env:
-          INPUT_PATH: dist
-
       - name: Upload Built files
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: github-pages
-          path: ${{ runner.temp }}/artifact.tar
+          path: app/dist
 
   test-integration:
-    needs:
-      - build
-    timeout-minutes: 60
+    needs: [build, install]
+    timeout-minutes: 30
     runs-on: ubuntu-latest
-
     defaults:
       run:
         working-directory: ./app
@@ -122,25 +135,22 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: "lts/*"
-          package-manager-cache: false
-      - name: Cache node_modules
-        id: cache-node-modules-integration
+      - name: Cache npm
+        uses: actions/cache@v5
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('app/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+      - name: Restore node_modules
         uses: actions/cache@v5
         with:
           path: app/node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('app/package-lock.json') }}
-      - name: Install dependencies
-        if: steps.cache-node-modules-integration.outputs.cache-hit != 'true'
-        run: npm ci
-        env:
-          PUPPETEER_SKIP_DOWNLOAD: true
       - uses: actions/download-artifact@v7
         with:
           name: github-pages
           path: app/dist
-      - name: Unpack dist
-        run: tar -xvf artifact.tar
-        working-directory: app/dist/
       - name: Cache Playwright browsers
         id: playwright-cache
         uses: actions/cache@v5
@@ -156,7 +166,7 @@ jobs:
       - name: Run Playwright tests
         run: npm run test:e2e -- --shard=${{ matrix.shardIndex }}/7
       - name: Upload Playwright Report
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
         with:
           name: playwright-report-${{ matrix.shardIndex }}
@@ -179,6 +189,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
