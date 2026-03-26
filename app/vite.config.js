@@ -26,7 +26,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ["jspdf", "vue3-html2pdf"],
+    include: ["vue3-html2pdf"],
     exclude: [],
   },
   plugins: [
