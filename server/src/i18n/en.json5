@@ -213,7 +213,7 @@
       title: "Email was sent!"
     },
     "sso-link-was-sent": {
-      message: "An email with a single sign-on link was sent. If you have not prompted this, please contact us immediately.\n\n[Contact Administrators](mailto:admin@choreoplaner.de)",
+      message: "An email with a single sign-on link was sent. If you have not prompted this, please contact us immediately.\n\n[Contact Administrators](mailto:admin@choreo-planer.de)",
       title: "Single Sign-on was sent"
     },
     "team-created": {
