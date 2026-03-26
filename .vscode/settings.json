@@ -3,5 +3,5 @@
   "i18n-ally.regex.key": ".*?",
   "i18n-ally.sourceLanguage": "en",
   "i18n-ally.keystyle": "nested",
-  "conventionalCommits.scopes": ["FE", "BE", "CI", "DOCS"]
+  "conventionalCommits.scopes": ["FE", "BE", "CI", "DOCS", "AGENT"]
 }
