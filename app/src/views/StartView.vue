@@ -490,7 +490,8 @@
 
 <script>
 import { useHead } from "@unhead/vue";
-import { computed, getCurrentInstance } from "vue";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import CreateChoreoModal from "@/components/modals/CreateChoreoModal.vue";
 import CreateClubModal from "@/components/modals/CreateClubModal.vue";
 import CreateSeasonModal from "@/components/modals/CreateSeasonModal.vue";
@@ -537,31 +538,33 @@ export default {
     loading: true,
     filterCollapseVisible: false,
   }),
+  setup() {
+    const { t } = useI18n();
+    return { t };
+  },
   mounted() {
     this.load();
 
-    const { proxy } = getCurrentInstance();
-
     useHead({
-      title: computed(() => proxy.$t("nav.start")),
+      title: computed(() => this.t("nav.start")),
       meta: [
         {
           name: "description",
-          content: computed(() => proxy.$t("meta.defaults.description")),
+          content: computed(() => this.t("meta.defaults.description")),
         },
         {
           name: "twitter:description",
-          content: computed(() => proxy.$t("meta.defaults.description")),
+          content: computed(() => this.t("meta.defaults.description")),
         },
         {
           property: "og:description",
-          content: computed(() => proxy.$t("meta.defaults.description")),
+          content: computed(() => this.t("meta.defaults.description")),
         },
         {
           property: "og:title",
           content: computed(
             () =>
-              `${proxy.$t("general.ChoreoPlaner")} | ${proxy.$t(
+              `${this.t("general.ChoreoPlaner")} | ${this.t(
                 "meta.defaults.title"
               )}`
           ),
@@ -570,7 +573,7 @@ export default {
           name: "twitter:title",
           content: computed(
             () =>
-              `${proxy.$t("general.ChoreoPlaner")} | ${proxy.$t(
+              `${this.t("general.ChoreoPlaner")} | ${this.t(
                 "meta.defaults.title"
               )}`
           ),

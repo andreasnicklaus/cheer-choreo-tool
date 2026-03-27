@@ -439,7 +439,8 @@
 
 <script>
 import { useHead } from "@unhead/vue";
-import { computed, getCurrentInstance } from "vue";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import Mat from "@/components/Mat.vue";
 import ChoreoService from "@/services/ChoreoService";
 import CountSheet from "@/components/CountSheet.vue";
@@ -511,6 +512,10 @@ export default {
     MobileChoreoEditModal,
     NewVersionBadge,
   },
+  setup() {
+    const { t } = useI18n();
+    return { t };
+  },
   data: function () {
     return {
       choreoId: null,
@@ -560,33 +565,31 @@ export default {
       }
     );
 
-    const { proxy } = getCurrentInstance();
-
     useHead({
-      title: computed(() => this.choreo?.name || proxy.$t("pdf.laedt-choreo")),
+      title: computed(() => this.choreo?.name || this.t("pdf.laedt-choreo")),
       meta: [
         {
           vmid: "description",
           name: "description",
-          content: computed(() => proxy.$t("meta.editView.description")),
+          content: computed(() => this.t("meta.editView.description")),
         },
         {
           vmid: "twitter:description",
           name: "twitter:description",
-          content: computed(() => proxy.$t("meta.editView.description")),
+          content: computed(() => this.t("meta.editView.description")),
         },
         {
           vmid: "og:description",
           property: "og:description",
-          content: computed(() => proxy.$t("meta.editView.description")),
+          content: computed(() => this.t("meta.editView.description")),
         },
         {
           vmid: "og:title",
           property: "og:title",
           content: computed(
             () =>
-              (proxy.choreo?.name || proxy.$t("pdf.laedt-choreo")) +
-              ` - ${proxy.$t("general.ChoreoPlaner")} | ${proxy.$t(
+              (this.choreo?.name || this.t("pdf.laedt-choreo")) +
+              ` - ${this.t("general.ChoreoPlaner")} | ${this.t(
                 "meta.defaults.title"
               )}`
           ),
@@ -596,8 +599,8 @@ export default {
           name: "twitter:title",
           content: computed(
             () =>
-              (proxy.choreo?.name || proxy.$t("pdf.laedt-choreo")) +
-              ` - ${proxy.$t("general.ChoreoPlaner")} | ${proxy.$t(
+              (this.choreo?.name || this.t("pdf.laedt-choreo")) +
+              ` - ${this.t("general.ChoreoPlaner")} | ${this.t(
                 "meta.defaults.title"
               )}`
           ),

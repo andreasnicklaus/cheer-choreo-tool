@@ -112,7 +112,8 @@
 
 <script>
 import { useHead } from "@unhead/vue";
-import { computed, getCurrentInstance } from "vue";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import FeatureFlagService from "@/services/FeatureFlagService";
 import { FeatureFlagKeys } from "@/services/FeatureFlagService";
 
@@ -137,39 +138,39 @@ export default {
   mounted() {
     this.init();
 
-    const { proxy } = getCurrentInstance();
+    const { t } = useI18n();
 
     useHead({
-      title: computed(() => proxy.$t("contact.help-and-support")),
+      title: computed(() => t("contact.help-and-support")),
       meta: [
         {
           name: "description",
-          content: computed(() => proxy.$t("meta.contact.description")),
+          content: computed(() => t("meta.contact.description")),
         },
         {
           name: "twitter:description",
-          content: computed(() => proxy.$t("meta.contact.description")),
+          content: computed(() => t("meta.contact.description")),
         },
         {
           property: "og:description",
-          content: computed(() => proxy.$t("meta.contact.description")),
+          content: computed(() => t("meta.contact.description")),
         },
         {
           property: "og:title",
           content: computed(
             () =>
-              `${proxy.$t("contact.contact")} - ${proxy.$t(
+              `${t("contact.contact")} - ${t(
                 "general.ChoreoPlaner"
-              )} | ${proxy.$t("meta.defaults.title")}`
+              )} | ${t("meta.defaults.title")}`
           ),
         },
         {
           name: "twitter:title",
           content: computed(
             () =>
-              `${proxy.$t("contact.contact")} - ${proxy.$t(
+              `${t("contact.contact")} - ${t(
                 "general.ChoreoPlaner"
-              )} | ${proxy.$t("meta.defaults.title")}`
+              )} | ${t("meta.defaults.title")}`
           ),
         },
       ],

@@ -627,27 +627,9 @@
   </BContainer>
 </template>
 
-<script setup>
-import { useElementHover } from "@vueuse/core";
-import { computed, getCurrentInstance, useTemplateRef } from "vue";
-
-const profilePictureElement = useTemplateRef("profilePictureUploadRef");
-const profilePictureIsHovered = useElementHover(profilePictureElement);
-
-const clubLogoElement = useTemplateRef("clubLogoUploadRef");
-const clubLogoIsHovered = useElementHover(clubLogoElement);
-
-const instance = getCurrentInstance();
-if (instance) {
-  instance.appContext.app.config.globalProperties.profilePictureIsHovered =
-    profilePictureIsHovered;
-  instance.appContext.app.config.globalProperties.clubLogoIsHovered =
-    clubLogoIsHovered;
-}
-</script>
-
 <script>
 import Cookies from "js-cookie";
+import { useElementHover } from "@vueuse/core";
 
 import AuthService from "@/services/AuthService";
 import ChangePasswordModal from "@/components/modals/ChangePasswordModal.vue";
@@ -661,8 +643,9 @@ import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import { error, log } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
 import { useHead } from "@unhead/vue";
+import { useI18n } from "vue-i18n";
+import { emailRegex } from "@/utils/validation";
 
-const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 const MB = 1_048_576;
 const MAX_IMAGE_MB = 2;
 
@@ -681,6 +664,8 @@ const MAX_IMAGE_MB = 2;
  * @vue-data {Boolean} profilePictureDeletion=false - Whether the profile picture is marked for deletion.
  * @vue-data {Boolean} clubLogoDeletion=false - Whether the club logo is marked for deletion.
  * @vue-data {Number} clubTabIndex=0 - The index of the currently selected club tab.
+ * @vue-data {Ref|null} profilePictureElement=null - Template ref for profile picture upload.
+ * @vue-data {Ref|null} clubLogoElement=null - Template ref for club logo upload.
  *
  * @vue-computed {Blob|null} newProfilePictureBlob - The new profile picture as a Blob.
  * @vue-computed {Object} currentClub - The currently selected club object.
@@ -700,6 +685,7 @@ const MAX_IMAGE_MB = 2;
  */
 
 export default {
+  name: "AccountView",
   components: {
     ChangePasswordModal,
     DeleteAccountModal,
@@ -707,7 +693,6 @@ export default {
     DeleteClubModal,
     NewVersionBadge,
   },
-  name: "AccountView",
   data: function () {
     return {
       MAX_IMAGE_MB,
@@ -724,9 +709,61 @@ export default {
       profilePictureDeletion: false,
       clubLogoDeletion: false,
       clubTabIndex: 0,
+      profilePictureElement: null,
+      clubLogoElement: null,
     };
   },
+  setup() {
+    const { t } = useI18n();
+    return { t };
+  },
   mounted() {
+    this.profilePictureElement = this.$refs.profilePictureUploadRef;
+    this.clubLogoElement = this.$refs.clubLogoUploadRef;
+
+    if (this.profilePictureElement) {
+      const profilePictureIsHovered = useElementHover(
+        this.profilePictureElement
+      );
+      this.$root.profilePictureIsHovered = profilePictureIsHovered;
+    }
+    if (this.clubLogoElement) {
+      const clubLogoIsHovered = useElementHover(this.clubLogoElement);
+      this.$root.clubLogoIsHovered = clubLogoIsHovered;
+    }
+
+    useHead({
+      title: `${this.t("konto")} - ${this.t("general.ChoreoPlaner")} | ${this.t("meta.defaults.title")}`,
+      titleTemplate: null,
+      meta: [
+        {
+          vmid: "description",
+          name: "description",
+          content: this.t("meta.account.description"),
+        },
+        {
+          vmid: "twitter:description",
+          name: "twitter:description",
+          content: this.t("meta.account.description"),
+        },
+        {
+          vmid: "og:description",
+          property: "og:description",
+          content: this.t("meta.account.description"),
+        },
+        {
+          vmid: "og:title",
+          property: "og:title",
+          content: `${this.t("konto")} - ${this.t("general.ChoreoPlaner")} | ${this.t("meta.defaults.title")}`,
+        },
+        {
+          vmid: "twitter:title",
+          name: "twitter:title",
+          content: `${this.t("konto")} - ${this.t("general.ChoreoPlaner")} | ${this.t("meta.defaults.title")}`,
+        },
+      ],
+    });
+
     this.loading = true;
     this.init().then(() => {
       this.loading = false;
@@ -736,51 +773,9 @@ export default {
         );
       }
     });
-
-    const { proxy } = getCurrentInstance();
-
-    useHead({
-      title: computed(() => proxy.$t("konto")),
-      meta: [
-        {
-          vmid: "description",
-          name: "description",
-          content: computed(() => proxy.$t("meta.account.description")),
-        },
-        {
-          vmid: "twitter:description",
-          name: "twitter:description",
-          content: computed(() => proxy.$t("meta.account.description")),
-        },
-        {
-          vmid: "og:description",
-          property: "og:description",
-          content: computed(() => proxy.$t("meta.account.description")),
-        },
-        {
-          vmid: "og:title",
-          property: "og:title",
-          content: computed(
-            () =>
-              `${proxy.$t("konto")} - ${proxy.$t(
-                "general.ChoreoPlaner"
-              )} | ${proxy.$t("meta.defaults.title")}`
-          ),
-        },
-        {
-          vmid: "twitter:title",
-          name: "twitter:title",
-          content: computed(
-            () =>
-              `${proxy.$t("konto")} - ${proxy.$t(
-                "general.ChoreoPlaner"
-              )} | ${proxy.$t("meta.defaults.title")}`
-          ),
-        },
-      ],
-    });
   },
   methods: {
+    toTimeAgo,
     init() {
       return AuthService.getUserInfo()
         .then((user) => {

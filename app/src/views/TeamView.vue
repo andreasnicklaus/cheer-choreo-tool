@@ -242,7 +242,8 @@
 
 <script>
 import { useHead } from "@unhead/vue";
-import { computed, getCurrentInstance } from "vue";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import EditableNameHeading from "@/components/EditableNameHeading.vue";
 import CreateMemberModal from "@/components/modals/CreateMemberModal.vue";
 import CreateSeasonModal from "@/components/modals/CreateSeasonModal.vue";
@@ -288,42 +289,44 @@ export default {
       editMemberId: null,
     };
   },
+  setup() {
+    const { t } = useI18n();
+    return { t };
+  },
   mounted() {
     this.load();
 
-    const { proxy } = getCurrentInstance();
-
     useHead({
-      title: computed(() => this.currentTeam?.name || proxy.$t("team", 1)),
+      title: computed(() => this.currentTeam?.name || this.t("team", 1)),
       meta: [
         {
           name: "description",
-          content: computed(() => proxy.$t("meta.teamView.description")),
+          content: computed(() => this.t("meta.teamView.description")),
         },
         {
           name: "twitter:description",
-          content: computed(() => proxy.$t("meta.teamView.description")),
+          content: computed(() => this.t("meta.teamView.description")),
         },
         {
           property: "og:description",
-          content: computed(() => proxy.$t("meta.teamView.description")),
+          content: computed(() => this.t("meta.teamView.description")),
         },
         {
           property: "og:title",
           content: computed(
             () =>
-              `${this.currentTeam?.name || "Team"} - ${proxy.$t(
+              `${this.currentTeam?.name || "Team"} - ${this.t(
                 "general.ChoreoPlaner"
-              )} | ${proxy.$t("meta.defaults.title")}`
+              )} | ${this.t("meta.defaults.title")}`
           ),
         },
         {
           name: "twitter:title",
           content: computed(
             () =>
-              `${this.currentTeam?.name || "Team"} - ${proxy.$t(
+              `${this.currentTeam?.name || "Team"} - ${this.t(
                 "general.ChoreoPlaner"
-              )} | ${proxy.$t("meta.defaults.title")}`
+              )} | ${this.t("meta.defaults.title")}`
           ),
         },
       ],

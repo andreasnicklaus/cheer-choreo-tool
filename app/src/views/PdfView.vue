@@ -267,7 +267,8 @@
 
 <script>
 import { useHead } from "@unhead/vue";
-import { computed, getCurrentInstance } from "vue";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import CountSheet from "@/components/CountSheet.vue";
 import LoadingModal from "@/components/modals/LoadingModal.vue";
 import AuthService from "@/services/AuthService";
@@ -307,6 +308,44 @@ import VueHtml2pdf from "vue3-html2pdf";
 export default {
   name: "PdfView",
   components: { CountSheet, VueHtml2pdf, LoadingModal },
+  setup() {
+    const { t } = useI18n();
+    useHead({
+      title: computed(() => `${t("pdf.PDF")} - ${t("general.ChoreoPlaner")}`),
+      meta: [
+        {
+          vmid: "description",
+          name: "description",
+          content: computed(() => t("meta.pdfView.description")),
+        },
+        {
+          vmid: "twitter:description",
+          name: "twitter:description",
+          content: computed(() => t("meta.pdfView.description")),
+        },
+        {
+          vmid: "og:description",
+          property: "og:description",
+          content: computed(() => t("meta.pdfView.description")),
+        },
+        {
+          vmid: "og:title",
+          property: "og:title",
+          content: computed(
+            () => `${t("pdf.PDF")} - ${t("general.ChoreoPlaner")}`
+          ),
+        },
+        {
+          vmid: "twitter:title",
+          name: "twitter:title",
+          content: computed(
+            () => `${t("pdf.PDF")} - ${t("general.ChoreoPlaner")}`
+          ),
+        },
+      ],
+    });
+    return { t };
+  },
   data: () => ({
     user: null,
     choreoId: null,
@@ -455,58 +494,6 @@ export default {
     this.sloganInterval = setInterval(() => {
       this.sloganIndex = Math.floor(Math.random() * this.slogans.length);
     }, 3000);
-
-    const { proxy } = getCurrentInstance();
-
-    useHead({
-      title: computed(
-        () =>
-          `${this.choreo?.name || proxy.$t("pdf.laedt-choreo")} - ${proxy.$t(
-            "pdf.PDF"
-          )}`
-      ),
-      meta: [
-        {
-          vmid: "description",
-          name: "description",
-          content: computed(() => proxy.$t("meta.pdfView.description")),
-        },
-        {
-          vmid: "twitter:description",
-          name: "twitter:description",
-          content: computed(() => proxy.$t("meta.pdfView.description")),
-        },
-        {
-          vmid: "og:description",
-          property: "og:description",
-          content: computed(() => proxy.$t("meta.pdfView.description")),
-        },
-        {
-          vmid: "og:title",
-          property: "og:title",
-          content: computed(
-            () =>
-              `${
-                this.choreo?.name || proxy.$t("pdf.laedt-choreo")
-              } - ${proxy.$t("pdf.PDF")} - ${proxy.$t(
-                "general.ChoreoPlaner"
-              )} | ${proxy.$t("meta.defaults.title")}`
-          ),
-        },
-        {
-          vmid: "twitter:title",
-          name: "twitter:title",
-          content: computed(
-            () =>
-              `${
-                this.choreo?.name || proxy.$t("pdf.laedt-choreo")
-              } - ${proxy.$t("pdf.PDF")} - ${proxy.$t(
-                "general.ChoreoPlaner"
-              )} | ${proxy.$t("meta.defaults.title")}`
-          ),
-        },
-      ],
-    });
   },
   computed: {
     currentClub() {

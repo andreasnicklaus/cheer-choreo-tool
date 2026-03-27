@@ -21,13 +21,14 @@ export default defineConfig({
     port: 8080,
   },
   resolve: {
-    alias: {
-      // Not needed - let Vite resolve these naturally
-    },
+    alias: {},
   },
   optimizeDeps: {
-    include: ["vue3-html2pdf"],
+    include: ["vue3-html2pdf", "jspdf"],
     exclude: [],
+    esbuildOptions: {
+      target: "esnext",
+    },
   },
   plugins: [
     vue(),
@@ -144,6 +145,11 @@ export default defineConfig({
         JSON.stringify(value),
       ])
     ),
+  },
+  build: {
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
   },
   test: {
     globals: true,

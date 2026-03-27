@@ -1,5 +1,5 @@
 <template>
-  <BContainer id="helpView" data-view class="mt-5 mb-5">
+  <BContainer id="datenschutzView" data-view class="mt-5 mb-5">
     <h1 class="mb-4">{{ $t("datenschutz.datenschutzerklaerung") }}</h1>
     <h2>1. {{ $t("datenschutz.allgemeine-hinweise") }}</h2>
     <p>
@@ -54,44 +54,47 @@
 
 <script>
 import { useHead } from "@unhead/vue";
-import { computed, getCurrentInstance } from "vue";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
 export default {
   name: "DatenschutzView",
+  setup() {
+    const { t } = useI18n();
+    return { t };
+  },
   mounted() {
-    const { proxy } = getCurrentInstance();
-
     useHead({
-      title: computed(() => proxy.$t("navigation.datenschutz")),
+      title: computed(() => this.t("navigation.datenschutz")),
       meta: [
         {
           name: "description",
-          content: computed(() => proxy.$t("meta.datenschutz.description")),
+          content: computed(() => this.t("meta.datenschutz.description")),
         },
         {
           name: "twitter:description",
-          content: computed(() => proxy.$t("meta.datenschutz.description")),
+          content: computed(() => this.t("meta.datenschutz.description")),
         },
         {
           property: "og:description",
-          content: computed(() => proxy.$t("meta.datenschutz.description")),
+          content: computed(() => this.t("meta.datenschutz.description")),
         },
         {
           property: "og:title",
           content: computed(
             () =>
-              `${proxy.$t("navigation.datenschutz")} - ${proxy.$t(
+              `${this.t("navigation.datenschutz")} - ${this.t(
                 "general.ChoreoPlaner"
-              )} | ${proxy.$t("meta.defaults.title")}`
+              )} | ${this.t("meta.defaults.title")}`
           ),
         },
         {
           name: "twitter:title",
           content: computed(
             () =>
-              `${proxy.$t("navigation.datenschutz")} - ${proxy.$t(
+              `${this.t("navigation.datenschutz")} - ${this.t(
                 "general.ChoreoPlaner"
-              )} | ${proxy.$t("meta.defaults.title")}`
+              )} | ${this.t("meta.defaults.title")}`
           ),
         },
       ],

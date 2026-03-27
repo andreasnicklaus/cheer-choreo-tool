@@ -468,45 +468,39 @@
 
 <script setup>
 import { useHead } from "@unhead/vue";
-import { computed, getCurrentInstance } from "vue";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
-const { proxy } = getCurrentInstance();
+const { t } = useI18n();
 
 useHead({
   title: computed(
-    () =>
-      `${proxy.$t("general.ChoreoPlaner")} | ${proxy.$t("meta.defaults.title")}`
+    () => `${t("general.ChoreoPlaner")} | ${t("meta.defaults.title")}`
   ),
   titleTemplate: null,
   meta: [
     {
       name: "description",
-      content: computed(() => proxy.$t("meta.defaults.description")),
+      content: computed(() => t("meta.defaults.description")),
     },
     {
       name: "twitter:description",
-      content: computed(() => proxy.$t("meta.defaults.description")),
+      content: computed(() => t("meta.defaults.description")),
     },
     {
       property: "og:description",
-      content: computed(() => proxy.$t("meta.defaults.description")),
+      content: computed(() => t("meta.defaults.description")),
     },
     {
       property: "og:title",
       content: computed(
-        () =>
-          `${proxy.$t("general.ChoreoPlaner")} | ${proxy.$t(
-            "meta.defaults.title"
-          )}`
+        () => `${t("general.ChoreoPlaner")} | ${t("meta.defaults.title")}`
       ),
     },
     {
       name: "twitter:title",
       content: computed(
-        () =>
-          `${proxy.$t("general.ChoreoPlaner")} | ${proxy.$t(
-            "meta.defaults.title"
-          )}`
+        () => `${t("general.ChoreoPlaner")} | ${t("meta.defaults.title")}`
       ),
     },
   ],

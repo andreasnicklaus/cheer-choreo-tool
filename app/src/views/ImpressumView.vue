@@ -38,44 +38,47 @@
 
 <script>
 import { useHead } from "@unhead/vue";
-import { computed, getCurrentInstance } from "vue";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
 export default {
   name: "ImpressumView",
+  setup() {
+    const { t } = useI18n();
+    return { t };
+  },
   mounted() {
-    const { proxy } = getCurrentInstance();
-
     useHead({
-      title: computed(() => proxy.$t("impressumView.impressum")),
+      title: computed(() => this.t("impressumView.impressum")),
       meta: [
         {
           name: "description",
-          content: computed(() => proxy.$t("meta.impressum.description")),
+          content: computed(() => this.t("meta.impressum.description")),
         },
         {
           name: "twitter:description",
-          content: computed(() => proxy.$t("meta.impressum.description")),
+          content: computed(() => this.t("meta.impressum.description")),
         },
         {
           property: "og:description",
-          content: computed(() => proxy.$t("meta.impressum.description")),
+          content: computed(() => this.t("meta.impressum.description")),
         },
         {
           property: "og:title",
           content: computed(
             () =>
-              `${proxy.$t("impressumView.impressum")} - ${proxy.$t(
+              `${this.t("impressumView.impressum")} - ${this.t(
                 "general.ChoreoPlaner"
-              )} | ${proxy.$t("meta.defaults.title")}`
+              )} | ${this.t("meta.defaults.title")}`
           ),
         },
         {
           name: "twitter:title",
           content: computed(
             () =>
-              `${proxy.$t("impressumView.impressum")} - ${proxy.$t(
+              `${this.t("impressumView.impressum")} - ${this.t(
                 "general.ChoreoPlaner"
-              )} | ${proxy.$t("meta.defaults.title")}`
+              )} | ${this.t("meta.defaults.title")}`
           ),
         },
       ],

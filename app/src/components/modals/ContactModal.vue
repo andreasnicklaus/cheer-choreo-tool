@@ -161,8 +161,7 @@ import AuthService from "@/services/AuthService";
 import ContactService from "@/services/ContactService";
 import { debug } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
-
-const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
+import { emailRegex } from "@/utils/validation";
 
 /**
  * @module Modal:ContactModal

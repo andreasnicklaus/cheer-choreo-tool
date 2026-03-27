@@ -14,6 +14,7 @@
               :placeholder="$t('username')"
               :state="usernameIsValid"
               v-model="username"
+              autocomplete="username"
             ></BFormInput>
           </BFormGroup>
           <BFormGroup
@@ -27,6 +28,7 @@
               type="password"
               :state="passwordIsValid"
               v-model="password"
+              autocomplete="current-password"
             ></BFormInput>
           </BFormGroup>
 
@@ -78,6 +80,7 @@
               :placeholder="$t('username')"
               :state="usernameIsValid"
               v-model="username"
+              autocomplete="username"
             ></BFormInput>
           </BFormGroup>
           <BFormGroup
@@ -92,6 +95,7 @@
                 :placeholder="$t('e-mail-adresse')"
                 :state="emailIsValid"
                 v-model="email"
+                autocomplete="email"
               ></BFormInput>
               <template #append>
                 <BInputGroupText v-b-tooltip.hover="$t('login.warum-email')">
@@ -112,6 +116,7 @@
               type="password"
               :state="passwordIsValid"
               v-model="password"
+              autocomplete="new-password"
             ></BFormInput>
           </BFormGroup>
           <BFormGroup
@@ -126,6 +131,7 @@
               type="password"
               :state="passwordRepetitionIsValid"
               v-model="passwordRepetition"
+              autocomplete="new-password"
             ></BFormInput>
           </BFormGroup>
 
@@ -189,7 +195,8 @@
 
 <script>
 import { useHead } from "@unhead/vue";
-import { computed, getCurrentInstance } from "vue";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import ConfirmEmailModal from "@/components/modals/ConfirmEmailModal.vue";
 import PasswordResetModal from "@/components/modals/PasswordResetModal.vue";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
@@ -197,8 +204,7 @@ import AuthService from "@/services/AuthService";
 import MessagingService from "@/services/MessagingService";
 import ERROR_CODES from "@/utils/error_codes";
 import { error, log } from "@/utils/logging";
-
-const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
+import { emailRegex } from "@/utils/validation";
 
 /**
  * @vue-data {string|null} username=null - The username for login or registration.
@@ -232,6 +238,10 @@ export default {
     tabIndex: 0,
     loading: false,
   }),
+  setup() {
+    const { t } = useI18n();
+    return { t };
+  },
   mounted() {
     if (this.$store.state.loggedIn) {
       this.redirect();
@@ -250,37 +260,35 @@ export default {
           this.showFailMessage(e.response.data);
         });
 
-    const { proxy } = getCurrentInstance();
-
     const baseMeta = [
       {
         name: "description",
-        content: computed(() => proxy.$t("meta.loginView.description")),
+        content: computed(() => this.t("meta.loginView.description")),
       },
       {
         name: "twitter:description",
-        content: computed(() => proxy.$t("meta.loginView.description")),
+        content: computed(() => this.t("meta.loginView.description")),
       },
       {
         property: "og:description",
-        content: computed(() => proxy.$t("meta.loginView.description")),
+        content: computed(() => this.t("meta.loginView.description")),
       },
       {
         property: "og:title",
         content: computed(
           () =>
-            `${proxy.$t("anmelden")} - ${proxy.$t(
+            `${this.t("anmelden")} - ${this.t(
               "general.ChoreoPlaner"
-            )} | ${proxy.$t("login.meta.dein-zugang-zu-allen-funktionen")}`
+            )} | ${this.t("login.meta.dein-zugang-zu-allen-funktionen")}`
         ),
       },
       {
         name: "twitter:title",
         content: computed(
           () =>
-            `${proxy.$t("anmelden")} - ${proxy.$t(
+            `${this.t("anmelden")} - ${this.t(
               "general.ChoreoPlaner"
-            )} | ${proxy.$t("login.meta.dein-zugang-zu-allen-funktionen")}`
+            )} | ${this.t("login.meta.dein-zugang-zu-allen-funktionen")}`
         ),
       },
     ];
@@ -301,9 +309,9 @@ export default {
     useHead({
       title: computed(
         () =>
-          `${proxy.$t("anmelden")} - ${proxy.$t(
+          `${this.t("anmelden")} - ${this.t(
             "general.ChoreoPlaner"
-          )} | ${proxy.$t("login.meta.dein-zugang-zu-allen-funktionen")}`
+          )} | ${this.t("login.meta.dein-zugang-zu-allen-funktionen")}`
       ),
       titleTemplate: null,
       meta: baseMeta,

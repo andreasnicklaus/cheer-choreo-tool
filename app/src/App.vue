@@ -154,7 +154,9 @@
 import { useToast } from "bootstrap-vue-next";
 import { computed, getCurrentInstance } from "vue";
 import { useHead } from "@unhead/vue";
+import { useRoute } from "vue-router";
 import { getApiDomain } from "./services/RequestService";
+import { useI18n } from "vue-i18n";
 
 const { create } = useToast();
 const instance = getCurrentInstance();
@@ -162,18 +164,19 @@ if (instance) {
   instance.appContext.app.config.globalProperties.$showToast = create;
 }
 
-const proxy = getCurrentInstance().proxy;
+const { t } = useI18n();
+const route = useRoute();
 
 useHead({
   titleTemplate: (title) =>
     title
-      ? `${title} - ${proxy.$t("general.ChoreoPlaner")} | ${proxy.$t("meta.defaults.title")}`
-      : proxy.$t("meta.defaults.title"),
+      ? `${title} - ${t("general.ChoreoPlaner")} | ${t("meta.defaults.title")}`
+      : t("meta.defaults.title"),
   meta: [
     {
       vmid: "keywords",
       name: "keywords",
-      content: computed(() => proxy.$t("meta.defaults.keywords")),
+      content: computed(() => t("meta.defaults.keywords")),
     },
     {
       vmid: "author",
@@ -183,47 +186,41 @@ useHead({
     {
       vmid: "description",
       name: "description",
-      content: computed(() => proxy.$t("meta.defaults.description")),
+      content: computed(() => t("meta.defaults.description")),
     },
     {
       vmid: "twitter:description",
       name: "twitter:description",
-      content: computed(() => proxy.$t("meta.defaults.description")),
+      content: computed(() => t("meta.defaults.description")),
     },
     {
       vmid: "og:description",
       property: "og:description",
-      content: computed(() => proxy.$t("meta.defaults.description")),
+      content: computed(() => t("meta.defaults.description")),
     },
     {
       vmid: "og:url",
       property: "og:url",
-      content: computed(
-        () => "https://www.choreo-planer.de" + proxy.$route.path
-      ),
+      content: computed(() => "https://www.choreo-planer.de" + route.path),
     },
     {
       vmid: "og:title",
       property: "og:title",
       content: computed(
-        () =>
-          `${proxy.$t("general.ChoreoPlaner")} | ${proxy.$t("meta.defaults.title")}`
+        () => `${t("general.ChoreoPlaner")} | ${t("meta.defaults.title")}`
       ),
     },
     {
       vmid: "twitter:title",
       name: "twitter:title",
       content: computed(
-        () =>
-          `${proxy.$t("general.ChoreoPlaner")} | ${proxy.$t("meta.defaults.title")}`
+        () => `${t("general.ChoreoPlaner")} | ${t("meta.defaults.title")}`
       ),
     },
     {
       vmid: "twitter:url",
       property: "twitter:url",
-      content: computed(
-        () => "https://www.choreo-planer.de" + proxy.$route.path
-      ),
+      content: computed(() => "https://www.choreo-planer.de" + route.path),
     },
     {
       vmid: "twitter:domain",
@@ -253,7 +250,7 @@ useHead({
     {
       vmid: "canonical",
       rel: "canonical",
-      href: computed(() => "https://www.choreo-planer.de" + proxy.$route.path),
+      href: computed(() => "https://www.choreo-planer.de" + route.path),
     },
   ],
 });

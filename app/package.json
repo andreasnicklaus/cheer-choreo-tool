@@ -83,6 +83,7 @@
     "ext": "vue,js,md"
   },
   "overrides": {
-    "node-sass": "npm:sass@^1.98.0"
+    "node-sass": "npm:sass@^1.98.0",
+    "jspdf": "^4.2.1"
   }
 }
