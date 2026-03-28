@@ -2,13 +2,30 @@ name: Build and push server
 
 on:
   push:
-    paths:
-      - "server/**"
-      - ".github/workflows/server.yml"
+    branches: [main]
+  pull_request:
   workflow_dispatch:
 
 jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      serverChanged: ${{ steps.filter.outputs.server }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            server:
+              - 'server/**'
+              - '.github/workflows/server.yml'
+
   test-unit:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.serverChanged == 'true'
     timeout-minutes: 60
     runs-on: ubuntu-latest
 
@@ -36,6 +53,8 @@ jobs:
           retention-days: 30
 
   docker-build:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.serverChanged == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

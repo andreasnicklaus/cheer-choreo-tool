@@ -2,9 +2,8 @@ name: Build Vue and Deploy to Pages
 
 on:
   push:
-    paths:
-      - "app/**"
-      - ".github/workflows/pages.yml"
+    branches: [main]
+  pull_request:
   workflow_dispatch:
 
 concurrency:
@@ -12,7 +11,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      appChanged: ${{ steps.filter.outputs.app }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            app:
+              - 'app/**'
+              - '.github/workflows/pages.yml'
+
   install:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.appChanged == 'true'
     timeout-minutes: 30
     runs-on: ubuntu-latest
     defaults:
@@ -43,7 +60,8 @@ jobs:
           PUPPETEER_SKIP_DOWNLOAD: true
 
   test-unit:
-    needs: install
+    needs: [detect-changes, install]
+    if: needs.detect-changes.outputs.appChanged == 'true'
     timeout-minutes: 10
     runs-on: ubuntu-latest
     defaults:
@@ -78,7 +96,8 @@ jobs:
 
   build:
     timeout-minutes: 15
-    needs: install
+    needs: [detect-changes, install]
+    if: needs.detect-changes.outputs.appChanged == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -118,7 +137,8 @@ jobs:
           path: app/dist
 
   test-integration:
-    needs: [build, install]
+    needs: [detect-changes, build, install]
+    if: needs.detect-changes.outputs.appChanged == 'true'
     timeout-minutes: 30
     runs-on: ubuntu-latest
     defaults:
