@@ -2,11 +2,17 @@ name: SAST NodeJsScan code scanning
 
 on:
   push:
+    branches: [main]
     paths:
       - "server/**"
       - "app/**"
       - ".github/workflows/code-scanning.yml"
+  pull_request:
   workflow_dispatch:
+
+concurrency:
+  group: sast-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -21,10 +27,10 @@ jobs:
     name: njsscan code scanning
     steps:
       - name: Checkout the code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: nodejsscan scan
         id: njsscan
-        uses: ajinabraham/njsscan-action@7237412fdd36af517e2745077cedbf9d6900d711
+        uses: ajinabraham/njsscan-action@master
         with:
           args: ". --sarif --output results.sarif || true"
       - name: Upload njsscan report

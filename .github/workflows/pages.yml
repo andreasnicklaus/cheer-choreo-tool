@@ -167,7 +167,7 @@ jobs:
         with:
           path: app/node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('app/package-lock.json') }}
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         with:
           name: github-pages
           path: app/dist
@@ -213,4 +213,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
