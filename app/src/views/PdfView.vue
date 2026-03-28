@@ -310,40 +310,6 @@ export default {
   components: { CountSheet, VueHtml2pdf, LoadingModal },
   setup() {
     const { t } = useI18n();
-    useHead({
-      title: computed(() => `${t("pdf.PDF")} - ${t("general.ChoreoPlaner")}`),
-      meta: [
-        {
-          vmid: "description",
-          name: "description",
-          content: computed(() => t("meta.pdfView.description")),
-        },
-        {
-          vmid: "twitter:description",
-          name: "twitter:description",
-          content: computed(() => t("meta.pdfView.description")),
-        },
-        {
-          vmid: "og:description",
-          property: "og:description",
-          content: computed(() => t("meta.pdfView.description")),
-        },
-        {
-          vmid: "og:title",
-          property: "og:title",
-          content: computed(
-            () => `${t("pdf.PDF")} - ${t("general.ChoreoPlaner")}`
-          ),
-        },
-        {
-          vmid: "twitter:title",
-          name: "twitter:title",
-          content: computed(
-            () => `${t("pdf.PDF")} - ${t("general.ChoreoPlaner")}`
-          ),
-        },
-      ],
-    });
     return { t };
   },
   data: () => ({
@@ -488,6 +454,55 @@ export default {
     },
   },
   mounted() {
+    useHead({
+      title: computed(
+        () =>
+          `${this.choreo?.name || this.t("pdf.laedt-choreo")} - ${this.t(
+            "pdf.PDF"
+          )}`
+      ),
+      meta: [
+        {
+          vmid: "description",
+          name: "description",
+          content: computed(() => this.t("meta.pdfView.description")),
+        },
+        {
+          vmid: "twitter:description",
+          name: "twitter:description",
+          content: computed(() => this.t("meta.pdfView.description")),
+        },
+        {
+          vmid: "og:description",
+          property: "og:description",
+          content: computed(() => this.t("meta.pdfView.description")),
+        },
+        {
+          vmid: "og:title",
+          property: "og:title",
+          content: computed(
+            () =>
+              `${
+                this.choreo?.name || this.t("pdf.laedt-choreo")
+              } - ${this.t("pdf.PDF")} - ${this.t(
+                "general.ChoreoPlaner"
+              )} | ${this.t("meta.defaults.title")}`
+          ),
+        },
+        {
+          vmid: "twitter:title",
+          name: "twitter:title",
+          content: computed(
+            () =>
+              `${
+                this.choreo?.name || this.t("pdf.laedt-choreo")
+              } - ${this.t("pdf.PDF")} - ${this.t(
+                "general.ChoreoPlaner"
+              )} | ${this.t("meta.defaults.title")}`
+          ),
+        },
+      ],
+    });
     this.loadUserInfo();
     this.choreoId = this.$route.params.choreoId;
     this.loadChoreo();

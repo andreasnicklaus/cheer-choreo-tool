@@ -280,7 +280,8 @@
 
 <script>
 import { useHead } from "@unhead/vue";
-import { computed, getCurrentInstance } from "vue";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import ChoreoService from "@/services/ChoreoService";
 import gsap from "gsap";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
@@ -331,6 +332,10 @@ import { roundToDecimals } from "@/utils/numbers";
 export default {
   name: "VideoExport",
   components: { VideoDownloadModal },
+  setup() {
+    const { t } = useI18n();
+    return { t };
+  },
   data: () => ({
     width: 1800,
     downloadUrl: null,
@@ -790,40 +795,26 @@ export default {
     },
   },
   mounted() {
-    Promise.all([this.loadUserInfo(), this.loadChoreo()]).then(() => {
-      this.drawCanvas();
-      this.calculateAnimationTime();
-    });
-
-    this.$nextTick(() => {
-      this.ffmpeg = new FFmpeg();
-      this.initializeFfmpeg();
-    });
-
-    const { proxy } = getCurrentInstance();
-
     useHead({
       title: computed(
         () =>
-          (this.choreo?.name || proxy.$t("pdf.laedt-choreo")) +
-          " - " +
-          proxy.$t("video")
+          `${this.choreo?.name || this.t("pdf.laedt-choreo")} - ${this.t("video")}`
       ),
       meta: [
         {
           vmid: "description",
           name: "description",
-          content: computed(() => proxy.$t("meta.video.description")),
+          content: computed(() => this.t("meta.video.description")),
         },
         {
           vmid: "twitter:description",
           name: "twitter:description",
-          content: computed(() => proxy.$t("meta.video.description")),
+          content: computed(() => this.t("meta.video.description")),
         },
         {
           vmid: "og:description",
           property: "og:description",
-          content: computed(() => proxy.$t("meta.video.description")),
+          content: computed(() => this.t("meta.video.description")),
         },
         {
           vmid: "og:title",
@@ -831,10 +822,10 @@ export default {
           content: computed(
             () =>
               `${
-                this.choreo?.name || proxy.$t("pdf.laedt-choreo")
-              } - ${proxy.$t("video")} - ${proxy.$t(
+                this.choreo?.name || this.t("pdf.laedt-choreo")
+              } - ${this.t("video")} - ${this.t(
                 "general.ChoreoPlaner"
-              )} | ${proxy.$t("meta.defaults.title")}`
+              )} | ${this.t("meta.defaults.title")}`
           ),
         },
         {
@@ -843,13 +834,22 @@ export default {
           content: computed(
             () =>
               `${
-                this.choreo?.name || proxy.$t("pdf.laedt-choreo")
-              } - ${proxy.$t("video")} - ${proxy.$t(
+                this.choreo?.name || this.t("pdf.laedt-choreo")
+              } - ${this.t("video")} - ${this.t(
                 "general.ChoreoPlaner"
-              )} | ${proxy.$t("meta.defaults.title")}`
+              )} | ${this.t("meta.defaults.title")}`
           ),
         },
       ],
+    });
+    Promise.all([this.loadUserInfo(), this.loadChoreo()]).then(() => {
+      this.drawCanvas();
+      this.calculateAnimationTime();
+    });
+
+    this.$nextTick(() => {
+      this.ffmpeg = new FFmpeg();
+      this.initializeFfmpeg();
     });
   },
   computed: {
