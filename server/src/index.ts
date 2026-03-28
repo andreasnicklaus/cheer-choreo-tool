@@ -67,16 +67,18 @@ app.use(
       origin: string | undefined,
       callback: { (err: Error | null, allow?: boolean): void },
     ) {
-      if (!origin || corsWhiteList.includes(origin) || origin.includes("localhost")) {
+      if (
+        !origin ||
+        corsWhiteList.includes(origin) ||
+        origin.includes("localhost")
+      ) {
         callback(null, true);
       } else {
         callback(null, false);
       }
     },
     allowedHeaders: "*",
-    exposedHeaders: [
-      "X-CSRF-Token",
-    ],
+    exposedHeaders: ["X-CSRF-Token"],
   }),
 );
 app.use(robots(__dirname + "/public/robots.txt"));
