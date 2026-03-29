@@ -1,9 +1,12 @@
 <template>
   <BModal
-    ref="modal"
     :id="`modal-newClub-${id}`"
+    ref="modal"
     :title="$t('modals.create-club.neuer-verein')"
     centered
+    :no-close-on-backdrop="preventClosing"
+    :no-close-on-esc="preventClosing"
+    :no-header-close="preventClosing"
     @show="resetClubModal"
     @ok="createAndSelectClub"
     @close="
@@ -11,9 +14,6 @@
         if (preventClosing) event.preventDefault();
       }
     "
-    :no-close-on-backdrop="preventClosing"
-    :no-close-on-esc="preventClosing"
-    :no-header-close="preventClosing"
   >
     <BForm>
       <BFormGroup
@@ -33,10 +33,10 @@
       </BFormGroup>
     </BForm>
     <template #footer="{ ok, cancel }">
-      <BButton @click="ok" variant="success" :disabled="!newClubNameIsValid">
+      <BButton variant="success" :disabled="!newClubNameIsValid" @click="ok">
         {{ $t("erstellen") }}
       </BButton>
-      <BButton v-if="!preventClosing" @click="cancel" variant="danger">
+      <BButton v-if="!preventClosing" variant="danger" @click="cancel">
         {{ $t("abbrechen") }}
       </BButton>
     </template>
@@ -72,14 +72,26 @@ import ClubService from "@/services/ClubService";
  */
 export default {
   name: "CreateClubModal",
-  data: () => ({
-    id: (Math.random() + 1).toString(36).substring(7),
-    newClubName: null,
-  }),
   props: {
     preventClosing: {
       type: Boolean,
       default: false,
+    },
+  },
+  emits: ["clubCreated"],
+  data: () => ({
+    id: (Math.random() + 1).toString(36).substring(7),
+    newClubName: null,
+  }),
+  computed: {
+    newClubNameIsValid() {
+      return this.newClubName != null && this.newClubName.length >= 3;
+    },
+    newClubNameStateFeedback() {
+      if (!this.newClubName) return this.$t("erforderlich");
+      if (this.newClubName.length < 3)
+        return this.$t("modals.create-club.min-vereinsname-length");
+      return null;
     },
   },
   methods: {
@@ -97,17 +109,6 @@ export default {
         this.$store.commit("setClubId", club.id);
         this.$emit("clubCreated", club);
       });
-    },
-  },
-  computed: {
-    newClubNameIsValid() {
-      return this.newClubName != null && this.newClubName.length >= 3;
-    },
-    newClubNameStateFeedback() {
-      if (!this.newClubName) return this.$t("erforderlich");
-      if (this.newClubName.length < 3)
-        return this.$t("modals.create-club.min-vereinsname-length");
-      return null;
     },
   },
 };

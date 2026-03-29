@@ -1,7 +1,7 @@
 <template>
   <BModal
-    ref="feedbackModal"
     :id="`feedback-modal-${id}`"
+    ref="feedbackModal"
     :title="$t('feedback.sag-uns-deine-meinung')"
     centered
     @ok.prevent="send"
@@ -21,8 +21,8 @@
             @mouseleave="mouseLeave"
           >
             <IBiStarFill
-              class="text-primary"
               v-show="hoverStars != null ? hoverStars >= i : stars >= i"
+              class="text-primary"
               :style="{ pointerEvents: 'none' }"
             />
             <IBiStar
@@ -35,10 +35,10 @@
       </BCol>
     </BRow>
     <textarea
-      name="feedback-text"
       id="feedback-text"
-      rows="5"
       v-model="feedbackText"
+      name="feedback-text"
+      rows="5"
       class="p-2 mt-3"
       :placeholder="$t('feedback.was-gefaellt-dir-am-choreo-planer')"
     />
@@ -47,9 +47,9 @@
         <BCol cols="auto">
           <BButton
             v-show="!forced"
-            @click="closeWithoutSending"
             variant="link"
             class="text-muted"
+            @click="closeWithoutSending"
           >
             {{ $t("feedback.nicht-mehr-fragen") }}
           </BButton>
@@ -58,17 +58,17 @@
           <BRow no-gutters :style="{ columnGap: '8px' }">
             <BCol>
               <BButton
-                @click="ok"
                 variant="success"
                 :disabled="stars < 0 || stars > 4 || !feedbackText"
                 to="#"
+                @click="ok"
               >
-                <BSpinner small v-show="sending" />
+                <BSpinner v-show="sending" small />
                 <span v-show="!sending"> {{ $t("feedback.abschicken") }} </span>
               </BButton>
             </BCol>
             <BCol cols="auto">
-              <BButton @click="cancel" variant="outline-danger">
+              <BButton variant="outline-danger" @click="cancel">
                 {{ $t("feedback.schliessen") }}
               </BButton>
             </BCol>
@@ -78,20 +78,20 @@
     </template>
 
     <BModal
-      ref="thankyouModal"
       :id="`feedback-thankyou-modal-${id}`"
+      ref="thankyouModal"
       :title="$t('feedback.dankeschoen')"
       centered
-      @ok="close"
-      @hide="close"
       header-bg-variant="success"
       header-text-variant="light"
+      @ok="close"
+      @hide="close"
     >
       <p>
         {{ $t("feedback.vielen-dank") }}
       </p>
       <template #footer="{ cancel }">
-        <BButton variant="success" @click="cancel" :style="{ color: 'white' }">
+        <BButton variant="success" :style="{ color: 'white' }" @click="cancel">
           {{ $t("feedback.schliessen") }}
         </BButton>
       </template>
@@ -132,6 +132,7 @@ const feedbackDeclinedCookieName = "feedback-declined";
 
 export default {
   name: "FeedbackPrompt",
+  emits: ["feedbackSent"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     stars: 4,
@@ -142,6 +143,13 @@ export default {
     forced: false,
     showTimer: null,
   }),
+  watch: {
+    "$route.path": {
+      handler() {
+        this.resetShowTimer();
+      },
+    },
+  },
   mounted() {
     if (!isPrerender()) {
       this.initializeShowTimer();
@@ -219,13 +227,6 @@ export default {
     },
     stopShowTimer() {
       clearTimeout(this.showTimer);
-    },
-  },
-  watch: {
-    "$route.path": {
-      handler() {
-        this.resetShowTimer();
-      },
     },
   },
 };

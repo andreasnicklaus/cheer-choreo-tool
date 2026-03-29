@@ -70,9 +70,9 @@
               </BFormCheckbox>
             </BFormGroup>
             <BAvatar
+              v-if="currentClub?.logoExtension"
               size="60px"
               :src="currentClubLogoBlob"
-              v-if="currentClub?.logoExtension"
               :disabled="!includeClubLogo"
             >
               <IBiHouseFill v-if="!currentClubLogoBlob" font-scale="1.5" />
@@ -99,12 +99,12 @@
                 <BButtonGroup class="mb-2">
                   <BButton
                     variant="light"
-                    @click="
-                      () => (includedMembers = teamMembers.map((m) => m.id))
-                    "
                     :disabled="
                       recordingIsRunning ||
                       includedMembers.length == teamMembers.length
+                    "
+                    @click="
+                      () => (includedMembers = teamMembers.map((m) => m.id))
                     "
                   >
                     <IBiCheckAll />
@@ -112,18 +112,18 @@
                   </BButton>
                   <BButton
                     variant="light"
-                    @click="() => (includedMembers = [])"
                     :disabled="
                       recordingIsRunning || includedMembers.length == 0
                     "
+                    @click="() => (includedMembers = [])"
                   >
                     <IBiSlash />
                     {{ $t("keine-auswaehlen") }}
                   </BButton>
                 </BButtonGroup>
                 <BFormCheckboxGroup
-                  :disabled="recordingIsRunning"
                   v-model="includedMembers"
+                  :disabled="recordingIsRunning"
                   :style="{ columnCount: $store.state.isMobile ? 1 : 2 }"
                   stacked
                   :options="
@@ -176,23 +176,23 @@
           <BCol cols="auto">
             <BButtonGroup>
               <BButton
-                @click="startPreview"
                 variant="outline-success"
                 :disabled="animationIsRunning || recordingIsRunning || !choreo"
+                @click="startPreview"
               >
                 <IBiPlay />
               </BButton>
               <BButton
-                @click="pausePreview"
                 variant="outline-danger"
                 :disabled="!animationIsRunning || recordingIsRunning || !choreo"
+                @click="pausePreview"
               >
                 <IBiPause />
               </BButton>
               <BButton
-                @click="resetPreview"
                 variant="outline-secondary"
                 :disabled="recordingIsRunning || !choreo || count == 0"
+                @click="resetPreview"
               >
                 <IBiSkipStartFill />
               </BButton>
@@ -201,16 +201,16 @@
           <BCol class="d-grid">
             <BButton
               variant="success"
-              @click="startRecording"
               :disabled="
                 !choreo || recordingIsRunning || includedMembers.length == 0
               "
+              @click="startRecording"
             >
               <IBiFilm class="me-2" />
               {{ $t("video-export-comp.video-generieren") }}
             </BButton>
           </BCol>
-          <BCol md="auto" cols="12" v-if="downloadUrl" class="d-grid">
+          <BCol v-if="downloadUrl" md="auto" cols="12" class="d-grid">
             <BButton
               variant="outline-success"
               @click="() => $refs.videoDownloadModal.open()"
@@ -273,9 +273,9 @@
       ref="videoDownloadModal"
       :choreo="choreo"
       :width="width"
-      :downloadUrl="downloadUrl"
-      :downloadOptions="downloadOptions"
-      @downloadOptionChanged="selectDownloadOption"
+      :download-url="downloadUrl"
+      :download-options="downloadOptions"
+      @download-option-changed="selectDownloadOption"
     />
   </div>
 </template>
@@ -374,6 +374,153 @@ export default {
     animationMinutes: 0,
     animationSeconds: 0,
   }),
+  computed: {
+    currentClub() {
+      return this.user?.Clubs.find((c) => c.id == this.$store.state.clubId);
+    },
+    waitingSlogan() {
+      const slogans = [
+        this.$t("loading-slogans.schuhe-werden-gebunden"),
+        this.$t("loading-slogans.haare-werden-geflochten"),
+        this.$t("loading-slogans.schleifen-werden-gerichtet"),
+        this.$t("loading-slogans.maskottchen-wird-hingelegt"),
+        this.$t("loading-slogans.1-3-5-7"),
+        this.$t("loading-slogans.dehnen"),
+        this.$t("loading-slogans.aufstellungen-werden-gemalt"),
+        this.$t("loading-slogans.matte-wird-aufgezeichnet"),
+        this.$t("loading-slogans.sprungboden-wird-aufgebaut"),
+        this.$t("loading-slogans.schminke-wird-aufgetragen"),
+        this.$t("loading-slogans.zopf-wird-gebunden"),
+      ];
+      if (this.choreo.SeasonTeam.Team.name)
+        slogans.push(
+          this.$t("loading-slogans.go-team", {
+            name: this.choreo.SeasonTeam.Team.name,
+          })
+        );
+      return slogans[Math.floor(this.count / 10) % slogans.length];
+    },
+    height() {
+      switch (this.choreo?.matType) {
+        case "1:2":
+          return this.width / 2;
+        case "3:4":
+          return (this.width / 4) * 3;
+        default:
+          return this.width;
+      }
+    },
+  },
+  watch: {
+    count: {
+      handler() {
+        this.drawCanvas();
+      },
+    },
+    includeCount: {
+      handler() {
+        this.drawCanvas();
+      },
+    },
+    includeTeamName: {
+      handler() {
+        this.drawCanvas();
+      },
+    },
+    includeChoreoName: {
+      handler() {
+        this.drawCanvas();
+      },
+    },
+    includedMembers: {
+      handler() {
+        this.drawCanvas();
+      },
+    },
+    includeClubLogo: {
+      handler() {
+        this.drawCanvas();
+      },
+    },
+    currentClubLogoBlob: {
+      handler() {
+        setTimeout(this.drawCanvas, 100);
+      },
+    },
+    bps: {
+      handler() {
+        this.addAnimationsFromChoreo();
+      },
+    },
+    animationSeconds: {
+      handler() {
+        this.adaptBpsFromTime();
+      },
+    },
+    animationMinutes: {
+      handler() {
+        this.adaptBpsFromTime();
+      },
+    },
+  },
+  mounted() {
+    useHead({
+      title: computed(
+        () =>
+          `${this.choreo?.name || this.t("pdf.laedt-choreo")} - ${this.t("video")}`
+      ),
+      meta: [
+        {
+          vmid: "description",
+          name: "description",
+          content: computed(() => this.t("meta.video.description")),
+        },
+        {
+          vmid: "twitter:description",
+          name: "twitter:description",
+          content: computed(() => this.t("meta.video.description")),
+        },
+        {
+          vmid: "og:description",
+          property: "og:description",
+          content: computed(() => this.t("meta.video.description")),
+        },
+        {
+          vmid: "og:title",
+          property: "og:title",
+          content: computed(
+            () =>
+              `${
+                this.choreo?.name || this.t("pdf.laedt-choreo")
+              } - ${this.t("video")} - ${this.t(
+                "general.ChoreoPlaner"
+              )} | ${this.t("meta.defaults.title")}`
+          ),
+        },
+        {
+          vmid: "twitter:title",
+          name: "twitter:title",
+          content: computed(
+            () =>
+              `${
+                this.choreo?.name || this.t("pdf.laedt-choreo")
+              } - ${this.t("video")} - ${this.t(
+                "general.ChoreoPlaner"
+              )} | ${this.t("meta.defaults.title")}`
+          ),
+        },
+      ],
+    });
+    Promise.all([this.loadUserInfo(), this.loadChoreo()]).then(() => {
+      this.drawCanvas();
+      this.calculateAnimationTime();
+    });
+
+    this.$nextTick(() => {
+      this.ffmpeg = new FFmpeg();
+      this.initializeFfmpeg();
+    });
+  },
   methods: {
     startPreview() {
       this.animationIsRunning = true;
@@ -741,153 +888,6 @@ export default {
       if (totalSeconds > 0 && this.choreo?.counts) {
         const targetBps = roundToDecimals(this.choreo.counts / totalSeconds, 1);
         if (this.bps !== targetBps) this.bps = targetBps;
-      }
-    },
-  },
-  watch: {
-    count: {
-      handler() {
-        this.drawCanvas();
-      },
-    },
-    includeCount: {
-      handler() {
-        this.drawCanvas();
-      },
-    },
-    includeTeamName: {
-      handler() {
-        this.drawCanvas();
-      },
-    },
-    includeChoreoName: {
-      handler() {
-        this.drawCanvas();
-      },
-    },
-    includedMembers: {
-      handler() {
-        this.drawCanvas();
-      },
-    },
-    includeClubLogo: {
-      handler() {
-        this.drawCanvas();
-      },
-    },
-    currentClubLogoBlob: {
-      handler() {
-        setTimeout(this.drawCanvas, 100);
-      },
-    },
-    bps: {
-      handler() {
-        this.addAnimationsFromChoreo();
-      },
-    },
-    animationSeconds: {
-      handler() {
-        this.adaptBpsFromTime();
-      },
-    },
-    animationMinutes: {
-      handler() {
-        this.adaptBpsFromTime();
-      },
-    },
-  },
-  mounted() {
-    useHead({
-      title: computed(
-        () =>
-          `${this.choreo?.name || this.t("pdf.laedt-choreo")} - ${this.t("video")}`
-      ),
-      meta: [
-        {
-          vmid: "description",
-          name: "description",
-          content: computed(() => this.t("meta.video.description")),
-        },
-        {
-          vmid: "twitter:description",
-          name: "twitter:description",
-          content: computed(() => this.t("meta.video.description")),
-        },
-        {
-          vmid: "og:description",
-          property: "og:description",
-          content: computed(() => this.t("meta.video.description")),
-        },
-        {
-          vmid: "og:title",
-          property: "og:title",
-          content: computed(
-            () =>
-              `${
-                this.choreo?.name || this.t("pdf.laedt-choreo")
-              } - ${this.t("video")} - ${this.t(
-                "general.ChoreoPlaner"
-              )} | ${this.t("meta.defaults.title")}`
-          ),
-        },
-        {
-          vmid: "twitter:title",
-          name: "twitter:title",
-          content: computed(
-            () =>
-              `${
-                this.choreo?.name || this.t("pdf.laedt-choreo")
-              } - ${this.t("video")} - ${this.t(
-                "general.ChoreoPlaner"
-              )} | ${this.t("meta.defaults.title")}`
-          ),
-        },
-      ],
-    });
-    Promise.all([this.loadUserInfo(), this.loadChoreo()]).then(() => {
-      this.drawCanvas();
-      this.calculateAnimationTime();
-    });
-
-    this.$nextTick(() => {
-      this.ffmpeg = new FFmpeg();
-      this.initializeFfmpeg();
-    });
-  },
-  computed: {
-    currentClub() {
-      return this.user?.Clubs.find((c) => c.id == this.$store.state.clubId);
-    },
-    waitingSlogan() {
-      const slogans = [
-        this.$t("loading-slogans.schuhe-werden-gebunden"),
-        this.$t("loading-slogans.haare-werden-geflochten"),
-        this.$t("loading-slogans.schleifen-werden-gerichtet"),
-        this.$t("loading-slogans.maskottchen-wird-hingelegt"),
-        this.$t("loading-slogans.1-3-5-7"),
-        this.$t("loading-slogans.dehnen"),
-        this.$t("loading-slogans.aufstellungen-werden-gemalt"),
-        this.$t("loading-slogans.matte-wird-aufgezeichnet"),
-        this.$t("loading-slogans.sprungboden-wird-aufgebaut"),
-        this.$t("loading-slogans.schminke-wird-aufgetragen"),
-        this.$t("loading-slogans.zopf-wird-gebunden"),
-      ];
-      if (this.choreo.SeasonTeam.Team.name)
-        slogans.push(
-          this.$t("loading-slogans.go-team", {
-            name: this.choreo.SeasonTeam.Team.name,
-          })
-        );
-      return slogans[Math.floor(this.count / 10) % slogans.length];
-    },
-    height() {
-      switch (this.choreo?.matType) {
-        case "1:2":
-          return this.width / 2;
-        case "3:4":
-          return (this.width / 4) * 3;
-        default:
-          return this.width;
       }
     },
   },

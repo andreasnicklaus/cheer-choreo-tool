@@ -1,11 +1,11 @@
 <template>
   <BModal
-    ref="modal"
     :id="`modal-importMember-${id}`"
+    ref="modal"
     centered
+    :title="$t('modals.import-member.team-mitglied-importieren')"
     @show="reset"
     @ok="importMembers"
-    :title="$t('modals.import-member.team-mitglied-importieren')"
   >
     <BFormGroup
       :label="$t('team', 1)"
@@ -47,12 +47,12 @@
     </BFormGroup>
     <template #footer="{ ok, cancel }">
       <BButton
-        @click="ok"
         variant="success"
         :disabled="!teamId || !seasonId || !memberIds || memberIds.length == 0"
+        @click="ok"
         >{{ $t("teamView.importieren") }}</BButton
       >
-      <BButton @click="cancel" variant="outline-danger">{{
+      <BButton variant="outline-danger" @click="cancel">{{
         $t("abbrechen")
       }}</BButton>
     </template>
@@ -96,58 +96,27 @@ import SeasonTeamService from "@/services/SeasonTeamService";
  */
 export default {
   name: "ImportMemberModal",
+  props: {
+    teams: {
+      type: Array,
+      default: () => [],
+    },
+    currentTeamId: {
+      type: String,
+      default: null,
+    },
+    currentSeasonTeamId: {
+      type: String,
+      default: null,
+    },
+  },
+  emits: ["import"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     teamId: null,
     seasonId: null,
     memberIds: [],
   }),
-  props: {
-    teams: {
-      type: Array,
-    },
-    currentTeamId: {
-      type: String,
-    },
-    currentSeasonTeamId: {
-      type: String,
-    },
-  },
-  methods: {
-    open() {
-      this.$refs.modal.show();
-    },
-    reset() {
-      this.teamId = this.currentTeamId;
-      if (this.seasonOptions.length == 0) {
-        this.teamId = this.teamOptions.filter(
-          (to) => to.value != this.currentTeamId
-        )[0]?.value;
-      }
-      this.seasonId = this.seasonOptions[0]?.value;
-      this.memberIds = [];
-    },
-    importMembers() {
-      SeasonTeamService.importMembers(
-        this.currentSeasonTeamId,
-        this.memberIds
-      ).then((members) => {
-        this.$emit("import", members);
-      });
-    },
-  },
-  watch: {
-    seasonId: {
-      handler() {
-        this.memberIds = [];
-      },
-    },
-    teamId: {
-      handler() {
-        this.memberIds = [];
-      },
-    },
-  },
   computed: {
     teamOptions() {
       if (!this.teams || this.teams.length === 0) return [];
@@ -214,6 +183,41 @@ export default {
       if (!this.memberIds || this.memberIds.length == 0)
         return this.$t("erforderlich");
       return null;
+    },
+  },
+  watch: {
+    seasonId: {
+      handler() {
+        this.memberIds = [];
+      },
+    },
+    teamId: {
+      handler() {
+        this.memberIds = [];
+      },
+    },
+  },
+  methods: {
+    open() {
+      this.$refs.modal.show();
+    },
+    reset() {
+      this.teamId = this.currentTeamId;
+      if (this.seasonOptions.length == 0) {
+        this.teamId = this.teamOptions.filter(
+          (to) => to.value != this.currentTeamId
+        )[0]?.value;
+      }
+      this.seasonId = this.seasonOptions[0]?.value;
+      this.memberIds = [];
+    },
+    importMembers() {
+      SeasonTeamService.importMembers(
+        this.currentSeasonTeamId,
+        this.memberIds
+      ).then((members) => {
+        this.$emit("import", members);
+      });
     },
   },
 };

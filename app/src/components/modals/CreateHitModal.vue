@@ -1,7 +1,7 @@
 <template>
   <BModal
-    ref="modal"
     :id="`modal-newHit-${id}`"
+    ref="modal"
     :title="$t('shortcut-tutorial.neuer-eintrag')"
     centered
     size="lg"
@@ -26,8 +26,8 @@
           list="hitName-options"
         />
         <datalist
-          id="hitName-options"
           v-if="newHitName && newHitName.length > 1"
+          id="hitName-options"
         >
           <option
             v-for="proposal in hitNameProposals.filter((p) =>
@@ -86,30 +86,30 @@
         <BButtonGroup>
           <BButton
             variant="light"
-            @click="() => (this.newHitMembers = teamMembers.map((m) => m.id))"
             :disabled="newHitMembers?.length == teamMembers?.length"
+            @click="() => (newHitMembers = teamMembers.map((m) => m.id))"
           >
             <IBiCheckAll />
             {{ $t("alle-auswaehlen") }}
           </BButton>
           <BButton
             variant="light"
-            @click="() => (this.newHitMembers = [])"
             :disabled="newHitMembers?.length == 0"
+            @click="() => (newHitMembers = [])"
           >
             <IBiSlash /> {{ $t("keine-auswaehlen") }}
           </BButton>
           <BButton
             variant="light"
-            @click="
-              () =>
-                (this.newHitMembers = teamMembers
-                  .filter((m) => !newHitMembers.includes(m.id))
-                  .map((m) => m.id))
-            "
             :disabled="
               newHitMembers?.length == 0 ||
               newHitMembers?.length == teamMembers?.length
+            "
+            @click="
+              () =>
+                (newHitMembers = teamMembers
+                  .filter((m) => !newHitMembers.includes(m.id))
+                  .map((m) => m.id))
             "
           >
             <IBiArrowRepeat />
@@ -147,7 +147,6 @@
     <template #footer="{ ok, cancel }">
       <BButton
         type="submit"
-        @click="ok"
         variant="success"
         :disabled="
           !newHitNameIsValid ||
@@ -155,10 +154,11 @@
           !newHitCountIsValid ||
           !newHitMembersIsValid
         "
+        @click="ok"
       >
         {{ $t("speichern") }}
       </BButton>
-      <BButton @click="cancel" variant="danger">{{ $t("abbrechen") }}</BButton>
+      <BButton variant="danger" @click="cancel">{{ $t("abbrechen") }}</BButton>
     </template>
   </BModal>
 </template>
@@ -290,14 +290,6 @@ const hitNameProposals = generateHitNameProposals();
  */
 export default {
   name: "CreateHitModal",
-  data: () => ({
-    id: (Math.random() + 1).toString(36).substring(7),
-    newHitName: null,
-    newHitAchter: 1,
-    newHitCount: 1,
-    newHitMembers: null,
-    hitNameProposals,
-  }),
   props: {
     teamMembers: {
       type: Array,
@@ -305,6 +297,7 @@ export default {
     },
     choreoId: {
       type: String,
+      default: "",
     },
     count: {
       type: Number,
@@ -320,37 +313,15 @@ export default {
       min: 0,
     },
   },
-  methods: {
-    open() {
-      this.$refs.modal.show();
-    },
-    resetModal() {
-      this.newHitAchter = Math.floor(this.count / 8) + 1;
-      this.newHitCount = (this.count % 8) + 1;
-      this.newHitName = "";
-      if (!this.newHitMembers)
-        this.newHitMembers = this.teamMembers
-          .filter(
-            (m1) =>
-              !this.hitsForCurrentCount.some((h) =>
-                h.Members ? h.Members.some((m2) => m1.id == m2.id) : false
-              )
-          )
-          .map((m) => m.id);
-    },
-    createHit() {
-      const count =
-        (parseInt(this.newHitAchter) - 1) * 8 + parseInt(this.newHitCount) - 1;
-      HitService.create(
-        this.newHitName,
-        count,
-        this.choreoId,
-        this.newHitMembers
-      ).then((hit) => {
-        this.$emit("hitCreated", hit);
-      });
-    },
-  },
+  emits: ["hitCreated"],
+  data: () => ({
+    id: (Math.random() + 1).toString(36).substring(7),
+    newHitName: null,
+    newHitAchter: 1,
+    newHitCount: 1,
+    newHitMembers: null,
+    hitNameProposals,
+  }),
   computed: {
     newHitNameIsValid() {
       return Boolean(this.newHitName) && this.newHitName.trim().length >= 3;
@@ -382,6 +353,37 @@ export default {
       if (!this.newHitMembers || this.newHitMembers.length == 0)
         return this.$t("erforderlich");
       return null;
+    },
+  },
+  methods: {
+    open() {
+      this.$refs.modal.show();
+    },
+    resetModal() {
+      this.newHitAchter = Math.floor(this.count / 8) + 1;
+      this.newHitCount = (this.count % 8) + 1;
+      this.newHitName = "";
+      if (!this.newHitMembers)
+        this.newHitMembers = this.teamMembers
+          .filter(
+            (m1) =>
+              !this.hitsForCurrentCount.some((h) =>
+                h.Members ? h.Members.some((m2) => m1.id == m2.id) : false
+              )
+          )
+          .map((m) => m.id);
+    },
+    createHit() {
+      const count =
+        (parseInt(this.newHitAchter) - 1) * 8 + parseInt(this.newHitCount) - 1;
+      HitService.create(
+        this.newHitName,
+        count,
+        this.choreoId,
+        this.newHitMembers
+      ).then((hit) => {
+        this.$emit("hitCreated", hit);
+      });
     },
   },
 };

@@ -17,25 +17,25 @@
         filename: choreo?.name ? choreo.name + '.pdf' : 'Countsheet.pdf',
       }"
     >
-      <template v-slot:pdf-content>
+      <template #pdf-content>
         <section>
           <div v-for="(split, i) in hitSplits" :key="split.startIndex">
             <BRow
+              :ref="(el) => setCountSheetInfoRef(el, split.startIndex)"
               align-h="between"
               align-v="center"
               class="mb-2"
-              :ref="(el) => setCountSheetInfoRef(el, split.startIndex)"
             >
-              <BCol cols="auto" v-if="includeChoreoName">
+              <BCol v-if="includeChoreoName" cols="auto">
                 {{ choreo?.name }}
               </BCol>
-              <BCol cols="auto" v-if="includeTeamName">
+              <BCol v-if="includeTeamName" cols="auto">
                 {{ choreo?.SeasonTeam.Team?.name }}
               </BCol>
-              <BCol cols="auto" v-if="includeDate">
+              <BCol v-if="includeDate" cols="auto">
                 {{ new Date(date).toLocaleDateString("de-de") }}
               </BCol>
-              <BCol cols="auto" v-if="includeLogo">
+              <BCol v-if="includeLogo" cols="auto">
                 <img
                   :src="currentClubLogoBlob"
                   alt=""
@@ -44,12 +44,12 @@
                 />
               </BCol>
               <BCol
-                cols="auto"
                 v-if="
                   includeMemberNames &&
                   includedMembers.length > 0 &&
                   includedMembers.length < teamMembers.length
                 "
+                cols="auto"
                 class="text-start"
               >
                 {{
@@ -63,7 +63,7 @@
             <CountSheet
               :ref="(el) => setCountSheetRef(el, split.startIndex)"
               :count="-1"
-              :startCount="split.startIndex"
+              :start-count="split.startIndex"
               :choreo="
                 choreo
                   ? {
@@ -83,8 +83,8 @@
                     }
                   : choreo
               "
-              :stickyHeader="false"
-              :fontSize="12"
+              :sticky-header="false"
+              :font-size="12"
               :fixed="true"
             />
             <p class="text-center">{{ i + 1 }} / {{ hitSplits.length }}</p>
@@ -123,8 +123,8 @@
                 {{ $t("pdf.datum-anzeigen") }}
               </BFormCheckbox>
               <BFormInput
-                type="date"
                 v-model="date"
+                type="date"
                 :disabled="!includeDate"
                 :state="dateIsValid"
               />
@@ -167,9 +167,9 @@
               </BFormCheckbox>
             </BFormGroup>
             <BAvatar
+              v-if="currentClub?.logoExtension"
               size="60px"
               :src="currentClubLogoBlob"
-              v-if="currentClub?.logoExtension"
               :disabled="!includeLogo"
             >
               <IBiHouseFill v-if="!currentClubLogoBlob" font-scale="1.5" />
@@ -196,18 +196,18 @@
                 <BButtonGroup class="mb-2">
                   <BButton
                     variant="light"
+                    :disabled="includedMembers.length == teamMembers.length"
                     @click="
                       () => (includedMembers = teamMembers.map((m) => m.id))
                     "
-                    :disabled="includedMembers.length == teamMembers.length"
                   >
                     <IBiCheckAll />
                     {{ $t("alle-auswaehlen") }}
                   </BButton>
                   <BButton
                     variant="light"
-                    @click="() => (includedMembers = [])"
                     :disabled="includedMembers.length == 0"
+                    @click="() => (includedMembers = [])"
                   >
                     <IBiSlash />
                     {{ $t("keine-auswaehlen") }}
@@ -246,11 +246,11 @@
           <BSpinner />
           <p>{{ slogan || $t("pdf.choreo-wird-geladen") }}</p>
         </div>
-        <div class="d-grid" v-else>
+        <div v-else class="d-grid">
           <BButton
-            @click="generatePdf"
             variant="success"
             :disabled="includedMembers.length == 0"
+            @click="generatePdf"
           >
             <IBiFilePdf />
             {{ $t("pdf.pdf-generieren") }}
@@ -333,6 +333,106 @@ export default {
     countSheetRefs: {},
     countSheetInfoRefs: {},
   }),
+  computed: {
+    currentClub() {
+      return this.user?.Clubs.find((c) => c.id == this.$store.state.clubId);
+    },
+    slogans() {
+      return [
+        this.$t("loading-slogans.schuhe-werden-gebunden"),
+        this.$t("loading-slogans.haare-werden-geflochten"),
+        this.$t("loading-slogans.schleifen-werden-gerichtet"),
+        this.$t("loading-slogans.maskottchen-wird-hingelegt"),
+        this.$t("loading-slogans.1-3-5-7"),
+        this.$t("loading-slogans.dehnen"),
+        this.$t("loading-slogans.uniformen-werden-sortiert"),
+        this.$t("loading-slogans.tabelle-wird-gemalt"),
+        this.$t("loading-slogans.eintraege-werden-geschrieben"),
+        this.$t("loading-slogans.schminke-wird-aufgetragen"),
+        this.$t("loading-slogans.zopf-wird-gebunden"),
+      ];
+    },
+    slogan() {
+      return this.slogans[this.sloganIndex];
+    },
+    dateIsValid() {
+      return (
+        !this.includeDate ||
+        (Boolean(this.date) && Boolean(new Date(this.date)))
+      );
+    },
+    dateStateFeedback() {
+      if (!this.includeDate) return null;
+      if (Boolean(this.date) && Boolean(new Date(this.date)))
+        return this.$t("erforderlich");
+      return null;
+    },
+    includedMembersIsValid() {
+      return this.includedMembers.length > 0;
+    },
+    includedMembersStateFeedback() {
+      if (this.includedMembers.length <= 0)
+        return this.$t("pdf.min-teilnehmer-erforderlich");
+      return null;
+    },
+  },
+  mounted() {
+    useHead({
+      title: computed(
+        () =>
+          `${this.choreo?.name || this.t("pdf.laedt-choreo")} - ${this.t(
+            "pdf.PDF"
+          )}`
+      ),
+      meta: [
+        {
+          vmid: "description",
+          name: "description",
+          content: computed(() => this.t("meta.pdfView.description")),
+        },
+        {
+          vmid: "twitter:description",
+          name: "twitter:description",
+          content: computed(() => this.t("meta.pdfView.description")),
+        },
+        {
+          vmid: "og:description",
+          property: "og:description",
+          content: computed(() => this.t("meta.pdfView.description")),
+        },
+        {
+          vmid: "og:title",
+          property: "og:title",
+          content: computed(
+            () =>
+              `${
+                this.choreo?.name || this.t("pdf.laedt-choreo")
+              } - ${this.t("pdf.PDF")} - ${this.t(
+                "general.ChoreoPlaner"
+              )} | ${this.t("meta.defaults.title")}`
+          ),
+        },
+        {
+          vmid: "twitter:title",
+          name: "twitter:title",
+          content: computed(
+            () =>
+              `${
+                this.choreo?.name || this.t("pdf.laedt-choreo")
+              } - ${this.t("pdf.PDF")} - ${this.t(
+                "general.ChoreoPlaner"
+              )} | ${this.t("meta.defaults.title")}`
+          ),
+        },
+      ],
+    });
+    this.loadUserInfo();
+    this.choreoId = this.$route.params.choreoId;
+    this.loadChoreo();
+    this.sloganInterval = setInterval(() => {
+      this.sloganIndex = Math.floor(Math.random() * this.slogans.length);
+    }, 3000);
+  },
   methods: {
     setCountSheetRef(el, startIndex) {
       if (el) {
@@ -452,106 +552,6 @@ export default {
         ).then((response) => {
           this.currentClubLogoBlob = URL.createObjectURL(response.data);
         });
-    },
-  },
-  mounted() {
-    useHead({
-      title: computed(
-        () =>
-          `${this.choreo?.name || this.t("pdf.laedt-choreo")} - ${this.t(
-            "pdf.PDF"
-          )}`
-      ),
-      meta: [
-        {
-          vmid: "description",
-          name: "description",
-          content: computed(() => this.t("meta.pdfView.description")),
-        },
-        {
-          vmid: "twitter:description",
-          name: "twitter:description",
-          content: computed(() => this.t("meta.pdfView.description")),
-        },
-        {
-          vmid: "og:description",
-          property: "og:description",
-          content: computed(() => this.t("meta.pdfView.description")),
-        },
-        {
-          vmid: "og:title",
-          property: "og:title",
-          content: computed(
-            () =>
-              `${
-                this.choreo?.name || this.t("pdf.laedt-choreo")
-              } - ${this.t("pdf.PDF")} - ${this.t(
-                "general.ChoreoPlaner"
-              )} | ${this.t("meta.defaults.title")}`
-          ),
-        },
-        {
-          vmid: "twitter:title",
-          name: "twitter:title",
-          content: computed(
-            () =>
-              `${
-                this.choreo?.name || this.t("pdf.laedt-choreo")
-              } - ${this.t("pdf.PDF")} - ${this.t(
-                "general.ChoreoPlaner"
-              )} | ${this.t("meta.defaults.title")}`
-          ),
-        },
-      ],
-    });
-    this.loadUserInfo();
-    this.choreoId = this.$route.params.choreoId;
-    this.loadChoreo();
-    this.sloganInterval = setInterval(() => {
-      this.sloganIndex = Math.floor(Math.random() * this.slogans.length);
-    }, 3000);
-  },
-  computed: {
-    currentClub() {
-      return this.user?.Clubs.find((c) => c.id == this.$store.state.clubId);
-    },
-    slogans() {
-      return [
-        this.$t("loading-slogans.schuhe-werden-gebunden"),
-        this.$t("loading-slogans.haare-werden-geflochten"),
-        this.$t("loading-slogans.schleifen-werden-gerichtet"),
-        this.$t("loading-slogans.maskottchen-wird-hingelegt"),
-        this.$t("loading-slogans.1-3-5-7"),
-        this.$t("loading-slogans.dehnen"),
-        this.$t("loading-slogans.uniformen-werden-sortiert"),
-        this.$t("loading-slogans.tabelle-wird-gemalt"),
-        this.$t("loading-slogans.eintraege-werden-geschrieben"),
-        this.$t("loading-slogans.schminke-wird-aufgetragen"),
-        this.$t("loading-slogans.zopf-wird-gebunden"),
-      ];
-    },
-    slogan() {
-      return this.slogans[this.sloganIndex];
-    },
-    dateIsValid() {
-      return (
-        !this.includeDate ||
-        (Boolean(this.date) && Boolean(new Date(this.date)))
-      );
-    },
-    dateStateFeedback() {
-      if (!this.includeDate) return null;
-      if (Boolean(this.date) && Boolean(new Date(this.date)))
-        return this.$t("erforderlich");
-      return null;
-    },
-    includedMembersIsValid() {
-      return this.includedMembers.length > 0;
-    },
-    includedMembersStateFeedback() {
-      if (this.includedMembers.length <= 0)
-        return this.$t("pdf.min-teilnehmer-erforderlich");
-      return null;
     },
   },
 };

@@ -22,19 +22,19 @@ import VersionService from "@/services/VersionService";
 
 export default {
   name: "NewVersionBadge",
-  data: () => ({
-    show: false,
-  }),
   props: {
     version: {
       type: String,
-      required: false,
+      default: "",
     },
     versions: {
       type: Array,
-      required: false,
+      default: () => [],
     },
   },
+  data: () => ({
+    show: false,
+  }),
 
   mounted() {
     this.init();

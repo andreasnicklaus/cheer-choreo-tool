@@ -21,9 +21,7 @@
       <BNavbarNav>
         <BNavItem
           :to="{ name: 'Home', params: { locale: $i18n.locale } }"
-          v-bind:active-class="
-            $route.name == 'Home' ? 'router-link-active' : ''
-          "
+          :active-class="$route.name == 'Home' ? 'router-link-active' : ''"
         >
           <IBiHouseFill class="me-1" />
           {{ $t("nav.start") }}
@@ -82,9 +80,9 @@
             <BDropdownDivider />
           </BDropdownGroup>
           <BDropdownItem
+            v-show="$store.state.clubId"
             variant="success"
             @click="() => $refs.createChoreoModal.open()"
-            v-show="$store.state.clubId"
           >
             <IBiPlus />
             {{ $t("nav.neue-choreo") }}
@@ -108,9 +106,9 @@
           </BDropdownItem>
           <BDropdownDivider v-show="teams && teams.length > 0" />
           <BDropdownItem
+            v-show="$store.state.clubId"
             variant="success"
             @click="() => $refs.createTeamModal.open()"
-            v-show="$store.state.clubId"
           >
             <IBiPlus />
             {{ $t("nav.neues-team") }}
@@ -120,10 +118,10 @@
 
       <BNavbarNav class="ms-auto align-items-sm-center">
         <BNavItemDropdown
+          v-show="$store.state.loggedIn && !$store.state.isMobile"
           no-caret
           right
           :class="{ 'me-3': $store.state.isMobile }"
-          v-show="$store.state.loggedIn && !$store.state.isMobile"
           data-testid="notification-button"
         >
           <template #button-content>
@@ -132,9 +130,9 @@
               $t("nav.benachrichtigungen")
             }}</span>
             <BBadge
+              v-show="notifications.filter((n) => !n.read).length > 0"
               pill
               variant="danger"
-              v-show="notifications.filter((n) => !n.read).length > 0"
               :style="{
                 position: 'absolute',
                 right: 0,
@@ -144,33 +142,33 @@
             >
           </template>
           <BDropdownText
-            style="width: 400px"
-            class="text-center"
             v-show="
               notifications.filter((n) => showAllNotifications || !n.read)
                 .length == 0
             "
+            style="width: 400px"
+            class="text-center"
           >
             <IBiBell />
             {{ $t("nav.du-hast-noch-keine-benachrichtigungen-erhalten") }}
           </BDropdownText>
           <BDropdownText
-            style="width: 400px"
-            text-class="p-0"
             v-for="notification in notifications.filter(
               (n) => showAllNotifications || !n.read
             )"
             :key="notification.id"
+            style="width: 400px"
+            text-class="p-0"
           >
             <BCard border-variant="light" class="notification-card" @click.stop>
               <BRow>
                 <BCol>
                   <BCardSubtitle>
                     <BBadge
+                      v-show="!notification.read"
                       pill
                       variant="success"
                       class="me-1"
-                      v-show="!notification.read"
                       >{{ $t("nav.neu-0") }}</BBadge
                     >
                     <BBadge pill variant="primary">{{
@@ -183,20 +181,20 @@
                       :breaks="false"
                       :html="true"
                       class="notification-card-text"
-                      :anchorAttributes="{ target: '_blank' }"
+                      :anchor-attributes="{ target: '_blank' }"
                     />
                   </BCardTitle>
                 </BCol>
                 <BCol cols="auto" @click.stop>
                   <BButton
                     variant="link"
+                    data-testid="toggleReadStatus-button"
                     @click.stop="
                       () =>
                         notification.read
                           ? markNotificationAsNotRead(notification.id)
                           : markNotificationAsRead(notification.id)
                     "
-                    data-testid="toggleReadStatus-button"
                   >
                     <IBiEnvelope v-show="notification.read" />
                     <IBiEnvelopeOpen v-show="!notification.read" />
@@ -212,7 +210,7 @@
               <Markdown
                 :breaks="false"
                 class="notification-card-text"
-                :anchorAttributes="{ target: '_blank' }"
+                :anchor-attributes="{ target: '_blank' }"
                 :source="notification.message.replace(/  +/g, ' ')"
                 :html="true"
               />
@@ -220,17 +218,17 @@
           </BDropdownText>
           <BDropdownText v-if="!showAllNotifications" class="d-grid">
             <BButton
-              @click.stop="() => (showAllNotifications = true)"
               variant="link"
               :disabled="notifications.length == 0"
+              @click.stop="() => (showAllNotifications = true)"
               >{{ $t("nav.alte-nachrichten-anzeigen") }}</BButton
             ></BDropdownText
           >
           <BDropdownText v-else class="d-grid">
             <BButton
-              @click.stop="() => (showAllNotifications = false)"
               variant="link"
               :disabled="notifications.length == 0"
+              @click.stop="() => (showAllNotifications = false)"
               >{{ $t("nav.alte-nachrichten-ausblenden") }}</BButton
             >
           </BDropdownText>
@@ -259,16 +257,15 @@
         </BNavItemDropdown>
 
         <BNavItem
-          @click="share"
-          v-b-tooltip.hover.bottom="$t('nav.teilen')"
           v-show="shareable"
+          v-b-tooltip.hover.bottom="$t('nav.teilen')"
+          @click="share"
         >
           <IBiShare />
           <span class="d-sm-none ms-2">{{ $t("nav.teilen") }}</span>
         </BNavItem>
 
         <BNavItem
-          class="d-sm-block d-none"
           v-show="onlineStatus != null"
           v-b-tooltip.hover.bottom="
             onlineStatus == true
@@ -276,22 +273,23 @@
                 (serverVersion && ` (${serverVersion || $t('errors.unknown')})`)
               : $t('nav.server-sind-offline')
           "
+          class="d-sm-block d-none"
           data-testid="serverStatus"
         >
-          <IBiCheckCircle class="text-success" v-show="onlineStatus === true" />
-          <IBiXCircle class="text-danger" v-show="onlineStatus === false" />
+          <IBiCheckCircle v-show="onlineStatus === true" class="text-success" />
+          <IBiXCircle v-show="onlineStatus === false" class="text-danger" />
         </BNavItem>
         <BNavItem
-          :to="{ name: 'Help', params: { locale: $i18n.locale } }"
           v-b-tooltip.hover.bottom="$t('general.help')"
+          :to="{ name: 'Help', params: { locale: $i18n.locale } }"
         >
           <IBiQuestionCircle />
           <span class="d-sm-none ms-2">{{ $t("general.help") }}</span>
         </BNavItem>
         <BButton
+          v-if="!$store.state.loggedIn"
           variant="primary"
           :style="{ color: 'white' }"
-          v-if="!$store.state.loggedIn"
           :to="
             $store.state.loggedIn
               ? null
@@ -356,8 +354,8 @@
           <BDropdownDivider />
           <BDropdownItem
             variant="danger"
-            @click="logout"
             data-testid="logout-button"
+            @click="logout"
           >
             <IBiDoorOpen class="me-2" />
             {{ $t("nav.ausloggen") }}
@@ -401,8 +399,8 @@
           <hr />
           <BNavItem
             variant="danger"
-            @click="logout"
             data-testid="logout-button"
+            @click="logout"
           >
             <IBiDoorOpen class="me-2" />
             {{ $t("nav.ausloggen") }}
@@ -411,18 +409,18 @@
       </BNavbarNav>
     </BCollapse>
 
-    <CreateClubModal ref="createClubModal" @clubCreated="reloadPage" />
+    <CreateClubModal ref="createClubModal" @club-created="reloadPage" />
 
     <CreateChoreoModal
       ref="createChoreoModal"
       :teams="teams"
-      @addChoreo="reloadPage"
+      @add-choreo="reloadPage"
     />
 
     <CreateTeamModal
-      ref="createTeamModal"
-      @teamCreated="onTeamCreated"
       v-if="$store.state.loggedIn"
+      ref="createTeamModal"
+      @team-created="onTeamCreated"
     />
   </BNavbar>
 </template>
@@ -474,6 +472,15 @@ export default {
     Markdown,
     CountryFlag,
   },
+  props: {
+    onlineStatus: {
+      type: Boolean,
+    },
+    serverVersion: {
+      type: String,
+      default: null,
+    },
+  },
   data: () => ({
     teams: [],
     choreos: [],
@@ -496,14 +503,46 @@ export default {
     showAllNotifications: false,
     showNotificationsDropdown: false,
   }),
-  props: {
-    onlineStatus: {
-      type: Boolean,
+  computed: {
+    shareData() {
+      return {
+        url: window.location.href,
+        title: document.title,
+        text: this.$t("nav.schau-dir-das-an"),
+      };
     },
-    serverVersion: {
-      type: String,
-      default: null,
+  },
+  watch: {
+    "$store.state.loggedIn": {
+      handler() {
+        this.load();
+      },
+      immediate: true,
     },
+    "$store.state.clubId": {
+      handler() {
+        this.load();
+      },
+      immediate: true,
+    },
+  },
+  created() {
+    this.load();
+    setTimeout(this.checkEmailConfirmation, 1000);
+    this.loadInterval = setInterval(this.load, 60_000);
+    this.loadNotificationsInterval = setInterval(
+      this.loadNotifications,
+      10_000
+    );
+  },
+  mounted() {
+    if (navigator.canShare && navigator.share)
+      this.shareable = navigator.canShare(this.shareData);
+  },
+  beforeUnmount() {
+    if (this.loadInterval) clearInterval(this.loadInterval);
+    if (this.loadNotificationsInterval)
+      clearInterval(this.loadNotificationsInterval);
   },
   methods: {
     load() {
@@ -625,47 +664,6 @@ export default {
       NotificationService.delete(notificationId).then(() => {
         this.loadNotifications();
       });
-    },
-  },
-  watch: {
-    "$store.state.loggedIn": {
-      handler() {
-        this.load();
-      },
-      immediate: true,
-    },
-    "$store.state.clubId": {
-      handler() {
-        this.load();
-      },
-      immediate: true,
-    },
-  },
-  created() {
-    this.load();
-    setTimeout(this.checkEmailConfirmation, 1000);
-    this.loadInterval = setInterval(this.load, 60_000);
-    this.loadNotificationsInterval = setInterval(
-      this.loadNotifications,
-      10_000
-    );
-  },
-  mounted() {
-    if (navigator.canShare && navigator.share)
-      this.shareable = navigator.canShare(this.shareData);
-  },
-  beforeUnmount() {
-    if (this.loadInterval) clearInterval(this.loadInterval);
-    if (this.loadNotificationsInterval)
-      clearInterval(this.loadNotificationsInterval);
-  },
-  computed: {
-    shareData() {
-      return {
-        url: window.location.href,
-        title: document.title,
-        text: this.$t("nav.schau-dir-das-an"),
-      };
     },
   },
 };

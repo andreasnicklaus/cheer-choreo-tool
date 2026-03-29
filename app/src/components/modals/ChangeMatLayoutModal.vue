@@ -1,12 +1,12 @@
 <template>
   <BModal
-    ref="modal"
     :id="`changeMatLayoutModal-${id}`"
+    ref="modal"
     centered
     @show="
       () => {
-        if (this.choreo) {
-          this.newMatType = this.choreo?.matType ?? 'cheer';
+        if (choreo) {
+          newMatType = choreo?.matType ?? 'cheer';
         }
       }
     "
@@ -32,10 +32,10 @@
       </BFormGroup>
     </BForm>
     <template #footer="{ ok, cancel }">
-      <BButton @click="ok" variant="success" :disabled="!newMatTypeIsValid">
+      <BButton variant="success" :disabled="!newMatTypeIsValid" @click="ok">
         {{ $t("modals.change-mat.layout-aendern") }}
       </BButton>
-      <BButton @click="cancel" variant="danger">{{ $t("abbrechen") }}</BButton>
+      <BButton variant="danger" @click="cancel">{{ $t("abbrechen") }}</BButton>
     </template>
   </BModal>
 </template>
@@ -67,25 +67,17 @@ import NewVersionBadge from "@/components/NewVersionBadge.vue";
 export default {
   name: "ChangeMatLayoutModal",
   components: { NewVersionBadge },
+  props: {
+    choreo: {
+      type: Object,
+      default: null,
+    },
+  },
+  emits: ["matTypeUpdate"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     newMatType: null,
   }),
-  props: {
-    choreo: {
-      type: Object,
-    },
-  },
-  methods: {
-    open() {
-      this.$refs.modal.show();
-    },
-    changeMatType() {
-      ChoreoService.changeMatType(this.choreo.id, this.newMatType).then(() => {
-        this.$emit("matTypeUpdate", this.newMatType);
-      });
-    },
-  },
   computed: {
     matTypeOptions() {
       return ChoreoService.matTypeOptions();
@@ -101,6 +93,16 @@ export default {
         this.newMatType != null &&
         ["cheer", "square", "1:2", "3:4"].includes(this.newMatType)
       );
+    },
+  },
+  methods: {
+    open() {
+      this.$refs.modal.show();
+    },
+    changeMatType() {
+      ChoreoService.changeMatType(this.choreo.id, this.newMatType).then(() => {
+        this.$emit("matTypeUpdate", this.newMatType);
+      });
     },
   },
 };

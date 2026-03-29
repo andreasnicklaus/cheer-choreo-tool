@@ -1,17 +1,17 @@
 <template>
   <BModal
+    :id="`video-download-modal-${id}`"
     ref="modal"
     no-footer
-    :id="`video-download-modal-${id}`"
     :title="$t('modals.video-download.video-herunterladen')"
     size="xl"
   >
     <BRow align-v="end">
       <BCol>
         <video
+          ref="outputVideo"
           :width="width"
           controls
-          ref="outputVideo"
           :src="downloadUrl"
           :style="{ width: '100%', minWidth: '100px', aspectRatio: '1/1' }"
         ></video>
@@ -92,7 +92,7 @@
                 <IBiFilm />
                 {{
                   selectedDownloadOption.name ||
-                  this.$t("modals.video-download.format")
+                  $t("modals.video-download.format")
                 }}
               </template>
               <BDropdownItem
@@ -108,8 +108,8 @@
           <BCol cols="auto">
             <BButton
               v-b-toggle.collapse-technical-issues
-              variant="light"
               v-b-tooltip.hover="$t('general.help')"
+              variant="light"
             >
               <IBiQuestionCircle />
             </BButton>
@@ -146,13 +146,10 @@
  */
 export default {
   name: "VideoDownloadModal",
-  data: () => ({
-    id: (Math.random() + 1).toString(36).substring(7),
-    selectedDownloadOptionId: "mp4",
-  }),
   props: {
     choreo: {
       type: Object,
+      default: null,
     },
     width: {
       type: Number,
@@ -160,9 +157,23 @@ export default {
     },
     downloadUrl: {
       type: String,
+      default: "",
     },
     downloadOptions: {
       type: Array,
+      default: () => [],
+    },
+  },
+  emits: ["downloadOptionChanged"],
+  data: () => ({
+    id: (Math.random() + 1).toString(36).substring(7),
+    selectedDownloadOptionId: "mp4",
+  }),
+  computed: {
+    selectedDownloadOption() {
+      return this.downloadOptions.find(
+        (o) => o.id == this.selectedDownloadOptionId
+      );
     },
   },
   methods: {
@@ -172,13 +183,6 @@ export default {
     selectDownloadOption(optionId) {
       this.selectedDownloadOptionId = optionId;
       this.$emit("downloadOptionChanged", optionId);
-    },
-  },
-  computed: {
-    selectedDownloadOption() {
-      return this.downloadOptions.find(
-        (o) => o.id == this.selectedDownloadOptionId
-      );
     },
   },
 };

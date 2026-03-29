@@ -1,14 +1,14 @@
 <template>
   <BModal
-    ref="modal"
     :id="`changePasswordModal-${id}`"
+    ref="modal"
     :title="$t('accountView.passwort-aendern')"
     centered
     @ok="changePassword"
     @show="
       () => {
-        this.newPassword = null;
-        this.passwordRepetition = null;
+        newPassword = null;
+        passwordRepetition = null;
       }
     "
   >
@@ -51,13 +51,13 @@
     </BForm>
     <template #footer="{ ok, cancel }">
       <BButton
-        @click="ok"
         variant="success"
         :disabled="!newPasswordIsValid || !passwordRepetitionIsValid"
+        @click="ok"
       >
         {{ $t("modals.change-password.password-aendern") }}
       </BButton>
-      <BButton @click="cancel" variant="danger">{{ $t("abbrechen") }}</BButton>
+      <BButton variant="danger" @click="cancel">{{ $t("abbrechen") }}</BButton>
     </template>
   </BModal>
 </template>
@@ -89,6 +89,30 @@ export default {
     newPassword: null,
     passwordRepetition: null,
   }),
+  computed: {
+    newPasswordIsValid() {
+      return Boolean(this.newPassword) && this.newPassword.length >= 6;
+    },
+    newPasswordStateFeedback() {
+      if (!this.newPassword || this.newPassword.length < 6)
+        return this.$t("modals.change-password.min-password-length");
+      return null;
+    },
+    passwordRepetitionIsValid() {
+      return (
+        Boolean(this.passwordRepetition) &&
+        this.newPassword == this.passwordRepetition
+      );
+    },
+    passwordRepetitionStateFeedback() {
+      if (!this.passwordRepetition) return this.$t("erforderlich");
+      if (this.newPassword != this.passwordRepetition)
+        return this.$t(
+          "modals.change-password.die-wiederholung-entspricht-nicht-dem-ersten-passwort"
+        );
+      return null;
+    },
+  },
   methods: {
     open() {
       this.$refs.modal.show();
@@ -114,30 +138,6 @@ export default {
             this.$t("accountView.das-hat-nicht-funktioniert")
           );
         });
-    },
-  },
-  computed: {
-    newPasswordIsValid() {
-      return Boolean(this.newPassword) && this.newPassword.length >= 6;
-    },
-    newPasswordStateFeedback() {
-      if (!this.newPassword || this.newPassword.length < 6)
-        return this.$t("modals.change-password.min-password-length");
-      return null;
-    },
-    passwordRepetitionIsValid() {
-      return (
-        Boolean(this.passwordRepetition) &&
-        this.newPassword == this.passwordRepetition
-      );
-    },
-    passwordRepetitionStateFeedback() {
-      if (!this.passwordRepetition) return this.$t("erforderlich");
-      if (this.newPassword != this.passwordRepetition)
-        return this.$t(
-          "modals.change-password.die-wiederholung-entspricht-nicht-dem-ersten-passwort"
-        );
-      return null;
     },
   },
 };

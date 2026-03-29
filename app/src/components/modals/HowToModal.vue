@@ -1,7 +1,7 @@
 <template>
   <BModal
-    ref="modal"
     :id="`howToModal-${id}`"
+    ref="modal"
     :title="$t('modals.howto.anleitung')"
     no-footer
     scrollable

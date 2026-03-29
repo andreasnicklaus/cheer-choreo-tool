@@ -1,7 +1,7 @@
 <template>
   <BModal
-    ref="modal"
     :id="`comfirmEmailModal-${id}`"
+    ref="modal"
     :title="$t('modals.confirm-email.bestaetige-deine-e-mail-adresse')"
     centered
     :header-bg-variant="isError ? 'danger' : 'success'"
@@ -13,8 +13,8 @@
     <p>{{ $t("modals.confirm-email.info-2") }}</p>
     <template #footer="{ cancel }">
       <BButton
-        @click="cancel"
         :variant="isError ? 'outline-danger' : 'outline-success'"
+        @click="cancel"
       >
         {{ $t("feedback.schliessen") }}
       </BButton>

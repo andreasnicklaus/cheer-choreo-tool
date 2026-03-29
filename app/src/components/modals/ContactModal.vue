@@ -1,7 +1,7 @@
 <template>
   <BModal
-    ref="modal"
     :id="`contactModal-${id}`"
+    ref="modal"
     :title="
       messageWasSuccess
         ? $t('modals.contact.success')
@@ -11,13 +11,13 @@
     "
     centered
     scrollable
-    @ok.prevent="send"
     :header-bg-variant="bgVariant"
     :header-text-variant="textVariant"
     :body-bg-variant="bgVariant"
     :body-text-variant="textVariant"
     :footer-bg-variant="bgVariant"
     :footer-text-variant="textVariant"
+    @ok.prevent="send"
   >
     <BForm v-if="!messageWasSuccess && !messageWasError">
       <BRow>
@@ -108,8 +108,8 @@
         :invalid-feedback="messageStateFeedback"
       >
         <BFormTextarea
-          v-model="message"
           id="message"
+          v-model="message"
           :placeholder="$t('modals.contact.enter-your-message-to-us')"
           required
           rows="8"
@@ -119,13 +119,13 @@
         </BFormTextarea>
       </BFormGroup>
     </BForm>
-    <BContainer fluid v-if="messageWasSuccess" class="text-center">
+    <BContainer v-if="messageWasSuccess" fluid class="text-center">
       <IBiCheckCircleFill style="width: 120px; height: 120px" class="my-4" />
       <p>
         <b>{{ $t("modals.contact.your-message-was-sent-successfully") }}</b>
       </p>
     </BContainer>
-    <BContainer fluid v-if="messageWasError" class="text-center">
+    <BContainer v-if="messageWasError" fluid class="text-center">
       <IBiXCircle style="width: 120px; height: 120px" class="my-4" />
       <p>
         <b>{{ $t("modals.contact.there-was-an-error-with-your-message") }}</b>
@@ -134,12 +134,12 @@
     </BContainer>
     <template #footer="{ ok, cancel }">
       <BButton
-        @click="ok"
-        variant="success"
         v-if="!messageWasSuccess && !messageWasError"
+        variant="success"
         :disabled="!allValid || sending"
+        @click="ok"
       >
-        <BSpinner small v-show="sending" />
+        <BSpinner v-show="sending" small />
         <span v-show="!sending">
           <IBiChatRightText class="me-2" />
           {{ $t("feedback.abschicken") }}
@@ -149,7 +149,7 @@
         <IBiArrowCounterclockwise class="me-2" />
         {{ $t("modals.contact.try-again") }}
       </BButton>
-      <BButton @click="cancel" variant="light">
+      <BButton variant="light" @click="cancel">
         {{ $t("feedback.schliessen") }}
       </BButton>
     </template>
@@ -198,6 +198,60 @@ export default {
     subject: null,
     message: null,
   }),
+  computed: {
+    bgVariant() {
+      if (this.messageWasSuccess) return "success";
+      if (this.messageWasError) return "danger";
+      return null;
+    },
+    textVariant() {
+      if (this.messageWasSuccess || this.messageWasError) return "white";
+      return null;
+    },
+    nameIsValid() {
+      return this.name != null && this.name.length > 0;
+    },
+    nameStateFeedback() {
+      if (!this.name || this.name.length == 0) return this.$t("erforderlich");
+      return null;
+    },
+    emailIsValid() {
+      return this.email != null && this.email.match(emailRegex)?.length > 0;
+    },
+    emailStateFeedback() {
+      if (!this.email) return this.$t("erforderlich");
+      else if (
+        !this.email.match(emailRegex) ||
+        this.email.match(emailRegex)?.length == 0
+      )
+        return this.$t("modals.contact.please-enter-a-valid-email-address");
+      return null;
+    },
+    subjectIsValid() {
+      return this.subject != null && this.subject.length > 0;
+    },
+    subjectStateFeedback() {
+      if (!this.subject || this.subject.length == 0)
+        return this.$t("erforderlich");
+      return null;
+    },
+    messageIsValid() {
+      return this.message != null && this.message.length > 0;
+    },
+    messageStateFeedback() {
+      if (!this.message || this.message.length == 0)
+        return this.$t("erforderlich");
+      return null;
+    },
+    allValid() {
+      return (
+        this.nameIsValid &&
+        this.emailIsValid &&
+        this.subjectIsValid &&
+        this.messageIsValid
+      );
+    },
+  },
   mounted() {
     this.initUserMessage();
     this.loadUserInfo();
@@ -268,60 +322,6 @@ export default {
     resetAfterError() {
       this.messageWasError = false;
       this.errorMessage = null;
-    },
-  },
-  computed: {
-    bgVariant() {
-      if (this.messageWasSuccess) return "success";
-      if (this.messageWasError) return "danger";
-      return null;
-    },
-    textVariant() {
-      if (this.messageWasSuccess || this.messageWasError) return "white";
-      return null;
-    },
-    nameIsValid() {
-      return this.name != null && this.name.length > 0;
-    },
-    nameStateFeedback() {
-      if (!this.name || this.name.length == 0) return this.$t("erforderlich");
-      return null;
-    },
-    emailIsValid() {
-      return this.email != null && this.email.match(emailRegex)?.length > 0;
-    },
-    emailStateFeedback() {
-      if (!this.email) return this.$t("erforderlich");
-      else if (
-        !this.email.match(emailRegex) ||
-        this.email.match(emailRegex)?.length == 0
-      )
-        return this.$t("modals.contact.please-enter-a-valid-email-address");
-      return null;
-    },
-    subjectIsValid() {
-      return this.subject != null && this.subject.length > 0;
-    },
-    subjectStateFeedback() {
-      if (!this.subject || this.subject.length == 0)
-        return this.$t("erforderlich");
-      return null;
-    },
-    messageIsValid() {
-      return this.message != null && this.message.length > 0;
-    },
-    messageStateFeedback() {
-      if (!this.message || this.message.length == 0)
-        return this.$t("erforderlich");
-      return null;
-    },
-    allValid() {
-      return (
-        this.nameIsValid &&
-        this.emailIsValid &&
-        this.subjectIsValid &&
-        this.messageIsValid
-      );
     },
   },
 };

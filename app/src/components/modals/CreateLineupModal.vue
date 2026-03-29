@@ -1,12 +1,12 @@
 <template>
   <BModal
-    ref="modal"
     :id="`modal-newLineup-${id}`"
+    ref="modal"
     :title="$t('modals.create-lineup.neue-aufstellung')"
+    size="lg"
     @show="resetLineupModal"
     @hidden="resetLineupModal"
     @ok="createLineup"
-    size="lg"
   >
     <BForm
       @keydown.enter="
@@ -36,9 +36,9 @@
               :invalid-feedback="editLineupStartAchterStateFeedback"
             >
               <BFormInput
+                v-model="editLineupStartAchter"
                 type="number"
                 min="1"
-                v-model="editLineupStartAchter"
                 autofocus
                 :state="editLineupStartAchterIsValid"
                 data-testid="startAchterInput"
@@ -52,10 +52,10 @@
               :invalid-feedback="editLineupStartCountStateFeedback"
             >
               <BFormInput
+                v-model="editLineupStartCount"
                 type="number"
                 min="1"
                 max="8"
-                v-model="editLineupStartCount"
                 :state="editLineupStartCountIsValid"
                 data-testid="startCountInput"
               />
@@ -78,10 +78,10 @@
               :invalid-feedback="editLineupEndAchterStateFeedback"
             >
               <BFormInput
+                v-model="editLineupEndAchter"
                 type="number"
                 min="1"
                 :max="Math.ceil((choreo?.counts || 0) / 8)"
-                v-model="editLineupEndAchter"
                 :state="editLineupEndAchterIsValid"
                 data-testid="endAchterInput"
               />
@@ -94,10 +94,10 @@
               :invalid-feedback="editLineupEndCountStateFeedback"
             >
               <BFormInput
+                v-model="editLineupEndCount"
                 type="number"
                 min="1"
                 max="8"
-                v-model="editLineupEndCount"
                 :state="editLineupEndCountIsValid"
                 data-testid="endCountInput"
               />
@@ -114,27 +114,27 @@
         <BButtonGroup>
           <BButton
             variant="light"
+            :disabled="
+              editLineupMembers?.length ==
+              teamMembers?.filter(
+                (m) =>
+                  !lineupsForCurrentCount
+                    .map((l) => l?.Positions.map((p) => p.MemberId))
+                    .flat()
+                    .includes(m.id)
+              )?.length
+            "
             @click="
               () =>
-                (this.editLineupMembers = teamMembers
+                (editLineupMembers = teamMembers
                   .filter(
                     (m) =>
-                      !this.lineupsForCurrentCount
+                      !lineupsForCurrentCount
                         .map((l) => l?.Positions.map((p) => p.MemberId))
                         .flat()
                         .includes(m.id)
                   )
                   .map((m) => m.id))
-            "
-            :disabled="
-              editLineupMembers?.length ==
-              teamMembers?.filter(
-                (m) =>
-                  !this.lineupsForCurrentCount
-                    .map((l) => l?.Positions.map((p) => p.MemberId))
-                    .flat()
-                    .includes(m.id)
-              )?.length
             "
           >
             <IBiCheckAll />
@@ -142,22 +142,22 @@
           </BButton>
           <BButton
             variant="light"
-            @click="() => (this.editLineupMembers = [])"
             :disabled="editLineupMembers?.length == 0"
+            @click="() => (editLineupMembers = [])"
           >
             <IBiSlash /> {{ $t("keine-auswaehlen") }}
           </BButton>
           <BButton
             variant="light"
-            @click="
-              () =>
-                (this.editLineupMembers = teamMembers
-                  .filter((m) => !editLineupMembers.includes(m.id))
-                  .map((m) => m.id))
-            "
             :disabled="
               editLineupMembers?.length == 0 ||
               editLineupMembers?.length == teamMembers?.length
+            "
+            @click="
+              () =>
+                (editLineupMembers = teamMembers
+                  .filter((m) => !editLineupMembers.includes(m.id))
+                  .map((m) => m.id))
             "
           >
             <IBiArrowRepeat />
@@ -209,7 +209,6 @@
     <template #footer="{ ok, cancel }">
       <BButton
         type="submit"
-        @click="ok"
         variant="success"
         :disabled="
           !editLineupStartAchter ||
@@ -218,10 +217,11 @@
           !editLineupEndCount ||
           editLineupMembers.length == 0
         "
+        @click="ok"
       >
         {{ $t("speichern") }}
       </BButton>
-      <BButton @click="cancel" variant="danger">{{ $t("abbrechen") }}</BButton>
+      <BButton variant="danger" @click="cancel">{{ $t("abbrechen") }}</BButton>
     </template>
   </BModal>
 </template>
@@ -269,6 +269,29 @@ import PositionService from "@/services/PositionService";
  */
 export default {
   name: "CreateLineupModal",
+  props: {
+    count: {
+      type: Number,
+      required: true,
+    },
+    choreo: {
+      type: Object,
+      default: null,
+    },
+    teamMembers: {
+      type: Array,
+      default: () => [],
+    },
+    lineupsForCurrentCount: {
+      type: Array,
+      required: true,
+    },
+    currentPositions: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  emits: ["updateLineups"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     editLineupStartAchter: 1,
@@ -277,23 +300,60 @@ export default {
     editLineupEndCount: 1,
     editLineupMembers: [],
   }),
-  props: {
-    count: {
-      type: Number,
-      required: true,
+  computed: {
+    startIsBeforeEnd() {
+      const absoluteStartCount =
+        (parseInt(this.editLineupStartAchter) - 1) * 8 +
+        parseInt(this.editLineupStartCount) -
+        1;
+      const absoluteEndCount =
+        (parseInt(this.editLineupEndAchter) - 1) * 8 +
+        parseInt(this.editLineupEndCount) -
+        1;
+      return absoluteStartCount <= absoluteEndCount;
     },
-    choreo: {
-      type: Object,
+    startIsBeforeEndStateFeedback() {
+      if (!this.startIsBeforeEnd)
+        return this.$t("countOverview.start-vor-ende");
+      return null;
     },
-    teamMembers: {
-      type: Array,
+    editLineupEndAchterIsValid() {
+      return Boolean(this.editLineupEndAchter) && this.startIsBeforeEnd;
     },
-    lineupsForCurrentCount: {
-      type: Array,
-      required: true,
+    editLineupEndAchterStateFeedback() {
+      if (!this.editLineupEndAchter) return this.$t("erforderlich");
+      return null;
     },
-    currentPositions: {
-      type: Array,
+    editLineupStartAchterIsValid() {
+      return Boolean(this.editLineupStartAchter) && this.startIsBeforeEnd;
+    },
+    editLineupStartAchterStateFeedback() {
+      if (!this.editLineupStartAchter) return this.$t("erforderlich");
+      return null;
+    },
+    editLineupStartCountIsValid() {
+      return Boolean(this.editLineupStartCount) && this.startIsBeforeEnd;
+    },
+    editLineupStartCountStateFeedback() {
+      if (!this.editLineupStartCount) return this.$t("erforderlich");
+      return null;
+    },
+    editLineupEndCountIsValid() {
+      return Boolean(this.editLineupEndCount) && this.startIsBeforeEnd;
+    },
+    editLineupEndCountStateFeedback() {
+      if (!this.editLineupEndCount) return this.$t("erforderlich");
+      return null;
+    },
+    editLineupMembersIsValid() {
+      return (
+        Boolean(this.editLineupMembers) && this.editLineupMembers.length > 0
+      );
+    },
+    editLineupMembersStateFeedback() {
+      if (!this.editLineupMembers || this.editLineupMembers.length == 0)
+        return this.$t("erforderlich");
+      return null;
     },
   },
   methods: {
@@ -352,62 +412,6 @@ export default {
           this.$emit("updateLineups", lineupCopy);
         });
       });
-    },
-  },
-  computed: {
-    startIsBeforeEnd() {
-      const absoluteStartCount =
-        (parseInt(this.editLineupStartAchter) - 1) * 8 +
-        parseInt(this.editLineupStartCount) -
-        1;
-      const absoluteEndCount =
-        (parseInt(this.editLineupEndAchter) - 1) * 8 +
-        parseInt(this.editLineupEndCount) -
-        1;
-      return absoluteStartCount <= absoluteEndCount;
-    },
-    startIsBeforeEndStateFeedback() {
-      if (!this.startIsBeforeEnd)
-        return this.$t("countOverview.start-vor-ende");
-      return null;
-    },
-    editLineupEndAchterIsValid() {
-      return Boolean(this.editLineupEndAchter) && this.startIsBeforeEnd;
-    },
-    editLineupEndAchterStateFeedback() {
-      if (!this.editLineupEndAchter) return this.$t("erforderlich");
-      return null;
-    },
-    editLineupStartAchterIsValid() {
-      return Boolean(this.editLineupStartAchter) && this.startIsBeforeEnd;
-    },
-    editLineupStartAchterStateFeedback() {
-      if (!this.editLineupStartAchter) return this.$t("erforderlich");
-      return null;
-    },
-    editLineupStartCountIsValid() {
-      return Boolean(this.editLineupStartCount) && this.startIsBeforeEnd;
-    },
-    editLineupStartCountStateFeedback() {
-      if (!this.editLineupStartCount) return this.$t("erforderlich");
-      return null;
-    },
-    editLineupEndCountIsValid() {
-      return Boolean(this.editLineupEndCount) && this.startIsBeforeEnd;
-    },
-    editLineupEndCountStateFeedback() {
-      if (!this.editLineupEndCount) return this.$t("erforderlich");
-      return null;
-    },
-    editLineupMembersIsValid() {
-      return (
-        Boolean(this.editLineupMembers) && this.editLineupMembers.length > 0
-      );
-    },
-    editLineupMembersStateFeedback() {
-      if (!this.editLineupMembers || this.editLineupMembers.length == 0)
-        return this.$t("erforderlich");
-      return null;
     },
   },
 };

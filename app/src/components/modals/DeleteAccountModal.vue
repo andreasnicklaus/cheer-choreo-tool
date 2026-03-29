@@ -1,10 +1,10 @@
 <template>
   <BModal
-    ref="modal"
     :id="`deleteAccountModal-${id}`"
+    ref="modal"
     :title="$t('accountView.konto-loeschen')"
     centered
-    @show="() => (this.accountDeletionApproval = false)"
+    @show="() => (accountDeletionApproval = false)"
   >
     <p>
       {{ $t("modals.delete-account.info") }}
@@ -18,30 +18,30 @@
     </BFormCheckbox>
     <template #footer="{ cancel }">
       <BButton
-        @click="openConfirmModal"
         variant="danger"
         :disabled="!accountDeletionApproval"
+        @click="openConfirmModal"
       >
         {{ $t("modals.delete-account.account-loeschen") }}
       </BButton>
-      <BButton @click="cancel" variant="outline-secondary">
+      <BButton variant="outline-secondary" @click="cancel">
         {{ $t("abbrechen") }}
       </BButton>
     </template>
 
     <BModal
-      ref="confirmModal"
       :id="`confirmDeletionModal-${id}`"
+      ref="confirmModal"
       :title="$t('bist-du-sicher')"
       centered
       @ok="deleteMember"
     >
       <p>{{ $t("du-kannst-diese-aktion-nicht-rueckgaengig-machen") }}</p>
       <template #footer="{ ok, cancel }">
-        <BButton @click="ok" variant="danger">{{
+        <BButton variant="danger" @click="ok">{{
           $t("jetzt-loeschen")
         }}</BButton>
-        <BButton @click="cancel" variant="outline-secondary">
+        <BButton variant="outline-secondary" @click="cancel">
           {{ $t("abbrechen") }}
         </BButton>
       </template>

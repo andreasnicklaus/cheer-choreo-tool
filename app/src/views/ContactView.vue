@@ -126,8 +126,8 @@ import ContactModal from "@/components/modals/ContactModal.vue";
  */
 
 export default {
-  components: { ContactModal },
   name: "ContactView",
+  components: { ContactModal },
   data: function () {
     return {
       showContactCallout: true,
@@ -135,6 +135,8 @@ export default {
       showEmailCallout: true,
     };
   },
+  computed: {},
+  watch: {},
   mounted() {
     this.init();
 
@@ -197,8 +199,6 @@ export default {
       this.$refs.contactModal.open();
     },
   },
-  watch: {},
-  computed: {},
 };
 </script>
 

@@ -4,7 +4,12 @@
       <BCol cols="12" md="auto" class="text-center">
         <BPlaceholderWrapper :loading="loading">
           <template #loading>
-            <BPlaceholder type="avatar" height="120px" width="120px" animation="wave" />
+            <BPlaceholder
+              type="avatar"
+              height="120px"
+              width="120px"
+              animation="wave"
+            />
           </template>
           <BAvatar
             variant="primary"
@@ -16,8 +21,18 @@
       <BCol class="text-md-left">
         <BPlaceholderWrapper :loading="loading">
           <template #loading>
-            <BPlaceholder width="35%" height="40px" class="mb-2" animation="wave"></BPlaceholder>
-            <BPlaceholder width="85%" height="24px" class="mb-3" animation="wave"></BPlaceholder>
+            <BPlaceholder
+              width="35%"
+              height="40px"
+              class="mb-2"
+              animation="wave"
+            ></BPlaceholder>
+            <BPlaceholder
+              width="85%"
+              height="24px"
+              class="mb-3"
+              animation="wave"
+            ></BPlaceholder>
             <BPlaceholder width="50%" height="24px" animation="wave" />
             <BPlaceholder width="50%" height="24px" animation="wave" />
           </template>
@@ -31,8 +46,8 @@
             </BBadge>
             <BBadge
               v-else-if="!user?.emailConfirmed"
-              variant="danger"
               v-b-tooltip.hover="$t('accountView.check-email')"
+              variant="danger"
               class="d-inline-flex align-items-center px-2"
             >
               <IBiExclamationTriangle class="me-2" font-scale="1.2" />
@@ -40,8 +55,8 @@
             >
             <BBadge
               v-else
-              variant="success"
               v-b-tooltip.hover="$t('accountView.bereits-bestaetigt')"
+              variant="success"
               class="d-inline-flex align-items-center px-2"
             >
               <IBiCheckCircle class="me-2" font-scale="1.2" />
@@ -86,7 +101,12 @@
               <BCol cols="auto" class="text-center mb-2 mb-md-0">
                 <BPlaceholderWrapper :loading="loading">
                   <template #loading>
-                    <BPlaceholder type="avatar" width="80px" height="80px" animation="wave" />
+                    <BPlaceholder
+                      type="avatar"
+                      width="80px"
+                      height="80px"
+                      animation="wave"
+                    />
                   </template>
                   <div id="profilePictureUpload" ref="profilePictureUploadRef">
                     <BOverlay
@@ -105,12 +125,12 @@
                       />
                       <template #overlay>
                         <input
+                          ref="profilePictureFile"
                           :style="{ width: '80px', height: '80px' }"
                           type="file"
-                          @change="submitProfilePicture"
                           accept="image/*"
                           class="input-file"
-                          ref="profilePictureFile"
+                          @change="submitProfilePicture"
                         />
                         <IBiCloudUpload variant="light" font-scale="2" />
                       </template>
@@ -230,11 +250,11 @@
               </BInputGroup>
 
               <BAlert
-                show
-                variant="warning"
                 v-if="
                   user?.email && !user?.emailConfirmed && email == user?.email
                 "
+                show
+                variant="warning"
               >
                 <p>
                   {{ $t("account.email-confirmation-warning") }}
@@ -286,24 +306,24 @@
       <BTab :title="$t('verein', 2)">
         <BTabs
           :index="clubTabIndex"
-          @update:index="updateClubTabIndex"
           content-class="mt-3 mt-md-0 flex-grow-1"
           :vertical="!$store.state.isMobile"
           :small="$store.state.isMobile"
           justified
           nav-item-class="text-start"
           pills
+          @update:index="updateClubTabIndex"
         >
           <BTab v-for="club in user?.Clubs" :key="club.id" :title="club.name">
             <template #title>
               {{ club.name }}
               <IBiCheckCircleFill
                 v-if="$store.state.clubId == club.id"
+                v-b-tooltip.hover="$t('start.aktiver-verein')"
                 :class="{
                   'text-success': club.id != currentClub?.id,
                   'ms-1': true,
                 }"
-                v-b-tooltip.hover="$t('start.aktiver-verein')"
               />
             </template>
             <BForm @submit.prevent="onClubSave" @reset.prevent="onClubReset">
@@ -345,12 +365,12 @@
                         </BAvatar>
                         <template #overlay>
                           <input
+                            :ref="`clubLogoFile-${club.id}`"
                             :style="{ width: '80px', height: '80px' }"
                             type="file"
-                            @change="() => submitClubLogo(club.id)"
                             accept="image/*"
                             class="input-file"
-                            :ref="`clubLogoFile-${club.id}`"
+                            @change="() => submitClubLogo(club.id)"
                           />
                           <IBiCloudUpload variant="light" font-scale="2" />
                         </template>
@@ -465,8 +485,8 @@
                 </BButton>
               </div>
               <p
-                class="text-muted text-center"
                 v-show="$store.state.clubId == club.id"
+                class="text-muted text-center"
               >
                 <small>
                   {{
@@ -533,12 +553,12 @@
             :description="$t('account.tracking-info')"
             class="mb-2"
           >
-            <BFormCheckbox id="tracking" class="py-1" switch v-model="tracking">
+            <BFormCheckbox id="tracking" v-model="tracking" class="py-1" switch>
               {{ $t("account.tracking-description") }}
             </BFormCheckbox>
           </BFormGroup>
 
-          <BAlert :show="tracking" variant="warning" v-if="tracking">
+          <BAlert v-if="tracking" :show="tracking" variant="warning">
             <h4 class="alert-heading">{{ $t("account.achtung") }}</h4>
             <p>
               {{ $t("account.tracking-warning") }}
@@ -591,8 +611,8 @@
         >
           <BButton
             variant="warning"
-            @click="() => $refs.changePasswordModal.open()"
             class="d-block"
+            @click="() => $refs.changePasswordModal.open()"
           >
             <IBiKey />
             {{ $t("accountView.passwort-aendern") }}
@@ -608,8 +628,8 @@
         >
           <BButton
             variant="danger"
-            @click="() => $refs.deleteAccountModal.open()"
             class="d-block"
+            @click="() => $refs.deleteAccountModal.open()"
           >
             <IBiTrash />
             {{ $t("accountView.konto-loeschen") }}
@@ -618,8 +638,8 @@
       </BTab>
     </BTabs>
 
-    <CreateClubModal ref="createClubModal" @clubCreated="init" />
-    <DeleteClubModal ref="deleteClubModal" @clubDeleted="init" />
+    <CreateClubModal ref="createClubModal" @club-created="init" />
+    <DeleteClubModal ref="deleteClubModal" @club-deleted="init" />
 
     <ChangePasswordModal ref="changePasswordModal" />
 
@@ -693,6 +713,10 @@ export default {
     DeleteClubModal,
     NewVersionBadge,
   },
+  setup() {
+    const { t } = useI18n();
+    return { t };
+  },
   data: function () {
     return {
       MAX_IMAGE_MB,
@@ -713,9 +737,100 @@ export default {
       clubLogoElement: null,
     };
   },
-  setup() {
-    const { t } = useI18n();
-    return { t };
+  computed: {
+    trackingConsent() {
+      return Boolean(Cookies.get("mtm_consent"));
+    },
+    newProfilePictureBlob() {
+      if (this.profilePictureDeletion) return null;
+      return this.newProfilePicture
+        ? URL.createObjectURL(this.newProfilePicture)
+        : this.currentProfilePictureBlob;
+    },
+    currentClub() {
+      return this.user?.Clubs[this.clubTabIndex];
+    },
+    newClubLogoBlob() {
+      if (this.clubLogoDeletion) return null;
+      return this.newClubLogo
+        ? URL.createObjectURL(this.newClubLogo)
+        : this.currentClubLogoBlob;
+    },
+
+    usernameIsValid() {
+      return this.username != null && this.username.length >= 6;
+    },
+    usernameError() {
+      if (this.username == null || this.username.length == 0)
+        return this.$t("login.bitte-angeben");
+      else if (this.username.length < 6)
+        return this.$t("login.benutzername-mindestens-laenge");
+      else return null;
+    },
+
+    emailIsValid() {
+      return this.email != null && this.email.match(emailRegex)?.length > 0;
+    },
+    emailError() {
+      if (this.email == null || this.email.length == 0)
+        return this.$t("login.bitte-angeben");
+      const emailRegexMatches = this.email.match(emailRegex);
+      if (!emailRegexMatches || emailRegexMatches.length <= 0)
+        return this.$t("login.echte-email");
+      else return null;
+    },
+
+    clubNameIsValid() {
+      return this.clubName != null && this.clubName.length >= 3;
+    },
+    clubNameError() {
+      if (this.clubName == null || this.clubName.length == 0)
+        return this.$t("login.bitte-angeben");
+      else if (this.clubName.length < 3)
+        return this.$t("modals.create-club.min-vereinsname-length");
+      else return null;
+    },
+    newProfilePictureIsValid() {
+      if (!this.newProfilePicture) return true;
+      else {
+        if (this.newProfilePicture.size > MAX_IMAGE_MB * MB) return false;
+      }
+      return true;
+    },
+    newProfilePictureError() {
+      if (!this.newProfilePicture) return null;
+      else {
+        if (this.newProfilePicture.size > MAX_IMAGE_MB * MB)
+          return this.$t(
+            "accountView.es-ist-nicht-moeglich-bilder-hochzuladen-die-groesser-al-mb-gross-sind",
+            [MAX_IMAGE_MB]
+          );
+      }
+      return null;
+    },
+    newClubLogoIsValid() {
+      if (!this.newClubLogo) return true;
+      else {
+        if (this.newClubLogo.size > MAX_IMAGE_MB * MB) return false;
+      }
+      return true;
+    },
+    newClubLogoError() {
+      if (!this.newClubLogo) return null;
+      else {
+        if (this.newClubLogo.size > MAX_IMAGE_MB * MB)
+          return this.$t(
+            "accountView.es-ist-nicht-moeglich-bilder-hochzuladen-die-groesser-al-mb-gross-sind",
+            [MAX_IMAGE_MB]
+          );
+      }
+      return null;
+    },
+  },
+  watch: {
+    clubTabIndex() {
+      this.resetClubInfo();
+    },
   },
   mounted() {
     this.profilePictureElement = this.$refs.profilePictureUploadRef;
@@ -937,101 +1052,6 @@ export default {
     },
     updateClubTabIndex(index) {
       this.clubTabIndex = index;
-    },
-  },
-  watch: {
-    clubTabIndex() {
-      this.resetClubInfo();
-    },
-  },
-  computed: {
-    trackingConsent() {
-      return Boolean(Cookies.get("mtm_consent"));
-    },
-    newProfilePictureBlob() {
-      if (this.profilePictureDeletion) return null;
-      return this.newProfilePicture
-        ? URL.createObjectURL(this.newProfilePicture)
-        : this.currentProfilePictureBlob;
-    },
-    currentClub() {
-      return this.user?.Clubs[this.clubTabIndex];
-    },
-    newClubLogoBlob() {
-      if (this.clubLogoDeletion) return null;
-      return this.newClubLogo
-        ? URL.createObjectURL(this.newClubLogo)
-        : this.currentClubLogoBlob;
-    },
-
-    usernameIsValid() {
-      return this.username != null && this.username.length >= 6;
-    },
-    usernameError() {
-      if (this.username == null || this.username.length == 0)
-        return this.$t("login.bitte-angeben");
-      else if (this.username.length < 6)
-        return this.$t("login.benutzername-mindestens-laenge");
-      else return null;
-    },
-
-    emailIsValid() {
-      return this.email != null && this.email.match(emailRegex)?.length > 0;
-    },
-    emailError() {
-      if (this.email == null || this.email.length == 0)
-        return this.$t("login.bitte-angeben");
-      const emailRegexMatches = this.email.match(emailRegex);
-      if (!emailRegexMatches || emailRegexMatches.length <= 0)
-        return this.$t("login.echte-email");
-      else return null;
-    },
-
-    clubNameIsValid() {
-      return this.clubName != null && this.clubName.length >= 3;
-    },
-    clubNameError() {
-      if (this.clubName == null || this.clubName.length == 0)
-        return this.$t("login.bitte-angeben");
-      else if (this.clubName.length < 3)
-        return this.$t("modals.create-club.min-vereinsname-length");
-      else return null;
-    },
-    newProfilePictureIsValid() {
-      if (!this.newProfilePicture) return true;
-      else {
-        if (this.newProfilePicture.size > MAX_IMAGE_MB * MB) return false;
-      }
-      return true;
-    },
-    newProfilePictureError() {
-      if (!this.newProfilePicture) return null;
-      else {
-        if (this.newProfilePicture.size > MAX_IMAGE_MB * MB)
-          return this.$t(
-            "accountView.es-ist-nicht-moeglich-bilder-hochzuladen-die-groesser-al-mb-gross-sind",
-            [MAX_IMAGE_MB]
-          );
-      }
-      return null;
-    },
-    newClubLogoIsValid() {
-      if (!this.newClubLogo) return true;
-      else {
-        if (this.newClubLogo.size > MAX_IMAGE_MB * MB) return false;
-      }
-      return true;
-    },
-    newClubLogoError() {
-      if (!this.newClubLogo) return null;
-      else {
-        if (this.newClubLogo.size > MAX_IMAGE_MB * MB)
-          return this.$t(
-            "accountView.es-ist-nicht-moeglich-bilder-hochzuladen-die-groesser-al-mb-gross-sind",
-            [MAX_IMAGE_MB]
-          );
-      }
-      return null;
     },
   },
 };

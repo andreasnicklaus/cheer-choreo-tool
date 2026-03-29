@@ -1,15 +1,15 @@
 <template>
   <BModal
-    ref="modal"
     :id="`deleteModal-${id}`"
+    ref="modal"
     centered
-    @ok="removeChoreo"
     :title="$t('bist-du-sicher')"
+    @ok="removeChoreo"
   >
     {{ $t("du-kannst-das-nicht-rueckgaengig-machen") }}
     <template #footer="{ ok, cancel }">
-      <BButton @click="ok" variant="danger">{{ $t("loeschen") }}</BButton>
-      <BButton @click="cancel" variant="outline-secondary">
+      <BButton variant="danger" @click="ok">{{ $t("loeschen") }}</BButton>
+      <BButton variant="outline-secondary" @click="cancel">
         {{ $t("abbrechen") }}
       </BButton>
     </template>
@@ -36,14 +36,15 @@ import { error } from "@/utils/logging";
  */
 export default {
   name: "DeleteChoreoModal",
-  data: () => ({
-    id: (Math.random() + 1).toString(36).substring(7),
-  }),
   props: {
     choreoId: {
       type: String,
+      default: "",
     },
   },
+  data: () => ({
+    id: (Math.random() + 1).toString(36).substring(7),
+  }),
   methods: {
     open() {
       this.$refs.modal.show();

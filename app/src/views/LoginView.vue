@@ -1,7 +1,7 @@
 <template>
   <BContainer id="loginView" class="mt-4 my-4" data-view>
     <h1>{{ $t("login.dein-online-zugang") }}</h1>
-    <BTabs fill v-model="tabIndex">
+    <BTabs v-model="tabIndex" fill>
       <BTab :title="$t('anmelden')" class="mt-4">
         <BForm @submit.prevent="onLoginSubmit" @reset.prevent="onReset">
           <BFormGroup
@@ -11,9 +11,9 @@
             :invalid-feedback="usernameError"
           >
             <BFormInput
+              v-model="username"
               :placeholder="$t('username')"
               :state="usernameIsValid"
-              v-model="username"
               autocomplete="username"
             ></BFormInput>
           </BFormGroup>
@@ -24,10 +24,10 @@
             :invalid-feedback="passwordError"
           >
             <BFormInput
+              v-model="password"
               :placeholder="$t('passwort')"
               type="password"
               :state="passwordIsValid"
-              v-model="password"
               autocomplete="current-password"
             ></BFormInput>
           </BFormGroup>
@@ -41,14 +41,14 @@
                 class="me-2"
                 :disabled="!usernameIsValid || !passwordIsValid"
               >
-                <BSpinner small v-if="loading" />
+                <BSpinner v-if="loading" small />
                 <span v-else> {{ $t("anmelden") }} </span>
               </BButton>
             </div>
             <BButton
+              v-b-tooltip.hover="$t('login.formular-zuruecksetzen')"
               type="reset"
               variant="light"
-              v-b-tooltip.hover="$t('login.formular-zuruecksetzen')"
             >
               <IBiArrowCounterclockwise />
             </BButton>
@@ -77,9 +77,9 @@
             :valid-feedback="$t('login.gueltig')"
           >
             <BFormInput
+              v-model="username"
               :placeholder="$t('username')"
               :state="usernameIsValid"
-              v-model="username"
               autocomplete="username"
             ></BFormInput>
           </BFormGroup>
@@ -92,9 +92,9 @@
           >
             <BInputGroup>
               <BFormInput
+                v-model="email"
                 :placeholder="$t('e-mail-adresse')"
                 :state="emailIsValid"
-                v-model="email"
                 autocomplete="email"
               ></BFormInput>
               <template #append>
@@ -112,10 +112,10 @@
             :valid-feedback="$t('login.gueltig')"
           >
             <BFormInput
+              v-model="password"
               :placeholder="$t('passwort')"
               type="password"
               :state="passwordIsValid"
-              v-model="password"
               autocomplete="new-password"
             ></BFormInput>
           </BFormGroup>
@@ -127,10 +127,10 @@
             :valid-feedback="$t('login.gueltig')"
           >
             <BFormInput
+              v-model="passwordRepetition"
               :placeholder="$t('login.passwort-wiederholen')"
               type="password"
               :state="passwordRepetitionIsValid"
-              v-model="passwordRepetition"
               autocomplete="new-password"
             ></BFormInput>
           </BFormGroup>
@@ -149,14 +149,14 @@
                   !passwordRepetitionIsValid
                 "
               >
-                <BSpinner small v-if="loading" />
+                <BSpinner v-if="loading" small />
                 <span v-else>{{ $t("registrieren") }}</span>
               </BButton>
             </div>
             <BButton
+              v-b-tooltip.hover="$t('login.formular-zuruecksetzen')"
               type="reset"
               variant="light"
-              v-b-tooltip.hover="$t('login.formular-zuruecksetzen')"
             >
               <IBiArrowCounterclockwise />
             </BButton>
@@ -188,7 +188,7 @@
 
     <PasswordResetModal
       ref="passwordResetModal"
-      @passwordResetRequested="onPasswordReset"
+      @password-reset-requested="onPasswordReset"
     />
   </BContainer>
 </template>
@@ -230,6 +230,10 @@ import { emailRegex } from "@/utils/validation";
 export default {
   name: "LoginView",
   components: { ConfirmEmailModal, PasswordResetModal, NewVersionBadge },
+  setup() {
+    const { t } = useI18n();
+    return { t };
+  },
   data: () => ({
     username: null,
     email: null,
@@ -238,9 +242,63 @@ export default {
     tabIndex: 0,
     loading: false,
   }),
-  setup() {
-    const { t } = useI18n();
-    return { t };
+  computed: {
+    failMessages() {
+      return [
+        this.$t("failMessages.oh-oh"),
+        this.$t("failMessages.satz-mit-x"),
+        this.$t("failMessages.da-dumm"),
+        this.$t("failMessages.check-ich-nicht"),
+        this.$t("failMessages.probiers-nochmal"),
+        this.$t("failMessages.computer-sagt-nein"),
+        this.$t("failMessages.traurige-trompete"),
+      ];
+    },
+    usernameIsValid() {
+      return this.username != null && this.username.length >= 6;
+    },
+    usernameError() {
+      if (this.username == null || this.username.length == 0)
+        return this.$t("login.bitte-angeben");
+      else if (this.username.length < 6)
+        return this.$t("login.benutzername-mindestens-laenge");
+      else return null;
+    },
+    emailIsValid() {
+      return this.email != null && this.email.match(emailRegex)?.length > 0;
+    },
+    emailError() {
+      if (this.email == null || this.email.length == 0)
+        return this.$t("login.bitte-angeben");
+      const emailRegexMatches = this.email.match(emailRegex);
+      if (!emailRegexMatches || emailRegexMatches.length <= 0)
+        return this.$t("login.echte-email");
+      else return null;
+    },
+    passwordIsValid() {
+      return this.password != null && this.password.length >= 6;
+    },
+    passwordError() {
+      if (this.password == null || this.password.length == 0)
+        return this.$t("login.bitte-angeben");
+      else if (this.password.length < 6)
+        return this.$t("login.passwort-mindest-laenge");
+      else return null;
+    },
+    passwordRepetitionIsValid() {
+      return (
+        this.passwordRepetition != null &&
+        this.passwordRepetition == this.password
+      );
+    },
+    passwordRepetitionError() {
+      if (this.passwordRepetition != this.password)
+        return this.$t("login.wiederholung-gleicht-nicht-passwort");
+      else return null;
+    },
+    isWelcome() {
+      return this.$route.path == "/willkommen";
+    },
   },
   mounted() {
     if (this.$store.state.loggedIn) {
@@ -413,64 +471,6 @@ export default {
           autoHideDelay: 5_000,
         }
       );
-    },
-  },
-  computed: {
-    failMessages() {
-      return [
-        this.$t("failMessages.oh-oh"),
-        this.$t("failMessages.satz-mit-x"),
-        this.$t("failMessages.da-dumm"),
-        this.$t("failMessages.check-ich-nicht"),
-        this.$t("failMessages.probiers-nochmal"),
-        this.$t("failMessages.computer-sagt-nein"),
-        this.$t("failMessages.traurige-trompete"),
-      ];
-    },
-    usernameIsValid() {
-      return this.username != null && this.username.length >= 6;
-    },
-    usernameError() {
-      if (this.username == null || this.username.length == 0)
-        return this.$t("login.bitte-angeben");
-      else if (this.username.length < 6)
-        return this.$t("login.benutzername-mindestens-laenge");
-      else return null;
-    },
-    emailIsValid() {
-      return this.email != null && this.email.match(emailRegex)?.length > 0;
-    },
-    emailError() {
-      if (this.email == null || this.email.length == 0)
-        return this.$t("login.bitte-angeben");
-      const emailRegexMatches = this.email.match(emailRegex);
-      if (!emailRegexMatches || emailRegexMatches.length <= 0)
-        return this.$t("login.echte-email");
-      else return null;
-    },
-    passwordIsValid() {
-      return this.password != null && this.password.length >= 6;
-    },
-    passwordError() {
-      if (this.password == null || this.password.length == 0)
-        return this.$t("login.bitte-angeben");
-      else if (this.password.length < 6)
-        return this.$t("login.passwort-mindest-laenge");
-      else return null;
-    },
-    passwordRepetitionIsValid() {
-      return (
-        this.passwordRepetition != null &&
-        this.passwordRepetition == this.password
-      );
-    },
-    passwordRepetitionError() {
-      if (this.passwordRepetition != this.password)
-        return this.$t("login.wiederholung-gleicht-nicht-passwort");
-      else return null;
-    },
-    isWelcome() {
-      return this.$route.path == "/willkommen";
     },
   },
 };

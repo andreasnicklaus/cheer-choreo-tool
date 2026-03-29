@@ -1,11 +1,11 @@
 <template>
   <BModal
-    ref="modal"
     :id="`modal-selectHitToUpdate-${id}`"
+    ref="modal"
     centered
+    :title="$t('modals.selectHit.welchen-eintrag-willst-du-aendern')"
     @ok="() => selectHit()"
     @hidden="() => (hitIdToUpdate = null)"
-    :title="$t('modals.selectHit.welchen-eintrag-willst-du-aendern')"
   >
     <BFormRadioGroup
       id="hitToUpdateSelectGroup"
@@ -16,8 +16,8 @@
       autofocus
     />
     <template #footer="{ ok, cancel }">
-      <BButton @click="ok" variant="success">{{ $t("auswaehlen") }}</BButton>
-      <BButton @click="cancel" variant="outline-danger">{{
+      <BButton variant="success" @click="ok">{{ $t("auswaehlen") }}</BButton>
+      <BButton variant="outline-danger" @click="cancel">{{
         $t("abbrechen")
       }}</BButton>
     </template>
@@ -43,15 +43,17 @@
  */
 export default {
   name: "SelectHitModal",
+  props: {
+    hitsForCurrentCount: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  emits: ["selection"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     hitIdToUpdate: null,
   }),
-  props: {
-    hitsForCurrentCount: {
-      type: Array,
-    },
-  },
   methods: {
     open() {
       this.$refs.modal.show();

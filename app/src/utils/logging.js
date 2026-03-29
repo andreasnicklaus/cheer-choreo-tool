@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 import i18n from "@/plugins/vue-i18n";
 import VersionService from "@/services/VersionService";
 import store from "@/store";

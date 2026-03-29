@@ -1,7 +1,7 @@
 <template>
   <BModal
-    ref="modal"
     :id="`modal-newTeam-${id}`"
+    ref="modal"
     :title="$t('nav.neues-team')"
     centered
     @show="resetTeamModal"
@@ -33,19 +33,19 @@
           v-model="seasonId"
           :state="seasonIsValid"
           required
-          :options="this.seasonSelectOptions"
+          :options="seasonSelectOptions"
         />
       </BFormGroup>
     </BForm>
     <template #footer="{ ok, cancel }">
       <BButton
-        @click="ok"
         variant="success"
         :disabled="!newTeamNameIsValid || !seasonIsValid"
+        @click="ok"
       >
         {{ $t("erstellen") }}
       </BButton>
-      <BButton @click="cancel" variant="danger">{{ $t("abbrechen") }}</BButton>
+      <BButton variant="danger" @click="cancel">{{ $t("abbrechen") }}</BButton>
     </template>
   </BModal>
 </template>
@@ -78,45 +78,13 @@ import TeamService from "@/services/TeamService";
  */
 export default {
   name: "CreateTeamModal",
+  emits: ["teamCreated"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     newTeamName: null,
     seasons: [],
     seasonId: null,
   }),
-  mounted() {
-    this.load();
-  },
-  methods: {
-    open() {
-      this.load();
-      this.$refs.modal.show();
-    },
-    load() {
-      SeasonService.getAll().then((seasons) => {
-        this.seasons = seasons.filter(
-          (s) => s.year == null || s.year <= new Date().getFullYear() + 1
-        );
-
-        let currentRelevantYear = new Date().getFullYear();
-        if (new Date().getMonth() <= 5) currentRelevantYear -= 1;
-        const relevantCurrentSeasons = this.seasons.filter(
-          (s) => s.year == currentRelevantYear
-        );
-        this.seasonId = relevantCurrentSeasons[0].id;
-      });
-    },
-    resetTeamModal() {
-      this.newTeamName = null;
-    },
-    createTeam() {
-      TeamService.create(
-        this.newTeamName,
-        this.$store.state.clubId,
-        this.seasonId
-      ).then((team) => this.$emit("teamCreated", team));
-    },
-  },
   computed: {
     newTeamNameIsValid() {
       return this.newTeamName != null && this.newTeamName.length >= 3;
@@ -154,6 +122,39 @@ export default {
       if (!this.seasons.map((s) => s.id).includes(this.seasonId))
         return this.$t("errors.unerwarteter-fehler");
       return null;
+    },
+  },
+  mounted() {
+    this.load();
+  },
+  methods: {
+    open() {
+      this.load();
+      this.$refs.modal.show();
+    },
+    load() {
+      SeasonService.getAll().then((seasons) => {
+        this.seasons = seasons.filter(
+          (s) => s.year == null || s.year <= new Date().getFullYear() + 1
+        );
+
+        let currentRelevantYear = new Date().getFullYear();
+        if (new Date().getMonth() <= 5) currentRelevantYear -= 1;
+        const relevantCurrentSeasons = this.seasons.filter(
+          (s) => s.year == currentRelevantYear
+        );
+        this.seasonId = relevantCurrentSeasons[0].id;
+      });
+    },
+    resetTeamModal() {
+      this.newTeamName = null;
+    },
+    createTeam() {
+      TeamService.create(
+        this.newTeamName,
+        this.$store.state.clubId,
+        this.seasonId
+      ).then((team) => this.$emit("teamCreated", team));
     },
   },
 };

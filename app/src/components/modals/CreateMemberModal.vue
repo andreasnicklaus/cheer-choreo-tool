@@ -1,7 +1,7 @@
 <template>
   <BModal
-    ref="modal"
     :id="`modal-newMember-${id}`"
+    ref="modal"
     :title="
       editMemberId
         ? $t('modals.create-member.mitglied-bearbeiten')
@@ -64,13 +64,13 @@
     <template #footer="{ ok, cancel }">
       <BButton
         type="submit"
-        @click="ok"
         variant="success"
         :disabled="!newMemberName || !abbreviationIsValid"
+        @click="ok"
       >
         {{ $t("speichern") }}
       </BButton>
-      <BButton @click="cancel" variant="danger">{{ $t("abbrechen") }}</BButton>
+      <BButton variant="danger" @click="cancel">{{ $t("abbrechen") }}</BButton>
     </template>
   </BModal>
 </template>
@@ -112,65 +112,27 @@ import MemberService from "@/services/MemberService";
  */
 export default {
   name: "CreateMemberModal",
-  data: () => ({
-    id: (Math.random() + 1).toString(36).substring(7),
-    newMemberName: null,
-    newMemberNickname: null,
-    newMemberAbbreviation: null,
-  }),
   props: {
     currentTeam: {
       type: Object,
+      default: null,
     },
     editMemberId: {
       type: String,
+      default: null,
     },
     seasonTabIndex: {
       type: Number,
       default: 0,
     },
   },
-  methods: {
-    open() {
-      this.$refs.modal.show();
-    },
-    resetMemberModal() {
-      if (!this.editMemberId) {
-        this.newMemberName = null;
-        this.newMemberNickname = null;
-        this.newMemberAbbreviation = null;
-      } else {
-        const memberToUpdate = this.currentTeam.SeasonTeams[
-          this.seasonTabIndex
-        ].Members.find((m) => m.id == this.editMemberId);
-        this.newMemberName = memberToUpdate.name;
-        this.newMemberNickname = memberToUpdate.nickname;
-        this.newMemberAbbreviation = memberToUpdate.abbreviation;
-      }
-    },
-    saveMember() {
-      if (!this.editMemberId)
-        MemberService.create(
-          this.newMemberName?.trim(),
-          this.newMemberNickname?.trim(),
-          this.newMemberAbbreviation?.trim() || this.proposedAbbreviation,
-          this.currentTeam.SeasonTeams[this.seasonTabIndex].id
-        ).then((member) => {
-          this.$emit("memberCreated", member);
-        });
-      else {
-        const data = {
-          name: this.newMemberName.trim(),
-          nickname: this.newMemberNickname?.trim(),
-          abbreviation:
-            this.newMemberAbbreviation?.trim() || this.proposedAbbreviation,
-        };
-        MemberService.update(this.editMemberId, data).then((member) => {
-          this.$emit("memberUpdated", member);
-        });
-      }
-    },
-  },
+  emits: ["memberCreated", "memberUpdated"],
+  data: () => ({
+    id: (Math.random() + 1).toString(36).substring(7),
+    newMemberName: null,
+    newMemberNickname: null,
+    newMemberAbbreviation: null,
+  }),
   computed: {
     newMemberNameIsValid() {
       return (
@@ -235,6 +197,47 @@ export default {
           "modals.create-member.es-existiert-bereits-ein-mitglied-mit-dieser-abkuerzung"
         );
       return null;
+    },
+  },
+  methods: {
+    open() {
+      this.$refs.modal.show();
+    },
+    resetMemberModal() {
+      if (!this.editMemberId) {
+        this.newMemberName = null;
+        this.newMemberNickname = null;
+        this.newMemberAbbreviation = null;
+      } else {
+        const memberToUpdate = this.currentTeam.SeasonTeams[
+          this.seasonTabIndex
+        ].Members.find((m) => m.id == this.editMemberId);
+        this.newMemberName = memberToUpdate.name;
+        this.newMemberNickname = memberToUpdate.nickname;
+        this.newMemberAbbreviation = memberToUpdate.abbreviation;
+      }
+    },
+    saveMember() {
+      if (!this.editMemberId)
+        MemberService.create(
+          this.newMemberName?.trim(),
+          this.newMemberNickname?.trim(),
+          this.newMemberAbbreviation?.trim() || this.proposedAbbreviation,
+          this.currentTeam.SeasonTeams[this.seasonTabIndex].id
+        ).then((member) => {
+          this.$emit("memberCreated", member);
+        });
+      else {
+        const data = {
+          name: this.newMemberName.trim(),
+          nickname: this.newMemberNickname?.trim(),
+          abbreviation:
+            this.newMemberAbbreviation?.trim() || this.proposedAbbreviation,
+        };
+        MemberService.update(this.editMemberId, data).then((member) => {
+          this.$emit("memberUpdated", member);
+        });
+      }
     },
   },
 };

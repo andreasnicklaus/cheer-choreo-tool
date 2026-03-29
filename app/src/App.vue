@@ -1,7 +1,7 @@
 <template>
   <BApp id="app" :class="{ mobile: $store.state.isMobile }">
     <AppInstallWindow />
-    <HeadNav :onlineStatus="online" :serverVersion="serverVersion" />
+    <HeadNav :online-status="online" :server-version="serverVersion" />
     <router-view :style="{ minHeight: 'calc(100vh - 116px)' }" class="mb-2" />
     <footer class="p-4 px-5 pt-5 d-flex flex-column align-items-center">
       <BRow align-h="around" class="w-75 footer-link" :style="{ gap: '20px' }">
@@ -46,7 +46,7 @@
           ><br />
           <BButton
             variant="link"
-            @click="() => this.$refs.feedbackPrompt.open(true)"
+            @click="() => $refs.feedbackPrompt.open(true)"
           >
             {{ $t("navigation.feedback-geben") }} </BButton
           ><br />
@@ -112,11 +112,11 @@
           >
             Version: {{ applicationVersion }}
             <span
-              data-testid="serverVersionTooltip"
+              v-show="serverVersion && serverVersion != applicationVersion"
               v-b-tooltip.hover="
                 `Die Version der Webseite (${applicationVersion}) entspricht nicht der Version der Server (${serverVersion})!`
               "
-              v-show="serverVersion && serverVersion != applicationVersion"
+              data-testid="serverVersionTooltip"
             >
               <IBiExclamationTriangleFill />
             </span>
@@ -287,6 +287,14 @@ export default {
     applicationVersion: env.VITE_VERSION,
     breakpoints,
   }),
+  watch: {
+    "breakpoints.screen.mobile": {
+      handler(value) {
+        this.$store.commit("setMobile", value);
+      },
+      immediate: true,
+    },
+  },
   mounted() {
     debug("Started App", {
       VITE_VERSION: env.VITE_VERSION,
@@ -324,14 +332,6 @@ export default {
 
     // Use nextTick to ensure DOM is fully ready
     this.$nextTick(checkPrerender);
-  },
-  watch: {
-    "breakpoints.screen.mobile": {
-      handler(value) {
-        this.$store.commit("setMobile", value);
-      },
-      immediate: true,
-    },
   },
 };
 </script>

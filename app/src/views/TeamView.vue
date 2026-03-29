@@ -46,10 +46,10 @@
         </BButtonGroup>
 
         <BDropdown
+          v-b-tooltip.hover="$t('optionen')"
           right
           no-caret
           variant="light"
-          v-b-tooltip.hover="$t('optionen')"
           class="ms-2"
           :style="{ display: 'inline' }"
           data-testid="options-dropdown"
@@ -58,21 +58,21 @@
             <IBiThreeDotsVertical />
           </template>
           <BDropdownItem
+            :disabled="!currentTeam"
             @click="
               () =>
                 $refs.deleteSeasonTeamModal.open(
                   currentTeam.SeasonTeams[seasonTabIndex].id
                 )
             "
-            :disabled="!currentTeam"
           >
             <IBiTrash class="me-2" />
             {{ $t("teamView.season-loeschen") }}
           </BDropdownItem>
           <BDropdownItem
-            @click="() => $refs.deleteTeamModal.open(teamId)"
             :disabled="!currentTeam"
             variant="danger"
+            @click="() => $refs.deleteTeamModal.open(teamId)"
           >
             <IBiTrash class="me-2" />
             {{ $t("teamView.team-loeschen") }}
@@ -157,8 +157,8 @@
         </BListGroup>
 
         <p
-          class="text-muted text-center"
           v-if="sortedMembersOfCurrentTeam.length == 0"
+          class="text-muted text-center"
         >
           {{ $t("teamView.dieses-team-hat-noch-keine-mitglieder") }}
         </p>
@@ -205,36 +205,36 @@
 
     <CreateMemberModal
       ref="createMemberModal"
-      :currentTeam="currentTeam"
-      :editMemberId="editMemberId"
-      :seasonTabIndex="seasonTabIndex"
-      @memberCreated="onMemberCreation"
-      @memberUpdated="onMemberUpdate"
+      :current-team="currentTeam"
+      :edit-member-id="editMemberId"
+      :season-tab-index="seasonTabIndex"
+      @member-created="onMemberCreation"
+      @member-updated="onMemberUpdate"
     />
 
     <DeleteMemberModal
       ref="deleteMemberModal"
-      @memberDeleted="onMemberDeletion"
+      @member-deleted="onMemberDeletion"
     />
 
-    <DeleteTeamModal ref="deleteTeamModal" @teamDeleted="onTeamDeletion" />
+    <DeleteTeamModal ref="deleteTeamModal" @team-deleted="onTeamDeletion" />
 
     <CreateSeasonModal
       ref="createSeasonModal"
       :teams="teams"
-      @seasonTeamCreated="onSeasonTeamCreation"
+      @season-team-created="onSeasonTeamCreation"
     />
 
     <DeleteSeasonTeamModal
       ref="deleteSeasonTeamModal"
-      @seasonTeamDeleted="onSeasonTeamDeletion"
+      @season-team-deleted="onSeasonTeamDeletion"
     />
 
     <ImportMemberModal
       ref="importMemberModal"
       :teams="teams"
-      :currentTeamId="teamId"
-      :currentSeasonTeamId="currentTeam?.SeasonTeams[seasonTabIndex]?.id"
+      :current-team-id="teamId"
+      :current-season-team-id="currentTeam?.SeasonTeams[seasonTabIndex]?.id"
       @import="onMemberImport"
     />
   </BContainer>
@@ -280,6 +280,10 @@ export default {
     DeleteSeasonTeamModal,
     ImportMemberModal,
   },
+  setup() {
+    const { t } = useI18n();
+    return { t };
+  },
   data: function () {
     return {
       presentation: "table",
@@ -289,9 +293,48 @@ export default {
       editMemberId: null,
     };
   },
-  setup() {
-    const { t } = useI18n();
-    return { t };
+  computed: {
+    tableFields() {
+      return [
+        { key: "name", sortable: true },
+        { key: "nickname", label: this.$t("spitzname"), sortable: true },
+        { key: "abbreviation", label: this.$t("abkuerzung"), sortable: true },
+        { key: "actions", label: "", class: "text-right" },
+      ];
+    },
+    currentTeam() {
+      if (!this.teamId || !this.teams) return null;
+
+      return this.teams.find((t) => t.id == this.teamId);
+    },
+    sortedMembersOfCurrentTeam() {
+      // Explicitly access currentTeam to ensure Vue tracks it as a dependency
+      const team = this.currentTeam;
+      if (
+        !team ||
+        !team.SeasonTeams ||
+        !team.SeasonTeams[this.seasonTabIndex]
+      ) {
+        return [];
+      }
+
+      const members = team.SeasonTeams[this.seasonTabIndex].Members;
+      if (!members || members.length === 0) {
+        return [];
+      }
+
+      // Create a new array and sort it
+      return [...members].sort((a, b) => a.name.localeCompare(b.name));
+    },
+  },
+  watch: {
+    "$route.params": {
+      handler() {
+        this.teamId = this.$route.params.teamId;
+        this.load();
+      },
+      immediate: true,
+    },
   },
   mounted() {
     this.load();
@@ -331,40 +374,6 @@ export default {
         },
       ],
     });
-  },
-  computed: {
-    tableFields() {
-      return [
-        { key: "name", sortable: true },
-        { key: "nickname", label: this.$t("spitzname"), sortable: true },
-        { key: "abbreviation", label: this.$t("abkuerzung"), sortable: true },
-        { key: "actions", label: "", class: "text-right" },
-      ];
-    },
-    currentTeam() {
-      if (!this.teamId || !this.teams) return null;
-
-      return this.teams.find((t) => t.id == this.teamId);
-    },
-    sortedMembersOfCurrentTeam() {
-      // Explicitly access currentTeam to ensure Vue tracks it as a dependency
-      const team = this.currentTeam;
-      if (
-        !team ||
-        !team.SeasonTeams ||
-        !team.SeasonTeams[this.seasonTabIndex]
-      ) {
-        return [];
-      }
-
-      const members = team.SeasonTeams[this.seasonTabIndex].Members;
-      if (!members || members.length === 0) {
-        return [];
-      }
-
-      // Create a new array and sort it
-      return [...members].sort((a, b) => a.name.localeCompare(b.name));
-    },
   },
   methods: {
     load() {
@@ -464,15 +473,6 @@ export default {
     },
     setPresentation(newPresentation) {
       this.presentation = newPresentation;
-    },
-  },
-  watch: {
-    "$route.params": {
-      handler() {
-        this.teamId = this.$route.params.teamId;
-        this.load();
-      },
-      immediate: true,
     },
   },
 };

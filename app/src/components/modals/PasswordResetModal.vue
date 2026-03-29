@@ -1,7 +1,7 @@
 <template>
   <BModal
-    ref="modal"
     :id="`passwordReset-modal-${id}`"
+    ref="modal"
     centered
     @show="resetPasswordResetModal"
     @ok.prevent="initializePasswordReset"
@@ -37,16 +37,16 @@
     <template #footer="{ ok, cancel }">
       <BButton
         type="submit"
-        @click="ok"
         variant="outline-success"
         :disabled="!emailIsValid"
+        @click="ok"
       >
-        <BSpinner small v-if="loading" />
+        <BSpinner v-if="loading" small />
         <span v-else>{{
           $t("modals.reset-password.login-link-schicken")
         }}</span>
       </BButton>
-      <BButton @click="cancel" variant="secondary">{{
+      <BButton variant="secondary" @click="cancel">{{
         $t("abbrechen")
       }}</BButton>
     </template>
@@ -82,11 +82,25 @@ import { emailRegex } from "@/utils/validation";
 export default {
   name: "LoadingModal",
   components: { NewVersionBadge },
+  emits: ["passwordResetRequested"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     email: null,
     loading: false,
   }),
+  computed: {
+    emailIsValid() {
+      return this.email != null && this.email.match(emailRegex)?.length > 0;
+    },
+    emailError() {
+      if (this.email == null || this.email.length == 0)
+        return this.$t("login.bitte-angeben");
+      const emailRegexMatches = this.email.match(emailRegex);
+      if (!emailRegexMatches || emailRegexMatches.length <= 0)
+        return this.$t("login.echte-email");
+      else return null;
+    },
+  },
   methods: {
     open() {
       this.$refs.modal.show();
@@ -113,19 +127,6 @@ export default {
             autoHideDelay: 5_000,
           });
         });
-    },
-  },
-  computed: {
-    emailIsValid() {
-      return this.email != null && this.email.match(emailRegex)?.length > 0;
-    },
-    emailError() {
-      if (this.email == null || this.email.length == 0)
-        return this.$t("login.bitte-angeben");
-      const emailRegexMatches = this.email.match(emailRegex);
-      if (!emailRegexMatches || emailRegexMatches.length <= 0)
-        return this.$t("login.echte-email");
-      else return null;
     },
   },
 };

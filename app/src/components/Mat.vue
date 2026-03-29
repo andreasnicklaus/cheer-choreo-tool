@@ -58,8 +58,6 @@
             : teamMembers.find((tm) => tm.id == position.MemberId)
                 .ChoreoParticipation.color + '55'
         "
-        @mousedown="() => mouseEnter(position.MemberId)"
-        @mouseup="mouseLeave"
         :style="{
           opacity:
             selectedMemberId && position.Member.id == selectedMemberId.id
@@ -68,6 +66,8 @@
           cx: (position.x * width) / 100 + 'px',
           cy: (position.y * _height) / 100 + 'px',
         }"
+        @mousedown="() => mouseEnter(position.MemberId)"
+        @mouseup="mouseLeave"
       />
       <text
         v-for="position in proposedPositions"
@@ -159,12 +159,6 @@ import gsap from "gsap";
  */
 export default {
   name: "MatComponent",
-  emits: ["positionChange"],
-  data: () => ({
-    selectedMemberId: null,
-    snappingDistance: 2,
-    positions: null,
-  }),
   props: {
     currentPositions: {
       type: Array,
@@ -180,7 +174,7 @@ export default {
     },
     height: {
       type: Number,
-      required: false,
+      default: 800,
     },
     dotRadius: {
       type: Number,
@@ -207,9 +201,12 @@ export default {
       default: () => [],
     },
   },
-  mounted() {
-    this.positions = this.currentPositions;
-  },
+  emits: ["positionChange"],
+  data: () => ({
+    selectedMemberId: null,
+    snappingDistance: 2,
+    positions: null,
+  }),
   computed: {
     _height() {
       switch (this.matType) {
@@ -221,6 +218,16 @@ export default {
           return this.height || this.width;
       }
     },
+  },
+  watch: {
+    currentPositions: {
+      handler(value) {
+        this.positions = value;
+      },
+    },
+  },
+  mounted() {
+    this.positions = this.currentPositions;
   },
   methods: {
     mouseEnter(member) {
@@ -317,13 +324,6 @@ export default {
     },
     acceptProposedPosition(memberId, x, y) {
       this.$emit("positionChange", memberId, x, y);
-    },
-  },
-  watch: {
-    currentPositions: {
-      handler(value) {
-        this.positions = value;
-      },
     },
   },
 };

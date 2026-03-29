@@ -1,5 +1,6 @@
 <template>
   <div
+    v-show="showConsentWindow"
     class="py-3 px-4"
     :style="{
       position: 'fixed',
@@ -9,7 +10,6 @@
       boxShadow: '0px 0px 25px #aaa',
       zIndex: 2,
     }"
-    v-show="showConsentWindow"
   >
     <p>
       🍪
@@ -28,8 +28,8 @@
         <div class="d-grid gap-2">
           <BButton
             variant="success"
-            @click="consent"
             :style="{ color: 'white' }"
+            @click="consent"
           >
             {{ $t("consent.einwilligen") }}
           </BButton>

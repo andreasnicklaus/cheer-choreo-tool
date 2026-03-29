@@ -1,14 +1,14 @@
 <template>
   <BModal
-    ref="modal"
     :id="`changeLengthModal-${id}`"
+    ref="modal"
     centered
     :title="$t('modals.change-length.laenge-der-choreo-aendern')"
     @show="
       () => {
-        if (this.choreo) {
-          this.newChoreoAchter = Math.floor(this.choreo.counts / 8);
-          this.newChoreoCount = this.choreo.counts % 8;
+        if (choreo) {
+          newChoreoAchter = Math.floor(choreo.counts / 8);
+          newChoreoCount = choreo.counts % 8;
         }
       }
     "
@@ -21,9 +21,9 @@
         :invalid-feedback="lengthStateFeedback"
       >
         <BFormInput
+          v-model="newChoreoAchter"
           type="number"
           min="0"
-          v-model="newChoreoAchter"
           :state="achterIsValid"
           autofocus
         />
@@ -36,10 +36,10 @@
         :invalid-feedback="lengthStateFeedback"
       >
         <BFormInput
+          v-model="newChoreoCount"
           type="number"
           min="0"
           max="7"
-          v-model="newChoreoCount"
           :state="countIsValid"
         />
       </BFormGroup>
@@ -49,10 +49,10 @@
       </p>
     </BForm>
     <template #footer="{ ok, cancel }">
-      <BButton @click="ok" variant="success" :disabled="!newCountIsValid">
+      <BButton variant="success" :disabled="!newCountIsValid" @click="ok">
         {{ $t("modals.change-length.laenge-aendern") }}
       </BButton>
-      <BButton @click="cancel" variant="danger">{{ $t("abbrechen") }}</BButton>
+      <BButton variant="danger" @click="cancel">{{ $t("abbrechen") }}</BButton>
     </template>
   </BModal>
 </template>
@@ -85,28 +85,18 @@ import ChoreoService from "@/services/ChoreoService";
  */
 export default {
   name: "ChangeChoreoLengthModal",
+  props: {
+    choreo: {
+      type: Object,
+      default: null,
+    },
+  },
+  emits: ["countUpdate"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     newChoreoAchter: 1,
     newChoreoCount: 0,
   }),
-  props: {
-    choreo: {
-      type: Object,
-    },
-  },
-  methods: {
-    open() {
-      this.$refs.modal.show();
-    },
-    changeChoreoLength() {
-      const counts =
-        parseInt(this.newChoreoAchter) * 8 + parseInt(this.newChoreoCount);
-      ChoreoService.changeLength(this.choreo.id, counts).then(() => {
-        this.$emit("countUpdate", counts);
-      });
-    },
-  },
   computed: {
     timeEstimationString() {
       const date = new Date(
@@ -137,6 +127,18 @@ export default {
         parseInt(this.newChoreoAchter) * 8 + parseInt(this.newChoreoCount);
       if (counts == 0) return this.$t("modals.change-length.choreo-min-length");
       return null;
+    },
+  },
+  methods: {
+    open() {
+      this.$refs.modal.show();
+    },
+    changeChoreoLength() {
+      const counts =
+        parseInt(this.newChoreoAchter) * 8 + parseInt(this.newChoreoCount);
+      ChoreoService.changeLength(this.choreo.id, counts).then(() => {
+        this.$emit("countUpdate", counts);
+      });
     },
   },
 };

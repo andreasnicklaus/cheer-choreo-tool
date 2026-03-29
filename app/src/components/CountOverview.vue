@@ -39,42 +39,42 @@
                 <BCol cols="auto">
                   <BButtonGroup>
                     <BButton
-                      variant="outline-primary"
                       v-b-tooltip.hover="
                         $t('countOverview.zum-vorigen-count-verschieben')
                       "
+                      variant="outline-primary"
                       :disabled="count <= 0 || !interactive"
-                      @click="() => moveHitToPreviousCount(hit.id)"
                       data-testid="moveHitToPreviousCount-button"
+                      @click="() => moveHitToPreviousCount(hit.id)"
                     >
                       <IBiChevronLeft />
                     </BButton>
                     <BButton
-                      variant="outline-primary"
                       v-b-tooltip.hover="
                         $t('countOverview.zum-naechsten-count-verschieben')
                       "
+                      variant="outline-primary"
                       :disabled="count >= choreo.counts - 1 || !interactive"
-                      @click="() => moveHitToNextCount(hit.id)"
                       data-testid="moveHitToNextCount-button"
+                      @click="() => moveHitToNextCount(hit.id)"
                     >
                       <IBiChevronRight />
                     </BButton>
                     <BButton
-                      variant="outline-success"
-                      @click="() => editHit(hit.id)"
                       v-b-tooltip.hover="$t('countOverview.bearbeiten')"
+                      variant="outline-success"
                       :disabled="!interactive"
                       data-testid="editHit-button"
+                      @click="() => editHit(hit.id)"
                     >
                       <IBiPen />
                     </BButton>
                     <BButton
-                      variant="outline-danger"
-                      @click="() => $refs.deleteHitModal.open(hit.id)"
                       v-b-tooltip.hover="$t('countOverview.loeschen')"
+                      variant="outline-danger"
                       :disabled="!interactive"
                       data-testid="deleteHit-button"
+                      @click="() => $refs.deleteHitModal.open(hit.id)"
                     >
                       <IBiTrash />
                     </BButton>
@@ -140,38 +140,38 @@
                         height: '1.2em',
                         textDecoration: 'underline dotted',
                       }"
+                      class="p-0"
+                      autofocus
+                      :placeholder="$t('countOverview.name-des-hits')"
+                      :state="editHitNameIsValid"
                       @keydown.enter="
                         () => {
                           if (editHitNameIsValid) saveHit();
                         }
                       "
                       @keydown.esc="() => (editHitId = null)"
-                      class="p-0"
-                      autofocus
-                      :placeholder="$t('countOverview.name-des-hits')"
-                      :state="editHitNameIsValid"
                     />
                   </BFormGroup>
                 </BCol>
                 <BCol cols="auto">
                   <BButtonGroup>
                     <BButton
-                      variant="success"
                       v-b-tooltip.hover="$t('speichern')"
+                      variant="success"
                       :disabled="
                         !editHitName ||
                         !editHitAchterIsValid ||
                         !editHitCountIsValid ||
                         !editHitMembersIsValid
                       "
-                      @click="() => saveHit()"
                       data-testid="saveHit-button"
+                      @click="() => saveHit()"
                     >
                       <IBiCheck />
                     </BButton>
                     <BButton
-                      variant="danger"
                       v-b-tooltip.hover="$t('abbrechen')"
+                      variant="danger"
                       @click="() => (editHitId = null)"
                     >
                       <IBiX />
@@ -194,10 +194,10 @@
                       :invalid-feedback="editHitAchterStateFeedback"
                     >
                       <BFormInput
+                        v-model="editHitAchter"
                         data-testid="editHitAchterInput"
                         type="number"
                         min="1"
-                        v-model="editHitAchter"
                         :state="editHitAchterIsValid"
                       />
                     </BFormGroup>
@@ -209,11 +209,11 @@
                       :invalid-feedback="editHitCountStateFeedback"
                     >
                       <BFormInput
+                        v-model="editHitCount"
                         data-testid="editHitCountInput"
                         type="number"
                         min="1"
                         max="8"
-                        v-model="editHitCount"
                         :state="editHitCountIsValid"
                       />
                     </BFormGroup>
@@ -245,15 +245,15 @@
                   </BButton>
                   <BButton
                     variant="light"
+                    :disabled="
+                      editHitMembers?.length == 0 ||
+                      editHitMembers?.length == teamMembers?.length
+                    "
                     @click="
                       () =>
                         (editHitMembers = teamMembers
                           .filter((m) => !editHitMembers.includes(m.id))
                           .map((m) => m.id))
-                    "
-                    :disabled="
-                      editHitMembers?.length == 0 ||
-                      editHitMembers?.length == teamMembers?.length
                     "
                   >
                     <IBiArrowRepeat />
@@ -321,35 +321,35 @@
                   <BButtonGroup class="me-2">
                     <BButton
                       v-show="lineup.Positions.length != teamMembers.length"
-                      variant="outline-primary"
                       v-b-tooltip.hover="
                         $t(
                           'countOverview.alle-teilnehmer-in-der-aufstellung-speichern'
                         )
                       "
-                      @click="() => addAllMembersToLineup(lineup.id)"
+                      variant="outline-primary"
                       :disabled="!interactive"
                       data-testid="selectAllMembersForLineup-button"
+                      @click="() => addAllMembersToLineup(lineup.id)"
                     >
                       <IBiPeopleFill />
                     </BButton>
                   </BButtonGroup>
                   <BButtonGroup>
                     <BButton
-                      variant="outline-success"
                       v-b-tooltip.hover="$t('countOverview.bearbeiten')"
-                      @click="() => editLineup(lineup.id)"
+                      variant="outline-success"
                       :disabled="!interactive"
                       data-testid="editLineup-button"
+                      @click="() => editLineup(lineup.id)"
                     >
                       <IBiPen />
                     </BButton>
                     <BButton
-                      variant="outline-danger"
                       v-b-tooltip.hover="$t('countOverview.loeschen')"
-                      @click="() => $refs.deleteLineupModal.open(lineup.id)"
+                      variant="outline-danger"
                       :disabled="!interactive"
                       data-testid="deleteLineup-button"
+                      @click="() => $refs.deleteLineupModal.open(lineup.id)"
                     >
                       <IBiTrash />
                     </BButton>
@@ -423,9 +423,8 @@
                 <BCol cols="auto">
                   <BButtonGroup>
                     <BButton
-                      variant="success"
                       v-b-tooltip.hover="$t('speichern')"
-                      @click="() => saveLineup()"
+                      variant="success"
                       :disabled="
                         !editLineupStartAchterIsValid ||
                         !editLineupStartCountIsValid ||
@@ -434,12 +433,13 @@
                         !editLineupMembersIsValid
                       "
                       data-testid="saveLineup-button"
+                      @click="() => saveLineup()"
                     >
                       <IBiCheck />
                     </BButton>
                     <BButton
-                      variant="danger"
                       v-b-tooltip.hover="$t('abbrechen')"
+                      variant="danger"
                       @click="() => (editLineupId = null)"
                     >
                       <IBiX />
@@ -463,10 +463,10 @@
                       :invalid-feedback="editLineupStartAchterStateFeedback"
                     >
                       <BFormInput
+                        v-model="editLineupStartAchter"
                         data-testid="editLineupStartAchterInput"
                         type="number"
                         min="1"
-                        v-model="editLineupStartAchter"
                         :state="editLineupStartAchterIsValid"
                       />
                     </BFormGroup>
@@ -478,11 +478,11 @@
                       :invalid-feedback="editLineupStartCountStateFeedback"
                     >
                       <BFormInput
+                        v-model="editLineupStartCount"
                         data-testid="editLineupStartCountInput"
                         type="number"
                         min="1"
                         max="8"
-                        v-model="editLineupStartCount"
                         :state="editLineupStartCountIsValid"
                       />
                     </BFormGroup>
@@ -504,10 +504,10 @@
                       :invalid-feedback="editLineupEndAchterStateFeedback"
                     >
                       <BFormInput
+                        v-model="editLineupEndAchter"
                         data-testid="editLineupEndAchterInput"
                         type="number"
                         min="1"
-                        v-model="editLineupEndAchter"
                         :state="editLineupEndAchterIsValid"
                       />
                     </BFormGroup>
@@ -519,11 +519,11 @@
                       :invalid-feedback="editLineupEndCountStateFeedback"
                     >
                       <BFormInput
+                        v-model="editLineupEndCount"
                         data-testid="editLineupEndCountInput"
                         type="number"
                         min="1"
                         max="8"
-                        v-model="editLineupEndCount"
                         :state="editLineupEndCountIsValid"
                       />
                     </BFormGroup>
@@ -542,33 +542,33 @@
                 <BButtonGroup>
                   <BButton
                     variant="light"
+                    :disabled="editLineupMembers.length == teamMembers.length"
                     @click="
                       () => (editLineupMembers = teamMembers.map((m) => m.id))
                     "
-                    :disabled="editLineupMembers.length == teamMembers.length"
                   >
                     <IBiCheckAll />
                     {{ $t("alle-auswaehlen") }}
                   </BButton>
                   <BButton
                     variant="light"
-                    @click="() => (editLineupMembers = [])"
                     :disabled="editLineupMembers.length == 0"
+                    @click="() => (editLineupMembers = [])"
                   >
                     <IBiSlash />
                     {{ $t("keine-auswaehlen") }}
                   </BButton>
                   <BButton
                     variant="light"
+                    :disabled="
+                      editLineupMembers?.length == 0 ||
+                      editLineupMembers?.length == teamMembers?.length
+                    "
                     @click="
                       () =>
                         (editLineupMembers = teamMembers
                           .filter((m) => !editLineupMembers.includes(m.id))
                           .map((m) => m.id))
-                    "
-                    :disabled="
-                      editLineupMembers?.length == 0 ||
-                      editLineupMembers?.length == teamMembers?.length
                     "
                   >
                     <IBiArrowRepeat />
@@ -642,8 +642,8 @@
       <BButton
         variant="outline-success"
         class="mt-2"
-        @click="() => $emit('openCreateHitModal')"
         :disabled="!interactive"
+        @click="() => $emit('openCreateHitModal')"
       >
         <IBiPlus />
         {{ $t("countOverview.count-eintrag-hinzufuegen") }}
@@ -653,8 +653,8 @@
       <BButton
         variant="light"
         class="mt-2"
-        @click="() => $refs.createLineupModal.open()"
         :disabled="!interactive"
+        @click="() => $refs.createLineupModal.open()"
       >
         <IBiPlus />
         {{ $t("countOverview.aufstellung-hinzufuegen") }}
@@ -665,22 +665,22 @@
       ref="createLineupModal"
       :count="count"
       :choreo="choreo"
-      :teamMembers="teamMembers"
-      :lineupsForCurrentCount="lineupsForCurrentCount"
-      :currentPositions="currentPositions"
-      @updateLineups="(lineupCopy) => $emit('updateLineups', lineupCopy)"
+      :team-members="teamMembers"
+      :lineups-for-current-count="lineupsForCurrentCount"
+      :current-positions="currentPositions"
+      @update-lineups="(lineupCopy) => $emit('updateLineups', lineupCopy)"
     />
 
     <DeleteLineupModal
       ref="deleteLineupModal"
       :choreo="choreo"
-      @updateLineups="(lineupCopy) => $emit('updateLineups', lineupCopy)"
+      @update-lineups="(lineupCopy) => $emit('updateLineups', lineupCopy)"
     />
 
     <DeleteHitModal
       ref="deleteHitModal"
       :choreo="choreo"
-      @updateHits="(hitCopy) => $emit('updateHits', hitCopy)"
+      @update-hits="(hitCopy) => $emit('updateHits', hitCopy)"
     />
   </BCard>
 </template>
@@ -727,19 +727,6 @@ import DeleteHitModal from "./modals/DeleteHitModal.vue";
 export default {
   name: "CountOverview",
   components: { CreateLineupModal, DeleteLineupModal, DeleteHitModal },
-  data: () => ({
-    editHitId: null,
-    editHitName: null,
-    editHitAchter: 1,
-    editHitCount: 1,
-    editHitMembers: [],
-    editLineupId: null,
-    editLineupStartAchter: 1,
-    editLineupStartCount: 1,
-    editLineupEndAchter: 1,
-    editLineupEndCount: 1,
-    editLineupMembers: [],
-  }),
   props: {
     count: {
       type: Number,
@@ -755,16 +742,128 @@ export default {
     },
     teamMembers: {
       type: Array,
+      default: () => [],
     },
     choreo: {
       type: Object,
+      default: () => ({}),
     },
     currentPositions: {
       type: Array,
+      default: () => [],
     },
     interactive: {
       type: Boolean,
       default: true,
+    },
+  },
+  emits: ["openCreateHitModal", "updateLineups", "updateHits", "updateCount"],
+  data: () => ({
+    editHitId: null,
+    editHitName: null,
+    editHitAchter: 1,
+    editHitCount: 1,
+    editHitMembers: [],
+    editLineupId: null,
+    editLineupStartAchter: 1,
+    editLineupStartCount: 1,
+    editLineupEndAchter: 1,
+    editLineupEndCount: 1,
+    editLineupMembers: [],
+  }),
+  computed: {
+    editHitNameIsValid() {
+      return Boolean(this.editHitName) && this.editHitName.trim().length >= 3;
+    },
+    editHitNameStateFeedback() {
+      if (!this.editHitName) return this.$t("erforderlich");
+      if (this.editHitName.trim().length < 3)
+        return this.$t("countOverview.hit-name-min-laenge");
+      return null;
+    },
+    editHitAchterIsValid() {
+      return Boolean(this.editHitAchter);
+    },
+    editHitAchterStateFeedback() {
+      if (!this.editHitAchter) return this.$t("erforderlich");
+      return null;
+    },
+    editHitCountIsValid() {
+      return Boolean(this.editHitCount);
+    },
+    editHitCountStateFeedback() {
+      if (!this.editHitCount) return this.$t("erforderlich");
+      return null;
+    },
+    editHitMembersIsValid() {
+      return Boolean(this.editHitMembers) && this.editHitMembers.length > 0;
+    },
+    editHitMembersStateFeedback() {
+      if (!this.editHitMembers || this.editHitMembers.length == 0)
+        return this.$t("erforderlich");
+      return null;
+    },
+    editLineupStartIsBeforeEnd() {
+      const absoluteStartCount =
+        (parseInt(this.editLineupStartAchter) - 1) * 8 +
+        parseInt(this.editLineupStartCount) -
+        1;
+      const absoluteEndCount =
+        (parseInt(this.editLineupEndAchter) - 1) * 8 +
+        parseInt(this.editLineupEndCount) -
+        1;
+      return absoluteStartCount <= absoluteEndCount;
+    },
+    editLineupStartIsBeforeEndStateFeedback() {
+      if (!this.editLineupStartIsBeforeEnd)
+        return this.$t("countOverview.start-vor-ende");
+      return null;
+    },
+    editLineupEndAchterIsValid() {
+      return (
+        Boolean(this.editLineupEndAchter) && this.editLineupStartIsBeforeEnd
+      );
+    },
+    editLineupEndAchterStateFeedback() {
+      if (!this.editLineupEndAchter) return this.$t("erforderlich");
+      return null;
+    },
+    editLineupStartAchterIsValid() {
+      return (
+        Boolean(this.editLineupStartAchter) && this.editLineupStartIsBeforeEnd
+      );
+    },
+    editLineupStartAchterStateFeedback() {
+      if (!this.editLineupStartAchter) return this.$t("erforderlich");
+      return null;
+    },
+    editLineupStartCountIsValid() {
+      return (
+        Boolean(this.editLineupStartCount) && this.editLineupStartIsBeforeEnd
+      );
+    },
+    editLineupStartCountStateFeedback() {
+      if (!this.editLineupStartCount) return this.$t("erforderlich");
+      return null;
+    },
+    editLineupEndCountIsValid() {
+      return (
+        Boolean(this.editLineupEndCount) && this.editLineupStartIsBeforeEnd
+      );
+    },
+    editLineupEndCountStateFeedback() {
+      if (!this.editLineupEndCount) return this.$t("erforderlich");
+      return null;
+    },
+    editLineupMembersIsValid() {
+      return (
+        Boolean(this.editLineupMembers) && this.editLineupMembers.length > 0
+      );
+    },
+    editLineupMembersStateFeedback() {
+      if (!this.editLineupMembers || this.editLineupMembers.length == 0)
+        return this.$t("erforderlich");
+      return null;
     },
   },
   methods: {
@@ -941,101 +1040,6 @@ export default {
     },
     openHitDeleteModal(hitId) {
       this.$refs.deleteHitModal(hitId);
-    },
-  },
-  computed: {
-    editHitNameIsValid() {
-      return Boolean(this.editHitName) && this.editHitName.trim().length >= 3;
-    },
-    editHitNameStateFeedback() {
-      if (!this.editHitName) return this.$t("erforderlich");
-      if (this.editHitName.trim().length < 3)
-        return this.$t("countOverview.hit-name-min-laenge");
-      return null;
-    },
-    editHitAchterIsValid() {
-      return Boolean(this.editHitAchter);
-    },
-    editHitAchterStateFeedback() {
-      if (!this.editHitAchter) return this.$t("erforderlich");
-      return null;
-    },
-    editHitCountIsValid() {
-      return Boolean(this.editHitCount);
-    },
-    editHitCountStateFeedback() {
-      if (!this.editHitCount) return this.$t("erforderlich");
-      return null;
-    },
-    editHitMembersIsValid() {
-      return Boolean(this.editHitMembers) && this.editHitMembers.length > 0;
-    },
-    editHitMembersStateFeedback() {
-      if (!this.editHitMembers || this.editHitMembers.length == 0)
-        return this.$t("erforderlich");
-      return null;
-    },
-    editLineupStartIsBeforeEnd() {
-      const absoluteStartCount =
-        (parseInt(this.editLineupStartAchter) - 1) * 8 +
-        parseInt(this.editLineupStartCount) -
-        1;
-      const absoluteEndCount =
-        (parseInt(this.editLineupEndAchter) - 1) * 8 +
-        parseInt(this.editLineupEndCount) -
-        1;
-      return absoluteStartCount <= absoluteEndCount;
-    },
-    editLineupStartIsBeforeEndStateFeedback() {
-      if (!this.editLineupStartIsBeforeEnd)
-        return this.$t("countOverview.start-vor-ende");
-      return null;
-    },
-    editLineupEndAchterIsValid() {
-      return (
-        Boolean(this.editLineupEndAchter) && this.editLineupStartIsBeforeEnd
-      );
-    },
-    editLineupEndAchterStateFeedback() {
-      if (!this.editLineupEndAchter) return this.$t("erforderlich");
-      return null;
-    },
-    editLineupStartAchterIsValid() {
-      return (
-        Boolean(this.editLineupStartAchter) && this.editLineupStartIsBeforeEnd
-      );
-    },
-    editLineupStartAchterStateFeedback() {
-      if (!this.editLineupStartAchter) return this.$t("erforderlich");
-      return null;
-    },
-    editLineupStartCountIsValid() {
-      return (
-        Boolean(this.editLineupStartCount) && this.editLineupStartIsBeforeEnd
-      );
-    },
-    editLineupStartCountStateFeedback() {
-      if (!this.editLineupStartCount) return this.$t("erforderlich");
-      return null;
-    },
-    editLineupEndCountIsValid() {
-      return (
-        Boolean(this.editLineupEndCount) && this.editLineupStartIsBeforeEnd
-      );
-    },
-    editLineupEndCountStateFeedback() {
-      if (!this.editLineupEndCount) return this.$t("erforderlich");
-      return null;
-    },
-    editLineupMembersIsValid() {
-      return (
-        Boolean(this.editLineupMembers) && this.editLineupMembers.length > 0
-      );
-    },
-    editLineupMembersStateFeedback() {
-      if (!this.editLineupMembers || this.editLineupMembers.length == 0)
-        return this.$t("erforderlich");
-      return null;
     },
   },
 };

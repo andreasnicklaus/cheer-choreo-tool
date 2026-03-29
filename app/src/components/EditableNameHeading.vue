@@ -1,7 +1,7 @@
 <template>
   <h1>
     <BRow align-h="start" align-v="center" no-gutters>
-      <BCol cols="auto" class="me-2" v-if="name">
+      <BCol v-if="name" cols="auto" class="me-2">
         <em>{{ name }}</em>
       </BCol>
       <BCol>
@@ -41,15 +41,15 @@
             <BButtonGroup>
               <BButton
                 variant="success"
-                @click="() => approveEdit()"
                 data-testid="approve-edit-button"
+                @click="() => approveEdit()"
               >
                 <IBiCheck />
               </BButton>
               <BButton
                 variant="danger"
-                @click="() => cancelEditing()"
                 data-testid="cancel-edit-button"
+                @click="() => cancelEditing()"
               >
                 <IBiX />
               </BButton>
@@ -79,7 +79,6 @@
  */
 export default {
   name: "EditableNameHeading",
-  emits: ["input"],
   props: {
     name: {
       type: String,
@@ -87,11 +86,14 @@ export default {
     },
     value: {
       type: String,
+      default: "",
     },
     placeholder: {
       type: String,
+      default: "",
     },
   },
+  emits: ["input"],
   data: () => ({
     edit: false,
     valueReplica: null,

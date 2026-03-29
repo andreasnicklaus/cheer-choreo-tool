@@ -1,7 +1,7 @@
 <template>
   <BModal
-    ref="modal"
     :id="`loading-modal-${id}`"
+    ref="modal"
     centered
     no-close-on-backdrop
     no-close-on-esc
@@ -14,7 +14,7 @@
         <BSpinner />
         <p class="m-0">
           <slot>
-            {{ description }}
+            {{ description || $t("modals.loading.wird-geladen") }}
           </slot>
         </p>
       </BCol>
@@ -41,17 +41,15 @@
  */
 export default {
   name: "LoadingModal",
-  data: () => ({
-    id: (Math.random() + 1).toString(36).substring(7),
-  }),
   props: {
     description: {
       type: String,
-      default: function () {
-        return this.$t("modals.loading.wird-geladen");
-      },
+      default: null,
     },
   },
+  data: () => ({
+    id: (Math.random() + 1).toString(36).substring(7),
+  }),
   methods: {
     open() {
       this.$refs.modal?.show();

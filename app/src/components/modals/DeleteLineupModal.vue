@@ -1,7 +1,7 @@
 <template>
   <BModal
+    :id="`modal-deleteLineup-${id}`"
     ref="modal"
-    :id="`modal-deleteLineup-${this.id}`"
     :title="$t('modals.delete-lineup.aufstellung-loeschen')"
     centered
     @hidden="resetDeleteLineupModal"
@@ -9,8 +9,8 @@
   >
     <p class="m-0">{{ $t("du-kannst-das-nicht-rueckgaengig-machen") }}</p>
     <template #footer="{ ok, cancel }">
-      <BButton @click="ok" variant="danger">{{ $t("loeschen") }}</BButton>
-      <BButton @click="cancel" variant="outline-secondary">
+      <BButton variant="danger" @click="ok">{{ $t("loeschen") }}</BButton>
+      <BButton variant="outline-secondary" @click="cancel">
         {{ $t("abbrechen") }}
       </BButton>
     </template>
@@ -38,15 +38,17 @@ import LineupService from "@/services/LineupService";
  */
 export default {
   name: "DeleteLineupModal",
+  props: {
+    choreo: {
+      type: Object,
+      default: null,
+    },
+  },
+  emits: ["updateLineups"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     deleteLineupId: null,
   }),
-  props: {
-    choreo: {
-      type: Object,
-    },
-  },
   methods: {
     open(deleteLineupId) {
       this.deleteLineupId = deleteLineupId;

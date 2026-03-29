@@ -82,16 +82,16 @@
                     ? 'white'
                     : null,
               }"
-              @click="() => setCount(i, parseInt(label - 1))"
-              @dblclick="() => $emit('openCreateHitModal')"
               :variant="
                 Math.floor(count / 8) == i && count % 8 == label - 1
                   ? 'primary'
                   : 'outline-primary'
               "
+              @click="() => setCount(i, parseInt(label - 1))"
+              @dblclick="() => $emit('openCreateHitModal')"
             >
               <span v-show="acht[label].length > 0">
-                <p class="mb-0" v-for="hit in acht[label]" :key="hit.name">
+                <p v-for="hit in acht[label]" :key="hit.name" class="mb-0">
                   {{ hit.name }}
                 </p>
               </span>
@@ -134,6 +134,7 @@ export default {
     },
     choreo: {
       type: Object,
+      default: () => ({}),
     },
     interactive: {
       type: Boolean,
@@ -145,6 +146,7 @@ export default {
     },
     fontSize: {
       type: Number,
+      default: 14,
     },
     startCount: {
       type: Number,
@@ -155,16 +157,7 @@ export default {
       default: false,
     },
   },
-  methods: {
-    setCount(achter, count) {
-      this.$emit("setCounter", achter * 8 + count);
-    },
-    findActionsForCount(count) {
-      return this.choreo.Hits.filter((a) => {
-        return a.count == count;
-      });
-    },
-  },
+  emits: ["openCreateHitModal", "setCounter"],
   computed: {
     achter() {
       if (!this.choreo) return [];
@@ -186,6 +179,16 @@ export default {
     },
     tableHeight() {
       return window.innerHeight - 30 + "px";
+    },
+  },
+  methods: {
+    setCount(achter, count) {
+      this.$emit("setCounter", achter * 8 + count);
+    },
+    findActionsForCount(count) {
+      return this.choreo.Hits.filter((a) => {
+        return a.count == count;
+      });
     },
   },
 };

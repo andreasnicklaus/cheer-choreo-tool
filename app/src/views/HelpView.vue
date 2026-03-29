@@ -6,10 +6,10 @@
       title-tag="h1"
     >
       <BInput
+        v-model="searchTerm"
         type="text"
         :placeholder="$t('suchen')"
         class="mb-2"
-        v-model="searchTerm"
       />
       <BCard
         v-for="(category, catId) in filteredFaqCategories"
@@ -20,8 +20,8 @@
         <BAccordion flush>
           <BAccordionItem
             v-for="(faq, faqId) in category.faqs"
-            :key="`accordion-${catId}-${faqId}`"
             :id="`accordion-${catId}-${faqId}`"
+            :key="`accordion-${catId}-${faqId}`"
             :title="faq.title"
           >
             <Markdown
@@ -34,7 +34,7 @@
         </BAccordion>
       </BCard>
 
-      <p class="text-muted" v-if="filteredFaqCategories.length == 0">
+      <p v-if="filteredFaqCategories.length == 0" class="text-muted">
         {{
           $t("HelpView.fuer-deine-suche-gibt-es-keine-ergebnisse", {
             searchTerm,
@@ -136,13 +136,13 @@ import Markdown from "vue3-markdown-it";
  */
 export default {
   name: "HelpView",
+  components: {
+    Markdown,
+  },
   data: function () {
     return {
       searchTerm: null,
     };
-  },
-  components: {
-    Markdown,
   },
   computed: {
     faqCategories() {

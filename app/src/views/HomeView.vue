@@ -33,13 +33,13 @@
           align-h="around"
           :style="{ fontWeight: 'bold' }"
         >
-          <BCol cols="auto" id="callout1">
+          <BCol id="callout1" cols="auto">
             1. {{ $t("Home.choreos-erstellen") }}
           </BCol>
-          <BCol cols="auto" id="callout2">
+          <BCol id="callout2" cols="auto">
             2. {{ $t("Home.countsheets-teilen") }}
           </BCol>
-          <BCol cols="auto" id="callout3">
+          <BCol id="callout3" cols="auto">
             3. {{ $t("Home.videos-erstellen") }}
           </BCol>
         </BRow>
@@ -92,7 +92,7 @@
         </BCol>
         <BCol cols="12" lg="6" :style="{ minHeight: matWidth + 56 + 'px' }">
           <BTabs pills content-class="mt-3" align="center">
-            <BTab :title="$t('cheerleading')" id="cheer-Mat">
+            <BTab id="cheer-Mat" :title="$t('cheerleading')">
               <div
                 :style="{
                   minHeight: matWidth + 'px',
@@ -101,12 +101,12 @@
                 }"
               >
                 <Mat
-                  :currentPositions="currentPositions"
+                  :current-positions="currentPositions"
                   :width="matWidth"
-                  matType="cheer"
-                  :teamMembers="teamMembers"
+                  mat-type="cheer"
+                  :team-members="teamMembers"
                   :interactive="false"
-                  :dotRadius="(matWidth / 500) * 20"
+                  :dot-radius="(matWidth / 500) * 20"
                 />
               </div>
             </BTab>
@@ -123,12 +123,12 @@
                 }"
               >
                 <Mat
-                  :currentPositions="currentPositions"
+                  :current-positions="currentPositions"
                   :width="matWidth"
-                  matType="1:2"
-                  :teamMembers="teamMembers"
+                  mat-type="1:2"
+                  :team-members="teamMembers"
                   :interactive="false"
-                  :dotRadius="(matWidth / 500) * 20"
+                  :dot-radius="(matWidth / 500) * 20"
                 />
               </div>
             </BTab>
@@ -145,12 +145,12 @@
                 }"
               >
                 <Mat
-                  :currentPositions="currentPositions"
+                  :current-positions="currentPositions"
                   :width="matWidth"
-                  matType="3:4"
-                  :teamMembers="teamMembers"
+                  mat-type="3:4"
+                  :team-members="teamMembers"
                   :interactive="false"
-                  :dotRadius="(matWidth / 500) * 20"
+                  :dot-radius="(matWidth / 500) * 20"
                 />
               </div>
             </BTab>
@@ -167,12 +167,12 @@
                 }"
               >
                 <Mat
-                  :currentPositions="currentPositions"
+                  :current-positions="currentPositions"
                   :width="matWidth"
-                  matType="square"
-                  :teamMembers="teamMembers"
+                  mat-type="square"
+                  :team-members="teamMembers"
                   :interactive="false"
-                  :dotRadius="(matWidth / 500) * 20"
+                  :dot-radius="(matWidth / 500) * 20"
                 />
               </div>
             </BTab>
@@ -304,9 +304,9 @@
             id="CountOverview"
             :count="count"
             :choreo="choreo"
-            :hitsForCurrentCount="hitsForCurrentCount"
-            :lineupsForCurrentCount="[]"
-            :teamMembers="teamMembers"
+            :hits-for-current-count="hitsForCurrentCount"
+            :lineups-for-current-count="[]"
+            :team-members="teamMembers"
             :interactive="false"
           />
         </BCol>
@@ -443,13 +443,15 @@
       </BRow>
     </section>
 
+    <!-- TODO: Add an example video -->
+
     <div
+      v-show="!$store.state.loggedIn"
+      id="interestedSection"
       :style="{
         borderRadius: '4px',
       }"
-      v-show="!$store.state.loggedIn"
       class="text-center py-5 px-3 bg-success text-light mb-5"
-      id="interestedSection"
     >
       <h2 class="mb-1">{{ $t("Home.interesse-geweckt") }}</h2>
       <p class="mb-4">

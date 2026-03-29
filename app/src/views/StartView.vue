@@ -2,7 +2,7 @@
   <BContainer id="startView" data-view>
     <BRow class="mb-5">
       <!-- FILTER -->
-      <BCol cols="12" lg="3" v-if="teams.length > 0 || loading" class="mb-3">
+      <BCol v-if="teams.length > 0 || loading" cols="12" lg="3" class="mb-3">
         <BCard class="filters" body-class="pb-2">
           <BCardTitle class="d-flex justify-content-between align-items-center">
             {{ $t("start.filter") }}
@@ -38,14 +38,14 @@
           >
             <BInputGroup class="mb-4 mt-2">
               <BFormInput
-                :placeholder="$t('suchen')"
                 v-model="searchTerm"
+                :placeholder="$t('suchen')"
                 type="search"
               />
               <template #append>
                 <BButton
                   :disabled="!searchTerm"
-                  @click="() => (this.searchTerm = null)"
+                  @click="() => (searchTerm = null)"
                 >
                   <IBiX />
                 </BButton>
@@ -75,9 +75,9 @@
                       :variant="
                         teamFilterIds.includes(team.id) ? 'dark' : 'light'
                       "
-                      @click="() => addOrRemoveTeamFilter(team.id)"
                       class="d-flex justify-content-between align-items-center"
                       button
+                      @click="() => addOrRemoveTeamFilter(team.id)"
                     >
                       {{ team.name }}
                       <BBadge variant="light" pill>
@@ -127,9 +127,9 @@
                       :variant="
                         seasonFilterIds.includes(season.id) ? 'dark' : 'light'
                       "
-                      @click="() => addOrRemoveSeasonFilter(season.id)"
                       class="d-flex justify-content-between align-items-center"
                       button
+                      @click="() => addOrRemoveSeasonFilter(season.id)"
                     >
                       {{ season.name }}
                       <BBadge variant="light" pill>
@@ -226,14 +226,14 @@
               <BButton
                 class="mt-2"
                 :disabled="
-                  !this.searchTerm &&
-                  this.teamFilterIds.length == 0 &&
-                  this.seasonFilterIds.length == 0
+                  !searchTerm &&
+                  teamFilterIds.length == 0 &&
+                  seasonFilterIds.length == 0
                 "
                 :variant="
-                  !this.searchTerm &&
-                  this.teamFilterIds.length == 0 &&
-                  this.seasonFilterIds.length == 0
+                  !searchTerm &&
+                  teamFilterIds.length == 0 &&
+                  seasonFilterIds.length == 0
                     ? 'outline-secondary'
                     : 'secondary'
                 "
@@ -247,8 +247,8 @@
           <div class="d-grid">
             <BButton
               v-if="$store.state.isMobile"
-              variant="light"
               v-b-toggle.filter-collapse
+              variant="light"
             >
               <IBiCaretDownFill
                 v-if="!filterCollapseVisible"
@@ -350,6 +350,9 @@
                                   <BCol cols="auto">
                                     <BButtonGroup>
                                       <BButton
+                                        v-b-tooltip.hover="
+                                          $t('start.video-erstellen')
+                                        "
                                         variant="light"
                                         :to="{
                                           name: 'Video',
@@ -358,13 +361,13 @@
                                             locale: $i18n.locale,
                                           },
                                         }"
-                                        v-b-tooltip.hover="
-                                          $t('start.video-erstellen')
-                                        "
                                       >
                                         <IBiFilm />
                                       </BButton>
                                       <BButton
+                                        v-b-tooltip.hover="
+                                          $t('start.pdf-erstellen')
+                                        "
                                         variant="light"
                                         :to="{
                                           name: 'PDF',
@@ -373,9 +376,6 @@
                                             locale: $i18n.locale,
                                           },
                                         }"
-                                        v-b-tooltip.hover="
-                                          $t('start.pdf-erstellen')
-                                        "
                                       >
                                         <IBiFilePdf />
                                       </BButton>
@@ -431,8 +431,8 @@
                     </BListGroupItem>
                     <BListGroupItem
                       class="text-muted"
-                      @click="() => $refs.createSeasonModal.open(team.id)"
                       button
+                      @click="() => $refs.createSeasonModal.open(team.id)"
                     >
                       <IBiPlusSquare class="me-1" />
                       <span>{{ $t("start.saison-anfangen") }}</span>
@@ -443,8 +443,8 @@
               <BListGroupItem
                 :variant="teams.length == 0 ? 'success' : 'light'"
                 :class="{ 'text-muted': teams.length > 0 }"
-                @click="() => $refs.createTeamModal.open()"
                 button
+                @click="() => $refs.createTeamModal.open()"
               >
                 <IBiPlusSquare class="me-1" />
                 <span>{{ $t("start.team-hinzufuegen") }}</span>
@@ -467,22 +467,22 @@
 
     <CreateClubModal
       ref="createClubModal"
-      :preventClosing="true"
-      @clubCreated="onClubCreated"
+      :prevent-closing="true"
+      @club-created="onClubCreated"
     />
 
     <CreateChoreoModal
       ref="createChoreoModal"
       :teams="teams"
-      @addChoreo="addChoreo"
+      @add-choreo="addChoreo"
     />
 
-    <CreateTeamModal ref="createTeamModal" @teamCreated="onTeamCreated" />
+    <CreateTeamModal ref="createTeamModal" @team-created="onTeamCreated" />
 
     <CreateSeasonModal
       ref="createSeasonModal"
       :teams="teams"
-      @seasonTeamCreated="onSeasonTeamCreation"
+      @season-team-created="onSeasonTeamCreation"
     />
   </BContainer>
 </template>
@@ -524,6 +524,10 @@ export default {
     CreateClubModal,
     CreateSeasonModal,
   },
+  setup() {
+    const { t } = useI18n();
+    return { t };
+  },
   data: () => ({
     useFolderColors: true,
     club: null,
@@ -537,9 +541,26 @@ export default {
     loading: true,
     filterCollapseVisible: false,
   }),
-  setup() {
-    const { t } = useI18n();
-    return { t };
+  computed: {
+    choreos() {
+      return this.teams
+        .map((t) =>
+          t.SeasonTeams.map((st) =>
+            st.Choreos.map((c) => ({
+              ...c,
+              SeasonTeam: { ...st, Team: t },
+            }))
+          )
+        )
+        .flat(Infinity);
+    },
+  },
+  watch: {
+    "$store.state.clubId": {
+      handler() {
+        this.load();
+      },
+    },
   },
   mounted() {
     this.load();
@@ -687,27 +708,6 @@ export default {
     },
     onSeasonTeamCreation() {
       this.load();
-    },
-  },
-  computed: {
-    choreos() {
-      return this.teams
-        .map((t) =>
-          t.SeasonTeams.map((st) =>
-            st.Choreos.map((c) => ({
-              ...c,
-              SeasonTeam: { ...st, Team: t },
-            }))
-          )
-        )
-        .flat(Infinity);
-    },
-  },
-  watch: {
-    "$store.state.clubId": {
-      handler() {
-        this.load();
-      },
     },
   },
 };

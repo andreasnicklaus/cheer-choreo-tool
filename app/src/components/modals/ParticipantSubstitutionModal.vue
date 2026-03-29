@@ -1,11 +1,11 @@
 <template>
   <BModal
-    ref="modal"
     :id="`modal-participation-substitution-${id}`"
+    ref="modal"
     centered
+    :title="$t('modals.substitution.teilnehmer-auswechseln')"
     @show="reset"
     @ok="substituteParticipants"
-    :title="$t('modals.substitution.teilnehmer-auswechseln')"
   >
     <p class="text-muted">
       {{ $t("choreo", 1) }}: {{ choreo?.name }} ({{
@@ -41,10 +41,10 @@
       />
     </BFormGroup>
     <template #footer="{ ok, cancel }">
-      <BButton @click="ok" variant="success">{{
+      <BButton variant="success" @click="ok">{{
         $t("modals.substitution.auswechseln")
       }}</BButton>
-      <BButton @click="cancel" variant="outline-danger">{{
+      <BButton variant="outline-danger" @click="cancel">{{
         $t("abbrechen")
       }}</BButton>
     </template>
@@ -82,14 +82,10 @@ import ChoreoService from "@/services/ChoreoService";
  */
 export default {
   name: "ParticipantSubstitutionModal",
-  data: () => ({
-    id: (Math.random() + 1).toString(36).substring(7),
-    memberToReplaceId: null,
-    memberToSubInId: null,
-  }),
   props: {
     choreo: {
       type: Object,
+      default: null,
     },
     participants: {
       type: Array,
@@ -100,26 +96,12 @@ export default {
       required: true,
     },
   },
-  methods: {
-    open(memberToReplaceId = null, memberToSubInId = null) {
-      this.$refs.modal.show();
-      this.memberToReplaceId = memberToReplaceId;
-      this.memberToSubInId = memberToSubInId;
-    },
-    reset() {
-      this.memberToReplaceId = null;
-      this.memberToSubInId = null;
-    },
-    substituteParticipants() {
-      ChoreoService.replaceParticipant(
-        this.choreo.id,
-        this.memberToReplaceId,
-        this.memberToSubInId
-      ).then((choreo) => {
-        this.$emit("substitution", choreo);
-      });
-    },
-  },
+  emits: ["substitution"],
+  data: () => ({
+    id: (Math.random() + 1).toString(36).substring(7),
+    memberToReplaceId: null,
+    memberToSubInId: null,
+  }),
   computed: {
     participantOptions() {
       return this.participants.map((p) => ({
@@ -146,6 +128,26 @@ export default {
     memberToSubInIdStateFeedback() {
       if (!this.memberToSubInId) return this.$t("erfolgreich");
       return null;
+    },
+  },
+  methods: {
+    open(memberToReplaceId = null, memberToSubInId = null) {
+      this.$refs.modal.show();
+      this.memberToReplaceId = memberToReplaceId;
+      this.memberToSubInId = memberToSubInId;
+    },
+    reset() {
+      this.memberToReplaceId = null;
+      this.memberToSubInId = null;
+    },
+    substituteParticipants() {
+      ChoreoService.replaceParticipant(
+        this.choreo.id,
+        this.memberToReplaceId,
+        this.memberToSubInId
+      ).then((choreo) => {
+        this.$emit("substitution", choreo);
+      });
     },
   },
 };

@@ -12,10 +12,10 @@
         {{ $t("app-install.install-info") }}
       </BCol>
       <BCol cols="auto">
-        <BButton @click="dismiss" variant="link" class="me-2">
+        <BButton variant="link" class="me-2" @click="dismiss">
           <u>{{ $t("app-install.nein-danke") }}</u>
         </BButton>
-        <BButton @click="install" variant="success" :style="{ color: 'white' }">
+        <BButton variant="success" :style="{ color: 'white' }" @click="install">
           <IBiDownload class="me-2" />
           {{ $t("app-install.installieren") }}
         </BButton>

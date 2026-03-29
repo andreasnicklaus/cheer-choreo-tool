@@ -1,7 +1,7 @@
 <template>
   <BModal
-    ref="modal"
     :id="`modal-deleteClub-${id}`"
+    ref="modal"
     :title="$t('modals.delete-club.verein-loeschen')"
     centered
     @hidden="reset"
@@ -9,8 +9,8 @@
   >
     <p class="m-0">{{ $t("du-kannst-das-nicht-rueckgaengig-machen") }}</p>
     <template #footer="{ ok, cancel }">
-      <BButton @click="ok" variant="danger">{{ $t("loeschen") }}</BButton>
-      <BButton @click="cancel" variant="outline-secondary">
+      <BButton variant="danger" @click="ok">{{ $t("loeschen") }}</BButton>
+      <BButton variant="outline-secondary" @click="cancel">
         {{ $t("abbrechen") }}
       </BButton>
     </template>
@@ -36,6 +36,7 @@ import ClubService from "@/services/ClubService";
  */
 export default {
   name: "DeleteClubModal",
+  emits: ["clubDeleted"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     deleteClubId: null,

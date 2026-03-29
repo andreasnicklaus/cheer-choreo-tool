@@ -1,19 +1,19 @@
 <template>
-  <BContainer id="editView" @keydown="onKeyPress" data-view>
+  <BContainer id="editView" data-view @keydown="onKeyPress">
     <EditableNameHeading
+      v-if="!$store.state.isMobile || mobileEditingEnabled"
       name="Choreo"
       :value="choreo?.name"
       class="mb-4"
-      @input="onNameEdit"
       :placeholder="`${$t('loading')}...`"
-      v-if="!$store.state.isMobile || mobileEditingEnabled"
+      @input="onNameEdit"
     />
 
     <!-- Controls -->
     <BRow
+      v-if="!$store.state.isMobile || mobileEditingEnabled"
       align-v="center"
       class="mb-4"
-      v-if="!$store.state.isMobile || mobileEditingEnabled"
     >
       <BCol>
         <BRow
@@ -25,18 +25,18 @@
           <BCol cols="auto">
             <BButtonGroup>
               <BButton
-                variant="outline-secondary"
-                @click="skipToStart"
-                :disabled="count <= 0"
                 id="tooltip-target-skipToStart"
+                variant="outline-secondary"
+                :disabled="count <= 0"
+                @click="skipToStart"
               >
                 <IBiChevronDoubleLeft />
               </BButton>
               <BButton
-                variant="outline-secondary"
-                @click="previousCount"
-                :disabled="count <= 0"
                 id="tooltip-target-previousCount"
+                variant="outline-secondary"
+                :disabled="count <= 0"
+                @click="previousCount"
               >
                 <IBiChevronLeft />
               </BButton>
@@ -82,18 +82,18 @@
           <BCol cols="auto">
             <BButtonGroup>
               <BButton
-                variant="outline-secondary"
-                @click="nextCount"
-                :disabled="choreo ? count >= choreo.counts - 1 : true"
                 id="tooltip-target-nextCount"
+                variant="outline-secondary"
+                :disabled="choreo ? count >= choreo.counts - 1 : true"
+                @click="nextCount"
               >
                 <IBiChevronRight />
               </BButton>
               <BButton
-                variant="outline-secondary"
-                @click="skipToEnd"
-                :disabled="choreo ? count >= choreo.counts - 1 : true"
                 id="tooltip-target-endCount"
+                variant="outline-secondary"
+                :disabled="choreo ? count >= choreo.counts - 1 : true"
+                @click="skipToEnd"
               >
                 <IBiChevronDoubleRight />
               </BButton>
@@ -127,20 +127,20 @@
         <BRow align-h="end" no-gutters>
           <BCol cols="auto" class="me-2">
             <BButton
-              variant="light"
               v-b-tooltip.hover="$t('editView.anleitung')"
-              @click="() => $refs.howToModal.open()"
+              variant="light"
               data-testid="instructions-button"
+              @click="() => $refs.howToModal.open()"
             >
               <IBiQuestion />
             </BButton>
           </BCol>
           <BCol cols="auto">
             <BDropdown
+              v-b-tooltip.hover="$t('optionen')"
               right
               no-caret
               variant="light"
-              v-b-tooltip.hover="$t('optionen')"
               data-testid="menu-button"
             >
               <template #button-content>
@@ -169,15 +169,15 @@
               <BDropdownDivider />
               <BDropdownGroup :header="$t('editView.choreo-einstellungen')">
                 <BDropdownItem
-                  @click="() => $refs.changeChoreoLengthModal.open()"
                   :disabled="!choreo"
+                  @click="() => $refs.changeChoreoLengthModal.open()"
                 >
                   <IBiHash class="me-2" />
                   {{ $t("editView.laenge-anpassen") }}
                 </BDropdownItem>
                 <BDropdownItem
-                  @click="() => $refs.changeMatLayoutModal.open()"
                   :disabled="!choreo"
+                  @click="() => $refs.changeMatLayoutModal.open()"
                 >
                   <IBiLayoutThreeColumns class="me-2" />
                   {{ $t("editView.change-mat-layout") }}
@@ -188,7 +188,7 @@
               <BDropdownDivider />
               <BDropdownGroup :header="$t('editView.bearbeitung')">
                 <BDropdownText style="width: 250px" @click.stop>
-                  <BFormCheckbox switch v-model="snapping">
+                  <BFormCheckbox v-model="snapping" switch>
                     {{
                       $t(
                         "editView.positionen-horizontal-und-vertikal-ausrichten"
@@ -197,21 +197,21 @@
                   </BFormCheckbox>
                 </BDropdownText>
                 <BDropdownText style="width: 250px" @click.stop>
-                  <BFormCheckbox switch v-model="proposalEnabled">
+                  <BFormCheckbox v-model="proposalEnabled" switch>
                     {{ $t("editView.propose-positions") }}
                   </BFormCheckbox>
                 </BDropdownText>
                 <BDropdownText @click.stop>
-                  <BFormCheckbox switch v-model="moveWithCountEdit">
+                  <BFormCheckbox v-model="moveWithCountEdit" switch>
                     {{ $t("editView.beim-bearbeiten-den-count-mitwechseln") }}
                   </BFormCheckbox>
                 </BDropdownText>
               </BDropdownGroup>
               <BDropdownDivider />
               <BDropdownItem
-                @click="() => $refs.deleteChoreoModal.open()"
                 :disabled="!choreo"
                 variant="danger"
+                @click="() => $refs.deleteChoreoModal.open()"
               >
                 <IBiTrash class="me-2" />
                 {{ $t("editView.choreo-loeschen") }}
@@ -224,49 +224,49 @@
 
     <!-- Main: Mat + CountOverview -->
     <BRow
-      align-h="around"
       v-if="!$store.state.isMobile || mobileEditingEnabled"
+      align-h="around"
     >
       <BCol cols="auto">
         <Mat
           ref="Mat"
-          :currentPositions="currentPositions"
-          :transitionMs="transitionMs"
-          :teamMembers="teamMembers"
+          :current-positions="currentPositions"
+          :transition-ms="transitionMs"
+          :team-members="teamMembers"
           :snapping="snapping"
-          :proposedPositions="proposedPositions"
-          :matType="choreo?.matType"
-          @positionChange="onPositionChange"
+          :proposed-positions="proposedPositions"
+          :mat-type="choreo?.matType"
+          @position-change="onPositionChange"
         />
       </BCol>
       <BCol cols="12" lg="6">
         <CountOverview
+          ref="countOverview"
           :count="count"
           :choreo="choreo"
-          ref="countOverview"
-          :hitsForCurrentCount="hitsForCurrentCount"
-          :lineupsForCurrentCount="lineupsForCurrentCount"
-          :teamMembers="teamMembers"
-          :currentPositions="currentPositions"
-          @updateHits="onUpdateHits"
-          @updateLineups="onUpdateLineups"
-          @updateCount="onUpdateCount"
-          @openCreateHitModal="openCreateHitModal"
+          :hits-for-current-count="hitsForCurrentCount"
+          :lineups-for-current-count="lineupsForCurrentCount"
+          :team-members="teamMembers"
+          :current-positions="currentPositions"
+          @update-hits="onUpdateHits"
+          @update-lineups="onUpdateLineups"
+          @update-count="onUpdateCount"
+          @open-create-hit-modal="openCreateHitModal"
         />
         <BCard
+          v-if="proposedPositions && proposedPositions.length > 0"
           :subtitle="$t('editView.acceptProposal')"
           border-variant="light"
           align="right"
           class="mt-2"
-          v-if="proposedPositions && proposedPositions.length > 0"
         >
           <BDropdown
+            v-b-tooltip.hover="$t('general.reject')"
             split
             variant="light"
-            v-b-tooltip.hover="$t('general.reject')"
-            @click="(e) => rejectProposedLineup(e)"
             class="me-2"
             right
+            @click="(e) => rejectProposedLineup(e)"
           >
             <template #button-content>
               <IBiX />
@@ -291,18 +291,18 @@
 
     <!-- Tabs: Countsheet + Team -->
     <BTabs
+      v-if="!$store.state.isMobile || mobileEditingEnabled"
       content-class="mt-3"
       class="mt-5"
       fill
-      v-if="!$store.state.isMobile || mobileEditingEnabled"
     >
       <BTab :title="$t('countsheet', 1)" active>
         <CountSheet
           v-if="choreo && choreo.Hits"
           :count="count"
           :choreo="choreo"
-          @setCounter="setCounter"
-          @openCreateHitModal="openCreateHitModal"
+          @set-counter="setCounter"
+          @open-create-hit-modal="openCreateHitModal"
         />
       </BTab>
       <BTab :title="$t('team', 1)">
@@ -323,23 +323,23 @@
           <template #cell(actions)="data">
             <BButtonGroup>
               <BButton
-                variant="light"
                 v-b-tooltip.hover.left="
                   $t('editView.auswechseln', {
                     name: data.item.nickname || data.item.name.split(' ')[0],
                   })
                 "
+                variant="light"
                 @click="subOutParticipant(data.item.id)"
               >
                 <IBiArrowRepeat />
               </BButton>
               <BButton
-                variant="outline-danger"
                 v-b-tooltip.hover.right="
                   $t('editView.von-der-matte-nehmen', {
                     name: data.item.nickname || data.item.name.split(' ')[0],
                   })
                 "
+                variant="outline-danger"
                 @click="removeParticipant(data.item.id)"
               >
                 <IBiBoxArrowRight />
@@ -347,7 +347,7 @@
             </BButtonGroup>
           </template>
         </BTable>
-        <p class="text-muted" v-if="teamMembers.length == 0">
+        <p v-if="teamMembers.length == 0" class="text-muted">
           {{ $t("editView.bisher-steht-noch-kein-teammitglied-auf-der-matte") }}
         </p>
 
@@ -370,23 +370,23 @@
           <template #cell(actions)="data">
             <BButtonGroup>
               <BButton
-                variant="light"
                 v-b-tooltip.hover.left="
                   $t('editView.einwechseln', {
                     name: data.item.nickname || data.item.name.split(' ')[0],
                   })
                 "
+                variant="light"
                 @click="subInMember(data.item.id)"
               >
                 <IBiArrowRepeat />
               </BButton>
               <BButton
-                variant="outline-success"
                 v-b-tooltip.hover.right="
                   $t('editView.auf-die-matte-stellen', {
                     name: data.item.nickname || data.item.name.split(' ')[0],
                   })
                 "
+                variant="outline-success"
                 @click="addParticipant(data.item.id)"
               >
                 <IBiBoxArrowInRight />
@@ -394,7 +394,7 @@
             </BButtonGroup>
           </template>
         </BTable>
-        <p class="text-muted" v-if="notParticipatingMembers.length == 0">
+        <p v-if="notParticipatingMembers.length == 0" class="text-muted">
           {{
             $t(
               "editView.alle-mitglieder-deines-teams-stehen-schon-auf-der-matte"
@@ -406,40 +406,40 @@
 
     <CreateHitModal
       ref="createHitModal"
-      :teamMembers="teamMembers"
-      :choreoId="choreoId"
+      :team-members="teamMembers"
+      :choreo-id="choreoId"
       :count="count"
-      :hitsForCurrentCount="hitsForCurrentCount"
-      :maxCount="choreo?.counts"
-      @hitCreated="onHitCreated"
+      :hits-for-current-count="hitsForCurrentCount"
+      :max-count="choreo?.counts"
+      @hit-created="onHitCreated"
     />
 
     <!-- MODALS -->
     <ChangeChoreoLengthModal
       ref="changeChoreoLengthModal"
       :choreo="choreo"
-      @countUpdate="onCountUpdate"
+      @count-update="onCountUpdate"
     />
     <ChangeMatLayoutModal
       ref="changeMatLayoutModal"
       :choreo="choreo"
-      @matTypeUpdate="onMatTypeUpdate"
+      @mat-type-update="onMatTypeUpdate"
     />
-    <DeleteChoreoModal ref="deleteChoreoModal" :choreoId="choreoId" />
+    <DeleteChoreoModal ref="deleteChoreoModal" :choreo-id="choreoId" />
     <HowToModal ref="howToModal" />
     <SelectHitModal
       ref="selectHitModal"
-      :hitsForCurrentCount="hitsForCurrentCount"
+      :hits-for-current-count="hitsForCurrentCount"
       @selection="onHitSelection"
     />
     <ParticipantSubstitutionModal
       ref="participantSubstitutionModal"
       :choreo="choreo"
       :participants="teamMembers"
-      :nonParticipants="notParticipatingMembers"
+      :non-participants="notParticipatingMembers"
       @substitution="onSubstitution"
     />
-    <MobileChoreoEditModal :choreoId="choreoId" ref="mobileChoreoEditModal" />
+    <MobileChoreoEditModal ref="mobileChoreoEditModal" :choreo-id="choreoId" />
   </BContainer>
 </template>
 
@@ -559,6 +559,68 @@ export default {
       mobileEditingEnabled: true,
     };
   },
+  computed: {
+    teamMembers() {
+      if (!this.choreo?.Participants) return [];
+      return Array.from(this.choreo.Participants).sort((a, b) =>
+        a.name.localeCompare(b.name)
+      );
+    },
+    notParticipatingMembers() {
+      if (!this.choreo?.SeasonTeam?.Members) return [];
+      return this.choreo.SeasonTeam.Members.filter(
+        (m) => !this.choreo.Participants.map((p) => p.id).includes(m.id)
+      ).sort((a, b) => a.name.localeCompare(b.name));
+    },
+    currentPositions() {
+      return ChoreoService.getPositionsFromChoreoAndCount(
+        this.choreo,
+        this.count,
+        this.teamMembers
+      );
+    },
+    hitsForCurrentCount() {
+      if (!this.choreo || !this.choreo.Hits) return [];
+
+      return this.choreo.Hits.filter((a) => {
+        return a.count == this.count;
+      }).sort((a, b) => b.Members?.length - a.Members?.length);
+    },
+    lineupsForCurrentCount() {
+      if (!this.choreo || !this.choreo.Lineups) return [];
+
+      return this.choreo.Lineups.filter((a) => {
+        return a.startCount <= this.count && a.endCount >= this.count;
+      });
+    },
+  },
+  watch: {
+    "$route.params": {
+      handler() {
+        this.choreoId = this.$route.params.choreoId;
+        if (this.$store.state.isMobile && !this.mobileEditingEnabled) {
+          if (this.$refs.mobileChoreoEditModal)
+            this.$refs.mobileChoreoEditModal.open(this.choreoId);
+        } else this.loadChoreo();
+      },
+      immediate: true,
+    },
+    choreo: {
+      handler() {
+        this.updateProposedPositions();
+      },
+    },
+    count: {
+      handler() {
+        this.updateProposedPositions();
+      },
+    },
+    proposalEnabled: {
+      handler() {
+        this.updateProposedPositions();
+      },
+    },
+  },
   mounted() {
     FeatureFlagService.isEnabled(FeatureFlagKeys.MOBILE_EDITING).then(
       (enabled) => {
@@ -613,33 +675,6 @@ export default {
         },
       ],
     });
-  },
-  watch: {
-    "$route.params": {
-      handler() {
-        this.choreoId = this.$route.params.choreoId;
-        if (this.$store.state.isMobile && !this.mobileEditingEnabled) {
-          if (this.$refs.mobileChoreoEditModal)
-            this.$refs.mobileChoreoEditModal.open(this.choreoId);
-        } else this.loadChoreo();
-      },
-      immediate: true,
-    },
-    choreo: {
-      handler() {
-        this.updateProposedPositions();
-      },
-    },
-    count: {
-      handler() {
-        this.updateProposedPositions();
-      },
-    },
-    proposalEnabled: {
-      handler() {
-        this.updateProposedPositions();
-      },
-    },
   },
   methods: {
     loadChoreo() {
@@ -1317,41 +1352,6 @@ export default {
         };
       });
       return proposedPositions;
-    },
-  },
-  computed: {
-    teamMembers() {
-      if (!this.choreo?.Participants) return [];
-      return Array.from(this.choreo.Participants).sort((a, b) =>
-        a.name.localeCompare(b.name)
-      );
-    },
-    notParticipatingMembers() {
-      if (!this.choreo?.SeasonTeam?.Members) return [];
-      return this.choreo.SeasonTeam.Members.filter(
-        (m) => !this.choreo.Participants.map((p) => p.id).includes(m.id)
-      ).sort((a, b) => a.name.localeCompare(b.name));
-    },
-    currentPositions() {
-      return ChoreoService.getPositionsFromChoreoAndCount(
-        this.choreo,
-        this.count,
-        this.teamMembers
-      );
-    },
-    hitsForCurrentCount() {
-      if (!this.choreo || !this.choreo.Hits) return [];
-
-      return this.choreo.Hits.filter((a) => {
-        return a.count == this.count;
-      }).sort((a, b) => b.Members?.length - a.Members?.length);
-    },
-    lineupsForCurrentCount() {
-      if (!this.choreo || !this.choreo.Lineups) return [];
-
-      return this.choreo.Lineups.filter((a) => {
-        return a.startCount <= this.count && a.endCount >= this.count;
-      });
     },
   },
 };

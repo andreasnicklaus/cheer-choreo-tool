@@ -1,13 +1,13 @@
 <template>
   <BModal
-    ref="modal"
     :id="`mobile-choreoEdit-modal-${id}`"
+    ref="modal"
     centered
     no-close-on-backdrop
     no-close-on-esc
     no-header-close
-    @close="(event) => event.preventDefault()"
     :title="$t('modals.mobile-choreo-edit.am-handy-nicht-moeglich')"
+    @close="(event) => event.preventDefault()"
   >
     <p class="text-muted">
       {{ $t("modals.mobile-choreo-edit.info-1") }}
@@ -43,9 +43,9 @@
     </BRow>
     <template #footer="{ cancel }">
       <BButton
-        @click="cancel"
         :to="{ name: 'Start', params: { locale: $i18n.locale } }"
         variant="outline-secondary"
+        @click="cancel"
       >
         {{ $t("zur-startseite") }}
       </BButton>
@@ -72,15 +72,15 @@
  */
 export default {
   name: "MobileChoreoEditModal",
-  data: () => ({
-    id: (Math.random() + 1).toString(36).substring(7),
-  }),
   props: {
     choreoId: {
       type: String,
       required: true,
     },
   },
+  data: () => ({
+    id: (Math.random() + 1).toString(36).substring(7),
+  }),
   methods: {
     open() {
       this.$refs.modal.show();
