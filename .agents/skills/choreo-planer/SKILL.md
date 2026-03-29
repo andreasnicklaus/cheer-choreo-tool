@@ -133,6 +133,18 @@ Coding task?
 | GitHub CLI, PRs, issues, workflows | [references/gh-cli/](references/gh-cli/) |
 | npm workspaces, packages, dependencies | [references/npm-packages-skill/](references/npm-packages-skill/) |
 
+### MCP Tools
+
+The project has the following MCP (Model Context Protocol) tools configured in `opencode.json`:
+
+| Tool | Purpose |
+|------|---------|
+| `chrome-devtools` | Browser automation, testing, and inspection via Chrome DevTools Protocol |
+| `github` | GitHub operations (PRs, issues, repos, Actions) via GitHub MCP Server |
+| `context7` | Documentation lookup and code search via Context7 |
+
+Use these tools when working with browser automation, GitHub operations, or documentation searches.
+
 ### General
 
 | Topic | Resource |
