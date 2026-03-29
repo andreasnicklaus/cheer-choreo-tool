@@ -20,7 +20,7 @@
         <BCollapse id="collapse-technical-issues" class="mb-2">
           <BCard
             title="Probleme?"
-            sub-title="Klicke auf die beste Beschreibung deines Problems"
+            subtitle="Klicke auf die beste Beschreibung deines Problems"
           >
             <BButton v-b-toggle.collapse-stocking-video>
               {{ $t("modals.video-download.stocking-video") }}

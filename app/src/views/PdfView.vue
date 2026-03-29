@@ -185,6 +185,7 @@
                 <BPlaceholder
                   v-for="(_, i) in Array(3)"
                   :key="i"
+                  animation="wave"
                 ></BPlaceholder>
               </template>
               <BFormGroup

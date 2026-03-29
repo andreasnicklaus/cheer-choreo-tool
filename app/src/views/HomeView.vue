@@ -9,7 +9,7 @@
       }"
     >
       <BCol
-        class="d-flex flex-column justify-content-center align-items-center"
+        class="d-flex flex-column justify-content-center align-items-center w-75"
       >
         <img
           id="logoImg"
@@ -29,7 +29,7 @@
           {{ $t("general.ChoreoPlaner") }}
         </h1>
         <BRow
-          class="w-75 my-4"
+          class="w-100 my-4"
           align-h="around"
           :style="{ fontWeight: 'bold' }"
         >
@@ -807,7 +807,9 @@ export default {
     },
   },
   mounted() {
-    this.selectedTeamMembers = this.teamMembers.map((t) => t.abbreviation);
+    this.selectedTeamMembers = this.teamMembers
+      .slice(0, this.teamMembers.length - 1)
+      .map((t) => t.abbreviation);
 
     const tl = gsap.timeline();
 

@@ -9,6 +9,7 @@
     :style="{
       placeItems: 'center',
       fontSize: fontSize ? fontSize + 'px' : null,
+      overflowY: 'hidden',
     }"
     class="text-center"
   >

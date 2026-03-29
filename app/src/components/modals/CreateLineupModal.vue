@@ -115,9 +115,27 @@
           <BButton
             variant="light"
             @click="
-              () => (this.editLineupMembers = teamMembers.map((m) => m.id))
+              () =>
+                (this.editLineupMembers = teamMembers
+                  .filter(
+                    (m) =>
+                      !this.lineupsForCurrentCount
+                        .map((l) => l?.Positions.map((p) => p.MemberId))
+                        .flat()
+                        .includes(m.id)
+                  )
+                  .map((m) => m.id))
             "
-            :disabled="editLineupMembers?.length == teamMembers?.length"
+            :disabled="
+              editLineupMembers?.length ==
+              teamMembers?.filter(
+                (m) =>
+                  !this.lineupsForCurrentCount
+                    .map((l) => l?.Positions.map((p) => p.MemberId))
+                    .flat()
+                    .includes(m.id)
+              )?.length
+            "
           >
             <IBiCheckAll />
             {{ $t("alle-auswaehlen") }}

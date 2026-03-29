@@ -1,6 +1,6 @@
 <template>
   <BContainer id="startView" data-view>
-    <BRow>
+    <BRow class="mb-5">
       <!-- FILTER -->
       <BCol cols="12" lg="3" v-if="teams.length > 0 || loading" class="mb-3">
         <BCard class="filters" body-class="pb-2">
@@ -339,8 +339,9 @@
                                 locale: $i18n.locale,
                               },
                             }"
+                            :underline-opacity="0"
                           >
-                            <BListGroupItem variant="light" button href="#">
+                            <BListGroupItem variant="light" button>
                               <b>
                                 <BRow align-h="between" align-v="center">
                                   <BCol>
@@ -412,8 +413,8 @@
                             </BListGroupItem>
                           </BLink>
                           <BListGroupItem
-                            variant="light"
                             class="text-muted"
+                            button
                             @click="
                               () =>
                                 $refs.createChoreoModal.open(
@@ -421,22 +422,20 @@
                                   seasonTeam.Season.id
                                 )
                             "
-                            href="#"
                           >
                             <IBiPlusSquare class="me-1" />
-                            <u>{{ $t("start.choreo-hinzufuegen") }}</u>
+                            <span>{{ $t("start.choreo-hinzufuegen") }}</span>
                           </BListGroupItem>
                         </BListGroup>
                       </BCollapse>
                     </BListGroupItem>
                     <BListGroupItem
-                      variant="light"
                       class="text-muted"
                       @click="() => $refs.createSeasonModal.open(team.id)"
-                      href="#"
+                      button
                     >
                       <IBiPlusSquare class="me-1" />
-                      <u>{{ $t("start.saison-anfangen") }}</u>
+                      <span>{{ $t("start.saison-anfangen") }}</span>
                     </BListGroupItem>
                   </BListGroup>
                 </BCollapse>
@@ -445,10 +444,10 @@
                 :variant="teams.length == 0 ? 'success' : 'light'"
                 :class="{ 'text-muted': teams.length > 0 }"
                 @click="() => $refs.createTeamModal.open()"
-                href="#"
+                button
               >
                 <IBiPlusSquare class="me-1" />
-                <u>{{ $t("start.team-hinzufuegen") }}</u>
+                <span>{{ $t("start.team-hinzufuegen") }}</span>
               </BListGroupItem>
             </BListGroup>
 
@@ -722,6 +721,17 @@ h5 {
 
 .filters button.btn:not(:disabled) {
   color: white !important;
+}
+
+.list-group-item-link {
+  a {
+    text-decoration: none;
+    color: inherit;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
 }
 
 .collapse-submenu:hover:has(:not(div):hover) {

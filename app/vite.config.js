@@ -1,6 +1,5 @@
 import { defineConfig } from "vite";
-import { readFileSync } from "fs";
-const { version } = JSON.parse(readFileSync("./package.json", "utf-8"));
+import { readFileSync, existsSync, writeFileSync } from "fs";
 import vue from "@vitejs/plugin-vue";
 import tsconfigPaths from "vite-tsconfig-paths";
 import Icons from "unplugin-icons/vite";
@@ -8,12 +7,38 @@ import Components from "unplugin-vue-components/vite";
 import IconsResolve from "unplugin-icons/resolver";
 import { VitePWA } from "vite-plugin-pwa";
 
+const { version } = JSON.parse(readFileSync("./package.json", "utf-8"));
 const betterStackConfig = JSON.parse(
   readFileSync("./better-stack.config.json", "utf-8")
 );
 const featureFlagConfig = JSON.parse(
   readFileSync("./feature-flags.config.json", "utf-8")
 );
+
+function preserveManifestTrailingNewline() {
+  const ensureTrailingNewline = (filePath) => {
+    if (existsSync(filePath)) {
+      const content = readFileSync(filePath, "utf-8");
+      if (!content.endsWith("\n")) {
+        writeFileSync(filePath, content + "\n");
+      }
+    }
+  };
+  return {
+    name: "preserve-manifest-trailing-newline",
+    configureServer(server) {
+      ensureTrailingNewline("public/manifest.json");
+      server.watcher.on("change", (file) => {
+        if (file.includes("manifest.json")) {
+          ensureTrailingNewline(file);
+        }
+      });
+    },
+    closeBundle() {
+      ensureTrailingNewline("public/manifest.json");
+    },
+  };
+}
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -32,6 +57,7 @@ export default defineConfig({
   },
   plugins: [
     vue(),
+    preserveManifestTrailingNewline(),
     tsconfigPaths(),
     Components({
       resolvers: [IconsResolve()],
@@ -177,5 +203,3 @@ export default defineConfig({
     },
   },
 });
-
-// TODO: confirm tests passing for other browsers than chromium for teamPage (webkit, mobile safari)

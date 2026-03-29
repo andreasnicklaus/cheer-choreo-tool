@@ -132,7 +132,7 @@
           :loading="!newChoreoTeamIsValid || !newChoreoSeasonIsValid"
         >
           <template #loading>
-            <BPlaceholder v-for="(_, i) in Array(3)" :key="i" />
+            <BPlaceholder v-for="(_, i) in Array(3)" :key="i" animation="wave" />
           </template>
           <BButtonGroup>
             <BButton

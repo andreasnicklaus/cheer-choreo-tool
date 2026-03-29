@@ -111,7 +111,9 @@ export default class ChoreoPage extends TestPage {
       name: "Change the layout",
     });
     await this.iClickButton(saveButton);
-    // TODO: find a way to verify the mat type change
+
+    const svgCanvas = this.page.locator(".svgCanvas");
+    await expect(svgCanvas).toHaveClass(/square/);
   }
 
   async iSeeHitsOnCountsheetsAndOverview() {

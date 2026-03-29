@@ -1,12 +1,15 @@
 <template>
   <BPlaceholderWrapper :loading="!currentPositions">
     <template #loading>
-      <BPlaceholder :width="width + 'px'" :height="_height + 'px'">
-      </BPlaceholder>
+      <BPlaceholder
+        :width="width + 'px'"
+        :height="_height + 'px'"
+        animation="wave"
+      />
     </template>
     <svg
       ref="svgCanvas"
-      :class="`svgCanvas ${matType}`"
+      :class="`svgCanvas ${matType} m-2`"
       :height="_height"
       :width="width"
       xmlns="http://www.w3.org/2000/svg"

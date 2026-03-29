@@ -470,6 +470,7 @@ export default {
     "$route.params": {
       handler() {
         this.teamId = this.$route.params.teamId;
+        this.load();
       },
       immediate: true,
     },

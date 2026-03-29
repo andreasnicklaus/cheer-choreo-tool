@@ -112,7 +112,7 @@
           id="message"
           :placeholder="$t('modals.contact.enter-your-message-to-us')"
           required
-          rows="6"
+          rows="8"
           max-rows="8"
           :disabled="sending"
         >

@@ -84,6 +84,7 @@
                 <BPlaceholder
                   v-for="(_, i) in Array(3)"
                   :key="i"
+                  animation="wave"
                 ></BPlaceholder>
               </template>
               <BFormGroup
@@ -226,6 +227,7 @@
               :width="width + 'px'"
               :height="height + 'px'"
               class="m-auto"
+              animation="wave"
             />
           </template>
           <BOverlay :show="recordingIsRunning" class="text-center">

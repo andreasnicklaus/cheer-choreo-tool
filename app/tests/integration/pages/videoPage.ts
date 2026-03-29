@@ -1,4 +1,5 @@
 import { expect, Page } from "@playwright/test";
+import * as fs from "fs";
 import { defaultChoreos } from "../testData/choreo";
 import TestPage from "./page";
 
@@ -56,6 +57,7 @@ export default class VideoPage extends TestPage {
 
       const videoElement = this.page.locator("video");
       await expect(videoElement).toBeVisible({ timeout: 30_000 });
+      await expect(videoElement).toHaveAttribute("src", /blob:/);
 
       const downloadVideoButton = this.page.getByRole("button", {
         name: "Download MP4",
@@ -63,14 +65,19 @@ export default class VideoPage extends TestPage {
 
       const downloadPromise = this.page.waitForEvent("download");
       await this.iClickButton(downloadVideoButton);
-      const downloadedVideoFile = await downloadPromise
-        .then((data) => true)
-        .catch((e) => false);
+      const download = await downloadPromise;
+      const downloadedVideoFile = download !== undefined;
       await expect(downloadedVideoFile).toBeTruthy();
       await expect(downloadVideoButton).toHaveAttribute(
         "download",
         `${defaultChoreos[0].name}.mp4`
       );
+
+      const videoPath = await download.path();
+      if (videoPath) {
+        const stats = fs.statSync(videoPath);
+        expect(stats.size).toBeGreaterThan(100_000);
+      }
 
       const fileFormatSelect = this.page.getByRole("button", {
         name: "MP4",

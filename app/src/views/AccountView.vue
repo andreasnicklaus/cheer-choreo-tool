@@ -4,7 +4,7 @@
       <BCol cols="12" md="auto" class="text-center">
         <BPlaceholderWrapper :loading="loading">
           <template #loading>
-            <BPlaceholder type="avatar" height="120px" width="120px" />
+            <BPlaceholder type="avatar" height="120px" width="120px" animation="wave" />
           </template>
           <BAvatar
             variant="primary"
@@ -16,10 +16,10 @@
       <BCol class="text-md-left">
         <BPlaceholderWrapper :loading="loading">
           <template #loading>
-            <BPlaceholder width="35%" height="40px" class="mb-2"></BPlaceholder>
-            <BPlaceholder width="85%" height="24px" class="mb-3"></BPlaceholder>
-            <BPlaceholder width="50%" height="24px" />
-            <BPlaceholder width="50%" height="24px" />
+            <BPlaceholder width="35%" height="40px" class="mb-2" animation="wave"></BPlaceholder>
+            <BPlaceholder width="85%" height="24px" class="mb-3" animation="wave"></BPlaceholder>
+            <BPlaceholder width="50%" height="24px" animation="wave" />
+            <BPlaceholder width="50%" height="24px" animation="wave" />
           </template>
           <h1>{{ user?.username }}</h1>
           <p class="text-muted">
@@ -86,7 +86,7 @@
               <BCol cols="auto" class="text-center mb-2 mb-md-0">
                 <BPlaceholderWrapper :loading="loading">
                   <template #loading>
-                    <BPlaceholder type="avatar" width="80px" height="80px" />
+                    <BPlaceholder type="avatar" width="80px" height="80px" animation="wave" />
                   </template>
                   <div id="profilePictureUpload" ref="profilePictureUploadRef">
                     <BOverlay
@@ -158,7 +158,7 @@
           >
             <BPlaceholderWrapper :loading="loading">
               <template #loading>
-                <BPlaceholder type="input" />
+                <BPlaceholder type="input" animation="wave" />
               </template>
               <BFormInput
                 v-model="username"
@@ -179,7 +179,7 @@
           >
             <BPlaceholderWrapper :loading="loading">
               <template #loading>
-                <BPlaceholder type="input" />
+                <BPlaceholder type="input" animation="wave" />
               </template>
               <BInputGroup>
                 <BFormInput
@@ -287,7 +287,7 @@
         <BTabs
           :index="clubTabIndex"
           @update:index="updateClubTabIndex"
-          content-class="ms-3 mt-3 mt-md-0"
+          content-class="mt-3 mt-md-0 flex-grow-1"
           :vertical="!$store.state.isMobile"
           :small="$store.state.isMobile"
           justified
@@ -403,8 +403,8 @@
 
               <BPlaceholderWrapper :loading="loading">
                 <template #loading>
-                  <BPlaceholder />
-                  <BPlaceholder />
+                  <BPlaceholder animation="wave" />
+                  <BPlaceholder animation="wave" />
                 </template>
                 <BRow class="text-muted mb-4">
                   <BCol cols="6" md="4">
@@ -506,7 +506,7 @@
           </BTab>
           <template #tabs-end>
             <hr />
-            <BPlaceholder v-if="loading" type="input" />
+            <BPlaceholder v-if="loading" type="input" animation="wave" />
 
             <BButton
               variant="link"

@@ -162,7 +162,7 @@
             )"
             :key="notification.id"
           >
-            <BCard border-variant="light" class="notification-card">
+            <BCard border-variant="light" class="notification-card" @click.stop>
               <BRow>
                 <BCol>
                   <BCardSubtitle>
@@ -187,10 +187,10 @@
                     />
                   </BCardTitle>
                 </BCol>
-                <BCol cols="auto">
+                <BCol cols="auto" @click.stop>
                   <BButton
                     variant="link"
-                    @click="
+                    @click.stop="
                       () =>
                         notification.read
                           ? markNotificationAsNotRead(notification.id)
@@ -203,7 +203,7 @@
                   </BButton>
                   <BButton
                     variant="link"
-                    @click="() => deleteNotification(notification.id)"
+                    @click.stop="() => deleteNotification(notification.id)"
                   >
                     <IBiTrash variant="danger" />
                   </BButton>
@@ -218,17 +218,17 @@
               />
             </BCard>
           </BDropdownText>
-          <BDropdownText v-show="!showAllNotifications" class="d-grid">
+          <BDropdownText v-if="!showAllNotifications" class="d-grid">
             <BButton
-              @click="() => (showAllNotifications = true)"
+              @click.stop="() => (showAllNotifications = true)"
               variant="link"
               :disabled="notifications.length == 0"
               >{{ $t("nav.alte-nachrichten-anzeigen") }}</BButton
             ></BDropdownText
           >
-          <BDropdownText v-show="showAllNotifications" class="d-grid">
+          <BDropdownText v-else class="d-grid">
             <BButton
-              @click="() => (showAllNotifications = false)"
+              @click.stop="() => (showAllNotifications = false)"
               variant="link"
               :disabled="notifications.length == 0"
               >{{ $t("nav.alte-nachrichten-ausblenden") }}</BButton

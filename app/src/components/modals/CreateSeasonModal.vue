@@ -5,13 +5,12 @@
     :title="$t('modals.create-season.neue-season')"
     size="xl"
     scrollable
-    @show="reset"
     @ok="create"
   >
     <p class="text-muted">
       {{ $t("modals.create-season.team-team-name", [team?.name]) }}
     </p>
-    <BTabs fill v-model="tabIndex">
+    <BTabs fill :index="tabIndex" @update:index="(i) => (tabIndex = i)">
       <BTab
         :title="$t('modals.create-season.regulaere-season')"
         class="pt-2"
@@ -183,13 +182,15 @@ export default {
   },
   methods: {
     open(teamId) {
+      this.reset();
+      this.teamId = teamId;
       this.$refs.modal.show();
       this.$nextTick(() => {
-        this.teamId = teamId;
         this.load();
       });
     },
     load() {
+      if (!this.teamId) return;
       SeasonService.getAll().then((seasons) => {
         this.seasons = seasons.filter(
           (s) =>
@@ -202,17 +203,18 @@ export default {
         this.newSeasonMemberIds = [];
 
         if (this.seasons.length > 0) this.seasonId = this.seasons[0].id;
-
-        if (this.seasonSelectOptions.length == 0) this.tabIndex = 1;
       });
     },
     reset() {
+      this.tabIndex = 0;
       this.newSeasonName = null;
       this.newSeasonYear = null;
       this.seasonId = null;
       this.teamId = null;
       this.seasonToCopyMembersFromId = null;
       this.newSeasonMemberIds = [];
+      this.seasons = [];
+      this.seasonsToCopy = [];
     },
     create() {
       if (this.tabIndex == 0)

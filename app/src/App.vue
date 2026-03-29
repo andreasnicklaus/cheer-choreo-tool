@@ -374,10 +374,60 @@ div:has(.betteruptime-announcement)
 .placeholder,
 .placeholder-wave {
   border-radius: 4px;
+  display: block;
+  margin-bottom: 0.25rem;
 }
 
 .fs-7 {
   font-size: 0.9em !important;
+}
+
+/*
+ * Fix button group rounded corners when buttons have tooltips.
+ *
+ * bootstrap-vue-next's v-b-tooltip directive inserts a <span> wrapper element
+ * as a sibling to each button that has a tooltip. This breaks the DOM adjacency
+ * of buttons within a BButtonGroup, which is required for Bootstrap's border-radius
+ * rules to work correctly (using :first-of-type, :last-of-type, etc.).
+ *
+ * This CSS makes the tooltip wrapper spans invisible to the layout engine (display: contents),
+ * and manually applies the correct border-radius to buttons based on their position.
+ */
+.btn-group {
+  /* Make tooltip wrapper spans invisible to layout */
+  > span:not([class]):not([style]):not([role]) {
+    display: contents;
+  }
+
+  /* Only child: keep all corners rounded */
+  > .btn:only-of-type,
+  > a[role="button"]:only-of-type {
+    border-radius: var(--bs-btn-border-radius) !important;
+  }
+
+  /* First button (not only): round left corners */
+  > .btn:first-of-type:not(:last-of-type),
+  > a[role="button"]:first-of-type:not(:last-of-type) {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-top-left-radius: var(--bs-btn-border-radius) !important;
+    border-bottom-left-radius: var(--bs-btn-border-radius) !important;
+  }
+
+  /* Last button (not only): round right corners */
+  > .btn:last-of-type:not(:first-of-type),
+  > a[role="button"]:last-of-type:not(:first-of-type) {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-top-right-radius: var(--bs-btn-border-radius) !important;
+    border-bottom-right-radius: var(--bs-btn-border-radius) !important;
+  }
+
+  /* Middle buttons: no rounded corners */
+  > .btn:not(:first-of-type):not(:last-of-type),
+  > a[role="button"]:not(:first-of-type):not(:last-of-type) {
+    border-radius: 0 !important;
+  }
 }
 </style>
 

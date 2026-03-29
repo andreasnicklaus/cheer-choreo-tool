@@ -123,96 +123,102 @@
           </BCol>
         </BRow>
       </BCol>
-      <BCol cols="auto" class="h3">
-        <BButtonGroup>
-          <BButton
-            variant="light"
-            v-b-tooltip.hover="$t('editView.anleitung')"
-            @click="() => $refs.howToModal.open()"
-            data-testid="instructions-button"
-          >
-            <IBiQuestion />
-          </BButton>
-          <BDropdown
-            right
-            no-caret
-            variant="light"
-            v-b-tooltip.hover="$t('optionen')"
-            data-testid="menu-button"
-          >
-            <template #button-content>
-              <IBiThreeDotsVertical />
-            </template>
-            <BDropdownGroup :header="$t('editView.exportieren')">
-              <BDropdownItem
-                :to="{
-                  name: 'PDF',
-                  params: { choreoId, locale: $i18n.locale },
-                }"
-              >
-                <IBiFilePdf class="me-2" />
-                {{ $t("Home.countsheet-als-pdf") }}
-              </BDropdownItem>
-              <BDropdownItem
-                :to="{
-                  name: 'Video',
-                  params: { choreoId, locale: $i18n.locale },
-                }"
-              >
-                <IBiFilm class="me-2" />
-                {{ $t("editView.video-exportieren") }}
-              </BDropdownItem>
-            </BDropdownGroup>
-            <BDropdownDivider />
-            <BDropdownGroup :header="$t('editView.choreo-einstellungen')">
-              <BDropdownItem
-                @click="() => $refs.changeChoreoLengthModal.open()"
-                :disabled="!choreo"
-              >
-                <IBiHash class="me-2" />
-                {{ $t("editView.laenge-anpassen") }}
-              </BDropdownItem>
-              <BDropdownItem
-                @click="() => $refs.changeMatLayoutModal.open()"
-                :disabled="!choreo"
-              >
-                <IBiLayoutThreeColumns class="me-2" />
-                {{ $t("editView.change-mat-layout") }}
-                <NewVersionBadge
-                  :versions="['0.10.3', '0.11.0']"
-                /> </BDropdownItem
-            ></BDropdownGroup>
-            <BDropdownDivider />
-            <BDropdownGroup :header="$t('editView.bearbeitung')">
-              <BDropdownText style="width: 250px">
-                <BFormCheckbox switch v-model="snapping">
-                  {{
-                    $t("editView.positionen-horizontal-und-vertikal-ausrichten")
-                  }}
-                </BFormCheckbox>
-              </BDropdownText>
-              <BDropdownText style="width: 250px">
-                <BFormCheckbox switch v-model="proposalEnabled">
-                  {{ $t("editView.propose-positions") }}
-                </BFormCheckbox>
-              </BDropdownText>
-              <BDropdownText>
-                <BFormCheckbox switch v-model="moveWithCountEdit">
-                  {{ $t("editView.beim-bearbeiten-den-count-mitwechseln") }}
-                </BFormCheckbox>
-              </BDropdownText>
-            </BDropdownGroup>
-            <BDropdownDivider />
-            <BDropdownItem
-              @click="() => $refs.deleteChoreoModal.open()"
-              :disabled="!choreo"
-              variant="danger"
+      <BCol cols="auto">
+        <BRow align-h="end" no-gutters>
+          <BCol cols="auto" class="me-2">
+            <BButton
+              variant="light"
+              v-b-tooltip.hover="$t('editView.anleitung')"
+              @click="() => $refs.howToModal.open()"
+              data-testid="instructions-button"
             >
-              <IBiTrash class="me-2" />
-              {{ $t("editView.choreo-loeschen") }}
-            </BDropdownItem>
-          </BDropdown>
-        </BButtonGroup>
+              <IBiQuestion />
+            </BButton>
+          </BCol>
+          <BCol cols="auto">
+            <BDropdown
+              right
+              no-caret
+              variant="light"
+              v-b-tooltip.hover="$t('optionen')"
+              data-testid="menu-button"
+            >
+              <template #button-content>
+                <IBiThreeDotsVertical />
+              </template>
+              <BDropdownGroup :header="$t('editView.exportieren')">
+                <BDropdownItem
+                  :to="{
+                    name: 'PDF',
+                    params: { choreoId, locale: $i18n.locale },
+                  }"
+                >
+                  <IBiFilePdf class="me-2" />
+                  {{ $t("Home.countsheet-als-pdf") }}
+                </BDropdownItem>
+                <BDropdownItem
+                  :to="{
+                    name: 'Video',
+                    params: { choreoId, locale: $i18n.locale },
+                  }"
+                >
+                  <IBiFilm class="me-2" />
+                  {{ $t("editView.video-exportieren") }}
+                </BDropdownItem>
+              </BDropdownGroup>
+              <BDropdownDivider />
+              <BDropdownGroup :header="$t('editView.choreo-einstellungen')">
+                <BDropdownItem
+                  @click="() => $refs.changeChoreoLengthModal.open()"
+                  :disabled="!choreo"
+                >
+                  <IBiHash class="me-2" />
+                  {{ $t("editView.laenge-anpassen") }}
+                </BDropdownItem>
+                <BDropdownItem
+                  @click="() => $refs.changeMatLayoutModal.open()"
+                  :disabled="!choreo"
+                >
+                  <IBiLayoutThreeColumns class="me-2" />
+                  {{ $t("editView.change-mat-layout") }}
+                  <NewVersionBadge
+                    :versions="['0.10.3', '0.11.0']"
+                  /> </BDropdownItem
+              ></BDropdownGroup>
+              <BDropdownDivider />
+              <BDropdownGroup :header="$t('editView.bearbeitung')">
+                <BDropdownText style="width: 250px" @click.stop>
+                  <BFormCheckbox switch v-model="snapping">
+                    {{
+                      $t(
+                        "editView.positionen-horizontal-und-vertikal-ausrichten"
+                      )
+                    }}
+                  </BFormCheckbox>
+                </BDropdownText>
+                <BDropdownText style="width: 250px" @click.stop>
+                  <BFormCheckbox switch v-model="proposalEnabled">
+                    {{ $t("editView.propose-positions") }}
+                  </BFormCheckbox>
+                </BDropdownText>
+                <BDropdownText @click.stop>
+                  <BFormCheckbox switch v-model="moveWithCountEdit">
+                    {{ $t("editView.beim-bearbeiten-den-count-mitwechseln") }}
+                  </BFormCheckbox>
+                </BDropdownText>
+              </BDropdownGroup>
+              <BDropdownDivider />
+              <BDropdownItem
+                @click="() => $refs.deleteChoreoModal.open()"
+                :disabled="!choreo"
+                variant="danger"
+              >
+                <IBiTrash class="me-2" />
+                {{ $t("editView.choreo-loeschen") }}
+              </BDropdownItem>
+            </BDropdown>
+          </BCol>
+        </BRow>
       </BCol>
     </BRow>
 
@@ -248,7 +254,7 @@
           @openCreateHitModal="openCreateHitModal"
         />
         <BCard
-          :sub-title="$t('editView.acceptProposal')"
+          :subtitle="$t('editView.acceptProposal')"
           border-variant="light"
           align="right"
           class="mt-2"
@@ -258,7 +264,7 @@
             split
             variant="light"
             v-b-tooltip.hover="$t('general.reject')"
-            @click="rejectProposedLineup"
+            @click="(e) => rejectProposedLineup(e)"
             class="me-2"
             right
           >
@@ -266,7 +272,7 @@
               <IBiX />
             </template>
             <BDropdownItem
-              @click="
+              @click.stop="
                 () => {
                   proposalEnabled = false;
                   rejectProposedLineup();
@@ -1151,7 +1157,8 @@ export default {
       });
       this.updateProposedPositions();
     },
-    rejectProposedLineup() {
+    rejectProposedLineup(event) {
+      if (event?.target?.closest(".dropdown-toggle")) return;
       this.rejectedPositionProposals.push(this.proposedPositions);
       this.proposedPositions = [];
     },

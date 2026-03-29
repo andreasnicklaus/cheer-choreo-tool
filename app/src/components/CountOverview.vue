@@ -13,9 +13,14 @@
       <BPlaceholderWrapper :loading="!hitsForCurrentCount">
         <template #loading>
           <BListGroupItem v-for="(_, i) in Array(1)" :key="i">
-            <BPlaceholder width="25%" height="30px" class="mb-2" />
-            <BPlaceholder width="50%" />
-            <BPlaceholder width="25%" class="mb-3" />
+            <BPlaceholder
+              width="25%"
+              height="30px"
+              class="mb-2"
+              animation="wave"
+            />
+            <BPlaceholder width="50%" animation="wave" />
+            <BPlaceholder width="25%" class="mb-3" animation="wave" />
           </BListGroupItem>
         </template>
         <BListGroupItem
@@ -112,7 +117,7 @@
                 hit.Members.length == teamMembers.length
               "
             >
-              <BBadge variant="info">{{ $t("countOverview.alle") }}</BBadge>
+              <BBadge variant="success">{{ $t("countOverview.alle") }}</BBadge>
             </p>
           </div>
 
@@ -293,9 +298,14 @@
       <BPlaceholderWrapper :loading="!lineupsForCurrentCount">
         <template #loading>
           <BListGroupItem v-for="(_, i) in Array(1)" :key="i">
-            <BPlaceholder width="25%" height="30px" class="mb-2" />
-            <BPlaceholder width="50%" />
-            <BPlaceholder width="25%" class="mb-3" />
+            <BPlaceholder
+              width="25%"
+              height="30px"
+              class="mb-2"
+              animation="wave"
+            />
+            <BPlaceholder width="50%" animation="wave" />
+            <BPlaceholder width="25%" class="mb-3" animation="wave" />
           </BListGroupItem>
         </template>
         <BListGroupItem
@@ -402,7 +412,7 @@
                 lineup.Positions.length == teamMembers.length
               "
             >
-              <BBadge variant="info">{{ $t("countOverview.alle") }}</BBadge>
+              <BBadge variant="success">{{ $t("countOverview.alle") }}</BBadge>
             </p>
           </div>
 
@@ -603,9 +613,14 @@
       <BPlaceholderWrapper :loading="!choreo">
         <template #loading>
           <BListGroupItem v-for="(_, i) in Array(1)" :key="i">
-            <BPlaceholder width="25%" height="30px" class="mb-2" />
-            <BPlaceholder width="50%" />
-            <BPlaceholder width="25%" class="mb-3" />
+            <BPlaceholder
+              width="25%"
+              height="30px"
+              class="mb-2"
+              animation="wave"
+            />
+            <BPlaceholder width="50%" animation="wave" />
+            <BPlaceholder width="25%" class="mb-3" animation="wave" />
           </BListGroupItem>
         </template>
         <BListGroupItem
