@@ -1,0 +1,21 @@
+{
+  "recommendations": [
+    "Vue.volar",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-playwright.playwright",
+    "usernamehw.errorlens",
+    "ms-azuretools.vscode-docker",
+    "lydanne.i18n-ally-next",
+    "lokalise.i18n-ally",
+    "idered.npm",
+    "mtxr.sqltools",
+    "mtxr.sqltools-driver-pg",
+    "humao.rest-client",
+    "eamodio.gitlens",
+    "davidanson.vscode-markdownlint",
+    "christian-kohler.path-intellisense",
+    "wayou.vscode-todo-highlight",
+    "VisualStudioExptTeam.vscodeintellicode"
+  ]
+}
