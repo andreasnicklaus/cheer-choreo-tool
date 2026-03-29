@@ -174,7 +174,8 @@ export default {
     },
     height: {
       type: Number,
-      default: 800,
+      required: false,
+      default: null,
     },
     dotRadius: {
       type: Number,
