@@ -120,31 +120,46 @@ const router = Router();
  */
 router.post("/", (req: Request, res: Response, next: NextFunction) => {
   const { username, password, email } = req.body;
-  UserService.create(username, password, email, false, req.locale)
-    .then((user: User) => {
-      const token = AuthService.generateAccessToken(user.id);
-      res.send(token);
-      next();
-    })
-    .catch((e: Error) => {
-      if (e instanceof UniqueConstraintError) {
-        const ue = e as UniqueConstraintError;
-        res
-          .status(400)
-          .send(
-            Object.keys(ue.fields).includes("username") ||
-              Object.keys(ue.fields).includes("email")
-              ? req.t("errors.user-already-exists")
-              : null,
-          );
-        return next();
-      } else if (e instanceof ValidationError) {
-        const ve = e as ValidationError;
-        res.status(400).send(ve.errors[0].message);
+
+  const searchIdentifier = email ? [username, email] : username;
+
+  UserService.findDeletedByUsernameOrEmail(searchIdentifier)
+    .then((deletedUser) => {
+      if (deletedUser) {
+        res.status(403).send(req.t("errors.account-deleted"));
         return next();
       }
-      next(e);
-    });
+      return createUser();
+    })
+    .catch((e: Error) => next(e));
+
+  function createUser() {
+    UserService.create(username, password, email, false, req.locale)
+      .then((user: User) => {
+        const token = AuthService.generateAccessToken(user.id);
+        res.send(token);
+        next();
+      })
+      .catch((e: Error) => {
+        if (e instanceof UniqueConstraintError) {
+          const ue = e as UniqueConstraintError;
+          res
+            .status(400)
+            .send(
+              Object.keys(ue.fields).includes("username") ||
+                Object.keys(ue.fields).includes("email")
+                ? req.t("errors.user-already-exists")
+                : null,
+            );
+          return next();
+        } else if (e instanceof ValidationError) {
+          const ve = e as ValidationError;
+          res.status(400).send(ve.errors[0].message);
+          return next();
+        }
+        next(e);
+      });
+  }
 });
 
 /**
@@ -170,7 +185,16 @@ router.post("/login", (req: Request, res: Response, next: NextFunction) => {
   const { username, password } = req.body;
   UserService.findByUsernameOrEmail(username, { scope: "withPasswordHash" })
     .then(async (user: User | null) => {
-      if (!user || !bcrypt.compareSync(password, user.password)) {
+      if (!user) {
+        const deletedUser = await UserService.findDeletedByUsernameOrEmail(username);
+        if (deletedUser) {
+          res.status(403).send(req.t("errors.account-deleted"));
+          return;
+        }
+        res.status(404).send();
+        return;
+      }
+      if (!bcrypt.compareSync(password, user.password)) {
         res.status(404).send();
         return;
       }
