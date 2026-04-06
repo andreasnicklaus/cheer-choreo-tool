@@ -16,6 +16,6 @@
     "davidanson.vscode-markdownlint",
     "christian-kohler.path-intellisense",
     "wayou.vscode-todo-highlight",
-    "VisualStudioExptTeam.vscodeintellicode"
+    "GitHub.copilot-chat"
   ]
 }
