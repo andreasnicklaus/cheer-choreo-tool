@@ -10,8 +10,8 @@
     "strict": true,
     "resolveJsonModule": true,
     "removeComments": true,
+    "baseUrl": ".",
     "paths": {
-      "*": ["./src/*"],
       "@/*": ["./src/*"]
     },
     "isolatedModules": true,
