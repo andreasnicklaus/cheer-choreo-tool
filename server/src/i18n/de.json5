@@ -24,10 +24,14 @@
     users: {
       "are-you-sure-you-want-to-delete-this-user": "Sind Sie sicher, dass Sie diesen Benutzer löschen möchten?",
       "create-user": "Benutzer erstellen",
+      deleted: "gelöscht",
       email: "E-Mail",
       "email-confirmed": "E-Mail bestätigt",
       "min-6-characters": "Min. 6 Zeichen",
       password: "Passwort",
+      recover: "Wiederherstellen",
+      "recover-user": "Benutzer wiederherstellen",
+      "recover-user-confirmation": "Sind Sie sicher, dass Sie diesen Benutzer wiederherstellen möchten?",
       "update-user": "Benutzer aktualisieren",
       username: "Benutzername",
       "users-with-email": "Benutzer mit E-Mail"
@@ -101,6 +105,7 @@
     "entity-not-found": "Kein {{entity}} mit dieser Information wurde gefunden.",
     "user-has-no-email": "Dieser Nutzer hat keine E-Mail-Adresse.",
     "user-already-exists": "Nutzer existiert bereits",
+    "account-deleted": "Dieses Konto wurde gelöscht.",
     "error-email-body": "Hallo,\n\nich möchte einen Fehler melden:\n\nAction: {{action}}\nData: {{data}}}\nFehlermeldung: {{error}}\nTimestamp: {{timestamp}}\n\nVielen Dank!"
   },
   status: {
@@ -116,6 +121,7 @@
     "oh-no": "Oh nein!",
     "info-text-1": "Das hat nicht funktioniert und wir wissen nicht warum...",
     "info-text-2": "Bitte versuche es noch einmal oder nimm Kontakt zu uns auf!",
+    "go-home": "Zur Startseite",
     reload: "Neu laden",
     "error-info": "Fehlerinformationen",
     action: "Action:",

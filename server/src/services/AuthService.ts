@@ -149,20 +149,27 @@ class AuthService {
             );
           }
 
-          return User.findByPk(content.UserId).then((user) => {
-            if (!user) {
+          const user = await UserService.findById(content.UserId);
+          if (!user) {
+            const deletedUser = await UserService.findDeletedByUsernameOrEmail(content.UserId);
+            if (deletedUser) {
               return reject(
                 new AuthorizationError(
-                  i18n.__({ phrase: "errors.sso-token-user-missing", locale }),
+                  i18n.__({ phrase: "errors.account-deleted", locale }),
                 ),
               );
             }
-
-            logger.debug(
-              `User ${user.username} with id ${user.id} used this SSO token: ${token}`,
+            return reject(
+              new AuthorizationError(
+                i18n.__({ phrase: "errors.sso-token-user-missing", locale }),
+              ),
             );
-            resolve(user);
-          });
+          }
+
+          logger.debug(
+            `User ${user.username} with id ${user.id} used this SSO token: ${token}`,
+          );
+          resolve(user);
         },
       );
     });
@@ -182,8 +189,14 @@ class AuthService {
       `AuthService generateSsoToken ${JSON.stringify({ email, locale })}`,
     );
     return UserService.findByUsernameOrEmail(email).then(
-      (user: User | null) => {
+      async (user: User | null) => {
         if (!user) {
+          const deletedUser = await UserService.findDeletedByUsernameOrEmail(email);
+          if (deletedUser) {
+            throw new AuthorizationError(
+              i18n.__({ phrase: "errors.account-deleted", locale }),
+            );
+          }
           logger.warn(`No user with email ${email} found`);
           throw new NotFoundError(
             i18n.__(

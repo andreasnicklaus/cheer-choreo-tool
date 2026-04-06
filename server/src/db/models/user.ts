@@ -158,6 +158,9 @@ User.init(
           exclude: [],
         },
       },
+      includingDeleted: {
+        paranoid: false,
+      },
     },
     paranoid: true,
     hooks: {

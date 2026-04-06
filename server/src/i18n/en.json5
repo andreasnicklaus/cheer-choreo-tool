@@ -30,7 +30,11 @@
       "email-confirmed": "Email confirmed",
       password: "Password",
       "update-user": "Update User",
-      "are-you-sure-you-want-to-delete-this-user": "Are you sure you want to delete this user?"
+      "are-you-sure-you-want-to-delete-this-user": "Are you sure you want to delete this user?",
+      deleted: "deleted",
+      recover: "Recover",
+      "recover-user": "Recover User",
+      "recover-user-confirmation": "Are you sure you want to recover this user?"
     },
     db: {
       "last-search": "Letzte Suche:",
@@ -101,6 +105,7 @@
     "entity-not-found": "No {{entity}} with this information was found.",
     "user-has-no-email": "This user has no email address.",
     "user-already-exists": "User already exists",
+    "account-deleted": "This account has been deleted.",
     "error-email-body": "Hello,\n\nI would like to report an error:\n\nAction: {{action}}\nData: {{data}}\nError message: {{error}}\nTimestamp: {{timestamp}}\n\nThank you!"
   },
   status: {
@@ -116,6 +121,7 @@
     action: "Action:",
     data: "Data:",
     "error-info": "Error information",
+    "go-home": "Go Home",
     "info-text-1": "Something didn't work and we don't know why...",
     "info-text-2": "Please try again or contact us!",
     message: "Error message:",

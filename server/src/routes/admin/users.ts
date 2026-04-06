@@ -5,7 +5,7 @@ import UserService from "../../services/UserService";
 const router = Router();
 
 router.get("/", (req: Request, res: Response, next: NextFunction) => {
-  return UserService.getAll()
+  return UserService.getAll({ includeDeleted: true })
     .then((userList: User[]) => {
       return res.render("../src/views/admin/users.ejs", {
         username: req.Admin.username,
@@ -16,15 +16,15 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.post("/", (req: Request, res: Response, next: NextFunction) => {
-  const { username, password, emailConfirmed } = req.body;
+  const { username, password, email } = req.body;
+  const emailConfirmed = req.body.emailConfirmed === "on";
 
-  let { email } = req.body.email;
-  if (email == "") email = null;
+  const cleanEmail = email === "" ? null : email;
 
   return UserService.create(
     username,
     password,
-    email,
+    cleanEmail,
     emailConfirmed,
     req.locale,
   )
@@ -48,6 +48,14 @@ router.post("/update", (req: Request, res: Response, next: NextFunction) => {
 
 router.delete("/:id", (req: Request, res: Response, next: NextFunction) => {
   return UserService.remove(req.params.id)
+    .then(() => {
+      return res.redirect(req.baseUrl); // njsscan-ignore: express_open_redirect
+    })
+    .catch((e: Error) => next(e));
+});
+
+router.post("/recover", (req: Request, res: Response, next: NextFunction) => {
+  return UserService.restore(req.body.id)
     .then(() => {
       return res.redirect(req.baseUrl); // njsscan-ignore: express_open_redirect
     })
