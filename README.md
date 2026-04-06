@@ -108,7 +108,7 @@ See [LICENSE](LICENSE) for the license of this project.
 
 ## :sparkles: Version history
 
-### 0.13.0 - 2026-03-29
+### 0.13.0 - 2026-04-06
 
 #### ⚠️ Breaking Changes
 - Migrated from Vue 2 to Vue 3 with Composition API
@@ -121,6 +121,7 @@ See [LICENSE](LICENSE) for the license of this project.
 - ESLint with strict rules and auto-fix
 - VSCode extension recommendations
 - CI/CD workflow improvements with better caching
+- Support for soft-deleted user accounts with recover functionality
 
 #### Changed
 - vue-meta replaced with @unhead/vue
