@@ -1,4 +1,3 @@
-import Vue from "vue";
-import VueMeta from "vue-meta";
+import { createHead } from "@unhead/vue/client";
 
-Vue.use(VueMeta);
+export default createHead();

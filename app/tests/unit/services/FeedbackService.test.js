@@ -1,19 +1,20 @@
-import { test, expect, jest, beforeEach } from "@jest/globals";
-import { describe } from "node:test";
+import { describe, test, expect, vi, beforeEach } from "vitest";
 import FeedbackService from "@/services/FeedbackService";
 import ax from "@/services/RequestService";
 
-jest.mock("@/services/RequestService", () => ({
-  get: jest.fn(),
-  post: jest.fn(),
-  put: jest.fn(),
-  patch: jest.fn(),
-  delete: jest.fn(),
+vi.mock("@/services/RequestService", () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    patch: vi.fn(),
+    delete: vi.fn(),
+  },
 }));
 
 describe("FeedbackService", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("sendFeedback", () => {

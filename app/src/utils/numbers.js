@@ -1,4 +1,4 @@
-const { debug } = require("./logging");
+import { debug } from "./logging";
 
 export function roundToDecimals(number, decimals) {
   debug(`Rounding number ${number} to ${decimals} decimals`);

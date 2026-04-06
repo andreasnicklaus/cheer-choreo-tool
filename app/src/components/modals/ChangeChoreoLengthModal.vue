@@ -1,61 +1,60 @@
 <template>
-  <b-modal
+  <BModal
     :id="`changeLengthModal-${id}`"
+    ref="modal"
     centered
     :title="$t('modals.change-length.laenge-der-choreo-aendern')"
     @show="
       () => {
-        if (this.choreo) {
-          this.newChoreoAchter = Math.floor(this.choreo.counts / 8);
-          this.newChoreoCount = this.choreo.counts % 8;
+        if (choreo) {
+          newChoreoAchter = Math.floor(choreo.counts / 8);
+          newChoreoCount = choreo.counts % 8;
         }
       }
     "
     @ok="changeChoreoLength"
   >
-    <b-form>
-      <b-form-group
+    <BForm>
+      <BFormGroup
         :description="$t('achter')"
         :state="achterIsValid"
         :invalid-feedback="lengthStateFeedback"
       >
-        <b-form-input
+        <BFormInput
+          v-model="newChoreoAchter"
           type="number"
           min="0"
-          v-model="newChoreoAchter"
           :state="achterIsValid"
           autofocus
         />
-      </b-form-group>
-      <b-form-group
+      </BFormGroup>
+      <BFormGroup
         :description="
           $t('modals.change-length.counts-zusaetzliche-counts-nach-den-achtern')
         "
         :state="countIsValid"
         :invalid-feedback="lengthStateFeedback"
       >
-        <b-form-input
+        <BFormInput
+          v-model="newChoreoCount"
           type="number"
           min="0"
           max="7"
-          v-model="newChoreoCount"
           :state="countIsValid"
         />
-      </b-form-group>
+      </BFormGroup>
       <p class="text-muted">
         {{ $t("modals.change-length.geschaetzte-zeit") }}
         {{ timeEstimationString }}
       </p>
-    </b-form>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="success" :disabled="!newCountIsValid">
+    </BForm>
+    <template #footer="{ ok, cancel }">
+      <BButton variant="success" :disabled="!newCountIsValid" @click="ok">
         {{ $t("modals.change-length.laenge-aendern") }}
-      </b-button>
-      <b-button @click="cancel" variant="danger">{{
-        $t("abbrechen")
-      }}</b-button>
+      </BButton>
+      <BButton variant="danger" @click="cancel">{{ $t("abbrechen") }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -86,28 +85,18 @@ import ChoreoService from "@/services/ChoreoService";
  */
 export default {
   name: "ChangeChoreoLengthModal",
+  props: {
+    choreo: {
+      type: Object,
+      default: null,
+    },
+  },
+  emits: ["countUpdate"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     newChoreoAchter: 1,
     newChoreoCount: 0,
   }),
-  props: {
-    choreo: {
-      type: Object,
-    },
-  },
-  methods: {
-    open() {
-      this.$bvModal.show(`changeLengthModal-${this.id}`);
-    },
-    changeChoreoLength() {
-      const counts =
-        parseInt(this.newChoreoAchter) * 8 + parseInt(this.newChoreoCount);
-      ChoreoService.changeLength(this.choreo.id, counts).then(() => {
-        this.$emit("countUpdate", counts);
-      });
-    },
-  },
   computed: {
     timeEstimationString() {
       const date = new Date(
@@ -138,6 +127,18 @@ export default {
         parseInt(this.newChoreoAchter) * 8 + parseInt(this.newChoreoCount);
       if (counts == 0) return this.$t("modals.change-length.choreo-min-length");
       return null;
+    },
+  },
+  methods: {
+    open() {
+      this.$refs.modal.show();
+    },
+    changeChoreoLength() {
+      const counts =
+        parseInt(this.newChoreoAchter) * 8 + parseInt(this.newChoreoCount);
+      ChoreoService.changeLength(this.choreo.id, counts).then(() => {
+        this.$emit("countUpdate", counts);
+      });
     },
   },
 };

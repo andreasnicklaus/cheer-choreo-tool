@@ -12,7 +12,7 @@
 ![Website status](https://img.shields.io/website?url=https%3A%2F%2Fwww.choreo-planer.de&style=for-the-badge)
 ![Backend status](https://img.shields.io/website?url=https%3A%2F%2Fapi.choreo-planer.de&style=for-the-badge&label=Backend)
 
-![Backend server build status](<https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/docker-server-image.yml?style=for-the-badge&logo=docker&logoColor=white&label=Backend%20Build%20(Server)>)
+![Backend server build status](<https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/server.yml?style=for-the-badge&logo=docker&logoColor=white&label=Backend%20Build%20(Server)>)
 ![Frontend build status](https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/pages.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=Frontend%20Build)
 
 ![Last commit](https://img.shields.io/github/last-commit/andreasnicklaus/cheer-choreo-tool?style=for-the-badge&label=Last%20Major%20Update)
@@ -107,6 +107,27 @@ graph
 See [LICENSE](LICENSE) for the license of this project.
 
 ## :sparkles: Version history
+
+### 0.13.0 - 2026-03-29
+
+#### ⚠️ Breaking Changes
+- Migrated from Vue 2 to Vue 3 with Composition API
+- Migrated from Vue CLI to Vite build system
+- Migrated from Jest to Vitest for unit testing
+- Upgraded Bootstrap 4 → Bootstrap 5
+
+#### Added
+- Development agent skills for AI-assisted development
+- ESLint with strict rules and auto-fix
+- VSCode extension recommendations
+- CI/CD workflow improvements with better caching
+
+#### Changed
+- vue-meta replaced with @unhead/vue
+- Various dependency updates
+
+#### Fixed
+- Spelling and translation errors
 
 ### 0.12.0 - 2025-12-22
 

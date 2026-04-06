@@ -1,6 +1,6 @@
 const i18n = require("i18n");
 const path = require("path");
-const { JSONC } = require("jsonc.min");
+const JSON5 = require("json5");
 
 i18n.configure({
   directory: path.join(__dirname, "..", "i18n"),
@@ -11,12 +11,9 @@ i18n.configure({
   },
   updateFiles: false,
   objectNotation: true,
-  // logDebugFn: console.debug,
-  // logWarnFn: console.warn,
-  // logErrorFn: console.error,
   mustacheConfig: {
     disable: false,
   },
   extension: ".json5",
-  parser: JSONC,
+  parser: JSON5,
 });

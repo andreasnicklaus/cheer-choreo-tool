@@ -1,18 +1,19 @@
 <template>
-  <b-modal
+  <BModal
     :id="`deleteModal-${id}`"
+    ref="modal"
     centered
-    @ok="removeChoreo"
     :title="$t('bist-du-sicher')"
+    @ok="removeChoreo"
   >
     {{ $t("du-kannst-das-nicht-rueckgaengig-machen") }}
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="danger">{{ $t("loeschen") }}</b-button>
-      <b-button @click="cancel" variant="outline-secondary">
+    <template #footer="{ ok, cancel }">
+      <BButton variant="danger" @click="ok">{{ $t("loeschen") }}</BButton>
+      <BButton variant="outline-secondary" @click="cancel">
         {{ $t("abbrechen") }}
-      </b-button>
+      </BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -35,24 +36,25 @@ import { error } from "@/utils/logging";
  */
 export default {
   name: "DeleteChoreoModal",
-  data: () => ({
-    id: (Math.random() + 1).toString(36).substring(7),
-  }),
   props: {
     choreoId: {
       type: String,
+      default: "",
     },
   },
+  data: () => ({
+    id: (Math.random() + 1).toString(36).substring(7),
+  }),
   methods: {
     open() {
-      this.$bvModal.show(`deleteModal-${this.id}`);
+      this.$refs.modal.show();
     },
     removeChoreo() {
       ChoreoService.remove(this.choreoId).then(() => {
         this.$router
           .push({
             name: "Start",
-            params: { locale: this.$root.$i18n.locale },
+            params: { locale: this.$i18n.locale },
           })
           .catch(() => {
             error(

@@ -1,95 +1,93 @@
 <template>
-  <b-container id="AccountView" data-view>
-    <b-row align-v="center" align-h="between" class="mb-4">
-      <b-col cols="12" md="auto" class="text-center">
-        <b-skeleton-wrapper :loading="loading">
+  <BContainer id="AccountView" data-view>
+    <BRow align-v="center" align-h="between" class="mb-4">
+      <BCol cols="12" md="auto" class="text-center">
+        <BPlaceholderWrapper :loading="loading">
           <template #loading>
-            <b-skeleton type="avatar" height="120px" width="120px" />
+            <BPlaceholder
+              type="avatar"
+              height="120px"
+              width="120px"
+              animation="wave"
+            />
           </template>
-          <b-avatar
+          <BAvatar
             variant="primary"
             size="120px"
             :src="currentProfilePictureBlob"
           />
-        </b-skeleton-wrapper>
-      </b-col>
-      <b-col class="text-center text-md-left">
-        <b-skeleton-wrapper :loading="loading">
+        </BPlaceholderWrapper>
+      </BCol>
+      <BCol class="text-md-left">
+        <BPlaceholderWrapper :loading="loading">
           <template #loading>
-            <b-skeleton width="35%" height="40px" class="mb-2"></b-skeleton>
-            <b-skeleton width="85%" height="24px" class="mb-3"></b-skeleton>
-            <b-skeleton width="50%" height="24px" />
-            <b-skeleton width="50%" height="24px" />
+            <BPlaceholder
+              width="35%"
+              height="40px"
+              class="mb-2"
+              animation="wave"
+            ></BPlaceholder>
+            <BPlaceholder
+              width="85%"
+              height="24px"
+              class="mb-3"
+              animation="wave"
+            ></BPlaceholder>
+            <BPlaceholder width="50%" height="24px" animation="wave" />
+            <BPlaceholder width="50%" height="24px" animation="wave" />
           </template>
           <h1>{{ user?.username }}</h1>
           <p class="text-muted">
-            <span class="d-block d-md-inline">
+            <span class="d-block d-md-inline me-2">
               {{ user?.email }}
             </span>
-            <b-badge v-if="!user?.email" variant="secondary">
+            <BBadge v-if="!user?.email" variant="secondary">
               {{ $t("accountView.no-email") }}
-            </b-badge>
-            <b-badge
+            </BBadge>
+            <BBadge
               v-else-if="!user?.emailConfirmed"
+              v-b-tooltip.hover="$t('accountView.check-email')"
               variant="danger"
-              v-b-tooltip.hover
-              :title="$t('accountView.check-email')"
               class="d-inline-flex align-items-center px-2"
             >
-              <b-icon-exclamation-triangle class="mr-2" font-scale="1.2" />
-              {{ $t("accountView.nicht-bestaetigt") }}</b-badge
+              <IBiExclamationTriangle class="me-2" font-scale="1.2" />
+              {{ $t("accountView.nicht-bestaetigt") }}</BBadge
             >
-            <b-badge
+            <BBadge
               v-else
+              v-b-tooltip.hover="$t('accountView.bereits-bestaetigt')"
               variant="success"
-              v-b-tooltip.hover
-              :title="$t('accountView.bereits-bestaetigt')"
               class="d-inline-flex align-items-center px-2"
             >
-              <b-icon-check-circle class="mr-2" font-scale="1.2" />
+              <IBiCheckCircle class="me-2" font-scale="1.2" />
               {{ $t("accountView.bestaetigt") }}
-            </b-badge>
+            </BBadge>
           </p>
-          <b-row v-show="user" class="text-muted text-left">
-            <b-col cols="6" md="4">
-              {{ $t("accountView.erstellt-am") }}:
-            </b-col>
-            <b-col v-if="user" cols="6" md="8">
+          <BRow v-show="user" class="text-muted text-start">
+            <BCol cols="6" md="4"> {{ $t("accountView.erstellt-am") }}: </BCol>
+            <BCol v-if="user" cols="6" md="8">
               {{ toTimeAgo(user?.createdAt) }}
-            </b-col>
-            <b-col cols="6" md="4">
+            </BCol>
+            <BCol cols="6" md="4">
               {{ $t("accountView.zuletzt-geaendert-am") }}:
-            </b-col>
-            <b-col v-if="user" cols="6" md="8">
+            </BCol>
+            <BCol v-if="user" cols="6" md="8">
               {{ toTimeAgo(user?.createdAt) }}
-            </b-col>
-          </b-row>
-        </b-skeleton-wrapper>
-      </b-col>
-    </b-row>
+            </BCol>
+          </BRow>
+        </BPlaceholderWrapper>
+      </BCol>
+    </BRow>
 
-    <b-tabs
+    <BTabs
       content-class="my-3"
       class="my-3"
       lazy
       :small="$store.state.isMobile"
     >
-      <b-tab :title="$t('konto')">
-        <b-form
-          @submit="
-            (event) => {
-              event.preventDefault();
-              this.saveUserInfo();
-            }
-          "
-          @reset="
-            (event) => {
-              event.preventDefault();
-              this.resetUserInfo();
-            }
-          "
-        >
-          <b-form-group
+      <BTab :title="$t('konto')">
+        <BForm @submit.prevent="saveUserInfo" @reset.prevent="resetUserInfo">
+          <BFormGroup
             label-cols="12"
             label-cols-md="4"
             label-cols-lg="2"
@@ -99,22 +97,24 @@
               $t('accountView.lade-ein-bild-hoch-max-mb', [MAX_IMAGE_MB])
             "
           >
-            <b-row align-v="center" align-h="around">
-              <b-col cols="auto" class="text-center mb-2 mb-md-0">
-                <b-skeleton-wrapper :loading="loading">
+            <BRow align-v="center" align-h="around">
+              <BCol cols="auto" class="text-center mb-2 mb-md-0">
+                <BPlaceholderWrapper :loading="loading">
                   <template #loading>
-                    <b-skeleton type="avatar" width="80px" height="80px" />
+                    <BPlaceholder
+                      type="avatar"
+                      width="80px"
+                      height="80px"
+                      animation="wave"
+                    />
                   </template>
-                  <div
-                    id="profilePictureUpload"
-                    v-b-hover="hoverProfilePicture"
-                  >
-                    <b-overlay
+                  <div id="profilePictureUpload" ref="profilePictureUploadRef">
+                    <BOverlay
                       :show="profilePictureIsHovered"
                       rounded="circle"
                       variant="dark"
                     >
-                      <b-avatar
+                      <BAvatar
                         variant="primary"
                         size="80px"
                         :src="
@@ -125,47 +125,48 @@
                       />
                       <template #overlay>
                         <input
+                          ref="profilePictureFile"
                           :style="{ width: '80px', height: '80px' }"
                           type="file"
-                          @change="submitProfilePicture"
                           accept="image/*"
                           class="input-file"
-                          ref="profilePictureFile"
+                          @change="submitProfilePicture"
                         />
-                        <b-icon-cloud-upload variant="light" font-scale="2" />
+                        <IBiCloudUpload variant="light" font-scale="2" />
                       </template>
-                    </b-overlay>
+                    </BOverlay>
                   </div>
-                </b-skeleton-wrapper>
-              </b-col>
-              <b-col cols="12" md="9">
-                <b-button
-                  variant="outline-secondary"
-                  block
-                  :disabled="
-                    profilePictureDeletion ||
-                    (!newProfilePicture && !currentProfilePictureBlob)
-                  "
-                  @click="
-                    newProfilePicture = null;
-                    profilePictureDeletion = true;
-                  "
-                >
-                  <b-icon-x />
-                  {{ $t("accountView.bild-entfernen") }}
-                </b-button>
-              </b-col>
-            </b-row>
-            <b-alert
+                </BPlaceholderWrapper>
+              </BCol>
+              <BCol cols="12" md="9">
+                <div class="d-grid">
+                  <BButton
+                    variant="outline-secondary"
+                    :disabled="
+                      profilePictureDeletion ||
+                      (!newProfilePicture && !currentProfilePictureBlob)
+                    "
+                    @click="
+                      newProfilePicture = null;
+                      profilePictureDeletion = true;
+                    "
+                  >
+                    <IBiX />
+                    {{ $t("accountView.bild-entfernen") }}
+                  </BButton>
+                </div>
+              </BCol>
+            </BRow>
+            <BAlert
               :show="!newProfilePictureIsValid"
               class="my-1"
               variant="danger"
             >
               {{ newProfilePictureError }}
-            </b-alert>
-          </b-form-group>
+            </BAlert>
+          </BFormGroup>
 
-          <b-form-group
+          <BFormGroup
             label-cols="12"
             label-cols-md="4"
             label-cols-lg="2"
@@ -173,19 +174,20 @@
             label-class="label-with-colon"
             :state="loading || usernameIsValid"
             :invalid-feedback="usernameError"
+            class="mb-2"
           >
-            <b-skeleton-wrapper :loading="loading">
+            <BPlaceholderWrapper :loading="loading">
               <template #loading>
-                <b-skeleton type="input" />
+                <BPlaceholder type="input" animation="wave" />
               </template>
-              <b-form-input
+              <BFormInput
                 v-model="username"
                 :placeholder="$t('username')"
                 :state="usernameIsValid"
               />
-            </b-skeleton-wrapper>
-          </b-form-group>
-          <b-form-group
+            </BPlaceholderWrapper>
+          </BFormGroup>
+          <BFormGroup
             label-cols="12"
             label-cols-md="4"
             label-cols-lg="2"
@@ -193,140 +195,139 @@
             label-class="label-with-colon"
             :state="loading || emailIsValid"
             :invalid-feedback="emailError"
+            class="mb-2"
           >
-            <b-skeleton-wrapper :loading="loading">
+            <BPlaceholderWrapper :loading="loading">
               <template #loading>
-                <b-skeleton type="input" />
+                <BPlaceholder type="input" animation="wave" />
               </template>
-              <b-input-group>
-                <b-form-input
+              <BInputGroup>
+                <BFormInput
                   v-model="email"
                   :placeholder="$t('e-mail-adresse')"
                   :state="emailIsValid"
                 />
-                <b-input-group-append>
-                  <b-input-group-text
+                <template #append>
+                  <BInputGroupText
                     v-if="
                       user?.email &&
                       !user?.emailConfirmed &&
                       email == user?.email
                     "
-                    v-b-tooltip.hover
-                    :title="$t('accountView.check-email')"
+                    v-b-tooltip.hover="$t('accountView.check-email')"
                   >
-                    <b-icon-exclamation-triangle-fill
+                    <IBiExclamationTriangleFill
                       variant="danger"
                       font-scale="1.2"
                     />
-                  </b-input-group-text>
-                  <b-input-group-text
+                  </BInputGroupText>
+                  <BInputGroupText
                     v-else-if="
                       user?.email &&
                       user?.emailConfirmed &&
                       email == user?.email
                     "
-                    v-b-tooltip.hover
-                    :title="$t('accountView.bereits-bestaetigt')"
+                    v-b-tooltip.hover="$t('accountView.bereits-bestaetigt')"
                   >
-                    <b-icon-check-circle-fill
-                      variant="success"
-                      font-scale="1.2"
-                    />
-                  </b-input-group-text>
-                  <b-input-group-text
+                    <IBiCheckCircleFill variant="success" font-scale="1.2" />
+                  </BInputGroupText>
+                  <BInputGroupText
                     v-else-if="email && email != user?.email"
-                    v-b-tooltip.hover
-                    :title="$t('accountView.save-new-email-info')"
+                    v-b-tooltip.hover="$t('accountView.save-new-email-info')"
                   >
-                    <b-icon-exclamation-triangle-fill
+                    <IBiExclamationTriangleFill
                       variant="warning"
                       font-scale="1.2"
                     />
-                  </b-input-group-text>
-                  <b-input-group-text
+                  </BInputGroupText>
+                  <BInputGroupText
                     v-else-if="!user?.email"
-                    v-b-tooltip.hover
-                    :title="$t('accountView.no-email-info')"
+                    v-b-tooltip.hover="$t('accountView.no-email-info')"
                   >
-                    <b-icon-info font-scale="1.2" />
-                  </b-input-group-text>
-                </b-input-group-append>
-              </b-input-group>
+                    <IBiInfo font-scale="1.2" />
+                  </BInputGroupText>
+                </template>
+              </BInputGroup>
 
-              <b-alert
-                show
-                variant="warning"
+              <BAlert
                 v-if="
                   user?.email && !user?.emailConfirmed && email == user?.email
                 "
+                show
+                variant="warning"
               >
                 <p>
                   {{ $t("account.email-confirmation-warning") }}
                 </p>
-                <b-button variant="link" @click="resendEmailConfirmationLink">{{
+                <BButton variant="link" @click="resendEmailConfirmationLink">{{
                   $t("account.link-nochmal-senden")
-                }}</b-button>
-              </b-alert>
-            </b-skeleton-wrapper>
-          </b-form-group>
+                }}</BButton>
+              </BAlert>
+            </BPlaceholderWrapper>
+          </BFormGroup>
 
-          <b-row>
-            <b-col class="mb-2 mb-md-0">
-              <b-button
-                type="submit"
-                variant="success"
-                block
-                :disabled="
-                  !usernameIsValid ||
-                  !emailIsValid ||
-                  !newProfilePictureIsValid ||
-                  (username == user?.username &&
+          <BRow>
+            <BCol class="mb-2 mb-md-0">
+              <div class="d-grid">
+                <BButton
+                  type="submit"
+                  variant="success"
+                  :disabled="
+                    !usernameIsValid ||
+                    !emailIsValid ||
+                    !newProfilePictureIsValid ||
+                    (username == user?.username &&
+                      email == user?.email &&
+                      !profilePictureDeletion &&
+                      newProfilePicture == null)
+                  "
+                  >{{ $t("speichern") }}</BButton
+                >
+              </div>
+            </BCol>
+            <BCol cols="12" md="auto">
+              <div class="d-grid">
+                <BButton
+                  type="reset"
+                  variant="outline-secondary"
+                  :disabled="
+                    username == user?.username &&
                     email == user?.email &&
                     !profilePictureDeletion &&
-                    newProfilePicture == null)
-                "
-                >{{ $t("speichern") }}</b-button
-              >
-            </b-col>
-            <b-col cols="12" md="auto">
-              <b-button
-                type="reset"
-                variant="outline-secondary"
-                :disabled="
-                  username == user?.username &&
-                  email == user?.email &&
-                  !profilePictureDeletion &&
-                  newProfilePicture == null
-                "
-                block
-                >{{ $t("zuruecksetzen") }}</b-button
-              >
-            </b-col>
-          </b-row>
-        </b-form>
-      </b-tab>
-      <b-tab :title="$tc('verein', 2)">
-        <b-tabs
-          v-model="clubTabIndex"
-          content-class="ml-3 mt-3 mt-md-0"
+                    newProfilePicture == null
+                  "
+                  >{{ $t("zuruecksetzen") }}</BButton
+                >
+              </div>
+            </BCol>
+          </BRow>
+        </BForm>
+      </BTab>
+      <BTab :title="$t('verein', 2)">
+        <BTabs
+          :index="clubTabIndex"
+          content-class="mt-3 mt-md-0 flex-grow-1"
           :vertical="!$store.state.isMobile"
           :small="$store.state.isMobile"
+          justified
+          nav-item-class="text-start"
           pills
+          @update:index="updateClubTabIndex"
         >
-          <b-tab v-for="club in user?.Clubs" :key="club.id" :title="club.name">
+          <BTab v-for="club in user?.Clubs" :key="club.id" :title="club.name">
             <template #title>
               {{ club.name }}
-              <b-icon-check-circle-fill
+              <IBiCheckCircleFill
                 v-if="$store.state.clubId == club.id"
+                v-b-tooltip.hover="$t('start.aktiver-verein')"
                 :class="{
-                  'text-success': club.id != currentClub.id,
+                  'text-success': club.id != currentClub?.id,
+                  'ms-1': true,
                 }"
-                v-b-tooltip.hover
-                :title="$t('start.aktiver-verein')"
               />
             </template>
-            <b-form @submit="onClubSave" @reset="onClubReset">
-              <b-form-group
+            <BForm @submit.prevent="onClubSave" @reset.prevent="onClubReset">
+              <BFormGroup
                 label-cols="12"
                 label-cols-md="4"
                 label-cols-lg="2"
@@ -335,16 +336,17 @@
                 :description="
                   $t('accountView.lade-ein-bild-hoch-max-mb', [MAX_IMAGE_MB])
                 "
+                class="mb-2"
               >
-                <b-row align-v="center" align-h="around">
-                  <b-col cols="auto" class="text-center mb-2 mb-md-0">
-                    <div id="profilePictureUpload" v-b-hover="hoverClubLogo">
-                      <b-overlay
+                <BRow align-v="center" align-h="around">
+                  <BCol cols="auto" class="text-center mb-2 mb-md-0">
+                    <div id="clubLogoUpload" ref="clubLogoUploadRef">
+                      <BOverlay
                         :show="clubLogoIsHovered"
                         rounded="circle"
                         variant="dark"
                       >
-                        <b-avatar
+                        <BAvatar
                           variant="primary"
                           size="80px"
                           :src="
@@ -353,55 +355,56 @@
                               : newClubLogoBlob || currentClubLogoBlob
                           "
                         >
-                          <b-icon-house-fill
+                          <IBiHouseFill
                             v-if="
                               !clubLogoDeletion &&
                               !(newClubLogoBlob || currentClubLogoBlob)
                             "
                             font-scale="1.5"
                           />
-                        </b-avatar>
+                        </BAvatar>
                         <template #overlay>
                           <input
+                            :ref="`clubLogoFile-${club.id}`"
                             :style="{ width: '80px', height: '80px' }"
                             type="file"
-                            @change="() => submitClubLogo(club.id)"
                             accept="image/*"
                             class="input-file"
-                            :ref="`clubLogoFile-${club.id}`"
+                            @change="() => submitClubLogo(club.id)"
                           />
-                          <b-icon-cloud-upload variant="light" font-scale="2" />
+                          <IBiCloudUpload variant="light" font-scale="2" />
                         </template>
-                      </b-overlay>
+                      </BOverlay>
                     </div>
-                  </b-col>
-                  <b-col cols="12" md="8">
-                    <b-button
-                      block
-                      variant="outline-secondary"
-                      :disabled="
-                        clubLogoDeletion ||
-                        (!newClubLogo && !currentClubLogoBlob)
-                      "
-                      @click="
-                        newClubLogo = null;
-                        clubLogoDeletion = true;
-                      "
-                    >
-                      <b-icon-x />
-                      {{ $t("accountView.bild-entfernen") }}
-                    </b-button>
-                  </b-col>
-                </b-row>
-                <b-alert
+                  </BCol>
+                  <BCol cols="12" md="8">
+                    <div class="d-grid">
+                      <BButton
+                        variant="outline-secondary"
+                        :disabled="
+                          clubLogoDeletion ||
+                          (!newClubLogo && !currentClubLogoBlob)
+                        "
+                        @click="
+                          newClubLogo = null;
+                          clubLogoDeletion = true;
+                        "
+                      >
+                        <IBiX />
+                        {{ $t("accountView.bild-entfernen") }}
+                      </BButton>
+                    </div>
+                  </BCol>
+                </BRow>
+                <BAlert
                   :show="!newClubLogoIsValid"
                   variant="danger"
                   class="my-1"
                 >
                   {{ newClubLogoError }}
-                </b-alert>
-              </b-form-group>
-              <b-form-group
+                </BAlert>
+              </BFormGroup>
+              <BFormGroup
                 label-cols="12"
                 label-cols-md="4"
                 label-cols-lg="2"
@@ -409,53 +412,55 @@
                 label-class="label-with-colon"
                 :state="loading || clubNameIsValid"
                 :invalid-feedback="clubNameError"
+                class="mb-2"
               >
-                <b-form-input
+                <BFormInput
                   v-model="clubName"
                   :placeholder="$t('name')"
                   :state="clubNameIsValid"
                 />
-              </b-form-group>
+              </BFormGroup>
 
-              <b-skeleton-wrapper :loading="loading">
+              <BPlaceholderWrapper :loading="loading">
                 <template #loading>
-                  <b-skeleton />
-                  <b-skeleton />
+                  <BPlaceholder animation="wave" />
+                  <BPlaceholder animation="wave" />
                 </template>
-                <b-row class="text-muted mb-2">
-                  <b-col cols="6" md="4">
+                <BRow class="text-muted mb-4">
+                  <BCol cols="6" md="4">
                     {{ $t("accountView.erstellt-am") }}:
-                  </b-col>
-                  <b-col cols="6" md="8">
+                  </BCol>
+                  <BCol cols="6" md="8">
                     {{ toTimeAgo(club?.createdAt) }}
-                  </b-col>
-                  <b-col cols="6" md="4">
+                  </BCol>
+                  <BCol cols="6" md="4">
                     {{ $t("accountView.zuletzt-geaendert-am") }}:
-                  </b-col>
-                  <b-col cols="6" md="8">
+                  </BCol>
+                  <BCol cols="6" md="8">
                     {{ toTimeAgo(club?.updatedAt) }}
-                  </b-col>
-                </b-row>
-              </b-skeleton-wrapper>
+                  </BCol>
+                </BRow>
+              </BPlaceholderWrapper>
 
-              <b-row>
-                <b-col class="mb-2 mb-md-0">
-                  <b-button
-                    type="submit"
-                    variant="success"
-                    block
-                    :disabled="
-                      !clubNameIsValid ||
-                      !newClubLogoIsValid ||
-                      (clubName == club.name &&
-                        !clubLogoDeletion &&
-                        newClubLogo == null)
-                    "
-                    >{{ $t("speichern") }}</b-button
-                  >
-                </b-col>
-                <b-col cols="12" md="auto">
-                  <b-button
+              <BRow>
+                <BCol class="mb-2 mb-md-0">
+                  <div class="d-grid">
+                    <BButton
+                      type="submit"
+                      variant="success"
+                      :disabled="
+                        !clubNameIsValid ||
+                        !newClubLogoIsValid ||
+                        (clubName == club.name &&
+                          !clubLogoDeletion &&
+                          newClubLogo == null)
+                      "
+                      >{{ $t("speichern") }}</BButton
+                    >
+                  </div>
+                </BCol>
+                <BCol cols="12" md="auto">
+                  <BButton
                     type="reset"
                     variant="outline-secondary"
                     :disabled="
@@ -463,25 +468,25 @@
                       !clubLogoDeletion &&
                       newClubLogo == null
                     "
-                    block
-                    >{{ $t("zuruecksetzen") }}</b-button
+                    >{{ $t("zuruecksetzen") }}</BButton
                   >
-                </b-col>
-              </b-row>
+                </BCol>
+              </BRow>
 
-              <b-button
-                block
-                variant="outline-primary"
-                class="mt-2"
-                :disabled="$store.state.clubId == club.id"
-                @click="selectCurrentClub(club.id)"
-              >
-                <b-icon-check />
-                {{ $t("accountView.als-aktiven-verein-auswaehlen") }}
-              </b-button>
+              <div class="d-grid">
+                <BButton
+                  variant="outline-primary"
+                  class="mt-2"
+                  :disabled="$store.state.clubId == club.id"
+                  @click="selectCurrentClub(club.id)"
+                >
+                  <IBiCheck />
+                  {{ $t("accountView.als-aktiven-verein-auswaehlen") }}
+                </BButton>
+              </div>
               <p
-                class="text-muted text-center"
                 v-show="$store.state.clubId == club.id"
+                class="text-muted text-center"
               >
                 <small>
                   {{
@@ -491,139 +496,129 @@
                   }}
                 </small>
               </p>
-            </b-form>
+            </BForm>
 
             <span
-              v-b-tooltip.hover
-              :title="
+              v-b-tooltip.hover="
                 user?.Clubs.length <= 1
                   ? $t('accountView.cant-delete-only-club')
                   : $store.state.clubId == club.id
                     ? $t('accountView.cant-delete-active-club')
-                    : null
+                    : false
               "
+              class="d-grid"
             >
-              <b-button
+              <BButton
                 variant="outline-danger"
                 :disabled="
                   user?.Clubs.length <= 1 || $store.state.clubId == club.id
                 "
-                block
                 class="mt-2"
-                @click="() => $refs.deleteClubMOdal.open(currentClub.id)"
+                @click="
+                  () =>
+                    currentClub && $refs.deleteClubModal.open(currentClub.id)
+                "
               >
-                <b-icon-exclamation-triangle-fill />
+                <IBiExclamationTriangleFill />
                 {{ $t("accountView.verein-loeschen") }}
-              </b-button>
+              </BButton>
             </span>
-          </b-tab>
+          </BTab>
           <template #tabs-end>
-            <b-skeleton v-if="loading" type="input" />
+            <hr />
+            <BPlaceholder v-if="loading" type="input" animation="wave" />
 
-            <b-button
+            <BButton
               variant="link"
-              class="text-success"
+              class="text-success text-start"
               @click="() => $refs.createClubModal.open()"
             >
-              <b-icon-plus /> {{ $t("modals.create-club.neuer-verein") }}
-            </b-button>
+              <IBiPlus /> {{ $t("modals.create-club.neuer-verein") }}
+            </BButton>
           </template>
-        </b-tabs>
-      </b-tab>
-      <b-tab>
+        </BTabs>
+      </BTab>
+      <BTab>
         <template #title>
           {{ $t("account.settings") }}
           <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
         </template>
-        <b-form
-          @submit="
-            (event) => {
-              event.preventDefault();
-              this.saveSettings();
-            }
-          "
-          @reset="
-            (event) => {
-              event.preventDefault();
-              this.resetSettings();
-            }
-          "
-        >
-          <b-form-group
+        <BForm @submit.prevent="saveSettings" @reset.prevent="resetSettings">
+          <BFormGroup
             label-cols="12"
             label-cols-md="4"
             label-cols-lg="2"
             :label="$t('account.tracking-opt-out')"
             label-class="label-with-colon"
             :description="$t('account.tracking-info')"
+            class="mb-2"
           >
-            <b-form-checkbox
-              id="tracking"
-              class="py-1"
-              switch
-              v-model="tracking"
-            >
+            <BFormCheckbox id="tracking" v-model="tracking" class="py-1" switch>
               {{ $t("account.tracking-description") }}
-            </b-form-checkbox>
-          </b-form-group>
+            </BFormCheckbox>
+          </BFormGroup>
 
-          <b-alert :show="tracking" variant="warning" v-if="tracking">
+          <BAlert v-if="tracking" :show="tracking" variant="warning">
             <h4 class="alert-heading">{{ $t("account.achtung") }}</h4>
             <p>
               {{ $t("account.tracking-warning") }}
             </p>
-            <b-button variant="success" @click="tracking = false">
-              <b-icon-arrow-counterclockwise class="mr-2" />
+            <BButton variant="success" @click="tracking = false">
+              <IBiArrowCounterclockwise class="me-2" />
               {{ $t("account.rueckgaengig-machen") }}
-            </b-button>
-          </b-alert>
+            </BButton>
+          </BAlert>
 
-          <b-row>
-            <b-col class="mb-2 mb-md-0">
-              <b-button
-                type="submit"
-                variant="success"
-                block
-                :disabled="tracking == Boolean($cookie.get('mtm_consent'))"
-                >{{ $t("speichern") }}</b-button
-              >
-            </b-col>
-            <b-col cols="12" md="auto">
-              <b-button
-                type="reset"
-                variant="outline-secondary"
-                :disabled="tracking == Boolean($cookie.get('mtm_consent'))"
-                block
-                >{{ $t("zuruecksetzen") }}</b-button
-              >
-            </b-col>
-          </b-row>
-        </b-form>
-      </b-tab>
-      <b-tab>
+          <BRow>
+            <BCol class="mb-2 mb-md-0">
+              <div class="d-grid">
+                <BButton
+                  type="submit"
+                  variant="success"
+                  :disabled="tracking == trackingConsent"
+                  >{{ $t("speichern") }}</BButton
+                >
+              </div>
+            </BCol>
+            <BCol cols="12" md="auto">
+              <div class="d-grid">
+                <BButton
+                  type="reset"
+                  variant="outline-secondary"
+                  :disabled="tracking == trackingConsent"
+                  >{{ $t("zuruecksetzen") }}</BButton
+                >
+              </div>
+            </BCol>
+          </BRow>
+        </BForm>
+      </BTab>
+      <BTab>
         <template #title>
-          <span class="text-danger mr-1">{{
+          <span class="text-danger me-1">{{
             $t("accountView.gefahrenbereich")
           }}</span>
           <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
         </template>
-        <b-form-group
+        <BFormGroup
           label-cols="12"
           label-cols-md="4"
           label-cols-lg="2"
           :label="$t('accountView.passwort-aendern')"
           label-class="label-with-colon"
           :description="$t('account.reset-password-description')"
+          class="mb-2"
         >
-          <b-button
+          <BButton
             variant="warning"
+            class="d-block"
             @click="() => $refs.changePasswordModal.open()"
           >
-            <b-icon-key />
+            <IBiKey />
             {{ $t("accountView.passwort-aendern") }}
-          </b-button>
-        </b-form-group>
-        <b-form-group
+          </BButton>
+        </BFormGroup>
+        <BFormGroup
           label-cols="12"
           label-cols-md="4"
           label-cols-lg="2"
@@ -631,27 +626,31 @@
           label-class="label-with-colon"
           :description="$t('accountView.konto-loeschen-descriptions')"
         >
-          <b-button
+          <BButton
             variant="danger"
+            class="d-block"
             @click="() => $refs.deleteAccountModal.open()"
           >
-            <b-icon-trash />
+            <IBiTrash />
             {{ $t("accountView.konto-loeschen") }}
-          </b-button>
-        </b-form-group>
-      </b-tab>
-    </b-tabs>
+          </BButton>
+        </BFormGroup>
+      </BTab>
+    </BTabs>
 
-    <CreateClubModal ref="createClubModal" @clubCreated="init" />
-    <DeleteClubModal ref="deleteClubMOdal" @clubDeleted="init" />
+    <CreateClubModal ref="createClubModal" @club-created="init" />
+    <DeleteClubModal ref="deleteClubModal" @club-deleted="init" />
 
     <ChangePasswordModal ref="changePasswordModal" />
 
     <DeleteAccountModal ref="deleteAccountModal" />
-  </b-container>
+  </BContainer>
 </template>
 
 <script>
+import Cookies from "js-cookie";
+import { useElementHover } from "@vueuse/core";
+
 import AuthService from "@/services/AuthService";
 import ChangePasswordModal from "@/components/modals/ChangePasswordModal.vue";
 import DeleteAccountModal from "@/components/modals/DeleteAccountModal.vue";
@@ -663,8 +662,10 @@ import MessagingService from "@/services/MessagingService";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import { error, log } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
+import { useHead } from "@unhead/vue";
+import { useI18n } from "vue-i18n";
+import { emailRegex } from "@/utils/validation";
 
-const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
 const MB = 1_048_576;
 const MAX_IMAGE_MB = 2;
 
@@ -680,11 +681,11 @@ const MAX_IMAGE_MB = 2;
  * @vue-data {Blob|null} currentClubLogoBlob=null - The current club logo as a Blob.
  * @vue-data {string|null} clubName=null - The name of the club.
  * @vue-data {Boolean} tracking=false - Indicates if tracking is enabled.
- * @vue-data {Boolean} profilePictureIsHovered=false - Whether the profile picture is hovered.
- * @vue-data {Boolean} clubLogoIsHovered=false - Whether the club logo is hovered.
  * @vue-data {Boolean} profilePictureDeletion=false - Whether the profile picture is marked for deletion.
  * @vue-data {Boolean} clubLogoDeletion=false - Whether the club logo is marked for deletion.
  * @vue-data {Number} clubTabIndex=0 - The index of the currently selected club tab.
+ * @vue-data {Ref|null} profilePictureElement=null - Template ref for profile picture upload.
+ * @vue-data {Ref|null} clubLogoElement=null - Template ref for club logo upload.
  *
  * @vue-computed {Blob|null} newProfilePictureBlob - The new profile picture as a Blob.
  * @vue-computed {Object} currentClub - The currently selected club object.
@@ -704,6 +705,7 @@ const MAX_IMAGE_MB = 2;
  */
 
 export default {
+  name: "AccountView",
   components: {
     ChangePasswordModal,
     DeleteAccountModal,
@@ -711,7 +713,10 @@ export default {
     DeleteClubModal,
     NewVersionBadge,
   },
-  name: "AccountView",
+  setup() {
+    const { t } = useI18n();
+    return { t };
+  },
   data: function () {
     return {
       MAX_IMAGE_MB,
@@ -724,202 +729,18 @@ export default {
       newClubLogo: null,
       currentClubLogoBlob: null,
       clubName: null,
-      tracking: Boolean(this.$cookie.get("mtm_consent")),
-      profilePictureIsHovered: false,
-      clubLogoIsHovered: false,
+      tracking: Boolean(Cookies.get("mtm_consent")),
       profilePictureDeletion: false,
       clubLogoDeletion: false,
       clubTabIndex: 0,
+      profilePictureElement: null,
+      clubLogoElement: null,
     };
   },
-  mounted() {
-    this.loading = true;
-    this.init().then(() => {
-      this.loading = false;
-      if (this.$store.state.clubId) {
-        this.clubTabIndex = this.user.Clubs.indexOf(
-          this.user.Clubs.find((club) => club.id == this.$store.state.clubId)
-        );
-      }
-    });
-  },
-  methods: {
-    toTimeAgo,
-    init() {
-      return AuthService.getUserInfo()
-        .then((user) => {
-          this.user = user;
-          this.loadUserSettings();
-          this.loadProfileImage();
-        })
-        .catch(() => {
-          error("Cannot get user info", ERROR_CODES.USER_INFO_QUERY_FAILED);
-          MessagingService.showError(
-            this.$t("accountView.unbekannter-fehler"),
-            this.$t("accountView.das-hat-nicht-funktioniert")
-          );
-        });
-    },
-    loadProfileImage() {
-      if (this.user?.profilePictureExtension == null)
-        this.currentProfilePictureBlob = null;
-      else
-        AuthService.getProfileImage(
-          this.user.id,
-          this.user.profilePictureExtension
-        ).then((response) => {
-          this.currentProfilePictureBlob = URL.createObjectURL(response.data);
-        });
-    },
-    loadClubLogo() {
-      if (this.currentClub?.logoExtension == null)
-        this.currentClubLogoBlob = null;
-      else
-        ClubService.getClubLogo(
-          this.currentClub.id,
-          this.currentClub.logoExtension
-        ).then((response) => {
-          this.currentClubLogoBlob = URL.createObjectURL(response.data);
-        });
-    },
-    loadUserSettings() {
-      this.resetUserInfo();
-      this.resetClubInfo();
-      this.resetSettings();
-    },
-    selectCurrentClub(id) {
-      this.$store.commit("setClubId", id);
-    },
-    saveSettings() {
-      if (!this.tracking) {
-        window._paq.push(["forgetConsentGiven"]);
-        this.$cookie.delete("mtm_consent");
-      } else {
-        window._paq.push(["rememberConsentGiven"]);
-      }
-      MessagingService.showSuccess(
-        this.$t("accountView.settings-saved"),
-        this.$t("editView.gespeichert")
-      );
-    },
-    resetSettings() {
-      this.tracking = Boolean(this.$cookie.get("mtm_consent"));
-    },
-    submitProfilePicture() {
-      this.newProfilePicture = this.$refs.profilePictureFile.files[0];
-      this.profilePictureDeletion = false;
-    },
-    submitClubLogo() {
-      this.newClubLogo =
-        this.$refs[`clubLogoFile-${this.currentClub.id}`][0].files[0];
-      this.clubLogoDeletion = false;
-    },
-    hoverProfilePicture(isHovered) {
-      this.profilePictureIsHovered = isHovered;
-    },
-    hoverClubLogo(isHovered) {
-      this.clubLogoIsHovered = isHovered;
-    },
-    saveUserInfo() {
-      const queries = [];
-      if (this.profilePictureDeletion) {
-        queries.push(AuthService.deleteProfilePicture());
-      } else if (this.newProfilePicture)
-        queries.push(AuthService.updateProfilePicture(this.newProfilePicture));
-
-      queries.push(AuthService.updateUserInfo(this.username, this.email));
-
-      Promise.all(queries)
-        .then(() => {
-          this.init();
-
-          log("Your user information was saved!");
-          MessagingService.showSuccess(
-            this.$t("accountView.deine-nutzerinformationen-wurden-gespeichert"),
-            this.$t("editView.gespeichert")
-          );
-        })
-        .catch((e) => {
-          error(e, ERROR_CODES.USER_UPDATE_FAILED);
-          MessagingService.showError(
-            this.$t("accountView.unbekannter-fehler"),
-            this.$t("accountView.das-hat-nicht-funktioniert")
-          );
-        });
-    },
-    resetUserInfo() {
-      this.newProfilePicture = null;
-      this.profilePictureDeletion = false;
-      this.username = this.user?.username;
-      this.email = this.user?.email;
-    },
-    saveClubInfo() {
-      const queries = [];
-      if (this.clubLogoDeletion) {
-        queries.push(ClubService.deleteClubLogo(this.currentClub.id));
-      } else if (this.newClubLogo) {
-        queries.push(
-          ClubService.updateClubLogo(this.currentClub.id, this.newClubLogo)
-        );
-      }
-      queries.push(
-        ClubService.update(this.currentClub.id, {
-          name: this.clubName,
-        })
-      );
-
-      Promise.all(queries)
-        .then(() => {
-          this.init();
-
-          log("Your club information was saved!");
-          MessagingService.showSuccess(
-            this.$t(
-              "accountView.deine-vereinsinformationen-wurden-gespeichert"
-            ),
-            this.$t("editView.gespeichert")
-          );
-        })
-        .catch((e) => {
-          error(e, ERROR_CODES.CLUB_UPDATE_FAILED);
-          MessagingService.showError(
-            this.$t("accountView.unbekannter-fehler"),
-            this.$t("accountView.das-hat-nicht-funktioniert")
-          );
-        });
-    },
-    resetClubInfo() {
-      this.clubName = this.user?.Clubs[this.clubTabIndex]?.name;
-      this.clubLogoDeletion = false;
-      this.newClubLogo = null;
-      this.loadClubLogo();
-    },
-    onClubReset(event) {
-      event.preventDefault();
-      this.resetClubInfo();
-    },
-    onClubSave(event) {
-      event.preventDefault();
-      this.saveClubInfo();
-    },
-    resendEmailConfirmationLink() {
-      return AuthService.resendEmailConfirmationLink().then(() => {
-        log("An email was sent with a link to confirm your email address.");
-        MessagingService.showSuccess(
-          this.$t(
-            "accountView.die-e-mail-zur-bestaetigung-deiner-e-mail-adresse-wurde-erneut-verschickt-check-dein-postfach"
-          ),
-          this.$t("accountView.e-mail-versandt")
-        );
-      });
-    },
-  },
-  watch: {
-    clubTabIndex() {
-      this.resetClubInfo();
-    },
-  },
   computed: {
+    trackingConsent() {
+      return Boolean(Cookies.get("mtm_consent"));
+    },
     newProfilePictureBlob() {
       if (this.profilePictureDeletion) return null;
       return this.newProfilePicture
@@ -1006,41 +827,232 @@ export default {
       return null;
     },
   },
-  metaInfo() {
-    return {
-      title: this.$t("konto"),
+  watch: {
+    clubTabIndex() {
+      this.resetClubInfo();
+    },
+  },
+  mounted() {
+    this.profilePictureElement = this.$refs.profilePictureUploadRef;
+    this.clubLogoElement = this.$refs.clubLogoUploadRef;
+
+    if (this.profilePictureElement) {
+      const profilePictureIsHovered = useElementHover(
+        this.profilePictureElement
+      );
+      this.$root.profilePictureIsHovered = profilePictureIsHovered;
+    }
+    if (this.clubLogoElement) {
+      const clubLogoIsHovered = useElementHover(this.clubLogoElement);
+      this.$root.clubLogoIsHovered = clubLogoIsHovered;
+    }
+
+    useHead({
+      title: `${this.t("konto")} - ${this.t("general.ChoreoPlaner")} | ${this.t("meta.defaults.title")}`,
+      titleTemplate: null,
       meta: [
         {
           vmid: "description",
           name: "description",
-          content: this.$t("meta.account.description"),
+          content: this.t("meta.account.description"),
         },
         {
           vmid: "twitter:description",
           name: "twitter:description",
-          content: this.$t("meta.account.description"),
+          content: this.t("meta.account.description"),
         },
         {
           vmid: "og:description",
           property: "og:description",
-          content: this.$t("meta.account.description"),
+          content: this.t("meta.account.description"),
         },
         {
           vmid: "og:title",
           property: "og:title",
-          content: `${this.$t("konto")} - ${this.$t(
-            "general.ChoreoPlaner"
-          )} | ${this.$t("meta.defaults.title")}`,
+          content: `${this.t("konto")} - ${this.t("general.ChoreoPlaner")} | ${this.t("meta.defaults.title")}`,
         },
         {
           vmid: "twitter:title",
           name: "twitter:title",
-          content: `${this.$t("konto")} - ${this.$t(
-            "general.ChoreoPlaner"
-          )} | ${this.$t("meta.defaults.title")}`,
+          content: `${this.t("konto")} - ${this.t("general.ChoreoPlaner")} | ${this.t("meta.defaults.title")}`,
         },
       ],
-    };
+    });
+
+    this.loading = true;
+    this.init().then(() => {
+      this.loading = false;
+      if (this.$store.state.clubId) {
+        this.clubTabIndex = this.user.Clubs.indexOf(
+          this.user.Clubs.find((club) => club.id == this.$store.state.clubId)
+        );
+      }
+    });
+  },
+  methods: {
+    toTimeAgo,
+    init() {
+      return AuthService.getUserInfo()
+        .then((user) => {
+          this.user = user;
+          this.loadUserSettings();
+          this.loadProfileImage();
+        })
+        .catch(() => {
+          error("Cannot get user info", ERROR_CODES.USER_INFO_QUERY_FAILED);
+          MessagingService.showError(
+            this.$t("accountView.unbekannter-fehler"),
+            this.$t("accountView.das-hat-nicht-funktioniert")
+          );
+        });
+    },
+    loadProfileImage() {
+      if (this.user?.profilePictureExtension == null)
+        this.currentProfilePictureBlob = null;
+      else
+        AuthService.getProfileImage(
+          this.user.id,
+          this.user.profilePictureExtension
+        ).then((response) => {
+          this.currentProfilePictureBlob = URL.createObjectURL(response.data);
+        });
+    },
+    loadClubLogo() {
+      if (this.currentClub?.logoExtension == null)
+        this.currentClubLogoBlob = null;
+      else
+        ClubService.getClubLogo(
+          this.currentClub.id,
+          this.currentClub.logoExtension
+        ).then((response) => {
+          this.currentClubLogoBlob = URL.createObjectURL(response.data);
+        });
+    },
+    loadUserSettings() {
+      this.resetUserInfo();
+      this.resetClubInfo();
+      this.resetSettings();
+    },
+    selectCurrentClub(id) {
+      this.$store.commit("setClubId", id);
+    },
+    saveSettings() {
+      if (!this.tracking) {
+        window._paq.push(["forgetConsentGiven"]);
+        Cookies.remove("mtm_consent");
+      } else {
+        window._paq.push(["rememberConsentGiven"]);
+      }
+      MessagingService.showSuccess(
+        this.$t("accountView.settings-saved"),
+        this.$t("editView.gespeichert")
+      );
+    },
+    resetSettings() {
+      this.tracking = Boolean(Cookies.get("mtm_consent"));
+    },
+    submitProfilePicture() {
+      this.newProfilePicture = this.$refs.profilePictureFile.files[0];
+      this.profilePictureDeletion = false;
+    },
+    submitClubLogo(clubId) {
+      this.newClubLogo = this.$refs[`clubLogoFile-${clubId}`][0].files[0];
+      this.clubLogoDeletion = false;
+    },
+    saveUserInfo() {
+      const queries = [];
+      if (this.profilePictureDeletion) {
+        queries.push(AuthService.deleteProfilePicture());
+      } else if (this.newProfilePicture)
+        queries.push(AuthService.updateProfilePicture(this.newProfilePicture));
+
+      queries.push(AuthService.updateUserInfo(this.username, this.email));
+
+      Promise.all(queries)
+        .then(() => {
+          this.init();
+
+          log("Your user information was saved!");
+          MessagingService.showSuccess(
+            this.$t("accountView.deine-nutzerinformationen-wurden-gespeichert"),
+            this.$t("editView.gespeichert")
+          );
+        })
+        .catch((e) => {
+          error(e, ERROR_CODES.USER_UPDATE_FAILED);
+          MessagingService.showError(
+            this.$t("accountView.unbekannter-fehler"),
+            this.$t("accountView.das-hat-nicht-funktioniert")
+          );
+        });
+    },
+    resetUserInfo() {
+      this.newProfilePicture = null;
+      this.profilePictureDeletion = false;
+      this.username = this.user?.username;
+      this.email = this.user?.email;
+    },
+    saveClubInfo() {
+      const queries = [];
+      if (this.clubLogoDeletion) {
+        queries.push(ClubService.deleteClubLogo(this.currentClub.id));
+      } else if (this.newClubLogo) {
+        queries.push(
+          ClubService.updateClubLogo(this.currentClub.id, this.newClubLogo)
+        );
+      }
+      queries.push(
+        ClubService.update(this.currentClub.id, {
+          name: this.clubName,
+        })
+      );
+
+      Promise.all(queries)
+        .then(() => {
+          this.init();
+
+          log("Your club information was saved!");
+          MessagingService.showSuccess(
+            this.$t(
+              "accountView.deine-vereinsinformationen-wurden-gespeichert"
+            ),
+            this.$t("editView.gespeichert")
+          );
+        })
+        .catch((e) => {
+          error(e, ERROR_CODES.CLUB_UPDATE_FAILED);
+          MessagingService.showError(
+            this.$t("accountView.unbekannter-fehler"),
+            this.$t("accountView.das-hat-nicht-funktioniert")
+          );
+        });
+    },
+    resetClubInfo() {
+      this.clubName = this.user?.Clubs[this.clubTabIndex]?.name;
+      this.clubLogoDeletion = false;
+      this.newClubLogo = null;
+      this.loadClubLogo();
+    },
+    onClubReset() {
+      this.resetClubInfo();
+    },
+    onClubSave() {
+      this.saveClubInfo();
+    },
+    resendEmailConfirmationLink() {
+      return AuthService.resendEmailConfirmationLink().then(() => {
+        log("An email was sent with a link to confirm your email address.");
+        MessagingService.showSuccess(
+          this.$t(
+            "accountView.die-e-mail-zur-bestaetigung-deiner-e-mail-adresse-wurde-erneut-verschickt-check-dein-postfach"
+          ),
+          this.$t("accountView.e-mail-versandt")
+        );
+      });
+    },
+    updateClubTabIndex(index) {
+      this.clubTabIndex = index;
+    },
   },
 };
 </script>

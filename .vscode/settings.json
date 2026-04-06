@@ -1,7 +1,9 @@
 {
-  "i18n-ally.localesPaths": ["app/src/i18n", "server/src/i18n"],
-  "i18n-ally.regex.key": ".*?",
-  "i18n-ally.sourceLanguage": "en",
-  "i18n-ally.keystyle": "nested",
-  "conventionalCommits.scopes": ["FE", "BE", "CI", "DOCS"]
+  "i18n-ally-next.localesPaths": ["app/src/i18n", "server/src/i18n"],
+  "i18n-ally-next.regex.key": ".*?",
+  "i18n-ally-next.sourceLanguage": "en",
+  "i18n-ally-next.displayLanguage": "en",
+  "i18n-ally-next.keystyle": "nested",
+  "conventionalCommits.scopes": ["FE", "BE", "CI", "DOCS", "AGENT"],
+  "i18n-ally.localesPaths": ["app/src/i18n", "server/src/i18n"]
 }

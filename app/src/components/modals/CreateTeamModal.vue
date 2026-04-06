@@ -1,54 +1,53 @@
 <template>
-  <b-modal
+  <BModal
     :id="`modal-newTeam-${id}`"
+    ref="modal"
     :title="$t('nav.neues-team')"
     centered
     @show="resetTeamModal"
     @ok="createTeam"
   >
-    <b-form>
-      <b-form-group
+    <BForm>
+      <BFormGroup
         :label="$t('name')"
         label-class="label-with-colon"
         :state="newTeamNameIsValid"
         :invalid-feedback="newTeamNameStateFeedback"
         :valid-feedback="$t('login.gueltig')"
       >
-        <b-form-input
+        <BFormInput
           v-model="newTeamName"
           :state="newTeamNameIsValid"
           required
           :placeholder="$t('modals.create-team.example-team-names')"
           autofocus
         />
-      </b-form-group>
-      <b-form-group
-        :label="$tc('season', 1)"
+      </BFormGroup>
+      <BFormGroup
+        :label="$t('season', 1)"
         label-class="label-with-colon"
         :state="seasonIsValid"
         :invalid-feedback="seasonStateFeedback"
       >
-        <b-form-select
+        <BFormSelect
           v-model="seasonId"
           :state="seasonIsValid"
           required
-          :options="this.seasonSelectOptions"
+          :options="seasonSelectOptions"
         />
-      </b-form-group>
-    </b-form>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button
-        @click="ok"
+      </BFormGroup>
+    </BForm>
+    <template #footer="{ ok, cancel }">
+      <BButton
         variant="success"
         :disabled="!newTeamNameIsValid || !seasonIsValid"
+        @click="ok"
       >
         {{ $t("erstellen") }}
-      </b-button>
-      <b-button @click="cancel" variant="danger">{{
-        $t("abbrechen")
-      }}</b-button>
+      </BButton>
+      <BButton variant="danger" @click="cancel">{{ $t("abbrechen") }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -79,45 +78,13 @@ import TeamService from "@/services/TeamService";
  */
 export default {
   name: "CreateTeamModal",
+  emits: ["teamCreated"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     newTeamName: null,
     seasons: [],
     seasonId: null,
   }),
-  mounted() {
-    this.load();
-  },
-  methods: {
-    open() {
-      this.load();
-      this.$bvModal.show(`modal-newTeam-${this.id}`);
-    },
-    load() {
-      SeasonService.getAll().then((seasons) => {
-        this.seasons = seasons.filter(
-          (s) => s.year == null || s.year <= new Date().getFullYear() + 1
-        );
-
-        let currentRelevantYear = new Date().getFullYear();
-        if (new Date().getMonth() <= 5) currentRelevantYear -= 1;
-        const relevantCurrentSeasons = this.seasons.filter(
-          (s) => s.year == currentRelevantYear
-        );
-        this.seasonId = relevantCurrentSeasons[0].id;
-      });
-    },
-    resetTeamModal() {
-      this.newTeamName = null;
-    },
-    createTeam() {
-      TeamService.create(
-        this.newTeamName,
-        this.$store.state.clubId,
-        this.seasonId
-      ).then((team) => this.$emit("teamCreated", team));
-    },
-  },
   computed: {
     newTeamNameIsValid() {
       return this.newTeamName != null && this.newTeamName.length >= 3;
@@ -155,6 +122,39 @@ export default {
       if (!this.seasons.map((s) => s.id).includes(this.seasonId))
         return this.$t("errors.unerwarteter-fehler");
       return null;
+    },
+  },
+  mounted() {
+    this.load();
+  },
+  methods: {
+    open() {
+      this.load();
+      this.$refs.modal.show();
+    },
+    load() {
+      SeasonService.getAll().then((seasons) => {
+        this.seasons = seasons.filter(
+          (s) => s.year == null || s.year <= new Date().getFullYear() + 1
+        );
+
+        let currentRelevantYear = new Date().getFullYear();
+        if (new Date().getMonth() <= 5) currentRelevantYear -= 1;
+        const relevantCurrentSeasons = this.seasons.filter(
+          (s) => s.year == currentRelevantYear
+        );
+        this.seasonId = relevantCurrentSeasons[0].id;
+      });
+    },
+    resetTeamModal() {
+      this.newTeamName = null;
+    },
+    createTeam() {
+      TeamService.create(
+        this.newTeamName,
+        this.$store.state.clubId,
+        this.seasonId
+      ).then((team) => this.$emit("teamCreated", team));
     },
   },
 };

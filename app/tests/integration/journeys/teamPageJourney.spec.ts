@@ -25,8 +25,11 @@ test("should display the info of all team members in table view", async ({}, tes
   );
 });
 
-test("should display the info of all team members in list view", async () => {
-  await teamPage.iCheckMemberDisplay(true);
+test("should display the info of all team members in list view", async ({}, testInfo) => {
+  await teamPage.iCheckMemberDisplay(
+    true,
+    Boolean(testInfo.project.use.isMobile)
+  );
 });
 
 test("should add a member to the team", async ({}, testInfo) => {

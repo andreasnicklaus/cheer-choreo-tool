@@ -1,18 +1,14 @@
-module.exports = {
+export default {
   presets: [
     [
-      "@vue/cli-plugin-babel/preset",
+      "@babel/preset-env",
       {
+        targets: {
+          browsers: ["> 1%", "last 2 versions", "not dead"],
+        },
         useBuiltIns: "entry",
         corejs: 3,
-        targets: {
-          browsers: ["chrome 58", "ie 11"],
-        },
       },
     ],
-  ],
-  plugins: [
-    "@babel/plugin-proposal-optional-chaining",
-    "@babel/plugin-proposal-nullish-coalescing-operator",
   ],
 };

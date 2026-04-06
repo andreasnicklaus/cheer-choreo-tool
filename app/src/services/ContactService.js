@@ -2,19 +2,22 @@ import i18n from "@/plugins/vue-i18n";
 import ax from "./RequestService";
 
 class ContactService {
-  messageSuffix = i18n.t(
+  messageSuffix = i18n.global.t(
     "services.ContactService.dear-choreo-planer-team",
-    i18n.locale
+    { locale: i18n.global.locale.value }
   );
 
   createMessageAppendix(username = null) {
     if (username)
-      return i18n.t(
+      return i18n.global.t(
         "services.ContactService.best-regards-username",
-        i18n.locale,
-        { username }
+        { username },
+        { locale: i18n.global.locale.value }
       );
-    else return i18n.t("services.ContactService.best-regards", i18n.locale);
+    else
+      return i18n.global.t("services.ContactService.best-regards", {
+        locale: i18n.global.locale.value,
+      });
   }
   sendContactMessage({ name, email, subject, message, category }) {
     return ax

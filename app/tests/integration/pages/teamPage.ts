@@ -23,19 +23,26 @@ export default class TeamPage extends TestPage {
     isMobile: Boolean = false
   ) {
     if (listView) {
-      const listButton = this.page.getByRole("button", { name: "list ul" });
+      const listButton = this.page
+        .getByRole("button")
+        .filter({ hasText: /^$/ })
+        .nth(isMobile ? 3 : 2);
       await this.iClickButton(listButton);
 
       return Promise.all(
         defaultMembers.map((member) =>
           Promise.all([
             expect(
-              this.page.getByText(`${member.name} (${member.nickname})`, {
-                exact: true,
-              })
+              this.page
+                .getByLabel("Season 30/31 ( 2)")
+                .getByText(`${member.name} (${member.nickname})`, {
+                  exact: true,
+                })
             ).toBeVisible(),
             expect(
-              this.page.getByText(member.abbreviation, { exact: true })
+              this.page
+                .getByLabel("Season 30/31 ( 2)")
+                .getByText(member.abbreviation, { exact: true })
             ).toBeVisible(),
           ])
         )
@@ -73,7 +80,7 @@ export default class TeamPage extends TestPage {
       abbreviation = "AA",
       nickname = "Newbie";
 
-    const addButton = this.page.getByRole("button", { name: "plus Add" });
+    const addButton = this.page.getByRole("button", { name: "Add" });
     await this.iClickButton(addButton);
 
     const saveButton = this.page.getByRole("button", { name: "Save" });
@@ -81,17 +88,19 @@ export default class TeamPage extends TestPage {
     await expect(saveButton).toBeDisabled();
 
     const nameInput = this.page.getByRole("textbox", {
-      name: "Name",
+      name: "Name:",
       exact: true,
     });
     await this.iFillInput(nameInput, name);
 
     await expect(saveButton).toBeEnabled();
 
-    const abbreviationInput = this.page.getByRole("textbox", { name: "NM" });
+    const abbreviationInput = this.page.getByRole("textbox", {
+      name: "Abbreviation:",
+    });
     await this.iFillInput(abbreviationInput, abbreviation);
 
-    const nicknameInput = this.page.getByRole("textbox", { name: "Nickname" });
+    const nicknameInput = this.page.getByRole("textbox", { name: "Nickname:" });
     await this.iFillInput(nicknameInput, nickname);
 
     await this.iClickButton(saveButton);
@@ -106,27 +115,29 @@ export default class TeamPage extends TestPage {
 
   async iImportMember() {
     const importMemberButton = this.page.getByRole("button", {
-      name: "box arrow in right Import",
+      name: "Import",
     });
     await this.iClickButton(importMemberButton);
 
-    const importButton = this.page.getByRole("button", {
-      name: "Import",
-      exact: true,
-    });
+    const importButton = this.page
+      .getByLabel("Import a team member")
+      .getByRole("button", {
+        name: "Import",
+        exact: true,
+      });
     await expect(importButton).toBeVisible();
     await expect(importButton).toBeDisabled();
 
     const teamSelect = this.page
-      .getByRole("group", { name: "Team" })
-      .getByRole("combobox");
+      .getByRole("dialog", { name: "Import a team member" })
+      .getByLabel("Team", { exact: true });
     await expect(teamSelect).toBeVisible();
     await teamSelect.selectOption(defaultTeams[1].id);
     await expect(teamSelect).toHaveValue(defaultTeams[1].id);
 
     const seasonSelect = this.page
-      .getByRole("group", { name: "Season" })
-      .getByRole("combobox");
+      .getByRole("dialog", { name: "Import a team member" })
+      .getByLabel("Season", { exact: true });
     await expect(seasonSelect).toBeVisible();
     await expect(seasonSelect).toHaveValue(
       defaultTeams[1].SeasonTeams[0].SeasonID
@@ -143,19 +154,25 @@ export default class TeamPage extends TestPage {
   }
 
   async iEditMember() {
-    const editButton = this.page.getByRole("button", { name: "pen" }).nth(1);
+    const editButton = this.page
+      .getByLabel("Season 30/31 ( 2)")
+      .getByRole("button")
+      .filter({ hasText: /^$/ })
+      .nth(0);
     await this.iClickButton(editButton);
 
     const nameInput = this.page.getByRole("textbox", {
-      name: "Name",
+      name: "Name:",
       exact: true,
     });
     await this.iFillInput(nameInput, "Edited Member");
 
-    const abbreviationInput = this.page.getByRole("textbox", { name: "EM" });
+    const abbreviationInput = this.page.getByRole("textbox", {
+      name: "Abbreviation:",
+    });
     await this.iFillInput(abbreviationInput, "EM");
 
-    const nicknameInput = this.page.getByRole("textbox", { name: "Nickname" });
+    const nicknameInput = this.page.getByRole("textbox", { name: "Nickname:" });
     await this.iFillInput(nicknameInput, "Edited");
 
     const saveButton = this.page.getByRole("button", { name: "Save" });
@@ -164,8 +181,10 @@ export default class TeamPage extends TestPage {
 
   async iDeleteMember() {
     const deleteButton = this.page
-      .getByRole("button", { name: "trash" })
-      .first();
+      .getByLabel("Season 30/31 ( 2)")
+      .getByRole("button")
+      .filter({ hasText: /^$/ })
+      .nth(1);
     await this.iClickButton(deleteButton);
 
     const confirmButton = this.page.getByRole("button", { name: "Delete" });
@@ -178,7 +197,7 @@ export default class TeamPage extends TestPage {
 
   async iSwitchSeason() {
     const seasonTab = this.page.getByRole("tab", {
-      name: `${defaultSeasons[1].name} ( person ${defaultSeasonTeams[1].Members.length})`,
+      name: `${defaultSeasons[1].name} ( ${defaultSeasonTeams[1].Members.length})`,
     });
     await expect(seasonTab).not.toHaveAttribute("aria-selected", "true");
     await this.iClickButton(seasonTab);
@@ -188,7 +207,7 @@ export default class TeamPage extends TestPage {
   async iSwitchTeam() {
     await expect(
       this.page
-        .getByRole("heading", { name: `Team ${defaultTeams[0].name} pen` })
+        .getByRole("heading", { name: `Team ${defaultTeams[0].name}` })
         .locator("b")
     ).toBeVisible();
 
@@ -204,34 +223,32 @@ export default class TeamPage extends TestPage {
 
     return expect(
       this.page
-        .getByRole("heading", { name: `Team ${defaultTeams[1].name} pen` })
+        .getByRole("heading", { name: `Team ${defaultTeams[1].name}` })
         .locator("b")
     ).toBeVisible();
   }
 
   async iEditTeam() {
     const editButton = this.page
-      .getByRole("heading", { name: `Team ${defaultTeams[0].name} pen` })
+      .getByRole("heading", { name: `Team ${defaultTeams[0].name}` })
       .getByRole("button");
     await this.iClickButton(editButton);
 
     const newTeamName = "Edited Team Name";
 
-    const nameInput = this.page.getByRole("textbox");
+    const nameInput = this.page.getByTestId("editHeading-input");
     await this.iFillInput(nameInput, newTeamName);
 
-    const saveButton = this.page.getByRole("button", { name: "check" });
+    const saveButton = this.page.getByTestId("approve-edit-button");
     await this.iClickButton(saveButton);
   }
 
   async iDeleteTeam() {
-    const openMenuButton = this.page.getByRole("button", {
-      name: "three dots vertical",
-    });
+    const openMenuButton = this.page.getByTestId("options-dropdown");
     await this.iClickButton(openMenuButton);
 
     const deleteButton = this.page.getByRole("menuitem", {
-      name: "trash Delete team",
+      name: "Delete team",
     });
     await this.iClickButton(deleteButton);
 
@@ -240,19 +257,17 @@ export default class TeamPage extends TestPage {
 
     return expect(
       this.page
-        .getByRole("heading", { name: `Team ${defaultTeams[1].name} pen` })
+        .getByRole("heading", { name: `Team ${defaultTeams[1].name}` })
         .locator("b")
     ).toBeVisible();
   }
 
   async iDeleteSeason() {
-    const openMenuButton = this.page.getByRole("button", {
-      name: "three dots vertical",
-    });
+    const openMenuButton = this.page.getByTestId("options-dropdown");
     await this.iClickButton(openMenuButton);
 
     const deleteButton = this.page.getByRole("menuitem", {
-      name: "trash Delete season",
+      name: "Delete season",
     });
     await this.iClickButton(deleteButton);
 

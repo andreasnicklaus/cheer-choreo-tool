@@ -1,7 +1,8 @@
 import { debug, warn } from "@/utils/logging";
 import { UnleashClient } from "unleash-proxy-client";
+import env from "../utils/env";
 
-const FEATURE_FLAG_API_KEY = process.env.VUE_APP_FEATURE_FLAG_API_KEY;
+const FEATURE_FLAG_API_KEY = env.VITE_FEATURE_FLAG_API_KEY;
 
 const unleash = new UnleashClient({
   url: "https://features.choreo-planer.de/api/frontend",

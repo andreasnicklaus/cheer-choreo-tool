@@ -1,24 +1,25 @@
 <template>
-  <b-modal
+  <BModal
     :id="`loading-modal-${id}`"
+    ref="modal"
     centered
     no-close-on-backdrop
     no-close-on-esc
-    hide-footer
-    hide-header
+    no-footer
+    no-header
     @close="(event) => event.preventDefault()"
   >
-    <b-row align-h="center">
-      <b-col cols="auto" class="text-center my-5">
-        <b-spinner />
+    <BRow align-h="center">
+      <BCol cols="auto" class="text-center my-5">
+        <BSpinner />
         <p class="m-0">
           <slot>
-            {{ description }}
+            {{ description || $t("modals.loading.wird-geladen") }}
           </slot>
         </p>
-      </b-col>
-    </b-row>
-  </b-modal>
+      </BCol>
+    </BRow>
+  </BModal>
 </template>
 
 <script>
@@ -40,23 +41,21 @@
  */
 export default {
   name: "LoadingModal",
-  data: () => ({
-    id: (Math.random() + 1).toString(36).substring(7),
-  }),
   props: {
     description: {
       type: String,
-      default: function () {
-        return this.$t("modals.loading.wird-geladen");
-      },
+      default: null,
     },
   },
+  data: () => ({
+    id: (Math.random() + 1).toString(36).substring(7),
+  }),
   methods: {
     open() {
-      this.$bvModal.show(`loading-modal-${this.id}`);
+      this.$refs.modal?.show();
     },
     close() {
-      this.$bvModal.hide(`loading-modal-${this.id}`);
+      this.$refs.modal?.hide();
     },
   },
 };

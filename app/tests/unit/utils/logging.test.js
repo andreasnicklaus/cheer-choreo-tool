@@ -1,17 +1,24 @@
 import VersionService from "@/services/VersionService";
-import { debug, error, log, logWelcomeMessage, warn } from "@/utils/logging";
+import {
+  debug,
+  error,
+  log,
+  logRequest,
+  logWelcomeMessage,
+  warn,
+} from "@/utils/logging";
 import {
   test,
   expect,
   describe,
-  jest,
+  vi,
   beforeEach,
   afterEach,
   beforeAll,
-} from "@jest/globals";
+} from "vitest";
 import { Logtail } from "@logtail/browser";
 
-jest.mock("@logtail/browser");
+vi.mock("@logtail/browser");
 
 describe("logging", () => {
   let consoleDebug;
@@ -19,18 +26,20 @@ describe("logging", () => {
   let consoleWarn;
   let consoleError;
   let consoleImage;
+  let versionServiceSpy;
 
   beforeAll(() => {});
 
   beforeEach(() => {
-    consoleDebug = jest.spyOn(console, "debug").mockImplementation(() => {});
-    consoleLog = jest.spyOn(console, "log").mockImplementation(() => {});
-    consoleWarn = jest.spyOn(console, "warn").mockImplementation(() => {});
-    consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
-    consoleImage = jest.spyOn(console, "image").mockImplementation(() => {});
-    jest
+    consoleDebug = vi.spyOn(console, "debug").mockImplementation(() => {});
+    consoleLog = vi.spyOn(console, "log").mockImplementation(() => {});
+    consoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    consoleImage = vi.spyOn(console, "image").mockImplementation(() => {});
+    versionServiceSpy = vi
       .spyOn(VersionService, "getServerVersion")
       .mockImplementation(() => "test");
+
     Logtail.mockClear();
   });
   afterEach(() => {
@@ -39,6 +48,7 @@ describe("logging", () => {
     consoleWarn.mockReset();
     consoleError.mockReset();
     consoleImage.mockReset();
+    versionServiceSpy.mockReset();
   });
   test("console.log is called thrice in welcome message", async () => {
     await logWelcomeMessage();
@@ -63,5 +73,12 @@ describe("logging", () => {
   test("console.error is called in warn function", async () => {
     error();
     expect(consoleError).toHaveBeenCalledTimes(1);
+  });
+
+  test("logRequest logs correct success message", () => {
+    logRequest(200, 150, "/test-endpoint");
+    expect(consoleDebug).toHaveBeenCalledWith(
+      "/test-endpoint responded with status 200 in 150 ms"
+    );
   });
 });

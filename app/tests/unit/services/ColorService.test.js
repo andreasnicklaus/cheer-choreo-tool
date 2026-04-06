@@ -1,19 +1,17 @@
 import ColorService from "@/services/ColorService";
-import { test, expect, jest, beforeEach } from "@jest/globals";
+import { test, expect, vi, beforeEach, afterEach, describe } from "vitest";
 
-import { afterEach, describe } from "node:test";
-
-describe("ChoreoService", () => {
+describe("ColorService", () => {
   describe("getRandom", () => {
     beforeEach(() => {
-      jest.spyOn(global.Math, "random").mockReturnValue(0);
-    });
+      vi.spyOn(global.Math, "random").mockReturnValue(0);
+      beforeEach(() => {
+        vi.spyOn(global.Math, "random").mockReturnValue(0);
+      });
 
-    afterEach(() => {
-      jest.spyOn(global.Math, "random").mockRestore();
-    });
-
-    test("should return a truly random color if no color is already used", () => {
+      afterEach(() => {
+        vi.restoreAllMocks();
+      });
       const result = ColorService.getRandom();
 
       expect(result).toBe("#FF8888");

@@ -1,8 +1,12 @@
 <template>
-  <b-modal
+  <BModal
     :id="`modal-newClub-${id}`"
+    ref="modal"
     :title="$t('modals.create-club.neuer-verein')"
     centered
+    :no-close-on-backdrop="preventClosing"
+    :no-close-on-esc="preventClosing"
+    :no-header-close="preventClosing"
     @show="resetClubModal"
     @ok="createAndSelectClub"
     @close="
@@ -10,36 +14,33 @@
         if (preventClosing) event.preventDefault();
       }
     "
-    :no-close-on-backdrop="preventClosing"
-    :no-close-on-esc="preventClosing"
-    :hide-header-close="preventClosing"
   >
-    <b-form>
-      <b-form-group
+    <BForm>
+      <BFormGroup
         :label="$t('modals.create-club.vereinsname')"
         label-class="label-with-colon"
         :state="newClubNameIsValid"
         :invalid-feedback="newClubNameStateFeedback"
         :valid-feedback="$t('login.gueltig')"
       >
-        <b-form-input
+        <BFormInput
           v-model="newClubName"
           :state="newClubNameIsValid"
           required
           :placeholder="$t('modals.create-club.example-team-names')"
           autofocus
         />
-      </b-form-group>
-    </b-form>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="success" :disabled="!newClubNameIsValid">
+      </BFormGroup>
+    </BForm>
+    <template #footer="{ ok, cancel }">
+      <BButton variant="success" :disabled="!newClubNameIsValid" @click="ok">
         {{ $t("erstellen") }}
-      </b-button>
-      <b-button v-if="!preventClosing" @click="cancel" variant="danger">
+      </BButton>
+      <BButton v-if="!preventClosing" variant="danger" @click="cancel">
         {{ $t("abbrechen") }}
-      </b-button>
+      </BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -71,33 +72,17 @@ import ClubService from "@/services/ClubService";
  */
 export default {
   name: "CreateClubModal",
-  data: () => ({
-    id: (Math.random() + 1).toString(36).substring(7),
-    newClubName: null,
-  }),
   props: {
     preventClosing: {
       type: Boolean,
       default: false,
     },
   },
-  methods: {
-    open() {
-      this.$bvModal.show(`modal-newClub-${this.id}`);
-    },
-    close() {
-      this.$bvModal.hide(`modal-newClub-${this.id}`);
-    },
-    resetClubModal() {
-      this.newClubName = null;
-    },
-    createAndSelectClub() {
-      ClubService.create(this.newClubName).then((club) => {
-        this.$store.commit("setClubId", club.id);
-        this.$emit("clubCreated", club);
-      });
-    },
-  },
+  emits: ["clubCreated"],
+  data: () => ({
+    id: (Math.random() + 1).toString(36).substring(7),
+    newClubName: null,
+  }),
   computed: {
     newClubNameIsValid() {
       return this.newClubName != null && this.newClubName.length >= 3;
@@ -107,6 +92,23 @@ export default {
       if (this.newClubName.length < 3)
         return this.$t("modals.create-club.min-vereinsname-length");
       return null;
+    },
+  },
+  methods: {
+    open() {
+      this.$refs.modal.show();
+    },
+    close() {
+      this.$refs.modal.hide();
+    },
+    resetClubModal() {
+      this.newClubName = null;
+    },
+    createAndSelectClub() {
+      ClubService.create(this.newClubName).then((club) => {
+        this.$store.commit("setClubId", club.id);
+        this.$emit("clubCreated", club);
+      });
     },
   },
 };

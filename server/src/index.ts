@@ -54,19 +54,31 @@ const port = 3000;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
-const corsWhiteList = [process.env.FRONTEND_DOMAIN, "http://localhost:8080"];
+const corsWhiteList = [
+  process.env.FRONTEND_DOMAIN,
+  "http://localhost:8080",
+  "http://localhost:8081",
+  "http://localhost:8082",
+  "http://localhost:8083",
+];
 app.use(
   cors({
     origin: function (
       origin: string | undefined,
       callback: { (err: Error | null, allow?: boolean): void },
     ) {
-      if (corsWhiteList.indexOf(origin) !== -1) {
+      if (
+        !origin ||
+        corsWhiteList.includes(origin) ||
+        origin.includes("localhost")
+      ) {
         callback(null, true);
       } else {
         callback(null, false);
       }
     },
+    allowedHeaders: "*",
+    exposedHeaders: ["X-CSRF-Token"],
   }),
 );
 app.use(robots(__dirname + "/public/robots.txt"));

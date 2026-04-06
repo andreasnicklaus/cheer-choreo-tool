@@ -1,6 +1,7 @@
 <template>
-  <b-modal
+  <BModal
     :id="`comfirmEmailModal-${id}`"
+    ref="modal"
     :title="$t('modals.confirm-email.bestaetige-deine-e-mail-adresse')"
     centered
     :header-bg-variant="isError ? 'danger' : 'success'"
@@ -10,15 +11,15 @@
       {{ $t("modals.confirm-email.info-1") }}
     </p>
     <p>{{ $t("modals.confirm-email.info-2") }}</p>
-    <template #modal-footer="{ cancel }">
-      <b-button
-        @click="cancel"
+    <template #footer="{ cancel }">
+      <BButton
         :variant="isError ? 'outline-danger' : 'outline-success'"
+        @click="cancel"
       >
         {{ $t("feedback.schliessen") }}
-      </b-button>
+      </BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -39,7 +40,7 @@ export default {
   methods: {
     open(isError = false) {
       this.isError = isError;
-      this.$bvModal.show(`comfirmEmailModal-${this.id}`);
+      this.$refs.modal.show();
     },
   },
 };

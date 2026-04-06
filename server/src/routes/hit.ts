@@ -105,8 +105,8 @@ router.post(
   "/",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    const { name, count, choreoId, memberIds = [] } = req.body;
-    return HitService.create(name, count, choreoId, memberIds, req.UserId)
+    const { name, count, choreoId, MemberIds = [] } = req.body;
+    return HitService.create(name, count, choreoId, MemberIds, req.UserId)
       .then((hit: Hit | null) => {
         res.send(hit);
         return next();

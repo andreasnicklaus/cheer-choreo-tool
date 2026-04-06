@@ -24,7 +24,7 @@
     "als-aktiven-verein-auswaehlen": "Select as active club",
     "du-hast-diesen-verein-als-aktiven-verein-ausgewaehlt": "You selected this club as the active club.",
     "cant-delete-only-club": "You can't remove your only club! \nCreate another club first.",
-    "cant-delete-active-club": "You cannot delete your active club! \nFirst select another one first.",
+    "cant-delete-active-club": "You cannot delete your active club! \nFirst select another one.",
     "verein-loeschen": "Delete club",
     "deine-nutzerinformationen-wurden-gespeichert": "Your user information was saved!",
     "deine-vereinsinformationen-wurden-gespeichert": "Your club information was saved!",
@@ -92,7 +92,7 @@
     "weitergabe-von-daten-an-dritte-text": "Your data will not be sold, rented or otherwise passed on to third parties. There is no disclosure of data for commercial or non-commercial purposes."
   },
   "download": "Download",
-  "du-kannst-das-nicht-rueckgaengig-machen": "You can't undo that.",
+  "du-kannst-das-nicht-rueckgaengig-machen": "You can't undo that!",
   "du-kannst-diese-aktion-nicht-rueckgaengig-machen": "You cannot undo this action.",
   "e-mail-adresse": "E-mail address",
   "editView": {
@@ -151,7 +151,7 @@
     },
     "funktionen-and-features": "Features",
     "funktionen-wuenschen": {
-      "answer": "**Yes!** We look forward to any features that we can incorporate into the choreo planner. If you wish for a feature, please feel free to send us an email to [info@choreoplaner.de](mailto:info@choreo-planer.de) or a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner</a>. We will then consider whether we can implement this feature. If do, we will of course inform you about it.",
+      "answer": "**Yes!** We look forward to any features that we can incorporate into the choreo planner. If you wish for a feature, please feel free to send us an email to [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) or a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a>. We will then consider whether we can implement this feature. If we do, we will of course inform you about it.",
       "question": "Can I request features?"
     },
     "neue-season": {
@@ -160,15 +160,15 @@
     },
     "probleme-loesen": "Solving problems",
     "probleme-melden": {
-      "answer": "Problems can currently only be reported by email to [info@choreoplaner.de] (mailto: info@choreoplaner.de) or as a DM on Instagram to <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_ blank\">@choreoplaner</a>. A contact form is planned.",
+      "answer": "Problems can currently only be reported by email to [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) or as a DM on Instagram to <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a>. A contact form is planned.",
       "question": "How can I report problems?"
     },
     "versehentlich-geloescht": {
-      "answer": "Yes, but not yourself! You can contact us at any time. Then the following data can be restored: <ul class = \"ml-3\"> <li>User accounts</li> <li>Clubs</li> <li>Teams</li> <li>Seasons</li> <li>Choreos</li> <li>Rosters</li> </ul> Please describe in your contact by email to [info@choreoplaner.de](mailto: info@choreoplaner.de) or as a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_ blank\">@choreoplaner</a> the date and the time of deletion so that we can quickly solve your problem.",
+      "answer": "Yes, but not yourself! You can contact us at any time. Then the following data can be restored: <ul class = \"ms-3\"> <li>User accounts</li> <li>Clubs</li> <li>Teams</li> <li>Seasons</li> <li>Choreos</li> <li>Rosters</li> </ul> Please describe in your contact by email to [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) or as a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a> the date and the time of deletion so that we can quickly solve your problem.",
       "question": "I accidentally deleted something. Can I undo that?"
     },
     "warum-offline": {
-      "answer": "The choreo planner is a **free** project. Therefore, the servers may not always be reached. We have prepared a list of reasons why you cannot reach the servers:<ol class = \"ml-3\"><li> The servers are serviced by us. In this case you can't do anything except to wait and hope that we are finished quickly. If you would like to know when the servers can be reached again, you are welcome to send us an email to [info@choreoplaner.de](mailto:info@choreo-planer.de) or a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner</a>. </li><li> Our internet connection failed. Since there is no budget available to insure a fail-safe internet connection, it can happen that our internet connection fails. In this case you can't do anything except to wait and hope that we are finished quickly. If you would like to know when the servers can be reached again, you are welcome to send us an email to [info@choreoplaner.de](mailto:info@choreo-planer.de) or a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner</a>. </li><li> Your internet connection has failed. If you have already loaded our website, you can charge the website again without an internet connection, but you cannot charge new data. In this case, you can try to restore your internet connection. If you need help, you can't write us email, because you have no internet. </li></ol>If you would like to support the choreo planner, you can support us by articipating in project development or making a donation. We have not yet prepared a way for that, but we are working on it. If you would like to support us, you are welcome to send us an email to [info@choreoplaner.de](mailto:info@choreo-planer.de) or a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner </a>.",
+      "answer": "The choreo planner is a **free** project. Therefore, the servers may not always be reached. We have prepared a list of reasons why you cannot reach the servers:<ol class = \"ms-3\"><li>The servers are serviced by us. In this case you can't do anything except to wait and hope that we are finished quickly. If you would like to know when the servers can be reached again, you are welcome to send us an email to [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) or a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a>.</li><li>Our internet connection failed. Since there is no budget available to insure a fail-safe internet connection, it can happen that our internet connection fails. In this case you can't do anything except to wait and hope that we are finished quickly. If you would like to know when the servers can be reached again, you are welcome to send us an email to [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) or a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a>.</li><li>Your internet connection has failed. If you have already loaded our website, you can charge the website again without an internet connection, but you cannot charge new data. In this case, you can try to restore your internet connection. If you need help, you can't write us email, because you have no internet. </li></ol>If you would like to support the choreo planner, you can support us by participating in project development or making a donation. We have not yet prepared a way for that, but we are working on it. If you would like to support us, you are welcome to send us an email to [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) or a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a>.",
       "question": "Why can the server be offline?"
     },
     "was-ist-choreo-planer": {
@@ -208,7 +208,7 @@
     "offline": "Offline",
     "reject": "Reject",
     "accept": "Accept",
-    "contact-email": "info@choreo-planer.de"
+    "contact-email": "info{'@'}choreo-planer.de"
   },
   "HelpView": {
     "fuer-deine-suche-gibt-es-keine-ergebnisse": "There are no results for your search \"{searchTerm}\"",
@@ -390,7 +390,7 @@
   "login": {
     "benutzername-mindestens-laenge": "Your username must be at least 6 characters long.",
     "bitte-angeben": "Please enter",
-    "dein-online-zugang": "Your online access",
+    "dein-online-zugang": "Your access",
     "du-hast-noch-kein-konto": "You don't have an account yet?",
     "du-hast-schon-ein-konto": "You already have an account?",
     "echte-email": "Your email address must be a valid email address.",
@@ -452,7 +452,7 @@
       "description": "Export the lineups of your choreo as a video!"
     },
     "contact": {
-      "description": "Send a message to the ChoreoPlaner team for support or inquiries. Email us at info@choreo-planer.de."
+      "description": "Send a message to the ChoreoPlaner team for support or inquiries. Email us at info{'@'}choreo-planer.de."
     }
   },
   "modals": {
@@ -611,7 +611,7 @@
     },
     "reset-password": {
       "lost-password": "Request a login link",
-      "no-email-info": "Accounts without an email address can only be reset manually. Send an email to info@choreoplaner.de!",
+      "no-email-info": "Accounts without an email address can only be reset manually. Send an email to info{'@'}choreo-planer.de!",
       "email-info": "If your account is connected to an email address, you can have a login link sent to you via email, with which you can log in for 24 hours. You can then change your password on the profile page.",
       "login-link-schicken": "Send login link"
     },
@@ -830,7 +830,7 @@
     "current-locale": "Current Locale",
     "available-locales": "Available Locales",
     "warning": "%cAttention: %cThis console could be used to obtain information about your browser or device. Only give out information if you can independently verify that you are in contact with a representative of Choreo Planer.",
-    "welcome": "%cWelcome to Choreo Planner\n%cThank you for your commitment to choreo sports! You can use this console to find out some information about the application and your browser.\n\nHere are a few helpful links:\nChoreo Planner on IG:     https://www.instagram.com/choreoplaner\nGet help:                           https://www.choreo-planer.de/hilfe\nContact us:                       info@choreo-planer.de"
+    "welcome": "%cWelcome to Choreo Planner\n%cThank you for your commitment to choreo sports! You can use this console to find out some information about the application and your browser.\n\nHere are a few helpful links:\nChoreo Planner on IG:     https://www.instagram.com/choreoplaner\nGet help:                           https://www.choreo-planer.de/hilfe\nContact us:                       info{'@'}choreo-planer.de"
   },
   "contact": {
     "contact": "Contact",

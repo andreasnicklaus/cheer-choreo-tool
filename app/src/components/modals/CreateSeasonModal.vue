@@ -1,68 +1,68 @@
 <template>
-  <b-modal
+  <BModal
     :id="`modal-newSeason-${id}`"
+    ref="modal"
     :title="$t('modals.create-season.neue-season')"
     size="xl"
     scrollable
-    @show="reset"
     @ok="create"
   >
     <p class="text-muted">
       {{ $t("modals.create-season.team-team-name", [team?.name]) }}
     </p>
-    <b-tabs fill v-model="tabIndex">
-      <b-tab
+    <BTabs fill :index="tabIndex" @update:index="(i) => (tabIndex = i)">
+      <BTab
         :title="$t('modals.create-season.regulaere-season')"
         class="pt-2"
-        :disabled="this.seasonSelectOptions.length == 0"
+        :disabled="seasonSelectOptions.length == 0"
       >
-        <b-form>
-          <b-form-group
-            :label="$tc('season', 1)"
+        <BForm>
+          <BFormGroup
+            :label="$t('season', 1)"
             label-class="label-with-colon"
             :state="seasonIsValid"
             :invalid-feedback="seasonStateFeedback"
           >
-            <b-form-select
+            <BFormSelect
               v-model="seasonId"
               :state="seasonIsValid"
               required
-              :options="this.seasonSelectOptions"
+              :options="seasonSelectOptions"
             />
-          </b-form-group>
-        </b-form>
-      </b-tab>
-      <b-tab :title="$t('modals.create-season.extra-events')" class="pt-2">
-        <b-form>
-          <b-form-group
+          </BFormGroup>
+        </BForm>
+      </BTab>
+      <BTab :title="$t('modals.create-season.extra-events')" class="pt-2">
+        <BForm>
+          <BFormGroup
             :label="$t('modals.create-season.name-der-event-gruppe')"
             label-class="label-with-colon"
             :state="newSeasonNameIsValid"
             :invalid-feedback="newSeasonNameStateFeedback"
             :valid-feedback="$t('login.gueltig')"
           >
-            <b-form-input
+            <BFormInput
               v-model="newSeasonName"
               required
               :placeholder="$t('modals.create-season.example-event-name')"
               :state="newSeasonNameIsValid"
             />
-          </b-form-group>
-          <b-form-group
+          </BFormGroup>
+          <BFormGroup
             :label="$t('jahr')"
             label-class="label-with-colon"
             :state="newSeasonYearIsValid"
             :invalid-feedback="newSeasonYearStateFeedback"
             :valid-feedback="$t('login.gueltig')"
           >
-            <b-form-input
+            <BFormInput
               v-model="newSeasonYear"
               type="number"
               :placeholder="new Date().getFullYear().toString()"
               :state="newSeasonYearIsValid"
             />
-          </b-form-group>
-        </b-form>
+          </BFormGroup>
+        </BForm>
         <hr />
         <div class="text-muted">
           <p>
@@ -74,18 +74,18 @@
             {{ $t("modals.create-season.jahr-info") }}
           </p>
         </div>
-      </b-tab>
-    </b-tabs>
+      </BTab>
+    </BTabs>
 
     <hr />
 
-    <b-form-group
+    <BFormGroup
       :label="$t('modals.create-season.team-mitglieder')"
       label-class="label-with-colon"
       :state="newSeasonMembersIsValid"
       :invalid-feedback="newSeasonMembersStateFeedback"
     >
-      <b-form-select
+      <BFormSelect
         v-model="seasonToCopyMembersFromId"
         :options="[
           {
@@ -96,7 +96,7 @@
         ]"
         :state="newSeasonMembersIsValid"
       />
-      <b-checkbox-group
+      <BFormCheckboxGroup
         v-model="newSeasonMemberIds"
         :options="newMemberOptions"
         stacked
@@ -104,17 +104,15 @@
         class="mt-2"
         :state="newSeasonMembersIsValid"
       />
-    </b-form-group>
+    </BFormGroup>
 
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="success" :disabled="!inputIsValid">
+    <template #footer="{ ok, cancel }">
+      <BButton variant="success" :disabled="!inputIsValid" @click="ok">
         {{ $t("erstellen") }}
-      </b-button>
-      <b-button @click="cancel" variant="danger">{{
-        $t("abbrechen")
-      }}</b-button>
+      </BButton>
+      <BButton variant="danger" @click="cancel">{{ $t("abbrechen") }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -162,6 +160,13 @@ import SeasonTeamService from "@/services/SeasonTeamService";
  */
 export default {
   name: "CreateSeasonModal",
+  props: {
+    teams: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  emits: ["seasonTeamCreated"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     tabIndex: 0,
@@ -174,72 +179,6 @@ export default {
     seasonToCopyMembersFromId: null,
     newSeasonMemberIds: [],
   }),
-  props: {
-    teams: {
-      type: Array,
-    },
-  },
-  mounted() {
-    this.load();
-  },
-  methods: {
-    open(teamId) {
-      this.$bvModal.show(`modal-newSeason-${this.id}`);
-      this.teamId = teamId;
-      this.load();
-    },
-    load() {
-      SeasonService.getAll().then((seasons) => {
-        this.seasons = seasons.filter(
-          (s) =>
-            !this.team?.SeasonTeams.map((st) => st.Season.id).includes(s.id)
-        );
-        this.seasonsToCopy = seasons.filter((s) =>
-          this.team?.SeasonTeams.map((st) => st.Season.id).includes(s.id)
-        );
-        this.seasonToCopyMembersFromId = null;
-        this.newSeasonMemberIds = [];
-
-        if (this.seasons.length > 0) this.seasonId = this.seasons[0].id;
-
-        if (this.seasonSelectOptions.length == 0) this.tabIndex = 1;
-      });
-    },
-    reset() {
-      this.newSeasonName = null;
-      this.newSeasonYear = null;
-      this.seasonId = null;
-      this.teamId = null;
-      this.seasonToCopyMembersFromId = null;
-      this.newSeasonMemberIds = [];
-    },
-    create() {
-      if (this.tabIndex == 0)
-        SeasonTeamService.create(
-          this.team.id,
-          this.seasonId,
-          this.newSeasonMemberIds
-        ).then((seasonTeam) => {
-          this.$emit("seasonTeamCreated", seasonTeam);
-        });
-      else {
-        if (this.newSeasonYear == "") this.newSeasonYear = null;
-        else if (this.newSeasonYear != null)
-          this.newSeasonYear = parseInt(this.newSeasonYear);
-        SeasonService.create(this.newSeasonName, this.newSeasonYear).then(
-          (season) => {
-            SeasonTeamService.create(
-              this.team.id,
-              season.id,
-              this.newSeasonMemberIds
-            ).then((seasonTeam) => {
-              this.$emit("seasonTeamCreated", seasonTeam);
-            });
-          }
-        );
-      }
-    },
-  },
   computed: {
     team() {
       return this.teams.find((t) => t.id == this.teamId);
@@ -342,6 +281,72 @@ export default {
       if (this.newSeasonMemberIds.length == 0)
         return this.$t("modals.create-season.min-team-mitglied");
       return null;
+    },
+  },
+  mounted() {
+    this.load();
+  },
+  methods: {
+    open(teamId) {
+      this.reset();
+      this.teamId = teamId;
+      this.$refs.modal.show();
+      this.$nextTick(() => {
+        this.load();
+      });
+    },
+    load() {
+      if (!this.teamId) return;
+      SeasonService.getAll().then((seasons) => {
+        this.seasons = seasons.filter(
+          (s) =>
+            !this.team?.SeasonTeams.map((st) => st.Season.id).includes(s.id)
+        );
+        this.seasonsToCopy = seasons.filter((s) =>
+          this.team?.SeasonTeams.map((st) => st.Season.id).includes(s.id)
+        );
+        this.seasonToCopyMembersFromId = null;
+        this.newSeasonMemberIds = [];
+
+        if (this.seasons.length > 0) this.seasonId = this.seasons[0].id;
+      });
+    },
+    reset() {
+      this.tabIndex = 0;
+      this.newSeasonName = null;
+      this.newSeasonYear = null;
+      this.seasonId = null;
+      this.teamId = null;
+      this.seasonToCopyMembersFromId = null;
+      this.newSeasonMemberIds = [];
+      this.seasons = [];
+      this.seasonsToCopy = [];
+    },
+    create() {
+      if (this.tabIndex == 0)
+        SeasonTeamService.create(
+          this.team.id,
+          this.seasonId,
+          this.newSeasonMemberIds
+        ).then((seasonTeam) => {
+          this.$emit("seasonTeamCreated", seasonTeam);
+        });
+      else {
+        if (this.newSeasonYear == "") this.newSeasonYear = null;
+        else if (this.newSeasonYear != null)
+          this.newSeasonYear = parseInt(this.newSeasonYear);
+        SeasonService.create(this.newSeasonName, this.newSeasonYear).then(
+          (season) => {
+            SeasonTeamService.create(
+              this.team.id,
+              season.id,
+              this.newSeasonMemberIds
+            ).then((seasonTeam) => {
+              this.$emit("seasonTeamCreated", seasonTeam);
+            });
+          }
+        );
+      }
     },
   },
 };

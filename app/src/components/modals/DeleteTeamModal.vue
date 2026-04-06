@@ -1,19 +1,20 @@
 <template>
-  <b-modal
+  <BModal
     :id="`modal-deleteTeam-${id}`"
+    ref="modal"
     :title="$t('modals.delete-team.team-loeschen')"
     centered
-    @show="reset"
+    @hidden="reset"
     @ok="deleteTeam"
   >
     <p class="m-0">{{ $t("du-kannst-das-nicht-rueckgaengig-machen") }}</p>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="danger">{{ $t("loeschen") }}</b-button>
-      <b-button @click="cancel" variant="outline-secondary">
+    <template #footer="{ ok, cancel }">
+      <BButton variant="danger" @click="ok">{{ $t("loeschen") }}</BButton>
+      <BButton variant="outline-secondary" @click="cancel">
         {{ $t("abbrechen") }}
-      </b-button>
+      </BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -35,14 +36,15 @@ import TeamService from "@/services/TeamService";
  */
 export default {
   name: "DeleteTeamModal",
+  emits: ["teamDeleted"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     deleteTeamId: null,
   }),
   methods: {
     open(deleteTeamId) {
-      this.$bvModal.show(`modal-deleteTeam-${this.id}`);
       this.deleteTeamId = deleteTeamId;
+      this.$refs.modal.show();
     },
     reset() {
       this.deleteTeamId = null;

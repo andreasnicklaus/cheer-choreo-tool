@@ -1,15 +1,14 @@
-import { test, expect, beforeEach, jest } from "@jest/globals";
+import { describe, test, expect, beforeEach, vi } from "vitest";
 import LanguageService from "@/services/LanguageService";
-import { describe } from "node:test";
 import router from "@/router";
 
-jest.mock("@/router");
+vi.mock("@/router");
 
 describe("LanguageService", () => {
   beforeEach(() => {
     localStorage.clear();
     document.documentElement.lang = "";
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("setLanguage", () => {

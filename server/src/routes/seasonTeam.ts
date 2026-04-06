@@ -47,8 +47,8 @@ router.post(
   "/",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    const { teamId, seasonId, memberIds = [] } = req.body;
-    return SeasonTeamService.create(teamId, seasonId, memberIds, req.UserId)
+    const { teamId, seasonId, MemberIds = [] } = req.body;
+    return SeasonTeamService.create(teamId, seasonId, MemberIds, req.UserId)
       .then((seasonTeam: SeasonTeam | null) => {
         res.send(seasonTeam);
         return next();
@@ -99,10 +99,10 @@ router.put(
   "/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    const { memberIds } = req.body;
+    const { MemberIds } = req.body;
     return SeasonTeamService.copyMembersIntoSeasonTeam(
       req.params.id,
-      memberIds,
+      MemberIds,
       req.UserId,
     )
       .then((memberList) => {
