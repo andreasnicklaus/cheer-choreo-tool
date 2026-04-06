@@ -1,4 +1,4 @@
-import { describe, test, expect } from "@jest/globals";
+import { describe, expect, beforeAll, afterEach } from "@jest/globals";
 import UserService from "@/services/UserService";
 import User from "@/db/models/user";
 import MailService from "@/services/MailService";
@@ -202,5 +202,114 @@ describe("UserService", () => {
     });
     const result = await UserService.getLoggedInPercentage();
     expect(result).toEqual(50);
+  });
+
+  describe("getAll with deleted users", () => {
+    test("getAll excludes deleted users by default", async () => {
+      await User.create({ username: "active1", password: "password" });
+      await User.create({ username: "active2", password: "password" });
+      const deleted = await User.create({
+        username: "deleted1",
+        password: "password",
+      });
+      await deleted.destroy();
+
+      const result = await UserService.getAll();
+      expect(result.length).toBe(2);
+    });
+
+    test("getAll includes deleted users when includeDeleted is true", async () => {
+      await User.create({ username: "active1", password: "password" });
+      await User.create({ username: "active2", password: "password" });
+      const deleted = await User.create({
+        username: "deleted1",
+        password: "password",
+      });
+      await deleted.destroy();
+
+      const result = await UserService.getAll({ includeDeleted: true });
+      expect(result.length).toBe(3);
+    });
+
+    test("findByUsernameOrEmail does not return deleted users", async () => {
+      await User.create({ username: "activeUser", password: "password" });
+      const deleted = await User.create({
+        username: "deletedUser",
+        password: "password",
+      });
+      await deleted.destroy();
+
+      const result = await UserService.findByUsernameOrEmail("deletedUser");
+      expect(result).toBeNull();
+    });
+
+    test("findByUsernameOrEmail returns active users", async () => {
+      await User.create({ username: "activeUser", password: "password" });
+
+      const result = await UserService.findByUsernameOrEmail("activeUser");
+      expect(result).not.toBeNull();
+      expect(result?.username).toBe("activeUser");
+    });
+  });
+
+  describe("findDeletedByUsernameOrEmail", () => {
+    test("returns deleted user by username", async () => {
+      const deleted = await User.create({
+        username: "deletedUser",
+        password: "password",
+      });
+      await deleted.destroy();
+
+      const result =
+        await UserService.findDeletedByUsernameOrEmail("deletedUser");
+      expect(result).not.toBeNull();
+      expect(result?.username).toBe("deletedUser");
+    });
+
+    test("returns deleted user by email", async () => {
+      const deleted = await User.create({
+        username: "deletedUser",
+        email: "deleted@example.com",
+        password: "password",
+      });
+      await deleted.destroy();
+
+      const result = await UserService.findDeletedByUsernameOrEmail(
+        "deleted@example.com",
+      );
+      expect(result).not.toBeNull();
+      expect(result?.email).toBe("deleted@example.com");
+    });
+
+    test("returns null for active users", async () => {
+      await User.create({ username: "activeUser", password: "password" });
+
+      const result =
+        await UserService.findDeletedByUsernameOrEmail("activeUser");
+      expect(result).toBeNull();
+    });
+
+    test("returns null for non-existent users", async () => {
+      const result =
+        await UserService.findDeletedByUsernameOrEmail("nonExistent");
+      expect(result).toBeNull();
+    });
+
+    test("returns deleted user when given array of identifiers", async () => {
+      const deleted = await User.create({
+        username: "deletedUser",
+        email: "deleted@example.com",
+        password: "password",
+      });
+      await deleted.destroy();
+
+      const result = await UserService.findDeletedByUsernameOrEmail([
+        "otherUser",
+        "deleted@example.com",
+        "anotherUser",
+      ]);
+      expect(result).not.toBeNull();
+      expect(result?.email).toBe("deleted@example.com");
+    });
   });
 });

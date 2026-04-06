@@ -17,11 +17,28 @@ const roundToDecimals = require("../utils/numbers");
 class UserService {
   /**
    * Get all users.
+   * @param options - Options for the query.
+   * @param options.includeDeleted - Whether to include soft-deleted users. Defaults to false.
    * @returns {Promise<Array>} Array of user objects.
    */
-  async getAll() {
-    logger.debug(`UserService getAll`);
+  async getAll(options: { includeDeleted?: boolean } = {}) {
+    logger.debug(`UserService getAll ${JSON.stringify({ options })}`);
+    if (options.includeDeleted) {
+      return User.scope("includingDeleted").findAll();
+    }
     return User.findAll();
+  }
+
+  /**
+   * Find a deleted user by username or email.
+   * @param {string | string[]} identifiers - The username, email, or array of identifiers to search for.
+   * @returns {Promise<User | null>} The deleted user object or null if not found.
+   */
+  async findDeletedByUsernameOrEmail(identifiers: string | string[]) {
+    const user = await this.findByUsernameOrEmail(identifiers, {
+      scope: ["withPasswordHash", "includingDeleted"],
+    });
+    return user?.deletedAt ? user : null;
   }
 
   /**
@@ -36,25 +53,28 @@ class UserService {
 
   /**
    * Find a user by username or email.
-   * @param {string} usernameOrEmail - The username or email of the user.
+   * @param {string | string[]} identifier - The username, email, or array of identifiers to search for.
    * @param {Object} options - Additional options.
-   * @param {string} [options.scope="defaultScope"] - Scope for the query.
+   * @param {string | string[]} [options.scope="defaultScope"] - Scope for the query.
    * @returns {User} The user object.
    */
   async findByUsernameOrEmail(
-    usernameOrEmail: string,
-    { scope = "defaultScope" } = {},
+    identifier: string | string[],
+    { scope = "defaultScope" }: { scope?: string | string[] } = {},
   ) {
+    const identifiers = Array.isArray(identifier) ? identifier : [identifier];
     logger.debug(
       `UserService findByUsernameOrEmail ${JSON.stringify({
-        usernameOrEmail,
+        identifiers,
         scope,
       })}`,
     );
+    const conditions = identifiers.flatMap((id) => [
+      { username: id },
+      { email: id },
+    ]);
     return User.scope(scope).findOne({
-      where: {
-        [Op.or]: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
-      },
+      where: { [Op.or]: conditions },
     }); // njsscan-ignore: node_nosqli_injection
   }
 
@@ -202,6 +222,27 @@ class UserService {
       } else {
         logger.error(`No user found with ID ${id} when deleting`);
         throw new NotFoundError(`No user found with ID ${id} when deleting`);
+      }
+    });
+  }
+
+  /**
+   * Restore a soft-deleted user.
+   * @param {string} id - The ID of the user.
+   * @returns {Promise<void>} Resolves when the user is restored.
+   */
+  async restore(id: string) {
+    logger.debug(`UserService restore ${JSON.stringify({ id })}`);
+    return User.scope("includingDeleted").findByPk(id).then((foundUser) => {
+      if (foundUser) {
+        if (foundUser.deletedAt) {
+          return foundUser.restore();
+        }
+        logger.warn(`User with ID ${id} is not deleted`);
+        return;
+      } else {
+        logger.error(`No user found with ID ${id} when restoring`);
+        throw new NotFoundError(`No user found with ID ${id} when restoring`);
       }
     });
   }
