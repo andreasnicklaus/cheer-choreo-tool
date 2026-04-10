@@ -1,0 +1,170 @@
+import { NotFoundError } from "@/utils/errors";
+import User from "../db/models/user";
+import UserAccess, { AccessRole } from "../db/models/userAccess";
+
+const { logger } = require("../plugins/winston");
+
+/**
+ * Service for managing user access relationships.
+ * Handles CRUD operations for owner-child access permissions.
+ *
+ * @class UserAccessService
+ */
+class UserAccessService {
+  /**
+   * Find a user access relationship by owner and child IDs.
+   * @param {string} ownerId - The owner's user ID.
+   * @param {string} childId - The child's user ID.
+   * @returns {Promise<UserAccess | null>} The user access object or null if not found.
+   */
+  async findByOwnerAndChild(ownerId: string, childId: string) {
+    logger.debug(
+      `UserAccessService findByOwnerAndChild ${JSON.stringify({ ownerId, childId })}`,
+    );
+    return UserAccess.findOne({
+      where: { ownerUserId: ownerId, childUserId: childId },
+    });
+  }
+
+  /**
+   * Get all children for an owner.
+   * @param {string} ownerId - The owner's user ID.
+   * @returns {Promise<Array>} Array of user access objects.
+   */
+  async getChildren(ownerId: string) {
+    logger.debug(
+      `UserAccessService getChildren ${JSON.stringify({ ownerId })}`,
+    );
+    return UserAccess.findAll({
+      where: { ownerUserId: ownerId },
+      include: [{ model: User, as: "child" }],
+    });
+  }
+
+  /**
+   * Get all owners for a child.
+   * @param {string} childId - The child's user ID.
+   * @returns {Promise<Array>} Array of user access objects.
+   */
+  async getOwners(childId: string) {
+    logger.debug(`UserAccessService getOwners ${JSON.stringify({ childId })}`);
+    return UserAccess.findAll({
+      where: { childUserId: childId },
+      include: [{ model: User, as: "owner" }],
+    });
+  }
+
+  /**
+   * Create a new user access relationship.
+   * @param {string} ownerId - The owner's user ID.
+   * @param {string} childId - The child's user ID.
+   * @param {AccessRole} role - The access role.
+   * @param {boolean} enabled - Whether the access is enabled.
+   * @returns {Promise<UserAccess>} The created user access object.
+   */
+  async create(
+    ownerId: string,
+    childId: string,
+    role: AccessRole = AccessRole.ATHLETE,
+    enabled: boolean = true,
+  ) {
+    logger.debug(
+      `UserAccessService create ${JSON.stringify({ ownerId, childId, role, enabled })}`,
+    );
+
+    const existing = await UserAccess.findOne({
+      where: { ownerUserId: ownerId, childUserId: childId },
+    });
+
+    if (existing) {
+      throw new Error("User access relationship already exists");
+    }
+
+    return UserAccess.create({
+      ownerUserId: ownerId,
+      childUserId: childId,
+      role,
+      enabled,
+    });
+  }
+
+  /**
+   * Update an existing user access relationship.
+   * @param {string} id - The user access ID.
+   * @param {object} data - The data to update (role, enabled).
+   * @param {string} ownerId - The owner's user ID (for authorization).
+   * @returns {Promise<UserAccess>} The updated user access object.
+   */
+  async update(id: string, data: { role?: AccessRole; enabled?: boolean }, ownerId: string) {
+    logger.debug(
+      `UserAccessService update ${JSON.stringify({ id, data, ownerId })}`,
+    );
+
+    const access = await UserAccess.findOne({
+      where: { id, ownerUserId: ownerId },
+    });
+
+    if (!access) {
+      throw new NotFoundError(`User access with id ${id} not found`);
+    }
+
+    return access.update(data);
+  }
+
+  /**
+   * Remove a user access relationship.
+   * @param {string} id - The user access ID.
+   * @param {string} ownerId - The owner's user ID (for authorization).
+   * @returns {Promise<void>}
+   */
+  async remove(id: string, ownerId: string) {
+    logger.debug(`UserAccessService remove ${JSON.stringify({ id, ownerId })}`);
+
+    const access = await UserAccess.findOne({
+      where: { id, ownerUserId: ownerId },
+    });
+
+    if (!access) {
+      throw new NotFoundError(`User access with id ${id} not found`);
+    }
+
+    return access.destroy();
+  }
+
+  /**
+   * Find a user by username.
+   * @param {string} username - The username to search for.
+   * @returns {Promise<User | null>} The user object or null if not found.
+   */
+  async findByUsername(username: string) {
+    return User.findOne({ where: { username } });
+  }
+
+  /**
+   * Check if a user has access to another user's data.
+   * @param {string} ownerId - The owner's user ID.
+   * @param {string} childId - The child's user ID.
+   * @returns {Promise<boolean>} Whether the child has access.
+   */
+  async hasAccess(ownerId: string, childId: string) {
+    const access = await UserAccess.findOne({
+      where: { ownerUserId: ownerId, childUserId: childId, enabled: true },
+    });
+    return !!access;
+  }
+
+  /**
+   * Get the role for a child accessing owner's data.
+   * @param {string} ownerId - The owner's user ID.
+   * @param {string} childId - The child's user ID.
+   * @returns {Promise<AccessRole | null>} The role or null if no access.
+   */
+  async getRole(ownerId: string, childId: string) {
+    const access = await UserAccess.findOne({
+      where: { ownerUserId: ownerId, childUserId: childId, enabled: true },
+    });
+    return access?.role || null;
+  }
+}
+
+export default new UserAccessService();

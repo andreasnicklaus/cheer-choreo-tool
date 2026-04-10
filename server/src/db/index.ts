@@ -12,6 +12,7 @@ import Season from "./models/season";
 import SeasonTeam from "./models/seasonTeam";
 import Team from "./models/team";
 import User from "./models/user";
+import UserAccess from "./models/userAccess";
 import seed from "./seed";
 require("./models/admin");
 
@@ -120,6 +121,26 @@ User.hasMany(Feedback);
 
 NotificationModel.belongsTo(User);
 User.hasMany(NotificationModel);
+
+User.hasMany(UserAccess, {
+  as: "childAccess",
+  foreignKey: "childUserId",
+  onDelete: "CASCADE",
+});
+UserAccess.belongsTo(User, {
+  as: "child",
+  foreignKey: "childUserId",
+});
+
+User.hasMany(UserAccess, {
+  as: "ownerAccess",
+  foreignKey: "ownerUserId",
+  onDelete: "CASCADE",
+});
+UserAccess.belongsTo(User, {
+  as: "owner",
+  foreignKey: "ownerUserId",
+});
 
 const syncPromise = db
   .sync({

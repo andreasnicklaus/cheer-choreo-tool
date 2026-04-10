@@ -9,6 +9,8 @@ import NotificationService from "../services/NotificationService";
 import PositionService from "../services/PositionService";
 import TeamService from "../services/TeamService";
 import UserService from "../services/UserService";
+import UserAccessService from "../services/UserAccessService";
+import { AccessRole } from "./models/userAccess";
 import Choreo, { MatType } from "./models/choreo";
 import Club from "./models/club";
 import Lineup from "./models/lineup";
@@ -31,7 +33,7 @@ type userSeedData = {
   username: string;
   password: string;
   clubs: clubSeedData[];
-  notifications: notificationSeedData[];
+  notifications?: notificationSeedData[];
 };
 type clubSeedData = {
   name: string;
@@ -89,6 +91,13 @@ type notificationSeedData = {
   read?: boolean;
 };
 
+type userAccessSeedData = {
+  owner: string;
+  child: string;
+  role: string;
+  enabled: boolean;
+};
+
 type seedData = {
   users: userSeedData[];
   seasons: seasonSeedData[];
@@ -96,6 +105,7 @@ type seedData = {
     username: string;
     password: string;
   }[];
+  userAccess?: userAccessSeedData[];
 };
 
 async function seed() {
@@ -138,7 +148,7 @@ async function seed() {
               }),
             ),
             Promise.all(
-              u.notifications.map((n) =>
+              (u.notifications || []).map((n) =>
                 NotificationService.findOrCreate(
                   n.title,
                   n.message,
@@ -292,6 +302,25 @@ async function seed() {
         ),
       ),
     ),
+    data.userAccess
+      ? Promise.all(
+          data.userAccess.map(async (ua) => {
+            const owner = await UserAccessService.findByUsername(ua.owner);
+            const child = await UserAccessService.findByUsername(ua.child);
+            if (owner && child) {
+              const existing = await UserAccessService.findByOwnerAndChild(owner.id, child.id);
+              if (!existing) {
+                await UserAccessService.create(
+                  owner.id,
+                  child.id,
+                  ua.role as AccessRole,
+                  ua.enabled,
+                );
+              }
+            }
+          }),
+        )
+      : Promise.resolve(),
     Promise.all(adminPromises),
   ]);
 }
