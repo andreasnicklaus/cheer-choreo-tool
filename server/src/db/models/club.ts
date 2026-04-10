@@ -30,6 +30,12 @@ import db from "../db";
  *        logoExtension:
  *          type: string
  *          example: .png
+ *        creatorId:
+ *          type: string
+ *          format: uuid
+ *        updaterId:
+ *          type: string
+ *          format: uuid
  */
 
 /**
@@ -38,6 +44,8 @@ import db from "../db";
  * @property {string} name
  * @property {string} [logoExtension]
  * @property {UUID} UserId
+ * @property {UUID} creatorId
+ * @property {UUID} updaterId
  * @memberof module:Models
  */
 class Club extends Model<InferAttributes<Club>, InferCreationAttributes<Club>> {
@@ -51,6 +59,11 @@ class Club extends Model<InferAttributes<Club>, InferCreationAttributes<Club>> {
 
   declare User: NonAttribute<User>;
   declare UserId: ForeignKey<User["id"]>;
+  
+  declare creator: NonAttribute<User>;
+  declare updater: NonAttribute<User>;
+  declare creatorId: ForeignKey<User["id"]>;
+  declare updaterId: ForeignKey<User["id"]>;
 
   declare Teams: NonAttribute<Team[]>;
 
