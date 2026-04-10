@@ -7,6 +7,7 @@ const { logger } = require("../plugins/winston");
 /**
  * Service for managing user access relationships.
  * Handles CRUD operations for owner-child access permissions.
+ * A child can have access to multiple owners.
  *
  * @class UserAccessService
  */

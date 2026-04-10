@@ -2,14 +2,11 @@ import { NextFunction, Request, Response } from "express";
 import User from "../db/models/user";
 import Admin from "../db/models/admin";
 import UserService from "./UserService";
+import UserAccessService from "./UserAccessService";
 import MailService from "./MailService";
 import NotificationService from "./NotificationService";
 import AdminService from "./AdminService";
-import {
-  AuthorizationError,
-  FaultyInputError,
-  NotFoundError,
-} from "@/utils/errors";
+import { AuthorizationError, FaultyInputError, NotFoundError } from "@/utils/errors";
 
 const jwt = require("jsonwebtoken");
 const { logger } = require("../plugins/winston");
@@ -41,6 +38,10 @@ declare module "express-serve-static-core" {
   interface Request {
     UserId: string;
     User: User;
+    Owners: User[];
+    ownerIds: string[];
+    ActingUser: User;
+    actingUserId: string;
     AdminId: string;
     Admin: Admin;
     locale: string;
@@ -107,7 +108,7 @@ class AuthService {
           }
 
           User.findByPk(content.UserId)
-            .then((user: User | null) => {
+            .then(async (user: User | null) => {
               if (!user) {
                 if (!failIfNotLoggedIn) return next();
                 return res.status(403).send();
@@ -118,6 +119,21 @@ class AuthService {
               );
               req.UserId = user.id;
               req.User = user;
+              
+              const ownerAccess = await UserAccessService.getOwners(user.id);
+              
+              if (ownerAccess.length > 0) {
+                req.ownerIds = ownerAccess.map((oa) => oa.ownerUserId);
+                req.Owners = ownerAccess.map((oa) => oa.owner as User);
+                req.actingUserId = user.id;
+                req.ActingUser = user;
+              } else {
+                req.ownerIds = [user.id];
+                req.Owners = [user];
+                req.actingUserId = user.id;
+                req.ActingUser = user;
+              }
+              
               next();
             })
             .catch((e) => next(e));
