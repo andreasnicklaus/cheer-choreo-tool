@@ -118,9 +118,6 @@ class AuthService {
                 return res.status(403).send();
               }
 
-              logger.debug(
-                `User ${user.username} with id ${user.id} used this token: ${token}`,
-              );
               req.UserId = user.id;
               req.User = user;
               req.actingUserId = user.id;
@@ -135,6 +132,15 @@ class AuthService {
                 req.ownerIds = [user.id];
                 req.Owners = [user];
               }
+
+              logger.debug(
+                `User ${user.username} authenticated. Token: ${token}, ownerRoles: ${JSON.stringify(ownerAccess.map((oa) => ({
+                  ownerId: oa.ownerUserId,
+                  ownerUsername: oa.owner?.username,
+                  role: oa.role,
+                  enabled: oa.enabled,
+                })))}`,
+              );
 
               next();
             })
