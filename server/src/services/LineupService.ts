@@ -1,5 +1,10 @@
 import { NotFoundError } from "@/utils/errors";
 import Lineup from "../db/models/lineup";
+import {
+  checkReadAccess,
+  checkWriteAccess,
+  checkDeleteAccess,
+} from "../utils/accessControl";
 
 const { logger } = require("../plugins/winston");
 
@@ -14,107 +19,155 @@ class LineupService {
    * Create a new lineup.
    * @param {number} startCount - The start count of the lineup.
    * @param {number} endCount - The end count of the lineup.
-   * @param {string} ChoreoId - The choreography ID.
-   * @param {string} UserId - The user ID.
+   * @param {UUID} ChoreoId - The choreography ID.
+   * @param {UUID} ownerId - The owner ID.
+   * @param {UUID} actingUserId - The acting user ID.
    * @returns {Promise<Object>} The created lineup.
    */
   async create(
     startCount: number,
     endCount: number,
     ChoreoId: string,
-    UserId: string,
+    ownerId: string,
+    actingUserId: string,
+    isAdmin = false,
   ) {
     logger.debug(
       `LineupService create ${JSON.stringify({
         startCount,
         endCount,
         ChoreoId,
-        UserId,
+        ownerId,
+        actingUserId,
+        isAdmin,
       })}`,
     );
-    return Lineup.create({ startCount, endCount, ChoreoId, UserId });
+
+    await checkWriteAccess(ownerId, actingUserId, isAdmin);
+
+    return Lineup.create({
+      startCount,
+      endCount,
+      ChoreoId,
+      UserId: ownerId,
+      creatorId: actingUserId,
+      updaterId: actingUserId,
+    });
   }
 
   /**
    * Find or create a lineup.
    * @param {number} startCount - The start count of the lineup.
    * @param {number} endCount - The end count of the lineup.
-   * @param {string} ChoreoId - The choreography ID.
-   * @param {string} UserId - The user ID.
+   * @param {UUID} ChoreoId - The choreography ID.
+   * @param {UUID} ownerId - The owner ID.
+   * @param {UUID} actingUserId - The acting user ID.
    * @returns {Promise<Object>} The found or created lineup.
    */
   async findOrCreate(
     startCount: number,
     endCount: number,
     ChoreoId: string,
-    UserId: string,
+    ownerId: string,
+    actingUserId: string,
+    isAdmin = false,
   ) {
     logger.debug(
       `LineupService findOrCreate ${JSON.stringify({
         startCount,
         endCount,
         ChoreoId,
-        UserId,
+        ownerId,
+        actingUserId,
+        isAdmin,
       })}`,
     );
+
+    await checkWriteAccess(ownerId, actingUserId, isAdmin);
+
     const [lineup, _created] = await Lineup.findOrCreate({
-      where: { startCount, endCount, ChoreoId, UserId },
+      where: { startCount, endCount, ChoreoId, UserId: ownerId },
+      defaults: {
+        startCount,
+        endCount,
+        ChoreoId,
+        UserId: ownerId,
+        creatorId: actingUserId,
+        updaterId: actingUserId,
+      },
     });
     return lineup;
   }
 
   /**
    * Update a lineup.
-   * @param {string} id - The lineup ID.
+   * @param {UUID} id - The lineup ID.
    * @param {Object} data - The data to update.
-   * @param {string} UserId - The user ID.
+   * @param {UUID} actingUserId - The acting user ID.
    * @returns {Promise<Object>} The updated lineup.
    */
-  async update(id: string, data: object, UserId: string) {
+  async update(
+    id: string,
+    data: object,
+    actingUserId: string,
+    isAdmin = false,
+  ) {
     logger.debug(
-      `LineupService update ${JSON.stringify({ id, data, UserId })}`,
+      `LineupService update ${JSON.stringify({ id, data, actingUserId, isAdmin })}`,
     );
-    return Lineup.findOne({ where: { id, UserId } }) // njsscan-ignore: node_nosqli_injection
-      .then(async (foundLineup: Lineup | null) => {
-        if (foundLineup) {
-          await foundLineup.update(data);
-          await foundLineup.save();
-          return Lineup.findOne({
-            where: { id, UserId },
-            include: [
-              {
-                association: "Positions",
-                include: [
-                  {
-                    association: "Member",
-                  },
-                ],
-              },
-            ],
-          }); // njsscan-ignore: node_nosqli_injection
-        } else {
-          logger.error(`No lineup found with ID ${id} when updating`);
-          throw new NotFoundError(
-            `No lineup found with ID ${id} when updating`,
-          );
-        }
-      });
+
+    const lineup = await Lineup.findByPk(id);
+    if (!lineup) {
+      throw new NotFoundError(`No lineup found with ID ${id} when updating`);
+    }
+
+    await checkWriteAccess(lineup.UserId, actingUserId, isAdmin);
+
+    await lineup.update({
+      ...data,
+      updaterId: actingUserId,
+    });
+    await lineup.save();
+    return Lineup.findOne({
+      where: { id },
+      include: [
+        {
+          association: "Positions",
+          include: [
+            {
+              association: "Member",
+            },
+          ],
+        },
+      ],
+    }); // njsscan-ignore: node_nosqli_injection
   }
 
   /**
    * Find a lineup by ID.
-   * @param {string} id - The lineup ID.
-   * @param {string} UserId - The user ID.
+   * @param {UUID} id - The lineup ID.
+   * @param {UUID[]} ownerIds - Array of owner IDs the acting user has access to.
+   * @param {UUID} actingUserId - The acting user ID.
    * @returns {Promise<Object>} The found lineup.
    */
-  async findById(id: string, UserId: string) {
-    logger.debug(`LineupService findById ${JSON.stringify({ id, UserId })}`);
-    return Lineup.findOne({ where: { id, UserId } }); // njsscan-ignore: node_nosqli_injection
+  async findById(id: string, actingUserId: string, isAdmin = false) {
+    logger.debug(
+      `LineupService findById ${JSON.stringify({ id, actingUserId, isAdmin })}`,
+    );
+
+    const lineup = await Lineup.findByPk(id);
+    if (!lineup) {
+      return null;
+    }
+
+    await checkReadAccess(lineup.UserId, actingUserId, isAdmin);
+
+    return Lineup.findOne({ where: { id } }); // njsscan-ignore: node_nosqli_injection
   }
 
   /**
    * Get all lineups for a choreography.
-   * @param {string} ChoreoId - The choreography ID.
+   * @param {UUID} ChoreoId - The choreography ID.
    * @returns {Promise<Array>} List of lineups.
    */
   async findByChoreoId(ChoreoId: string) {
@@ -126,23 +179,23 @@ class LineupService {
 
   /**
    * Remove a lineup.
-   * @param {string} id - The lineup ID.
-   * @param {string} UserId - The user ID.
+   * @param {UUID} id - The lineup ID.
+   * @param {UUID} actingUserId - The acting user ID.
    * @returns {Promise<void>} Resolves when the lineup is removed.
    */
-  async remove(id: string, UserId: string) {
-    logger.debug(`LineupService remove ${JSON.stringify({ id, UserId })}`);
-    return Lineup.findOne({ where: { id, UserId } }) // njsscan-ignore: node_nosqli_injection
-      .then((foundLineup: Lineup | null) => {
-        if (foundLineup) {
-          return foundLineup.destroy();
-        } else {
-          logger.error(`No lineup found with ID ${id} when deleting`);
-          throw new NotFoundError(
-            `No lineup found with ID ${id} when deleting`,
-          );
-        }
-      });
+  async remove(id: string, actingUserId: string, isAdmin = false) {
+    logger.debug(
+      `LineupService remove ${JSON.stringify({ id, actingUserId, isAdmin })}`,
+    );
+
+    const lineup = await Lineup.findByPk(id);
+    if (!lineup) {
+      throw new NotFoundError(`No lineup found with ID ${id} when deleting`);
+    }
+
+    await checkDeleteAccess(lineup.UserId, actingUserId, isAdmin);
+
+    return lineup.destroy();
   }
 }
 

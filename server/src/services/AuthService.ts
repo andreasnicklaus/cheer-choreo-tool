@@ -6,7 +6,11 @@ import UserAccessService from "./UserAccessService";
 import MailService from "./MailService";
 import NotificationService from "./NotificationService";
 import AdminService from "./AdminService";
-import { AuthorizationError, FaultyInputError, NotFoundError } from "@/utils/errors";
+import {
+  AuthorizationError,
+  FaultyInputError,
+  NotFoundError,
+} from "@/utils/errors";
 
 const jwt = require("jsonwebtoken");
 const { logger } = require("../plugins/winston");
@@ -119,21 +123,19 @@ class AuthService {
               );
               req.UserId = user.id;
               req.User = user;
-              
+              req.actingUserId = user.id;
+              req.ActingUser = user;
+
               const ownerAccess = await UserAccessService.getOwners(user.id);
-              
+
               if (ownerAccess.length > 0) {
                 req.ownerIds = ownerAccess.map((oa) => oa.ownerUserId);
                 req.Owners = ownerAccess.map((oa) => oa.owner as User);
-                req.actingUserId = user.id;
-                req.ActingUser = user;
               } else {
                 req.ownerIds = [user.id];
                 req.Owners = [user];
-                req.actingUserId = user.id;
-                req.ActingUser = user;
               }
-              
+
               next();
             })
             .catch((e) => next(e));
@@ -167,7 +169,9 @@ class AuthService {
 
           const user = await UserService.findById(content.UserId);
           if (!user) {
-            const deletedUser = await UserService.findDeletedByUsernameOrEmail(content.UserId);
+            const deletedUser = await UserService.findDeletedByUsernameOrEmail(
+              content.UserId,
+            );
             if (deletedUser) {
               return reject(
                 new AuthorizationError(
@@ -207,7 +211,8 @@ class AuthService {
     return UserService.findByUsernameOrEmail(email).then(
       async (user: User | null) => {
         if (!user) {
-          const deletedUser = await UserService.findDeletedByUsernameOrEmail(email);
+          const deletedUser =
+            await UserService.findDeletedByUsernameOrEmail(email);
           if (deletedUser) {
             throw new AuthorizationError(
               i18n.__({ phrase: "errors.account-deleted", locale }),

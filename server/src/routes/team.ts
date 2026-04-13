@@ -49,7 +49,7 @@ router.get(
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.params.id)
-      return TeamService.findById(req.params.id, req.UserId)
+      return TeamService.findById(req.params.id, req.actingUserId)
         .then((team: Team | null) => {
           res.send(team);
           return next();
@@ -57,7 +57,11 @@ router.get(
         .catch((e: Error) => next(e));
     else {
       if (req.query.name)
-        return TeamService.findByName(req.query.name as string, req.UserId)
+        return TeamService.findByName(
+          req.query.name as string,
+          req.ownerIds,
+          req.actingUserId,
+        )
           .then((foundTeams: Team[]) => {
             if (!foundTeams) throw new NotFoundError();
             else res.send(foundTeams);
@@ -65,7 +69,7 @@ router.get(
           })
           .catch((e: Error) => next(e));
       else
-        return TeamService.getAll(req.UserId)
+        return TeamService.getAll(req.ownerIds, req.actingUserId)
           .then((foundTeams: Team[]) => {
             res.send(foundTeams);
             return next();
@@ -101,6 +105,8 @@ router.get(
  *                 type: string
  *               seasonId:
  *                 type: string
+ *               ownerId:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Team created successfully
@@ -115,8 +121,8 @@ router.post(
   "/",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    const { name, clubId, seasonId } = req.body;
-    return TeamService.create(name, clubId, seasonId, req.UserId)
+    const { name, clubId, seasonId, ownerId } = req.body;
+    return TeamService.create(name, clubId, seasonId, ownerId, req.actingUserId)
       .then((team: Team | null) => {
         if (!team) throw new Error("Unknown error: Team could not be created");
         NotificationService.createOne(
@@ -125,7 +131,7 @@ router.post(
             name,
             teamId: team.id,
           }),
-          req.UserId,
+          req.actingUserId,
         );
         res.send(team);
         return next();
@@ -171,7 +177,7 @@ router.put(
   "/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    return TeamService.update(req.params.id, req.body, req.UserId)
+    return TeamService.update(req.params.id, req.body, req.actingUserId)
       .then((team: Team) => {
         res.send(team);
         return next();
@@ -207,7 +213,7 @@ router.delete(
   "/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    return TeamService.remove(req.params.id, req.UserId)
+    return TeamService.remove(req.params.id, req.actingUserId)
       .then(() => {
         res.send();
         return next();

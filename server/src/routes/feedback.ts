@@ -46,7 +46,7 @@ router.post(
   AuthService.authenticateUser(false),
   (req: Request, res: Response, next: NextFunction) => {
     const { stars, text } = req.body;
-    const UserId = req.UserId;
+    const UserId = req.actingUserId;
     FeedbackService.create(stars, text, UserId)
       .then((feedback: Feedback) => {
         res.send(feedback);
@@ -81,12 +81,12 @@ router.get(
   "/",
   AuthService.authenticateUser(false),
   (req: Request, res: Response, next: NextFunction) => {
-    const UserId = req.UserId;
+    const UserId = req.actingUserId;
     if (!UserId) {
       res.send([]);
       return next();
     } else {
-      FeedbackService.getAll(UserId)
+      FeedbackService.getAll(req.ownerIds, req.actingUserId)
         .then((feedbackList: Feedback[]) => {
           res.send(feedbackList);
           return next();

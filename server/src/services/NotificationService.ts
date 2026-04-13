@@ -16,7 +16,7 @@ const roundToDecimals = require("../utils/numbers");
 class NotificationService {
   /**
    * Get all notifications for a user.
-   * @param {string} UserId - The user's UUID.
+   * @param {UUID} UserId - The user's UUID.
    * @param {Object} options - Options for fetching notifications.
    * @param {boolean} options.all - Whether to fetch all notifications.
    * @returns {Promise<Array>} List of notifications.
@@ -33,8 +33,8 @@ class NotificationService {
 
   /**
    * Find a notification by ID.
-   * @param {string} id - Notification ID.
-   * @param {string} UserId - The user's UUID.
+   * @param {UUID} id - Notification ID.
+   * @param {UUID} UserId - The user's UUID.
    * @returns {Promise<Object|null>} The notification object or null.
    */
   findById(id: string, UserId: string) {
@@ -65,7 +65,7 @@ class NotificationService {
    * Create a notification for a single user.
    * @param {string} title - Notification title.
    * @param {string} message - Notification message.
-   * @param {string} UserId - The user's UUID.
+   * @param {UUID} UserId - The user's UUID.
    * @returns {Promise<Object>} The created notification object.
    */
   createOne(title: string, message: string, UserId: string) {
@@ -87,7 +87,7 @@ class NotificationService {
    * Find or create a notification.
    * @param {string} title - Notification title.
    * @param {string} message - Notification message.
-   * @param {string} UserId - The user's UUID.
+   * @param {UUID} UserId - The user's UUID.
    * @returns {Promise<Object>} The notification object.
    */
   async findOrCreate(title: string, message: string, UserId: string) {
@@ -110,8 +110,8 @@ class NotificationService {
 
   /**
    * Mark a notification as read.
-   * @param {string} id - Notification ID.
-   * @param {string} UserId - The user's UUID.
+   * @param {UUID} id - Notification ID.
+   * @param {UUID} UserId - The user's UUID.
    * @returns {Promise<Object>} The updated notification object.
    */
   markRead(id: string, UserId: string) {
@@ -123,8 +123,8 @@ class NotificationService {
 
   /**
    * Mark a notification as unread.
-   * @param {string} id - Notification ID.
-   * @param {string} UserId - The user's UUID.
+   * @param {UUID} id - Notification ID.
+   * @param {UUID} UserId - The user's UUID.
    * @returns {Promise<Object>} The updated notification object.
    */
   markUnread(id: string, UserId: string) {
@@ -136,8 +136,8 @@ class NotificationService {
 
   /**
    * Update a notification.
-   * @param {string} id - Notification ID.
-   * @param {string} UserId - The user's UUID.
+   * @param {UUID} id - Notification ID.
+   * @param {UUID} UserId - The user's UUID.
    * @param {Object} data - Data to update.
    * @returns {Promise<Object>} The updated notification object.
    */
@@ -166,8 +166,8 @@ class NotificationService {
 
   /**
    * Remove a notification.
-   * @param {string} id - Notification ID.
-   * @param {string} UserId - The user's UUID.
+   * @param {UUID} id - Notification ID.
+   * @param {UUID} UserId - The user's UUID.
    * @param {Object} options - Options for removing notifications.
    * @param {boolean} options.all - Whether to remove all notifications.
    * @returns {Promise<void>} Resolves if notification removed.

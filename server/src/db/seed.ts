@@ -165,11 +165,16 @@ async function seed() {
           ]).then(([seasons, _notifications]) =>
             Promise.all(
               u.clubs.map((c) =>
-                ClubService.findOrCreate(c.name, user.id).then((club: Club) =>
-                  Promise.all(
-                    c.Teams.map((t) =>
-                      TeamService.findOrCreate(t.name, club.id, user.id).then(
-                        (team: Team) =>
+                ClubService.findOrCreate(c.name, user.id, user.id).then(
+                  (club: Club) =>
+                    Promise.all(
+                      c.Teams.map((t) =>
+                        TeamService.findOrCreate(
+                          t.name,
+                          club.id,
+                          user.id,
+                          user.id,
+                        ).then((team: Team) =>
                           Promise.all(
                             t.SeasonTeams.map(async (st) =>
                               SeasonTeam.findOrCreate({
@@ -202,8 +207,8 @@ async function seed() {
                                         m.name,
                                         m.nickname,
                                         m.abbreviation,
-                                        // m.color,
                                         seasonTeam.id,
+                                        user.id,
                                         user.id,
                                       ),
                                     ),
@@ -216,6 +221,7 @@ async function seed() {
                                           ch.matType as MatType,
                                           seasonTeam.id,
                                           user.id,
+                                          user.id,
                                         ).then((choreo: Choreo) => {
                                           Promise.all([
                                             ...ch.Hits.map((h) =>
@@ -227,6 +233,7 @@ async function seed() {
                                                   (i) => members[i]?.id,
                                                 ),
                                                 user.id,
+                                                user.id,
                                               ),
                                             ),
                                             ...ch.Lineups.map((l) =>
@@ -234,6 +241,7 @@ async function seed() {
                                                 l.startCount,
                                                 l.endCount,
                                                 choreo.id,
+                                                user.id,
                                                 user.id,
                                               ).then((lineup: Lineup) =>
                                                 Promise.all(
@@ -256,6 +264,7 @@ async function seed() {
                                                       p.y,
                                                       lineup.id,
                                                       member.id,
+                                                      user.id,
                                                       user.id,
                                                     );
                                                   }),
@@ -282,6 +291,7 @@ async function seed() {
                                                   return participant.id;
                                                 })(),
                                                 user.id,
+                                                user.id,
                                               ),
                                             ),
                                           ]);
@@ -292,9 +302,9 @@ async function seed() {
                               ),
                             ),
                           ),
+                        ),
                       ),
                     ),
-                  ),
                 ),
               ),
             ),
@@ -308,7 +318,10 @@ async function seed() {
             const owner = await UserAccessService.findByUsername(ua.owner);
             const child = await UserAccessService.findByUsername(ua.child);
             if (owner && child) {
-              const existing = await UserAccessService.findByOwnerAndChild(owner.id, child.id);
+              const existing = await UserAccessService.findByOwnerAndChild(
+                owner.id,
+                child.id,
+              );
               if (!existing) {
                 await UserAccessService.create(
                   owner.id,

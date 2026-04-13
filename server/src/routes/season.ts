@@ -31,7 +31,7 @@ router.get(
   "/",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    return SeasonService.getAll(req.UserId)
+    return SeasonService.getAll(req.ownerIds || null, req.actingUserId)
       .then((seasonList: Season[]) => {
         res.send(seasonList);
         return next();
@@ -63,6 +63,8 @@ router.get(
  *                 type: string
  *               year:
  *                 type: integer
+ *               ownerId:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Season created successfully
@@ -77,8 +79,8 @@ router.post(
   "/",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    const { name, year } = req.body;
-    return SeasonService.create(name, year, req.UserId)
+    const { name, year, ownerId } = req.body;
+    return SeasonService.create(name, year, ownerId, req.actingUserId)
       .then((season: Season) => {
         res.send(season);
         return next();

@@ -27,7 +27,7 @@ class MailService {
   /**
    * Sends a notice to admin emails about a new user registration.
    * @param {string} username - The username of the new user.
-   * @param {string} userId - The ID of the new user.
+   * @param {UUID} userId - The ID of the new user.
    * @param {string} userEmail - The email of the new user.
    * @returns {Promise<void[]>} Resolves when all emails are sent.
    */
@@ -70,7 +70,7 @@ class MailService {
   /**
    * Sends a welcome email to a new user.
    * @param {string} username - The username of the new user.
-   * @param {string} userId - The ID of the new user.
+   * @param {UUID} userId - The ID of the new user.
    * @param {string} userEmail - The email of the new user.
    * @param {string} locale - The locale for the email content.
    * @returns {Promise<void>} Resolves when the email is sent.
@@ -112,7 +112,7 @@ class MailService {
   /**
    * Sends an email confirmation request to a user.
    * @param {string} username - The username of the user.
-   * @param {string} userId - The ID of the user.
+   * @param {UUID} userId - The ID of the user.
    * @param {string} userEmail - The email of the user.
    * @param {string} locale - The locale for the email content.
    * @returns {Promise<void>} Resolves when the email is sent.

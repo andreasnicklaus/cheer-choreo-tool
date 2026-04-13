@@ -1,5 +1,10 @@
 import { NotFoundError } from "@/utils/errors";
 import Season from "../db/models/season";
+import {
+  checkWriteAccess,
+  checkDeleteAccess,
+  filterAccessibleOwnerIds,
+} from "../utils/accessControl";
 
 const { Op } = require("sequelize");
 const { logger } = require("../plugins/winston");
@@ -13,18 +18,36 @@ const { logger } = require("../plugins/winston");
 class SeasonService {
   /**
    * Get all seasons for a user.
-   * @param {string} UserId - The user ID.
+   * @param {string[] | null} ownerIds - Array of owner IDs the acting user has access to.
+   * @param {UUID} actingUserId - The acting user ID.
    * @param {Object} options - Options for fetching seasons.
    * @param {boolean} options.all - Whether to fetch all seasons.
    * @returns {Promise<Array>} List of seasons.
    */
-  async getAll(UserId: string | null, options = { all: false }) {
-    logger.debug(`SeasonService getAll ${JSON.stringify({ UserId, options })}`);
-    if (UserId)
+  async getAll(
+    ownerIds: string[] | null,
+    actingUserId: string,
+    isAdmin = false,
+    options = { all: false },
+  ) {
+    logger.debug(
+      `SeasonService getAll ${JSON.stringify({ ownerIds, actingUserId, isAdmin, options })}`,
+    );
+
+    const accessibleOwnerIds =
+      ownerIds && ownerIds.length > 0
+        ? await filterAccessibleOwnerIds(ownerIds, actingUserId, isAdmin)
+        : [];
+
+    if (accessibleOwnerIds.length > 0)
       return Season.findAll({
         where: options.all
           ? {}
-          : { UserId: { [Op.or]: [UserId, { [Op.eq]: null }] } },
+          : {
+              UserId: {
+                [Op.or]: [{ [Op.in]: accessibleOwnerIds }, { [Op.eq]: null }],
+              },
+            },
         order: [["year", "DESC NULLS LAST"], "createdAt"],
       });
     else
@@ -60,25 +83,44 @@ class SeasonService {
    * Create a new season.
    * @param {string} name - Name of the season.
    * @param {number} year - Year of the season.
-   * @param {string} UserId - User ID associated with the season.
+   * @param {UUID} ownerId - Owner ID associated with the season.
+   * @param {UUID} actingUserId - The acting user ID.
+   * @param {boolean} [isAdmin=false]
    * @returns {Promise<Object>} Created season object.
    */
-  async create(name: string, year: number, UserId: string) {
+  async create(
+    name: string,
+    year: number,
+    ownerId: string,
+    actingUserId: string,
+    isAdmin = false,
+  ) {
     logger.debug(
       `SeasonService create ${JSON.stringify({
         name,
         year,
-        UserId,
+        ownerId,
+        actingUserId,
+        isAdmin,
       })}`,
     );
-    return Season.create({ name, year, UserId });
+
+    await checkWriteAccess(ownerId, actingUserId, isAdmin);
+
+    return Season.create({
+      name,
+      year,
+      UserId: ownerId,
+      creatorId: actingUserId,
+      updaterId: actingUserId,
+    });
   }
 
   /**
    * Update an existing season.
-   * @param {number} id - ID of the season to update.
+   * @param {UUID} id - ID of the season to update.
    * @param {Object} data - Data to update the season with.
-   * @param {string} UserId - User ID associated with the season.
+   * @param {UUID} actingUserId - The acting user ID.
    * @param {Object} options - Options for updating the season.
    * @param {boolean} options.all - Whether to update all seasons.
    * @returns {Promise<Object>} Updated season object.
@@ -87,52 +129,57 @@ class SeasonService {
   async update(
     id: string,
     data: object,
-    UserId: string | null,
+    actingUserId: string,
+    isAdmin = false,
     options = { all: false },
   ) {
     logger.debug(
-      `SeasonService update ${JSON.stringify({ id, data, UserId })}`,
+      `SeasonService update ${JSON.stringify({ id, data, actingUserId, isAdmin, options })}`,
     );
-    return Season.findOne({
-      where: options.all || !UserId ? { id } : { id, UserId },
-    }) // njsscan-ignore: node_nosqli_injection
-      .then(async (foundSeason) => {
-        if (foundSeason) {
-          await foundSeason.update(data);
-          return foundSeason.save();
-        } else {
-          logger.error(`No season found with ID ${id} when updating`);
-          throw new NotFoundError(
-            `No season found with ID ${id} when updating`,
-          );
-        }
-      });
+
+    const foundSeason = await Season.findByPk(id);
+    if (!foundSeason) {
+      logger.error(`No season found with ID ${id} when updating`);
+      throw new NotFoundError(`No season found with ID ${id} when updating`);
+    }
+
+    await checkWriteAccess(foundSeason.UserId, actingUserId, isAdmin);
+
+    await foundSeason.update({
+      ...data,
+      updaterId: actingUserId,
+    });
+    return foundSeason.save();
   }
 
   /**
    * Remove a season.
-   * @param {number} id - ID of the season to remove.
-   * @param {string} UserId - User ID associated with the season.
+   * @param {UUID} id - ID of the season to remove.
+   * @param {UUID} actingUserId - The acting user ID.
    * @param {Object} options - Options for removing the season.
    * @param {boolean} options.all - Whether to remove all seasons.
    * @returns {Promise<void>} Resolves when the season is removed.
    * @throws Will throw an error if the season is not found.
    */
-  async remove(id: string, UserId: string | null, options = { all: false }) {
-    logger.debug(`SeasonService remove ${JSON.stringify({ id, UserId })}`);
-    return Season.findOne({
-      where: options.all || !UserId ? { id } : { id, UserId },
-    }) // njsscan-ignore: node_nosqli_injection
-      .then((foundSeason) => {
-        if (foundSeason) {
-          return foundSeason.destroy();
-        } else {
-          logger.error(`No season found with ID ${id} when deleting`);
-          throw new NotFoundError(
-            `No season found with ID ${id} when deleting`,
-          );
-        }
-      });
+  async remove(
+    id: string,
+    actingUserId: string,
+    isAdmin = false,
+    options = { all: false },
+  ) {
+    logger.debug(
+      `SeasonService remove ${JSON.stringify({ id, actingUserId, isAdmin, options })}`,
+    );
+
+    const foundSeason = await Season.findByPk(id);
+    if (!foundSeason) {
+      logger.error(`No season found with ID ${id} when deleting`);
+      throw new NotFoundError(`No season found with ID ${id} when deleting`);
+    }
+
+    await checkDeleteAccess(foundSeason.UserId, actingUserId, isAdmin);
+
+    return foundSeason.destroy();
   }
 }
 

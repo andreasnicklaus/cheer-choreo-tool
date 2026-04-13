@@ -43,7 +43,7 @@ class UserService {
 
   /**
    * Get a user by ID.
-   * @param {string} id - The user's ID.
+   * @param {UUID} id - The user's ID.
    * @returns {Promise<Object>} The user object.
    */
   async findById(id: string) {
@@ -190,7 +190,7 @@ class UserService {
 
   /**
    * Update a user.
-   * @param {string} id - The ID of the user.
+   * @param {UUID} id - The ID of the user.
    * @param {Object} data - The data to update.
    * @returns {Promise<Object>} The updated user object.
    */
@@ -211,7 +211,7 @@ class UserService {
 
   /**
    * Remove a user.
-   * @param {string} id - The ID of the user.
+   * @param {UUID} id - The ID of the user.
    * @returns {Promise<void>} Resolves when the user is removed.
    */
   async remove(id: string) {
@@ -228,23 +228,25 @@ class UserService {
 
   /**
    * Restore a soft-deleted user.
-   * @param {string} id - The ID of the user.
+   * @param {UUID} id - The ID of the user.
    * @returns {Promise<void>} Resolves when the user is restored.
    */
   async restore(id: string) {
     logger.debug(`UserService restore ${JSON.stringify({ id })}`);
-    return User.scope("includingDeleted").findByPk(id).then((foundUser) => {
-      if (foundUser) {
-        if (foundUser.deletedAt) {
-          return foundUser.restore();
+    return User.scope("includingDeleted")
+      .findByPk(id)
+      .then((foundUser) => {
+        if (foundUser) {
+          if (foundUser.deletedAt) {
+            return foundUser.restore();
+          }
+          logger.warn(`User with ID ${id} is not deleted`);
+          return;
+        } else {
+          logger.error(`No user found with ID ${id} when restoring`);
+          throw new NotFoundError(`No user found with ID ${id} when restoring`);
         }
-        logger.warn(`User with ID ${id} is not deleted`);
-        return;
-      } else {
-        logger.error(`No user found with ID ${id} when restoring`);
-        throw new NotFoundError(`No user found with ID ${id} when restoring`);
-      }
-    });
+      });
   }
 
   /**

@@ -55,15 +55,15 @@ router.get(
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.params.id)
-      ChoreoService.findById(req.params.id, req.UserId)
-        .then((foundChoreo: Choreo) => {
+      ChoreoService.findById(req.params.id, req.actingUserId)
+        .then((foundChoreo: Choreo | null) => {
           if (!foundChoreo) throw new NotFoundError();
           else res.send(foundChoreo);
           return next();
         })
         .catch((e: Error) => next(e));
     else {
-      ChoreoService.getAll(req.UserId)
+      ChoreoService.getAll(req.ownerIds, req.actingUserId)
         .then((choreoList: Choreo[]) => {
           res.send(choreoList);
           return next();
@@ -106,6 +106,8 @@ router.get(
  *                 type: array
  *                 items:
  *                   type: string
+ *               ownerId:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Choreo created successfully
@@ -120,16 +122,18 @@ router.post(
   "/",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    const { name, counts, matType, seasonTeamId, participants } = req.body;
+    const { name, counts, matType, seasonTeamId, participants, ownerId } =
+      req.body;
     return ChoreoService.create(
       name,
       counts,
       matType,
       seasonTeamId,
       participants,
-      req.UserId,
+      ownerId,
+      req.actingUserId,
     )
-      .then((choreo: Choreo) => {
+      .then((choreo: Choreo | null) => {
         res.send(choreo);
         return next();
       })
@@ -174,8 +178,8 @@ router.put(
   "/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    return ChoreoService.update(req.params.id, req.body, req.UserId)
-      .then((choreo: Choreo) => {
+    return ChoreoService.update(req.params.id, req.body, req.actingUserId)
+      .then((choreo: Choreo | null) => {
         res.send(choreo);
         return next();
       })
@@ -210,7 +214,7 @@ router.delete(
   "/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    return ChoreoService.remove(req.params.id, req.UserId)
+    return ChoreoService.remove(req.params.id, req.actingUserId)
       .then(() => {
         res.send();
         return next();
@@ -261,7 +265,7 @@ router.post(
     return ChoreoService.addParticipant(
       req.params.id,
       MemberId,
-      req.UserId,
+      req.actingUserId,
       color,
     )
       .then(() => {
@@ -305,6 +309,7 @@ router.delete(
     return ChoreoService.removeParticipant(
       req.params.id,
       req.params.participationId,
+      req.actingUserId,
     )
       .then(() => {
         res.send();
@@ -362,9 +367,9 @@ router.patch(
       req.params.id,
       memberToAddId,
       memberToRemoveId,
-      req.UserId,
+      req.actingUserId,
     )
-      .then((choreo: Choreo) => {
+      .then((choreo: Choreo | null) => {
         res.send(choreo);
         return next();
       })
@@ -418,6 +423,7 @@ router.patch(
       req.params.id,
       req.params.participantId,
       color,
+      req.actingUserId,
     )
       .then(() => {
         res.send();

@@ -33,6 +33,8 @@ const router = Router();
  *                 type: string
  *               seasonTeamId:
  *                 type: string
+ *               ownerId:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Member created successfully
@@ -47,8 +49,15 @@ router.post(
   "/",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    const { name, nickname, abbreviation, seasonTeamId } = req.body;
-    MemberService.create(name, nickname, abbreviation, seasonTeamId, req.UserId)
+    const { name, nickname, abbreviation, seasonTeamId, ownerId } = req.body;
+    MemberService.create(
+      name,
+      nickname,
+      abbreviation,
+      seasonTeamId,
+      ownerId,
+      req.actingUserId,
+    )
       .then((member: Member) => {
         res.send(member);
         return next();
@@ -94,7 +103,7 @@ router.put(
   "/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    MemberService.update(req.params.id, req.body, req.UserId)
+    MemberService.update(req.params.id, req.body, req.actingUserId)
       .then((member: Member | null) => {
         res.send(member);
         return next();
@@ -130,7 +139,7 @@ router.delete(
   "/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    MemberService.remove(req.params.id, req.UserId)
+    MemberService.remove(req.params.id, req.actingUserId)
       .then(() => {
         res.send();
         next();

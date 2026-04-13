@@ -18,16 +18,23 @@ class FeedbackService {
    *
    * @param {number} stars - Number of stars given in the feedback.
    * @param {string} text - Text content of the feedback.
-   * @param {UUID} UserId - ID of the user submitting the feedback.
+   * @param {UUID} actingUserId - ID of the user submitting the feedback.
    * @returns {Promise<Feedback>} The created feedback object.
    */
-  create(stars: number, text: string, UserId: string) {
+  create(stars: number, text: string, actingUserId: string) {
     logger.debug(
-      `FeedbackService create ${JSON.stringify({ stars, text, UserId })}`,
+      `FeedbackService create ${JSON.stringify({ stars, text, actingUserId })}`,
     );
-    return Feedback.create({ stars, text, UserId }).then(async (feedback) => {
+    return Feedback.create({
+      stars,
+      text,
+      UserId: actingUserId,
+      creatorId: actingUserId,
+      updaterId: actingUserId,
+    }).then(async (feedback) => {
       let user = null;
-      if (UserId) user = await UserService.findById(UserId).catch(() => null);
+      if (actingUserId)
+        user = await UserService.findById(actingUserId).catch(() => null);
       if (!user)
         throw new NotFoundError(
           "User does not exist in order to create this feedback",
@@ -46,12 +53,15 @@ class FeedbackService {
   /**
    * Get all Feedbacks
    *
-   * @param {UUID} UserId - ID of the user whose feedbacks are to be retrieved.
+   * @param {UUID[]} ownerIds - IDs of the owners whose feedbacks are to be retrieved.
+   * @param {UUID} actingUserId - ID of the acting user.
    * @returns {Promise<Feedback[]>} List of feedbacks for the user.
    */
-  getAll(UserId: string) {
-    logger.debug(`FeedbackService getAll ${JSON.stringify({ UserId })}`);
-    return Feedback.findAll({ where: { UserId } });
+  getAll(ownerIds: string[], actingUserId: string) {
+    logger.debug(
+      `FeedbackService getAll ${JSON.stringify({ ownerIds, actingUserId })}`,
+    );
+    return Feedback.findAll({ where: { UserId: { [Op.in]: ownerIds } } });
   }
 
   /**

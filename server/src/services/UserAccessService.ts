@@ -14,8 +14,8 @@ const { logger } = require("../plugins/winston");
 class UserAccessService {
   /**
    * Find a user access relationship by owner and child IDs.
-   * @param {string} ownerId - The owner's user ID.
-   * @param {string} childId - The child's user ID.
+   * @param {UUID} ownerId - The owner's user ID.
+   * @param {UUID} childId - The child's user ID.
    * @returns {Promise<UserAccess | null>} The user access object or null if not found.
    */
   async findByOwnerAndChild(ownerId: string, childId: string) {
@@ -29,7 +29,7 @@ class UserAccessService {
 
   /**
    * Get all children for an owner.
-   * @param {string} ownerId - The owner's user ID.
+   * @param {UUID} ownerId - The owner's user ID.
    * @returns {Promise<Array>} Array of user access objects.
    */
   async getChildren(ownerId: string) {
@@ -44,7 +44,7 @@ class UserAccessService {
 
   /**
    * Get all owners for a child.
-   * @param {string} childId - The child's user ID.
+   * @param {UUID} childId - The child's user ID.
    * @returns {Promise<Array>} Array of user access objects.
    */
   async getOwners(childId: string) {
@@ -57,8 +57,8 @@ class UserAccessService {
 
   /**
    * Create a new user access relationship.
-   * @param {string} ownerId - The owner's user ID.
-   * @param {string} childId - The child's user ID.
+   * @param {UUID} ownerId - The owner's user ID.
+   * @param {UUID} childId - The child's user ID.
    * @param {AccessRole} role - The access role.
    * @param {boolean} enabled - Whether the access is enabled.
    * @returns {Promise<UserAccess>} The created user access object.
@@ -91,12 +91,16 @@ class UserAccessService {
 
   /**
    * Update an existing user access relationship.
-   * @param {string} id - The user access ID.
+   * @param {UUID} id - The user access ID.
    * @param {object} data - The data to update (role, enabled).
-   * @param {string} ownerId - The owner's user ID (for authorization).
+   * @param {UUID} ownerId - The owner's user ID (for authorization).
    * @returns {Promise<UserAccess>} The updated user access object.
    */
-  async update(id: string, data: { role?: AccessRole; enabled?: boolean }, ownerId: string) {
+  async update(
+    id: string,
+    data: { role?: AccessRole; enabled?: boolean },
+    ownerId: string,
+  ) {
     logger.debug(
       `UserAccessService update ${JSON.stringify({ id, data, ownerId })}`,
     );
@@ -114,8 +118,8 @@ class UserAccessService {
 
   /**
    * Remove a user access relationship.
-   * @param {string} id - The user access ID.
-   * @param {string} ownerId - The owner's user ID (for authorization).
+   * @param {UUID} id - The user access ID.
+   * @param {UUID} ownerId - The owner's user ID (for authorization).
    * @returns {Promise<void>}
    */
   async remove(id: string, ownerId: string) {
@@ -143,8 +147,8 @@ class UserAccessService {
 
   /**
    * Check if a user has access to another user's data.
-   * @param {string} ownerId - The owner's user ID.
-   * @param {string} childId - The child's user ID.
+   * @param {UUID} ownerId - The owner's user ID.
+   * @param {UUID} childId - The child's user ID.
    * @returns {Promise<boolean>} Whether the child has access.
    */
   async hasAccess(ownerId: string, childId: string) {
@@ -156,8 +160,8 @@ class UserAccessService {
 
   /**
    * Get the role for a child accessing owner's data.
-   * @param {string} ownerId - The owner's user ID.
-   * @param {string} childId - The child's user ID.
+   * @param {UUID} ownerId - The owner's user ID.
+   * @param {UUID} childId - The child's user ID.
    * @returns {Promise<AccessRole | null>} The role or null if no access.
    */
   async getRole(ownerId: string, childId: string) {

@@ -13,7 +13,6 @@ const { logger } = require("../plugins/winston");
 class AdminService {
   /**
    * Find or create an Admin by username. If not found, creates a new Admin with the given password.
-   * @async
    * @param {string} username - The admin's username.
    * @param {string} password - The admin's password.
    * @returns {Promise<Admin>} The found or newly created Admin instance.
@@ -61,7 +60,6 @@ class AdminService {
 
   /**
    * Get the total number of Admins in the database.
-   * @async
    * @returns {Promise<number>} The count of Admins.
    */
   getCount() {
@@ -71,7 +69,6 @@ class AdminService {
 
   /**
    * Get all Admins in the database.
-   * @async
    * @returns {Promise<Admin[]>} Array of all Admins.
    */
   getAll() {
@@ -81,7 +78,6 @@ class AdminService {
 
   /**
    * Get the trend of Admins (new minus deleted) in the last 30 days.
-   * @async
    * @returns {Promise<number>} The net number of Admins added in the last 30 days.
    */
   getTrend() {
@@ -106,7 +102,6 @@ class AdminService {
 
   /**
    * Update an Admin by ID.
-   * @async
    * @param {UUID} id - The admin's UUID.
    * @param {Object} data - The update data.
    * @returns {Promise<Admin>} The updated Admin instance.
@@ -135,7 +130,6 @@ class AdminService {
 
   /**
    * Delete an Admin by ID.
-   * @async
    * @param {UUID} id - The admin's UUID.
    * @returns {Promise<void>} Resolves if deletion is successful.
    * @throws {Error} If no Admin with the given ID is found.

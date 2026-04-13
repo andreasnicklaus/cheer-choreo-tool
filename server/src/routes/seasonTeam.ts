@@ -33,6 +33,8 @@ const router = Router();
  *                 type: array
  *                 items:
  *                   type: string
+ *               ownerId:
+ *                 type: string
  *     responses:
  *       200:
  *         description: SeasonTeam created successfully
@@ -47,8 +49,14 @@ router.post(
   "/",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    const { teamId, seasonId, MemberIds = [] } = req.body;
-    return SeasonTeamService.create(teamId, seasonId, MemberIds, req.UserId)
+    const { teamId, seasonId, MemberIds = [], ownerId } = req.body;
+    return SeasonTeamService.create(
+      teamId,
+      seasonId,
+      MemberIds,
+      ownerId,
+      req.actingUserId,
+    )
       .then((seasonTeam: SeasonTeam | null) => {
         res.send(seasonTeam);
         return next();
@@ -83,6 +91,8 @@ router.post(
  *                 type: array
  *                 items:
  *                   type: string
+ *               ownerId:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Members copied successfully
@@ -99,11 +109,12 @@ router.put(
   "/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    const { MemberIds } = req.body;
+    const { MemberIds, ownerId } = req.body;
     return SeasonTeamService.copyMembersIntoSeasonTeam(
       req.params.id,
       MemberIds,
-      req.UserId,
+      ownerId,
+      req.actingUserId,
     )
       .then((memberList) => {
         res.send(memberList);
@@ -138,7 +149,7 @@ router.delete(
   "/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    return SeasonTeamService.remove(req.params.id, req.UserId)
+    return SeasonTeamService.remove(req.params.id, req.actingUserId)
       .then(() => {
         res.send();
         return next();

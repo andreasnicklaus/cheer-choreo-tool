@@ -186,7 +186,8 @@ router.post("/login", (req: Request, res: Response, next: NextFunction) => {
   UserService.findByUsernameOrEmail(username, { scope: "withPasswordHash" })
     .then(async (user: User | null) => {
       if (!user) {
-        const deletedUser = await UserService.findDeletedByUsernameOrEmail(username);
+        const deletedUser =
+          await UserService.findDeletedByUsernameOrEmail(username);
         if (deletedUser) {
           res.status(403).send(req.t("errors.account-deleted"));
           return;
@@ -390,7 +391,15 @@ router.put(
  *    security:
  *      - userAuthentication: []
  *    requestBody:
- *      $ref: '#/components/requestBodies/LoginRequestBody'
+ *      required: true
+ *      content:
+ *        multipart/form-data:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              profilePicture:
+ *                type: string
+ *                format: binary
  *    responses:
  *      200:
  *        description: Upload successful
