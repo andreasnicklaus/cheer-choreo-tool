@@ -59,7 +59,7 @@ class Club extends Model<InferAttributes<Club>, InferCreationAttributes<Club>> {
 
   declare User: NonAttribute<User>;
   declare UserId: ForeignKey<User["id"]>;
-  
+
   declare creator: NonAttribute<User>;
   declare updater: NonAttribute<User>;
   declare creatorId: ForeignKey<User["id"]>;
