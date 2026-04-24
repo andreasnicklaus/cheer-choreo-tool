@@ -43,6 +43,9 @@ export enum AccessRole {
  *          - coach
  *          - assistant
  *          - athlete
+ *        accepted:
+ *          type: boolean
+ *          default: false
  *        enabled:
  *          type: boolean
  *          default: true
@@ -67,6 +70,7 @@ class UserAccess extends Model<
   declare ownerUserId: ForeignKey<User["id"]>;
   declare childUserId: ForeignKey<User["id"]>;
   declare role: AccessRole;
+  declare accepted: CreationOptional<boolean>;
   declare enabled: CreationOptional<boolean>;
 
   declare createdAt: CreationOptional<Date>;
@@ -83,26 +87,15 @@ UserAccess.init(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    ownerUserId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      references: {
-        model: "users",
-        key: "id",
-      },
-    },
-    childUserId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      references: {
-        model: "users",
-        key: "id",
-      },
-    },
     role: {
       type: DataTypes.ENUM(...Object.values(AccessRole)),
       allowNull: false,
       defaultValue: AccessRole.ATHLETE,
+    },
+    accepted: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
     enabled: {
       type: DataTypes.BOOLEAN,

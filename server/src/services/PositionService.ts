@@ -1,5 +1,7 @@
 import { NotFoundError, RequestOrderError } from "./../utils/errors";
 import Position from "../db/models/position";
+import Lineup from "../db/models/lineup";
+import LineupService from "./LineupService";
 import {
   checkReadAccess,
   checkWriteAccess,
@@ -91,7 +93,7 @@ class PositionService {
 
     await checkWriteAccess(ownerId, actingUserId, isAdmin);
 
-    const [position, _created] = await Position.findOrCreate({
+    const [position, created] = await Position.findOrCreate({
       where: { x, y, LineupId, MemberId, UserId: ownerId },
       defaults: {
         x,
@@ -104,6 +106,14 @@ class PositionService {
         updaterId: actingUserId,
       },
     });
+
+    if (created) {
+      const lineup = await Lineup.findByPk(LineupId);
+      if (lineup) {
+        await LineupService.update(LineupId, {}, actingUserId, isAdmin);
+      }
+    }
+
     return position;
   }
 
@@ -208,7 +218,21 @@ class PositionService {
       ...data,
       updaterId: actingUserId,
     });
-    return position.save();
+
+    const savedPosition = await position.save();
+    if (position.LineupId) {
+      const lineup = await Lineup.findByPk(position.LineupId);
+      if (lineup) {
+        await LineupService.update(
+          position.LineupId,
+          {},
+          actingUserId,
+          isAdmin,
+        );
+      }
+    }
+
+    return savedPosition;
   }
 
   /**
@@ -229,6 +253,11 @@ class PositionService {
     }
 
     await checkDeleteAccess(position.UserId, actingUserId, isAdmin);
+
+    const lineupId = position.LineupId;
+    if (lineupId) {
+      await LineupService.update(lineupId, {}, actingUserId, isAdmin);
+    }
 
     return position.destroy();
   }

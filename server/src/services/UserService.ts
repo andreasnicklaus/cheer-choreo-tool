@@ -48,7 +48,19 @@ class UserService {
    */
   async findById(id: string) {
     logger.debug(`UserService findById ${JSON.stringify({ id })}`);
-    return User.findByPk(id, { include: ["Clubs"] });
+    return User.findByPk(id, {
+      include: [
+        "Clubs",
+        {
+          association: "childAccess",
+          include: ["owner"],
+        },
+        {
+          association: "ownerAccess",
+          include: ["child"],
+        },
+      ],
+    });
   }
 
   /**

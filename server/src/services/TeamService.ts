@@ -13,6 +13,9 @@ const { Op } = require("sequelize");
 const { logger } = require("../plugins/winston");
 
 const defaultInclude = [
+  { association: "User" },
+  { association: "creator" },
+  { association: "updater" },
   {
     association: "SeasonTeams",
     include: ["Season", "Members"],

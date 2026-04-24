@@ -1,5 +1,7 @@
 import { NotFoundError } from "@/utils/errors";
 import Member from "../db/models/member";
+import SeasonTeam from "../db/models/seasonTeam";
+import TeamService from "./TeamService";
 import {
   checkReadAccess,
   checkWriteAccess,
@@ -138,7 +140,7 @@ class MemberService {
 
     await checkWriteAccess(ownerId, actingUserId, isAdmin);
 
-    return Member.create({
+    const member = await Member.create({
       name,
       nickname,
       abbreviation,
@@ -147,6 +149,13 @@ class MemberService {
       creatorId: actingUserId,
       updaterId: actingUserId,
     });
+
+    const seasonTeam = await SeasonTeam.findByPk(SeasonTeamId);
+    if (seasonTeam) {
+      await TeamService.update(seasonTeam.TeamId, {}, actingUserId, isAdmin);
+    }
+
+    return member;
   }
 
   /**
@@ -246,11 +255,21 @@ class MemberService {
 
     await checkWriteAccess(foundMember.UserId, actingUserId, isAdmin);
 
+    const oldSeasonTeamId = foundMember.SeasonTeamId;
+
     await foundMember.update({
       ...data,
       updaterId: actingUserId,
     });
     await foundMember.save();
+
+    const seasonTeam = await SeasonTeam.findByPk(
+      foundMember.SeasonTeamId || oldSeasonTeamId,
+    );
+    if (seasonTeam) {
+      await TeamService.update(seasonTeam.TeamId, {}, actingUserId, isAdmin);
+    }
+
     return Member.findByPk(id);
   }
 
@@ -280,6 +299,14 @@ class MemberService {
     }
 
     await checkDeleteAccess(foundMember.UserId, actingUserId, isAdmin);
+
+    const seasonTeamId = foundMember.SeasonTeamId;
+    if (seasonTeamId) {
+      const seasonTeam = await SeasonTeam.findByPk(seasonTeamId);
+      if (seasonTeam) {
+        await TeamService.update(seasonTeam.TeamId, {}, actingUserId, isAdmin);
+      }
+    }
 
     return foundMember.destroy();
   }

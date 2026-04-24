@@ -1,5 +1,6 @@
 import { NotFoundError } from "@/utils/errors";
 import Lineup from "../db/models/lineup";
+import ChoreoService from "./ChoreoService";
 import {
   checkReadAccess,
   checkWriteAccess,
@@ -45,7 +46,7 @@ class LineupService {
 
     await checkWriteAccess(ownerId, actingUserId, isAdmin);
 
-    return Lineup.create({
+    const lineup = await Lineup.create({
       startCount,
       endCount,
       ChoreoId,
@@ -53,6 +54,8 @@ class LineupService {
       creatorId: actingUserId,
       updaterId: actingUserId,
     });
+    await ChoreoService.update(ChoreoId, {}, actingUserId, isAdmin);
+    return lineup;
   }
 
   /**
@@ -128,6 +131,7 @@ class LineupService {
       updaterId: actingUserId,
     });
     await lineup.save();
+    await ChoreoService.update(lineup.ChoreoId, {}, actingUserId, isAdmin);
     return Lineup.findOne({
       where: { id },
       include: [
@@ -195,6 +199,7 @@ class LineupService {
 
     await checkDeleteAccess(lineup.UserId, actingUserId, isAdmin);
 
+    await ChoreoService.update(lineup.ChoreoId, {}, actingUserId, isAdmin);
     return lineup.destroy();
   }
 }

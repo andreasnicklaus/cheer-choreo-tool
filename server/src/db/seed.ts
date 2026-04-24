@@ -109,6 +109,7 @@ type seedData = {
 };
 
 async function seed() {
+  logger.info("Starting database seeding...");
   const adminPromises = [
     ...(data.admins?.map((a) =>
       AdminService.findOrCreate(a.username, a.password),
@@ -336,6 +337,7 @@ async function seed() {
       : Promise.resolve(),
     Promise.all(adminPromises),
   ]);
+  logger.info("Database seeding complete!");
 }
 
 export default seed;

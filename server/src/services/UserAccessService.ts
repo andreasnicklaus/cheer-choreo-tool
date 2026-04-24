@@ -137,6 +137,48 @@ class UserAccessService {
   }
 
   /**
+   * Accept an access invitation.
+   * @param {UUID} id - The user access ID.
+   * @param {UUID} childId - The child's user ID (for authorization).
+   * @returns {Promise<UserAccess>} The updated user access object.
+   */
+  async accept(id: string, childId: string) {
+    logger.debug(`UserAccessService accept ${JSON.stringify({ id, childId })}`);
+
+    const access = await UserAccess.findOne({
+      where: { id, childUserId: childId },
+    });
+
+    if (!access) {
+      throw new NotFoundError(`User access with id ${id} not found`);
+    }
+
+    return access.update({ accepted: true });
+  }
+
+  /**
+   * Decline an access invitation.
+   * @param {UUID} id - The user access ID.
+   * @param {UUID} childId - The child's user ID (for authorization).
+   * @returns {Promise<UserAccess>} The deleted user access object.
+   */
+  async decline(id: string, childId: string) {
+    logger.debug(
+      `UserAccessService decline ${JSON.stringify({ id, childId })}`
+    );
+
+    const access = await UserAccess.findOne({
+      where: { id, childUserId: childId },
+    });
+
+    if (!access) {
+      throw new NotFoundError(`User access with id ${id} not found`);
+    }
+
+    return access.destroy();
+  }
+
+  /**
    * Find a user by username.
    * @param {string} username - The username to search for.
    * @returns {Promise<User | null>} The user object or null if not found.

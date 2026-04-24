@@ -3,9 +3,21 @@
     <EditableNameHeading
       :name="$t('team')"
       :value="teams?.find((t) => t.id == teamId)?.name"
-      class="mb-3"
+      :class="me?.id != currentTeam?.UserId ? 'mb-0' : 'mb-3'"
       @input="onNameEdit"
     />
+    <BPlaceholderWrapper :loading="!currentTeam">
+      <template #loading>
+        <BPlaceholder width="25%" class="mb-4" animation="wave" />
+      </template>
+      <p
+        v-show="me?.id != currentTeam?.UserId"
+        class="text-muted mb-4 fw-light"
+      >
+        {{ $t("general.shared-with-you-by") }}
+        {{ currentTeam?.User?.username || "unknown" }}
+      </p>
+    </BPlaceholderWrapper>
 
     <BRow align-h="between" class="px-3 mb-4">
       <BCol>
@@ -77,6 +89,36 @@
             <IBiTrash class="me-2" />
             {{ $t("teamView.team-loeschen") }}
           </BDropdownItem>
+          <BDropdownDivider
+            v-if="
+              me?.id &&
+              (currentTeam?.creator?.username || currentTeam?.updater?.username)
+            "
+          />
+          <BDropdownText
+            v-if="currentTeam?.creator?.username && me?.id"
+            class="text-muted fw-light text-nowrap"
+            @click.stop
+          >
+            {{ $t("general.created-by") }}
+            {{
+              currentTeam.creatorId != me.id
+                ? currentTeam?.creator?.username
+                : $t("general.you")
+            }}
+          </BDropdownText>
+          <BDropdownText
+            v-if="currentTeam?.updater?.username && me?.id"
+            class="text-muted fw-light text-nowrap"
+            @click.stop
+          >
+            {{ $t("general.last-updated-by") }}
+            {{
+              currentTeam.updaterId != me.id
+                ? currentTeam?.updater?.username
+                : $t("general.you")
+            }}
+          </BDropdownText>
         </BDropdown>
       </BCol>
     </BRow>
@@ -252,6 +294,7 @@ import DeleteSeasonTeamModal from "@/components/modals/DeleteSeasonTeamModal.vue
 import DeleteTeamModal from "@/components/modals/DeleteTeamModal.vue";
 import ImportMemberModal from "@/components/modals/ImportMemberModal.vue";
 import TeamService from "@/services/TeamService";
+import AuthService from "@/services/AuthService";
 import ERROR_CODES from "@/utils/error_codes";
 import { error } from "@/utils/logging";
 
@@ -291,6 +334,7 @@ export default {
       teams: [],
       seasonTabIndex: 0,
       editMemberId: null,
+      me: null,
     };
   },
   computed: {
@@ -299,7 +343,7 @@ export default {
         { key: "name", sortable: true },
         { key: "nickname", label: this.$t("spitzname"), sortable: true },
         { key: "abbreviation", label: this.$t("abkuerzung"), sortable: true },
-        { key: "actions", label: "", class: "text-right" },
+        { key: "actions", label: "", class: "text-end" },
       ];
     },
     currentTeam() {
@@ -377,14 +421,19 @@ export default {
   },
   methods: {
     load() {
-      return TeamService.getAll().then((teams) => {
-        this.teams = teams.map((t) => ({
-          ...t,
-          SeasonTeams: t.SeasonTeams.sort(
-            (a, b) => b.Season.year - a.Season.year
-          ),
-        }));
-      });
+      return Promise.all([
+        TeamService.getAll().then((teams) => {
+          this.teams = teams.map((t) => ({
+            ...t,
+            SeasonTeams: t.SeasonTeams.sort(
+              (a, b) => b.Season.year - a.Season.year
+            ),
+          }));
+        }),
+        AuthService.getUserInfo().then((me) => {
+          this.me = me;
+        }),
+      ]);
     },
     onNameEdit(nameNew) {
       this.currentTeam.name = nameNew;
@@ -400,6 +449,7 @@ export default {
     onMemberCreation(member) {
       this.currentTeam.SeasonTeams[this.seasonTabIndex].Members.push(member);
       this.editMemberId = null;
+      this.setLastUpdaterToMe();
     },
     onMemberUpdate(member) {
       const membersCopy = this.currentTeam.SeasonTeams[
@@ -408,6 +458,7 @@ export default {
       membersCopy.push(member);
       this.currentTeam.SeasonTeams[this.seasonTabIndex].Members = membersCopy;
       this.editMemberId = null;
+      this.setLastUpdaterToMe();
     },
     requestMemberRemoval(id) {
       this.$refs.deleteMemberModal.open(id);
@@ -417,6 +468,7 @@ export default {
         this.currentTeam.SeasonTeams[this.seasonTabIndex].Members.filter(
           (m) => m.id != MemberId
         );
+      this.setLastUpdaterToMe();
     },
     editMember(id) {
       this.editMemberId = id;
@@ -467,12 +519,19 @@ export default {
       this.currentTeam?.SeasonTeams[this.seasonTabIndex]?.Members.push(
         ...newMembers
       );
+      this.setLastUpdaterToMe();
     },
     updateSeasonTabIndex(newIndex) {
       this.seasonTabIndex = newIndex;
     },
     setPresentation(newPresentation) {
       this.presentation = newPresentation;
+    },
+    setLastUpdaterToMe() {
+      if (this.me?.id && this.currentTeam?.updaterId !== this.me?.id) {
+        this.currentTeam.updaterId = this.me?.id;
+        this.currentTeam.updater = this.me;
+      }
     },
   },
 };

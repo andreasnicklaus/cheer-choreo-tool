@@ -47,6 +47,9 @@ const defaultColors = [
 ];
 
 const defaultInclude = [
+  { association: "User" },
+  { association: "creator" },
+  { association: "updater" },
   {
     association: "SeasonTeam",
     include: [
@@ -373,23 +376,24 @@ class ChoreoService {
 
     await checkWriteAccess(ownerId, actingUserId, isAdmin);
 
-    return this.findById(choreoId, actingUserId, isAdmin).then((choreo) => {
+    return this.findById(choreoId, actingUserId, isAdmin).then(async (choreo) => {
       if (!choreo) {
         throw new NotFoundError(`Choreo with ID ${choreoId} not found`);
       }
       return MemberService.findById(MemberId, actingUserId, isAdmin).then(
-        (member) => {
+        async (member) => {
           if (!member) {
             logger.error(`Member with ID ${MemberId} not found`);
             throw new NotFoundError(`Member with ID ${MemberId} not found`);
           }
-          return choreo.addParticipant(member, {
+          await choreo.addParticipant(member, {
             through: {
               color:
                 color ||
-                defaultColors[Math.floor(Math.random() * defaultColors.length)], // njsscan-ignore: node_insecure_random_generator
+                defaultColors[Math.floor(Math.random() * defaultColors.length)],
             },
           });
+          await this.update(choreoId, {}, actingUserId, isAdmin);
         },
       );
     });
@@ -429,7 +433,9 @@ class ChoreoService {
           actingUserId,
           isAdmin,
         );
-        return foundChoreoParticipation.destroy();
+        const choreoIdVar = foundChoreoParticipation.ChoreoId;
+        await foundChoreoParticipation.destroy();
+        await this.update(choreoIdVar, {}, actingUserId, isAdmin);
       });
   }
 
@@ -565,7 +571,8 @@ class ChoreoService {
           isAdmin,
         );
         await foundChoreoParticipation.update({ color });
-        return foundChoreoParticipation.save();
+        await foundChoreoParticipation.save();
+        await this.update(ChoreoId, {}, actingUserId, isAdmin);
       });
   }
 

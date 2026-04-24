@@ -538,6 +538,157 @@
           </template>
         </BTabs>
       </BTab>
+      <BTab :title="$t('accountView.zugriff')">
+        <BRow class="mb-3">
+          <BCol>
+            <BCard border-variant="white" header-bg-variant="white">
+              <template #header>
+                <h5 class="mb-0">{{ $t("accountView.mit-mir-geteilt") }}</h5>
+                <small class="text-muted">
+                  {{ $t("accountView.mit-mir-geteilt-info") }}
+                </small>
+              </template>
+              <BRow v-if="sharedWithMe.length > 0" class="mb-0">
+                <BCol>
+                  <BTable
+                    :items="sharedWithMe"
+                    :fields="sharedWithMeFields"
+                    responsive
+                    striped
+                  >
+                    <template #cell(name)="row">
+                      {{ row.item.owner?.username }}
+                    </template>
+                    <template #cell(role)="row">
+                      {{ $t("accountView.role." + row.item.role) }}
+                    </template>
+                    <template #cell(accepted)="row">
+                      <BBadge
+                        :variant="row.item.accepted ? 'success' : 'warning'"
+                      >
+                        {{
+                          row.item.accepted
+                            ? $t("accountView.angenommen")
+                            : $t("accountView.ausstehend")
+                        }}
+                      </BBadge>
+                      <span v-if="!row.item.accepted" class="ms-2">
+                        <BButton
+                          variant="success"
+                          size="sm"
+                          @click="acceptAccess(row.item.id)"
+                        >
+                          <IBiCheck />
+                          {{ $t("accountView.annehmen") }}
+                        </BButton>
+                        <BButton
+                          variant="danger"
+                          size="sm"
+                          class="ms-1"
+                          @click="declineAccess(row.item.id)"
+                        >
+                          <IBiX />
+                        </BButton>
+                      </span>
+                    </template>
+                  </BTable>
+                </BCol>
+              </BRow>
+              <BRow v-else class="mb-0">
+                <BCol class="text-center text-muted">
+                  {{ $t("accountView.no-shared-with-me") }}
+                </BCol>
+              </BRow>
+            </BCard>
+          </BCol>
+        </BRow>
+        <BRow class="mb-3">
+          <BCol>
+            <BCard
+              border-variant="white"
+              header-bg-variant="white"
+              footer-bg-variant="white"
+              footer-border-variant="white"
+            >
+              <template #header>
+                <h5 class="mb-0">{{ $t("accountView.von-mir-verwaltet") }}</h5>
+                <small class="text-muted">
+                  {{ $t("accountView.von-mir-verwaltet-info") }}
+                </small>
+              </template>
+              <template #footer>
+                <div class="d-grid">
+                  <BButton
+                    variant="primary"
+                    @click="$refs.inviteUserModal.open()"
+                  >
+                    <IBiPlus /> {{ $t("accountView.benutzer-hinzufuegen") }}
+                  </BButton>
+                </div>
+              </template>
+              <BRow v-if="managedByMe.length > 0" class="mb-0">
+                <BCol>
+                  <BTable
+                    :items="managedByMe"
+                    :fields="managedByMeFields"
+                    responsive
+                    striped
+                  >
+                    <template #cell(name)="row">
+                      {{ row.item.child?.username }}
+                    </template>
+                    <template #cell(role)="row">
+                      <BFormSelect
+                        v-model="row.item.role"
+                        :options="roleOptions"
+                        size="sm"
+                        @change="
+                          updateAccess(row.item.id, { role: row.item.role })
+                        "
+                      />
+                    </template>
+                    <template #cell(accepted)="row">
+                      <BBadge
+                        :variant="row.item.accepted ? 'success' : 'warning'"
+                      >
+                        {{
+                          row.item.accepted
+                            ? $t("accountView.angenommen")
+                            : $t("accountView.ausstehend")
+                        }}
+                      </BBadge>
+                    </template>
+                    <template #cell(enabled)="row">
+                      <BFormSwitch
+                        v-model="row.item.enabled"
+                        @change="
+                          updateAccess(row.item.id, {
+                            enabled: row.item.enabled,
+                          })
+                        "
+                      />
+                    </template>
+                    <template #cell(actions)="row">
+                      <BButton
+                        variant="danger"
+                        size="sm"
+                        @click="removeAccess(row.item.id)"
+                      >
+                        <IBiTrash />
+                      </BButton>
+                    </template>
+                  </BTable>
+                </BCol>
+              </BRow>
+              <BRow v-else class="mb-0">
+                <BCol class="text-center text-muted">
+                  {{ $t("accountView.no-managed-by-me") }}
+                </BCol>
+              </BRow>
+            </BCard>
+          </BCol>
+        </BRow>
+      </BTab>
       <BTab>
         <template #title>
           {{ $t("account.settings") }}
@@ -639,6 +790,7 @@
     </BTabs>
 
     <CreateClubModal ref="createClubModal" @club-created="init" />
+    <InviteUserModal ref="inviteUserModal" @invited="loadUserAccess" />
     <DeleteClubModal ref="deleteClubModal" @club-deleted="init" />
 
     <ChangePasswordModal ref="changePasswordModal" />
@@ -657,7 +809,9 @@ import DeleteAccountModal from "@/components/modals/DeleteAccountModal.vue";
 import DeleteClubModal from "@/components/modals/DeleteClubModal.vue";
 import toTimeAgo from "@/utils/time";
 import ClubService from "@/services/ClubService";
+import UserAccessService from "@/services/UserAccessService";
 import CreateClubModal from "@/components/modals/CreateClubModal.vue";
+import InviteUserModal from "@/components/modals/InviteUserModal.vue";
 import MessagingService from "@/services/MessagingService";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import { error, log } from "@/utils/logging";
@@ -686,6 +840,8 @@ const MAX_IMAGE_MB = 2;
  * @vue-data {Number} clubTabIndex=0 - The index of the currently selected club tab.
  * @vue-data {Ref|null} profilePictureElement=null - Template ref for profile picture upload.
  * @vue-data {Ref|null} clubLogoElement=null - Template ref for club logo upload.
+ * @vue-data {Array} sharedWithMe=[] - Array of users who have shared access with the current user.
+ * @vue-data {Array} managedByMe=[] - Array of users the current user has granted access to.
  *
  * @vue-computed {Blob|null} newProfilePictureBlob - The new profile picture as a Blob.
  * @vue-computed {Object} currentClub - The currently selected club object.
@@ -702,6 +858,12 @@ const MAX_IMAGE_MB = 2;
  * @vue-computed {string|null} newClubLogoError - Error message for new club logo validation.
  *
  * @vue-computed {MetaInfo} metaInfo
+ *
+ * @vue-method loadUserAccess() Load user access data for sharedWithMe and managedByMe.
+ * @vue-method updateAccess(id, data) Update access permissions for a user.
+ * @vue-method removeAccess(id) Remove access for a user.
+ * @vue-method acceptAccess(id) Accept an access invitation.
+ * @vue-method declineAccess(id) Decline an access invitation.
  */
 
 export default {
@@ -735,6 +897,8 @@ export default {
       clubTabIndex: 0,
       profilePictureElement: null,
       clubLogoElement: null,
+      sharedWithMe: [],
+      managedByMe: [],
     };
   },
   computed: {
@@ -755,6 +919,34 @@ export default {
       return this.newClubLogo
         ? URL.createObjectURL(this.newClubLogo)
         : this.currentClubLogoBlob;
+    },
+    sharedWithMeFields() {
+      return [
+        { key: "name", label: this.$t("name") },
+        { key: "role", label: this.$t("accountView.rolle") },
+        {
+          key: "accepted",
+          label: this.$t("accountView.status"),
+          class: "text-end",
+        },
+        { key: "actions", label: "" },
+      ];
+    },
+    managedByMeFields() {
+      return [
+        { key: "name", label: this.$t("name") },
+        { key: "role", label: this.$t("accountView.rolle") },
+        { key: "accepted", label: this.$t("accountView.status") },
+        { key: "enabled", label: this.$t("accountView.aktiv") },
+        { key: "actions", label: "" },
+      ];
+    },
+    roleOptions() {
+      return [
+        { value: "coach", text: this.$t("accountView.role.coach") },
+        { value: "assistant", text: this.$t("accountView.role.assistant") },
+        { value: "athlete", text: this.$t("accountView.role.athlete") },
+      ];
     },
 
     usernameIsValid() {
@@ -897,6 +1089,7 @@ export default {
           this.user = user;
           this.loadUserSettings();
           this.loadProfileImage();
+          this.loadUserAccess();
         })
         .catch(() => {
           error("Cannot get user info", ERROR_CODES.USER_INFO_QUERY_FAILED);
@@ -905,6 +1098,34 @@ export default {
             this.$t("accountView.das-hat-nicht-funktioniert")
           );
         });
+    },
+    loadUserAccess() {
+      UserAccessService.getOwners().then((access) => {
+        this.sharedWithMe = access.filter((a) => a.enabled);
+      });
+      UserAccessService.getChildren().then((access) => {
+        this.managedByMe = access;
+      });
+    },
+    updateAccess(id, data) {
+      UserAccessService.update(id, data).then(() => {
+        this.loadUserAccess();
+      });
+    },
+    removeAccess(id) {
+      UserAccessService.remove(id).then(() => {
+        this.loadUserAccess();
+      });
+    },
+    acceptAccess(id) {
+      UserAccessService.accept(id).then(() => {
+        this.loadUserAccess();
+      });
+    },
+    declineAccess(id) {
+      UserAccessService.decline(id).then(() => {
+        this.loadUserAccess();
+      });
     },
     loadProfileImage() {
       if (this.user?.profilePictureExtension == null)

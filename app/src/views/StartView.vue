@@ -383,6 +383,17 @@
                                   </BCol>
                                 </BRow>
                               </b>
+                              <p
+                                v-if="
+                                  me &&
+                                  choreo?.UserId &&
+                                  me.id != choreo?.UserId
+                                "
+                                class="m-0 fw-light"
+                              >
+                                {{ $t("general.shared-with-you-by") }}
+                                {{ choreo.User.username }}
+                              </p>
                               <router-link
                                 :to="{
                                   name: 'Team',
@@ -496,6 +507,7 @@ import CreateClubModal from "@/components/modals/CreateClubModal.vue";
 import CreateSeasonModal from "@/components/modals/CreateSeasonModal.vue";
 import CreateTeamModal from "@/components/modals/CreateTeamModal.vue";
 import ClubService from "@/services/ClubService";
+import AuthService from "@/services/AuthService";
 import { error } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
 
@@ -540,6 +552,7 @@ export default {
     maxCount: 400,
     loading: true,
     filterCollapseVisible: false,
+    me: null,
   }),
   computed: {
     choreos() {
@@ -605,6 +618,10 @@ export default {
     load() {
       this.filterCollapseVisible = !this.$store.state.isMobile;
       let getClubPromise = null;
+
+      AuthService.getUserInfo().then((userInfo) => {
+        this.me = userInfo;
+      });
 
       if (this.$store.state.clubId) {
         getClubPromise = ClubService.getById(this.$store.state.clubId);

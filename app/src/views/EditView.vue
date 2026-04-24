@@ -3,11 +3,20 @@
     <EditableNameHeading
       v-if="!$store.state.isMobile || mobileEditingEnabled"
       name="Choreo"
+      :class="me?.id != choreo?.UserId || loading ? 'mb-0' : 'mb-4'"
       :value="choreo?.name"
-      class="mb-4"
       :placeholder="`${$t('loading')}...`"
       @input="onNameEdit"
     />
+    <BPlaceholderWrapper :loading="loading">
+      <template #loading>
+        <BPlaceholder width="25%" class="mb-4" animation="wave" />
+      </template>
+      <p v-show="me?.id != choreo?.UserId" class="text-muted mb-4 fw-light">
+        {{ $t("general.shared-with-you-by") }}
+        {{ choreo?.User?.username || "unknown" }}
+      </p>
+    </BPlaceholderWrapper>
 
     <!-- Controls -->
     <BRow
@@ -216,6 +225,36 @@
                 <IBiTrash class="me-2" />
                 {{ $t("editView.choreo-loeschen") }}
               </BDropdownItem>
+              <BDropdownDivider
+                v-if="
+                  me?.id &&
+                  (choreo?.creator?.username || choreo?.updater?.username)
+                "
+              />
+              <BDropdownText
+                v-if="choreo?.creator?.username"
+                class="text-muted fw-light text-nowrap"
+                @click.stop
+              >
+                {{ $t("general.created-by") }}
+                {{
+                  choreo.creatorId != me.id
+                    ? choreo?.creator?.username
+                    : $t("general.you")
+                }}
+              </BDropdownText>
+              <BDropdownText
+                v-if="choreo?.updater?.username && me?.id"
+                class="text-muted fw-light text-nowrap"
+                @click.stop
+              >
+                {{ $t("general.last-updated-by") }}
+                {{
+                  choreo?.updaterId != me.id
+                    ? choreo?.updater?.username
+                    : $t("general.you")
+                }}
+              </BDropdownText>
             </BDropdown>
           </BCol>
         </BRow>
@@ -465,6 +504,7 @@ import ParticipantSubstitutionModal from "@/components/modals/ParticipantSubstit
 import MobileChoreoEditModal from "@/components/modals/MobileChoreoEditModal.vue";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import MessagingService from "@/services/MessagingService";
+import AuthService from "@/services/AuthService";
 import { debug, error } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
 import { roundToDecimals, clamp } from "@/utils/numbers";
@@ -524,6 +564,7 @@ export default {
   },
   data: function () {
     return {
+      loading: true,
       choreoId: null,
       matHeight: 500,
       matWidth: 500,
@@ -557,6 +598,7 @@ export default {
       proposedPositions: [],
       rejectedPositionProposals: [],
       mobileEditingEnabled: true,
+      me: null,
     };
   },
   computed: {
@@ -630,6 +672,8 @@ export default {
           if (this.$refs.mobileChoreoEditModal)
             this.$refs.mobileChoreoEditModal.open(this.choreoId);
         } else this.loadChoreo();
+
+        this.loadMe();
       }
     );
 
@@ -678,6 +722,7 @@ export default {
   },
   methods: {
     loadChoreo() {
+      this.loading = true;
       ChoreoService.getById(this.choreoId)
         .then((choreo) => {
           if (!choreo) return;
@@ -702,7 +747,15 @@ export default {
                 ERROR_CODES.REDUNDANT_ROUTING
               );
             });
+        })
+        .finally(() => {
+          this.loading = false;
         });
+    },
+    loadMe() {
+      AuthService.getUserInfo().then((me) => {
+        this.me = me;
+      });
     },
     onPositionChange(MemberId, x, y, isRetry = false) {
       const positionToUpdate = this.lineupsForCurrentCount
@@ -823,6 +876,8 @@ export default {
           };
         }
       }
+
+      this.setLastUpdaterToMe();
     },
     createPositionOnExistingLineup(lineupToUpdate, x, y, MemberId) {
       return PositionService.create(lineupToUpdate.id, x, y, MemberId).then(
@@ -838,6 +893,7 @@ export default {
           this.choreo.Lineups = lineupCopy;
           this.showSuccessMessage(this.$t("lineup", 1));
           this.updateProposedPositions();
+          this.setLastUpdaterToMe();
         }
       );
     },
@@ -951,15 +1007,18 @@ export default {
       this.choreo.name = nameNew;
       ChoreoService.changeName(this.choreoId, nameNew).then(() => {
         this.choreo.name = nameNew;
+        this.setLastUpdaterToMe();
         this.showSuccessMessage();
       });
     },
     onUpdateHits(hits) {
       this.choreo.Hits = hits;
+      this.setLastUpdaterToMe();
       this.showSuccessMessage(this.$t("countsheet", 1));
     },
     onUpdateLineups(lineups) {
       this.choreo.Lineups = lineups;
+      this.setLastUpdaterToMe();
       this.showSuccessMessage(this.$t("lineup", 1));
       this.updateProposedPositions();
     },
@@ -968,10 +1027,12 @@ export default {
     },
     onCountUpdate(counts) {
       this.choreo.counts = counts;
+      this.setLastUpdaterToMe();
       this.showSuccessMessage();
     },
     onMatTypeUpdate(matType) {
       this.choreo.matType = matType;
+      this.setLastUpdaterToMe();
       this.showSuccessMessage();
     },
     openCreateHitModal() {
@@ -981,6 +1042,7 @@ export default {
       let hitsCopy = this.choreo.Hits;
       hitsCopy.push(hit);
       this.choreo.Hits = hitsCopy;
+      this.setLastUpdaterToMe();
       this.showSuccessMessage(this.$t("countsheet", 1));
     },
     initiateHitUpdate() {
@@ -1037,6 +1099,7 @@ export default {
         this.choreo.Participants = this.choreo.Participants.filter(
           (p) => p.id != MemberId
         );
+        this.setLastUpdaterToMe();
         this.updateProposedPositions();
       });
     },
@@ -1050,6 +1113,7 @@ export default {
           ChoreoParticipation: { color },
         };
         this.choreo.Participants = [...this.choreo.Participants, memberToAdd];
+        this.setLastUpdaterToMe();
         this.updateProposedPositions();
       });
     },
@@ -1066,6 +1130,7 @@ export default {
         this.choreo.Participants.find(
           (p) => p.id == participantId
         ).ChoreoParticipation.color = color;
+        this.setLastUpdaterToMe();
       });
     },
     findPreviousPosition(memberId) {
@@ -1352,6 +1417,12 @@ export default {
         };
       });
       return proposedPositions;
+    },
+    setLastUpdaterToMe() {
+      if (this.me?.id && this.choreo?.updaterId === this.me?.id) {
+        this.choreo.updaterId = this.me?.id;
+        this.choreo.updater = this.me;
+      }
     },
   },
 };

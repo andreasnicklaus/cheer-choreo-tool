@@ -1,5 +1,6 @@
 import { NotFoundError } from "@/utils/errors";
 import Hit from "../db/models/hit";
+import ChoreoService from "./ChoreoService";
 import {
   checkReadAccess,
   checkWriteAccess,
@@ -137,6 +138,7 @@ class HitService {
       updaterId: actingUserId,
     }).then(async (hit: Hit) => {
       if (memberIds.length > 0) await hit.setMembers(memberIds);
+      await ChoreoService.update(hit.ChoreoId, {}, actingUserId, isAdmin);
       return Hit.findByPk(hit.id, { include: "Members" });
     });
   }
@@ -224,6 +226,7 @@ class HitService {
     });
     await hit.save();
     if (data.memberIds) await hit.setMembers(data.memberIds);
+    await ChoreoService.update(hit.ChoreoId, {}, actingUserId, isAdmin);
     return hit;
   }
 
@@ -245,6 +248,7 @@ class HitService {
 
     await checkDeleteAccess(hit.UserId, actingUserId, isAdmin);
 
+    await ChoreoService.update(hit.ChoreoId, {}, actingUserId, isAdmin);
     return hit.destroy();
   }
 }

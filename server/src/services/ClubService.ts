@@ -20,6 +20,7 @@ const { Op } = require("sequelize");
 const { logger } = require("../plugins/winston");
 
 const defaultInclude = [
+  { association: "User" },
   {
     model: Team,
     as: "Teams",
@@ -28,7 +29,7 @@ const defaultInclude = [
         model: SeasonTeam,
         as: "SeasonTeams",
         include: [
-          { association: "Choreos" },
+          { association: "Choreos", include: [{ association: "User" }] },
           { association: "Season" },
           { association: "Members" },
         ],
