@@ -1,10 +1,10 @@
 ---
 name: choreo-planer
-description: "Comprehensive skill for Cheer Choreo Tool development. Routes tasks to the correct resource using a decision tree. Use when working with Vue, Vite, Express, Sequelize, Postgres, TypeScript, Docker, CI/CD, GitHub CLI, testing, or general development tasks."
+description: "MUST be loaded first for any cheer-choreo-tool task. Provides project-specific context (layout, commands, conventions) and decision trees to route to specialized skills (Vue, Express, CI/CD, etc.). Do not load specialized skills directly—use this skill to ensure project standards are followed."
 license: MIT
 compatibility: OpenCode and VSCode-compatible environments; Node.js, npm, Docker
 metadata:
-  version: "1.0"
+  version: "1.1"
   author: Andreas Nicklaus
   project: cheer-choreo-tool
   technologies:
@@ -19,11 +19,18 @@ metadata:
     - Playwright
 ---
 
+## ⚠️ Load This Skill First
+- Includes project-specific `project-layout.md` and `commands.md` not available in generic specialized skills
+- Enforces cheer-choreo-tool coding standards and safety rules
+- Correctly routes tasks to specialized skills via decision trees
+
 # Choreo Planer Skill
 
 Consolidated skill for building and maintaining the Cheer Choreo Tool project.
 
 ## How to Use
+
+**⚠️ IMPORTANT: This is the entry point for all cheer-choreo-tool tasks. Do NOT load reference skills directly.**
 
 1. **Read the user task** — understand what the user is asking for
 2. **Apply the decision tree** — match keywords in the task to identify the correct resource
@@ -93,64 +100,64 @@ Coding task?
 
 ### Testing & Quality
 
-| Topic | Resource |
-|-------|----------|
-| Unit test (new, failing, or changes) | [references/fix-unit-tests-skill/](references/fix-unit-tests-skill/) |
+| Topic                                           | Resource                                                                           |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Unit test (new, failing, or changes)            | [references/fix-unit-tests-skill/](references/fix-unit-tests-skill/)               |
 | Integration/E2E test (new, failing, or changes) | [references/fix-integration-tests-skill/](references/fix-integration-tests-skill/) |
-| Vitest configuration, mocking, coverage | [references/vitest/](references/vitest/) |
+| Vitest configuration, mocking, coverage         | [references/vitest/](references/vitest/)                                           |
 
 ### Frontend
 
-| Topic | Resource |
-|-------|----------|
+| Topic                                      | Resource                                                         |
+| ------------------------------------------ | ---------------------------------------------------------------- |
 | Vue 3, components, composables, reactivity | [references/vue-best-practices/](references/vue-best-practices/) |
 
 ### Backend
 
-| Topic | Resource |
-|-------|----------|
-| Express.js, REST APIs, middleware | [references/express-rest-api/](references/express-rest-api/) |
-| Sequelize ORM, models, migrations | [references/sequelize/](references/sequelize/) |
+| Topic                                | Resource                                                                                     |
+| ------------------------------------ | -------------------------------------------------------------------------------------------- |
+| Express.js, REST APIs, middleware    | [references/express-rest-api/](references/express-rest-api/)                                 |
+| Sequelize ORM, models, migrations    | [references/sequelize/](references/sequelize/)                                               |
 | Postgres, RLS, security, performance | [references/supabase-postgres-best-practices/](references/supabase-postgres-best-practices/) |
 
 ### TypeScript
 
-| Topic | Resource |
-|-------|----------|
+| Topic                          | Resource                                                       |
+| ------------------------------ | -------------------------------------------------------------- |
 | TypeScript, types, strict mode | [references/typescript-expert/](references/typescript-expert/) |
 
 ### DevOps & Infrastructure
 
-| Topic | Resource |
-|-------|----------|
-| Docker, containers, Dockerfile | [references/docker-best-practices/](references/docker-best-practices/) |
-| CI/CD, pipelines, GitHub Actions | [references/cicd-expert/](references/cicd-expert/) |
+| Topic                            | Resource                                                               |
+| -------------------------------- | ---------------------------------------------------------------------- |
+| Docker, containers, Dockerfile   | [references/docker-best-practices/](references/docker-best-practices/) |
+| CI/CD, pipelines, GitHub Actions | [references/cicd-expert/](references/cicd-expert/)                     |
 
 ### Developer Tools
 
-| Topic | Resource |
-|-------|----------|
-| GitHub CLI, PRs, issues, workflows | [references/gh-cli/](references/gh-cli/) |
+| Topic                                  | Resource                                                         |
+| -------------------------------------- | ---------------------------------------------------------------- |
+| GitHub CLI, PRs, issues, workflows     | [references/gh-cli/](references/gh-cli/)                         |
 | npm workspaces, packages, dependencies | [references/npm-packages-skill/](references/npm-packages-skill/) |
 
 ### MCP Tools
 
 The project has the following MCP (Model Context Protocol) tools configured in `opencode.json`:
 
-| Tool | Purpose |
-|------|---------|
+| Tool              | Purpose                                                                  |
+| ----------------- | ------------------------------------------------------------------------ |
 | `chrome-devtools` | Browser automation, testing, and inspection via Chrome DevTools Protocol |
-| `github` | GitHub operations (PRs, issues, repos, Actions) via GitHub MCP Server |
-| `context7` | Documentation lookup and code search via Context7 |
+| `github`          | GitHub operations (PRs, issues, repos, Actions) via GitHub MCP Server    |
+| `context7`        | Documentation lookup and code search via Context7                        |
 
 Use these tools when working with browser automation, GitHub operations, or documentation searches.
 
 ### General
 
-| Topic | Resource |
-|-------|----------|
-| Documentation, concept explanation | [references/read-docs-skill/](references/read-docs-skill/) |
-| General coding, patches, refactoring | [references/basic-skill/](references/basic-skill/) |
+| Topic                                | Resource                                                   |
+| ------------------------------------ | ---------------------------------------------------------- |
+| Documentation, concept explanation   | [references/read-docs-skill/](references/read-docs-skill/) |
+| General coding, patches, refactoring | [references/basic-skill/](references/basic-skill/)         |
 
 ## Examples
 
@@ -178,6 +185,8 @@ User says: "What files are involved in the authentication flow?"
 3. Provide a summary of the relevant files
 
 ## Safety and Governance
+
+**Skill Loading Order**: Always load this `choreo-planer` skill FIRST before any reference skills. Reference skills have "[Load choreo-planer first]" in their descriptions to remind you.
 
 - **Explicit approval required**: Never apply patches, run migrations, or make changes without user confirmation
 - **Git operations**: No git commits, pushes, or branch operations unless explicitly approved per task

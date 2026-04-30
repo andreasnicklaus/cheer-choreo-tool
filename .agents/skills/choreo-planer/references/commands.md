@@ -4,7 +4,7 @@ Commands for running, testing, and developing the Cheer Choreo Tool project.
 
 ## Testing
 
-### Frontend (app/)
+### Frontend (app/) - Testing
 
 ```bash
 # From app/ directory
@@ -13,7 +13,7 @@ npm run test:e2e         # Run E2E tests (playwright)
 npm run test             # Run all tests
 ```
 
-### Server (server/)
+### Server (server/) - Testing
 
 ```bash
 # From server/ directory
@@ -24,7 +24,7 @@ npm run test             # Run all tests (prep then unit)
 
 ## Development
 
-### Frontend (app/)
+### Frontend (app/) - Development
 
 ```bash
 # From app/ directory
@@ -35,7 +35,7 @@ npm run lint             # Lint code
 npm run lint:fix         # Lint and auto-fix issues
 ```
 
-### Server (server/)
+### Server (server/) - Development
 
 ```bash
 # From server/ directory
@@ -57,7 +57,7 @@ docker compose exec server npm run dev  # Run server command in container
 
 ## Package Management
 
-### Frontend (app/)
+### Frontend (app/) - Package Management
 
 ```bash
 # From app/ directory
@@ -66,21 +66,11 @@ npm run audit           # Run security audit
 npm run audit:fix       # Auto-fix security vulnerabilities
 ```
 
-### Server (server/)
+### Server (server/) - Package Management
 
 ```bash
 # From server/ directory
 npm install              # Install dependencies
 npm run audit           # Run security audit
 npm run audit:fix       # Auto-fix security vulnerabilities
-```
-
-## Database
-
-```bash
-# From server/ directory
-npm run db:migrate       # Run database migrations
-npm run db:seed         # Seed database with initial data
-npm run db:reset        # Reset database (drop, recreate, seed)
-npm run db:rollback      # Rollback last migration
 ```

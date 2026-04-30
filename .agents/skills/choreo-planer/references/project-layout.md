@@ -4,7 +4,7 @@ Overview of the Cheer Choreo Tool project structure. This reflects the actual di
 
 ## Root Structure
 
-```
+```text
 cheer-choreo-tool/
 ├── app/                    # Vue 3 frontend application
 ├── server/                 # Node Express backend
@@ -15,7 +15,7 @@ cheer-choreo-tool/
 
 ## Frontend (app/)
 
-```
+```text
 app/
 ├── src/
 │   ├── App.vue            # Root component
@@ -46,7 +46,7 @@ app/
 
 ## Backend (server/)
 
-```
+```text
 server/
 ├── src/
 │   ├── index.ts           # Server entry point
@@ -71,7 +71,7 @@ server/
 
 ## Agent Skills (.agents/)
 
-```
+```text
 .agents/
 └── skills/
     └── choreo-planer/
