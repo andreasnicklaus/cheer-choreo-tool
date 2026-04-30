@@ -198,7 +198,7 @@ class ChoreoService {
 
     const choreo = await Choreo.findByPk(id);
     if (!choreo) {
-      return null;
+      throw new NotFoundError(`Choreo with ID ${id} not found`);
     }
 
     await checkReadAccess(choreo.UserId, actingUserId, isAdmin);
@@ -376,27 +376,31 @@ class ChoreoService {
 
     await checkWriteAccess(ownerId, actingUserId, isAdmin);
 
-    return this.findById(choreoId, actingUserId, isAdmin).then(async (choreo) => {
-      if (!choreo) {
-        throw new NotFoundError(`Choreo with ID ${choreoId} not found`);
-      }
-      return MemberService.findById(MemberId, actingUserId, isAdmin).then(
-        async (member) => {
-          if (!member) {
-            logger.error(`Member with ID ${MemberId} not found`);
-            throw new NotFoundError(`Member with ID ${MemberId} not found`);
-          }
-          await choreo.addParticipant(member, {
-            through: {
-              color:
-                color ||
-                defaultColors[Math.floor(Math.random() * defaultColors.length)],
-            },
-          });
-          await this.update(choreoId, {}, actingUserId, isAdmin);
-        },
-      );
-    });
+    return this.findById(choreoId, actingUserId, isAdmin).then(
+      async (choreo) => {
+        if (!choreo) {
+          throw new NotFoundError(`Choreo with ID ${choreoId} not found`);
+        }
+        return MemberService.findById(MemberId, actingUserId, isAdmin).then(
+          async (member) => {
+            if (!member) {
+              logger.error(`Member with ID ${MemberId} not found`);
+              throw new NotFoundError(`Member with ID ${MemberId} not found`);
+            }
+            await choreo.addParticipant(member, {
+              through: {
+                color:
+                  color ||
+                  defaultColors[
+                    Math.floor(Math.random() * defaultColors.length)
+                  ],
+              },
+            });
+            return this.update(choreoId, {}, actingUserId, isAdmin);
+          },
+        );
+      },
+    );
   }
 
   /**
@@ -425,11 +429,12 @@ class ChoreoService {
 
     return ChoreoParticipation.findOne({
       where: { MemberId, ChoreoId },
+      include: { association: "Choreo" },
     }) // njsscan-ignore: node_nosqli_injection
       .then(async (foundChoreoParticipation: ChoreoParticipation | null) => {
         if (!foundChoreoParticipation) return;
         await checkWriteAccess(
-          foundChoreoParticipation.UserId,
+          foundChoreoParticipation.Choreo.UserId,
           actingUserId,
           isAdmin,
         );
@@ -468,6 +473,7 @@ class ChoreoService {
 
     return ChoreoParticipation.findOne({
       where: { ChoreoId, MemberId: memberToRemoveId },
+      include: { association: "Choreo" },
     }) // njsscan-ignore: node_nosqli_injection
       .then(async (foundChoreoParticipation: ChoreoParticipation | null) => {
         if (!foundChoreoParticipation) {
@@ -479,7 +485,7 @@ class ChoreoService {
           );
         }
         const color = foundChoreoParticipation.color;
-        const ownerId = foundChoreoParticipation.UserId;
+        const ownerId = foundChoreoParticipation.Choreo.UserId;
         await checkWriteAccess(ownerId, actingUserId, isAdmin);
         await this.removeParticipant(
           ChoreoId,
@@ -555,6 +561,7 @@ class ChoreoService {
 
     return ChoreoParticipation.findOne({
       where: { ChoreoId, MemberId: participantId },
+      include: { association: "Choreo" },
     }) // njsscan-ignore: node_nosqli_injection
       .then(async (foundChoreoParticipation: ChoreoParticipation | null) => {
         if (!foundChoreoParticipation) {
@@ -566,13 +573,13 @@ class ChoreoService {
           );
         }
         await checkWriteAccess(
-          foundChoreoParticipation.UserId,
+          foundChoreoParticipation.Choreo.UserId,
           actingUserId,
           isAdmin,
         );
         await foundChoreoParticipation.update({ color });
         await foundChoreoParticipation.save();
-        await this.update(ChoreoId, {}, actingUserId, isAdmin);
+        return this.update(ChoreoId, {}, actingUserId, isAdmin);
       });
   }
 

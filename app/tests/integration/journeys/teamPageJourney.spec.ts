@@ -1,6 +1,8 @@
 import test from "@playwright/test";
 import { mockDefaultStartRequests } from "../utils/multiRequests";
+import { mockTeams } from "../utils/requests";
 import TeamPage from "../pages/teamPage";
+import { sharedTeams } from "../testData/team";
 
 let teamPage: TeamPage;
 
@@ -58,4 +60,38 @@ test("should delete a team", async () => {
 });
 test("should delete a season", async () => {
   await teamPage.iDeleteSeason();
+});
+
+test.describe("creator and editor display", () => {
+  test("should display 'you' as creator when user is the creator", async () => {
+    await teamPage.iSeeCreatorDisplay("you");
+  });
+
+  test("should display username as creator when creator is another user", async () => {
+    await mockTeams(teamPage.page, sharedTeams);
+    await teamPage.goToPage();
+    await teamPage.iSeeCreatorDisplay("Other User");
+  });
+
+  test("should display 'you' as last editor when user is the updater", async () => {
+    await teamPage.iSeeUpdaterDisplay("you");
+  });
+
+  test("should display username as last editor when updater is another user", async () => {
+    await mockTeams(teamPage.page, sharedTeams);
+    await teamPage.goToPage();
+    await teamPage.iSeeUpdaterDisplay("Other User");
+  });
+});
+
+test.describe("owner display", () => {
+  test("should not display owner when user is the owner", async () => {
+    await teamPage.iDontSeeOwnerDisplay();
+  });
+
+  test("should display owner when team is shared with user", async () => {
+    await mockTeams(teamPage.page, sharedTeams);
+    await teamPage.goToPage();
+    await teamPage.iSeeOwnerDisplay("Other User");
+  });
 });

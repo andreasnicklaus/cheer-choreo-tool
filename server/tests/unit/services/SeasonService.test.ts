@@ -9,6 +9,7 @@ jest.mock("@/plugins/winston", () => ({
     error: jest.fn(),
   },
   debug: jest.fn(),
+  info: jest.fn(),
 }));
 
 jest.mock("@/db/db", () => {
@@ -49,26 +50,34 @@ describe("SeasonService", () => {
 
   test("getAll returns seasons for valid user", async () => {
     await Season.create({ name: "TestSeason", year: 2025, UserId: user.id });
-    const result = await SeasonService.getAll(user.id);
+    const result = await SeasonService.getAll([user.id], user.id);
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(1);
   });
 
   test("getAll returns all seasons for no user", async () => {
     await Season.create({ name: "TestSeason", year: 2025 });
-    const result = await SeasonService.getAll(null);
+    const result = await SeasonService.getAll(null, user.id);
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(1);
   });
 
   test("getAll returns empty for invalid user", async () => {
-    const result = await SeasonService.getAll("invalid-user-id");
+    const result = await SeasonService.getAll(
+      ["invalid-user-id"],
+      "invalid-user-id",
+    );
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(0);
   });
 
   test("create creates a new season", async () => {
-    const result = await SeasonService.create("seasonName", 2025, user.id);
+    const result = await SeasonService.create(
+      "seasonName",
+      2025,
+      user.id,
+      user.id,
+    );
     expect(result).toBeDefined();
     expect(result.id).toBeDefined();
   });
@@ -120,9 +129,9 @@ describe("SeasonService", () => {
       year: 2025,
       UserId: user.id,
     });
-    expect((await SeasonService.getAll(user.id)).length).toBe(1);
+    expect((await SeasonService.getAll([user.id], user.id)).length).toBe(1);
     await SeasonService.remove(season.id, user.id);
-    expect((await SeasonService.getAll(user.id)).length).toBe(0);
+    expect((await SeasonService.getAll([user.id], user.id)).length).toBe(0);
   });
 
   test("remove on non-existing member should throw", async () => {

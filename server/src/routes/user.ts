@@ -245,7 +245,7 @@ router.post(
     User.findOne({ where: { email: childEmail } })
       .then((child: User | null) => {
         if (!child) {
-          return next(new Error("User not found"));
+          throw new Error("User not found");
         }
         return UserAccessService.create(req.UserId, child.id, role, true);
       })

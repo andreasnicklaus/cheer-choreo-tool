@@ -164,7 +164,7 @@ class UserAccessService {
    */
   async decline(id: string, childId: string) {
     logger.debug(
-      `UserAccessService decline ${JSON.stringify({ id, childId })}`
+      `UserAccessService decline ${JSON.stringify({ id, childId })}`,
     );
 
     const access = await UserAccess.findOne({

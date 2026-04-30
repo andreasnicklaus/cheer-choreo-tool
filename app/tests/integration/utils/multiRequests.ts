@@ -13,6 +13,7 @@ import {
   mockSeasons,
   mockTeams,
   mockVersion,
+  mockUserAccess,
 } from "./requests";
 import { mockTrackingRequests } from "./trackingRequests";
 import { mockFeatureFlagRequests } from "./featureFlagRequests";
@@ -32,6 +33,7 @@ export async function mockDefaultStartRequests(page: Page) {
     mockPositions(page),
     mockLineups(page),
     mockHits(page),
+    mockUserAccess(page),
     mockTrackingRequests(page),
     mockFeatureFlagRequests(page),
   ]);

@@ -12,7 +12,11 @@
       <template #loading>
         <BPlaceholder width="25%" class="mb-4" animation="wave" />
       </template>
-      <p v-show="me?.id != choreo?.UserId" class="text-muted mb-4 fw-light">
+      <p
+        v-show="me?.id != choreo?.UserId"
+        class="text-muted mb-4 fw-light"
+        data-testid="owner-display"
+      >
         {{ $t("general.shared-with-you-by") }}
         {{ choreo?.User?.username || "unknown" }}
       </p>
@@ -234,6 +238,7 @@
               <BDropdownText
                 v-if="choreo?.creator?.username"
                 class="text-muted fw-light text-nowrap"
+                data-testid="creator-display"
                 @click.stop
               >
                 {{ $t("general.created-by") }}
@@ -246,6 +251,7 @@
               <BDropdownText
                 v-if="choreo?.updater?.username && me?.id"
                 class="text-muted fw-light text-nowrap"
+                data-testid="updater-display"
                 @click.stop
               >
                 {{ $t("general.last-updated-by") }}

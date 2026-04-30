@@ -555,6 +555,7 @@
                     :fields="sharedWithMeFields"
                     responsive
                     striped
+                    data-testid="sharedWithMeTable"
                   >
                     <template #cell(name)="row">
                       {{ row.item.owner?.username }}
@@ -633,6 +634,7 @@
                     :fields="managedByMeFields"
                     responsive
                     striped
+                    data-testid="managedByMeTable"
                   >
                     <template #cell(name)="row">
                       {{ row.item.child?.username }}

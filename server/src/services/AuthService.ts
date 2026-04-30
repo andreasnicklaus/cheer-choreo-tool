@@ -134,12 +134,14 @@ class AuthService {
               }
 
               logger.debug(
-                `User ${user.username} authenticated. Token: ${token}, ownerRoles: ${JSON.stringify(ownerAccess.map((oa) => ({
-                  ownerId: oa.ownerUserId,
-                  ownerUsername: oa.owner?.username,
-                  role: oa.role,
-                  enabled: oa.enabled,
-                })))}`,
+                `User ${user.username} authenticated. Token: ${token}, ownerRoles: ${JSON.stringify(
+                  ownerAccess.map((oa) => ({
+                    ownerId: oa.ownerUserId,
+                    ownerUsername: oa.owner?.username,
+                    role: oa.role,
+                    enabled: oa.enabled,
+                  })),
+                )}`,
               );
 
               next();

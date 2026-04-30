@@ -1,4 +1,4 @@
-import logger from "plugins/winston";
+import logger from "@/plugins/winston";
 import migrateCreatorUpdaters from "./migrateCreatorUpdaters";
 
 async function migrate() {

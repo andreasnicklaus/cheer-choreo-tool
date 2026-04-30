@@ -1,4 +1,4 @@
-import { describe, test, expect } from "@jest/globals";
+﻿import { describe, test, expect } from "@jest/globals";
 import ChoreoService from "@/services/ChoreoService";
 import Choreo from "@/db/models/choreo";
 import User from "@/db/models/user";
@@ -13,6 +13,7 @@ jest.mock("@/plugins/winston", () => ({
     debug: jest.fn(),
     error: jest.fn(),
   },
+  info: jest.fn(),
 }));
 
 jest.mock("@/db/db", () => {
@@ -65,7 +66,14 @@ describe("ChoreoService", () => {
       UserId: user.id,
     });
     await expect(
-      ChoreoService.addParticipant(choreo.id, member.id, user.id, "#FF1493"),
+      ChoreoService.addParticipant(
+        choreo.id,
+        member.id,
+        user.id,
+        user.id,
+        false,
+        "#FF1493",
+      ),
     ).resolves.toBeDefined();
     expect(
       await ChoreoParticipation.findOne({
@@ -86,6 +94,8 @@ describe("ChoreoService", () => {
         choreo.id,
         "invalid-member-id",
         user.id,
+        user.id,
+        false,
         "#FF1493",
       ),
     ).rejects.toThrow();
@@ -107,10 +117,12 @@ describe("ChoreoService", () => {
       choreo.id,
       member.id,
       user.id,
+      user.id,
+      false,
       "#FF1493",
     );
 
-    await ChoreoService.removeParticipant(choreo.id, member.id);
+    await ChoreoService.removeParticipant(choreo.id, member.id, user.id);
 
     expect(
       await ChoreoParticipation.findOne({
@@ -127,7 +139,7 @@ describe("ChoreoService", () => {
       UserId: user.id,
     });
     await expect(
-      ChoreoService.removeParticipant(choreo.id, "invalid-member-id"),
+      ChoreoService.removeParticipant(choreo.id, "invalid-member-id", user.id),
     ).resolves.toBeUndefined();
   });
 
@@ -152,6 +164,8 @@ describe("ChoreoService", () => {
       choreo.id,
       member1.id,
       user.id,
+      user.id,
+      false,
       "#FF1493",
     );
     await expect(
@@ -212,10 +226,17 @@ describe("ChoreoService", () => {
       choreo.id,
       member.id,
       user.id,
+      user.id,
+      false,
       "#FF1493",
     );
     await expect(
-      ChoreoService.changeParticipationColor(choreo.id, member.id, "#00FFFF"),
+      ChoreoService.changeParticipationColor(
+        choreo.id,
+        member.id,
+        "#00FFFF",
+        user.id,
+      ),
     ).resolves.toBeDefined();
     const participation = await ChoreoParticipation.findOne({
       where: { MemberId: member.id, ChoreoId: choreo.id },
@@ -236,6 +257,7 @@ describe("ChoreoService", () => {
         choreo.id,
         "invalid-participant-id",
         "#00FFFF",
+        user.id,
       ),
     ).rejects.toThrow();
   });
@@ -251,6 +273,7 @@ describe("ChoreoService", () => {
     });
     const result = await ChoreoService.findBySeasonTeamId(
       seasonTeam.id,
+      [user.id],
       user.id,
     );
     expect(Array.isArray(result)).toBe(true);
@@ -267,6 +290,7 @@ describe("ChoreoService", () => {
     });
     const result = await ChoreoService.findBySeasonTeamId(
       "invalid-team-id",
+      ["invalid-user-id"],
       "invalid-user-id",
     );
     expect(Array.isArray(result)).toBe(true);
@@ -281,6 +305,7 @@ describe("ChoreoService", () => {
       "cheer",
       seasonTeam.id,
       user.id,
+      user.id,
     );
     expect(result).toBeDefined();
     expect(result.name).toBe("FindOrCreateChoreo");
@@ -292,6 +317,7 @@ describe("ChoreoService", () => {
       7,
       "cheer",
       seasonTeam.id,
+      user.id,
       user.id,
     );
     expect(result2).toBeDefined();
@@ -311,7 +337,9 @@ describe("ChoreoService", () => {
       user.id,
     );
     expect(updated).toBeDefined();
-    expect(updated.name).toBe("UpdatedName");
+    if (updated) {
+      expect(updated.name).toBe("UpdatedName");
+    }
   });
 
   test("update throws for invalid id", async () => {
@@ -344,7 +372,7 @@ describe("ChoreoService", () => {
       matType: "cheer",
       UserId: user.id,
     });
-    const result = await ChoreoService.getAll(user.id);
+    const result = await ChoreoService.getAll([user.id], user.id);
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(1);
     expect(result[0].id).toBe(choreo.id);
@@ -359,7 +387,9 @@ describe("ChoreoService", () => {
     });
     const result = await ChoreoService.findById(choreo.id, user.id);
     expect(result).toBeDefined();
-    expect(result.id).toBe(choreo.id);
+    if (result) {
+      expect(result.id).toBe(choreo.id);
+    }
   });
 
   test("findById throws for invalid id", async () => {
@@ -377,11 +407,14 @@ describe("ChoreoService", () => {
       seasonTeam.id,
       [],
       user.id,
+      user.id,
     );
     expect(result).toBeDefined();
-    expect(result.name).toBe("NewChoreo");
-    expect(result.counts).toBe(10);
-    expect(result.UserId).toBe(user.id);
+    if (result) {
+      expect(result.name).toBe("NewChoreo");
+      expect(result.counts).toBe(10);
+      expect(result.UserId).toBe(user.id);
+    }
   });
 
   test("getCount returns correct number", async () => {

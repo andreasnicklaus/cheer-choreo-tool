@@ -249,7 +249,7 @@ class SeasonTeamService {
     );
 
     const foundSeasonTeam = await SeasonTeam.findByPk(id, {
-      include: [{ association: "Season" }],
+      include: [{ association: "Season", include: ["SeasonTeams"] }],
     });
     if (!foundSeasonTeam) {
       logger.error(`No seasonTeam found with ID ${id} when deleting`);

@@ -1,10 +1,11 @@
-import { describe, test, expect, beforeAll, afterEach } from "@jest/globals";
+﻿import { describe, test, expect, beforeAll, afterEach } from "@jest/globals";
 import ClubService from "@/services/ClubService";
 import Club from "@/db/models/club";
 import User from "@/db/models/user";
 import Team from "@/db/models/team";
 import Season from "@/db/models/season";
 import UserAccess from "@/db/models/userAccess";
+import { AccessRole } from "@/db/models/userAccess";
 
 jest.mock("@/plugins/winston", () => ({
   logger: {
@@ -12,6 +13,7 @@ jest.mock("@/plugins/winston", () => ({
     error: jest.fn(),
   },
   debug: jest.fn(),
+  info: jest.fn(),
 }));
 
 jest.mock("@/db/db", () => {
@@ -49,14 +51,17 @@ describe("ClubService", () => {
 
   test("getAll returns clubs for valid user", async () => {
     const club = await Club.create({ name: "TestClub", UserId: user.id });
-    const result = await ClubService.getAll(user.id);
+    const result = await ClubService.getAll([user.id], user.id);
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(1);
     expect(result[0].id).toBe(club.id);
   });
 
   test("getAll returns empty for invalid user", async () => {
-    const result = await ClubService.getAll("invalid-user-id");
+    const result = await ClubService.getAll(
+      ["invalid-user-id"],
+      "invalid-user-id",
+    );
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(0);
   });
@@ -98,14 +103,18 @@ describe("ClubService", () => {
 
   test("findByName returns club for valid name/user", async () => {
     const club = await Club.create({ name: "TestClub", UserId: user.id });
-    const result = await ClubService.findByName("TestClub", user.id);
+    const result = await ClubService.findByName("TestClub", [user.id], user.id);
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(1);
     expect(result[0].id).toBe(club.id);
   });
 
   test("findByName returns empty for invalid name", async () => {
-    const result = await ClubService.findByName("InvalidClub", user.id);
+    const result = await ClubService.findByName(
+      "InvalidClub",
+      [user.id],
+      user.id,
+    );
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(0);
   });
@@ -123,7 +132,11 @@ describe("ClubService", () => {
   });
 
   test("findOrCreate finds or creates a club", async () => {
-    const result = await ClubService.findOrCreate("FindOrCreateClub", user.id, user.id);
+    const result = await ClubService.findOrCreate(
+      "FindOrCreateClub",
+      user.id,
+      user.id,
+    );
     expect(result).toBeDefined();
     expect(result.name).toBe("FindOrCreateClub");
     expect(result.UserId).toBe(user.id);
@@ -135,7 +148,6 @@ describe("ClubService", () => {
       club.id,
       { name: "UpdatedName" },
       user.id,
-      user.id,
     );
     expect(updated).toBeDefined();
     expect(updated.name).toBe("UpdatedName");
@@ -143,19 +155,19 @@ describe("ClubService", () => {
 
   test("update throws for invalid id", async () => {
     await expect(
-      ClubService.update("invalid-id", { name: "UpdatedName" }, user.id, user.id),
+      ClubService.update("invalid-id", { name: "UpdatedName" }, user.id),
     ).rejects.toThrow();
   });
 
   test("remove deletes club", async () => {
     const club = await Club.create({ name: "TestClub", UserId: user.id });
-    await ClubService.remove(club.id, user.id, user.id);
+    await ClubService.remove(club.id, user.id);
     const found = await Club.findByPk(club.id);
     expect(found?.deletedAt).not.toBeNull();
   });
 
   test("remove throws for invalid id", async () => {
-    await expect(ClubService.remove("invalid-id", user.id, user.id)).rejects.toThrow();
+    await expect(ClubService.remove("invalid-id", user.id)).rejects.toThrow();
   });
 
   describe("ClubService access control", () => {
@@ -165,27 +177,39 @@ describe("ClubService", () => {
     let childCoach: User;
 
     beforeAll(async () => {
-      owner = await User.create({ username: "access-owner", password: "password" });
-      childAthlete = await User.create({ username: "child-athlete", password: "password" });
-      childAssistant = await User.create({ username: "child-assistant", password: "password" });
-      childCoach = await User.create({ username: "child-coach", password: "password" });
+      owner = await User.create({
+        username: "access-owner",
+        password: "password",
+      });
+      childAthlete = await User.create({
+        username: "child-athlete",
+        password: "password",
+      });
+      childAssistant = await User.create({
+        username: "child-assistant",
+        password: "password",
+      });
+      childCoach = await User.create({
+        username: "child-coach",
+        password: "password",
+      });
 
       await UserAccess.create({
         ownerUserId: owner.id,
         childUserId: childAthlete.id,
-        role: "athlete",
+        role: AccessRole.ATHLETE,
         enabled: true,
       });
       await UserAccess.create({
         ownerUserId: owner.id,
         childUserId: childAssistant.id,
-        role: "assistant",
+        role: AccessRole.ASSISTANT,
         enabled: true,
       });
       await UserAccess.create({
         ownerUserId: owner.id,
         childUserId: childCoach.id,
-        role: "coach",
+        role: AccessRole.COACH,
         enabled: true,
       });
     });
@@ -210,14 +234,14 @@ describe("ClubService", () => {
     test("child with athlete role CANNOT update clubs (throws)", async () => {
       const club = await Club.create({ name: "TestClub", UserId: owner.id });
       await expect(
-        ClubService.update(club.id, { name: "Updated" }, owner.id, childAthlete.id),
+        ClubService.update(club.id, { name: "Updated" }, childAthlete.id),
       ).rejects.toThrow();
     });
 
     test("child with athlete role CANNOT delete clubs (throws)", async () => {
       const club = await Club.create({ name: "TestClub", UserId: owner.id });
       await expect(
-        ClubService.remove(club.id, owner.id, childAthlete.id),
+        ClubService.remove(club.id, childAthlete.id),
       ).rejects.toThrow();
     });
 
@@ -228,14 +252,18 @@ describe("ClubService", () => {
     });
 
     test("child with assistant role can CREATE clubs", async () => {
-      const created = await ClubService.create("NewClub", owner.id, childAssistant.id);
+      const created = await ClubService.create(
+        "NewClub",
+        owner.id,
+        childAssistant.id,
+      );
       expect(created).toBeDefined();
     });
 
     test("child with assistant role CANNOT delete clubs (throws)", async () => {
       const club = await Club.create({ name: "TestClub", UserId: owner.id });
       await expect(
-        ClubService.remove(club.id, owner.id, childAssistant.id),
+        ClubService.remove(club.id, childAssistant.id),
       ).rejects.toThrow();
     });
 
@@ -246,20 +274,28 @@ describe("ClubService", () => {
     });
 
     test("child with coach role can CREATE clubs", async () => {
-      const created = await ClubService.create("NewClub", owner.id, childCoach.id);
+      const created = await ClubService.create(
+        "NewClub",
+        owner.id,
+        childCoach.id,
+      );
       expect(created).toBeDefined();
     });
 
     test("child with coach role can UPDATE clubs", async () => {
       const club = await Club.create({ name: "TestClub", UserId: owner.id });
-      const updated = await ClubService.update(club.id, { name: "Updated" }, owner.id, childCoach.id);
+      const updated = await ClubService.update(
+        club.id,
+        { name: "Updated" },
+        childCoach.id,
+      );
       expect(updated).toBeDefined();
       expect(updated.name).toBe("Updated");
     });
 
     test("child with coach role can DELETE clubs", async () => {
       const club = await Club.create({ name: "TestClub", UserId: owner.id });
-      await ClubService.remove(club.id, owner.id, childCoach.id);
+      await ClubService.remove(club.id, childCoach.id);
       const deleted = await Club.findByPk(club.id);
       expect(deleted?.deletedAt).not.toBeNull();
     });
@@ -279,8 +315,8 @@ describe("ClubService", () => {
     test("getAll returns owner's clubs when using ownerId", async () => {
       await Club.create({ name: "OwnerClub1", UserId: owner.id });
       await Club.create({ name: "OwnerClub2", UserId: owner.id });
-      
-      const result = await ClubService.getAll(owner.id);
+
+      const result = await ClubService.getAll([owner.id], owner.id);
       expect(result.length).toBe(2);
     });
   });

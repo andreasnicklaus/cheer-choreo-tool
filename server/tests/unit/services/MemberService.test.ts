@@ -2,6 +2,7 @@ import { describe, test, expect } from "@jest/globals";
 import MemberService from "@/services/MemberService";
 import Member from "@/db/models/member";
 import User from "@/db/models/user";
+import Team from "@/db/models/team";
 import SeasonTeam from "@/db/models/seasonTeam";
 
 jest.mock("@/plugins/winston", () => ({
@@ -10,6 +11,7 @@ jest.mock("@/plugins/winston", () => ({
     error: jest.fn(),
   },
   debug: jest.fn(),
+  info: jest.fn(),
 }));
 
 jest.mock("@/db/db", () => {
@@ -53,13 +55,16 @@ describe("MemberService", () => {
       abbreviation: "TM",
       UserId: user.id,
     });
-    const result = await MemberService.getAll(user.id);
+    const result = await MemberService.getAll([user.id], user.id);
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(1);
   });
 
   test("getAll returns empty for invalid user", async () => {
-    const result = await MemberService.getAll("invalid-user-id");
+    const result = await MemberService.getAll(
+      ["invalid-user-id"],
+      "invalid-user-id",
+    );
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(0);
   });
@@ -105,12 +110,17 @@ describe("MemberService", () => {
   });
 
   test("create creates a new Member", async () => {
-    const seasonTeam = await SeasonTeam.create();
+    const team = await Team.create({ name: "TestTeam", UserId: user.id });
+    const seasonTeam = await SeasonTeam.create({
+      TeamId: team.id,
+      UserId: user.id,
+    });
     const member = await MemberService.create(
       "TestMember",
       "Testi",
       null,
       seasonTeam.id,
+      user.id,
       user.id,
     );
     expect(member.id).toBeDefined();
@@ -124,6 +134,7 @@ describe("MemberService", () => {
       "TestNickname",
       null,
       seasonTeam.id,
+      user.id,
       user.id,
     );
     expect(member.id).toBeDefined();

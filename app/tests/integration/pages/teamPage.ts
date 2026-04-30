@@ -275,4 +275,34 @@ export default class TeamPage extends TestPage {
     await this.iClickButton(confirmButton);
     // check to ensure the season is deleted is not possible as the app simply reloads
   }
+
+  async iOpenOptionsMenu() {
+    const openMenuButton = this.page.getByTestId("options-dropdown");
+    await this.iClickButton(openMenuButton);
+  }
+
+  async iSeeCreatorDisplay(expectedText: string) {
+    await this.iOpenOptionsMenu();
+    const creatorDisplay = this.page.getByTestId("creator-display");
+    await expect(creatorDisplay).toBeVisible();
+    await expect(creatorDisplay).toContainText(expectedText);
+  }
+
+  async iSeeUpdaterDisplay(expectedText: string) {
+    await this.iOpenOptionsMenu();
+    const updaterDisplay = this.page.getByTestId("updater-display");
+    await expect(updaterDisplay).toBeVisible();
+    await expect(updaterDisplay).toContainText(expectedText);
+  }
+
+  async iSeeOwnerDisplay(username: string) {
+    const ownerDisplay = this.page.getByTestId("owner-display");
+    await expect(ownerDisplay).toBeVisible();
+    await expect(ownerDisplay).toContainText(username);
+  }
+
+  async iDontSeeOwnerDisplay() {
+    const ownerDisplay = this.page.getByTestId("owner-display");
+    await expect(ownerDisplay).not.toBeVisible();
+  }
 }

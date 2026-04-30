@@ -91,6 +91,13 @@ UserAccess.init(
       type: DataTypes.ENUM(...Object.values(AccessRole)),
       allowNull: false,
       defaultValue: AccessRole.ATHLETE,
+      validate: {
+        isValidAccessRole(value: unknown) {
+          if (!Object.values(AccessRole).includes(value as AccessRole)) {
+            throw new Error("Invalid access role");
+          }
+        },
+      },
     },
     accepted: {
       type: DataTypes.BOOLEAN,

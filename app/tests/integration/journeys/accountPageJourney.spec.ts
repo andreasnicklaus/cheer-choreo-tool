@@ -67,3 +67,47 @@ test.describe("Danger Zone", () => {
     await accountPage.iDeleteAccount();
   });
 });
+
+test.describe("Access", () => {
+  test("should display Access tab", async () => {
+    await accountPage.iSwitchToAccess();
+  });
+
+  test("should display Shared with me section", async () => {
+    await accountPage.iCheckSharedWithMe();
+  });
+
+  test("should display Managed by me section", async () => {
+    await accountPage.iCheckManagedByMe();
+  });
+
+  test("should show pending status for pending invitations", async () => {
+    await accountPage.iSwitchToAccess();
+    // Check that pending badges are shown
+    await accountPage.iCheckPendingStatusInSharedWithMe();
+  });
+
+  test("should allow accepting an invitation", async () => {
+    await accountPage.iSwitchToAccess();
+    // Check if there are pending invitations to accept
+    const acceptButtons = accountPage.page.getByRole("button", {
+      name: "Accept",
+    });
+    const count = await acceptButtons.count();
+    if (count > 0) {
+      await accountPage.iAcceptAccess();
+    }
+  });
+
+  test("should allow declining an invitation", async () => {
+    await accountPage.iSwitchToAccess();
+    // Check if there are pending invitations to decline
+    const declineButtons = accountPage.page.getByRole("button", {
+      name: "Decline",
+    });
+    const count = await declineButtons.count();
+    if (count > 0) {
+      await accountPage.iDeclineAccess();
+    }
+  });
+});

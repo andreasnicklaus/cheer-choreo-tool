@@ -13,6 +13,7 @@
       <p
         v-show="me?.id != currentTeam?.UserId"
         class="text-muted mb-4 fw-light"
+        data-testid="owner-display"
       >
         {{ $t("general.shared-with-you-by") }}
         {{ currentTeam?.User?.username || "unknown" }}
@@ -98,6 +99,7 @@
           <BDropdownText
             v-if="currentTeam?.creator?.username && me?.id"
             class="text-muted fw-light text-nowrap"
+            data-testid="creator-display"
             @click.stop
           >
             {{ $t("general.created-by") }}
@@ -110,6 +112,7 @@
           <BDropdownText
             v-if="currentTeam?.updater?.username && me?.id"
             class="text-muted fw-light text-nowrap"
+            data-testid="updater-display"
             @click.stop
           >
             {{ $t("general.last-updated-by") }}

@@ -7,6 +7,7 @@ process.env.JWT_EXPIRES_IN = "1h";
 import Admin from "@/db/models/admin";
 import User from "@/db/models/user";
 import UserAccess from "@/db/models/userAccess";
+import { AccessRole } from "@/db/models/userAccess";
 import { NextFunction, Request, Response } from "express";
 import UserService from "@/services/UserService";
 import MailService from "@/services/MailService";
@@ -30,7 +31,9 @@ type TestRequest = {
 };
 
 jest.mock("@/plugins/winston", () => ({
+  info: jest.fn(),
   logger: {
+    info: jest.fn(),
     debug: jest.fn(),
     warn: jest.fn(),
     error: jest.fn(),
@@ -534,7 +537,7 @@ describe("AuthService", () => {
           const res = {} as Response;
           const next = jest.fn(() => {
             try {
-              expect(req.ownerId).toBe(user.id);
+              expect(req.ownerId).toBeUndefined();
               expect(req.actingUserId).toBe(user.id);
               done();
             } catch (e) {
@@ -581,9 +584,8 @@ describe("AuthService", () => {
           const res = {} as Response;
           const next = jest.fn(() => {
             try {
-              expect(req.Owner).toBeDefined();
+              expect(req.Owner).toBeUndefined();
               expect(req.ActingUser).toBeDefined();
-              expect(req.Owner?.id).toBe(user.id);
               expect(req.ActingUser?.id).toBe(user.id);
               done();
             } catch (e) {
@@ -607,7 +609,7 @@ describe("AuthService", () => {
             return UserAccess.create({
               ownerUserId: owner.id,
               childUserId: child.id,
-              role: "coach",
+              role: AccessRole.COACH,
               enabled: true,
             }).then(() => {
               const token = AuthService.generateAccessToken(child.id);
@@ -643,7 +645,7 @@ describe("AuthService", () => {
           const res = {} as Response;
           const next = jest.fn(() => {
             try {
-              expect(req.Owner).toBeDefined();
+              expect(req.Owner).toBeUndefined();
               done();
             } catch (e) {
               done(e as Error);

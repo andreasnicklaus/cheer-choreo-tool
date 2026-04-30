@@ -58,6 +58,8 @@ Choreo.belongsToMany(Member, {
 Member.belongsToMany(Choreo, {
   through: ChoreoParticipation,
 });
+ChoreoParticipation.belongsTo(Choreo);
+ChoreoParticipation.belongsTo(Member);
 
 Hit.belongsToMany(Member, { through: "HitMemberships" });
 Member.belongsToMany(Hit, { through: "HitMemberships" });

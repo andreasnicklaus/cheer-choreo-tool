@@ -9,6 +9,7 @@ jest.mock("@/plugins/winston", () => ({
     error: jest.fn(),
   },
   debug: jest.fn(),
+  info: jest.fn(),
 }));
 
 jest.mock("@/db/db", () => {
@@ -54,13 +55,16 @@ describe("FeedbackService", () => {
 
   test("getAll returns feedbacks for valid user", async () => {
     await Feedback.create({ stars: 5, text: "Great!", UserId: user.id });
-    const result = await FeedbackService.getAll(user.id);
+    const result = await FeedbackService.getAll([user.id], user.id);
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(1);
   });
 
   test("getAll returns empty for invalid user", async () => {
-    const result = await FeedbackService.getAll("invalid-user-id");
+    const result = await FeedbackService.getAll(
+      ["invalid-user-id"],
+      "invalid-user-id",
+    );
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(0);
   });

@@ -3,7 +3,11 @@ import ChoreoPage from "../pages/choreoPage";
 import { mockDefaultStartRequests } from "../utils/multiRequests";
 import { mockChoreos, mockClubs } from "../utils/requests";
 import { defaultClubs } from "../testData/club";
-import { defaultChoreos, emptyChoreos } from "../testData/choreo";
+import {
+  defaultChoreos,
+  emptyChoreos,
+  sharedChoreos,
+} from "../testData/choreo";
 
 let choreoPage: ChoreoPage;
 
@@ -62,6 +66,47 @@ test.describe("non-specific to choreo", () => {
   test("should offer a link to video export", async ({}, testInfo) => {
     if (!Boolean(testInfo.project.use.isMobile))
       await choreoPage.iSeeLinkToVideoExport();
+  });
+});
+
+test.describe("owner and creator/editor display", () => {
+  test("should not display owner when user is the owner", async ({}, testInfo) => {
+    if (!Boolean(testInfo.project.use.isMobile))
+      await choreoPage.iDontSeeOwnerDisplay();
+  });
+
+  test("should display owner when choreo is shared with user", async ({}, testInfo) => {
+    if (!Boolean(testInfo.project.use.isMobile)) {
+      await mockChoreos(choreoPage.page, sharedChoreos);
+      await choreoPage.goToPage();
+      await choreoPage.iSeeOwnerDisplay("Other User");
+    }
+  });
+
+  test("should display 'you' as creator when user is the creator", async ({}, testInfo) => {
+    if (!Boolean(testInfo.project.use.isMobile))
+      await choreoPage.iSeeCreatorDisplay("you");
+  });
+
+  test("should display username as creator when creator is another user", async ({}, testInfo) => {
+    if (!Boolean(testInfo.project.use.isMobile)) {
+      await mockChoreos(choreoPage.page, sharedChoreos);
+      await choreoPage.goToPage();
+      await choreoPage.iSeeCreatorDisplay("Other User");
+    }
+  });
+
+  test("should display 'you' as last editor when user is the updater", async ({}, testInfo) => {
+    if (!Boolean(testInfo.project.use.isMobile))
+      await choreoPage.iSeeUpdaterDisplay("you");
+  });
+
+  test("should display username as last editor when updater is another user", async ({}, testInfo) => {
+    if (!Boolean(testInfo.project.use.isMobile)) {
+      await mockChoreos(choreoPage.page, sharedChoreos);
+      await choreoPage.goToPage();
+      await choreoPage.iSeeUpdaterDisplay("Other User");
+    }
   });
 });
 

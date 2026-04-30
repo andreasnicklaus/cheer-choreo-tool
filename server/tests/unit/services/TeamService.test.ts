@@ -11,6 +11,7 @@ jest.mock("@/plugins/winston", () => ({
     error: jest.fn(),
   },
   debug: jest.fn(),
+  info: jest.fn(),
 }));
 
 jest.mock("@/db/db", () => {
@@ -51,28 +52,35 @@ describe("TeamService", () => {
 
   test("getAll returns teams for valid user", async () => {
     const team = await Team.create({ name: "TestTeam", UserId: user.id });
-    const result = await TeamService.getAll(user.id);
+    const result = await TeamService.getAll([user.id], user.id);
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(1);
     expect(result[0].id).toBe(team.id);
   });
 
   test("getAll returns empty for invalid user", async () => {
-    const result = await TeamService.getAll("invalid-user-id");
+    const result = await TeamService.getAll(
+      ["invalid-user-id"],
+      "invalid-user-id",
+    );
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(0);
   });
 
   test("findByName returns team for valid name/user", async () => {
     const team = await Team.create({ name: "TestTeam", UserId: user.id });
-    const result = await TeamService.findByName("TestTeam", user.id);
+    const result = await TeamService.findByName("TestTeam", [user.id], user.id);
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(1);
     expect(result[0].id).toBe(team.id);
   });
 
   test("findByName returns empty for invalid name", async () => {
-    const result = await TeamService.findByName("InvalidTeam", "user-id");
+    const result = await TeamService.findByName(
+      "InvalidTeam",
+      [user.id],
+      user.id,
+    );
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(0);
   });
@@ -87,7 +95,7 @@ describe("TeamService", () => {
   });
 
   test("findById returns null for invalid id", async () => {
-    const result = await TeamService.findById("invalid-id", "user-id");
+    const result = await TeamService.findById("invalid-id", user.id);
     expect(result).toBeNull();
   });
 
@@ -117,6 +125,7 @@ describe("TeamService", () => {
       club.id,
       season.id,
       user.id,
+      user.id,
     );
     expect(team).toBeDefined();
     expect(team).not.toBeNull();
@@ -127,7 +136,12 @@ describe("TeamService", () => {
     const club = await Club.create({
       name: "test-club",
     });
-    const team = await TeamService.findOrCreate("test-team", club.id, user.id);
+    const team = await TeamService.findOrCreate(
+      "test-team",
+      club.id,
+      user.id,
+      user.id,
+    );
     expect(team).toBeDefined();
     expect(team).not.toBeNull();
     expect(team?.id).toStrictEqual(expect.any(String));
@@ -135,6 +149,7 @@ describe("TeamService", () => {
     const foundTeam = await TeamService.findOrCreate(
       "test-team",
       club.id,
+      user.id,
       user.id,
     );
     expect(foundTeam.id).toEqual(team.id);

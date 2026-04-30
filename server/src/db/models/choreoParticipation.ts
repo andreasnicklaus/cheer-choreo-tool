@@ -32,9 +32,9 @@ class ChoreoParticipation extends Model<
   declare user: NonAttribute<User>;
   declare UserId: ForeignKey<User["id"]>;
 
-  declare choreo: NonAttribute<Choreo>;
+  declare Choreo: NonAttribute<Choreo>;
   declare ChoreoId: ForeignKey<Choreo["id"]>;
-  declare member: NonAttribute<Member>;
+  declare Member: NonAttribute<Member>;
   declare MemberId: ForeignKey<Member["id"]>;
 }
 

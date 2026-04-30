@@ -545,4 +545,34 @@ export default class ChoreoPage extends TestPage {
     const newHitDisplay = this.page.locator("#editView h5").getByText(newName);
     await expect(newHitDisplay).toBeVisible();
   }
+
+  async iOpenOptionsMenu() {
+    const menuButton = this.page.getByTestId("menu-button");
+    await this.iClickButton(menuButton);
+  }
+
+  async iSeeOwnerDisplay(username: string) {
+    const ownerDisplay = this.page.getByTestId("owner-display");
+    await expect(ownerDisplay).toBeVisible();
+    await expect(ownerDisplay).toContainText(username);
+  }
+
+  async iDontSeeOwnerDisplay() {
+    const ownerDisplay = this.page.getByTestId("owner-display");
+    await expect(ownerDisplay).not.toBeVisible();
+  }
+
+  async iSeeCreatorDisplay(expectedText: string) {
+    await this.iOpenOptionsMenu();
+    const creatorDisplay = this.page.getByTestId("creator-display");
+    await expect(creatorDisplay).toBeVisible();
+    await expect(creatorDisplay).toContainText(expectedText);
+  }
+
+  async iSeeUpdaterDisplay(expectedText: string) {
+    await this.iOpenOptionsMenu();
+    const updaterDisplay = this.page.getByTestId("updater-display");
+    await expect(updaterDisplay).toBeVisible();
+    await expect(updaterDisplay).toContainText(expectedText);
+  }
 }

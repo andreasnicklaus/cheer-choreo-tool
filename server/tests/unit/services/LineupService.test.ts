@@ -10,7 +10,7 @@ jest.mock("@/plugins/winston", () => ({
     error: jest.fn(),
   },
   debug: jest.fn(),
-  error: jest.fn(),
+  info: jest.fn(),
 }));
 
 jest.mock("@/db/db", () => {
@@ -27,7 +27,7 @@ jest.mock("@/plugins/nodemailer", () => ({
   verify: jest.fn().mockResolvedValue(true),
 }));
 
-let user = { id: "test-id" };
+let user: { id: string } = { id: "test-id" };
 
 describe("LineupService", () => {
   beforeAll(async () => {
@@ -53,7 +53,13 @@ describe("LineupService", () => {
       matType: "cheer",
       UserId: user.id,
     });
-    const result = await LineupService.create(1, 2, choreo.id, user.id);
+    const result = await LineupService.create(
+      1,
+      2,
+      choreo.id,
+      user.id,
+      user.id,
+    );
     expect(result).toBeDefined();
     expect(result.startCount).toBe(1);
     expect(result.endCount).toBe(2);
@@ -67,7 +73,13 @@ describe("LineupService", () => {
       matType: "cheer",
       UserId: user.id,
     });
-    const result = await LineupService.findOrCreate(1, 2, choreo.id, user.id);
+    const result = await LineupService.findOrCreate(
+      1,
+      2,
+      choreo.id,
+      user.id,
+      user.id,
+    );
     expect(result).toBeDefined();
     expect(result.startCount).toBe(1);
     expect(result.endCount).toBe(2);
@@ -97,6 +109,7 @@ describe("LineupService", () => {
       expect(updated.endCount).toBe(3);
     }
   });
+
   test("update throws error for invalid lineup id", async () => {
     expect(
       LineupService.update("invalid-lineup-id", { endCount: 3 }, user.id),
@@ -104,8 +117,8 @@ describe("LineupService", () => {
   });
 
   test("findById should find existing lineup", async () => {
-    const notFoundAdmin = await LineupService.findById("", user.id);
-    expect(notFoundAdmin).toBeNull();
+    const notFound = await LineupService.findById("", user.id);
+    expect(notFound).toBeNull();
 
     const choreo = await Choreo.create({
       name: "test-choreo",
@@ -125,8 +138,8 @@ describe("LineupService", () => {
   });
 
   test("findByChoreoId should find existing lineup", async () => {
-    const notFoundAdmin = await LineupService.findByChoreoId("");
-    expect(notFoundAdmin.length).toBe(0);
+    const notFound = await LineupService.findByChoreoId("");
+    expect(notFound.length).toBe(0);
 
     const choreo = await Choreo.create({
       name: "test-choreo",
@@ -152,13 +165,19 @@ describe("LineupService", () => {
       matType: "cheer",
       UserId: user.id,
     });
-    const lineup = await LineupService.findOrCreate(1, 2, choreo.id, user.id);
+    const lineup = await LineupService.findOrCreate(
+      1,
+      2,
+      choreo.id,
+      user.id,
+      user.id,
+    );
     expect(await LineupService.findById(lineup.id, user.id)).not.toBeNull();
     await LineupService.remove(lineup.id, user.id);
     expect(await LineupService.findById(lineup.id, user.id)).toBeNull();
   });
 
-  test("remove on non-existing admin should throw", async () => {
+  test("remove on non-existing lineup should throw", async () => {
     expect(() =>
       LineupService.remove("non-existing-id", user.id),
     ).rejects.toThrow();
