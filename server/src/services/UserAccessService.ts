@@ -222,7 +222,6 @@ class UserAccessService {
     });
     return access?.role || null;
   }
-
 }
 
 export default new UserAccessService();
