@@ -257,8 +257,8 @@
           v-if="canEditTeam"
           v-b-tooltip.hover="$t('teamView.neue-season-anfangen')"
           variant="success"
-          @click="() => $refs.createSeasonModal.open(currentTeam.id)"
           data-testid="create-season-button"
+          @click="() => $refs.createSeasonModal.open(currentTeam.id)"
         >
           <IBiPlus />
         </BButton>
