@@ -40,7 +40,7 @@ class MemberService {
     const accessibleOwnerIds =
       ownerIds.length > 0
         ? await filterAccessibleOwnerIds(ownerIds, actingUserId, isAdmin)
-        : [];
+        : [actingUserId];
 
     return Member.findAll({
       where: options.all ? {} : { UserId: { [Op.in]: accessibleOwnerIds } },
@@ -107,7 +107,6 @@ class MemberService {
    * @param {string} nickname - The nickname of the member.
    * @param {string | null} abbreviation - The abbreviation for the member.
    * @param {UUID} SeasonTeamId - The season team ID.
-   * @param {UUID} ownerId - The owner ID.
    * @param {UUID} actingUserId - The acting user ID.
    * @returns {Promise<Object>} The created member object.
    */
@@ -116,7 +115,6 @@ class MemberService {
     nickname: string,
     abbreviation: string | null,
     SeasonTeamId: string,
-    ownerId: string,
     actingUserId: string,
     isAdmin = false,
   ) {
@@ -132,11 +130,17 @@ class MemberService {
         nickname,
         abbreviation,
         SeasonTeamId,
-        ownerId,
         actingUserId,
         isAdmin,
       })}`,
     );
+
+    // Inherit ownerId from parent SeasonTeam
+    const foundSeasonTeam = await SeasonTeam.findByPk(SeasonTeamId);
+    if (!foundSeasonTeam) {
+      throw new NotFoundError(`SeasonTeam with ID ${SeasonTeamId} not found`);
+    }
+    const ownerId = foundSeasonTeam.UserId;
 
     await checkWriteAccess(ownerId, actingUserId, isAdmin);
 
@@ -161,10 +165,9 @@ class MemberService {
   /**
    * Find or create a member.
    * @param {string} name - The name of the member.
-   * @param {string | null} nickname - The nickname of the member.
+   * @param {string} nickname - The nickname of the member.
    * @param {string | null} abbreviation - The abbreviation for the member.
    * @param {UUID} SeasonTeamId - The season team ID.
-   * @param {UUID} ownerId - The owner ID.
    * @param {UUID} actingUserId - The acting user ID.
    * @returns {Promise<Object>} The found or created member object.
    */
@@ -173,7 +176,6 @@ class MemberService {
     nickname: string | null,
     abbreviation: string | null,
     SeasonTeamId: string,
-    ownerId: string,
     actingUserId: string,
     isAdmin = false,
   ) {
@@ -183,11 +185,17 @@ class MemberService {
         nickname,
         abbreviation,
         SeasonTeamId,
-        ownerId,
         actingUserId,
         isAdmin,
       })}`,
     );
+
+    // Inherit ownerId from parent SeasonTeam
+    const foundSeasonTeam = await SeasonTeam.findByPk(SeasonTeamId);
+    if (!foundSeasonTeam) {
+      throw new NotFoundError(`SeasonTeam with ID ${SeasonTeamId} not found`);
+    }
+    const ownerId = foundSeasonTeam.UserId;
 
     await checkWriteAccess(ownerId, actingUserId, isAdmin);
 
@@ -212,11 +220,10 @@ class MemberService {
       whereClause.nickname = nickname;
     }
     const [member, _created] = await Member.findOrCreate({
-      where: whereClause,
+      where: { name, SeasonTeamId, UserId: ownerId },
       defaults: {
         name,
         abbreviation: abbreviation || defaultAbbreviation,
-        nickname: nickname ?? undefined,
         SeasonTeamId,
         UserId: ownerId,
         creatorId: actingUserId,
@@ -309,6 +316,20 @@ class MemberService {
     }
 
     return foundMember.destroy();
+  }
+
+  async migrateCreatorUpdater() {
+    logger.debug(`MemberService migrateCreatorUpdater`);
+
+    const members = await Member.findAll({
+      where: { creatorId: { [Op.is]: null }, UserId: { [Op.not]: null } },
+    });
+
+    await Promise.all(
+      members.map((member) =>
+        member.update({ creatorId: member.UserId, updaterId: member.UserId }),
+      ),
+    );
   }
 }
 

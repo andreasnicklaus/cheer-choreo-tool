@@ -68,14 +68,14 @@ class ClubService {
     const accessibleOwnerIds =
       ownerIds && ownerIds.length > 0
         ? await filterAccessibleOwnerIds(ownerIds, actingUserId, isAdmin)
-        : [];
+        : [actingUserId];
 
     return Club.findAll({
       where: options.all
         ? {}
         : accessibleOwnerIds.length > 0
           ? { UserId: { [Op.in]: accessibleOwnerIds } }
-          : {},
+          : { UserId: actingUserId },
       include: defaultInclude,
       order: [
         ["createdAt", "ASC"],
@@ -196,7 +196,7 @@ class ClubService {
     const accessibleOwnerIds =
       ownerIds.length > 0
         ? await filterAccessibleOwnerIds(ownerIds, actingUserId, isAdmin)
-        : [];
+        : [actingUserId];
 
     return Club.findAll({
       where:
@@ -211,7 +211,7 @@ class ClubService {
    * Create a new Club
    *
    * @param {string} name
-   * @param {UUID} ownerId - The owner ID (from request body or inferred from entity)
+   * @param {UUID|null} ownerId - Owner ID. If null/undefined, falls back to actingUserId
    * @param {UUID} actingUserId
    * @param {boolean} [isAdmin=false]
    * @returns {Club}
@@ -283,7 +283,6 @@ class ClubService {
               "Tini",
               "T",
               seasonTeam.id,
-              ownerId,
               actingUserId,
             ),
             MemberService.create(
@@ -291,7 +290,6 @@ class ClubService {
               "Zoe",
               "Z",
               seasonTeam.id,
-              ownerId,
               actingUserId,
             ),
             MemberService.create(
@@ -299,7 +297,6 @@ class ClubService {
               "Fipsi",
               "F",
               seasonTeam.id,
-              ownerId,
               actingUserId,
             ),
           ]).then((members) =>
@@ -319,7 +316,6 @@ class ClubService {
                   0,
                   choreo.id,
                   members.map((m) => m.id),
-                  ownerId,
                   actingUserId,
                 ),
                 HitService.create(
@@ -327,7 +323,6 @@ class ClubService {
                   2,
                   choreo.id,
                   [members[0].id],
-                  ownerId,
                   actingUserId,
                 ),
               ]);
@@ -339,10 +334,10 @@ class ClubService {
   }
 
   /**
-   * Find or create (if it does not exist) a Club
+   * Find or create a club.
    *
    * @param {string} name
-   * @param {UUID} ownerId
+   * @param {UUID|null} ownerId - Owner ID. If null/undefined, falls back to actingUserId
    * @param {UUID} actingUserId
    * @param {boolean} [isAdmin=false]
    * @returns {Club}
@@ -352,14 +347,14 @@ class ClubService {
     ownerId: string,
     actingUserId: string,
     isAdmin = false,
-  ) {
+  ): Promise<[Club, boolean]> {
     logger.debug(
       `ClubService findOrCreate ${JSON.stringify({ name, ownerId, actingUserId, isAdmin })}`,
     );
 
     await checkWriteAccess(ownerId, actingUserId, isAdmin);
 
-    const [club, _created] = await Club.findOrCreate({
+    const [club, created] = await Club.findOrCreate({
       where: { name, UserId: ownerId },
       defaults: {
         name,
@@ -368,7 +363,7 @@ class ClubService {
         updaterId: actingUserId,
       },
     });
-    return club;
+    return [club, created];
   }
 
   /**
@@ -435,6 +430,20 @@ class ClubService {
     await checkDeleteAccess(club.UserId, actingUserId, isAdmin);
 
     return club.destroy();
+  }
+
+  async migrateCreatorUpdater() {
+    logger.debug(`ClubService migrateCreatorUpdater`);
+
+    const clubs = await Club.findAll({
+      where: { creatorId: { [Op.is]: null }, UserId: { [Op.not]: null } },
+    });
+
+    await Promise.all(
+      clubs.map((club) =>
+        club.update({ creatorId: club.UserId, updaterId: club.UserId }),
+      ),
+    );
   }
 }
 

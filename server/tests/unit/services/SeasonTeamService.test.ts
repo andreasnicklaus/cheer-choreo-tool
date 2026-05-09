@@ -86,13 +86,12 @@ describe("SeasonTeamService", () => {
   });
 
   test("create creates a new SeasonTeam", async () => {
-    const team = await Team.create({ name: "test-team" });
+    const team = await Team.create({ name: "test-team", UserId: user.id });
     const seasons = await Season.create({ name: "test-season" });
     const season = await SeasonTeamService.create(
       team.id,
       seasons.id,
       [],
-      user.id,
       user.id,
     );
     expect(season?.id).toBeDefined();
@@ -122,7 +121,6 @@ describe("SeasonTeamService", () => {
       seasonTeam.id,
       member.id,
       user.id,
-      user.id,
     );
     const updatedSeasonTeam = await SeasonTeam.findByPk(seasonTeam.id);
     expect(updatedSeasonTeam).toBeDefined();
@@ -148,7 +146,6 @@ describe("SeasonTeamService", () => {
     await SeasonTeamService.copyMembersIntoSeasonTeam(
       seasonTeam.id,
       [member.id],
-      user.id,
       user.id,
     );
     const updatedSeasonTeam = await SeasonTeam.findByPk(seasonTeam.id);

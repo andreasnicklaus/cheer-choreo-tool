@@ -31,7 +31,7 @@ router.get(
   "/",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    NotificationService.getAll(req.UserId)
+    NotificationService.getAll(req.actingUserId)
       .then((notificationList: NotificationModel[]) => {
         res.send(notificationList);
         return next();
@@ -65,7 +65,7 @@ router.post(
   "/:id/read",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    return NotificationService.markRead(req.params.id, req.UserId)
+    return NotificationService.markRead(req.params.id, req.actingUserId)
       .then((notification: NotificationModel) => {
         res.send(notification);
         return next();
@@ -99,7 +99,7 @@ router.post(
   "/:id/unread",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    return NotificationService.markUnread(req.params.id, req.UserId)
+    return NotificationService.markUnread(req.params.id, req.actingUserId)
       .then((notification: NotificationModel) => {
         res.send(notification);
         return next();
@@ -133,7 +133,7 @@ router.delete(
   "/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    return NotificationService.remove(req.params.id, req.UserId)
+    return NotificationService.remove(req.params.id, req.actingUserId)
       .then(() => {
         res.send();
         return next();

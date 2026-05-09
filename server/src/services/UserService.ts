@@ -184,20 +184,23 @@ class UserService {
    * Find or create a user.
    * @param {string} username - The username of the user.
    * @param {string} password - The password of the user.
-   * @returns {Promise<Object>} The user object.
+   * @returns {Promise<[Object, boolean]>} The user object and a boolean indicating if the user was created.
    */
-  async findOrCreate(username: string, password: string) {
+  async findOrCreate(
+    username: string,
+    password: string,
+  ): Promise<[User, boolean]> {
     logger.debug(
       `UserService findOrCreate ${JSON.stringify({ username, password })}`,
     );
-    const [user, _created] = await User.findOrCreate({
+    const [user, created] = await User.findOrCreate({
       where: { username },
       defaults: {
         username,
         password,
       },
     });
-    return user;
+    return [user, created];
   }
 
   /**

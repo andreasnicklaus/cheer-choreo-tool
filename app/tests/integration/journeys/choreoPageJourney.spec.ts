@@ -1,13 +1,14 @@
 import test from "@playwright/test";
 import ChoreoPage from "../pages/choreoPage";
 import { mockDefaultStartRequests } from "../utils/multiRequests";
-import { mockChoreos, mockClubs } from "../utils/requests";
+import { mockAuthMe, mockChoreos, mockClubs } from "../utils/requests";
 import { defaultClubs } from "../testData/club";
 import {
   defaultChoreos,
   emptyChoreos,
   sharedChoreos,
 } from "../testData/choreo";
+import { sharedUser } from "../testData/user";
 
 let choreoPage: ChoreoPage;
 
@@ -66,6 +67,29 @@ test.describe("non-specific to choreo", () => {
   test("should offer a link to video export", async ({}, testInfo) => {
     if (!Boolean(testInfo.project.use.isMobile))
       await choreoPage.iSeeLinkToVideoExport();
+  });
+});
+
+test.describe("create choreo modal owner selection", () => {
+  test("should display owner selection options when user has shared access", async ({}, testInfo) => {
+    if (!Boolean(testInfo.project.use.isMobile)) {
+      await mockDefaultStartRequests(choreoPage.page);
+      await mockAuthMe(choreoPage.page, sharedUser);
+      await choreoPage.goToPage();
+      await choreoPage.iSetClubId(defaultClubs[0].id);
+      await choreoPage.iOpenCreateChoreoModal();
+      await choreoPage.iSeeOwnerSelectInCreateChoreoModal();
+      await choreoPage.iSeeOwnerSelectOptionInCreateChoreoModal("Owner User");
+      await choreoPage.iSeeOwnerSelectOptionInCreateChoreoModal("(you)");
+    }
+  });
+
+  test("should not display owner selection when user has no shared access", async ({}, testInfo) => {
+    if (!Boolean(testInfo.project.use.isMobile)) {
+      await choreoPage.iSetClubId(defaultClubs[0].id);
+      await choreoPage.iOpenCreateChoreoModal();
+      await choreoPage.iDontSeeOwnerSelectInCreateChoreoModal();
+    }
   });
 });
 

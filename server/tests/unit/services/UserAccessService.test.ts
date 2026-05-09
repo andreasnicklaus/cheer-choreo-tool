@@ -248,7 +248,7 @@ describe("UserAccessService", () => {
     ).rejects.toThrow();
   });
 
-  test("hasAccess returns true when access exists", async () => {
+  test("hasAccess returns true when access exists and is accepted", async () => {
     await UserAccess.create({
       ownerUserId: owner.id,
       childUserId: child.id,
@@ -261,12 +261,25 @@ describe("UserAccessService", () => {
     expect(hasAccess).toBe(true);
   });
 
+  test("hasAccess returns false when access exists but is not accepted", async () => {
+    await UserAccess.create({
+      ownerUserId: owner.id,
+      childUserId: child.id,
+      role: AccessRole.COACH,
+      enabled: true,
+      accepted: false,
+    });
+
+    const hasAccess = await UserAccessService.hasAccess(owner.id, child.id);
+    expect(hasAccess).toBe(false);
+  });
+
   test("hasAccess returns false when access does not exist", async () => {
     const hasAccess = await UserAccessService.hasAccess(owner.id, child.id);
     expect(hasAccess).toBe(false);
   });
 
-  test("getRole returns role when access exists", async () => {
+  test("getRole returns role when access exists and is accepted", async () => {
     await UserAccess.create({
       ownerUserId: owner.id,
       childUserId: child.id,
@@ -277,6 +290,19 @@ describe("UserAccessService", () => {
 
     const role = await UserAccessService.getRole(owner.id, child.id);
     expect(role).toBe(AccessRole.ASSISTANT);
+  });
+
+  test("getRole returns null when access exists but is not accepted", async () => {
+    await UserAccess.create({
+      ownerUserId: owner.id,
+      childUserId: child.id,
+      role: AccessRole.ASSISTANT,
+      enabled: true,
+      accepted: false,
+    });
+
+    const role = await UserAccessService.getRole(owner.id, child.id);
+    expect(role).toBeNull();
   });
 
   test("getRole returns null when access does not exist", async () => {

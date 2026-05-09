@@ -1,8 +1,9 @@
 import test from "@playwright/test";
 import { mockDefaultStartRequests } from "../utils/multiRequests";
-import { mockTeams } from "../utils/requests";
+import { mockAuthMe, mockTeams } from "../utils/requests";
 import TeamPage from "../pages/teamPage";
 import { sharedTeams } from "../testData/team";
+import { sharedUser } from "../testData/user";
 
 let teamPage: TeamPage;
 
@@ -60,6 +61,42 @@ test("should delete a team", async () => {
 });
 test("should delete a season", async () => {
   await teamPage.iDeleteSeason();
+});
+
+test.describe("create team modal owner selection", () => {
+  test("should display owner selection options when user has shared access", async () => {
+    await mockDefaultStartRequests(teamPage.page);
+    await mockAuthMe(teamPage.page, sharedUser);
+    await teamPage.goToPage();
+    await teamPage.iSetClubId();
+    await teamPage.iOpenCreateTeamModal();
+    await teamPage.iSeeOwnerSelectInCreateTeamModal();
+    await teamPage.iSeeOwnerSelectOptionInCreateTeamModal("Owner User");
+    await teamPage.iSeeOwnerSelectOptionInCreateTeamModal("(you)");
+  });
+
+  test("should not display owner selection when user has no shared access", async () => {
+    await teamPage.iSetClubId();
+    await teamPage.iOpenCreateTeamModal();
+    await teamPage.iDontSeeOwnerSelectInCreateTeamModal();
+  });
+});
+
+test.describe("create season modal owner selection", () => {
+  test("should display owner selection options when user has shared access", async () => {
+    await mockDefaultStartRequests(teamPage.page);
+    await mockAuthMe(teamPage.page, sharedUser);
+    await teamPage.goToPage();
+    await teamPage.iOpenCreateSeasonModal();
+    await teamPage.iSeeOwnerSelectInCreateSeasonModal();
+    await teamPage.iSeeOwnerSelectOptionInCreateSeasonModal("Owner User");
+    await teamPage.iSeeOwnerSelectOptionInCreateSeasonModal("(you)");
+  });
+
+  test("should not display owner selection when user has no shared access", async () => {
+    await teamPage.iOpenCreateSeasonModal();
+    await teamPage.iDontSeeOwnerSelectInCreateSeasonModal();
+  });
 });
 
 test.describe("creator and editor display", () => {

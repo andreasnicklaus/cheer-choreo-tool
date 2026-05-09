@@ -36,7 +36,7 @@ router.put(
   "/",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    UserService.update(req.UserId, req.body)
+    UserService.update(req.actingUserId, req.body)
       .then((user: User | null) => {
         res.send(user);
         next();
@@ -64,7 +64,7 @@ router.delete(
   "/",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    UserService.remove(req.UserId)
+    UserService.remove(req.actingUserId)
       .then(() => {
         res.send();
         next();
@@ -172,7 +172,7 @@ router.get(
   "/access",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    UserAccessService.getChildren(req.UserId)
+    UserAccessService.getChildren(req.actingUserId)
       .then((access) => {
         res.send(access);
         next();
@@ -201,7 +201,7 @@ router.get(
   "/access/owner",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    UserAccessService.getOwners(req.UserId)
+    UserAccessService.getOwners(req.actingUserId)
       .then((access) => {
         res.send(access);
         next();
@@ -247,7 +247,7 @@ router.post(
         if (!child) {
           throw new Error("User not found");
         }
-        return UserAccessService.create(req.UserId, child.id, role, true);
+        return UserAccessService.create(req.actingUserId, child.id, role, true);
       })
       .then((access) => {
         res.send(access);
@@ -290,7 +290,7 @@ router.put(
   "/access/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    UserAccessService.update(req.params.id, req.body, req.UserId)
+    UserAccessService.update(req.params.id, req.body, req.actingUserId)
       .then((access) => {
         res.send(access);
         next();
@@ -322,7 +322,7 @@ router.delete(
   "/access/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    UserAccessService.remove(req.params.id, req.UserId)
+    UserAccessService.remove(req.params.id, req.actingUserId)
       .then(() => {
         res.send();
         next();
@@ -354,7 +354,7 @@ router.post(
   "/access/:id/accept",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    UserAccessService.accept(req.params.id, req.UserId)
+    UserAccessService.accept(req.params.id, req.actingUserId)
       .then((access) => {
         res.send(access);
         next();
@@ -388,7 +388,7 @@ router.post(
   "/access/:id/decline",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    UserAccessService.decline(req.params.id, req.UserId)
+    UserAccessService.decline(req.params.id, req.actingUserId)
       .then((access) => {
         res.send(access);
         next();

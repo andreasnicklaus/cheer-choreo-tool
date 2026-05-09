@@ -59,6 +59,12 @@
         </BButtonGroup>
 
         <BDropdown
+          v-if="
+            canDeleteTeam ||
+            (me?.id &&
+              (currentTeam?.creator?.username ||
+                currentTeam?.updater?.username))
+          "
           v-b-tooltip.hover="$t('optionen')"
           right
           no-caret
@@ -71,6 +77,7 @@
             <IBiThreeDotsVertical />
           </template>
           <BDropdownItem
+            v-if="canDeleteTeam"
             :disabled="!currentTeam"
             @click="
               () =>
@@ -83,6 +90,7 @@
             {{ $t("teamView.season-loeschen") }}
           </BDropdownItem>
           <BDropdownItem
+            v-if="canDeleteTeam"
             :disabled="!currentTeam"
             variant="danger"
             @click="() => $refs.deleteTeamModal.open(teamId)"
@@ -92,6 +100,7 @@
           </BDropdownItem>
           <BDropdownDivider
             v-if="
+              canDeleteTeam &&
               me?.id &&
               (currentTeam?.creator?.username || currentTeam?.updater?.username)
             "
@@ -151,12 +160,14 @@
           <template #cell(actions)="data">
             <BButtonGroup>
               <BButton
+                v-if="canEditMember"
                 variant="outline-success"
                 @click="editMember(data.item.id)"
               >
                 <IBiPen />
               </BButton>
               <BButton
+                v-if="canDeleteMember"
                 variant="outline-danger"
                 @click="requestMemberRemoval(data.item.id)"
               >
@@ -185,12 +196,14 @@
               </BBadge>
               <BButtonGroup>
                 <BButton
+                  v-if="canEditMember"
                   variant="outline-success"
                   @click="editMember(member.id)"
                 >
                   <IBiPen />
                 </BButton>
                 <BButton
+                  v-if="canDeleteMember"
                   variant="outline-danger"
                   @click="requestMemberRemoval(member.id)"
                 >
@@ -210,6 +223,7 @@
 
         <div class="d-grid gap-2">
           <BButton
+            v-if="canEditTeam"
             class="my-3"
             variant="success"
             @click="
@@ -224,6 +238,7 @@
           </BButton>
 
           <BButton
+            v-if="canEditTeam"
             class="my-3"
             variant="outline-success"
             @click="
@@ -239,9 +254,11 @@
       </BTab>
       <template #tabs-end>
         <BButton
+          v-if="canEditTeam"
           v-b-tooltip.hover="$t('teamView.neue-season-anfangen')"
           variant="success"
           @click="() => $refs.createSeasonModal.open(currentTeam.id)"
+          data-testid="create-season-button"
         >
           <IBiPlus />
         </BButton>
@@ -267,6 +284,7 @@
     <CreateSeasonModal
       ref="createSeasonModal"
       :teams="teams"
+      :me="me"
       @season-team-created="onSeasonTeamCreation"
     />
 
@@ -289,6 +307,7 @@
 import { useHead } from "@unhead/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { mapState } from "vuex";
 import EditableNameHeading from "@/components/EditableNameHeading.vue";
 import CreateMemberModal from "@/components/modals/CreateMemberModal.vue";
 import CreateSeasonModal from "@/components/modals/CreateSeasonModal.vue";
@@ -297,9 +316,9 @@ import DeleteSeasonTeamModal from "@/components/modals/DeleteSeasonTeamModal.vue
 import DeleteTeamModal from "@/components/modals/DeleteTeamModal.vue";
 import ImportMemberModal from "@/components/modals/ImportMemberModal.vue";
 import TeamService from "@/services/TeamService";
-import AuthService from "@/services/AuthService";
 import ERROR_CODES from "@/utils/error_codes";
 import { error } from "@/utils/logging";
+import { canWrite, canDelete } from "@/utils/permissions";
 
 /**
  * @vue-data {string} presentation=table - The current presentation mode, either 'table' or 'list'.
@@ -337,10 +356,22 @@ export default {
       teams: [],
       seasonTabIndex: 0,
       editMemberId: null,
-      me: null,
     };
   },
   computed: {
+    ...mapState(["owners", "me"]),
+    canEditTeam() {
+      return canWrite(this.owners, this.me?.id, this.currentTeam?.UserId);
+    },
+    canDeleteTeam() {
+      return canDelete(this.owners, this.me?.id, this.currentTeam?.UserId);
+    },
+    canEditMember() {
+      return this.canEditTeam;
+    },
+    canDeleteMember() {
+      return this.canDeleteTeam;
+    },
     tableFields() {
       return [
         { key: "name", sortable: true },
@@ -432,9 +463,6 @@ export default {
               (a, b) => b.Season.year - a.Season.year
             ),
           }));
-        }),
-        AuthService.getUserInfo().then((me) => {
-          this.me = me;
         }),
       ]);
     },

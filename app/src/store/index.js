@@ -1,3 +1,4 @@
+import AuthService from "@/services/AuthService";
 import { createStore } from "vuex";
 
 const tokenStorageKey = "choreo-planer-token";
@@ -7,6 +8,9 @@ export default createStore({
     loggedIn: localStorage.getItem(tokenStorageKey) != null,
     clubId: null,
     isMobile: true,
+    owners: [],
+    ownersLoaded: false,
+    me: null,
   },
   getters: {
     isChristmasTime() {
@@ -27,7 +31,11 @@ export default createStore({
   mutations: {
     setLoginState(state, loginState) {
       state.loggedIn = loginState;
-      if (!loginState) state.clubId = null;
+      if (!loginState) {
+        state.clubId = null;
+        state.owners = [];
+        state.ownersLoaded = false;
+      }
     },
     setClubId(state, id) {
       state.clubId = id;
@@ -35,7 +43,36 @@ export default createStore({
     setMobile(state, isMobile) {
       state.isMobile = isMobile;
     },
+    setOwners(state, owners) {
+      state.owners = owners;
+      state.ownersLoaded = true;
+    },
+    clearOwners(state) {
+      state.owners = [];
+      state.ownersLoaded = false;
+    },
+    setMe(state, me) {
+      state.me = me;
+    },
+    clearMe(state) {
+      state.me = null;
+    },
   },
-  actions: {},
+  actions: {
+    loadUserInfo({ commit }) {
+      return AuthService.getUserInfo(true)
+        .then((me) => {
+          commit("setMe", me);
+          commit(
+            "setOwners",
+            (me.childAccess || []).filter((access) => access.enabled)
+          );
+        })
+        .catch(() => {
+          commit("clearMe");
+          commit("clearOwners");
+        });
+    },
+  },
   modules: {},
 });

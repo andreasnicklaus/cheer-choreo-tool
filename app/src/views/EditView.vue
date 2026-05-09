@@ -221,14 +221,16 @@
                 </BDropdownText>
               </BDropdownGroup>
               <BDropdownDivider />
-              <BDropdownItem
-                :disabled="!choreo"
-                variant="danger"
-                @click="() => $refs.deleteChoreoModal.open()"
-              >
-                <IBiTrash class="me-2" />
-                {{ $t("editView.choreo-loeschen") }}
-              </BDropdownItem>
+              <span>
+                <BDropdownItem
+                  :disabled="!choreo || !canDeleteChoreo"
+                  variant="danger"
+                  @click="() => $refs.deleteChoreoModal.open()"
+                >
+                  <IBiTrash class="me-2" />
+                  {{ $t("editView.choreo-loeschen") }}
+                </BDropdownItem>
+              </span>
               <BDropdownDivider
                 v-if="
                   me?.id &&
@@ -368,6 +370,7 @@
           <template #cell(actions)="data">
             <BButtonGroup>
               <BButton
+                v-if="canEditParticipants"
                 v-b-tooltip.hover.left="
                   $t('editView.auswechseln', {
                     name: data.item.nickname || data.item.name.split(' ')[0],
@@ -379,6 +382,7 @@
                 <IBiArrowRepeat />
               </BButton>
               <BButton
+                v-if="canEditParticipants"
                 v-b-tooltip.hover.right="
                   $t('editView.von-der-matte-nehmen', {
                     name: data.item.nickname || data.item.name.split(' ')[0],
@@ -415,6 +419,7 @@
           <template #cell(actions)="data">
             <BButtonGroup>
               <BButton
+                v-if="canEditParticipants"
                 v-b-tooltip.hover.left="
                   $t('editView.einwechseln', {
                     name: data.item.nickname || data.item.name.split(' ')[0],
@@ -426,11 +431,7 @@
                 <IBiArrowRepeat />
               </BButton>
               <BButton
-                v-b-tooltip.hover.right="
-                  $t('editView.auf-die-matte-stellen', {
-                    name: data.item.nickname || data.item.name.split(' ')[0],
-                  })
-                "
+                v-if="canEditParticipants"
                 variant="outline-success"
                 @click="addParticipant(data.item.id)"
               >
@@ -492,6 +493,7 @@
 import { useHead } from "@unhead/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { mapState } from "vuex";
 import Mat from "@/components/Mat.vue";
 import ChoreoService from "@/services/ChoreoService";
 import CountSheet from "@/components/CountSheet.vue";
@@ -510,12 +512,12 @@ import ParticipantSubstitutionModal from "@/components/modals/ParticipantSubstit
 import MobileChoreoEditModal from "@/components/modals/MobileChoreoEditModal.vue";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import MessagingService from "@/services/MessagingService";
-import AuthService from "@/services/AuthService";
 import { debug, error } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
 import { roundToDecimals, clamp } from "@/utils/numbers";
 import FeatureFlagService from "@/services/FeatureFlagService";
 import { FeatureFlagKeys } from "@/services/FeatureFlagService";
+import { canWrite, canDelete } from "@/utils/permissions";
 
 /**
  * @vue-data {string|null} choreoId=null - The ID of the choreo being edited.
@@ -604,10 +606,19 @@ export default {
       proposedPositions: [],
       rejectedPositionProposals: [],
       mobileEditingEnabled: true,
-      me: null,
     };
   },
   computed: {
+    ...mapState(["owners", "me"]),
+    canEditChoreo() {
+      return canWrite(this.owners, this.me?.id, this.choreo?.UserId);
+    },
+    canDeleteChoreo() {
+      return canDelete(this.owners, this.me?.id, this.choreo?.UserId);
+    },
+    canEditParticipants() {
+      return this.canEditChoreo;
+    },
     teamMembers() {
       if (!this.choreo?.Participants) return [];
       return Array.from(this.choreo.Participants).sort((a, b) =>
@@ -678,8 +689,6 @@ export default {
           if (this.$refs.mobileChoreoEditModal)
             this.$refs.mobileChoreoEditModal.open(this.choreoId);
         } else this.loadChoreo();
-
-        this.loadMe();
       }
     );
 
@@ -757,11 +766,6 @@ export default {
         .finally(() => {
           this.loading = false;
         });
-    },
-    loadMe() {
-      AuthService.getUserInfo().then((me) => {
-        this.me = me;
-      });
     },
     onPositionChange(MemberId, x, y, isRetry = false) {
       const positionToUpdate = this.lineupsForCurrentCount

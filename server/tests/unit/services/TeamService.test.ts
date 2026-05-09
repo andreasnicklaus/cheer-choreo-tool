@@ -136,7 +136,7 @@ describe("TeamService", () => {
     const club = await Club.create({
       name: "test-club",
     });
-    const team = await TeamService.findOrCreate(
+    const [team, _teamCreated] = await TeamService.findOrCreate(
       "test-team",
       club.id,
       user.id,
@@ -146,7 +146,7 @@ describe("TeamService", () => {
     expect(team).not.toBeNull();
     expect(team?.id).toStrictEqual(expect.any(String));
 
-    const foundTeam = await TeamService.findOrCreate(
+    const [foundTeam, _foundTeamCreated] = await TeamService.findOrCreate(
       "test-team",
       club.id,
       user.id,

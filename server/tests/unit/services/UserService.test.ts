@@ -143,7 +143,7 @@ describe("UserService", () => {
   });
 
   test("findOrCreate creates or returns existing user", async () => {
-    const user = await UserService.findOrCreate(
+    const [user, ..._] = await UserService.findOrCreate(
       "test-username",
       "test-password",
     );
@@ -151,7 +151,7 @@ describe("UserService", () => {
     expect(user).not.toBeNull();
     expect(user?.id).toStrictEqual(expect.any(String));
 
-    const foundUser = await UserService.findOrCreate(
+    const [foundUser, _created] = await UserService.findOrCreate(
       "test-username",
       "test-password",
     );

@@ -118,8 +118,6 @@ class AuthService {
                 return res.status(403).send();
               }
 
-              req.UserId = user.id;
-              req.User = user;
               req.actingUserId = user.id;
               req.ActingUser = user;
 

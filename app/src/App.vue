@@ -303,6 +303,8 @@ export default {
       this.$showToast?.({ body: message, ...options });
     });
 
+    this.$store.dispatch("loadUserInfo");
+
     logWelcomeMessage();
 
     // Check prerender status - use setTimeout to ensure window.__PRERENDER__ is set

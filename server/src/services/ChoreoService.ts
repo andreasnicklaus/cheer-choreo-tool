@@ -94,7 +94,7 @@ class ChoreoService {
     const accessibleOwnerIds =
       ownerIds.length > 0
         ? await filterAccessibleOwnerIds(ownerIds, actingUserId, isAdmin)
-        : [];
+        : [actingUserId];
 
     return Choreo.findAll({
       where: options.all ? {} : { UserId: { [Op.in]: accessibleOwnerIds } },
@@ -129,7 +129,7 @@ class ChoreoService {
     const accessibleOwnerIds =
       ownerIds.length > 0
         ? await filterAccessibleOwnerIds(ownerIds, actingUserId, isAdmin)
-        : [];
+        : [actingUserId];
 
     return Choreo.findAll({
       where:
@@ -240,7 +240,7 @@ class ChoreoService {
    * @param {MatType} [matType='cheer'] - Type of mat used.
    * @param {UUID} SeasonTeamId - The season team UUID.
    * @param {Member} participants - List of participants.
-   * @param {UUID} ownerId - The owner's UUID.
+   * @param {UUID|null} ownerId - Owner ID. If null/undefined, falls back to actingUserId
    * @param {UUID} actingUserId - The acting user's UUID.
    * @param {boolean} [isAdmin=false]
    * @returns {Promise<Choreo>} The created choreography.
@@ -281,30 +281,23 @@ class ChoreoService {
     }).then((choreo) =>
       Promise.all(
         participants.map((p) =>
-          this.addParticipant(
-            choreo.id,
-            p.id,
-            ownerId,
-            actingUserId,
-            isAdmin,
-            p.color,
-          ),
+          this.addParticipant(choreo.id, p.id, actingUserId, isAdmin, p.color),
         ),
       ).then(() => this.findById(choreo.id, actingUserId, isAdmin)),
     );
   }
 
   /**
-   * Find or create (if it does not exist) a Choreo
+   * Find or create a choreo.
    *
    * @param {string} name - Name of the choreography.
    * @param {number} counts - Number of counts in the choreography.
    * @param {MatType} [matType='cheer'] - Type of mat used.
    * @param {UUID} SeasonTeamId - The season team UUID.
-   * @param {UUID} ownerId - The owner's UUID.
+   * @param {UUID|null} ownerId - Owner ID. If null/undefined, falls back to actingUserId
    * @param {UUID} actingUserId - The acting user's UUID.
    * @param {boolean} [isAdmin=false]
-   * @returns {Promise<Choreo>} The found or created choreography.
+   * @returns {Promise<[Choreo, boolean]>} The found or created choreography and a boolean indicating if the choreography was created.
    */
   async findOrCreate(
     name: string,
@@ -314,7 +307,7 @@ class ChoreoService {
     ownerId: string,
     actingUserId: string,
     isAdmin = false,
-  ) {
+  ): Promise<[Choreo, boolean]> {
     logger.debug(
       `ChoreoService findOrCreate ${JSON.stringify({
         name,
@@ -329,7 +322,7 @@ class ChoreoService {
 
     await checkWriteAccess(ownerId, actingUserId, isAdmin);
 
-    const [choreo, _created] = await Choreo.findOrCreate({
+    const [choreo, created] = await Choreo.findOrCreate({
       where: { name, counts, matType, SeasonTeamId, UserId: ownerId },
       defaults: {
         name,
@@ -341,7 +334,7 @@ class ChoreoService {
         updaterId: actingUserId,
       },
     });
-    return choreo;
+    return [choreo, created];
   }
 
   /**
@@ -349,7 +342,6 @@ class ChoreoService {
    *
    * @param {UUID} choreoId - The choreography's UUID.
    * @param {UUID} MemberId - The member's UUID.
-   * @param {UUID} ownerId - The owner's UUID.
    * @param {UUID} actingUserId - The acting user's UUID.
    * @param {boolean} [isAdmin=false]
    * @param {string} [color=null] - Color associated with the participant.
@@ -358,11 +350,18 @@ class ChoreoService {
   async addParticipant(
     choreoId: string,
     MemberId: string,
-    ownerId: string,
     actingUserId: string,
     isAdmin = false,
     color: string | null = null,
   ) {
+    // Inherit ownerId from parent Choreo
+    const choreo = await this.findById(choreoId, actingUserId, isAdmin);
+    if (!choreo) {
+      throw new NotFoundError(`Choreo with ID ${choreoId} not found`);
+    }
+    const ownerId = choreo.UserId;
+
+    await checkWriteAccess(ownerId, actingUserId, isAdmin);
     logger.debug(
       `ChoreoService addParticipant ${JSON.stringify({
         choreoId,
@@ -496,7 +495,6 @@ class ChoreoService {
         await this.addParticipant(
           ChoreoId,
           memberToAddId,
-          ownerId,
           actingUserId,
           isAdmin,
           color,
@@ -649,6 +647,20 @@ class ChoreoService {
     await checkDeleteAccess(foundChoreo.UserId, actingUserId, isAdmin);
 
     return foundChoreo.destroy();
+  }
+
+  async migrateCreatorUpdater() {
+    logger.debug(`ChoreoService migrateCreatorUpdater`);
+
+    const choreos = await Choreo.findAll({
+      where: { creatorId: { [Op.is]: null }, UserId: { [Op.not]: null } },
+    });
+
+    await Promise.all(
+      choreos.map((choreo) =>
+        choreo.update({ creatorId: choreo.UserId, updaterId: choreo.UserId }),
+      ),
+    );
   }
 }
 

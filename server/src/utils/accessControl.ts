@@ -160,7 +160,9 @@ export const filterAccessibleOwnerIds = async (
       const hasAccess = await canRead(ownerId, actingUserId, isAdmin);
       return hasAccess ? ownerId : null;
     }),
-  );
+  ).then((res) => res.filter((id): id is string => id !== null));
 
-  return results.filter((id): id is string => id !== null);
+  if (!results.includes(actingUserId)) results.push(actingUserId);
+
+  return results;
 };

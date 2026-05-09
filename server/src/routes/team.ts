@@ -106,7 +106,8 @@ router.get(
  *               seasonId:
  *                 type: string
  *               ownerId:
- *                 type: string
+ *                 type: string | null
+ *                 description: Owner ID. If null/undefined, falls back to actingUserId
  *     responses:
  *       200:
  *         description: Team created successfully
@@ -122,7 +123,13 @@ router.post(
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
     const { name, clubId, seasonId, ownerId } = req.body;
-    return TeamService.create(name, clubId, seasonId, ownerId, req.actingUserId)
+    return TeamService.create(
+      name,
+      clubId,
+      seasonId,
+      ownerId || req.actingUserId,
+      req.actingUserId,
+    )
       .then((team: Team | null) => {
         if (!team) throw new Error("Unknown error: Team could not be created");
         NotificationService.createOne(

@@ -8,6 +8,7 @@ import {
 } from "../utils/accessControl";
 
 const { logger } = require("../plugins/winston");
+const { Op } = require("sequelize");
 
 /**
  * Service for managing lineup entities and their associations.
@@ -21,7 +22,6 @@ class LineupService {
    * @param {number} startCount - The start count of the lineup.
    * @param {number} endCount - The end count of the lineup.
    * @param {UUID} ChoreoId - The choreography ID.
-   * @param {UUID} ownerId - The owner ID.
    * @param {UUID} actingUserId - The acting user ID.
    * @returns {Promise<Object>} The created lineup.
    */
@@ -29,7 +29,6 @@ class LineupService {
     startCount: number,
     endCount: number,
     ChoreoId: string,
-    ownerId: string,
     actingUserId: string,
     isAdmin = false,
   ) {
@@ -38,11 +37,21 @@ class LineupService {
         startCount,
         endCount,
         ChoreoId,
-        ownerId,
         actingUserId,
         isAdmin,
       })}`,
     );
+
+    // Inherit ownerId from parent Choreo
+    const choreo = await ChoreoService.findById(
+      ChoreoId,
+      actingUserId,
+      isAdmin,
+    );
+    if (!choreo) {
+      throw new NotFoundError(`Choreo with ID ${ChoreoId} not found`);
+    }
+    const ownerId = choreo.UserId;
 
     await checkWriteAccess(ownerId, actingUserId, isAdmin);
 
@@ -60,34 +69,50 @@ class LineupService {
 
   /**
    * Find or create a lineup.
-   * @param {number} startCount - The start count of the lineup.
-   * @param {number} endCount - The end count of the lineup.
-   * @param {UUID} ChoreoId - The choreography ID.
-   * @param {UUID} ownerId - The owner ID.
+   * @param {number} x - The x-coordinate of the lineup.
+   * @param {number} y - The y-coordinate of the lineup.
+   * @param {UUID} LineupId - The lineup ID associated with the lineup.
+   * @param {UUID} MemberId - The member ID associated with the lineup.
    * @param {UUID} actingUserId - The acting user ID.
+   * @param {Date} [timeOfManualUpdate=new Date()]
    * @returns {Promise<Object>} The found or created lineup.
    */
   async findOrCreate(
     startCount: number,
     endCount: number,
     ChoreoId: string,
-    ownerId: string,
     actingUserId: string,
     isAdmin = false,
   ) {
-    logger.debug(
+    logger.info(
       `LineupService findOrCreate ${JSON.stringify({
         startCount,
         endCount,
         ChoreoId,
-        ownerId,
         actingUserId,
         isAdmin,
       })}`,
     );
 
-    await checkWriteAccess(ownerId, actingUserId, isAdmin);
+    // Inherit ownerId from parent Choreo
+    const choreo = await ChoreoService.findById(
+      ChoreoId,
+      actingUserId,
+      isAdmin,
+    );
+    if (!choreo) {
+      logger.error(
+        `Choreo with ID ${ChoreoId} not found when trying to findOrCreate lineup`,
+      );
+      throw new NotFoundError(`Choreo with ID ${ChoreoId} not found`);
+    }
+    const ownerId = choreo.UserId;
 
+    await checkWriteAccess(ownerId, actingUserId, isAdmin).catch(logger.error);
+
+    logger.info(
+      `Finding or creating lineup with startCount ${startCount}, endCount ${endCount}, ChoreoId ${ChoreoId}, ownerId ${ownerId}`,
+    );
     const [lineup, _created] = await Lineup.findOrCreate({
       where: { startCount, endCount, ChoreoId, UserId: ownerId },
       defaults: {
@@ -99,6 +124,12 @@ class LineupService {
         updaterId: actingUserId,
       },
     });
+    logger.info(
+      `Lineup findOrCreate result: ${JSON.stringify({
+        lineup: lineup.toJSON(),
+        created: _created,
+      })}`,
+    );
     return lineup;
   }
 
@@ -201,6 +232,20 @@ class LineupService {
 
     await ChoreoService.update(lineup.ChoreoId, {}, actingUserId, isAdmin);
     return lineup.destroy();
+  }
+
+  async migrateCreatorUpdater() {
+    logger.debug(`LineupService migrateCreatorUpdater`);
+
+    const lineups = await Lineup.findAll({
+      where: { creatorId: { [Op.is]: null }, UserId: { [Op.not]: null } },
+    });
+
+    await Promise.all(
+      lineups.map((lineup) =>
+        lineup.update({ creatorId: lineup.UserId, updaterId: lineup.UserId }),
+      ),
+    );
   }
 }
 

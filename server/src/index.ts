@@ -12,7 +12,7 @@ const robots = require("express-robots-txt");
 const permissionsPolicy = require("permissions-policy");
 
 // DATABASE
-import db from "./db";
+import db, { syncPromise } from "./db";
 
 // MIDDLEWARES
 const {
@@ -380,12 +380,17 @@ function startServer() {
     .then(() => {
       logger.info("DB Connection established");
 
+      return syncPromise;
+    })
+    .then(() => {
       app.listen(port, (error) => {
         if (error) throw error;
         logger.info(`App listening on http://localhost:${port}`);
       });
     })
-    .catch(() => {
+    .catch((e) => {
+      logger.error("Encountered error during startup:", e.message);
+      logger.error(e.stack);
       logger.error(
         "Unable to authenticate with the database. Restarting in 1 sec",
       );

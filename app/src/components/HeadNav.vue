@@ -409,17 +409,23 @@
       </BNavbarNav>
     </BCollapse>
 
-    <CreateClubModal ref="createClubModal" @club-created="reloadPage" />
+    <CreateClubModal
+      ref="createClubModal"
+      :me="user"
+      @club-created="reloadPage"
+    />
 
     <CreateChoreoModal
       ref="createChoreoModal"
       :teams="teams"
+      :me="user"
       @add-choreo="reloadPage"
     />
 
     <CreateTeamModal
       v-if="$store.state.loggedIn"
       ref="createTeamModal"
+      :me="user"
       @team-created="onTeamCreated"
     />
   </BNavbar>
@@ -524,6 +530,11 @@ export default {
         this.load();
       },
       immediate: true,
+    },
+    "$store.state.owners": {
+      handler() {
+        this.load();
+      },
     },
   },
   created() {

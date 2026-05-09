@@ -29,12 +29,10 @@ const router = Router();
  *                 type: string
  *               seasonId:
  *                 type: string
- *               memberIds:
+ *               MemberIds:
  *                 type: array
  *                 items:
  *                   type: string
- *               ownerId:
- *                 type: string
  *     responses:
  *       200:
  *         description: SeasonTeam created successfully
@@ -49,12 +47,11 @@ router.post(
   "/",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    const { teamId, seasonId, MemberIds = [], ownerId } = req.body;
+    const { teamId, seasonId, MemberIds = [] } = req.body;
     return SeasonTeamService.create(
       teamId,
       seasonId,
       MemberIds,
-      ownerId,
       req.actingUserId,
     )
       .then((seasonTeam: SeasonTeam | null) => {
@@ -87,12 +84,10 @@ router.post(
  *           schema:
  *             type: object
  *             properties:
- *               memberIds:
+ *               MemberIds:
  *                 type: array
  *                 items:
  *                   type: string
- *               ownerId:
- *                 type: string
  *     responses:
  *       200:
  *         description: Members copied successfully
@@ -109,16 +104,15 @@ router.put(
   "/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    const { MemberIds, ownerId } = req.body;
+    const { MemberIds } = req.body;
     return SeasonTeamService.copyMembersIntoSeasonTeam(
       req.params.id,
       MemberIds,
-      ownerId,
       req.actingUserId,
     )
       .then((memberList) => {
         res.send(memberList);
-        next();
+        return next();
       })
       .catch((e: Error) => next(e));
   },

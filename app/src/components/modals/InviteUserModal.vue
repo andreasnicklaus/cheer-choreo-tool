@@ -10,7 +10,13 @@
   >
     <p class="mb-3">{{ $t("modals.invite-user.info") }}</p>
     <BForm>
-      <BFormGroup :label="$t('e-mail-adresse')" label-class="label-with-colon">
+      <BFormGroup
+        class="mb-2"
+        :label="$t('e-mail-adresse')"
+        label-class="label-with-colon"
+        :state="emailState"
+        :invalid-feedback="emailStateFeedback"
+      >
         <BFormInput
           v-model="email"
           type="email"
@@ -21,12 +27,19 @@
         />
       </BFormGroup>
       <BFormGroup
+        class="mb-4"
         :label="$t('modals.invite-user.role')"
         label-class="label-with-colon"
       >
         <BFormSelect v-model="role" :options="roleOptions" />
       </BFormGroup>
     </BForm>
+
+    <!-- Role explanation table -->
+    <p class="text-muted small mt-4 mb-0">
+      {{ $t("modals.invite-user.what-each-role-can-do") }}
+    </p>
+    <AccessOverViewTable />
     <template #footer="{ ok, cancel }">
       <BButton
         type="submit"
@@ -44,6 +57,8 @@
 <script>
 import UserAccessService from "@/services/UserAccessService";
 import MessagingService from "@/services/MessagingService";
+import AccessOverViewTable from "../AccessOverViewTable.vue";
+import { emailRegex } from "@/utils/validation";
 
 /**
  * Modal to invite users to share access to your account.
@@ -53,6 +68,7 @@ import MessagingService from "@/services/MessagingService";
  */
 export default {
   name: "InviteUserModal",
+  components: { AccessOverViewTable },
   emits: ["invited"],
   data: () => ({
     email: null,
@@ -60,7 +76,21 @@ export default {
   }),
   computed: {
     emailState() {
-      return this.email != null && this.email.length > 0;
+      return Boolean(
+        this.email != null &&
+        this.email.length > 0 &&
+        this.email.match(emailRegex) &&
+        this.email.match(emailRegex)?.length > 0
+      );
+    },
+    emailStateFeedback() {
+      if (!this.email) return this.$t("erforderlich");
+      else if (
+        !this.email.match(emailRegex) ||
+        this.email.match(emailRegex)?.length == 0
+      )
+        return this.$t("modals.contact.please-enter-a-valid-email-address");
+      return null;
     },
     roleOptions() {
       return [

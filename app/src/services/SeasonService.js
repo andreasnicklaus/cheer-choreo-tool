@@ -22,11 +22,12 @@ class SeasonService {
    * Create a new season.
    * @param {string} name - Name of the season
    * @param {number} year - Year of the season
+   * @param {string|null} ownerId - ID of the owner
    * @returns {Promise<Object>} Created season
    */
-  create(name, year) {
-    debug("Creating a new season", { name, year });
-    return ax.post("/season", { name, year }).then((res) => {
+  create(name, year, ownerId = null) {
+    debug("Creating a new season", { name, year, ownerId });
+    return ax.post("/season", { name, year, ownerId }).then((res) => {
       debug("Successfully created new season");
       return res.data;
     });

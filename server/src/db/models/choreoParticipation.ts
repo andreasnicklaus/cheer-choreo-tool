@@ -22,7 +22,7 @@ class ChoreoParticipation extends Model<
   InferAttributes<ChoreoParticipation>,
   InferCreationAttributes<ChoreoParticipation>
 > {
-  declare id: string;
+  declare id: CreationOptional<string>;
   declare color?: string;
 
   declare createdAt: CreationOptional<Date>;

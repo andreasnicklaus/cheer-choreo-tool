@@ -80,6 +80,21 @@
     <hr />
 
     <BFormGroup
+      v-if="showOwnerSelect"
+      :label="$t('accountView.owner')"
+      label-class="label-with-colon"
+      :state="selectedOwnerIsValid"
+      :invalid-feedback="newSeasonOwnerStateFeedback"
+    >
+      <BFormSelect
+        v-model="selectedOwnerId"
+        :state="selectedOwnerIsValid"
+        :options="ownerOptions"
+        :placeholder="$t('accountView.owner')"
+      />
+    </BFormGroup>
+
+    <BFormGroup
       :label="$t('modals.create-season.team-mitglieder')"
       label-class="label-with-colon"
       :state="newSeasonMembersIsValid"
@@ -118,6 +133,7 @@
 <script>
 import SeasonService from "@/services/SeasonService";
 import SeasonTeamService from "@/services/SeasonTeamService";
+import UserAccessService from "@/services/UserAccessService";
 
 /**
  * @module Modal:CreateSeasonModal
@@ -132,6 +148,7 @@ import SeasonTeamService from "@/services/SeasonTeamService";
  * @vue-data {Array} seasonsToCopy
  * @vue-data {Number|null} seasonToCopyMembersFromId=null
  * @vue-data {Array} newSeasonMemberIds
+ * @vue-data {String|null} selectedOwnerId=null
  *
  * @vue-prop {Array} teams
  *
@@ -149,6 +166,8 @@ import SeasonTeamService from "@/services/SeasonTeamService";
  * @vue-computed {String|null} newSeasonYearStateFeedback
  * @vue-computed {Boolean} newSeasonMembersIsValid
  * @vue-computed {String|null} newSeasonMembersStateFeedback
+ * @vue-computed {Array} ownerOptions
+ * @vue-computed {Boolean} showOwnerSelect
  *
  * @vue-event {Object} seasonTeamCreated
  *
@@ -165,6 +184,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    me: {
+      type: Object,
+      default: null,
+    },
   },
   emits: ["seasonTeamCreated"],
   data: () => ({
@@ -178,6 +201,7 @@ export default {
     seasonsToCopy: [],
     seasonToCopyMembersFromId: null,
     newSeasonMemberIds: [],
+    selectedOwnerId: null,
   }),
   computed: {
     team() {
@@ -282,6 +306,51 @@ export default {
         return this.$t("modals.create-season.min-team-mitglied");
       return null;
     },
+    ownerOptions() {
+      const options = this.$store.state.owners.map((o) => {
+        const baseText = o.owner?.username || o.owner?.email || o.ownerUserId;
+        const isYou = this.me && o.ownerUserId === this.$store.state.me.id;
+        return {
+          value: o.ownerUserId,
+          text: isYou ? `${baseText} (you)` : baseText,
+        };
+      });
+
+      if (
+        this.$store.state.me &&
+        !options.some((o) => o.value === this.$store.state.me.id)
+      ) {
+        options.push({
+          value: this.$store.state.me.id,
+          text: `${this.$store.state.me.username || this.$store.state.me.email || this.$store.state.me.id} (you)`,
+        });
+      }
+
+      return options;
+    },
+    showOwnerSelect() {
+      return this.$store.state.owners.length > 0;
+    },
+    selectedOwnerIsValid() {
+      return (
+        this.selectedOwnerId != null &&
+        (this.$store.state.owners
+          .map((o) => o.ownerUserId)
+          .includes(this.selectedOwnerId) ||
+          this.selectedOwnerId === this.$store.state.me?.id)
+      );
+    },
+    newSeasonOwnerStateFeedback() {
+      if (!this.selectedOwnerId) return this.$t("erforderlich");
+      if (
+        !this.$store.state.owners
+          .map((o) => o.ownerUserId)
+          .includes(this.selectedOwnerId) &&
+        this.selectedOwnerId !== this.$store.state.me?.id
+      )
+        return this.$t("errors.unerwarteter-fehler");
+      return null;
+    },
   },
   mounted() {
     this.load();
@@ -290,6 +359,9 @@ export default {
     open(teamId) {
       this.reset();
       this.teamId = teamId;
+      if (this.$store.state.me?.id) {
+        this.selectedOwnerId = this.$store.state.me?.id;
+      }
       this.$refs.modal.show();
       this.$nextTick(() => {
         this.load();
@@ -321,13 +393,16 @@ export default {
       this.newSeasonMemberIds = [];
       this.seasons = [];
       this.seasonsToCopy = [];
+      this.selectedOwnerId = null;
     },
     create() {
+      const ownerId = this.selectedOwnerId || null;
       if (this.tabIndex == 0)
         SeasonTeamService.create(
           this.team.id,
           this.seasonId,
-          this.newSeasonMemberIds
+          this.newSeasonMemberIds,
+          ownerId
         ).then((seasonTeam) => {
           this.$emit("seasonTeamCreated", seasonTeam);
         });
@@ -340,7 +415,8 @@ export default {
             SeasonTeamService.create(
               this.team.id,
               season.id,
-              this.newSeasonMemberIds
+              this.newSeasonMemberIds,
+              ownerId
             ).then((seasonTeam) => {
               this.$emit("seasonTeamCreated", seasonTeam);
             });

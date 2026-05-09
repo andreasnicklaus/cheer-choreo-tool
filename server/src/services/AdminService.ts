@@ -15,23 +15,26 @@ class AdminService {
    * Find or create an Admin by username. If not found, creates a new Admin with the given password.
    * @param {string} username - The admin's username.
    * @param {string} password - The admin's password.
-   * @returns {Promise<Admin>} The found or newly created Admin instance.
+   * @returns {Promise<[Admin, boolean]>} The found or newly created Admin instance and a boolean indicating if it was created.
    */
-  async findOrCreate(username: string, password: string) {
+  async findOrCreate(
+    username: string,
+    password: string,
+  ): Promise<[Admin, boolean]> {
     logger.debug(
       `AdminService findOrCreate ${JSON.stringify({
         username,
         password: password ? "<redacted>" : "undefined",
       })}`,
     );
-    const [admin, _created] = await Admin.findOrCreate({
+    const [admin, created] = await Admin.findOrCreate({
       where: { username },
       defaults: {
         username,
         password,
       },
     });
-    return admin;
+    return [admin, created];
   }
 
   /**

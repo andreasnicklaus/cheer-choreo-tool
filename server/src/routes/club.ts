@@ -102,7 +102,8 @@ router.get(
  *               name:
  *                 type: string
  *               ownerId:
- *                 type: string
+ *                 type: string | null
+ *                 description: Owner ID. If null/undefined, falls back to actingUserId
  *     responses:
  *       200:
  *         description: Club created successfully
@@ -118,7 +119,11 @@ router.post(
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
     const { name, ownerId } = req.body;
-    return ClubService.create(name, ownerId, req.actingUserId)
+    return ClubService.create(
+      name,
+      ownerId || req.actingUserId,
+      req.actingUserId,
+    )
       .then((club: Club | null) => {
         NotificationService.createOne(
           req.t("notifications.club-created.title"),

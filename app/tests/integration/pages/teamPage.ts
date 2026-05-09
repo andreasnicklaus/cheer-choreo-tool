@@ -6,6 +6,7 @@ import { defaultSeasons } from "../testData/season";
 import { defaultSeasonTeams } from "../testData/seasonTeam";
 
 export default class TeamPage extends TestPage {
+  firstClubId = "20f5bc46-de1b-4316-beaa-df927bbe57fc";
   route = `/team/${defaultTeams[0].id}`;
 
   constructor(page: Page) {
@@ -293,6 +294,65 @@ export default class TeamPage extends TestPage {
     const updaterDisplay = this.page.getByTestId("updater-display");
     await expect(updaterDisplay).toBeVisible();
     await expect(updaterDisplay).toContainText(expectedText);
+  }
+
+  async iSetClubId() {
+    await this.page.evaluate((id) => {
+      const app = (document.querySelector("#app") as any)?.__vue_app__;
+      app?.config?.globalProperties?.$store?.commit("setClubId", id);
+    }, this.firstClubId);
+  }
+
+  async iOpenCreateTeamModal() {
+    const teamDropdown = this.page.getByRole("button", { name: "Teams" });
+    await this.iClickButton(teamDropdown);
+    const newTeamItem = this.page.getByRole("menuitem", {
+      name: "New team",
+    });
+    await this.iClickButton(newTeamItem);
+  }
+
+  async iOpenCreateSeasonModal() {
+    const addSeasonButton = this.page.getByTestId("create-season-button");
+    await this.iClickButton(addSeasonButton);
+  }
+
+  async iSeeOwnerSelectInCreateTeamModal() {
+    const modal = this.page.getByRole("dialog", { name: "New team" });
+    await expect(modal.getByLabel("Owner")).toBeVisible();
+  }
+
+  async iSeeOwnerSelectOptionInCreateTeamModal(text: string) {
+    const modal = this.page.getByRole("dialog", { name: "New team" });
+    const options = await modal
+      .getByRole("combobox", { name: "Owner" })
+      .locator("option")
+      .allTextContents();
+    expect(options.some((o) => o.includes(text))).toBeTruthy();
+  }
+
+  async iDontSeeOwnerSelectInCreateTeamModal() {
+    const modal = this.page.getByRole("dialog", { name: "New team" });
+    await expect(modal.getByLabel("Owner")).not.toBeVisible();
+  }
+
+  async iSeeOwnerSelectInCreateSeasonModal() {
+    const modal = this.page.getByRole("dialog", { name: "New season" });
+    await expect(modal.getByLabel("Owner")).toBeVisible();
+  }
+
+  async iSeeOwnerSelectOptionInCreateSeasonModal(text: string) {
+    const modal = this.page.getByRole("dialog", { name: "New season" });
+    const options = await modal
+      .getByRole("combobox", { name: "Owner" })
+      .locator("option")
+      .allTextContents();
+    expect(options.some((o) => o.includes(text))).toBeTruthy();
+  }
+
+  async iDontSeeOwnerSelectInCreateSeasonModal() {
+    const modal = this.page.getByRole("dialog", { name: "New season" });
+    await expect(modal.getByLabel("Owner")).not.toBeVisible();
   }
 
   async iSeeOwnerDisplay(username: string) {

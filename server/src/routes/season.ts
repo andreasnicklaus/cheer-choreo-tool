@@ -64,7 +64,8 @@ router.get(
  *               year:
  *                 type: integer
  *               ownerId:
- *                 type: string
+ *                 type: string | null
+ *                 description: Owner ID. If null/undefined, falls back to actingUserId
  *     responses:
  *       200:
  *         description: Season created successfully
@@ -80,7 +81,12 @@ router.post(
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
     const { name, year, ownerId } = req.body;
-    return SeasonService.create(name, year, ownerId, req.actingUserId)
+    return SeasonService.create(
+      name,
+      year,
+      ownerId || req.actingUserId,
+      req.actingUserId,
+    )
       .then((season: Season) => {
         res.send(season);
         return next();

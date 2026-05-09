@@ -190,6 +190,34 @@ export default class AccountPage extends TestPage {
     await expect(this.page).toHaveURL("/en/login");
   }
 
+  async iOpenCreateClubModal() {
+    await this.iSwitchToClubs();
+    const addClubButton = this.page.getByRole("button", {
+      name: "New club",
+      exact: true,
+    });
+    await this.iClickButton(addClubButton);
+  }
+
+  async iSeeOwnerSelectInCreateClubModal() {
+    const modal = this.page.getByRole("dialog", { name: "New club" });
+    await expect(modal.getByLabel("Owner")).toBeVisible();
+  }
+
+  async iSeeOwnerSelectOptionInCreateClubModal(text: string) {
+    const modal = this.page.getByRole("dialog", { name: "New club" });
+    const options = await modal
+      .getByRole("combobox", { name: "Owner" })
+      .locator("option")
+      .allTextContents();
+    expect(options.some((o) => o.includes(text))).toBeTruthy();
+  }
+
+  async iDontSeeOwnerSelectInCreateClubModal() {
+    const modal = this.page.getByRole("dialog", { name: "New club" });
+    await expect(modal.getByLabel("Owner")).not.toBeVisible();
+  }
+
   iSwitchToAccess() {
     return this.iClickButton(this.page.getByRole("tab", { name: "Access" }));
   }

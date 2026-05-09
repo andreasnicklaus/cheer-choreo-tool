@@ -40,7 +40,7 @@ function errorHandlingMiddleWare(
     else
       res.status(500).render("../src/views/error.ejs", {
         action: "generic error handling",
-        data: JSON.stringify({ userId: req.UserId, url: req.url }),
+        data: JSON.stringify({ userId: req.actingUserId, url: req.url }),
         error: error,
         timestamp: new Date().toLocaleString(req.locale),
       }); // njsscan-ignore: express_lfr_warning

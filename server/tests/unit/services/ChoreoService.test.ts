@@ -70,7 +70,6 @@ describe("ChoreoService", () => {
         choreo.id,
         member.id,
         user.id,
-        user.id,
         false,
         "#FF1493",
       ),
@@ -94,7 +93,6 @@ describe("ChoreoService", () => {
         choreo.id,
         "invalid-member-id",
         user.id,
-        user.id,
         false,
         "#FF1493",
       ),
@@ -116,7 +114,6 @@ describe("ChoreoService", () => {
     await ChoreoService.addParticipant(
       choreo.id,
       member.id,
-      user.id,
       user.id,
       false,
       "#FF1493",
@@ -163,7 +160,6 @@ describe("ChoreoService", () => {
     await ChoreoService.addParticipant(
       choreo.id,
       member1.id,
-      user.id,
       user.id,
       false,
       "#FF1493",
@@ -225,7 +221,6 @@ describe("ChoreoService", () => {
     await ChoreoService.addParticipant(
       choreo.id,
       member.id,
-      user.id,
       user.id,
       false,
       "#FF1493",
@@ -299,7 +294,7 @@ describe("ChoreoService", () => {
 
   test("findOrCreate finds or creates a choreo", async () => {
     const seasonTeam = await SeasonTeam.create({});
-    const result = await ChoreoService.findOrCreate(
+    const [result, _created] = await ChoreoService.findOrCreate(
       "FindOrCreateChoreo",
       7,
       "cheer",
@@ -312,7 +307,7 @@ describe("ChoreoService", () => {
     expect(result.counts).toBe(7);
     expect(result.UserId).toBe(user.id);
 
-    const result2 = await ChoreoService.findOrCreate(
+    const [result2, _created2] = await ChoreoService.findOrCreate(
       "FindOrCreateChoreo",
       7,
       "cheer",

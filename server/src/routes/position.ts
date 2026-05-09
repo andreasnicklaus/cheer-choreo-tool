@@ -97,16 +97,9 @@ router.post(
   "/",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    const { x, y, MemberId, lineupId, ownerId } = req.body;
+    const { x, y, MemberId, lineupId } = req.body;
 
-    PositionService.findOrCreate(
-      x,
-      y,
-      lineupId,
-      MemberId,
-      ownerId,
-      req.actingUserId,
-    )
+    PositionService.findOrCreate(x, y, lineupId, MemberId, req.actingUserId)
       .then(async (position: Position) => {
         return Promise.all([
           position.setMember(MemberId),

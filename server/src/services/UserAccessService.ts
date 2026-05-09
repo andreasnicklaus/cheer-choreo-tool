@@ -195,23 +195,34 @@ class UserAccessService {
    */
   async hasAccess(ownerId: string, childId: string) {
     const access = await UserAccess.findOne({
-      where: { ownerUserId: ownerId, childUserId: childId, enabled: true },
+      where: {
+        ownerUserId: ownerId,
+        childUserId: childId,
+        enabled: true,
+        accepted: true,
+      },
     });
     return !!access;
   }
 
   /**
    * Get the role for a child accessing owner's data.
-   * @param {UUID} ownerId - The owner's user ID.
-   * @param {UUID} childId - The child's user ID.
+   * @param ownerId - The owner's user ID.
+   * @param childId - The child's user ID.
    * @returns {Promise<AccessRole | null>} The role or null if no access.
    */
   async getRole(ownerId: string, childId: string) {
     const access = await UserAccess.findOne({
-      where: { ownerUserId: ownerId, childUserId: childId, enabled: true },
+      where: {
+        ownerUserId: ownerId,
+        childUserId: childId,
+        enabled: true,
+        accepted: true,
+      },
     });
     return access?.role || null;
   }
+
 }
 
 export default new UserAccessService();

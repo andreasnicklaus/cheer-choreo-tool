@@ -214,7 +214,6 @@ router.post(
               abbreviation,
               SeasonTeamId,
               UserId,
-              UserId,
               true,
             );
           }

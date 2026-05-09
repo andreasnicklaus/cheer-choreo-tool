@@ -93,6 +93,21 @@
       </BFormGroup>
 
       <BFormGroup
+        v-if="showOwnerSelect"
+        :label="$t('accountView.owner')"
+        label-class="label-with-colon"
+        :state="selectedOwnerIsValid"
+        :invalid-feedback="newChoreoOwnerStateFeedback"
+      >
+        <BFormSelect
+          v-model="selectedOwnerId"
+          :state="selectedOwnerIsValid"
+          :options="ownerOptions"
+          :placeholder="$t('accountView.owner')"
+        />
+      </BFormGroup>
+
+      <BFormGroup
         :label="$t('team', 1)"
         label-class="label-with-colon"
         :state="newChoreoTeamIsValid"
@@ -234,6 +249,7 @@
 <script>
 import ChoreoService from "@/services/ChoreoService";
 import ColorService from "@/services/ColorService";
+import UserAccessService from "@/services/UserAccessService";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
 
 /**
@@ -248,6 +264,7 @@ import NewVersionBadge from "@/components/NewVersionBadge.vue";
  * @vue-data {Number|null} newChoreoSeasonId=null
  * @vue-data {Array} newChoreoParticipantIds
  * @vue-data {Array} participantOptions
+ * @vue-data {String|null} selectedOwnerId=null
  *
  * @vue-prop {Array} teams
  *
@@ -267,6 +284,8 @@ import NewVersionBadge from "@/components/NewVersionBadge.vue";
  * @vue-computed {String|null} newChoreoMatTypeStateFeedback
  * @vue-computed {Boolean} newChoreoSeasonIsValid
  * @vue-computed {String|null} newChoreoSeasonStateFeedback
+ * @vue-computed {Array} ownerOptions
+ * @vue-computed {Boolean} showOwnerSelect
  *
  * @vue-event {Object} addChoreo
  *
@@ -296,6 +315,7 @@ export default {
     newChoreoSeasonId: null,
     newChoreoParticipantIds: [],
     participantOptions: [],
+    selectedOwnerId: null,
   }),
   computed: {
     selectedTeam() {
@@ -405,6 +425,52 @@ export default {
         return this.$t("errors.unerwarteter-fehler");
       return null;
     },
+    ownerOptions() {
+      const options = this.$store.state.owners.map((o) => {
+        const baseText = o.owner?.username || o.owner?.email || o.ownerUserId;
+        const isYou =
+          this.$store.state.me && o.ownerUserId === this.$store.state.me.id;
+        return {
+          value: o.ownerUserId,
+          text: isYou ? `${baseText} (you)` : baseText,
+        };
+      });
+
+      if (
+        this.$store.state.me &&
+        !options.some((o) => o.value === this.$store.state.me.id)
+      ) {
+        options.push({
+          value: this.$store.state.me.id,
+          text: `${this.$store.state.me.username || this.$store.state.me.email || this.$store.state.me.id} (you)`,
+        });
+      }
+
+      return options;
+    },
+    showOwnerSelect() {
+      return this.$store.state.owners.length > 0;
+    },
+    selectedOwnerIsValid() {
+      return (
+        this.selectedOwnerId != null &&
+        (this.$store.state.owners
+          .map((o) => o.ownerUserId)
+          .includes(this.selectedOwnerId) ||
+          this.selectedOwnerId === this.$store.state.me?.id)
+      );
+    },
+    newChoreoOwnerStateFeedback() {
+      if (!this.selectedOwnerId) return this.$t("erforderlich");
+      if (
+        !this.$store.state.owners
+          .map((o) => o.ownerUserId)
+          .includes(this.selectedOwnerId) &&
+        this.selectedOwnerId !== this.$store.state.me?.id
+      )
+        return this.$t("errors.unerwarteter-fehler");
+      return null;
+    },
   },
   watch: {
     newChoreoTeamId: {
@@ -426,11 +492,13 @@ export default {
       this.$refs.modal.show();
       if (teamId) {
         this.newChoreoTeamId = teamId;
-
         if (seasonId) {
           this.newChoreoSeasonId = seasonId;
           this.updateParticipantOptions();
         }
+      }
+      if (this.$store.state.me?.id) {
+        this.selectedOwnerId = this.$store.state.me?.id;
       }
     },
     resetChoreoModal() {
@@ -439,11 +507,10 @@ export default {
       this.newChoreoCount = 0;
       this.newChoreoMatType = "cheer";
       this.newChoreoTeamId = this.teams[0]?.id;
-
+      this.selectedOwnerId = null;
       const seasonTeamsOfSelectedTeam = this.teams.find(
         (t) => t.id == this.newChoreoTeamId
       )?.SeasonTeams;
-
       if (seasonTeamsOfSelectedTeam && seasonTeamsOfSelectedTeam.length == 1) {
         this.newChoreoSeasonId = seasonTeamsOfSelectedTeam[0].Season.id;
         this.updateParticipantOptions();
@@ -472,12 +539,14 @@ export default {
       const participants = this.newChoreoParticipantIds
         .map((pId) => this.participantOptions.find((o) => o.value == pId))
         .map((o) => ({ id: o.value, color: o.color }));
+      const ownerId = this.selectedOwnerId || null;
       ChoreoService.create(
         this.newChoreoName,
         count,
         this.newChoreoMatType,
         seasonTeamId,
-        participants
+        participants,
+        ownerId
       ).then((choreo) => {
         this.$emit("addChoreo", choreo);
       });

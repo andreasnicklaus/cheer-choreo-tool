@@ -108,7 +108,12 @@
                       animation="wave"
                     />
                   </template>
-                  <div id="profilePictureUpload" ref="profilePictureUploadRef">
+                  <div
+                    id="profilePictureUpload"
+                    ref="profilePictureUploadRef"
+                    @mouseenter="profilePictureIsHovered = true"
+                    @mouseleave="profilePictureIsHovered = false"
+                  >
                     <BOverlay
                       :show="profilePictureIsHovered"
                       rounded="circle"
@@ -132,7 +137,7 @@
                           class="input-file"
                           @change="submitProfilePicture"
                         />
-                        <IBiCloudUpload variant="light" font-scale="2" />
+                        <IBiCloudUpload color="white" font-scale="2" />
                       </template>
                     </BOverlay>
                   </div>
@@ -304,7 +309,23 @@
         </BForm>
       </BTab>
       <BTab :title="$t('verein', 2)">
+        <BContainer
+          v-if="clubs.length == 0"
+          class="d-grid gap-2 mt-2"
+          :style="{ maxWidth: '700px' }"
+        >
+          <p class="text-muted text-center w-75 mx-auto">
+            {{ $t("accountView.no-clubs-info") }}
+          </p>
+          <BButton
+            variant="success"
+            @click="() => $refs.createClubModal.open()"
+          >
+            <IBiPlus /> {{ $t("modals.create-club.neuer-verein") }}
+          </BButton>
+        </BContainer>
         <BTabs
+          v-else
           :index="clubTabIndex"
           content-class="mt-3 mt-md-0 flex-grow-1"
           :vertical="!$store.state.isMobile"
@@ -314,7 +335,7 @@
           pills
           @update:index="updateClubTabIndex"
         >
-          <BTab v-for="club in user?.Clubs" :key="club.id" :title="club.name">
+          <BTab v-for="club in clubs" :key="club.id" :title="club.name">
             <template #title>
               {{ club.name }}
               <IBiCheckCircleFill
@@ -340,7 +361,12 @@
               >
                 <BRow align-v="center" align-h="around">
                   <BCol cols="auto" class="text-center mb-2 mb-md-0">
-                    <div id="clubLogoUpload" ref="clubLogoUploadRef">
+                    <div
+                      id="clubLogoUpload"
+                      ref="clubLogoUploadRef"
+                      @mouseenter="clubLogoIsHovered = true"
+                      @mouseleave="clubLogoIsHovered = false"
+                    >
                       <BOverlay
                         :show="clubLogoIsHovered"
                         rounded="circle"
@@ -354,25 +380,17 @@
                               ? null
                               : newClubLogoBlob || currentClubLogoBlob
                           "
-                        >
-                          <IBiHouseFill
-                            v-if="
-                              !clubLogoDeletion &&
-                              !(newClubLogoBlob || currentClubLogoBlob)
-                            "
-                            font-scale="1.5"
-                          />
-                        </BAvatar>
+                        />
                         <template #overlay>
                           <input
-                            :ref="`clubLogoFile-${club.id}`"
                             :style="{ width: '80px', height: '80px' }"
                             type="file"
                             accept="image/*"
                             class="input-file"
-                            @change="() => submitClubLogo(club.id)"
+                            :disabled="!canWriteCurrentClub"
+                            @change="(e) => submitClubLogo(club.id, e)"
                           />
-                          <IBiCloudUpload variant="light" font-scale="2" />
+                          <IBiCloudUpload color="white" font-scale="2" />
                         </template>
                       </BOverlay>
                     </div>
@@ -382,6 +400,7 @@
                       <BButton
                         variant="outline-secondary"
                         :disabled="
+                          !canWriteCurrentClub ||
                           clubLogoDeletion ||
                           (!newClubLogo && !currentClubLogoBlob)
                         "
@@ -418,6 +437,7 @@
                   v-model="clubName"
                   :placeholder="$t('name')"
                   :state="clubNameIsValid"
+                  :disabled="!canWriteCurrentClub"
                 />
               </BFormGroup>
 
@@ -449,6 +469,7 @@
                       type="submit"
                       variant="success"
                       :disabled="
+                        !canWriteCurrentClub ||
                         !clubNameIsValid ||
                         !newClubLogoIsValid ||
                         (clubName == club.name &&
@@ -464,9 +485,10 @@
                     type="reset"
                     variant="outline-secondary"
                     :disabled="
-                      clubName == club.name &&
-                      !clubLogoDeletion &&
-                      newClubLogo == null
+                      !canWriteCurrentClub ||
+                      (clubName == club.name &&
+                        !clubLogoDeletion &&
+                        newClubLogo == null)
                     "
                     >{{ $t("zuruecksetzen") }}</BButton
                   >
@@ -500,18 +522,22 @@
 
             <span
               v-b-tooltip.hover="
-                user?.Clubs.length <= 1
-                  ? $t('accountView.cant-delete-only-club')
-                  : $store.state.clubId == club.id
-                    ? $t('accountView.cant-delete-active-club')
-                    : false
+                !canDeleteCurrentClub
+                  ? $t('accountView.cant-delete-access')
+                  : clubs.length <= 1
+                    ? $t('accountView.cant-delete-only-club')
+                    : $store.state.clubId == club.id
+                      ? $t('accountView.cant-delete-active-club')
+                      : false
               "
               class="d-grid"
             >
               <BButton
                 variant="outline-danger"
                 :disabled="
-                  user?.Clubs.length <= 1 || $store.state.clubId == club.id
+                  !canDeleteCurrentClub ||
+                  clubs.length <= 1 ||
+                  $store.state.clubId == club.id
                 "
                 class="mt-2"
                 @click="
@@ -603,7 +629,7 @@
             </BCard>
           </BCol>
         </BRow>
-        <BRow class="mb-3">
+        <BRow class="mb-5">
           <BCol>
             <BCard
               border-variant="white"
@@ -661,8 +687,9 @@
                       </BBadge>
                     </template>
                     <template #cell(enabled)="row">
-                      <BFormSwitch
+                      <BFormCheckbox
                         v-model="row.item.enabled"
+                        switch
                         @change="
                           updateAccess(row.item.id, {
                             enabled: row.item.enabled,
@@ -690,6 +717,13 @@
             </BCard>
           </BCol>
         </BRow>
+
+        <div :style="{ maxWidth: '700px' }" class="mx-auto mb-5">
+          <p class="text-muted small mt-4 mb-0">
+            {{ $t("modals.invite-user.what-each-role-can-do") }}
+          </p>
+          <AccessOverViewTable />
+        </div>
       </BTab>
       <BTab>
         <template #title>
@@ -791,7 +825,7 @@
       </BTab>
     </BTabs>
 
-    <CreateClubModal ref="createClubModal" @club-created="init" />
+    <CreateClubModal ref="createClubModal" :me="user" @club-created="init" />
     <InviteUserModal ref="inviteUserModal" @invited="loadUserAccess" />
     <DeleteClubModal ref="deleteClubModal" @club-deleted="init" />
 
@@ -803,7 +837,6 @@
 
 <script>
 import Cookies from "js-cookie";
-import { useElementHover } from "@vueuse/core";
 
 import AuthService from "@/services/AuthService";
 import ChangePasswordModal from "@/components/modals/ChangePasswordModal.vue";
@@ -818,9 +851,11 @@ import MessagingService from "@/services/MessagingService";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import { error, log } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
+import { mapState } from "vuex";
 import { useHead } from "@unhead/vue";
 import { useI18n } from "vue-i18n";
 import { emailRegex } from "@/utils/validation";
+import { canWrite, canDelete } from "@/utils/permissions";
 
 const MB = 1_048_576;
 const MAX_IMAGE_MB = 2;
@@ -844,6 +879,7 @@ const MAX_IMAGE_MB = 2;
  * @vue-data {Ref|null} clubLogoElement=null - Template ref for club logo upload.
  * @vue-data {Array} sharedWithMe=[] - Array of users who have shared access with the current user.
  * @vue-data {Array} managedByMe=[] - Array of users the current user has granted access to.
+ * @vue-data {Array} clubs=[] - Array of clubs the user belongs to.
  *
  * @vue-computed {Blob|null} newProfilePictureBlob - The new profile picture as a Blob.
  * @vue-computed {Object} currentClub - The currently selected club object.
@@ -894,13 +930,14 @@ export default {
       currentClubLogoBlob: null,
       clubName: null,
       tracking: Boolean(Cookies.get("mtm_consent")),
+      profilePictureIsHovered: false,
       profilePictureDeletion: false,
+      clubLogoIsHovered: false,
       clubLogoDeletion: false,
       clubTabIndex: 0,
-      profilePictureElement: null,
-      clubLogoElement: null,
       sharedWithMe: [],
       managedByMe: [],
+      clubs: [],
     };
   },
   computed: {
@@ -914,13 +951,20 @@ export default {
         : this.currentProfilePictureBlob;
     },
     currentClub() {
-      return this.user?.Clubs[this.clubTabIndex];
+      return this.clubs[this.clubTabIndex];
     },
     newClubLogoBlob() {
       if (this.clubLogoDeletion) return null;
       return this.newClubLogo
         ? URL.createObjectURL(this.newClubLogo)
         : this.currentClubLogoBlob;
+    },
+    ...mapState(["owners", "me"]),
+    canWriteCurrentClub() {
+      return canWrite(this.owners, this.me?.id, this.currentClub?.UserId);
+    },
+    canDeleteCurrentClub() {
+      return canDelete(this.owners, this.me?.id, this.currentClub?.UserId);
     },
     sharedWithMeFields() {
       return [
@@ -1027,20 +1071,6 @@ export default {
     },
   },
   mounted() {
-    this.profilePictureElement = this.$refs.profilePictureUploadRef;
-    this.clubLogoElement = this.$refs.clubLogoUploadRef;
-
-    if (this.profilePictureElement) {
-      const profilePictureIsHovered = useElementHover(
-        this.profilePictureElement
-      );
-      this.$root.profilePictureIsHovered = profilePictureIsHovered;
-    }
-    if (this.clubLogoElement) {
-      const clubLogoIsHovered = useElementHover(this.clubLogoElement);
-      this.$root.clubLogoIsHovered = clubLogoIsHovered;
-    }
-
     useHead({
       title: `${this.t("konto")} - ${this.t("general.ChoreoPlaner")} | ${this.t("meta.defaults.title")}`,
       titleTemplate: null,
@@ -1089,17 +1119,28 @@ export default {
       return AuthService.getUserInfo()
         .then((user) => {
           this.user = user;
-          this.loadUserSettings();
-          this.loadProfileImage();
-          this.loadUserAccess();
+          return Promise.all([
+            this.loadProfileImage(),
+            this.loadUserAccess(),
+            this.loadClubs(),
+          ]);
         })
-        .catch(() => {
+        .then(() => {
+          this.loadUserSettings();
+        })
+        .catch((e) => {
+          console.warn(e);
           error("Cannot get user info", ERROR_CODES.USER_INFO_QUERY_FAILED);
           MessagingService.showError(
             this.$t("accountView.unbekannter-fehler"),
             this.$t("accountView.das-hat-nicht-funktioniert")
           );
         });
+    },
+    loadClubs() {
+      return ClubService.getAll().then((clubs) => {
+        this.clubs = clubs;
+      });
     },
     loadUserAccess() {
       UserAccessService.getOwners().then((access) => {
@@ -1122,6 +1163,8 @@ export default {
     acceptAccess(id) {
       UserAccessService.accept(id).then(() => {
         this.loadUserAccess();
+        this.$store.dispatch("loadUserInfo");
+        this.loadClubs();
       });
     },
     declineAccess(id) {
@@ -1178,8 +1221,8 @@ export default {
       this.newProfilePicture = this.$refs.profilePictureFile.files[0];
       this.profilePictureDeletion = false;
     },
-    submitClubLogo(clubId) {
-      this.newClubLogo = this.$refs[`clubLogoFile-${clubId}`][0].files[0];
+    submitClubLogo(clubId, event) {
+      this.newClubLogo = event.target.files[0];
       this.clubLogoDeletion = false;
     },
     saveUserInfo() {
@@ -1251,7 +1294,7 @@ export default {
         });
     },
     resetClubInfo() {
-      this.clubName = this.user?.Clubs[this.clubTabIndex]?.name;
+      this.clubName = this.clubs[this.clubTabIndex]?.name;
       this.clubLogoDeletion = false;
       this.newClubLogo = null;
       this.loadClubLogo();

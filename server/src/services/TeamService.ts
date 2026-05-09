@@ -51,14 +51,14 @@ class TeamService {
     const accessibleOwnerIds =
       ownerIds && ownerIds.length > 0
         ? await filterAccessibleOwnerIds(ownerIds, actingUserId, isAdmin)
-        : [];
+        : [actingUserId];
 
     return Team.findAll({
       where: options.all
         ? {}
         : accessibleOwnerIds.length > 0
           ? { UserId: { [Op.in]: accessibleOwnerIds } }
-          : {},
+          : { UserId: actingUserId },
       include: defaultInclude,
     });
   }
@@ -84,13 +84,13 @@ class TeamService {
     const accessibleOwnerIds =
       ownerIds.length > 0
         ? await filterAccessibleOwnerIds(ownerIds, actingUserId, isAdmin)
-        : [];
+        : [actingUserId];
 
     return Team.findAll({
       where:
         accessibleOwnerIds.length > 0
           ? { name, UserId: { [Op.in]: accessibleOwnerIds } }
-          : { name },
+          : { name, UserId: actingUserId },
       include: defaultInclude,
     });
   }
@@ -154,11 +154,12 @@ class TeamService {
   }
 
   /**
-   * Create a new team and associate it with a season.
+   * Create a new team.
+   *
    * @param {string} name - The name of the team.
    * @param {UUID} ClubId - The club ID.
    * @param {UUID} SeasonId - The season ID.
-   * @param {UUID} ownerId - The owner ID.
+   * @param {UUID|null} ownerId - Owner ID. If null/undefined, falls back to actingUserId
    * @param {UUID} actingUserId - The acting user ID.
    * @param {boolean} [isAdmin=false]
    * @returns {Promise<Object>} The created team object.
@@ -195,8 +196,8 @@ class TeamService {
         team.id,
         SeasonId,
         [],
-        ownerId,
         actingUserId,
+        isAdmin,
       ).then((_seasonTeam: SeasonTeam | null) =>
         this.findById(team.id, actingUserId, isAdmin),
       );
@@ -207,10 +208,10 @@ class TeamService {
    * Find or create a team.
    * @param {string} name - The name of the team.
    * @param {UUID} ClubId - The club ID.
-   * @param {UUID} ownerId - The owner ID.
+   * @param {UUID|null} ownerId - Owner ID. If null/undefined, falls back to actingUserId
    * @param {UUID} actingUserId - The acting user ID.
    * @param {boolean} [isAdmin=false]
-   * @returns {Promise<Object>} The found or created team object.
+   * @returns {Promise<[Object, boolean]>} The found or created team object and a boolean indicating if the team was created.
    */
   async findOrCreate(
     name: string,
@@ -218,14 +219,14 @@ class TeamService {
     ownerId: string,
     actingUserId: string,
     isAdmin = false,
-  ) {
+  ): Promise<[Team, boolean]> {
     logger.debug(
       `TeamService findOrCreate ${JSON.stringify({ name, ClubId, ownerId, actingUserId, isAdmin })}`,
     );
 
     await checkWriteAccess(ownerId, actingUserId, isAdmin);
 
-    const [team, _created] = await Team.findOrCreate({
+    const [team, created] = await Team.findOrCreate({
       where: { name, ClubId, UserId: ownerId },
       defaults: {
         name,
@@ -235,7 +236,7 @@ class TeamService {
         updaterId: actingUserId,
       },
     });
-    return team;
+    return [team, created];
   }
 
   /**
@@ -243,9 +244,7 @@ class TeamService {
    * @param {UUID} id - The ID of the team.
    * @param {Object} data - The data to update.
    * @param {UUID} actingUserId - The acting user ID.
-   * @param {boolean} [isAdmin=false]
-   * @param {Object} options - Options for filtering.
-   * @param {boolean} options.all - Whether to update all teams.
+   * @param {boolean} [options.all=false]
    * @returns {Promise<Object>} The updated team object.
    */
   async update(
@@ -300,6 +299,20 @@ class TeamService {
     await checkDeleteAccess(team.UserId, actingUserId, isAdmin);
 
     return team.destroy();
+  }
+
+  async migrateCreatorUpdater() {
+    logger.debug(`TeamService migrateCreatorUpdater`);
+
+    const teams = await Team.findAll({
+      where: { creatorId: { [Op.is]: null }, UserId: { [Op.not]: null } },
+    });
+
+    await Promise.all(
+      teams.map((team) =>
+        team.update({ creatorId: team.UserId, updaterId: team.UserId }),
+      ),
+    );
   }
 }
 

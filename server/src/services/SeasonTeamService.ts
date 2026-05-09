@@ -9,6 +9,7 @@ import {
   checkDeleteAccess,
   filterAccessibleOwnerIds,
 } from "../utils/accessControl";
+import TeamService from "./TeamService";
 
 const { logger } = require("../plugins/winston");
 const { Op } = require("sequelize");
@@ -64,7 +65,7 @@ class SeasonTeamService {
     const accessibleOwnerIds =
       ownerIds.length > 0
         ? await filterAccessibleOwnerIds(ownerIds, actingUserId, isAdmin)
-        : [];
+        : [actingUserId];
 
     return SeasonTeam.findAll({
       where: { UserId: { [Op.in]: accessibleOwnerIds } },
@@ -110,15 +111,14 @@ class SeasonTeamService {
    * @param {UUID} TeamId - The ID of the team.
    * @param {UUID} SeasonId - The ID of the season.
    * @param {Array<string>} memberIds - List of member IDs to copy.
-   * @param {UUID} ownerId - The ID of the owner.
    * @param {UUID} actingUserId - The ID of the acting user.
+   * @param {boolean} [isAdmin=false]
    * @returns {Promise<Object>} The created season team object.
    */
   async create(
     TeamId: string,
     SeasonId: string,
-    memberIds: string[],
-    ownerId: string,
+    memberIds: Array<string> = [],
     actingUserId: string,
     isAdmin = false,
   ) {
@@ -127,11 +127,17 @@ class SeasonTeamService {
         TeamId,
         SeasonId,
         memberIds,
-        ownerId,
         actingUserId,
         isAdmin,
       })}`,
     );
+
+    // Inherit ownerId from parent Team
+    const team = await TeamService.findById(TeamId, actingUserId, isAdmin);
+    if (!team) {
+      throw new NotFoundError(`Team with ID ${TeamId} not found`);
+    }
+    const ownerId = team.UserId;
 
     await checkWriteAccess(ownerId, actingUserId, isAdmin);
 
@@ -147,8 +153,8 @@ class SeasonTeamService {
           this.copyMemberIntoSeasonTeam(
             seasonTeam.id,
             mId,
-            ownerId,
             actingUserId,
+            isAdmin,
           ),
         ),
       ).then(() => this.findById(seasonTeam.id, actingUserId, isAdmin)),
@@ -159,14 +165,12 @@ class SeasonTeamService {
    * Copy a member into a season team.
    * @param {UUID} SeasonTeamId - The ID of the season team.
    * @param {UUID} MemberId - The ID of the member.
-   * @param {UUID} ownerId - The ID of the owner.
    * @param {UUID} actingUserId - The ID of the acting user.
    * @returns {Promise<Object>} The created member object.
    */
   async copyMemberIntoSeasonTeam(
     SeasonTeamId: string,
     MemberId: string,
-    ownerId: string,
     actingUserId: string,
     isAdmin = false,
   ) {
@@ -174,11 +178,18 @@ class SeasonTeamService {
       `SeasonTeamService copyMemberIntoSeasonTeam ${JSON.stringify({
         SeasonTeamId,
         MemberId,
-        ownerId,
         actingUserId,
         isAdmin,
       })}`,
     );
+
+    // Inherit ownerId from parent SeasonTeam
+    const seasonTeam = await this.findById(SeasonTeamId, actingUserId, isAdmin);
+    if (!seasonTeam) {
+      throw new NotFoundError(`SeasonTeam with ID ${SeasonTeamId} not found`);
+    }
+    const ownerId = seasonTeam.UserId;
+
     return MemberService.findById(MemberId, actingUserId, isAdmin).then(
       (member: Member | null) => {
         checkWriteAccess(ownerId, actingUserId, isAdmin);
@@ -188,7 +199,6 @@ class SeasonTeamService {
               member.nickname as string,
               member.abbreviation,
               SeasonTeamId,
-              ownerId,
               actingUserId,
               isAdmin,
             )
@@ -201,15 +211,13 @@ class SeasonTeamService {
    * Copy multiple members into a season team.
    * @param {UUID} seasonTeamId - The ID of the season team.
    * @param {Array<string>} memberIds - List of member IDs to copy.
-   * @param {UUID} ownerId - The ID of the owner.
    * @param {UUID} actingUserId - The ID of the acting user.
    * @param {boolean} isAdmin - Whether the user is an admin.
    * @returns {Promise<Array>} List of created member objects.
    */
   async copyMembersIntoSeasonTeam(
     seasonTeamId: string,
-    memberIds: string[],
-    ownerId: string,
+    memberIds: Array<string>,
     actingUserId: string,
     isAdmin = false,
   ) {
@@ -217,23 +225,27 @@ class SeasonTeamService {
       `SeasonTeamService copyMembersIntoSeasonTeam ${JSON.stringify({
         seasonTeamId,
         memberIds,
-        ownerId,
         actingUserId,
         isAdmin,
       })}`,
     );
-    checkWriteAccess(ownerId, actingUserId, isAdmin);
-    return Promise.all(
+
+    // Inherit ownerId from parent SeasonTeam
+    const seasonTeam = await this.findById(seasonTeamId, actingUserId, isAdmin);
+    if (!seasonTeam) {
+      throw new NotFoundError(`SeasonTeam with ID ${seasonTeamId} not found`);
+    }
+    const ownerId = seasonTeam.UserId;
+
+    await checkWriteAccess(ownerId, actingUserId, isAdmin);
+
+    const members = await Promise.all(
       memberIds.map((mId) =>
-        this.copyMemberIntoSeasonTeam(
-          seasonTeamId,
-          mId,
-          ownerId,
-          actingUserId,
-          isAdmin,
-        ),
+        this.copyMemberIntoSeasonTeam(seasonTeamId, mId, actingUserId, isAdmin),
       ),
     );
+
+    return members;
   }
 
   /**
@@ -267,6 +279,23 @@ class SeasonTeamService {
     )
       SeasonService.remove(foundSeasonTeam.Season.id, actingUserId);
     return foundSeasonTeam.destroy();
+  }
+
+  async migrateCreatorUpdater() {
+    logger.debug(`SeasonTeamService migrateCreatorUpdater`);
+
+    const seasonTeams = await SeasonTeam.findAll({
+      where: { creatorId: { [Op.is]: null }, UserId: { [Op.not]: null } },
+    });
+
+    await Promise.all(
+      seasonTeams.map((seasonTeam) =>
+        seasonTeam.update({
+          creatorId: seasonTeam.UserId,
+          updaterId: seasonTeam.UserId,
+        }),
+      ),
+    );
   }
 }
 

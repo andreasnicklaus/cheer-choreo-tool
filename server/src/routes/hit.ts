@@ -87,12 +87,10 @@ router.get(
  *                 type: integer
  *               choreoId:
  *                 type: string
- *               memberIds:
+ *               MemberIds:
  *                 type: array
  *                 items:
  *                   type: string
- *               ownerId:
- *                 type: string
  *     responses:
  *       200:
  *         description: Hit created successfully
@@ -107,15 +105,8 @@ router.post(
   "/",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    const { name, count, choreoId, MemberIds = [], ownerId } = req.body;
-    return HitService.create(
-      name,
-      count,
-      choreoId,
-      MemberIds,
-      ownerId,
-      req.actingUserId,
-    )
+    const { name, count, choreoId, MemberIds = [] } = req.body;
+    return HitService.create(name, count, choreoId, MemberIds, req.actingUserId)
       .then((hit: Hit | null) => {
         res.send(hit);
         return next();

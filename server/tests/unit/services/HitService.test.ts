@@ -133,14 +133,7 @@ describe("HitService", () => {
       matType: "cheer",
       UserId: user.id,
     });
-    const result = await HitService.create(
-      "NewHit",
-      1,
-      choreo.id,
-      [],
-      user.id,
-      user.id,
-    );
+    const result = await HitService.create("NewHit", 1, choreo.id, [], user.id);
     expect(result).not.toBeNull();
     if (result) {
       expect(result.name).toBe("NewHit");
@@ -164,14 +157,12 @@ describe("HitService", () => {
       choreo.id,
       [],
       user.id,
-      user.id,
     );
     const hit2 = await HitService.findOrCreate(
       hitName,
       hitCount,
       choreo.id,
       [],
-      user.id,
       user.id,
     );
     expect(hit1.id).toBe(hit2.id);
@@ -192,7 +183,6 @@ describe("HitService", () => {
       choreo.id,
       [],
       user.id,
-      user.id,
     );
     expect(hit.name).toBe(hitName);
   });
@@ -209,7 +199,6 @@ describe("HitService", () => {
       1,
       choreo.id,
       [],
-      user.id,
       user.id,
     );
     const newHitName = "updatedHit";
@@ -236,7 +225,6 @@ describe("HitService", () => {
       1,
       choreo.id,
       [],
-      user.id,
       user.id,
     );
     expect((await HitService.getAll([user.id], user.id)).length).toBe(1);

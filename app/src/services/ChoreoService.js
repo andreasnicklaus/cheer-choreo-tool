@@ -191,16 +191,24 @@ class ChoreoService {
    * @param {Array} participants - Array of participant objects
    * @returns {Promise<Object>} Created choreography
    */
-  create(name, counts, matType, seasonTeamId, participants) {
+  create(name, counts, matType, seasonTeamId, participants, ownerId = null) {
     debug("Creating choreo", {
       name,
       counts,
       matType,
       seasonTeamId,
       participants,
+      ownerId,
     });
     return ax
-      .post("/choreo", { name, counts, matType, seasonTeamId, participants })
+      .post("/choreo", {
+        name,
+        counts,
+        matType,
+        seasonTeamId,
+        participants,
+        ownerId,
+      })
       .then((res) => {
         debug("Successfully created choreo");
         return res.data;

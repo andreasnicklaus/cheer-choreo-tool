@@ -107,7 +107,8 @@ router.get(
  *                 items:
  *                   type: string
  *               ownerId:
- *                 type: string
+ *                 type: string | null
+ *                 description: Owner ID. If null/undefined, falls back to actingUserId
  *     responses:
  *       200:
  *         description: Choreo created successfully
@@ -130,7 +131,7 @@ router.post(
       matType,
       seasonTeamId,
       participants,
-      ownerId,
+      ownerId || req.actingUserId,
       req.actingUserId,
     )
       .then((choreo: Choreo | null) => {

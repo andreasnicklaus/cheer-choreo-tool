@@ -19,11 +19,14 @@ const { Op } = require("sequelize");
  */
 class HitService {
   /**
-   * Get all Hits for a user, including their members.
+   * Find or create a Hit by name, count, and choreography, and associate members.
    *
-   * @param {UUID[]} ownerIds - The owner's UUIDs.
+   * @param {string} name - The Hit's name.
+   * @param {number} count - The count value.
+   * @param {UUID} ChoreoId - The choreography ID.
+   * @param {Array<string>} [memberIds=[]] - Array of member IDs.
    * @param {UUID} actingUserId - The acting user's UUID.
-   * @returns {Promise<Array<Hit>>} List of Hit objects.
+   * @returns {Promise<Hit>} The found or created Hit.
    */
   async getAll(ownerIds: string[], actingUserId: string, isAdmin = false) {
     logger.debug(
@@ -33,7 +36,7 @@ class HitService {
     const accessibleOwnerIds =
       ownerIds.length > 0
         ? await filterAccessibleOwnerIds(ownerIds, actingUserId, isAdmin)
-        : [];
+        : [actingUserId];
 
     return Hit.findAll({
       where: { UserId: { [Op.in]: accessibleOwnerIds } },
@@ -85,13 +88,13 @@ class HitService {
     const accessibleOwnerIds =
       ownerIds.length > 0
         ? await filterAccessibleOwnerIds(ownerIds, actingUserId, isAdmin)
-        : [];
+        : [actingUserId];
 
     return Hit.findAll({
       where:
         accessibleOwnerIds.length > 0
           ? { name, UserId: { [Op.in]: accessibleOwnerIds } }
-          : { name },
+          : { name, UserId: actingUserId },
       include: { all: true },
     });
   }
@@ -111,7 +114,6 @@ class HitService {
     count: number,
     ChoreoId: string,
     memberIds: Array<string> = [],
-    ownerId: string,
     actingUserId: string,
     isAdmin = false,
   ) {
@@ -121,11 +123,21 @@ class HitService {
         count,
         ChoreoId,
         memberIds,
-        ownerId,
         actingUserId,
         isAdmin,
       })}`,
     );
+
+    // Inherit ownerId from parent Choreo
+    const choreo = await ChoreoService.findById(
+      ChoreoId,
+      actingUserId,
+      isAdmin,
+    );
+    if (!choreo) {
+      throw new NotFoundError(`Choreo with ID ${ChoreoId} not found`);
+    }
+    const ownerId = choreo.UserId;
 
     await checkWriteAccess(ownerId, actingUserId, isAdmin);
 
@@ -157,8 +169,7 @@ class HitService {
     name: string,
     count: number,
     ChoreoId: string,
-    memberIds: string[] = [],
-    ownerId: string,
+    memberIds: Array<string> = [],
     actingUserId: string,
     isAdmin = false,
   ) {
@@ -168,21 +179,26 @@ class HitService {
         count,
         ChoreoId,
         memberIds,
-        ownerId,
         actingUserId,
         isAdmin,
       })}`,
     );
 
+    // Inherit ownerId from parent Choreo
+    const choreo = await ChoreoService.findById(
+      ChoreoId,
+      actingUserId,
+      isAdmin,
+    );
+    if (!choreo) {
+      throw new NotFoundError(`Choreo with ID ${ChoreoId} not found`);
+    }
+    const ownerId = choreo.UserId;
+
     await checkWriteAccess(ownerId, actingUserId, isAdmin);
 
     const [hit, _created] = await Hit.findOrCreate({
-      where: {
-        name,
-        count,
-        ChoreoId,
-        UserId: ownerId,
-      },
+      where: { name, count, ChoreoId, UserId: ownerId },
       defaults: {
         name,
         count,
@@ -250,6 +266,20 @@ class HitService {
 
     await ChoreoService.update(hit.ChoreoId, {}, actingUserId, isAdmin);
     return hit.destroy();
+  }
+
+  async migrateCreatorUpdater() {
+    logger.debug(`HitService migrateCreatorUpdater`);
+
+    const hits = await Hit.findAll({
+      where: { creatorId: { [Op.is]: null }, UserId: { [Op.not]: null } },
+    });
+
+    await Promise.all(
+      hits.map((hit) =>
+        hit.update({ creatorId: hit.UserId, updaterId: hit.UserId }),
+      ),
+    );
   }
 }
 

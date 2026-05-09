@@ -1,5 +1,16 @@
 import { defaultClubs } from "./club";
 import { defaultUserId } from "./defaultUserId";
+import { ownerUser } from "./userAccess";
+
+export type UserAccess = {
+  id: string;
+  ownerUserId: string;
+  childUserId: string;
+  role: string;
+  enabled: boolean;
+  accepted: boolean;
+  owner: typeof ownerUser;
+};
 
 export type User = {
   id: string;
@@ -12,6 +23,7 @@ export type User = {
   emailConfirmed: boolean;
   profilePictureExtension: string | null;
   Clubs: typeof defaultClubs;
+  childAccess?: UserAccess[];
 };
 
 export const defaultUser: User = {
@@ -25,4 +37,20 @@ export const defaultUser: User = {
   emailConfirmed: true,
   profilePictureExtension: null,
   Clubs: defaultClubs,
+  childAccess: [],
+};
+
+export const sharedUser: User = {
+  ...defaultUser,
+  childAccess: [
+    {
+      id: "access-shared-1",
+      ownerUserId: ownerUser.id,
+      childUserId: defaultUserId,
+      role: "coach",
+      enabled: true,
+      accepted: true,
+      owner: ownerUser,
+    },
+  ],
 };

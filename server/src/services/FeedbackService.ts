@@ -102,6 +102,23 @@ class FeedbackService {
       attributes: [[Sequelize.fn("avg", Sequelize.col("stars")), "stars"]],
     }).then((result) => parseFloat(String(result[0].dataValues.stars)));
   }
+
+  async migrateCreatorUpdater() {
+    logger.debug(`FeedbackService migrateCreatorUpdater`);
+
+    const feedbacks = await Feedback.findAll({
+      where: { creatorId: { [Op.is]: null }, UserId: { [Op.not]: null } },
+    });
+
+    await Promise.all(
+      feedbacks.map((feedback) =>
+        feedback.update({
+          creatorId: feedback.UserId,
+          updaterId: feedback.UserId,
+        }),
+      ),
+    );
+  }
 }
 
 export default new FeedbackService();

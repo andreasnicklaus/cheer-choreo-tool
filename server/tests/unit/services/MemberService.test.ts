@@ -121,20 +121,18 @@ describe("MemberService", () => {
       null,
       seasonTeam.id,
       user.id,
-      user.id,
     );
     expect(member.id).toBeDefined();
     expect(member.name).toBe("TestMember");
   });
 
   test("findOrCreate creates a new Member", async () => {
-    const seasonTeam = await SeasonTeam.create();
+    const seasonTeam = await SeasonTeam.create({ UserId: user.id });
     const member = await MemberService.findOrCreate(
       "TestMember",
       "TestNickname",
       null,
       seasonTeam.id,
-      user.id,
       user.id,
     );
     expect(member.id).toBeDefined();

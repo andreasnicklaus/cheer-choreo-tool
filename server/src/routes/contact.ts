@@ -67,7 +67,7 @@ router.post(
       message,
       category,
       req.locale,
-      req.UserId,
+      req.actingUserId,
     )
       .then((response: string) => {
         res.send(response);

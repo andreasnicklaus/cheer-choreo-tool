@@ -327,7 +327,7 @@ router.get(
   "/me",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    UserService.findById(req.UserId)
+    UserService.findById(req.actingUserId)
       .then((user: User | null) => {
         res.send(user);
         return next();
@@ -361,10 +361,10 @@ router.put(
   (req: Request, res: Response, next: NextFunction) => {
     const { username, email, emailConfirmed } = req.body;
     const data = { username, email, emailConfirmed };
-    if (email && email != req.User.email) data.emailConfirmed = false;
-    UserService.update(req.UserId, data)
+    if (email && email != req.ActingUser.email) data.emailConfirmed = false;
+    UserService.update(req.actingUserId, data)
       .then((user: User | null) => {
-        if (user && email != req.User.email)
+        if (user && email != req.ActingUser.email)
           return MailService.sendEmailConfirmationEmail(
             user.username,
             user.id,
@@ -425,11 +425,11 @@ router.put(
     if (!req.file) res.status(400).send(req.t("responses.no-file-uploaded"));
     else {
       const profilePictureExtension = req.file.filename.split(".").pop();
-      UserService.update(req.UserId, {
+      UserService.update(req.actingUserId, {
         profilePictureExtension,
       }).then((user: User | null) => {
         FileService.clearProfilePictureFolder(
-          req.UserId,
+          req.actingUserId,
           profilePictureExtension,
         );
         res.send(user);
@@ -471,7 +471,7 @@ router.get(
     const { filename } = req.params;
     const root = path.join(__dirname, "../../uploads/profilePictures");
 
-    if (filename.startsWith(req.UserId))
+    if (filename.startsWith(req.actingUserId))
       return res.sendFile(filename, { root });
 
     return next();
@@ -497,9 +497,9 @@ router.delete(
   "/me/profilePicture",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    UserService.update(req.UserId, { profilePictureExtension: null })
+    UserService.update(req.actingUserId, { profilePictureExtension: null })
       .then(() => {
-        FileService.clearProfilePictureFolder(req.UserId);
+        FileService.clearProfilePictureFolder(req.actingUserId);
         res.send();
         return next();
       })
@@ -526,7 +526,7 @@ router.get(
   "/me/resendEmailConfirmationLink",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    UserService.findById(req.UserId)
+    UserService.findById(req.actingUserId)
       .then((user: User | null) => {
         if (!user) {
           res.status(404).send(req.t("responses.user-not-found"));

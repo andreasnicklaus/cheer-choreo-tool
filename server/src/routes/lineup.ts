@@ -35,8 +35,6 @@ const router = Router();
  *                 type: integer
  *               choreoId:
  *                 type: string
- *               ownerId:
- *                 type: string
  *     responses:
  *       200:
  *         description: Lineup created successfully
@@ -51,14 +49,8 @@ router.post(
   "/",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    const { startCount, endCount, choreoId, ownerId } = req.body;
-    LineupService.create(
-      startCount,
-      endCount,
-      choreoId,
-      ownerId,
-      req.actingUserId,
-    )
+    const { startCount, endCount, choreoId } = req.body;
+    LineupService.create(startCount, endCount, choreoId, req.actingUserId)
       .then((lineup: Lineup) => {
         res.send(lineup);
         return next();
@@ -145,6 +137,10 @@ router.put(
  *                 type: number
  *               MemberId:
  *                 type: string
+ *               timeOfManualUpdate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Optional timestamp for manual update tracking
  *     responses:
  *       200:
  *         description: Position added successfully

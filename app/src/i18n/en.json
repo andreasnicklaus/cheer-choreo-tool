@@ -25,6 +25,7 @@
     "du-hast-diesen-verein-als-aktiven-verein-ausgewaehlt": "You selected this club as the active club.",
     "cant-delete-only-club": "You can't remove your only club! \nCreate another club first.",
     "cant-delete-active-club": "You cannot delete your active club! \nFirst select another one.",
+    "cant-delete-access": "You don't have permission to delete this club.",
     "verein-loeschen": "Delete club",
     "deine-nutzerinformationen-wurden-gespeichert": "Your user information was saved!",
     "deine-vereinsinformationen-wurden-gespeichert": "Your club information was saved!",
@@ -34,6 +35,7 @@
     "e-mail-versandt": "Email sent",
     "settings-saved": "Your settings were saved!",
     "zugriff": "Access",
+    "owner": "Owner",
     "mit-mir-geteilt": "Shared with me",
     "mit-mir-geteilt-info": "People who have given you access to their choreos.",
     "von-mir-verwaltet": "Managed by me",
@@ -51,7 +53,8 @@
       "coach": "Coach",
       "assistant": "Assistant",
       "athlete": "Athlete"
-    }
+    },
+    "no-clubs-info": "You currently do not belong to any clubs. Either create one or ask the owner of you club to give you access to it."
   },
   "achter": "Eight",
   "alle-auswaehlen": "Select all",
@@ -231,7 +234,9 @@
     "shared-with-you-by": "Shared with you by",
     "created-by": "Created by",
     "last-updated-by": "Last updated by",
-    "you": "you"
+    "you": "you",
+    "no-delete-permission": "You don't have permission to delete this.",
+    "no-edit-permission": "You don't have permission to edit this."
   },
   "HelpView": {
     "fuer-deine-suche-gibt-es-keine-ergebnisse": "There are no results for your search \"{searchTerm}\"",
@@ -515,7 +520,9 @@
       "example-team-names": "TSG Salach e.V., Glamorous cheerleaders, ...",
       "min-vereinsname-length": "Min. 3 characters",
       "neuer-verein": "New club",
-      "vereinsname": "Club name"
+      "vereinsname": "Club name",
+      "ausstehende-einladungen": "Pending invitations",
+      "oder-neuen-verein-erstellen": "or create a new club"
     },
     "create-hit": {
       "wie-heisst-der-neue-eintrag": "What is the name of the new entry?"
@@ -605,7 +612,8 @@
       "info": "If a user exists with this email address, we will share access to your account with them.",
       "send": "Send invitation",
       "error": "The invitation could not be sent.",
-      "role": "Role"
+      "role": "Role",
+      "what-each-role-can-do": "What each role can do:"
     },
     "loading": {
       "wird-geladen": "Loading"
@@ -886,5 +894,9 @@
       "best-regards": "\nBest regards!",
       "best-regards-username": "\nBest regards\n{username}"
     }
+  },
+  "accessOverviewTable": {
+    "edit": "Edit",
+    "read": "Read"
   }
 }

@@ -132,7 +132,7 @@ describe("ClubService", () => {
   });
 
   test("findOrCreate finds or creates a club", async () => {
-    const result = await ClubService.findOrCreate(
+    const [result, _] = await ClubService.findOrCreate(
       "FindOrCreateClub",
       user.id,
       user.id,

@@ -81,9 +81,10 @@ class SeasonService {
 
   /**
    * Create a new season.
+   *
    * @param {string} name - Name of the season.
    * @param {number} year - Year of the season.
-   * @param {UUID} ownerId - Owner ID associated with the season.
+   * @param {UUID|null} ownerId - Owner ID. If null/undefined, falls back to actingUserId
    * @param {UUID} actingUserId - The acting user ID.
    * @param {boolean} [isAdmin=false]
    * @returns {Promise<Object>} Created season object.
@@ -180,6 +181,20 @@ class SeasonService {
     await checkDeleteAccess(foundSeason.UserId, actingUserId, isAdmin);
 
     return foundSeason.destroy();
+  }
+
+  async migrateCreatorUpdater() {
+    logger.debug(`SeasonService migrateCreatorUpdater`);
+
+    const seasons = await Season.findAll({
+      where: { creatorId: { [Op.is]: null }, UserId: { [Op.not]: null } },
+    });
+
+    await Promise.all(
+      seasons.map((season) =>
+        season.update({ creatorId: season.UserId, updaterId: season.UserId }),
+      ),
+    );
   }
 }
 

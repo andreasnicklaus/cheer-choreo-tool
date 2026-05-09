@@ -1,3 +1,4 @@
+import logger from "@/plugins/winston";
 import db from "./db";
 import Choreo from "@/db/models/choreo";
 import ChoreoParticipation from "@/db/models/choreoParticipation";
@@ -181,7 +182,11 @@ NotificationModel.belongsTo(User, { as: "updater", foreignKey: "updaterId" });
 const syncPromise = db
   .sync({ alter: true })
   .then(() => (process.env.NODE_ENV == "test" ? Promise.resolve() : seed()))
-  .then(migrate);
+  .then(migrate)
+  .catch((e) => {
+    logger.error("Database sync/seeding/migration failed:", e);
+    throw e;
+  });
 
 export { syncPromise };
 export default db;

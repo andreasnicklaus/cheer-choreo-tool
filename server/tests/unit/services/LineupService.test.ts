@@ -53,13 +53,7 @@ describe("LineupService", () => {
       matType: "cheer",
       UserId: user.id,
     });
-    const result = await LineupService.create(
-      1,
-      2,
-      choreo.id,
-      user.id,
-      user.id,
-    );
+    const result = await LineupService.create(1, 2, choreo.id, user.id);
     expect(result).toBeDefined();
     expect(result.startCount).toBe(1);
     expect(result.endCount).toBe(2);
@@ -73,13 +67,7 @@ describe("LineupService", () => {
       matType: "cheer",
       UserId: user.id,
     });
-    const result = await LineupService.findOrCreate(
-      1,
-      2,
-      choreo.id,
-      user.id,
-      user.id,
-    );
+    const result = await LineupService.findOrCreate(1, 2, choreo.id, user.id);
     expect(result).toBeDefined();
     expect(result.startCount).toBe(1);
     expect(result.endCount).toBe(2);
@@ -165,13 +153,7 @@ describe("LineupService", () => {
       matType: "cheer",
       UserId: user.id,
     });
-    const lineup = await LineupService.findOrCreate(
-      1,
-      2,
-      choreo.id,
-      user.id,
-      user.id,
-    );
+    const lineup = await LineupService.findOrCreate(1, 2, choreo.id, user.id);
     expect(await LineupService.findById(lineup.id, user.id)).not.toBeNull();
     await LineupService.remove(lineup.id, user.id);
     expect(await LineupService.findById(lineup.id, user.id)).toBeNull();

@@ -8,6 +8,7 @@ import {
   checkDeleteAccess,
   filterAccessibleOwnerIds,
 } from "../utils/accessControl";
+import ChoreoService from "./ChoreoService";
 
 const { Op } = require("sequelize");
 const { logger } = require("../plugins/winston");
@@ -23,7 +24,7 @@ class PositionService {
    * Create a new position.
    * @param {number} x - The x-coordinate of the position.
    * @param {number} y - The y-coordinate of the position.
-   * @param {UUID} ownerId - The owner ID associated with the position.
+   * @param {UUID} LineupId - The lineup ID associated with the position.
    * @param {UUID} actingUserId - The acting user ID.
    * @param {Date} [timeOfManualUpdate=new Date()]
    * @returns {Promise<Object>} The created position.
@@ -31,7 +32,7 @@ class PositionService {
   async create(
     x: number,
     y: number,
-    ownerId: string,
+    LineupId: string,
     actingUserId: string,
     isAdmin = false,
     timeOfManualUpdate: Date = new Date(),
@@ -40,11 +41,30 @@ class PositionService {
       `PositionService create ${JSON.stringify({
         x,
         y,
-        ownerId,
+        LineupId,
         actingUserId,
         isAdmin,
       })}`,
     );
+
+    // Inherit ownerId from parent Lineup → Choreo
+    const lineup = await LineupService.findById(
+      LineupId,
+      actingUserId,
+      isAdmin,
+    );
+    if (!lineup) {
+      throw new NotFoundError(`Lineup not found`);
+    }
+    const choreo = await ChoreoService.findById(
+      lineup.ChoreoId,
+      actingUserId,
+      isAdmin,
+    );
+    if (!choreo) {
+      throw new NotFoundError(`Choreo not found`);
+    }
+    const ownerId = choreo.UserId;
 
     await checkWriteAccess(ownerId, actingUserId, isAdmin);
 
@@ -53,6 +73,7 @@ class PositionService {
       y,
       timeOfManualUpdate,
       UserId: ownerId,
+      LineupId,
       creatorId: actingUserId,
       updaterId: actingUserId,
     });
@@ -64,7 +85,6 @@ class PositionService {
    * @param {number} y - The y-coordinate of the position.
    * @param {UUID} LineupId - The lineup ID associated with the position.
    * @param {UUID} MemberId - The member ID associated with the position.
-   * @param {UUID} ownerId - The owner ID associated with the position.
    * @param {UUID} actingUserId - The acting user ID.
    * @param {Date} [timeOfManualUpdate=new Date()]
    * @returns {Promise<Object>} The found or created position.
@@ -74,7 +94,6 @@ class PositionService {
     y: number,
     LineupId: string,
     MemberId: string,
-    ownerId: string,
     actingUserId: string,
     isAdmin = false,
     timeOfManualUpdate: Date = new Date(),
@@ -85,11 +104,29 @@ class PositionService {
         y,
         LineupId,
         MemberId,
-        ownerId,
         actingUserId,
         isAdmin,
       })}`,
     );
+
+    // Inherit ownerId from parent Lineup → Choreo
+    const lineup = await LineupService.findById(
+      LineupId,
+      actingUserId,
+      isAdmin,
+    );
+    if (!lineup) {
+      throw new NotFoundError(`Lineup not found`);
+    }
+    const choreo = await ChoreoService.findById(
+      lineup.ChoreoId,
+      actingUserId,
+      isAdmin,
+    );
+    if (!choreo) {
+      throw new NotFoundError(`Choreo not found`);
+    }
+    const ownerId = choreo.UserId;
 
     await checkWriteAccess(ownerId, actingUserId, isAdmin);
 
@@ -137,13 +174,13 @@ class PositionService {
     const accessibleOwnerIds =
       ownerIds && ownerIds.length > 0
         ? await filterAccessibleOwnerIds(ownerIds, actingUserId, isAdmin)
-        : [];
+        : [actingUserId];
 
     return Position.findAll({
       where:
         accessibleOwnerIds.length > 0
           ? { LineupId, UserId: { [Op.in]: accessibleOwnerIds } }
-          : { LineupId },
+          : { LineupId, UserId: actingUserId },
       include: "Member",
     });
   }
@@ -260,6 +297,23 @@ class PositionService {
     }
 
     return position.destroy();
+  }
+
+  async migrateCreatorUpdater() {
+    logger.debug(`PositionService migrateCreatorUpdater`);
+
+    const positions = await Position.findAll({
+      where: { creatorId: { [Op.is]: null }, UserId: { [Op.not]: null } },
+    });
+
+    await Promise.all(
+      positions.map((position) =>
+        position.update({
+          creatorId: position.UserId,
+          updaterId: position.UserId,
+        }),
+      ),
+    );
   }
 }
 

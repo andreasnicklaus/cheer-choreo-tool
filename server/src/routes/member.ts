@@ -33,8 +33,6 @@ const router = Router();
  *                 type: string
  *               seasonTeamId:
  *                 type: string
- *               ownerId:
- *                 type: string
  *     responses:
  *       200:
  *         description: Member created successfully
@@ -49,13 +47,12 @@ router.post(
   "/",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    const { name, nickname, abbreviation, seasonTeamId, ownerId } = req.body;
+    const { name, nickname, abbreviation, seasonTeamId } = req.body;
     MemberService.create(
       name,
       nickname,
       abbreviation,
       seasonTeamId,
-      ownerId,
       req.actingUserId,
     )
       .then((member: Member) => {

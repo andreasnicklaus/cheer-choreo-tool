@@ -88,9 +88,13 @@ class NotificationService {
    * @param {string} title - Notification title.
    * @param {string} message - Notification message.
    * @param {UUID} UserId - The user's UUID.
-   * @returns {Promise<Object>} The notification object.
+   * @returns {Promise<[Object, boolean]>} The notification object and a boolean indicating if the notification was created.
    */
-  async findOrCreate(title: string, message: string, UserId: string) {
+  async findOrCreate(
+    title: string,
+    message: string,
+    UserId: string,
+  ): Promise<[NotificationModel, boolean]> {
     logger.debug(
       `NotificationService findOrCreate ${JSON.stringify({
         title,
@@ -98,14 +102,14 @@ class NotificationService {
         UserId,
       })}`,
     );
-    const [notification, _created] = await NotificationModel.findOrCreate({
+    const [notification, created] = await NotificationModel.findOrCreate({
       where: {
         title,
         message,
         UserId,
       },
     });
-    return notification;
+    return [notification, created];
   }
 
   /**

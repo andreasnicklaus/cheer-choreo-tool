@@ -225,8 +225,8 @@ describe("AuthService", () => {
         const res = {} as Response;
         const next = jest.fn(() => {
           try {
-            expect(req.UserId).toBe(user.id);
-            expect(req.User).toBeDefined();
+            expect(req.actingUserId).toBe(user.id);
+            expect(req.ActingUser).toBeDefined();
             done();
           } catch (e) {
             done(e as Error);
@@ -619,7 +619,6 @@ describe("AuthService", () => {
               const res = {} as Response;
               const next = jest.fn(() => {
                 try {
-                  expect(req.UserId).toBe(child.id);
                   expect(req.actingUserId).toBe(child.id);
                   done();
                 } catch (e) {
