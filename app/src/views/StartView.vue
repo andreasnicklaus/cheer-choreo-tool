@@ -407,6 +407,7 @@
                               </b>
                               <p
                                 v-if="
+                                  accessSharingEnabled &&
                                   me &&
                                   choreo?.UserId &&
                                   me.id != choreo?.UserId
@@ -539,6 +540,9 @@ import CreateTeamModal from "@/components/modals/CreateTeamModal.vue";
 import ClubService from "@/services/ClubService";
 import ChoreoService from "@/services/ChoreoService";
 import { canWrite, canDelete } from "@/utils/permissions";
+import FeatureFlagService, {
+  FeatureFlagKeys,
+} from "@/services/FeatureFlagService";
 import { error } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
 
@@ -583,6 +587,7 @@ export default {
     maxCount: 400,
     loading: true,
     filterCollapseVisible: false,
+    accessSharingEnabled: true,
   }),
   computed: {
     ...mapState(["owners", "me"]),
@@ -614,6 +619,11 @@ export default {
   },
   mounted() {
     this.load();
+    FeatureFlagService.isEnabled(FeatureFlagKeys.ACCESS_SHARING).then(
+      (enabled) => {
+        this.accessSharingEnabled = enabled;
+      }
+    );
 
     useHead({
       title: computed(() => this.t("nav.start")),

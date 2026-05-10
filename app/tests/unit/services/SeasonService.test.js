@@ -45,7 +45,11 @@ describe("SeasonService", () => {
 
       const result = await SeasonService.create("2024 Season");
 
-      expect(ax.post).toHaveBeenCalledWith("/season", { name: "2024 Season" });
+      expect(ax.post).toHaveBeenCalledWith("/season", {
+        name: "2024 Season",
+        year: undefined,
+        ownerId: null,
+      });
       expect(result).toEqual(mockResponse.data);
     });
 
@@ -57,7 +61,11 @@ describe("SeasonService", () => {
         "Network Error"
       );
 
-      expect(ax.post).toHaveBeenCalledWith("/season", { name: "2024 Season" });
+      expect(ax.post).toHaveBeenCalledWith("/season", {
+        name: "2024 Season",
+        year: undefined,
+        ownerId: null,
+      });
     });
   });
 });

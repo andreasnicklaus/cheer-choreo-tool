@@ -25,6 +25,16 @@ jest.mock("@/db/db", () => {
   });
 });
 
+jest.mock("@/services/FeatureFlagService", () => ({
+  __esModule: true,
+  default: {
+    isEnabled: jest.fn().mockResolvedValue(true),
+  },
+  FeatureFlagKey: {
+    ACCESS_SHARING: "access-sharing",
+  },
+}));
+
 jest.mock("@/plugins/nodemailer", () => ({
   sendMail: jest.fn(),
   verify: jest.fn().mockResolvedValue(true),
@@ -199,18 +209,21 @@ describe("ClubService", () => {
         childUserId: childAthlete.id,
         role: AccessRole.ATHLETE,
         enabled: true,
+        accepted: true,
       });
       await UserAccess.create({
         ownerUserId: owner.id,
         childUserId: childAssistant.id,
         role: AccessRole.ASSISTANT,
         enabled: true,
+        accepted: true,
       });
       await UserAccess.create({
         ownerUserId: owner.id,
         childUserId: childCoach.id,
         role: AccessRole.COACH,
         enabled: true,
+        accepted: true,
       });
     });
 

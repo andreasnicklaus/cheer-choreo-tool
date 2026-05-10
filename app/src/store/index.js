@@ -1,4 +1,7 @@
 import AuthService from "@/services/AuthService";
+import FeatureFlagService, {
+  FeatureFlagKeys,
+} from "@/services/FeatureFlagService";
 import { createStore } from "vuex";
 
 const tokenStorageKey = "choreo-planer-token";
@@ -59,19 +62,23 @@ export default createStore({
     },
   },
   actions: {
-    loadUserInfo({ commit }) {
-      return AuthService.getUserInfo(true)
-        .then((me) => {
-          commit("setMe", me);
-          commit(
-            "setOwners",
-            (me.childAccess || []).filter((access) => access.enabled)
-          );
-        })
-        .catch(() => {
-          commit("clearMe");
-          commit("clearOwners");
-        });
+    async loadUserInfo({ commit }) {
+      try {
+        const me = await AuthService.getUserInfo(true);
+        commit("setMe", me);
+        const accessSharingEnabled = await FeatureFlagService.isEnabled(
+          FeatureFlagKeys.ACCESS_SHARING
+        );
+        commit(
+          "setOwners",
+          accessSharingEnabled
+            ? (me.childAccess || []).filter((access) => access.enabled)
+            : []
+        );
+      } catch {
+        commit("clearMe");
+        commit("clearOwners");
+      }
     },
   },
   modules: {},

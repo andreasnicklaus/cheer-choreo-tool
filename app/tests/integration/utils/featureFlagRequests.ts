@@ -20,6 +20,17 @@ export function mockFeatureFlagRequests(page: Page) {
           //   "impressionData": true
           // },
           {
+            name: "access-sharing",
+            enabled: true,
+            variant: {
+              name: "disabled",
+              enabled: false,
+              feature_enabled: true,
+              featureEnabled: true,
+            },
+            impressionData: true,
+          },
+          {
             name: "contact-with-login",
             enabled: true,
             variant: {

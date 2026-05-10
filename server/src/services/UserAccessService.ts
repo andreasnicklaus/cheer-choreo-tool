@@ -1,6 +1,7 @@
-import { NotFoundError } from "@/utils/errors";
+import { AccessDeniedError, NotFoundError } from "@/utils/errors";
 import User from "../db/models/user";
 import UserAccess, { AccessRole } from "../db/models/userAccess";
+import FeatureFlagService, { FeatureFlagKey } from "./FeatureFlagService";
 
 const { logger } = require("../plugins/winston");
 
@@ -13,12 +14,21 @@ const { logger } = require("../plugins/winston");
  */
 class UserAccessService {
   /**
+   * Check if the ACCESS_SHARING feature flag is enabled.
+   * @returns {Promise<boolean>} True if access sharing is enabled.
+   */
+  async isAccessSharingEnabled(): Promise<boolean> {
+    return FeatureFlagService.isEnabled(FeatureFlagKey.ACCESS_SHARING);
+  }
+
+  /**
    * Find a user access relationship by owner and child IDs.
    * @param {UUID} ownerId - The owner's user ID.
    * @param {UUID} childId - The child's user ID.
    * @returns {Promise<UserAccess | null>} The user access object or null if not found.
    */
   async findByOwnerAndChild(ownerId: string, childId: string) {
+    if (!(await this.isAccessSharingEnabled())) return null;
     logger.debug(
       `UserAccessService findByOwnerAndChild ${JSON.stringify({ ownerId, childId })}`,
     );
@@ -33,6 +43,7 @@ class UserAccessService {
    * @returns {Promise<Array>} Array of user access objects.
    */
   async getChildren(ownerId: string) {
+    if (!(await this.isAccessSharingEnabled())) return [];
     logger.debug(
       `UserAccessService getChildren ${JSON.stringify({ ownerId })}`,
     );
@@ -48,6 +59,7 @@ class UserAccessService {
    * @returns {Promise<Array>} Array of user access objects.
    */
   async getOwners(childId: string) {
+    if (!(await this.isAccessSharingEnabled())) return [];
     logger.debug(`UserAccessService getOwners ${JSON.stringify({ childId })}`);
     return UserAccess.findAll({
       where: { childUserId: childId },
@@ -69,6 +81,9 @@ class UserAccessService {
     role: AccessRole = AccessRole.ATHLETE,
     enabled: boolean = true,
   ) {
+    if (!(await this.isAccessSharingEnabled())) {
+      throw new AccessDeniedError("Access sharing is disabled");
+    }
     logger.debug(
       `UserAccessService create ${JSON.stringify({ ownerId, childId, role, enabled })}`,
     );
@@ -101,6 +116,9 @@ class UserAccessService {
     data: { role?: AccessRole; enabled?: boolean },
     ownerId: string,
   ) {
+    if (!(await this.isAccessSharingEnabled())) {
+      throw new AccessDeniedError("Access sharing is disabled");
+    }
     logger.debug(
       `UserAccessService update ${JSON.stringify({ id, data, ownerId })}`,
     );
@@ -123,6 +141,9 @@ class UserAccessService {
    * @returns {Promise<void>}
    */
   async remove(id: string, ownerId: string) {
+    if (!(await this.isAccessSharingEnabled())) {
+      throw new AccessDeniedError("Access sharing is disabled");
+    }
     logger.debug(`UserAccessService remove ${JSON.stringify({ id, ownerId })}`);
 
     const access = await UserAccess.findOne({
@@ -143,6 +164,9 @@ class UserAccessService {
    * @returns {Promise<UserAccess>} The updated user access object.
    */
   async accept(id: string, childId: string) {
+    if (!(await this.isAccessSharingEnabled())) {
+      throw new AccessDeniedError("Access sharing is disabled");
+    }
     logger.debug(`UserAccessService accept ${JSON.stringify({ id, childId })}`);
 
     const access = await UserAccess.findOne({
@@ -163,6 +187,9 @@ class UserAccessService {
    * @returns {Promise<UserAccess>} The deleted user access object.
    */
   async decline(id: string, childId: string) {
+    if (!(await this.isAccessSharingEnabled())) {
+      throw new AccessDeniedError("Access sharing is disabled");
+    }
     logger.debug(
       `UserAccessService decline ${JSON.stringify({ id, childId })}`,
     );
@@ -194,6 +221,7 @@ class UserAccessService {
    * @returns {Promise<boolean>} Whether the child has access.
    */
   async hasAccess(ownerId: string, childId: string) {
+    if (!(await this.isAccessSharingEnabled())) return false;
     const access = await UserAccess.findOne({
       where: {
         ownerUserId: ownerId,
@@ -212,6 +240,7 @@ class UserAccessService {
    * @returns {Promise<AccessRole | null>} The role or null if no access.
    */
   async getRole(ownerId: string, childId: string) {
+    if (!(await this.isAccessSharingEnabled())) return null;
     const access = await UserAccess.findOne({
       where: {
         ownerUserId: ownerId,

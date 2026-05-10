@@ -76,6 +76,15 @@
       </BFormGroup>
     </BForm>
     <template #footer="{ ok, cancel }">
+      <BButton
+        v-if="preventClosing"
+        variant="link"
+        @click="routeToUserSettings"
+      >
+        <IBiGearWideConnected class="me-1" />{{
+          $t("modals.create-club.go-to-settings")
+        }}
+      </BButton>
       <BButton variant="success" :disabled="!newClubNameIsValid" @click="ok">
         {{ $t("erstellen") }}
       </BButton>
@@ -232,6 +241,13 @@ export default {
             this.close();
           }
         });
+    },
+    routeToUserSettings() {
+      this.close();
+      this.$router.push({
+        name: "Account",
+        params: { locale: this.$i18n.locale },
+      });
     },
   },
 };

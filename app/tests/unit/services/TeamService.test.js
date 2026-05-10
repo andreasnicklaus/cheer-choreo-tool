@@ -12,6 +12,12 @@ vi.mock("@/services/RequestService", () => ({
   },
 }));
 
+vi.mock("@/services/FeatureFlagService", () => ({
+  default: {
+    isEnabled: vi.fn().mockResolvedValue(true),
+  },
+}));
+
 describe("TeamService", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -95,7 +101,12 @@ describe("TeamService", () => {
 
       const result = await TeamService.create("New Team");
 
-      expect(ax.post).toHaveBeenCalledWith("/team", { name: "New Team" });
+      expect(ax.post).toHaveBeenCalledWith("/team", {
+        name: "New Team",
+        clubId: undefined,
+        seasonId: undefined,
+        ownerId: null,
+      });
       expect(result).toEqual(mockResponse.data);
     });
 
@@ -107,7 +118,12 @@ describe("TeamService", () => {
         "Network Error"
       );
 
-      expect(ax.post).toHaveBeenCalledWith("/team", { name: "New Team" });
+      expect(ax.post).toHaveBeenCalledWith("/team", {
+        name: "New Team",
+        clubId: undefined,
+        seasonId: undefined,
+        ownerId: null,
+      });
     });
   });
 

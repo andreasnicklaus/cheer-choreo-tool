@@ -79,6 +79,15 @@
             </BDropdownText>
             <BDropdownDivider />
           </BDropdownGroup>
+          <BDropdownDivider v-show="teams && teams.length > 0" />
+          <BDropdownText
+            v-show="!teams || teams.length == 0"
+            class="text-muted small"
+            :style="{ color: 'var(--bs-secondary-color) !important' }"
+          >
+            <IBiPatchExclamation class="me-1 mb-1" />
+            {{ $t("general.empty-list") }}
+          </BDropdownText>
           <BDropdownItem
             v-show="$store.state.clubId"
             variant="success"
@@ -105,6 +114,14 @@
             {{ team.name }}
           </BDropdownItem>
           <BDropdownDivider v-show="teams && teams.length > 0" />
+          <BDropdownText
+            v-show="!teams || teams.length == 0"
+            class="text-muted small"
+            :style="{ color: 'var(--bs-secondary-color) !important' }"
+          >
+            <IBiPatchExclamation class="me-1 mb-1" />
+            {{ $t("general.empty-list") }}
+          </BDropdownText>
           <BDropdownItem
             v-show="$store.state.clubId"
             variant="success"

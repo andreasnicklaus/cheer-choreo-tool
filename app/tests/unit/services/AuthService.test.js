@@ -365,7 +365,9 @@ describe("AuthService", () => {
       const userInfo = await AuthService.getUserInfo();
 
       expect(ax.get).toHaveBeenCalledTimes(1);
-      expect(ax.get).toHaveBeenCalledWith("/auth/me");
+      expect(ax.get).toHaveBeenCalledWith("/auth/me", {
+        skipRoutingToLogin: false,
+      });
       expect(userInfo).toEqual({ username: "testuser", email: "test-email" });
     });
 

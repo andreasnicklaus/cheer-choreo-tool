@@ -3,6 +3,7 @@ import User from "../db/models/user";
 import Admin from "../db/models/admin";
 import UserService from "./UserService";
 import UserAccessService from "./UserAccessService";
+import FeatureFlagService, { FeatureFlagKey } from "./FeatureFlagService";
 import MailService from "./MailService";
 import NotificationService from "./NotificationService";
 import AdminService from "./AdminService";
@@ -121,26 +122,39 @@ class AuthService {
               req.actingUserId = user.id;
               req.ActingUser = user;
 
-              const ownerAccess = await UserAccessService.getOwners(user.id);
-
-              if (ownerAccess.length > 0) {
-                req.ownerIds = ownerAccess.map((oa) => oa.ownerUserId);
-                req.Owners = ownerAccess.map((oa) => oa.owner as User);
-              } else {
-                req.ownerIds = [user.id];
-                req.Owners = [user];
-              }
-
-              logger.debug(
-                `User ${user.username} authenticated. Token: ${token}, ownerRoles: ${JSON.stringify(
-                  ownerAccess.map((oa) => ({
-                    ownerId: oa.ownerUserId,
-                    ownerUsername: oa.owner?.username,
-                    role: oa.role,
-                    enabled: oa.enabled,
-                  })),
-                )}`,
+              const accessSharingEnabled = await FeatureFlagService.isEnabled(
+                FeatureFlagKey.ACCESS_SHARING,
               );
+
+              if (accessSharingEnabled) {
+                const ownerAccess = await UserAccessService.getOwners(user.id);
+
+                if (ownerAccess.length > 0) {
+                  req.ownerIds = ownerAccess.map((oa) => oa.ownerUserId);
+                  req.Owners = ownerAccess.map((oa) => oa.owner as User);
+                } else {
+                  req.ownerIds = [user.id];
+                  req.Owners = [user];
+                }
+
+                logger.debug(
+                  `User ${user.username} authenticated. Token: ${token}, ownerRoles: ${JSON.stringify(
+                    ownerAccess.map((oa) => ({
+                      ownerId: oa.ownerUserId,
+                      ownerUsername: oa.owner?.username,
+                      role: oa.role,
+                      enabled: oa.enabled,
+                    })),
+                  )}`,
+                );
+              } else {
+                req.ownerIds = [];
+                req.Owners = [];
+
+                logger.debug(
+                  `User ${user.username} authenticated. Token: ${token}, ownerRoles: []`,
+                );
+              }
 
               next();
             })

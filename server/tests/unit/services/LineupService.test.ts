@@ -8,6 +8,7 @@ jest.mock("@/plugins/winston", () => ({
   logger: {
     debug: jest.fn(),
     error: jest.fn(),
+    info: jest.fn(),
   },
   debug: jest.fn(),
   info: jest.fn(),

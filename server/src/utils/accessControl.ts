@@ -1,4 +1,7 @@
 import UserAccessService from "../services/UserAccessService";
+import FeatureFlagService, {
+  FeatureFlagKey,
+} from "../services/FeatureFlagService";
 import { AccessRole } from "../db/models/userAccess";
 import { AccessDeniedError } from "./errors";
 
@@ -151,6 +154,13 @@ export const filterAccessibleOwnerIds = async (
   actingUserId: string,
   isAdmin?: boolean,
 ): Promise<string[]> => {
+  const accessSharingEnabled = await FeatureFlagService.isEnabled(
+    FeatureFlagKey.ACCESS_SHARING,
+  );
+  if (!accessSharingEnabled) {
+    return [actingUserId];
+  }
+
   if (ownerIds.length === 0) {
     return [];
   }

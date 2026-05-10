@@ -29,6 +29,16 @@ jest.mock("@/db/db", () => {
   });
 });
 
+jest.mock("@/services/FeatureFlagService", () => ({
+  __esModule: true,
+  default: {
+    isEnabled: jest.fn().mockResolvedValue(true),
+  },
+  FeatureFlagKey: {
+    ACCESS_SHARING: "access-sharing",
+  },
+}));
+
 jest.mock("@/plugins/nodemailer", () => ({
   sendMail: jest.fn(),
   verify: jest.fn().mockResolvedValue(true),

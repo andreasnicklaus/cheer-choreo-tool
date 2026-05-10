@@ -37,10 +37,7 @@ describe("AdminServices", () => {
   });
 
   beforeEach(async () => {
-    const admins = await Admin.findAll();
-    admins.forEach(
-      async (admin: Admin) => await admin.destroy({ force: true }),
-    );
+    await Admin.destroy({ where: {}, force: true });
   });
 
   test("getCount should return the actual count", async () => {

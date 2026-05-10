@@ -236,7 +236,8 @@
     "last-updated-by": "Last updated by",
     "you": "you",
     "no-delete-permission": "You don't have permission to delete this.",
-    "no-edit-permission": "You don't have permission to edit this."
+    "no-edit-permission": "You don't have permission to edit this.",
+    "empty-list": "Empty list"
   },
   "HelpView": {
     "fuer-deine-suche-gibt-es-keine-ergebnisse": "There are no results for your search \"{searchTerm}\"",
@@ -517,12 +518,13 @@
       "min-choreoname-length": "Min. 2 characters"
     },
     "create-club": {
-      "example-team-names": "TSG Salach e.V., Glamorous cheerleaders, ...",
+      "example-team-names": "Glamorous Cheerleader, TSG Salach e.V. ...",
       "min-vereinsname-length": "Min. 3 characters",
       "neuer-verein": "New club",
       "vereinsname": "Club name",
       "ausstehende-einladungen": "Pending invitations",
-      "oder-neuen-verein-erstellen": "or create a new club"
+      "oder-neuen-verein-erstellen": "or create a new club",
+      "go-to-settings": "Go to settings"
     },
     "create-hit": {
       "wie-heisst-der-neue-eintrag": "What is the name of the new entry?"

@@ -277,7 +277,7 @@ class ClubService {
         ).then((team: Team | null) => {
           if (!team) return;
           const seasonTeam = team.SeasonTeams[0];
-          Promise.all([
+          return Promise.all([
             MemberService.create(
               "Tina Turnerin",
               "Tini",
@@ -310,7 +310,7 @@ class ClubService {
               actingUserId,
             ).then((choreo: Choreo | null) => {
               if (!choreo) return;
-              Promise.all([
+              return Promise.all([
                 HitService.create(
                   "Pose",
                   0,

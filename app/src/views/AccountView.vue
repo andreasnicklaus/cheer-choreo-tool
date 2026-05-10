@@ -564,7 +564,11 @@
           </template>
         </BTabs>
       </BTab>
-      <BTab :title="$t('accountView.zugriff')">
+      <BTab v-if="accessSharingEnabled">
+        <template #title>
+          {{ $t("accountView.zugriff") }}
+          <NewVersionBadge :versions="['0.13.1', '1.0.0']" />
+        </template>
         <BRow class="mb-3">
           <BCol>
             <BCard border-variant="white" header-bg-variant="white">
@@ -646,7 +650,7 @@
               <template #footer>
                 <div class="d-grid">
                   <BButton
-                    variant="primary"
+                    variant="outline-success"
                     @click="$refs.inviteUserModal.open()"
                   >
                     <IBiPlus /> {{ $t("accountView.benutzer-hinzufuegen") }}
@@ -856,6 +860,9 @@ import { useHead } from "@unhead/vue";
 import { useI18n } from "vue-i18n";
 import { emailRegex } from "@/utils/validation";
 import { canWrite, canDelete } from "@/utils/permissions";
+import FeatureFlagService, {
+  FeatureFlagKeys,
+} from "@/services/FeatureFlagService";
 
 const MB = 1_048_576;
 const MAX_IMAGE_MB = 2;
@@ -935,6 +942,7 @@ export default {
       clubLogoIsHovered: false,
       clubLogoDeletion: false,
       clubTabIndex: 0,
+      accessSharingEnabled: true,
       sharedWithMe: [],
       managedByMe: [],
       clubs: [],
@@ -1104,8 +1112,11 @@ export default {
     });
 
     this.loading = true;
-    this.init().then(() => {
+    this.init().then(async () => {
       this.loading = false;
+      this.accessSharingEnabled = await FeatureFlagService.isEnabled(
+        FeatureFlagKeys.ACCESS_SHARING
+      );
       if (this.$store.state.clubId) {
         this.clubTabIndex = this.user.Clubs.indexOf(
           this.user.Clubs.find((club) => club.id == this.$store.state.clubId)

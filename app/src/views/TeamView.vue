@@ -11,7 +11,7 @@
         <BPlaceholder width="25%" class="mb-4" animation="wave" />
       </template>
       <p
-        v-show="me?.id != currentTeam?.UserId"
+        v-show="accessSharingEnabled && me?.id != currentTeam?.UserId"
         class="text-muted mb-4 fw-light"
         data-testid="owner-display"
       >
@@ -100,13 +100,16 @@
           </BDropdownItem>
           <BDropdownDivider
             v-if="
+              accessSharingEnabled &&
               canDeleteTeam &&
               me?.id &&
               (currentTeam?.creator?.username || currentTeam?.updater?.username)
             "
           />
           <BDropdownText
-            v-if="currentTeam?.creator?.username && me?.id"
+            v-if="
+              accessSharingEnabled && currentTeam?.creator?.username && me?.id
+            "
             class="text-muted fw-light text-nowrap"
             data-testid="creator-display"
             @click.stop
@@ -119,7 +122,9 @@
             }}
           </BDropdownText>
           <BDropdownText
-            v-if="currentTeam?.updater?.username && me?.id"
+            v-if="
+              accessSharingEnabled && currentTeam?.updater?.username && me?.id
+            "
             class="text-muted fw-light text-nowrap"
             data-testid="updater-display"
             @click.stop
@@ -319,6 +324,9 @@ import TeamService from "@/services/TeamService";
 import ERROR_CODES from "@/utils/error_codes";
 import { error } from "@/utils/logging";
 import { canWrite, canDelete } from "@/utils/permissions";
+import FeatureFlagService, {
+  FeatureFlagKeys,
+} from "@/services/FeatureFlagService";
 
 /**
  * @vue-data {string} presentation=table - The current presentation mode, either 'table' or 'list'.
@@ -356,6 +364,7 @@ export default {
       teams: [],
       seasonTabIndex: 0,
       editMemberId: null,
+      accessSharingEnabled: true,
     };
   },
   computed: {
@@ -414,8 +423,11 @@ export default {
       immediate: true,
     },
   },
-  mounted() {
+  async mounted() {
     this.load();
+    this.accessSharingEnabled = await FeatureFlagService.isEnabled(
+      FeatureFlagKeys.ACCESS_SHARING
+    );
 
     useHead({
       title: computed(() => this.currentTeam?.name || this.t("team", 1)),

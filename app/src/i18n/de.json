@@ -236,7 +236,8 @@
     "last-updated-by": "Zuletzt aktualisiert von",
     "you": "dir",
     "no-delete-permission": "Sie haben keine Berechtigung zum Löschen.",
-    "no-edit-permission": "Sie haben keine Berechtigung, dies zu bearbeiten."
+    "no-edit-permission": "Sie haben keine Berechtigung, dies zu bearbeiten.",
+    "empty-list": "Leere Liste"
   },
   "HelpView": {
     "fuer-deine-suche-gibt-es-keine-ergebnisse": "Für deine Suche \"{searchTerm}\" gibt es keine Ergebnisse",
@@ -525,12 +526,13 @@
       "min-choreoname-length": "Min. 2 Zeichen"
     },
     "create-club": {
-      "example-team-names": "TSG Salach e.V., Glamorous Cheerleader, ...",
+      "example-team-names": "Glamorous Cheerleader, TSG Salach e.V. ...",
       "min-vereinsname-length": "Min. 3 Zeichen",
       "neuer-verein": "Neuer Verein",
       "vereinsname": "Vereinsname",
       "ausstehende-einladungen": "Ausstehende Einladungen",
-      "oder-neuen-verein-erstellen": "oder erstelle einen neuen Verein"
+      "oder-neuen-verein-erstellen": "oder erstelle einen neuen Verein",
+      "go-to-settings": "Nutzereinstellungen"
     },
     "create-hit": {
       "wie-heisst-der-neue-eintrag": "Wie heißt der neue Eintrag?"

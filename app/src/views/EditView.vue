@@ -13,7 +13,7 @@
         <BPlaceholder width="25%" class="mb-4" animation="wave" />
       </template>
       <p
-        v-show="me?.id != choreo?.UserId"
+        v-show="accessSharingEnabled && me?.id != choreo?.UserId"
         class="text-muted mb-4 fw-light"
         data-testid="owner-display"
       >
@@ -233,12 +233,13 @@
               </span>
               <BDropdownDivider
                 v-if="
+                  accessSharingEnabled &&
                   me?.id &&
                   (choreo?.creator?.username || choreo?.updater?.username)
                 "
               />
               <BDropdownText
-                v-if="choreo?.creator?.username"
+                v-if="accessSharingEnabled && choreo?.creator?.username"
                 class="text-muted fw-light text-nowrap"
                 data-testid="creator-display"
                 @click.stop
@@ -251,7 +252,9 @@
                 }}
               </BDropdownText>
               <BDropdownText
-                v-if="choreo?.updater?.username && me?.id"
+                v-if="
+                  accessSharingEnabled && choreo?.updater?.username && me?.id
+                "
                 class="text-muted fw-light text-nowrap"
                 data-testid="updater-display"
                 @click.stop
@@ -606,6 +609,7 @@ export default {
       proposedPositions: [],
       rejectedPositionProposals: [],
       mobileEditingEnabled: true,
+      accessSharingEnabled: true,
     };
   },
   computed: {
@@ -681,16 +685,18 @@ export default {
     },
   },
   mounted() {
-    FeatureFlagService.isEnabled(FeatureFlagKeys.MOBILE_EDITING).then(
-      (enabled) => {
-        this.mobileEditingEnabled = enabled;
+    Promise.all([
+      FeatureFlagService.isEnabled(FeatureFlagKeys.MOBILE_EDITING),
+      FeatureFlagService.isEnabled(FeatureFlagKeys.ACCESS_SHARING),
+    ]).then(([mobileEditing, accessSharing]) => {
+      this.mobileEditingEnabled = mobileEditing;
+      this.accessSharingEnabled = accessSharing;
 
-        if (this.$store.state.isMobile && !this.mobileEditingEnabled) {
-          if (this.$refs.mobileChoreoEditModal)
-            this.$refs.mobileChoreoEditModal.open(this.choreoId);
-        } else this.loadChoreo();
-      }
-    );
+      if (this.$store.state.isMobile && !this.mobileEditingEnabled) {
+        if (this.$refs.mobileChoreoEditModal)
+          this.$refs.mobileChoreoEditModal.open(this.choreoId);
+      } else this.loadChoreo();
+    });
 
     useHead({
       title: computed(() => this.choreo?.name || this.t("pdf.laedt-choreo")),

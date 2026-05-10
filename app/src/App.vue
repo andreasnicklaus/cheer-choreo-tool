@@ -349,9 +349,7 @@ html {
 .toast-container {
   z-index: 9999999 !important;
 }
-</style>
 
-<style lang="scss">
 .label-with-colon::after {
   content: ":";
 }
@@ -430,6 +428,11 @@ div:has(.betteruptime-announcement)
   > a[role="button"]:not(:first-of-type):not(:last-of-type) {
     border-radius: 0 !important;
   }
+}
+
+.nav-link {
+  display: flex;
+  gap: 4px;
 }
 </style>
 

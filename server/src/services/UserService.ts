@@ -2,6 +2,7 @@ import { NotFoundError } from "@/utils/errors";
 import User from "../db/models/user";
 import MailService from "./MailService";
 import NotificationService from "./NotificationService";
+import FeatureFlagService, { FeatureFlagKey } from "./FeatureFlagService";
 
 const { Op } = require("sequelize");
 const { logger } = require("../plugins/winston");
@@ -48,6 +49,22 @@ class UserService {
    */
   async findById(id: string) {
     logger.debug(`UserService findById ${JSON.stringify({ id })}`);
+
+    const accessSharingEnabled = await FeatureFlagService.isEnabled(
+      FeatureFlagKey.ACCESS_SHARING,
+    );
+
+    if (!accessSharingEnabled) {
+      const user = await User.findByPk(id, { include: ["Clubs"] });
+      if (user) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (user as any).childAccess = [];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (user as any).ownerAccess = [];
+      }
+      return user;
+    }
+
     return User.findByPk(id, {
       include: [
         "Clubs",
