@@ -425,9 +425,6 @@ export default {
   },
   async mounted() {
     this.load();
-    this.accessSharingEnabled = await FeatureFlagService.isEnabled(
-      FeatureFlagKeys.ACCESS_SHARING
-    );
 
     useHead({
       title: computed(() => this.currentTeam?.name || this.t("team", 1)),
@@ -464,6 +461,9 @@ export default {
         },
       ],
     });
+    this.accessSharingEnabled = await FeatureFlagService.isEnabled(
+      FeatureFlagKeys.ACCESS_SHARING
+    );
   },
   methods: {
     load() {

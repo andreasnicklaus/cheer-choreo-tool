@@ -430,7 +430,7 @@ div:has(.betteruptime-announcement)
   }
 }
 
-.nav-link {
+.nav-link:not(.dropdown-toggle) {
   display: flex;
   gap: 4px;
 }
