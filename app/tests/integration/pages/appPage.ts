@@ -282,14 +282,6 @@ export default class AppPage extends TestPage {
     return expect(this.page).toHaveURL(`/en/team/${defaultTeams[0].id}`);
   }
 
-  async iOpenMobileMenu() {
-    const menuToggle = this.page.getByRole("button", {
-      name: "Toggle navigation",
-    });
-    await this.iClickButton(menuToggle);
-    return new Promise((resolve) => setTimeout(resolve, 200));
-  }
-
   async iSwitchLanguageTo(language: string) {
     const languageSelectButton = this.page.getByTestId("locale-switch");
     await this.iClickButton(languageSelectButton);

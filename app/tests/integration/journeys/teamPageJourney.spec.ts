@@ -64,19 +64,25 @@ test("should delete a season", async () => {
 });
 
 test.describe("create team modal owner selection", () => {
-  test("should display owner selection options when user has shared access", async () => {
+  test("should display owner selection options when user has shared access", async ({}, testInfo) => {
     await mockDefaultStartRequests(teamPage.page);
     await mockAuthMe(teamPage.page, sharedUser);
     await teamPage.goToPage();
     await teamPage.iSetClubId();
+    if (Boolean(testInfo.project.use.isMobile)) {
+      await teamPage.iOpenMobileMenu();
+    }
     await teamPage.iOpenCreateTeamModal();
     await teamPage.iSeeOwnerSelectInCreateTeamModal();
     await teamPage.iSeeOwnerSelectOptionInCreateTeamModal("Owner User");
     await teamPage.iSeeOwnerSelectOptionInCreateTeamModal("(you)");
   });
 
-  test("should not display owner selection when user has no shared access", async () => {
+  test("should not display owner selection when user has no shared access", async ({}, testInfo) => {
     await teamPage.iSetClubId();
+    if (Boolean(testInfo.project.use.isMobile)) {
+      await teamPage.iOpenMobileMenu();
+    }
     await teamPage.iOpenCreateTeamModal();
     await teamPage.iDontSeeOwnerSelectInCreateTeamModal();
   });
