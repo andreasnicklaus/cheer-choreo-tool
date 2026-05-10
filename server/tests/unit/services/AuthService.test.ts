@@ -124,6 +124,16 @@ jest.mock("express-basic-auth", () => {
   };
 });
 
+jest.mock("@/services/FeatureFlagService", () => ({
+  __esModule: true,
+  default: {
+    isEnabled: jest.fn().mockResolvedValue(true),
+  },
+  FeatureFlagKey: {
+    ACCESS_SHARING: "access-sharing",
+  },
+}));
+
 import AuthService from "@/services/AuthService";
 import NotificationModel from "@/db/models/notification";
 

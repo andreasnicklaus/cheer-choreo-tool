@@ -44,6 +44,16 @@ jest.mock("i18n", () => ({
   configure: jest.fn(),
 }));
 
+jest.mock("@/services/FeatureFlagService", () => ({
+  __esModule: true,
+  default: {
+    isEnabled: jest.fn().mockResolvedValue(true),
+  },
+  FeatureFlagKey: {
+    ACCESS_SHARING: "access-sharing",
+  },
+}));
+
 describe("UserService", () => {
   beforeAll(async () => {
     const { syncPromise } = require("@/db");

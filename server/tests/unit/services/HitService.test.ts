@@ -27,6 +27,16 @@ jest.mock("@/plugins/nodemailer", () => ({
   verify: jest.fn().mockResolvedValue(true),
 }));
 
+jest.mock("@/services/FeatureFlagService", () => ({
+  __esModule: true,
+  default: {
+    isEnabled: jest.fn().mockResolvedValue(true),
+  },
+  FeatureFlagKey: {
+    ACCESS_SHARING: "access-sharing",
+  },
+}));
+
 let user: { id: string } = { id: "test-id" };
 
 describe("HitService", () => {
