@@ -211,7 +211,7 @@ class TeamService {
    * @param {UUID|null} ownerId - Owner ID. If null/undefined, falls back to actingUserId
    * @param {UUID} actingUserId - The acting user ID.
    * @param {boolean} [isAdmin=false]
-   * @returns {Promise<[Object, boolean]>} The found or created team object and a boolean indicating if the team was created.
+   * @returns {Promise<Array<Object|boolean>>} The found or created team object and a boolean indicating if the team was created.
    */
   async findOrCreate(
     name: string,

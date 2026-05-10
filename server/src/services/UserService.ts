@@ -201,7 +201,7 @@ class UserService {
    * Find or create a user.
    * @param {string} username - The username of the user.
    * @param {string} password - The password of the user.
-   * @returns {Promise<[Object, boolean]>} The user object and a boolean indicating if the user was created.
+   * @returns {Promise<Array<Object|boolean>>} The user object and a boolean indicating if the user was created.
    */
   async findOrCreate(
     username: string,

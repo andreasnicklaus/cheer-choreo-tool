@@ -297,7 +297,7 @@ class ChoreoService {
    * @param {UUID|null} ownerId - Owner ID. If null/undefined, falls back to actingUserId
    * @param {UUID} actingUserId - The acting user's UUID.
    * @param {boolean} [isAdmin=false]
-   * @returns {Promise<[Choreo, boolean]>} The found or created choreography and a boolean indicating if the choreography was created.
+   * @returns {Promise<Array<Choreo|boolean>>} The found or created choreography and a boolean indicating if the choreography was created.
    */
   async findOrCreate(
     name: string,

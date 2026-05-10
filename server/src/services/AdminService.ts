@@ -15,7 +15,7 @@ class AdminService {
    * Find or create an Admin by username. If not found, creates a new Admin with the given password.
    * @param {string} username - The admin's username.
    * @param {string} password - The admin's password.
-   * @returns {Promise<[Admin, boolean]>} The found or newly created Admin instance and a boolean indicating if it was created.
+   * @returns {Promise<Array<Admin|boolean>>} The found or newly created Admin instance and a boolean indicating if it was created.
    */
   async findOrCreate(
     username: string,

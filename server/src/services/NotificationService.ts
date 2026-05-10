@@ -88,7 +88,7 @@ class NotificationService {
    * @param {string} title - Notification title.
    * @param {string} message - Notification message.
    * @param {UUID} UserId - The user's UUID.
-   * @returns {Promise<[Object, boolean]>} The notification object and a boolean indicating if the notification was created.
+   * @returns {Promise<Array<Object|boolean>>} The notification object and a boolean indicating if the notification was created.
    */
   async findOrCreate(
     title: string,
