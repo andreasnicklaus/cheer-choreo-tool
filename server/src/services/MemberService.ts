@@ -8,6 +8,7 @@ import {
   checkDeleteAccess,
   filterAccessibleOwnerIds,
 } from "../utils/accessControl";
+import { stripProtectedUpdateFields } from "@/utils/stripProtectedFields";
 
 const { Op } = require("sequelize");
 const { logger } = require("../plugins/winston");
@@ -265,7 +266,7 @@ class MemberService {
     const oldSeasonTeamId = foundMember.SeasonTeamId;
 
     await foundMember.update({
-      ...data,
+      ...stripProtectedUpdateFields(data),
       updaterId: actingUserId,
     });
     await foundMember.save();

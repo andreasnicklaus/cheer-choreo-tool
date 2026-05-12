@@ -6,6 +6,7 @@ import {
   checkWriteAccess,
   checkDeleteAccess,
 } from "../utils/accessControl";
+import { stripProtectedUpdateFields } from "@/utils/stripProtectedFields";
 
 const { logger } = require("../plugins/winston");
 const { Op } = require("sequelize");
@@ -158,7 +159,7 @@ class LineupService {
     await checkWriteAccess(lineup.UserId, actingUserId, isAdmin);
 
     await lineup.update({
-      ...data,
+      ...stripProtectedUpdateFields(data),
       updaterId: actingUserId,
     });
     await lineup.save();

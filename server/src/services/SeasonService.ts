@@ -5,6 +5,7 @@ import {
   checkDeleteAccess,
   filterAccessibleOwnerIds,
 } from "../utils/accessControl";
+import { stripProtectedUpdateFields } from "@/utils/stripProtectedFields";
 
 const { Op } = require("sequelize");
 const { logger } = require("../plugins/winston");
@@ -147,7 +148,7 @@ class SeasonService {
     await checkWriteAccess(foundSeason.UserId, actingUserId, isAdmin);
 
     await foundSeason.update({
-      ...data,
+      ...stripProtectedUpdateFields(data),
       updaterId: actingUserId,
     });
     return foundSeason.save();

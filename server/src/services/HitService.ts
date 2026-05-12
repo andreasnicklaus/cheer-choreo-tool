@@ -7,6 +7,7 @@ import {
   checkDeleteAccess,
   filterAccessibleOwnerIds,
 } from "../utils/accessControl";
+import { stripProtectedUpdateFields } from "@/utils/stripProtectedFields";
 
 const { logger } = require("../plugins/winston");
 const { Op } = require("sequelize");
@@ -237,7 +238,7 @@ class HitService {
     await checkWriteAccess(hit.UserId, actingUserId, isAdmin);
 
     await hit.update({
-      ...data,
+      ...stripProtectedUpdateFields(data),
       updaterId: actingUserId,
     });
     await hit.save();

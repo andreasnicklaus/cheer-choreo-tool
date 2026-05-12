@@ -8,6 +8,7 @@ import {
   checkDeleteAccess,
   filterAccessibleOwnerIds,
 } from "../utils/accessControl";
+import { stripProtectedUpdateFields } from "@/utils/stripProtectedFields";
 
 const { Op } = require("sequelize");
 const { logger } = require("../plugins/winston");
@@ -266,7 +267,7 @@ class TeamService {
     await checkWriteAccess(team.UserId, actingUserId, isAdmin);
 
     await team.update({
-      ...data,
+      ...stripProtectedUpdateFields(data),
       updaterId: actingUserId,
     });
     return team.save();

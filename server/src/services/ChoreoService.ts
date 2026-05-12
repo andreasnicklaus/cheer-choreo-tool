@@ -14,6 +14,7 @@ import {
   checkDeleteAccess,
   filterAccessibleOwnerIds,
 } from "../utils/accessControl";
+import { stripProtectedUpdateFields } from "@/utils/stripProtectedFields";
 
 const { logger } = require("../plugins/winston");
 const { Op } = require("sequelize");
@@ -611,7 +612,7 @@ class ChoreoService {
     await checkWriteAccess(foundChoreo.UserId, actingUserId, isAdmin);
 
     await foundChoreo.update({
-      ...data,
+      ...stripProtectedUpdateFields(data),
       updaterId: actingUserId,
     });
     await foundChoreo.save();

@@ -8,6 +8,7 @@ import {
   checkDeleteAccess,
   filterAccessibleOwnerIds,
 } from "../utils/accessControl";
+import { stripProtectedUpdateFields } from "@/utils/stripProtectedFields";
 import ChoreoService from "./ChoreoService";
 
 const { Op } = require("sequelize");
@@ -252,7 +253,7 @@ class PositionService {
     } else data.timeOfManualUpdate = new Date();
 
     await position.update({
-      ...data,
+      ...stripProtectedUpdateFields(data),
       updaterId: actingUserId,
     });
 

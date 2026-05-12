@@ -15,6 +15,7 @@ import {
   checkDeleteAccess,
   filterAccessibleOwnerIds,
 } from "../utils/accessControl";
+import { stripProtectedUpdateFields } from "@/utils/stripProtectedFields";
 
 const { Op } = require("sequelize");
 const { logger } = require("../plugins/winston");
@@ -396,7 +397,7 @@ class ClubService {
     await checkWriteAccess(club.UserId, actingUserId, isAdmin);
 
     await club.update({
-      ...data,
+      ...stripProtectedUpdateFields(data),
       updaterId: actingUserId,
     });
     return club.save();
