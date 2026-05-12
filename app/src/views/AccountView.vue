@@ -569,6 +569,9 @@
           {{ $t("accountView.zugriff") }}
           <NewVersionBadge :versions="['0.13.1', '1.0.0']" />
         </template>
+        <BAlert variant="info" :model-value="true" class="my-3">
+          {{ $t("accountView.access-tab-help") }}
+        </BAlert>
         <BRow class="mb-3">
           <BCol>
             <BCard border-variant="white" header-bg-variant="white">

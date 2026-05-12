@@ -40,6 +40,7 @@
     "mit-mir-geteilt-info": "Personen, die dir Zugriff auf ihre Choreografien gewährt haben.",
     "von-mir-verwaltet": "Von mir verwaltet",
     "von-mir-verwaltet-info": "Personen, denen du Zugriff auf deine Choreografien gewährt hast.",
+    "access-tab-help": "Hier kannst du verwalten, wer Zugriff auf deine Choreografien hat. Füge Personen per E-Mail hinzu und lege fest, was sie dürfen.",
     "no-shared-with-me": "Bitte jemanden, dir Zugriff auf seine Choreos zu gewähren.",
     "no-managed-by-me": "Füge einen Benutzer hinzu, um deine Choreos zu teilen.",
     "benutzer-hinzufuegen": "Benutzer hinzufügen",
@@ -210,7 +211,7 @@
       "question": "Für wen ist der Choreo Planer gedacht?"
     },
     "zusammenarbeiten": {
-      "answer": "Ein \"Live-Sharing\" wie es aus Google Docs oder ähnlichen Online-Tools bekannt ist, ist nicht geplant. Stattdessen ist es vorgesehen, dass Trainerinnen und Trainer eines Vereins sich **einen Zugang teilen**. Damit soll es dann auch einfach sein, Teilnehmer zwischen Teams zu verschieben. Ein mögliches \"Extrazugang anlegen\" für ein Konto ist geplant.",
+      "answer": "Ja, kannst du! Gehe in deine Kontoeinstellungen und öffne den **Zugriff**-Tab. Klicke auf **Benutzer hinzufügen**, gib ihre E-Mail-Adresse ein und wähle eine Rolle aus. Sie erhalten eine Einladung und müssen sie annehmen, bevor sie auf deine Daten zugreifen können.\n\n**Was jede Rolle tun kann:**\n- **Trainer** kann deine Choreografien ansehen, bearbeiten und löschen\n- **Assistent** kann deine Choreografien ansehen und bearbeiten\n- **Athlet** kann deine Choreografien ansehen\n\nDu kannst die Rolle jederzeit ändern oder den Zugriff entziehen.",
       "question": "Kann ich mit anderen zusammenarbeiten?"
     }
   },
