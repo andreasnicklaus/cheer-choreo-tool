@@ -51,7 +51,7 @@ router.get(
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.params.id)
-      return ClubService.findById(req.params.id, req.UserId)
+      return ClubService.findById(req.params.id, req.actingUserId)
         .then((foundClub: Club | null) => {
           if (!foundClub) throw new NotFoundError();
           else res.send(foundClub);
@@ -60,14 +60,18 @@ router.get(
         .catch((e: Error) => next(e));
     else {
       if (req.query.name)
-        return ClubService.findByName(req.query.name as string, req.UserId)
+        return ClubService.findByName(
+          req.query.name as string,
+          req.ownerIds,
+          req.actingUserId,
+        )
           .then((clubList: Club[]) => {
             res.send(clubList);
             return next();
           })
           .catch((e: Error) => next(e));
       else
-        return ClubService.getAll(req.UserId)
+        return ClubService.getAll(req.ownerIds, req.actingUserId)
           .then((clubList: Club[]) => {
             res.send(clubList);
             return next();
@@ -97,6 +101,9 @@ router.get(
  *             properties:
  *               name:
  *                 type: string
+ *               ownerId:
+ *                 type: string | null
+ *                 description: Owner ID. If null/undefined, falls back to actingUserId
  *     responses:
  *       200:
  *         description: Club created successfully
@@ -111,13 +118,17 @@ router.post(
   "/",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    const { name } = req.body;
-    return ClubService.create(name, req.UserId)
-      .then((club: Club) => {
+    const { name, ownerId } = req.body;
+    return ClubService.create(
+      name,
+      ownerId || req.actingUserId,
+      req.actingUserId,
+    )
+      .then((club: Club | null) => {
         NotificationService.createOne(
           req.t("notifications.club-created.title"),
           req.t("notifications.club-created.message", { name }),
-          req.UserId,
+          req.actingUserId,
         );
         res.send(club);
         return next();
@@ -163,7 +174,7 @@ router.put(
   "/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    return ClubService.update(req.params.id, req.body, req.UserId)
+    return ClubService.update(req.params.id, req.body, req.actingUserId)
       .then((club: Club) => {
         res.send(club);
         return next();
@@ -199,7 +210,7 @@ router.delete(
   "/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    return ClubService.remove(req.params.id, req.UserId)
+    return ClubService.remove(req.params.id, req.actingUserId)
       .then(() => {
         res.send();
         return next();
@@ -259,7 +270,7 @@ router.put(
         {
           logoExtension,
         },
-        req.UserId,
+        req.actingUserId,
       ).then((club: Club) => {
         FileService.clearClubLogoFolder(club.id, logoExtension as string);
         res.send(club);
@@ -297,7 +308,7 @@ router.get(
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
     const clubId = req.params.id;
-    ClubService.findById(clubId, req.UserId)
+    ClubService.findById(clubId, req.actingUserId)
       .then((foundClub: Club | null) => {
         if (!foundClub?.logoExtension) {
           res.status(400).send(req.t("responses.no-file-uploaded"));
@@ -339,7 +350,7 @@ router.delete(
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
     const clubId = req.params.id;
-    ClubService.update(clubId, { logoExtension: null }, req.UserId)
+    ClubService.update(clubId, { logoExtension: null }, req.actingUserId)
       .then(() => {
         FileService.clearClubLogoFolder(clubId);
         res.send();

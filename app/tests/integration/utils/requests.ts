@@ -11,6 +11,7 @@ import { defaultMembers } from "../testData/member";
 import { defaultLineups } from "../testData/lineup";
 import { defaultPositions } from "../testData/position";
 import { defaultHits } from "../testData/hit";
+import { sharedWithMe, managedByMe } from "../testData/userAccess";
 
 const API_URL = "https://api.choreo-planer.de";
 
@@ -321,6 +322,27 @@ export async function mockHits(page: Page, hits = defaultHits) {
         })
       )
       .flat(),
+  ]);
+}
+
+export async function mockUserAccess(
+  page: Page,
+  owners = sharedWithMe,
+  children = managedByMe
+) {
+  return Promise.all([
+    page.route(`${API_URL}/user/access`, async (route) => {
+      if (await checkAuthorization(route.request()))
+        await route.fulfill({
+          json: children,
+        });
+    }),
+    page.route(`${API_URL}/user/access/owner`, async (route) => {
+      if (await checkAuthorization(route.request()))
+        await route.fulfill({
+          json: owners,
+        });
+    }),
   ]);
 }
 

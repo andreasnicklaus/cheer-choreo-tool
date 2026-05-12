@@ -95,7 +95,10 @@ describe("ClubService", () => {
       const result = await ClubService.create("Club A");
 
       expect(ax.post).toHaveBeenCalledTimes(1);
-      expect(ax.post).toHaveBeenCalledWith("/club", { name: "Club A" });
+      expect(ax.post).toHaveBeenCalledWith("/club", {
+        name: "Club A",
+        ownerId: null,
+      });
       expect(result).toEqual(mockResponse.data);
     });
 

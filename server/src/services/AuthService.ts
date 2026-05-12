@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import User from "../db/models/user";
 import Admin from "../db/models/admin";
 import UserService from "./UserService";
+import UserAccessService from "./UserAccessService";
+import FeatureFlagService, { FeatureFlagKey } from "./FeatureFlagService";
 import MailService from "./MailService";
 import NotificationService from "./NotificationService";
 import AdminService from "./AdminService";
@@ -41,6 +43,10 @@ declare module "express-serve-static-core" {
   interface Request {
     UserId: string;
     User: User;
+    Owners: User[];
+    ownerIds: string[];
+    ActingUser: User;
+    actingUserId: string;
     AdminId: string;
     Admin: Admin;
     locale: string;
@@ -107,17 +113,49 @@ class AuthService {
           }
 
           User.findByPk(content.UserId)
-            .then((user: User | null) => {
+            .then(async (user: User | null) => {
               if (!user) {
                 if (!failIfNotLoggedIn) return next();
                 return res.status(403).send();
               }
 
-              logger.debug(
-                `User ${user.username} with id ${user.id} used this token: ${token}`,
+              req.actingUserId = user.id;
+              req.ActingUser = user;
+
+              const accessSharingEnabled = await FeatureFlagService.isEnabled(
+                FeatureFlagKey.ACCESS_SHARING,
               );
-              req.UserId = user.id;
-              req.User = user;
+
+              if (accessSharingEnabled) {
+                const ownerAccess = await UserAccessService.getOwners(user.id);
+
+                if (ownerAccess.length > 0) {
+                  req.ownerIds = ownerAccess.map((oa) => oa.ownerUserId);
+                  req.Owners = ownerAccess.map((oa) => oa.owner as User);
+                } else {
+                  req.ownerIds = [user.id];
+                  req.Owners = [user];
+                }
+
+                logger.debug(
+                  `User ${user.username} authenticated. Token: ${token}, ownerRoles: ${JSON.stringify(
+                    ownerAccess.map((oa) => ({
+                      ownerId: oa.ownerUserId,
+                      ownerUsername: oa.owner?.username,
+                      role: oa.role,
+                      enabled: oa.enabled,
+                    })),
+                  )}`,
+                );
+              } else {
+                req.ownerIds = [];
+                req.Owners = [];
+
+                logger.debug(
+                  `User ${user.username} authenticated. Token: ${token}, ownerRoles: []`,
+                );
+              }
+
               next();
             })
             .catch((e) => next(e));
@@ -151,7 +189,9 @@ class AuthService {
 
           const user = await UserService.findById(content.UserId);
           if (!user) {
-            const deletedUser = await UserService.findDeletedByUsernameOrEmail(content.UserId);
+            const deletedUser = await UserService.findDeletedByUsernameOrEmail(
+              content.UserId,
+            );
             if (deletedUser) {
               return reject(
                 new AuthorizationError(
@@ -191,7 +231,8 @@ class AuthService {
     return UserService.findByUsernameOrEmail(email).then(
       async (user: User | null) => {
         if (!user) {
-          const deletedUser = await UserService.findDeletedByUsernameOrEmail(email);
+          const deletedUser =
+            await UserService.findDeletedByUsernameOrEmail(email);
           if (deletedUser) {
             throw new AuthorizationError(
               i18n.__({ phrase: "errors.account-deleted", locale }),

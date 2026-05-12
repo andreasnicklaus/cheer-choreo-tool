@@ -545,4 +545,69 @@ export default class ChoreoPage extends TestPage {
     const newHitDisplay = this.page.locator("#editView h5").getByText(newName);
     await expect(newHitDisplay).toBeVisible();
   }
+
+  async iOpenOptionsMenu() {
+    const menuButton = this.page.getByTestId("menu-button");
+    await this.iClickButton(menuButton);
+  }
+
+  async iSetClubId(clubId: string) {
+    await this.page.evaluate((id) => {
+      const app = (document.querySelector("#app") as any)?.__vue_app__;
+      app?.config?.globalProperties?.$store?.commit("setClubId", id);
+    }, clubId);
+  }
+
+  async iOpenCreateChoreoModal() {
+    const choreoDropdown = this.page.getByRole("button", { name: "Choreos" });
+    await this.iClickButton(choreoDropdown);
+    const newChoreoItem = this.page.getByRole("menuitem", {
+      name: "New choreo",
+    });
+    await this.iClickButton(newChoreoItem);
+  }
+
+  async iSeeOwnerSelectInCreateChoreoModal() {
+    const modal = this.page.getByRole("dialog", { name: "New choreo" });
+    await expect(modal.getByLabel("Owner")).toBeVisible();
+  }
+
+  async iSeeOwnerSelectOptionInCreateChoreoModal(text: string) {
+    const modal = this.page.getByRole("dialog", { name: "New choreo" });
+    const options = await modal
+      .getByRole("combobox", { name: "Owner" })
+      .locator("option")
+      .allTextContents();
+    expect(options.some((o) => o.includes(text))).toBeTruthy();
+  }
+
+  async iDontSeeOwnerSelectInCreateChoreoModal() {
+    const modal = this.page.getByRole("dialog", { name: "New choreo" });
+    await expect(modal.getByLabel("Owner")).not.toBeVisible();
+  }
+
+  async iSeeOwnerDisplay(username: string) {
+    const ownerDisplay = this.page.getByTestId("owner-display");
+    await expect(ownerDisplay).toBeVisible();
+    await expect(ownerDisplay).toContainText(username);
+  }
+
+  async iDontSeeOwnerDisplay() {
+    const ownerDisplay = this.page.getByTestId("owner-display");
+    await expect(ownerDisplay).not.toBeVisible();
+  }
+
+  async iSeeCreatorDisplay(expectedText: string) {
+    await this.iOpenOptionsMenu();
+    const creatorDisplay = this.page.getByTestId("creator-display");
+    await expect(creatorDisplay).toBeVisible();
+    await expect(creatorDisplay).toContainText(expectedText);
+  }
+
+  async iSeeUpdaterDisplay(expectedText: string) {
+    await this.iOpenOptionsMenu();
+    const updaterDisplay = this.page.getByTestId("updater-display");
+    await expect(updaterDisplay).toBeVisible();
+    await expect(updaterDisplay).toContainText(expectedText);
+  }
 }

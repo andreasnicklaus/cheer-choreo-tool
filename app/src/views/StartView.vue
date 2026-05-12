@@ -350,7 +350,8 @@
                                   <BCol cols="auto">
                                     <BButtonGroup>
                                       <BButton
-                                        v-b-tooltip.hover="
+                                        v-if="canEditChoreo(choreo)"
+                                        v-b-tooltip:hover="
                                           $t('start.video-erstellen')
                                         "
                                         variant="light"
@@ -365,7 +366,8 @@
                                         <IBiFilm />
                                       </BButton>
                                       <BButton
-                                        v-b-tooltip.hover="
+                                        v-if="canEditChoreo(choreo)"
+                                        v-b-tooltip:hover="
                                           $t('start.pdf-erstellen')
                                         "
                                         variant="light"
@@ -379,10 +381,42 @@
                                       >
                                         <IBiFilePdf />
                                       </BButton>
+                                      <BButton
+                                        v-if="canEditChoreo(choreo)"
+                                        variant="outline-primary"
+                                        :to="{
+                                          name: 'Choreo',
+                                          params: {
+                                            choreoId: choreo.id,
+                                            locale: $i18n.locale,
+                                          },
+                                        }"
+                                      >
+                                        <IBiPen />
+                                      </BButton>
+                                      <BButton
+                                        v-if="canDeleteChoreo(choreo)"
+                                        variant="outline-danger"
+                                        @click="deleteChoreo(choreo.id)"
+                                      >
+                                        <IBiTrash />
+                                      </BButton>
                                     </BButtonGroup>
                                   </BCol>
                                 </BRow>
                               </b>
+                              <p
+                                v-if="
+                                  accessSharingEnabled &&
+                                  me &&
+                                  choreo?.UserId &&
+                                  me.id != choreo?.UserId
+                                "
+                                class="m-0 fw-light"
+                              >
+                                {{ $t("general.shared-with-you-by") }}
+                                {{ choreo.User.username }}
+                              </p>
                               <router-link
                                 :to="{
                                   name: 'Team',
@@ -467,6 +501,7 @@
 
     <CreateClubModal
       ref="createClubModal"
+      :me="me"
       :prevent-closing="true"
       @club-created="onClubCreated"
     />
@@ -474,14 +509,20 @@
     <CreateChoreoModal
       ref="createChoreoModal"
       :teams="teams"
+      :me="me"
       @add-choreo="addChoreo"
     />
 
-    <CreateTeamModal ref="createTeamModal" @team-created="onTeamCreated" />
+    <CreateTeamModal
+      ref="createTeamModal"
+      :me="me"
+      @team-created="onTeamCreated"
+    />
 
     <CreateSeasonModal
       ref="createSeasonModal"
       :teams="teams"
+      :me="me"
       @season-team-created="onSeasonTeamCreation"
     />
   </BContainer>
@@ -491,11 +532,17 @@
 import { useHead } from "@unhead/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { mapState } from "vuex";
 import CreateChoreoModal from "@/components/modals/CreateChoreoModal.vue";
 import CreateClubModal from "@/components/modals/CreateClubModal.vue";
 import CreateSeasonModal from "@/components/modals/CreateSeasonModal.vue";
 import CreateTeamModal from "@/components/modals/CreateTeamModal.vue";
 import ClubService from "@/services/ClubService";
+import ChoreoService from "@/services/ChoreoService";
+import { canWrite, canDelete } from "@/utils/permissions";
+import FeatureFlagService, {
+  FeatureFlagKeys,
+} from "@/services/FeatureFlagService";
 import { error } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
 
@@ -540,8 +587,16 @@ export default {
     maxCount: 400,
     loading: true,
     filterCollapseVisible: false,
+    accessSharingEnabled: true,
   }),
   computed: {
+    ...mapState(["owners", "me"]),
+    canEditChoreo() {
+      return (choreo) => canWrite(this.owners, this.me?.id, choreo?.UserId);
+    },
+    canDeleteChoreo() {
+      return (choreo) => canDelete(this.owners, this.me?.id, choreo?.UserId);
+    },
     choreos() {
       return this.teams
         .map((t) =>
@@ -564,6 +619,11 @@ export default {
   },
   mounted() {
     this.load();
+    FeatureFlagService.isEnabled(FeatureFlagKeys.ACCESS_SHARING).then(
+      (enabled) => {
+        this.accessSharingEnabled = enabled;
+      }
+    );
 
     useHead({
       title: computed(() => this.t("nav.start")),
@@ -602,6 +662,18 @@ export default {
     });
   },
   methods: {
+    deleteChoreo(choreoId) {
+      ChoreoService.remove(choreoId).then(() => {
+        // Remove from local state
+        this.teams = this.teams.map((t) => ({
+          ...t,
+          SeasonTeams: t.SeasonTeams.map((st) => ({
+            ...st,
+            Choreos: st.Choreos.filter((c) => c.id !== choreoId),
+          })),
+        }));
+      });
+    },
     load() {
       this.filterCollapseVisible = !this.$store.state.isMobile;
       let getClubPromise = null;

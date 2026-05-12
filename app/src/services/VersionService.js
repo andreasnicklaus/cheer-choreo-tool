@@ -20,6 +20,21 @@ const VERSIONS = [
     start: null,
     end: new Date(2025, 6, 15), // July 15th 2025
   },
+  {
+    tag: "0.13.0",
+    start: null,
+    end: new Date(2026, 7, 15), // October 15th 2026
+  },
+  {
+    tag: "0.13.1",
+    start: null,
+    end: new Date(2026, 7, 15), // October 15th 2026
+  },
+  {
+    tag: "1.0.0",
+    start: null,
+    end: null, // No end date, considered always new
+  },
 ];
 
 /**

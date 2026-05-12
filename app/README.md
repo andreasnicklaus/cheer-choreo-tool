@@ -12,7 +12,7 @@
 ![Website status](https://img.shields.io/website?url=https%3A%2F%2Fwww.choreo-planer.de&style=for-the-badge)
 ![Backend status](https://img.shields.io/website?url=https%3A%2F%2Fapi.choreo-planer.de&style=for-the-badge&label=Backend)
 
-![Backend server build status](https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/server.yml?style=for-the-badge&logo=docker&logoColor=white&label=Backend%20Build%20(Server))
+![Backend server build status](<https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/server.yml?style=for-the-badge&logo=docker&logoColor=white&label=Backend%20Build%20(Server)>)
 ![Frontend build status](https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/pages.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=Frontend%20Build)
 
 ![Last commit](https://img.shields.io/github/last-commit/andreasnicklaus/cheer-choreo-tool?style=for-the-badge&label=Last%20Major%20Update)
@@ -98,23 +98,23 @@ graph TD
   User[User] -->|IPv4/IPv6,https| AWS[AWS EC2]
   AWS -->|IPv6,https| Router[Home Router]
   Router -->|port forwarding| ReverseProxy[Reverse Proxy]
-  
+
   subgraph On-Premise Server
     ReverseProxy --> API[Choreo Planer API]
     ReverseProxy --> Matomo[Matomo Analytics]
     ReverseProxy --> Watchtower
     ReverseProxy --> Unleash
   end
-  
+
   subgraph GitHub Pages
     User -->|https| Pages[GitHub Pages - Vue 3 App]
   end
-  
+
   Pages -.->|tracking| Matomo
   API -->|nodemailer| Email[Google Mail → Brevo]
   Pages -.->|logging| BetterStack[BetterStack]
   API -.->|logging| BetterStack
-  
+
   subgraph Docker Containers
     API -->|sequelize| DB[(Postgres Database)]
   end
@@ -123,6 +123,7 @@ graph TD
 ## Testing
 
 ### Unit Tests (Vitest)
+
 ```sh
 npm run test:unit
 ```
@@ -130,11 +131,13 @@ npm run test:unit
 Coverage thresholds are set to 80% for branches, functions, lines, and statements.
 
 ### E2E Tests (Playwright)
+
 ```sh
 npm run test:e2e
 ```
 
 Tests are run in 7 parallel shards in CI. To run locally with UI:
+
 ```sh
 npm run test:e2e:ui
 ```

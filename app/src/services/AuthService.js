@@ -36,6 +36,7 @@ class AuthService {
         debug("Successfully logged in as", username);
         localStorage.setItem(tokenStorageKey, token);
         store.commit("setLoginState", true);
+        store.dispatch("loadUserInfo");
         return true;
       })
       .catch((e) => {
@@ -69,6 +70,7 @@ class AuthService {
         debug("Successfully logged in with SSO token");
         localStorage.setItem(tokenStorageKey, token);
         store.commit("setLoginState", true);
+
         return true;
       })
       .catch((e) => {
@@ -120,6 +122,7 @@ class AuthService {
         debug("Successfully registered as", username);
         localStorage.setItem(tokenStorageKey, token);
         store.commit("setLoginState", true);
+        store.dispatch("loadUserInfo");
         return true;
       })
       .catch((e) => {
@@ -239,8 +242,10 @@ class AuthService {
    *
    * @returns {Promise<object>} Returns the user information from the server
    */
-  getUserInfo() {
-    return ax.get("/auth/me").then((res) => res.data);
+  getUserInfo(skipRoutingOnFailure = false) {
+    return ax
+      .get("/auth/me", { skipRoutingToLogin: skipRoutingOnFailure })
+      .then((res) => res.data);
   }
 
   /**

@@ -2,6 +2,7 @@ import { NotFoundError } from "@/utils/errors";
 import User from "../db/models/user";
 import MailService from "./MailService";
 import NotificationService from "./NotificationService";
+import FeatureFlagService, { FeatureFlagKey } from "./FeatureFlagService";
 
 const { Op } = require("sequelize");
 const { logger } = require("../plugins/winston");
@@ -43,12 +44,40 @@ class UserService {
 
   /**
    * Get a user by ID.
-   * @param {string} id - The user's ID.
+   * @param {UUID} id - The user's ID.
    * @returns {Promise<Object>} The user object.
    */
   async findById(id: string) {
     logger.debug(`UserService findById ${JSON.stringify({ id })}`);
-    return User.findByPk(id, { include: ["Clubs"] });
+
+    const accessSharingEnabled = await FeatureFlagService.isEnabled(
+      FeatureFlagKey.ACCESS_SHARING,
+    );
+
+    if (!accessSharingEnabled) {
+      const user = await User.findByPk(id, { include: ["Clubs"] });
+      if (user) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (user as any).childAccess = [];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (user as any).ownerAccess = [];
+      }
+      return user;
+    }
+
+    return User.findByPk(id, {
+      include: [
+        "Clubs",
+        {
+          association: "childAccess",
+          include: ["owner"],
+        },
+        {
+          association: "ownerAccess",
+          include: ["child"],
+        },
+      ],
+    });
   }
 
   /**
@@ -172,25 +201,28 @@ class UserService {
    * Find or create a user.
    * @param {string} username - The username of the user.
    * @param {string} password - The password of the user.
-   * @returns {Promise<Object>} The user object.
+   * @returns {Promise<Array<Object|boolean>>} The user object and a boolean indicating if the user was created.
    */
-  async findOrCreate(username: string, password: string) {
+  async findOrCreate(
+    username: string,
+    password: string,
+  ): Promise<[User, boolean]> {
     logger.debug(
       `UserService findOrCreate ${JSON.stringify({ username, password })}`,
     );
-    const [user, _created] = await User.findOrCreate({
+    const [user, created] = await User.findOrCreate({
       where: { username },
       defaults: {
         username,
         password,
       },
     });
-    return user;
+    return [user, created];
   }
 
   /**
    * Update a user.
-   * @param {string} id - The ID of the user.
+   * @param {UUID} id - The ID of the user.
    * @param {Object} data - The data to update.
    * @returns {Promise<Object>} The updated user object.
    */
@@ -211,7 +243,7 @@ class UserService {
 
   /**
    * Remove a user.
-   * @param {string} id - The ID of the user.
+   * @param {UUID} id - The ID of the user.
    * @returns {Promise<void>} Resolves when the user is removed.
    */
   async remove(id: string) {
@@ -228,23 +260,25 @@ class UserService {
 
   /**
    * Restore a soft-deleted user.
-   * @param {string} id - The ID of the user.
+   * @param {UUID} id - The ID of the user.
    * @returns {Promise<void>} Resolves when the user is restored.
    */
   async restore(id: string) {
     logger.debug(`UserService restore ${JSON.stringify({ id })}`);
-    return User.scope("includingDeleted").findByPk(id).then((foundUser) => {
-      if (foundUser) {
-        if (foundUser.deletedAt) {
-          return foundUser.restore();
+    return User.scope("includingDeleted")
+      .findByPk(id)
+      .then((foundUser) => {
+        if (foundUser) {
+          if (foundUser.deletedAt) {
+            return foundUser.restore();
+          }
+          logger.warn(`User with ID ${id} is not deleted`);
+          return;
+        } else {
+          logger.error(`No user found with ID ${id} when restoring`);
+          throw new NotFoundError(`No user found with ID ${id} when restoring`);
         }
-        logger.warn(`User with ID ${id} is not deleted`);
-        return;
-      } else {
-        logger.error(`No user found with ID ${id} when restoring`);
-        throw new NotFoundError(`No user found with ID ${id} when restoring`);
-      }
-    });
+      });
   }
 
   /**

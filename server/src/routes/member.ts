@@ -48,7 +48,13 @@ router.post(
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
     const { name, nickname, abbreviation, seasonTeamId } = req.body;
-    MemberService.create(name, nickname, abbreviation, seasonTeamId, req.UserId)
+    MemberService.create(
+      name,
+      nickname,
+      abbreviation,
+      seasonTeamId,
+      req.actingUserId,
+    )
       .then((member: Member) => {
         res.send(member);
         return next();
@@ -94,7 +100,7 @@ router.put(
   "/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    MemberService.update(req.params.id, req.body, req.UserId)
+    MemberService.update(req.params.id, req.body, req.actingUserId)
       .then((member: Member | null) => {
         res.send(member);
         return next();
@@ -130,7 +136,7 @@ router.delete(
   "/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    MemberService.remove(req.params.id, req.UserId)
+    MemberService.remove(req.params.id, req.actingUserId)
       .then(() => {
         res.send();
         next();

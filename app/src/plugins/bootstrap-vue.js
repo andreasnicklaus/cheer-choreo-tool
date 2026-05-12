@@ -86,6 +86,7 @@ const components = {
   BFormTextarea,
   BFormRadio,
   BFormRadioGroup,
+  BFormCheckbox,
   BInput,
   BModal,
   BTable,

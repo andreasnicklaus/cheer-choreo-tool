@@ -43,7 +43,7 @@ router.get(
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.params.id)
-      return HitService.findById(req.params.id, req.UserId)
+      return HitService.findById(req.params.id, req.actingUserId)
         .then((foundHit: Hit | null) => {
           if (!foundHit) throw new NotFoundError();
           else res.send(foundHit);
@@ -51,7 +51,7 @@ router.get(
         })
         .catch((e: Error) => next(e));
     else {
-      return HitService.getAll(req.UserId)
+      return HitService.getAll(req.ownerIds, req.actingUserId)
         .then((hitList: Hit[]) => {
           res.send(hitList);
           return next();
@@ -87,7 +87,7 @@ router.get(
  *                 type: integer
  *               choreoId:
  *                 type: string
- *               memberIds:
+ *               MemberIds:
  *                 type: array
  *                 items:
  *                   type: string
@@ -106,7 +106,7 @@ router.post(
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
     const { name, count, choreoId, MemberIds = [] } = req.body;
-    return HitService.create(name, count, choreoId, MemberIds, req.UserId)
+    return HitService.create(name, count, choreoId, MemberIds, req.actingUserId)
       .then((hit: Hit | null) => {
         res.send(hit);
         return next();
@@ -152,7 +152,7 @@ router.put(
   "/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    return HitService.update(req.params.id, req.body, req.UserId)
+    return HitService.update(req.params.id, req.body, req.actingUserId)
       .then((hit: Hit | null) => {
         res.send(hit);
         return next();
@@ -188,7 +188,7 @@ router.delete(
   "/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    return HitService.remove(req.params.id, req.UserId)
+    return HitService.remove(req.params.id, req.actingUserId)
       .then(() => {
         res.send();
         return next();

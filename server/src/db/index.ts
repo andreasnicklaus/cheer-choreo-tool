@@ -1,19 +1,22 @@
+import logger from "@/plugins/winston";
 import db from "./db";
-import Choreo from "./models/choreo";
-import ChoreoParticipation from "./models/choreoParticipation";
-import Club from "./models/club";
-import Feedback from "./models/feedback";
-import Hit from "./models/hit";
-import Lineup from "./models/lineup";
-import Member from "./models/member";
-import NotificationModel from "./models/notification";
-import Position from "./models/position";
-import Season from "./models/season";
-import SeasonTeam from "./models/seasonTeam";
-import Team from "./models/team";
-import User from "./models/user";
+import Choreo from "@/db/models/choreo";
+import ChoreoParticipation from "@/db/models/choreoParticipation";
+import Club from "@/db/models/club";
+import Feedback from "@/db/models/feedback";
+import Hit from "@/db/models/hit";
+import Lineup from "@/db/models/lineup";
+import Member from "@/db/models/member";
+import NotificationModel from "@/db/models/notification";
+import Position from "@/db/models/position";
+import Season from "@/db/models/season";
+import SeasonTeam from "@/db/models/seasonTeam";
+import Team from "@/db/models/team";
+import User from "@/db/models/user";
+import UserAccess from "@/db/models/userAccess";
 import seed from "./seed";
-require("./models/admin");
+import migrate from "./migrations";
+require("@/db/models/admin");
 
 Team.hasMany(SeasonTeam, {
   onDelete: "CASCADE",
@@ -56,6 +59,8 @@ Choreo.belongsToMany(Member, {
 Member.belongsToMany(Choreo, {
   through: ChoreoParticipation,
 });
+ChoreoParticipation.belongsTo(Choreo);
+ChoreoParticipation.belongsTo(Member);
 
 Hit.belongsToMany(Member, { through: "HitMemberships" });
 Member.belongsToMany(Hit, { through: "HitMemberships" });
@@ -121,11 +126,67 @@ User.hasMany(Feedback);
 NotificationModel.belongsTo(User);
 User.hasMany(NotificationModel);
 
+User.hasMany(UserAccess, {
+  as: "childAccess",
+  foreignKey: "childUserId",
+  onDelete: "CASCADE",
+});
+UserAccess.belongsTo(User, {
+  as: "child",
+  foreignKey: "childUserId",
+});
+
+User.hasMany(UserAccess, {
+  as: "ownerAccess",
+  foreignKey: "ownerUserId",
+  onDelete: "CASCADE",
+});
+UserAccess.belongsTo(User, {
+  as: "owner",
+  foreignKey: "ownerUserId",
+});
+
+Club.belongsTo(User, { as: "creator", foreignKey: "creatorId" });
+Club.belongsTo(User, { as: "updater", foreignKey: "updaterId" });
+
+Team.belongsTo(User, { as: "creator", foreignKey: "creatorId" });
+Team.belongsTo(User, { as: "updater", foreignKey: "updaterId" });
+
+SeasonTeam.belongsTo(User, { as: "creator", foreignKey: "creatorId" });
+SeasonTeam.belongsTo(User, { as: "updater", foreignKey: "updaterId" });
+
+Member.belongsTo(User, { as: "creator", foreignKey: "creatorId" });
+Member.belongsTo(User, { as: "updater", foreignKey: "updaterId" });
+
+Choreo.belongsTo(User, { as: "creator", foreignKey: "creatorId" });
+Choreo.belongsTo(User, { as: "updater", foreignKey: "updaterId" });
+
+Lineup.belongsTo(User, { as: "creator", foreignKey: "creatorId" });
+Lineup.belongsTo(User, { as: "updater", foreignKey: "updaterId" });
+
+Position.belongsTo(User, { as: "creator", foreignKey: "creatorId" });
+Position.belongsTo(User, { as: "updater", foreignKey: "updaterId" });
+
+Hit.belongsTo(User, { as: "creator", foreignKey: "creatorId" });
+Hit.belongsTo(User, { as: "updater", foreignKey: "updaterId" });
+
+Season.belongsTo(User, { as: "creator", foreignKey: "creatorId" });
+Season.belongsTo(User, { as: "updater", foreignKey: "updaterId" });
+
+Feedback.belongsTo(User, { as: "creator", foreignKey: "creatorId" });
+Feedback.belongsTo(User, { as: "updater", foreignKey: "updaterId" });
+
+NotificationModel.belongsTo(User, { as: "creator", foreignKey: "creatorId" });
+NotificationModel.belongsTo(User, { as: "updater", foreignKey: "updaterId" });
+
 const syncPromise = db
-  .sync({
-    alter: true,
-  })
-  .then(() => (process.env.NODE_ENV == "test" ? Promise.resolve() : seed()));
+  .sync({ alter: true })
+  .then(() => (process.env.NODE_ENV == "test" ? Promise.resolve() : seed()))
+  .then(migrate)
+  .catch((e) => {
+    logger.error("Database sync/seeding/migration failed:", e);
+    throw e;
+  });
 
 export { syncPromise };
 export default db;

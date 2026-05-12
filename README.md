@@ -110,15 +110,21 @@ See [LICENSE](LICENSE) for the license of this project.
 
 ## :sparkles: Version history
 
+### 1.0.0 - 2026-04-06 (alias: 0.13.1)
+
+- Sharing access to different users in order to work on the same clubs, teams and choreos
+
 ### 0.13.0 - 2026-04-06
 
 #### ⚠️ Breaking Changes
+
 - Migrated from Vue 2 to Vue 3 with Composition API
 - Migrated from Vue CLI to Vite build system
 - Migrated from Jest to Vitest for unit testing
 - Upgraded Bootstrap 4 → Bootstrap 5
 
 #### Added
+
 - Development agent skills for AI-assisted development
 - ESLint with strict rules and auto-fix
 - VSCode extension recommendations
@@ -126,10 +132,12 @@ See [LICENSE](LICENSE) for the license of this project.
 - Support for soft-deleted user accounts with recover functionality
 
 #### Changed
+
 - vue-meta replaced with @unhead/vue
 - Various dependency updates
 
 #### Fixed
+
 - Spelling and translation errors
 
 ### 0.12.0 - 2025-12-22

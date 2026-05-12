@@ -5,5 +5,6 @@
   "i18n-ally-next.displayLanguage": "en",
   "i18n-ally-next.keystyle": "nested",
   "conventionalCommits.scopes": ["FE", "BE", "CI", "DOCS", "AGENT"],
-  "i18n-ally.localesPaths": ["app/src/i18n", "server/src/i18n"]
+  "i18n-ally.localesPaths": ["app/src/i18n", "server/src/i18n"],
+  "i18n-ally.keystyle": "nested"
 }

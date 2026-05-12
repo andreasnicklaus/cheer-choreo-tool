@@ -7,6 +7,7 @@ import { initialize, Unleash } from "unleash-client";
 export enum FeatureFlagKey {
   MOBILE_EDITING = "mobile-editing",
   SOCIAL_LOGIN = "social-login",
+  ACCESS_SHARING = "access-sharing",
 }
 
 /**

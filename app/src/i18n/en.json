@@ -25,6 +25,7 @@
     "du-hast-diesen-verein-als-aktiven-verein-ausgewaehlt": "You selected this club as the active club.",
     "cant-delete-only-club": "You can't remove your only club! \nCreate another club first.",
     "cant-delete-active-club": "You cannot delete your active club! \nFirst select another one.",
+    "cant-delete-access": "You don't have permission to delete this club.",
     "verein-loeschen": "Delete club",
     "deine-nutzerinformationen-wurden-gespeichert": "Your user information was saved!",
     "deine-vereinsinformationen-wurden-gespeichert": "Your club information was saved!",
@@ -32,7 +33,29 @@
     "es-ist-nicht-moeglich-bilder-hochzuladen-die-groesser-al-mb-gross-sind": "It is not possible to upload images that are larger than {0} MB. Select a smaller file!",
     "die-e-mail-zur-bestaetigung-deiner-e-mail-adresse-wurde-erneut-verschickt-check-dein-postfach": "The email to confirm your email address has been sent. Check your mailbox!",
     "e-mail-versandt": "Email sent",
-    "settings-saved": "Your settings were saved!"
+    "settings-saved": "Your settings were saved!",
+    "zugriff": "Access",
+    "owner": "Owner",
+    "mit-mir-geteilt": "Shared with me",
+    "mit-mir-geteilt-info": "People who have given you access to their choreos.",
+    "von-mir-verwaltet": "Managed by me",
+    "von-mir-verwaltet-info": "People you have given access to your choreos.",
+    "access-tab-help": "Here you can manage who has access to your choreos. Add people by email and choose what they are allowed to do.",
+    "no-shared-with-me": "Ask somebody to share access to their choreos with you.",
+    "no-managed-by-me": "Add a user to share your choreos with them.",
+    "benutzer-hinzufuegen": "Add user",
+    "rolle": "Role",
+    "aktiv": "Active",
+    "status": "Status",
+    "angenommen": "Accepted",
+    "ausstehend": "Pending",
+    "annehmen": "Accept",
+    "role": {
+      "coach": "Coach",
+      "assistant": "Assistant",
+      "athlete": "Athlete"
+    },
+    "no-clubs-info": "You currently do not belong to any clubs. Either create one or ask the owner of you club to give you access to it."
   },
   "achter": "Eight",
   "alle-auswaehlen": "Select all",
@@ -188,7 +211,7 @@
       "question": "Who is the choreo planner for?"
     },
     "zusammenarbeiten": {
-      "answer": "A \"live sharing\" as is known from Google Docs or similar online tools is not planned. Instead, it is planned that coaches of an association **share access**. This should also make it easy to move participants between teams. A possible \"create extra access\" for an account is planned.",
+      "answer": "Yes, you can! Go to your account settings and open the **Access** tab. Click **Add user**, enter their email address and pick a role. They will get an invitation and need to accept it before they can see your data.\n\n**Here is what each role can do:**\n- **Coach** can view, edit and delete your choreos\n- **Assistant** can view and edit your choreos\n- **Athlete** can view your choreos\n\nYou can change their role or revoke access at any time.",
       "question": "Can I work with others?"
     }
   },
@@ -208,7 +231,14 @@
     "offline": "Offline",
     "reject": "Reject",
     "accept": "Accept",
-    "contact-email": "info{'@'}choreo-planer.de"
+    "contact-email": "info{'@'}choreo-planer.de",
+    "shared-with-you-by": "Shared with you by",
+    "created-by": "Created by",
+    "last-updated-by": "Last updated by",
+    "you": "you",
+    "no-delete-permission": "You don't have permission to delete this.",
+    "no-edit-permission": "You don't have permission to edit this.",
+    "empty-list": "Empty list"
   },
   "HelpView": {
     "fuer-deine-suche-gibt-es-keine-ergebnisse": "There are no results for your search \"{searchTerm}\"",
@@ -426,7 +456,7 @@
       "description": "The data protection declaration of the choreo planner. Information on contact and liability regarding the use of the choreo planner."
     },
     "defaults": {
-      "description": "Plan your choreographies quickly and easily with the choreo planner! Perfect for cheerleading, dance and floor gymnastics. 100% free. Try now!",
+      "description": "Plan your choreos quickly and easily with the choreo planner! Perfect for cheerleading, dance and floor gymnastics. 100% free. Try now!",
       "keywords": "choreo, choreography, cheer, cheerleading, dance, planner, editor, video, log in, register, countsheet",
       "title": "The best free online tool for choreo sport"
     },
@@ -440,7 +470,7 @@
       "description": "The imprint of the choreo planner. Information on contact and liability regarding the use of the choreo planner."
     },
     "loginView": {
-      "description": "Register now and plan your choreographies! Access to all functions of the free choreo planner for cheerleading, dance and gymnastics."
+      "description": "Register now and plan your choreos! Access to all functions of the free choreo planner for cheerleading, dance and gymnastics."
     },
     "pdfView": {
       "description": "Export your choreo countsheet as a PDF!"
@@ -489,10 +519,13 @@
       "min-choreoname-length": "Min. 2 characters"
     },
     "create-club": {
-      "example-team-names": "TSG Salach e.V., Glamorous cheerleaders, ...",
+      "example-team-names": "Glamorous Cheerleader, TSG Salach e.V. ...",
       "min-vereinsname-length": "Min. 3 characters",
       "neuer-verein": "New club",
-      "vereinsname": "Club name"
+      "vereinsname": "Club name",
+      "ausstehende-einladungen": "Pending invitations",
+      "oder-neuen-verein-erstellen": "or create a new club",
+      "go-to-settings": "Go to settings"
     },
     "create-hit": {
       "wie-heisst-der-neue-eintrag": "What is the name of the new entry?"
@@ -576,6 +609,14 @@
       "fuer-das-team-this-selectedteam-name-gibt-es-bisher-keine-andere-season": "So far there is no other season for the team {0}",
       "team-mitglied": "Team member",
       "team-mitglied-importieren": "Import a team member"
+    },
+    "invite-user": {
+      "title": "Invite user",
+      "info": "If a user exists with this email address, we will share access to your account with them.",
+      "send": "Send invitation",
+      "error": "The invitation could not be sent.",
+      "role": "Role",
+      "what-each-role-can-do": "What each role can do:"
     },
     "loading": {
       "wird-geladen": "Loading"
@@ -856,5 +897,9 @@
       "best-regards": "\nBest regards!",
       "best-regards-username": "\nBest regards\n{username}"
     }
+  },
+  "accessOverviewTable": {
+    "edit": "Edit",
+    "read": "Read"
   }
 }

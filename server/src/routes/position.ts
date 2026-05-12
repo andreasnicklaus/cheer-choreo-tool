@@ -41,7 +41,11 @@ router.get(
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.query.lineupId)
-      PositionService.findByLineupId(req.query.lineupId as string, req.UserId)
+      PositionService.findByLineupId(
+        req.query.lineupId as string,
+        req.ownerIds,
+        req.actingUserId,
+      )
         .then((foundPositions: Position[]) => {
           res.send(foundPositions);
           return next();
@@ -95,15 +99,15 @@ router.post(
   (req: Request, res: Response, next: NextFunction) => {
     const { x, y, MemberId, lineupId } = req.body;
 
-    PositionService.findOrCreate(x, y, lineupId, MemberId, req.UserId)
+    PositionService.findOrCreate(x, y, lineupId, MemberId, req.actingUserId)
       .then(async (position: Position) => {
         return Promise.all([
           position.setMember(MemberId),
-          LineupService.findById(lineupId, req.UserId).then(
+          LineupService.findById(lineupId, req.actingUserId).then(
             (lineup: Lineup | null) => lineup?.addPosition(position),
           ),
         ]).then(() =>
-          PositionService.findById(position.id, req.UserId).then(
+          PositionService.findById(position.id, req.actingUserId).then(
             (p: Position | null) => {
               res.send(p);
               next();
@@ -153,7 +157,7 @@ router.put(
   AuthService.authenticateUser(),
   requestQueue("positionUpdate"),
   (req: Request, res: Response, next: NextFunction) => {
-    PositionService.update(req.params.id, null, req.body, req.UserId)
+    PositionService.update(req.params.id, null, req.body, req.actingUserId)
       .then((position: Position) => {
         res.send(position);
         next();
@@ -189,7 +193,7 @@ router.delete(
   "/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    PositionService.remove(req.params.id, req.UserId)
+    PositionService.remove(req.params.id, req.actingUserId)
       .then(() => {
         res.send();
         next();

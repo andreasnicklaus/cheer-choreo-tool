@@ -6,6 +6,8 @@ process.env.JWT_EXPIRES_IN = "1h";
 
 import Admin from "@/db/models/admin";
 import User from "@/db/models/user";
+import UserAccess from "@/db/models/userAccess";
+import { AccessRole } from "@/db/models/userAccess";
 import { NextFunction, Request, Response } from "express";
 import UserService from "@/services/UserService";
 import MailService from "@/services/MailService";
@@ -18,8 +20,20 @@ import {
   NotFoundError,
 } from "@/utils/errors";
 
+type TestRequest = {
+  headers: { authorization?: string };
+  UserId?: string;
+  User?: User;
+  ownerId?: string;
+  actingUserId?: string;
+  Owner?: User;
+  ActingUser?: User;
+};
+
 jest.mock("@/plugins/winston", () => ({
+  info: jest.fn(),
   logger: {
+    info: jest.fn(),
     debug: jest.fn(),
     warn: jest.fn(),
     error: jest.fn(),
@@ -109,6 +123,16 @@ jest.mock("express-basic-auth", () => {
     };
   };
 });
+
+jest.mock("@/services/FeatureFlagService", () => ({
+  __esModule: true,
+  default: {
+    isEnabled: jest.fn().mockResolvedValue(true),
+  },
+  FeatureFlagKey: {
+    ACCESS_SHARING: "access-sharing",
+  },
+}));
 
 import AuthService from "@/services/AuthService";
 import NotificationModel from "@/db/models/notification";
@@ -211,8 +235,8 @@ describe("AuthService", () => {
         const res = {} as Response;
         const next = jest.fn(() => {
           try {
-            expect(req.UserId).toBe(user.id);
-            expect(req.User).toBeDefined();
+            expect(req.actingUserId).toBe(user.id);
+            expect(req.ActingUser).toBeDefined();
             done();
           } catch (e) {
             done(e as Error);
@@ -501,5 +525,169 @@ describe("AuthService", () => {
     const token = AuthService.generateAccessToken("test-user-id");
     expect(token).toBeDefined();
     expect(token).not.toBe("");
+  });
+
+  describe("authenticateUser with access relationships", () => {
+    beforeAll(async () => {
+      const { syncPromise } = require("@/db");
+      await syncPromise;
+    });
+
+    afterEach(async () => {
+      await UserAccess.destroy({ where: {}, force: true });
+    });
+
+    test("sets ownerId = UserId when no access relationships", (done) => {
+      User.create({ username: "noaccessuser", password: "hashedpass" }).then(
+        (user) => {
+          const token = AuthService.generateAccessToken(user.id);
+          const req: TestRequest = {
+            headers: { authorization: `Bearer ${token}` },
+          };
+          const res = {} as Response;
+          const next = jest.fn(() => {
+            try {
+              expect(req.ownerId).toBeUndefined();
+              expect(req.actingUserId).toBe(user.id);
+              done();
+            } catch (e) {
+              done(e as Error);
+            }
+          });
+
+          const middleware = AuthService.authenticateUser();
+          middleware(req as Request, res, next as NextFunction);
+        },
+      );
+    });
+
+    test("sets actingUserId = UserId when no access relationships", (done) => {
+      User.create({ username: "actinguser", password: "hashedpass" }).then(
+        (user) => {
+          const token = AuthService.generateAccessToken(user.id);
+          const req: TestRequest = {
+            headers: { authorization: `Bearer ${token}` },
+          };
+          const res = {} as Response;
+          const next = jest.fn(() => {
+            try {
+              expect(req.actingUserId).toBe(user.id);
+              done();
+            } catch (e) {
+              done(e as Error);
+            }
+          });
+
+          const middleware = AuthService.authenticateUser();
+          middleware(req as Request, res, next as NextFunction);
+        },
+      );
+    });
+
+    test("sets Owner and ActingUser on request when no access relationships", (done) => {
+      User.create({ username: "owneruser", password: "hashedpass" }).then(
+        (user) => {
+          const token = AuthService.generateAccessToken(user.id);
+          const req: TestRequest = {
+            headers: { authorization: `Bearer ${token}` },
+          };
+          const res = {} as Response;
+          const next = jest.fn(() => {
+            try {
+              expect(req.Owner).toBeUndefined();
+              expect(req.ActingUser).toBeDefined();
+              expect(req.ActingUser?.id).toBe(user.id);
+              done();
+            } catch (e) {
+              done(e as Error);
+            }
+          });
+
+          const middleware = AuthService.authenticateUser();
+          middleware(req as Request, res, next as NextFunction);
+        },
+      );
+    });
+
+    test("loads access relationships from database", (done) => {
+      User.create({ username: "testowner", password: "hashedpass" }).then(
+        (owner) => {
+          return User.create({
+            username: "testchild",
+            password: "hashedpass",
+          }).then((child) => {
+            return UserAccess.create({
+              ownerUserId: owner.id,
+              childUserId: child.id,
+              role: AccessRole.COACH,
+              enabled: true,
+            }).then(() => {
+              const token = AuthService.generateAccessToken(child.id);
+              const req: TestRequest = {
+                headers: { authorization: `Bearer ${token}` },
+              };
+              const res = {} as Response;
+              const next = jest.fn(() => {
+                try {
+                  expect(req.actingUserId).toBe(child.id);
+                  done();
+                } catch (e) {
+                  done(e as Error);
+                }
+              });
+
+              const middleware = AuthService.authenticateUser();
+              middleware(req as Request, res, next as NextFunction);
+            });
+          });
+        },
+      );
+    });
+
+    test("req.Owner is undefined when no access", (done) => {
+      User.create({ username: "testuser5", password: "hashedpass" }).then(
+        (user) => {
+          const token = AuthService.generateAccessToken(user.id);
+          const req: TestRequest = {
+            headers: { authorization: `Bearer ${token}` },
+          };
+          const res = {} as Response;
+          const next = jest.fn(() => {
+            try {
+              expect(req.Owner).toBeUndefined();
+              done();
+            } catch (e) {
+              done(e as Error);
+            }
+          });
+
+          const middleware = AuthService.authenticateUser();
+          middleware(req as Request, res, next as NextFunction);
+        },
+      );
+    });
+
+    test("req.ActingUser is undefined when no access", (done) => {
+      User.create({ username: "testuser6", password: "hashedpass" }).then(
+        (user) => {
+          const token = AuthService.generateAccessToken(user.id);
+          const req: TestRequest = {
+            headers: { authorization: `Bearer ${token}` },
+          };
+          const res = {} as Response;
+          const next = jest.fn(() => {
+            try {
+              expect(req.ActingUser).toBeDefined();
+              done();
+            } catch (e) {
+              done(e as Error);
+            }
+          });
+
+          const middleware = AuthService.authenticateUser();
+          middleware(req as Request, res, next as NextFunction);
+        },
+      );
+    });
   });
 });

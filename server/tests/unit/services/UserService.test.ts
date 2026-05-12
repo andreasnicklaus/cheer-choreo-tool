@@ -10,6 +10,7 @@ jest.mock("@/plugins/winston", () => ({
     error: jest.fn(),
   },
   debug: jest.fn(),
+  info: jest.fn(),
 }));
 
 jest.mock("@/db/db", () => {
@@ -41,6 +42,16 @@ jest.mock("@/services/NotificationService", () => ({
 jest.mock("i18n", () => ({
   __: jest.fn().mockReturnValue("i18nTranslation"),
   configure: jest.fn(),
+}));
+
+jest.mock("@/services/FeatureFlagService", () => ({
+  __esModule: true,
+  default: {
+    isEnabled: jest.fn().mockResolvedValue(true),
+  },
+  FeatureFlagKey: {
+    ACCESS_SHARING: "access-sharing",
+  },
 }));
 
 describe("UserService", () => {
@@ -142,7 +153,7 @@ describe("UserService", () => {
   });
 
   test("findOrCreate creates or returns existing user", async () => {
-    const user = await UserService.findOrCreate(
+    const [user, ..._] = await UserService.findOrCreate(
       "test-username",
       "test-password",
     );
@@ -150,7 +161,7 @@ describe("UserService", () => {
     expect(user).not.toBeNull();
     expect(user?.id).toStrictEqual(expect.any(String));
 
-    const foundUser = await UserService.findOrCreate(
+    const [foundUser, _created] = await UserService.findOrCreate(
       "test-username",
       "test-password",
     );

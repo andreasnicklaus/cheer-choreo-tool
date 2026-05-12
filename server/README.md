@@ -12,7 +12,7 @@
 ![Website status](https://img.shields.io/website?url=https%3A%2F%2Fwww.choreo-planer.de&style=for-the-badge)
 ![Backend status](https://img.shields.io/website?url=https%3A%2F%2Fapi.choreo-planer.de&style=for-the-badge&label=Backend)
 
-![Backend server build status](https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/server.yml?style=for-the-badge&logo=docker&logoColor=white&label=Backend%20Build%20(Server))
+![Backend server build status](https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/server.yml?style=for-the-badge&logo=docker&logoColor=white&label=Backend%20Build)
 ![Frontend build status](https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/pages.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=Frontend%20Build)
 
 ![Last commit](https://img.shields.io/github/last-commit/andreasnicklaus/cheer-choreo-tool?style=for-the-badge&label=Last%20Major%20Update)
@@ -159,6 +159,7 @@ graph
 ## API Documentation
 
 Once the server is running:
+
 - Swagger UI: `/api-docs`
 - JSDoc: `/docs`
 - Status: `/status`

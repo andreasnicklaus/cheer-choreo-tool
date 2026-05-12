@@ -50,7 +50,7 @@ router.post(
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
     const { startCount, endCount, choreoId } = req.body;
-    LineupService.create(startCount, endCount, choreoId, req.UserId)
+    LineupService.create(startCount, endCount, choreoId, req.actingUserId)
       .then((lineup: Lineup) => {
         res.send(lineup);
         return next();
@@ -96,7 +96,7 @@ router.put(
   "/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    LineupService.update(req.params.id, req.body, req.UserId)
+    LineupService.update(req.params.id, req.body, req.actingUserId)
       .then((lineup: Lineup | null) => {
         res.send(lineup);
         return next();
@@ -137,6 +137,10 @@ router.put(
  *                 type: number
  *               MemberId:
  *                 type: string
+ *               timeOfManualUpdate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Optional timestamp for manual update tracking
  *     responses:
  *       200:
  *         description: Position added successfully
@@ -152,15 +156,15 @@ router.post(
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
     const { x, y, MemberId, timeOfManualUpdate } = req.body;
-    PositionService.create(x, y, req.UserId, timeOfManualUpdate)
+    PositionService.create(x, y, req.actingUserId, timeOfManualUpdate)
       .then(async (position: Position) => {
         return Promise.all([
           position.setMember(MemberId),
-          LineupService.findById(req.params.id, req.UserId).then(
+          LineupService.findById(req.params.id, req.actingUserId).then(
             (lineup: Lineup | null) => lineup?.addPosition(position),
           ),
         ]).then(() =>
-          PositionService.findById(position.id, req.UserId).then(
+          PositionService.findById(position.id, req.actingUserId).then(
             (p: Position | null) => {
               res.send(p);
               next();
@@ -219,7 +223,7 @@ router.put(
       req.params.positionId,
       req.params.id,
       req.body,
-      req.UserId,
+      req.actingUserId,
     )
       .then((position: Position) => {
         res.send(position);
@@ -256,7 +260,7 @@ router.delete(
   "/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    LineupService.remove(req.params.id, req.UserId)
+    LineupService.remove(req.params.id, req.actingUserId)
       .then(() => {
         res.send();
         next();

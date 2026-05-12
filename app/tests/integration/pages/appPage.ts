@@ -91,7 +91,7 @@ export default class AppPage extends TestPage {
 
   iCheckAppVersion() {
     return Promise.all([
-      expect(this.page.getByText("Version:")).toContainText("0.13.0"),
+      expect(this.page.getByText("Version:")).toContainText("0.13.1"),
     ]);
   }
 
@@ -112,7 +112,7 @@ export default class AppPage extends TestPage {
     await this.page.getByTestId("serverVersionTooltip").hover();
     return expect(
       this.page.getByText(
-        `Die Version der Webseite (0.13.0) entspricht nicht der Version der Server (${serverVersion})!`
+        `Die Version der Webseite (0.13.1) entspricht nicht der Version der Server (${serverVersion})!`
       )
     ).toBeVisible();
   }
@@ -280,14 +280,6 @@ export default class AppPage extends TestPage {
     await expect(teamLink).toBeVisible();
     await teamLink.click();
     return expect(this.page).toHaveURL(`/en/team/${defaultTeams[0].id}`);
-  }
-
-  async iOpenMobileMenu() {
-    const menuToggle = this.page.getByRole("button", {
-      name: "Toggle navigation",
-    });
-    await this.iClickButton(menuToggle);
-    return new Promise((resolve) => setTimeout(resolve, 200));
   }
 
   async iSwitchLanguageTo(language: string) {

@@ -79,6 +79,15 @@
             </BDropdownText>
             <BDropdownDivider />
           </BDropdownGroup>
+          <BDropdownDivider v-show="teams && teams.length > 0" />
+          <BDropdownText
+            v-show="!teams || teams.length == 0"
+            class="text-muted small"
+            :style="{ color: 'var(--bs-secondary-color) !important' }"
+          >
+            <IBiPatchExclamation class="me-1 mb-1" />
+            {{ $t("general.empty-list") }}
+          </BDropdownText>
           <BDropdownItem
             v-show="$store.state.clubId"
             variant="success"
@@ -105,6 +114,14 @@
             {{ team.name }}
           </BDropdownItem>
           <BDropdownDivider v-show="teams && teams.length > 0" />
+          <BDropdownText
+            v-show="!teams || teams.length == 0"
+            class="text-muted small"
+            :style="{ color: 'var(--bs-secondary-color) !important' }"
+          >
+            <IBiPatchExclamation class="me-1 mb-1" />
+            {{ $t("general.empty-list") }}
+          </BDropdownText>
           <BDropdownItem
             v-show="$store.state.clubId"
             variant="success"
@@ -409,17 +426,23 @@
       </BNavbarNav>
     </BCollapse>
 
-    <CreateClubModal ref="createClubModal" @club-created="reloadPage" />
+    <CreateClubModal
+      ref="createClubModal"
+      :me="user"
+      @club-created="reloadPage"
+    />
 
     <CreateChoreoModal
       ref="createChoreoModal"
       :teams="teams"
+      :me="user"
       @add-choreo="reloadPage"
     />
 
     <CreateTeamModal
       v-if="$store.state.loggedIn"
       ref="createTeamModal"
+      :me="user"
       @team-created="onTeamCreated"
     />
   </BNavbar>
@@ -524,6 +547,11 @@ export default {
         this.load();
       },
       immediate: true,
+    },
+    "$store.state.owners": {
+      handler() {
+        this.load();
+      },
     },
   },
   created() {

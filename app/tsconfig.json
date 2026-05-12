@@ -1,10 +1,9 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
-    "strict": true /* Enable all strict type-checking options. */,
-    "skipLibCheck": true /* Skip type checking all .d.ts files. */,
+    "strict": true,
+    "skipLibCheck": true,
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     }
   }
 }

@@ -29,7 +29,7 @@ const router = Router();
  *                 type: string
  *               seasonId:
  *                 type: string
- *               memberIds:
+ *               MemberIds:
  *                 type: array
  *                 items:
  *                   type: string
@@ -48,7 +48,12 @@ router.post(
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
     const { teamId, seasonId, MemberIds = [] } = req.body;
-    return SeasonTeamService.create(teamId, seasonId, MemberIds, req.UserId)
+    return SeasonTeamService.create(
+      teamId,
+      seasonId,
+      MemberIds,
+      req.actingUserId,
+    )
       .then((seasonTeam: SeasonTeam | null) => {
         res.send(seasonTeam);
         return next();
@@ -79,7 +84,7 @@ router.post(
  *           schema:
  *             type: object
  *             properties:
- *               memberIds:
+ *               MemberIds:
  *                 type: array
  *                 items:
  *                   type: string
@@ -103,11 +108,11 @@ router.put(
     return SeasonTeamService.copyMembersIntoSeasonTeam(
       req.params.id,
       MemberIds,
-      req.UserId,
+      req.actingUserId,
     )
       .then((memberList) => {
         res.send(memberList);
-        next();
+        return next();
       })
       .catch((e: Error) => next(e));
   },
@@ -138,7 +143,7 @@ router.delete(
   "/:id",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    return SeasonTeamService.remove(req.params.id, req.UserId)
+    return SeasonTeamService.remove(req.params.id, req.actingUserId)
       .then(() => {
         res.send();
         return next();

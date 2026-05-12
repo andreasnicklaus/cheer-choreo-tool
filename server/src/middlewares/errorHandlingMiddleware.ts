@@ -1,4 +1,5 @@
 import {
+  AccessDeniedError,
   AuthorizationError,
   FaultyInputError,
   NotFoundError,
@@ -34,10 +35,12 @@ function errorHandlingMiddleWare(
       res
         .status(401)
         .send(`Unauthorized${error.message ? `: ${error.message}` : ""}`);
+    else if (error instanceof AccessDeniedError)
+      res.status(403).send(req.t("responses.access-denied"));
     else
       res.status(500).render("../src/views/error.ejs", {
         action: "generic error handling",
-        data: JSON.stringify({ userId: req.UserId, url: req.url }),
+        data: JSON.stringify({ userId: req.actingUserId, url: req.url }),
         error: error,
         timestamp: new Date().toLocaleString(req.locale),
       }); // njsscan-ignore: express_lfr_warning

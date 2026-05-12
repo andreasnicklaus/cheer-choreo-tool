@@ -1,7 +1,11 @@
 <template>
-  <BBadge v-show="show" variant="success" class="newVersionBadge px-2">{{
-    $t("neu").toUpperCase()
-  }}</BBadge>
+  <BBadge
+    v-if="show"
+    variant="success"
+    class="newVersionBadge d-inline-flex gap-1 align-items-center"
+  >
+    <IBiPatchExclamationFill />{{ $t("neu").toUpperCase() }}</BBadge
+  >
 </template>
 
 <script>

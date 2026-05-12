@@ -12,7 +12,7 @@ RUN apk del tzdata
 ENV NODE_ENV=production
 
 COPY package*.json ./
-RUN npm i --omit=dev
+RUN npm ci --omit=dev
 
 COPY ./ ./
 RUN npm run build

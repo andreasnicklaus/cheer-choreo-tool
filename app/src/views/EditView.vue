@@ -3,11 +3,24 @@
     <EditableNameHeading
       v-if="!$store.state.isMobile || mobileEditingEnabled"
       name="Choreo"
+      :class="me?.id != choreo?.UserId || loading ? 'mb-0' : 'mb-4'"
       :value="choreo?.name"
-      class="mb-4"
       :placeholder="`${$t('loading')}...`"
       @input="onNameEdit"
     />
+    <BPlaceholderWrapper :loading="loading">
+      <template #loading>
+        <BPlaceholder width="25%" class="mb-4" animation="wave" />
+      </template>
+      <p
+        v-show="accessSharingEnabled && me?.id != choreo?.UserId"
+        class="text-muted mb-4 fw-light"
+        data-testid="owner-display"
+      >
+        {{ $t("general.shared-with-you-by") }}
+        {{ choreo?.User?.username || "unknown" }}
+      </p>
+    </BPlaceholderWrapper>
 
     <!-- Controls -->
     <BRow
@@ -208,14 +221,51 @@
                 </BDropdownText>
               </BDropdownGroup>
               <BDropdownDivider />
-              <BDropdownItem
-                :disabled="!choreo"
-                variant="danger"
-                @click="() => $refs.deleteChoreoModal.open()"
+              <span>
+                <BDropdownItem
+                  :disabled="!choreo || !canDeleteChoreo"
+                  variant="danger"
+                  @click="() => $refs.deleteChoreoModal.open()"
+                >
+                  <IBiTrash class="me-2" />
+                  {{ $t("editView.choreo-loeschen") }}
+                </BDropdownItem>
+              </span>
+              <BDropdownDivider
+                v-if="
+                  accessSharingEnabled &&
+                  me?.id &&
+                  (choreo?.creator?.username || choreo?.updater?.username)
+                "
+              />
+              <BDropdownText
+                v-if="accessSharingEnabled && choreo?.creator?.username"
+                class="text-muted fw-light text-nowrap"
+                data-testid="creator-display"
+                @click.stop
               >
-                <IBiTrash class="me-2" />
-                {{ $t("editView.choreo-loeschen") }}
-              </BDropdownItem>
+                {{ $t("general.created-by") }}
+                {{
+                  choreo.creatorId != me.id
+                    ? choreo?.creator?.username
+                    : $t("general.you")
+                }}
+              </BDropdownText>
+              <BDropdownText
+                v-if="
+                  accessSharingEnabled && choreo?.updater?.username && me?.id
+                "
+                class="text-muted fw-light text-nowrap"
+                data-testid="updater-display"
+                @click.stop
+              >
+                {{ $t("general.last-updated-by") }}
+                {{
+                  choreo?.updaterId != me.id
+                    ? choreo?.updater?.username
+                    : $t("general.you")
+                }}
+              </BDropdownText>
             </BDropdown>
           </BCol>
         </BRow>
@@ -323,6 +373,7 @@
           <template #cell(actions)="data">
             <BButtonGroup>
               <BButton
+                v-if="canEditParticipants"
                 v-b-tooltip.hover.left="
                   $t('editView.auswechseln', {
                     name: data.item.nickname || data.item.name.split(' ')[0],
@@ -334,6 +385,7 @@
                 <IBiArrowRepeat />
               </BButton>
               <BButton
+                v-if="canEditParticipants"
                 v-b-tooltip.hover.right="
                   $t('editView.von-der-matte-nehmen', {
                     name: data.item.nickname || data.item.name.split(' ')[0],
@@ -370,6 +422,7 @@
           <template #cell(actions)="data">
             <BButtonGroup>
               <BButton
+                v-if="canEditParticipants"
                 v-b-tooltip.hover.left="
                   $t('editView.einwechseln', {
                     name: data.item.nickname || data.item.name.split(' ')[0],
@@ -381,11 +434,7 @@
                 <IBiArrowRepeat />
               </BButton>
               <BButton
-                v-b-tooltip.hover.right="
-                  $t('editView.auf-die-matte-stellen', {
-                    name: data.item.nickname || data.item.name.split(' ')[0],
-                  })
-                "
+                v-if="canEditParticipants"
                 variant="outline-success"
                 @click="addParticipant(data.item.id)"
               >
@@ -447,6 +496,7 @@
 import { useHead } from "@unhead/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { mapState } from "vuex";
 import Mat from "@/components/Mat.vue";
 import ChoreoService from "@/services/ChoreoService";
 import CountSheet from "@/components/CountSheet.vue";
@@ -470,6 +520,7 @@ import ERROR_CODES from "@/utils/error_codes";
 import { roundToDecimals, clamp } from "@/utils/numbers";
 import FeatureFlagService from "@/services/FeatureFlagService";
 import { FeatureFlagKeys } from "@/services/FeatureFlagService";
+import { canWrite, canDelete } from "@/utils/permissions";
 
 /**
  * @vue-data {string|null} choreoId=null - The ID of the choreo being edited.
@@ -524,6 +575,7 @@ export default {
   },
   data: function () {
     return {
+      loading: true,
       choreoId: null,
       matHeight: 500,
       matWidth: 500,
@@ -557,9 +609,20 @@ export default {
       proposedPositions: [],
       rejectedPositionProposals: [],
       mobileEditingEnabled: true,
+      accessSharingEnabled: true,
     };
   },
   computed: {
+    ...mapState(["owners", "me"]),
+    canEditChoreo() {
+      return canWrite(this.owners, this.me?.id, this.choreo?.UserId);
+    },
+    canDeleteChoreo() {
+      return canDelete(this.owners, this.me?.id, this.choreo?.UserId);
+    },
+    canEditParticipants() {
+      return this.canEditChoreo;
+    },
     teamMembers() {
       if (!this.choreo?.Participants) return [];
       return Array.from(this.choreo.Participants).sort((a, b) =>
@@ -622,16 +685,18 @@ export default {
     },
   },
   mounted() {
-    FeatureFlagService.isEnabled(FeatureFlagKeys.MOBILE_EDITING).then(
-      (enabled) => {
-        this.mobileEditingEnabled = enabled;
+    Promise.all([
+      FeatureFlagService.isEnabled(FeatureFlagKeys.MOBILE_EDITING),
+      FeatureFlagService.isEnabled(FeatureFlagKeys.ACCESS_SHARING),
+    ]).then(([mobileEditing, accessSharing]) => {
+      this.mobileEditingEnabled = mobileEditing;
+      this.accessSharingEnabled = accessSharing;
 
-        if (this.$store.state.isMobile && !this.mobileEditingEnabled) {
-          if (this.$refs.mobileChoreoEditModal)
-            this.$refs.mobileChoreoEditModal.open(this.choreoId);
-        } else this.loadChoreo();
-      }
-    );
+      if (this.$store.state.isMobile && !this.mobileEditingEnabled) {
+        if (this.$refs.mobileChoreoEditModal)
+          this.$refs.mobileChoreoEditModal.open(this.choreoId);
+      } else this.loadChoreo();
+    });
 
     useHead({
       title: computed(() => this.choreo?.name || this.t("pdf.laedt-choreo")),
@@ -678,6 +743,7 @@ export default {
   },
   methods: {
     loadChoreo() {
+      this.loading = true;
       ChoreoService.getById(this.choreoId)
         .then((choreo) => {
           if (!choreo) return;
@@ -702,6 +768,9 @@ export default {
                 ERROR_CODES.REDUNDANT_ROUTING
               );
             });
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
     onPositionChange(MemberId, x, y, isRetry = false) {
@@ -823,6 +892,8 @@ export default {
           };
         }
       }
+
+      this.setLastUpdaterToMe();
     },
     createPositionOnExistingLineup(lineupToUpdate, x, y, MemberId) {
       return PositionService.create(lineupToUpdate.id, x, y, MemberId).then(
@@ -838,6 +909,7 @@ export default {
           this.choreo.Lineups = lineupCopy;
           this.showSuccessMessage(this.$t("lineup", 1));
           this.updateProposedPositions();
+          this.setLastUpdaterToMe();
         }
       );
     },
@@ -951,15 +1023,18 @@ export default {
       this.choreo.name = nameNew;
       ChoreoService.changeName(this.choreoId, nameNew).then(() => {
         this.choreo.name = nameNew;
+        this.setLastUpdaterToMe();
         this.showSuccessMessage();
       });
     },
     onUpdateHits(hits) {
       this.choreo.Hits = hits;
+      this.setLastUpdaterToMe();
       this.showSuccessMessage(this.$t("countsheet", 1));
     },
     onUpdateLineups(lineups) {
       this.choreo.Lineups = lineups;
+      this.setLastUpdaterToMe();
       this.showSuccessMessage(this.$t("lineup", 1));
       this.updateProposedPositions();
     },
@@ -968,10 +1043,12 @@ export default {
     },
     onCountUpdate(counts) {
       this.choreo.counts = counts;
+      this.setLastUpdaterToMe();
       this.showSuccessMessage();
     },
     onMatTypeUpdate(matType) {
       this.choreo.matType = matType;
+      this.setLastUpdaterToMe();
       this.showSuccessMessage();
     },
     openCreateHitModal() {
@@ -981,6 +1058,7 @@ export default {
       let hitsCopy = this.choreo.Hits;
       hitsCopy.push(hit);
       this.choreo.Hits = hitsCopy;
+      this.setLastUpdaterToMe();
       this.showSuccessMessage(this.$t("countsheet", 1));
     },
     initiateHitUpdate() {
@@ -1037,6 +1115,7 @@ export default {
         this.choreo.Participants = this.choreo.Participants.filter(
           (p) => p.id != MemberId
         );
+        this.setLastUpdaterToMe();
         this.updateProposedPositions();
       });
     },
@@ -1050,6 +1129,7 @@ export default {
           ChoreoParticipation: { color },
         };
         this.choreo.Participants = [...this.choreo.Participants, memberToAdd];
+        this.setLastUpdaterToMe();
         this.updateProposedPositions();
       });
     },
@@ -1066,6 +1146,7 @@ export default {
         this.choreo.Participants.find(
           (p) => p.id == participantId
         ).ChoreoParticipation.color = color;
+        this.setLastUpdaterToMe();
       });
     },
     findPreviousPosition(memberId) {
@@ -1352,6 +1433,12 @@ export default {
         };
       });
       return proposedPositions;
+    },
+    setLastUpdaterToMe() {
+      if (this.me?.id && this.choreo?.updaterId === this.me?.id) {
+        this.choreo.updaterId = this.me?.id;
+        this.choreo.updater = this.me;
+      }
     },
   },
 };

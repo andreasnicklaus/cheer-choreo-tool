@@ -160,6 +160,7 @@ describe("ChoreoService", () => {
         matType: "test-matType",
         seasonTeamId: "test-seasonTeamId",
         participants: ["test-participantId"],
+        ownerId: null,
       });
 
       expect(result).toEqual({ key: "value" });

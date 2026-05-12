@@ -11,5 +11,5 @@ RUN cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN apk del tzdata
 
 COPY package*.json ./
-RUN npm i
+RUN npm ci
 CMD [ "npm", "run", "dev" ]

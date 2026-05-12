@@ -2,6 +2,7 @@ import { expect, Page } from "@playwright/test";
 import TestPage from "./page";
 import { defaultUser } from "../testData/user";
 import { defaultClubs } from "../testData/club";
+import { managedByMe } from "../testData/userAccess";
 
 export default class AccountPage extends TestPage {
   route = "/account";
@@ -187,5 +188,110 @@ export default class AccountPage extends TestPage {
     await this.iClickButton(confirmButton);
 
     await expect(this.page).toHaveURL("/en/login");
+  }
+
+  async iOpenCreateClubModal() {
+    await this.iSwitchToClubs();
+    const addClubButton = this.page.getByRole("button", {
+      name: "New club",
+      exact: true,
+    });
+    await this.iClickButton(addClubButton);
+  }
+
+  async iSeeOwnerSelectInCreateClubModal() {
+    const modal = this.page.getByRole("dialog", { name: "New club" });
+    await expect(modal.getByLabel("Owner")).toBeVisible();
+  }
+
+  async iSeeOwnerSelectOptionInCreateClubModal(text: string) {
+    const modal = this.page.getByRole("dialog", { name: "New club" });
+    const options = await modal
+      .getByRole("combobox", { name: "Owner" })
+      .locator("option")
+      .allTextContents();
+    expect(options.some((o) => o.includes(text))).toBeTruthy();
+  }
+
+  async iDontSeeOwnerSelectInCreateClubModal() {
+    const modal = this.page.getByRole("dialog", { name: "New club" });
+    await expect(modal.getByLabel("Owner")).not.toBeVisible();
+  }
+
+  iSwitchToAccess() {
+    return this.iClickButton(this.page.getByRole("tab", { name: "Access" }));
+  }
+
+  async iCheckSharedWithMe() {
+    await this.iSwitchToAccess();
+    await expect(this.page.getByText("Shared with me")).toBeVisible();
+    // Check that pending access is shown
+    if (managedByMe.length > 0) {
+      for (const access of managedByMe) {
+        if (!access.accepted) {
+          await expect(
+            this.page.getByTestId("sharedWithMeTable").getByText("Pending")
+          ).toBeVisible();
+        }
+      }
+    }
+  }
+
+  async iCheckManagedByMe() {
+    await this.iSwitchToAccess();
+    await expect(this.page.getByText("Managed by me")).toBeVisible();
+    // Check that managed users are displayed
+    if (managedByMe.length > 0) {
+      for (const access of managedByMe) {
+        await expect(
+          this.page.getByText(access.owner?.username || "")
+        ).toBeVisible();
+      }
+    }
+  }
+
+  async iInviteUser(email: string, role: string) {
+    await this.iSwitchToAccess();
+    await this.page.getByRole("button", { name: "Add user" }).click();
+
+    const emailInput = this.page.getByRole("textbox", {
+      name: "E-mail address",
+    });
+    await this.iFillInput(emailInput, email);
+
+    const roleSelect = this.page.getByRole("combobox", { name: "Role" });
+    await roleSelect.selectOption(role);
+
+    await this.page.getByRole("button", { name: "Send invitation" }).click();
+  }
+
+  async iAcceptAccess() {
+    await this.iSwitchToAccess();
+    // Click accept button for pending access
+    const acceptButton = this.page
+      .getByRole("button", { name: "Accept" })
+      .first();
+    await this.iClickButton(acceptButton);
+  }
+
+  async iDeclineAccess() {
+    await this.iSwitchToAccess();
+    // Click decline button for pending access
+    const declineButton = this.page
+      .getByRole("button", { name: "Decline" })
+      .first();
+    await this.iClickButton(declineButton);
+  }
+
+  iCheckPendingStatusInSharedWithMe() {
+    return expect(
+      this.page.getByTestId("sharedWithMeTable").getByText("Pending")
+    ).toBeVisible();
+  }
+
+  iCheckPendingStatusInManagedByMe() {
+    return expect(
+      this.page.getByTestId("managedByMeTable").getByText("Pending")
+    ).toBeVisible();
   }
 }

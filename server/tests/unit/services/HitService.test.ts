@@ -1,4 +1,4 @@
-import { describe, test, expect } from "@jest/globals";
+﻿import { describe, test, expect } from "@jest/globals";
 import HitService from "@/services/HitService";
 import Hit from "@/db/models/hit";
 import User from "@/db/models/user";
@@ -10,6 +10,7 @@ jest.mock("@/plugins/winston", () => ({
     error: jest.fn(),
   },
   debug: jest.fn(),
+  info: jest.fn(),
 }));
 
 jest.mock("@/db/db", () => {
@@ -26,7 +27,17 @@ jest.mock("@/plugins/nodemailer", () => ({
   verify: jest.fn().mockResolvedValue(true),
 }));
 
-let user = { id: "test-id" };
+jest.mock("@/services/FeatureFlagService", () => ({
+  __esModule: true,
+  default: {
+    isEnabled: jest.fn().mockResolvedValue(true),
+  },
+  FeatureFlagKey: {
+    ACCESS_SHARING: "access-sharing",
+  },
+}));
+
+let user: { id: string } = { id: "test-id" };
 
 describe("HitService", () => {
   beforeAll(async () => {
@@ -58,13 +69,16 @@ describe("HitService", () => {
       ChoreoId: choreo.id,
       UserId: user.id,
     });
-    const result = await HitService.getAll(user.id);
+    const result = await HitService.getAll([user.id], user.id);
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(1);
   });
 
   test("getAll returns empty for invalid user", async () => {
-    const result = await HitService.getAll("invalid-user-id");
+    const result = await HitService.getAll(
+      ["invalid-user-id"],
+      "invalid-user-id",
+    );
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(0);
   });
@@ -107,13 +121,17 @@ describe("HitService", () => {
       ChoreoId: choreo.id,
       UserId: user.id,
     });
-    const result = await HitService.findByName("TestHit", user.id);
+    const result = await HitService.findByName("TestHit", [user.id], user.id);
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(1);
   });
 
-  test("findByName returns empty for invalid name/user", async () => {
-    const result = await HitService.findByName("InvalidHit", user.id);
+  test("findByName returns empty for invalid name", async () => {
+    const result = await HitService.findByName(
+      "InvalidHit",
+      [user.id],
+      user.id,
+    );
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(0);
   });
@@ -195,8 +213,8 @@ describe("HitService", () => {
     );
     const newHitName = "updatedHit";
     await HitService.update(hit.id, { name: newHitName }, user.id);
-    const updatedAdmin = await HitService.findById(hit.id, user.id);
-    expect(updatedAdmin?.name).toBe(newHitName);
+    const updatedHit = await HitService.findById(hit.id, user.id);
+    expect(updatedHit?.name).toBe(newHitName);
   });
 
   test("update on non-existing hit should throw", async () => {
@@ -219,12 +237,12 @@ describe("HitService", () => {
       [],
       user.id,
     );
-    expect((await HitService.getAll(user.id)).length).toBe(1);
+    expect((await HitService.getAll([user.id], user.id)).length).toBe(1);
     await HitService.remove(hit.id, user.id);
-    expect((await HitService.getAll(user.id)).length).toBe(0);
+    expect((await HitService.getAll([user.id], user.id)).length).toBe(0);
   });
 
-  test("remove on non-existing admin should throw", async () => {
+  test("remove on non-existing hit should throw", async () => {
     expect(() =>
       HitService.remove("non-existing-id", user.id),
     ).rejects.toThrow();

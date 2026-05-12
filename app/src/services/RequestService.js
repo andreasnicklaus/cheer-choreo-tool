@@ -44,32 +44,34 @@ ax.interceptors.response.use(
       case 401:
         AuthService.removeToken();
         store.commit("setLoginState", false);
-        router
-          .push({
-            name: "Login",
-            params: { locale: i18n.global.locale.value },
-          })
-          .catch(() => {
-            logError(
-              "Redundant navigation to login",
-              ERROR_CODES.REDUNDANT_ROUTING
-            );
-          });
+        if (!error.config.skipRoutingToLogin)
+          router
+            .push({
+              name: "Login",
+              params: { locale: i18n.global.locale.value },
+            })
+            .catch(() => {
+              logError(
+                "Redundant navigation to login",
+                ERROR_CODES.REDUNDANT_ROUTING
+              );
+            });
         break;
       case 403:
         AuthService.removeToken();
         store.commit("setLoginState", false);
-        router
-          .push({
-            name: "Login",
-            params: { locale: i18n.global.locale.value },
-          })
-          .catch(() => {
-            logError(
-              "Redundant navigation to login",
-              ERROR_CODES.REDUNDANT_ROUTING
-            );
-          });
+        if (!error.config.skipRoutingToLogin)
+          router
+            .push({
+              name: "Login",
+              params: { locale: i18n.global.locale.value },
+            })
+            .catch(() => {
+              logError(
+                "Redundant navigation to login",
+                ERROR_CODES.REDUNDANT_ROUTING
+              );
+            });
         break;
       default:
     }
