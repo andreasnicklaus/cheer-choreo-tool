@@ -13,6 +13,7 @@ jest.mock("@/plugins/winston", () => ({
     debug: jest.fn(),
     error: jest.fn(),
   },
+  debug: jest.fn(),
   info: jest.fn(),
 }));
 
