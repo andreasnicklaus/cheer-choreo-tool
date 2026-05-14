@@ -71,7 +71,8 @@
     "typescript": "^5.9.3",
     "typescript-cp": "^0.1.9",
     "unleash-client": "^6.10.1",
-    "winston": "^3.19.0"
+    "winston": "^3.19.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",

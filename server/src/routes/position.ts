@@ -1,11 +1,29 @@
 import { NextFunction, Response, Request, Router } from "express";
+import { z } from "zod";
 import Position from "../db/models/position";
 import Lineup from "../db/models/lineup";
 import PositionService from "../services/PositionService";
 import LineupService from "../services/LineupService";
 import { requestQueue } from "@/middlewares/requestQueue";
+import { validate } from "@/middlewares/validateMiddleware";
+import { uuidParams } from "@/utils/zodSchemas";
 
 const { default: AuthService } = require("../services/AuthService");
+
+const positionQuerySchema = z.object({
+  lineupId: z.uuid().optional(),
+});
+
+const createPositionSchema = z.object({
+  x: z.number(),
+  y: z.number(),
+  MemberId: z.uuid(),
+  lineupId: z.uuid(),
+});
+const updatePositionSchema = createPositionSchema.partial();
+
+type PositionQuery = z.infer<typeof positionQuerySchema>;
+type CreatePositionBody = z.infer<typeof createPositionSchema>;
 
 const router = Router();
 
@@ -39,10 +57,12 @@ const router = Router();
 router.get(
   "/",
   AuthService.authenticateUser(),
+  validate(positionQuerySchema, "query"),
   (req: Request, res: Response, next: NextFunction) => {
-    if (req.query.lineupId)
+    const query = req.query as PositionQuery;
+    if (query.lineupId)
       PositionService.findByLineupId(
-        req.query.lineupId as string,
+        query.lineupId,
         req.ownerIds,
         req.actingUserId,
       )
@@ -96,8 +116,9 @@ router.get(
 router.post(
   "/",
   AuthService.authenticateUser(),
+  validate(createPositionSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { x, y, MemberId, lineupId } = req.body;
+    const { x, y, MemberId, lineupId } = req.body as CreatePositionBody;
 
     PositionService.findOrCreate(x, y, lineupId, MemberId, req.actingUserId)
       .then(async (position: Position) => {
@@ -155,6 +176,8 @@ router.post(
 router.put(
   "/:id",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
+  validate(updatePositionSchema),
   requestQueue("positionUpdate"),
   (req: Request, res: Response, next: NextFunction) => {
     PositionService.update(req.params.id, null, req.body, req.actingUserId)
@@ -192,6 +215,7 @@ router.put(
 router.delete(
   "/:id",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
     PositionService.remove(req.params.id, req.actingUserId)
       .then(() => {

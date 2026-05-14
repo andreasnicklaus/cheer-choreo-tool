@@ -231,6 +231,127 @@
       message: "Willkommen beim Choreo Planer! Viel Spaß beim Erstellen deiner Teams und Choreos!\n\n[Hilfe bekommen](/hilfe)\n\n[Kontakt](mailto:info@choreo-planer.de)"
     }
   },
+  validation: {
+    generic: {
+      too_small: "Dieses Feld ist erforderlich",
+      too_big: "Wert ist zu groß",
+      invalid_type: "Ungültiger Wertetyp",
+      invalid_string: "Ungültiges Format",
+      invalid_enum_value: "Ungültiger Wert",
+    },
+    name: {
+      too_small: "Name ist erforderlich",
+    },
+    ssoToken: {
+      too_small: "Ein SSO-Token ist erforderlich. Bitte kontaktieren Sie admin@choreo-planer.de",
+    },
+    username: {
+      too_small: "Benutzername muss mindestens 6 Zeichen lang sein",
+    },
+    password: {
+      too_small: "Passwort muss mindestens 8 Zeichen lang sein",
+    },
+    email: {
+      invalid_string: "Ungültiges E-Mail-Format",
+    },
+    stars: {
+      too_small: "Sterne müssen mindestens 1 sein",
+      too_big: "Sterne dürfen höchstens 5 sein",
+      invalid_type: "Sterne müssen eine Zahl sein",
+    },
+    text: {
+      too_small: "Text ist erforderlich",
+    },
+    ownerId: {
+      invalid_string: "Ungültiges Besitzer-ID-Format",
+    },
+    emailConfirmed: {
+      invalid_type: "emailConfirmed muss ein Boolean sein",
+    },
+    subject: {
+      too_small: "Betreff ist erforderlich",
+    },
+    message: {
+      too_small: "Nachricht ist erforderlich",
+    },
+    category: {
+      too_small: "Kategorie ist erforderlich",
+    },
+    count: {
+      too_small: "Count muss mindestens 0 sein",
+      invalid_type: "Count muss eine Zahl sein",
+    },
+    choreoId: {
+      invalid_string: "Ungültiges Choreo-ID-Format",
+    },
+    MemberIds: {
+      invalid_type: "Mitglieds-IDs müssen ein Array sein",
+    },
+    startCount: {
+      too_small: "Startanzahl ist erforderlich",
+      invalid_type: "Startanzahl muss eine Zahl sein",
+    },
+    endCount: {
+      too_small: "Endanzahl ist erforderlich",
+      invalid_type: "Endanzahl muss eine Zahl sein",
+    },
+    MemberId: {
+      invalid_string: "Ungültiges Mitglieds-ID-Format",
+    },
+    x: {
+      invalid_type: "X-Koordinate muss eine Zahl sein",
+    },
+    y: {
+      invalid_type: "Y-Koordinate muss eine Zahl sein",
+    },
+    nickname: {
+      too_small: "Spitzname ist erforderlich",
+    },
+    abbreviation: {
+      too_small: "Abkürzung ist erforderlich",
+    },
+    seasonTeamId: {
+      invalid_string: "Ungültiges Season-Team-ID-Format",
+    },
+    year: {
+      too_small: "Jahr ist erforderlich",
+      invalid_type: "Jahr muss eine Zahl sein",
+    },
+    teamId: {
+      invalid_string: "Ungültiges Team-ID-Format",
+    },
+    seasonId: {
+      invalid_string: "Ungültiges Season-ID-Format",
+    },
+    clubId: {
+      invalid_string: "Ungültiges Club-ID-Format",
+    },
+    childEmail: {
+      invalid_string: "Ungültiges E-Mail-Format für das Kind",
+    },
+    role: {
+      invalid_enum_value: "Rolle muss eine der folgenden sein: coach, assistant, athlete",
+    },
+    enabled: {
+      invalid_type: "Enabled muss ein Boolean sein",
+    },
+    lineupId: {
+      invalid_string: "Ungültiges Lineup-ID-Format",
+    },
+    matType: {
+      too_small: "Matte-Typ ist erforderlich",
+    },
+    counts: {
+      too_small: "Counts muss mindestens 0 sein",
+      invalid_type: "Counts muss eine Zahl sein",
+    },
+    participants: {
+      invalid_type: "Teilnehmer müssen ein Array sein",
+    },
+    timeOfManualUpdate: {
+      invalid_string: "Ungültiges Zeitstempelformat",
+    },
+  },
   responses: {
     "email-required": "Eine E-Mail-Adresse ist erforderlich.",
     "sso-link-sent": "Single-Sign-On-Link wurde an Ihren E-Mail-Posteingang gesendet.",

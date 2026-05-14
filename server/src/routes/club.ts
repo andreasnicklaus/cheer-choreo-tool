@@ -1,12 +1,29 @@
 import { NextFunction, Request, Response, Router } from "express";
+import { z } from "zod";
 import Club from "../db/models/club";
 import ClubService from "../services/ClubService";
 import NotificationService from "../services/NotificationService";
 import FileService from "../services/FileService";
 import { NotFoundError } from "@/utils/errors";
+import { validate } from "@/middlewares/validateMiddleware";
+import { uuidParams, uuidParamsOptional } from "@/utils/zodSchemas";
 
 const path = require("node:path");
 const { default: AuthService } = require("../services/AuthService");
+
+const clubQuerySchema = z.object({
+  name: z.string().optional(),
+});
+
+const createClubSchema = z.object({
+  name: z.string().min(1),
+  ownerId: z.uuid().optional(),
+});
+const updateClubSchema = createClubSchema.partial();
+
+type ClubQuery = z.infer<typeof clubQuerySchema>;
+type CreateClubBody = z.infer<typeof createClubSchema>;
+type UuidParams = z.infer<typeof uuidParams>;
 
 const router = Router();
 
@@ -49,9 +66,13 @@ const router = Router();
 router.get(
   "/{:id}",
   AuthService.authenticateUser(),
+  validate(uuidParamsOptional, "params"),
+  validate(clubQuerySchema, "query"),
   (req: Request, res: Response, next: NextFunction) => {
-    if (req.params.id)
-      return ClubService.findById(req.params.id, req.actingUserId)
+    const params = req.params as UuidParams;
+    const query = req.query as ClubQuery;
+    if (params.id)
+      return ClubService.findById(params.id, req.actingUserId)
         .then((foundClub: Club | null) => {
           if (!foundClub) throw new NotFoundError();
           else res.send(foundClub);
@@ -59,9 +80,9 @@ router.get(
         })
         .catch((e: Error) => next(e));
     else {
-      if (req.query.name)
+      if (query.name)
         return ClubService.findByName(
-          req.query.name as string,
+          query.name,
           req.ownerIds,
           req.actingUserId,
         )
@@ -117,8 +138,9 @@ router.get(
 router.post(
   "/",
   AuthService.authenticateUser(),
+  validate(createClubSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { name, ownerId } = req.body;
+    const { name, ownerId } = req.body as CreateClubBody;
     return ClubService.create(
       name,
       ownerId || req.actingUserId,
@@ -173,6 +195,8 @@ router.post(
 router.put(
   "/:id",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
+  validate(updateClubSchema),
   (req: Request, res: Response, next: NextFunction) => {
     return ClubService.update(req.params.id, req.body, req.actingUserId)
       .then((club: Club) => {
@@ -209,6 +233,7 @@ router.put(
 router.delete(
   "/:id",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
     return ClubService.remove(req.params.id, req.actingUserId)
       .then(() => {
@@ -259,6 +284,7 @@ router.delete(
 router.put(
   "/:id/clubLogo",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
   FileService.singleFileMiddleware("clubLogo"),
   (req: Request, res: Response, next: NextFunction) => {
     const clubId = req.params.id;
@@ -306,6 +332,7 @@ router.put(
 router.get(
   "/:id/clubLogo",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
     const clubId = req.params.id;
     ClubService.findById(clubId, req.actingUserId)
@@ -348,6 +375,7 @@ router.get(
 router.delete(
   "/:id/clubLogo",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
     const clubId = req.params.id;
     ClubService.update(clubId, { logoExtension: null }, req.actingUserId)

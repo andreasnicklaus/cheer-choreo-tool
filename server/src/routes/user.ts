@@ -1,9 +1,34 @@
 import { NextFunction, Response, Request, Router } from "express";
+import { z } from "zod";
 import User from "../db/models/user";
 import UserService from "../services/UserService";
 import UserAccessService from "../services/UserAccessService";
+import { validate } from "@/middlewares/validateMiddleware";
+import { uuidParams } from "@/utils/zodSchemas";
 
 const { default: AuthService } = require("../services/AuthService");
+import { AccessRole } from "@/db/models/userAccess";
+
+const updateUserSchema = z.object({
+  username: z.string().min(6).optional(),
+  email: z.email().optional(),
+  emailConfirmed: z.boolean().optional(),
+});
+
+const inviteAccessSchema = z.object({
+  childEmail: z.email(),
+  role: z.enum(["coach", "assistant", "athlete"]),
+});
+
+const updateAccessSchema = z.object({
+  role: z.enum(["coach", "assistant", "athlete"]).optional(),
+  enabled: z.boolean().optional(),
+});
+
+type UpdateUserBody = z.infer<typeof updateUserSchema>;
+type InviteAccessBody = z.infer<typeof inviteAccessSchema>;
+type UpdateAccessBody = z.infer<typeof updateAccessSchema>;
+type UuidParams = z.infer<typeof uuidParams>;
 
 const router = Router();
 
@@ -35,8 +60,9 @@ const router = Router();
 router.put(
   "/",
   AuthService.authenticateUser(),
+  validate(updateUserSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    UserService.update(req.actingUserId, req.body)
+    UserService.update(req.actingUserId, req.body as UpdateUserBody)
       .then((user: User | null) => {
         res.send(user);
         next();
@@ -92,8 +118,10 @@ router.delete(
  */
 router.get(
   "/revokeEmail/:id",
+  validate(uuidParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
-    UserService.remove(req.params.id)
+    const { id } = req.params as UuidParams;
+    UserService.remove(id)
       .then(() => {
         res.render("../src/views/emailRevoked.ejs", {
           frontendDomain: process.env.FRONTEND_DOMAIN,
@@ -130,8 +158,10 @@ router.get(
  */
 router.get(
   "/confirmEmail/:id",
+  validate(uuidParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
-    UserService.update(req.params.id, { emailConfirmed: true })
+    const { id } = req.params as UuidParams;
+    UserService.update(id, { emailConfirmed: true })
       .then((_user: User | null) => {
         res.render("../src/views/emailConfirmed.ejs", {
           frontendDomain: process.env.FRONTEND_DOMAIN,
@@ -240,14 +270,15 @@ router.get(
 router.post(
   "/access",
   AuthService.authenticateUser(),
+  validate(inviteAccessSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { childEmail, role } = req.body;
+    const { childEmail, role } = req.body as InviteAccessBody;
     User.findOne({ where: { email: childEmail } })
       .then((child: User | null) => {
         if (!child) {
           throw new Error("User not found");
         }
-        return UserAccessService.create(req.actingUserId, child.id, role, true);
+        return UserAccessService.create(req.actingUserId, child.id, role as AccessRole, true);
       })
       .then((access) => {
         res.send(access);
@@ -289,8 +320,15 @@ router.post(
 router.put(
   "/access/:id",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
+  validate(updateAccessSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    UserAccessService.update(req.params.id, req.body, req.actingUserId)
+    const updateData = req.body as UpdateAccessBody;
+    UserAccessService.update(
+      req.params.id,
+      { ...updateData, role: updateData.role as AccessRole | undefined },
+      req.actingUserId,
+    )
       .then((access) => {
         res.send(access);
         next();
@@ -321,6 +359,7 @@ router.put(
 router.delete(
   "/access/:id",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
     UserAccessService.remove(req.params.id, req.actingUserId)
       .then(() => {
@@ -353,8 +392,10 @@ router.delete(
 router.post(
   "/access/:id/accept",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
-    UserAccessService.accept(req.params.id, req.actingUserId)
+    const { id } = req.params as UuidParams;
+    UserAccessService.accept(id, req.actingUserId)
       .then((access) => {
         res.send(access);
         next();
@@ -387,8 +428,10 @@ router.post(
 router.post(
   "/access/:id/decline",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
-    UserAccessService.decline(req.params.id, req.actingUserId)
+    const { id } = req.params as UuidParams;
+    UserAccessService.decline(id, req.actingUserId)
       .then((access) => {
         res.send(access);
         next();

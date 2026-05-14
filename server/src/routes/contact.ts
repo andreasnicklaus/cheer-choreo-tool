@@ -1,7 +1,19 @@
 import { NextFunction, Request, Response, Router } from "express";
+import { z } from "zod";
 import ContactService from "@/services/ContactService";
 import { openApiRateLimit } from "@/middlewares/rateLimitMiddleware";
 import AuthService from "@/services/AuthService";
+import { validate } from "@/middlewares/validateMiddleware";
+
+const createContactSchema = z.object({
+  name: z.string().min(1),
+  email: z.email(),
+  subject: z.string().min(1),
+  message: z.string().min(1),
+  category: z.string().min(1),
+});
+
+type CreateContactBody = z.infer<typeof createContactSchema>;
 
 /**
  * @swagger
@@ -58,8 +70,9 @@ router.post(
   "/",
   openApiRateLimit,
   AuthService.authenticateUser(false),
+  validate(createContactSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { name, email, subject, message, category } = req.body;
+    const { name, email, subject, message, category } = req.body as CreateContactBody;
     return ContactService.sendMessage(
       name,
       email,

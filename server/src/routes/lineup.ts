@@ -1,11 +1,39 @@
 import { NextFunction, Response, Request, Router } from "express";
+import { z } from "zod";
 import Lineup from "../db/models/lineup";
 import Position from "../db/models/position";
 import LineupService from "../services/LineupService";
 import PositionService from "../services/PositionService";
 import { requestQueue } from "@/middlewares/requestQueue";
+import { validate } from "@/middlewares/validateMiddleware";
+import { uuidParams } from "@/utils/zodSchemas";
 
 const { default: AuthService } = require("../services/AuthService");
+
+const createLineupSchema = z.object({
+  startCount: z.number().int(),
+  endCount: z.number().int(),
+  choreoId: z.uuid(),
+});
+const updateLineupSchema = createLineupSchema.partial();
+
+const lineupPositionParams = z.object({
+  id: z.uuid(),
+  positionId: z.uuid(),
+});
+
+const addPositionSchema = z.object({
+  x: z.number(),
+  y: z.number(),
+  MemberId: z.uuid(),
+  timeOfManualUpdate: z.string().optional(),
+});
+const updatePositionSchema = addPositionSchema.partial();
+
+type CreateLineupBody = z.infer<typeof createLineupSchema>;
+type UpdateLineupBody = z.infer<typeof updateLineupSchema>;
+type AddPositionBody = z.infer<typeof addPositionSchema>;
+type LineupPositionParams = z.infer<typeof lineupPositionParams>;
 
 const router = Router();
 
@@ -48,8 +76,9 @@ const router = Router();
 router.post(
   "/",
   AuthService.authenticateUser(),
+  validate(createLineupSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { startCount, endCount, choreoId } = req.body;
+    const { startCount, endCount, choreoId } = req.body as CreateLineupBody;
     LineupService.create(startCount, endCount, choreoId, req.actingUserId)
       .then((lineup: Lineup) => {
         res.send(lineup);
@@ -95,8 +124,10 @@ router.post(
 router.put(
   "/:id",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
+  validate(updateLineupSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    LineupService.update(req.params.id, req.body, req.actingUserId)
+    LineupService.update(req.params.id, req.body as UpdateLineupBody, req.actingUserId)
       .then((lineup: Lineup | null) => {
         res.send(lineup);
         return next();
@@ -154,9 +185,11 @@ router.put(
 router.post(
   "/:id/position",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
+  validate(addPositionSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { x, y, MemberId, timeOfManualUpdate } = req.body;
-    PositionService.create(x, y, req.actingUserId, timeOfManualUpdate)
+    const { x, y, MemberId, timeOfManualUpdate } = req.body as AddPositionBody;
+    PositionService.create(x, y, req.actingUserId, timeOfManualUpdate as string)
       .then(async (position: Position) => {
         return Promise.all([
           position.setMember(MemberId),
@@ -217,11 +250,14 @@ router.post(
 router.put(
   "/:id/position/:positionId",
   AuthService.authenticateUser(),
+  validate(lineupPositionParams, "params"),
+  validate(updatePositionSchema),
   requestQueue("positionUpdate"),
   (req: Request, res: Response, next: NextFunction) => {
+    const params = req.params as LineupPositionParams;
     PositionService.update(
-      req.params.positionId,
-      req.params.id,
+      params.positionId,
+      params.id,
       req.body,
       req.actingUserId,
     )
@@ -259,6 +295,7 @@ router.put(
 router.delete(
   "/:id",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
     LineupService.remove(req.params.id, req.actingUserId)
       .then(() => {

@@ -109,7 +109,8 @@ class AuthService {
         async (err: Error, content: jwtContent) => {
           if (err) {
             if (!failIfNotLoggedIn) return next();
-            return res.status(403);
+            res.status(403);
+            return res.send();
           }
 
           User.findByPk(content.UserId)

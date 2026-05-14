@@ -1,9 +1,23 @@
 import { NextFunction, Response, Request, Router } from "express";
+import { z } from "zod";
 import Hit from "../db/models/hit";
 import HitService from "../services/HitService";
 import { NotFoundError } from "@/utils/errors";
+import { validate } from "@/middlewares/validateMiddleware";
+import { uuidParams, uuidParamsOptional } from "@/utils/zodSchemas";
 
 const { default: AuthService } = require("../services/AuthService");
+
+const createHitSchema = z.object({
+  name: z.string().min(1),
+  count: z.number().int().min(0),
+  choreoId: z.uuid(),
+  MemberIds: z.array(z.uuid()).optional().default([]),
+});
+const updateHitSchema = createHitSchema.partial();
+
+type CreateHitBody = z.infer<typeof createHitSchema>;
+type UpdateHitBody = z.infer<typeof updateHitSchema>;
 
 const router = Router();
 
@@ -41,6 +55,7 @@ const router = Router();
 router.get(
   "/{:id}",
   AuthService.authenticateUser(),
+  validate(uuidParamsOptional, "params"),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.params.id)
       return HitService.findById(req.params.id, req.actingUserId)
@@ -104,8 +119,9 @@ router.get(
 router.post(
   "/",
   AuthService.authenticateUser(),
+  validate(createHitSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { name, count, choreoId, MemberIds = [] } = req.body;
+    const { name, count, choreoId, MemberIds = [] } = req.body as CreateHitBody;
     return HitService.create(name, count, choreoId, MemberIds, req.actingUserId)
       .then((hit: Hit | null) => {
         res.send(hit);
@@ -151,8 +167,10 @@ router.post(
 router.put(
   "/:id",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
+  validate(updateHitSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    return HitService.update(req.params.id, req.body, req.actingUserId)
+    return HitService.update(req.params.id, req.body as UpdateHitBody, req.actingUserId)
       .then((hit: Hit | null) => {
         res.send(hit);
         return next();
@@ -187,6 +205,7 @@ router.put(
 router.delete(
   "/:id",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
     return HitService.remove(req.params.id, req.actingUserId)
       .then(() => {
