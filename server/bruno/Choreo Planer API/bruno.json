@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Choreo Planer API",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
