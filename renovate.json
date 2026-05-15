@@ -3,5 +3,6 @@
   "extends": ["config:recommended"],
   "baseBranchPatterns": ["dev"],
   "automerge": true,
-  "prConcurrentLimit": 5
+  "prConcurrentLimit": 5,
+  "minimumReleaseAge": "7 days"
 }
