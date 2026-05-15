@@ -26,7 +26,7 @@
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
     "@logtail/browser": "^0.5.8",
-    "@unhead/vue": "^2.1.15",
+    "@unhead/vue": "^3.0.0",
     "@vueuse/core": "^14.3.0",
     "axios": "^1.16.0",
     "axios-cache-interceptor": "^1.12.0",
