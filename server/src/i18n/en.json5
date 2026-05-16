@@ -237,120 +237,120 @@
       too_big: "Value is too large",
       invalid_type: "Invalid value type",
       invalid_string: "Invalid format",
-      invalid_enum_value: "Invalid value",
+      invalid_enum_value: "Invalid value"
     },
     name: {
-      too_small: "Name is required",
+      too_small: "Name is required"
     },
     ssoToken: {
-      too_small: "A SSO token is required. Please contact admin@choreo-planer.de",
+      too_small: "A SSO token is required. Please contact admin@choreo-planer.de"
     },
     username: {
-      too_small: "Username must be at least 6 characters",
+      too_small: "Username must be at least 6 characters"
     },
     password: {
-      too_small: "Password must be at least 8 characters",
+      too_small: "Password must be at least 8 characters"
     },
     email: {
-      invalid_string: "Invalid email format",
+      invalid_string: "Invalid email format"
     },
     stars: {
       too_small: "Stars must be at least 1",
       too_big: "Stars must be at most 5",
-      invalid_type: "Stars must be a number",
+      invalid_type: "Stars must be a number"
     },
     text: {
-      too_small: "Text is required",
+      too_small: "Text is required"
     },
     ownerId: {
-      invalid_string: "Invalid owner ID format",
+      invalid_string: "Invalid owner ID format"
     },
     emailConfirmed: {
-      invalid_type: "emailConfirmed must be a boolean",
+      invalid_type: "emailConfirmed must be a boolean"
     },
     subject: {
-      too_small: "Subject is required",
+      too_small: "Subject is required"
     },
     message: {
-      too_small: "Message is required",
+      too_small: "Message is required"
     },
     category: {
-      too_small: "Category is required",
+      too_small: "Category is required"
     },
     count: {
       too_small: "Count must be at least 0",
-      invalid_type: "Count must be a number",
+      invalid_type: "Count must be a number"
     },
     choreoId: {
-      invalid_string: "Invalid choreo ID format",
+      invalid_string: "Invalid choreo ID format"
     },
     MemberIds: {
-      invalid_type: "Member IDs must be an array",
+      invalid_type: "Member IDs must be an array"
     },
     startCount: {
       too_small: "Start count is required",
-      invalid_type: "Start count must be a number",
+      invalid_type: "Start count must be a number"
     },
     endCount: {
       too_small: "End count is required",
-      invalid_type: "End count must be a number",
+      invalid_type: "End count must be a number"
     },
     MemberId: {
-      invalid_string: "Invalid member ID format",
+      invalid_string: "Invalid member ID format"
     },
     x: {
-      invalid_type: "X coordinate must be a number",
+      invalid_type: "X coordinate must be a number"
     },
     y: {
-      invalid_type: "Y coordinate must be a number",
+      invalid_type: "Y coordinate must be a number"
     },
     nickname: {
-      too_small: "Nickname is required",
+      too_small: "Nickname is required"
     },
     abbreviation: {
-      too_small: "Abbreviation is required",
+      too_small: "Abbreviation is required"
     },
     seasonTeamId: {
-      invalid_string: "Invalid season-team ID format",
+      invalid_string: "Invalid season-team ID format"
     },
     year: {
       too_small: "Year is required",
-      invalid_type: "Year must be a number",
+      invalid_type: "Year must be a number"
     },
     teamId: {
-      invalid_string: "Invalid team ID format",
+      invalid_string: "Invalid team ID format"
     },
     seasonId: {
-      invalid_string: "Invalid season ID format",
+      invalid_string: "Invalid season ID format"
     },
     clubId: {
-      invalid_string: "Invalid club ID format",
+      invalid_string: "Invalid club ID format"
     },
     childEmail: {
-      invalid_string: "Invalid email format for child",
+      invalid_string: "Invalid email format for child"
     },
     role: {
-      invalid_enum_value: "Role must be one of: coach, assistant, athlete",
+      invalid_enum_value: "Role must be one of: coach, assistant, athlete"
     },
     enabled: {
-      invalid_type: "Enabled must be a boolean",
+      invalid_type: "Enabled must be a boolean"
     },
     lineupId: {
-      invalid_string: "Invalid lineup ID format",
+      invalid_string: "Invalid lineup ID format"
     },
     matType: {
-      too_small: "Mat type is required",
+      too_small: "Mat type is required"
     },
     counts: {
       too_small: "Counts must be at least 0",
-      invalid_type: "Counts must be a number",
+      invalid_type: "Counts must be a number"
     },
     participants: {
-      invalid_type: "Participants must be an array",
+      invalid_type: "Participants must be an array"
     },
     timeOfManualUpdate: {
-      invalid_string: "Invalid timestamp format",
-    },
+      invalid_string: "Invalid timestamp format"
+    }
   },
   responses: {
     "email-required": "An email address is required.",

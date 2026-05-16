@@ -63,7 +63,11 @@ router.post(
   AuthService.authenticateUser(),
   validate(createSeasonTeamSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { teamId, seasonId, MemberIds = [] } = req.body as CreateSeasonTeamBody;
+    const {
+      teamId,
+      seasonId,
+      MemberIds = [],
+    } = req.body as CreateSeasonTeamBody;
     return SeasonTeamService.create(
       teamId,
       seasonId,

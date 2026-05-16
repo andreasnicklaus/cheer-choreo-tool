@@ -61,7 +61,8 @@ router.post(
   AuthService.authenticateUser(),
   validate(createMemberSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { name, nickname, abbreviation, seasonTeamId } = req.body as CreateMemberBody;
+    const { name, nickname, abbreviation, seasonTeamId } =
+      req.body as CreateMemberBody;
     MemberService.create(
       name,
       nickname as string,

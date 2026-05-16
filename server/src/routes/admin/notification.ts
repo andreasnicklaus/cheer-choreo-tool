@@ -33,57 +33,64 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
     .catch((e) => next(e));
 });
 
-router.post("/", validate(sendNotificationSchema), (req: Request, res: Response, next: NextFunction) => {
-  const { message, notifyViaEmail, sendToAllUsers } = req.body;
-  let { title, targetUsers } = req.body;
+router.post(
+  "/",
+  validate(sendNotificationSchema),
+  (req: Request, res: Response, next: NextFunction) => {
+    const { message, notifyViaEmail, sendToAllUsers } = req.body;
+    let { title, targetUsers } = req.body;
 
-  if (typeof targetUsers == "string") targetUsers = [targetUsers];
-  if (!title || title.length == 0) title = null;
+    if (typeof targetUsers == "string") targetUsers = [targetUsers];
+    if (!title || title.length == 0) title = null;
 
-  let notificationSendPromise = null;
-  if (sendToAllUsers)
-    notificationSendPromise = NotificationService.createForAll(title, message);
-  else {
-    notificationSendPromise = Promise.all(
-      targetUsers.map((userId: string) =>
-        NotificationService.createOne(title, message, userId),
-      ),
-    );
-  }
+    let notificationSendPromise = null;
+    if (sendToAllUsers)
+      notificationSendPromise = NotificationService.createForAll(
+        title,
+        message,
+      );
+    else {
+      notificationSendPromise = Promise.all(
+        targetUsers.map((userId: string) =>
+          NotificationService.createOne(title, message, userId),
+        ),
+      );
+    }
 
-  return notificationSendPromise
-    .then(async () => {
-      if (notifyViaEmail) {
-        if (sendToAllUsers) {
-          await UserService.getAll().then((users: User[]) => {
-            targetUsers = users.map((u) => u.id);
-          });
-        }
-        Promise.all(
-          targetUsers.map((userId: string) => {
-            return UserService.findById(userId).then((user: User | null) => {
-              if (user?.email && user.emailConfirmed) {
-                const token = AuthService.generateAccessToken(user.id, {
-                  expiresIn: process.env.SSO_TOKEN_EXPIRES_IN,
-                });
-                return MailService.sendNotificationNotice(
-                  user.email,
-                  user.username,
-                  token,
-                  title,
-                  req.locale,
-                );
-              }
+    return notificationSendPromise
+      .then(async () => {
+        if (notifyViaEmail) {
+          if (sendToAllUsers) {
+            await UserService.getAll().then((users: User[]) => {
+              targetUsers = users.map((u) => u.id);
             });
-          }),
-        );
-      }
+          }
+          Promise.all(
+            targetUsers.map((userId: string) => {
+              return UserService.findById(userId).then((user: User | null) => {
+                if (user?.email && user.emailConfirmed) {
+                  const token = AuthService.generateAccessToken(user.id, {
+                    expiresIn: process.env.SSO_TOKEN_EXPIRES_IN,
+                  });
+                  return MailService.sendNotificationNotice(
+                    user.email,
+                    user.username,
+                    token,
+                    title,
+                    req.locale,
+                  );
+                }
+              });
+            }),
+          );
+        }
 
-      res.redirect(req.baseUrl); // njsscan-ignore: express_open_redirect
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+        res.redirect(req.baseUrl); // njsscan-ignore: express_open_redirect
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 // router.post("/update", (req, res, next) => {
 //   let { id, ...data } = req.body;
@@ -97,13 +104,17 @@ router.post("/", validate(sendNotificationSchema), (req: Request, res: Response,
 //     .catch((e) => next(e));
 // });
 
-router.delete("/:id", validate(uuidParams, "params"), (req: Request, res: Response, next: NextFunction) => {
-  return NotificationService.remove(req.params.id, null, { all: true })
-    .then(() => {
-      res.redirect(req.baseUrl); // njsscan-ignore: express_open_redirect
-      return next();
-    })
-    .catch((e: Error) => next(e));
-});
+router.delete(
+  "/:id",
+  validate(uuidParams, "params"),
+  (req: Request, res: Response, next: NextFunction) => {
+    return NotificationService.remove(req.params.id, null, { all: true })
+      .then(() => {
+        res.redirect(req.baseUrl); // njsscan-ignore: express_open_redirect
+        return next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 export { router as notificationRouter };

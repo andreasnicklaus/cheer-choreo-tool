@@ -127,7 +127,11 @@ router.put(
   validate(uuidParams, "params"),
   validate(updateLineupSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    LineupService.update(req.params.id, req.body as UpdateLineupBody, req.actingUserId)
+    LineupService.update(
+      req.params.id,
+      req.body as UpdateLineupBody,
+      req.actingUserId,
+    )
       .then((lineup: Lineup | null) => {
         res.send(lineup);
         return next();

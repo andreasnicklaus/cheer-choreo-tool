@@ -2,7 +2,9 @@ import { uuidParams, uuidParamsOptional, colorHex } from "@/utils/zodSchemas";
 
 describe("uuidParams", () => {
   it("accepts a valid UUID", () => {
-    const result = uuidParams.safeParse({ id: "550e8400-e29b-41d4-a716-446655440000" });
+    const result = uuidParams.safeParse({
+      id: "550e8400-e29b-41d4-a716-446655440000",
+    });
     expect(result.success).toBe(true);
   });
 
@@ -24,7 +26,9 @@ describe("uuidParams", () => {
 
 describe("uuidParamsOptional", () => {
   it("accepts a valid UUID", () => {
-    const result = uuidParamsOptional.safeParse({ id: "550e8400-e29b-41d4-a716-446655440000" });
+    const result = uuidParamsOptional.safeParse({
+      id: "550e8400-e29b-41d4-a716-446655440000",
+    });
     expect(result.success).toBe(true);
   });
 

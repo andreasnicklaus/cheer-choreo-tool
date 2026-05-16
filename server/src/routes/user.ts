@@ -278,7 +278,12 @@ router.post(
         if (!child) {
           throw new Error("User not found");
         }
-        return UserAccessService.create(req.actingUserId, child.id, role as AccessRole, true);
+        return UserAccessService.create(
+          req.actingUserId,
+          child.id,
+          role as AccessRole,
+          true,
+        );
       })
       .then((access) => {
         res.send(access);

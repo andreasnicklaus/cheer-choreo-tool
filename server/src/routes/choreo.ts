@@ -13,7 +13,10 @@ const createChoreoSchema = z.object({
   counts: z.number().int().min(0),
   matType: z.string().min(1),
   seasonTeamId: z.uuid(),
-  participants: z.array(z.object({ id: z.uuid(), color: colorHex.optional() })).optional().default([]),
+  participants: z
+    .array(z.object({ id: z.uuid(), color: colorHex.optional() }))
+    .optional()
+    .default([]),
   ownerId: z.uuid().optional(),
 });
 const updateChoreoSchema = createChoreoSchema.partial();
@@ -228,7 +231,11 @@ router.put(
   validate(uuidParams, "params"),
   validate(updateChoreoSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    return ChoreoService.update(req.params.id, req.body as UpdateChoreoBody, req.actingUserId)
+    return ChoreoService.update(
+      req.params.id,
+      req.body as UpdateChoreoBody,
+      req.actingUserId,
+    )
       .then((choreo: Choreo | null) => {
         res.send(choreo);
         return next();
@@ -420,7 +427,8 @@ router.patch(
   validate(uuidParams, "params"),
   validate(replaceParticipantSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { memberToRemoveId, memberToAddId } = req.body as ReplaceParticipantBody;
+    const { memberToRemoveId, memberToAddId } =
+      req.body as ReplaceParticipantBody;
     return ChoreoService.replaceParticipant(
       req.params.id,
       memberToAddId,

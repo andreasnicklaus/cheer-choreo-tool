@@ -170,7 +170,11 @@ router.put(
   validate(uuidParams, "params"),
   validate(updateHitSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    return HitService.update(req.params.id, req.body as UpdateHitBody, req.actingUserId)
+    return HitService.update(
+      req.params.id,
+      req.body as UpdateHitBody,
+      req.actingUserId,
+    )
       .then((hit: Hit | null) => {
         res.send(hit);
         return next();

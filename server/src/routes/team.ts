@@ -211,7 +211,11 @@ router.put(
   validate(uuidParams, "params"),
   validate(updateTeamSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    return TeamService.update(req.params.id, req.body as UpdateTeamBody, req.actingUserId)
+    return TeamService.update(
+      req.params.id,
+      req.body as UpdateTeamBody,
+      req.actingUserId,
+    )
       .then((team: Team) => {
         res.send(team);
         return next();

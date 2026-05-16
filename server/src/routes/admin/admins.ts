@@ -34,32 +34,44 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
     .catch((e: Error) => next(e));
 });
 
-router.post("/", validate(createAdminSchema), (req: Request, res: Response, next: NextFunction) => {
-  const { username, password } = req.body as CreateAdminBody;
-  return AdminService.findOrCreate(username, password)
-    .then(() => {
-      return res.redirect(req.baseUrl); // njsscan-ignore: express_open_redirect
-    })
-    .catch((e: Error) => next(e));
-});
+router.post(
+  "/",
+  validate(createAdminSchema),
+  (req: Request, res: Response, next: NextFunction) => {
+    const { username, password } = req.body as CreateAdminBody;
+    return AdminService.findOrCreate(username, password)
+      .then(() => {
+        return res.redirect(req.baseUrl); // njsscan-ignore: express_open_redirect
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
-router.post("/update", validate(updateAdminSchema), (req: Request, res: Response, next: NextFunction) => {
-  const { id, ...data } = req.body as UpdateAdminBody;
-  if (data.password == "") data.password = undefined;
-  return AdminService.update(id, data)
-    .then(() => {
-      return res.redirect(req.baseUrl); // njsscan-ignore: express_open_redirect
-    })
-    .catch((e: Error) => next(e));
-});
+router.post(
+  "/update",
+  validate(updateAdminSchema),
+  (req: Request, res: Response, next: NextFunction) => {
+    const { id, ...data } = req.body as UpdateAdminBody;
+    if (data.password == "") data.password = undefined;
+    return AdminService.update(id, data)
+      .then(() => {
+        return res.redirect(req.baseUrl); // njsscan-ignore: express_open_redirect
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
-router.delete("/:id", validate(uuidParams, "params"), (req: Request, res: Response, next: NextFunction) => {
-  const { id } = req.params as UuidParams;
-  return AdminService.remove(id)
-    .then(() => {
-      return res.redirect(req.baseUrl); // njsscan-ignore: express_open_redirect
-    })
-    .catch((e: Error) => next(e));
-});
+router.delete(
+  "/:id",
+  validate(uuidParams, "params"),
+  (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params as UuidParams;
+    return AdminService.remove(id)
+      .then(() => {
+        return res.redirect(req.baseUrl); // njsscan-ignore: express_open_redirect
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 export { router as adminsRouter };

@@ -72,7 +72,8 @@ router.post(
   AuthService.authenticateUser(false),
   validate(createContactSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { name, email, subject, message, category } = req.body as CreateContactBody;
+    const { name, email, subject, message, category } =
+      req.body as CreateContactBody;
     return ContactService.sendMessage(
       name,
       email,

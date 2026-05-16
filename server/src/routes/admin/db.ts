@@ -21,7 +21,10 @@ import { validate } from "../../middlewares/validateMiddleware";
 
 const entityEnum = z.enum(["clubs", "teams", "seasons", "members", "choreos"]);
 const entityParams = z.object({ entity: entityEnum });
-const entityDeleteParams = z.object({ entity: entityEnum, id: z.string().min(1) });
+const entityDeleteParams = z.object({
+  entity: entityEnum,
+  id: z.string().min(1),
+});
 const dbGetQuerySchema = z.object({
   UserId: z.string().optional(),
   s: z.string().optional(),
