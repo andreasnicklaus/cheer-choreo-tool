@@ -324,7 +324,7 @@ export default {
         });
     },
     acceptProposedPosition(memberId, x, y) {
-      this.$emit("positionChange", memberId, x, y);
+      if (this.interactive) this.$emit("positionChange", memberId, x, y);
     },
   },
 };
