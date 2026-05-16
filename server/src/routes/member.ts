@@ -1,8 +1,21 @@
 import { NextFunction, Response, Request, Router } from "express";
+import { z } from "zod";
 import Member from "../db/models/member";
 import MemberService from "../services/MemberService";
+import { validate } from "@/middlewares/validateMiddleware";
+import { uuidParams } from "@/utils/zodSchemas";
 
 const { default: AuthService } = require("../services/AuthService");
+
+const createMemberSchema = z.object({
+  name: z.string().min(1),
+  nickname: z.string().optional(),
+  abbreviation: z.string().optional(),
+  seasonTeamId: z.uuid(),
+});
+const updateMemberSchema = createMemberSchema.partial();
+
+type CreateMemberBody = z.infer<typeof createMemberSchema>;
 
 const router = Router();
 
@@ -46,9 +59,17 @@ const router = Router();
 router.post(
   "/",
   AuthService.authenticateUser(),
+  validate(createMemberSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { name, nickname, abbreviation, seasonTeamId } = req.body;
-    MemberService.create(name, nickname, abbreviation, seasonTeamId, req.UserId)
+    const { name, nickname, abbreviation, seasonTeamId } =
+      req.body as CreateMemberBody;
+    MemberService.create(
+      name,
+      nickname as string,
+      abbreviation as string | null,
+      seasonTeamId,
+      req.actingUserId,
+    )
       .then((member: Member) => {
         res.send(member);
         return next();
@@ -93,8 +114,10 @@ router.post(
 router.put(
   "/:id",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
+  validate(updateMemberSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    MemberService.update(req.params.id, req.body, req.UserId)
+    MemberService.update(req.params.id, req.body, req.actingUserId)
       .then((member: Member | null) => {
         res.send(member);
         return next();
@@ -129,8 +152,9 @@ router.put(
 router.delete(
   "/:id",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
-    MemberService.remove(req.params.id, req.UserId)
+    MemberService.remove(req.params.id, req.actingUserId)
       .then(() => {
         res.send();
         next();

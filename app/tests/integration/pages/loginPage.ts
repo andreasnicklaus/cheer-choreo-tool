@@ -30,18 +30,15 @@ export default class LoginPage extends TestPage {
     await this.iFillInput(emailInput, email);
   }
 
-  async iInputPassword(password: string) {
-    const passwordInput = this.page.getByRole("textbox", {
-      name: "Password",
-      exact: true,
-    });
+  async iInputPassword(password: string, tabPanel: "Log in" | "Register") {
+    const passwordInput = this.page
+      .getByRole("tabpanel", { name: tabPanel })
+      .getByPlaceholder("Password", { exact: true });
     await this.iFillInput(passwordInput, password);
   }
 
   async iInputPasswordRepetition(password: string) {
-    const passwordInput = this.page.getByRole("textbox", {
-      name: "Repeat password",
-    });
+    const passwordInput = this.page.getByPlaceholder("Repeat password");
     await this.iFillInput(passwordInput, password);
   }
 

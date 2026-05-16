@@ -18,10 +18,10 @@ function initTimeAgo(locale) {
  * @global
  *
  * @param {Date} date - Date to format
- * @param {string} [locale=i18n.locale] - Locale to use for formatting
+ * @param {string} [locale=i18n.global.locale.value] - Locale to use for formatting
  * @returns {string} Formatted time ago string
  */
-function toTimeAgo(date, locale = i18n.locale) {
+function toTimeAgo(date, locale = i18n.global.locale.value) {
   debug("Converting time to timeAgo", { date, locale });
   const timeAgo = initTimeAgo(locale);
   const result =

@@ -1,5 +1,5 @@
 <template>
-  <b-container id="homeView" data-view>
+  <BContainer id="homeView" data-view>
     <section
       id="sectionA"
       :style="{
@@ -8,8 +8,8 @@
         minHeight: 'calc(100vh - 76px)',
       }"
     >
-      <b-col
-        class="d-flex flex-column justify-content-center align-items-center"
+      <BCol
+        class="d-flex flex-column justify-content-center align-items-center w-75"
       >
         <img
           id="logoImg"
@@ -28,28 +28,28 @@
           {{ $t("Home.dein") }}
           {{ $t("general.ChoreoPlaner") }}
         </h1>
-        <b-row
-          class="w-75 my-4"
+        <BRow
+          class="w-100 my-4"
           align-h="around"
           :style="{ fontWeight: 'bold' }"
         >
-          <b-col cols="auto" id="callout1">
+          <BCol id="callout1" cols="auto">
             1. {{ $t("Home.choreos-erstellen") }}
-          </b-col>
-          <b-col cols="auto" id="callout2">
+          </BCol>
+          <BCol id="callout2" cols="auto">
             2. {{ $t("Home.countsheets-teilen") }}
-          </b-col>
-          <b-col cols="auto" id="callout3">
+          </BCol>
+          <BCol id="callout3" cols="auto">
             3. {{ $t("Home.videos-erstellen") }}
-          </b-col>
-        </b-row>
-        <b-button
+          </BCol>
+        </BRow>
+        <BButton
           id="registerButton"
           variant="primary"
           :to="
             $store.state.loggedIn
-              ? { name: 'Start', params: { locale: $root.$i18n.locale } }
-              : { name: 'Login', params: { locale: $root.$i18n.locale } }
+              ? { name: 'Start', params: { locale: $i18n.locale } }
+              : { name: 'Login', params: { locale: $i18n.locale } }
           "
           class="my-4"
           :style="{ textWrap: 'no-wrap' }"
@@ -59,14 +59,14 @@
               ? $t("Home.zur-uebersicht")
               : `${$t("anmelden")} / ${$t("registrieren")}`
           }}
-        </b-button>
+        </BButton>
         <router-link
           id="helpLink"
-          :to="{ name: 'Help', params: { locale: $root.$i18n.locale } }"
+          :to="{ name: 'Help', params: { locale: $i18n.locale } }"
         >
           {{ $t("general.help") }}
         </router-link>
-      </b-col>
+      </BCol>
     </section>
 
     <section
@@ -76,8 +76,8 @@
         placeItems: 'center',
       }"
     >
-      <b-row align-v="center" align-h="center" class="w-100">
-        <b-col cols="12" lg="6" class="mb-lg-0 mb-2">
+      <BRow align-v="center" align-h="center" class="w-100">
+        <BCol cols="12" lg="6" class="mb-lg-0 mb-2">
           <h2>📝 {{ $t("Home.choreos-erstellen") }}</h2>
           <ol>
             <li>{{ $t("Home.choreo-benennen") }}</li>
@@ -89,10 +89,10 @@
             </li>
             <li>{{ $t("Home.eintraege-machen") }}</li>
           </ol>
-        </b-col>
-        <b-col cols="12" lg="6" :style="{ minHeight: matWidth + 56 + 'px' }">
-          <b-tabs pills content-class="mt-3" align="center">
-            <b-tab :title="$t('cheerleading')" id="cheer-Mat">
+        </BCol>
+        <BCol cols="12" lg="6" :style="{ minHeight: matWidth + 56 + 'px' }">
+          <BTabs pills content-class="mt-3" align="center">
+            <BTab id="cheer-Mat" :title="$t('cheerleading')">
               <div
                 :style="{
                   minHeight: matWidth + 'px',
@@ -101,16 +101,16 @@
                 }"
               >
                 <Mat
-                  :currentPositions="currentPositions"
+                  :current-positions="currentPositions"
                   :width="matWidth"
-                  matType="cheer"
-                  :teamMembers="teamMembers"
+                  mat-type="cheer"
+                  :team-members="teamMembers"
                   :interactive="false"
-                  :dotRadius="(matWidth / 500) * 20"
+                  :dot-radius="(matWidth / 500) * 20"
                 />
               </div>
-            </b-tab>
-            <b-tab id="garde-Mat">
+            </BTab>
+            <BTab id="garde-Mat">
               <template #title>
                 {{ $t("Home.garde") }}
                 <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
@@ -123,16 +123,16 @@
                 }"
               >
                 <Mat
-                  :currentPositions="currentPositions"
+                  :current-positions="currentPositions"
                   :width="matWidth"
-                  matType="1:2"
-                  :teamMembers="teamMembers"
+                  mat-type="1:2"
+                  :team-members="teamMembers"
                   :interactive="false"
-                  :dotRadius="(matWidth / 500) * 20"
+                  :dot-radius="(matWidth / 500) * 20"
                 />
               </div>
-            </b-tab>
-            <b-tab id="v34-Mat">
+            </BTab>
+            <BTab id="v34-Mat">
               <template #title>
                 {{ $t("Home.stage-3-4") }}
                 <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
@@ -145,16 +145,16 @@
                 }"
               >
                 <Mat
-                  :currentPositions="currentPositions"
+                  :current-positions="currentPositions"
                   :width="matWidth"
-                  matType="3:4"
-                  :teamMembers="teamMembers"
+                  mat-type="3:4"
+                  :team-members="teamMembers"
                   :interactive="false"
-                  :dotRadius="(matWidth / 500) * 20"
+                  :dot-radius="(matWidth / 500) * 20"
                 />
               </div>
-            </b-tab>
-            <b-tab id="square-Mat">
+            </BTab>
+            <BTab id="square-Mat">
               <template #title>
                 {{ $t("Home.stage-1-1") }}
                 <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
@@ -167,46 +167,46 @@
                 }"
               >
                 <Mat
-                  :currentPositions="currentPositions"
+                  :current-positions="currentPositions"
                   :width="matWidth"
-                  matType="square"
-                  :teamMembers="teamMembers"
+                  mat-type="square"
+                  :team-members="teamMembers"
                   :interactive="false"
-                  :dotRadius="(matWidth / 500) * 20"
+                  :dot-radius="(matWidth / 500) * 20"
                 />
               </div>
-            </b-tab>
-          </b-tabs>
-        </b-col>
-      </b-row>
+            </BTab>
+          </BTabs>
+        </BCol>
+      </BRow>
     </section>
 
     <div id="featureCallouts1" class="featureCallouts d-none d-md-flex">
-      <b-col class="featureCallout h3">
-        <b-icon-people-fill class="text-info" /><br />
+      <BCol class="featureCallout h3">
+        <IBiPeopleFill class="text-info" /><br />
         {{ $t("Home.mitgliederverwaltung") }}
         <ul>
-          <li>{{ $tc("verein", 2) }}</li>
-          <li>{{ $tc("team", 2) }}</li>
+          <li>{{ $t("verein", 2) }}</li>
+          <li>{{ $t("team", 2) }}</li>
           <li>{{ $t("seasonkader") }}</li>
-          <li>{{ $tc("teilnehmer", 2) }}</li>
+          <li>{{ $t("teilnehmer", 2) }}</li>
         </ul>
-      </b-col>
-      <b-col class="featureCallout h3">
-        <b-icon-layout-three-columns class="text-secondary" /><br />
+      </BCol>
+      <BCol class="featureCallout h3">
+        <IBiLayoutThreeColumns class="text-secondary" /><br />
         {{ $t("Home.choreoplanung") }}
         <ul>
-          <li>{{ $tc("lineup", 2) }}</li>
-          <li>{{ $tc("countsheet", 2) }}</li>
+          <li>{{ $t("lineup", 2) }}</li>
+          <li>{{ $t("countsheet", 2) }}</li>
           <li>{{ $t("Home.verwaltung-nach-season") }}</li>
           <li>
             {{ $t("Home.choose-the-layout-of-your-stage") }}
             <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
           </li>
         </ul>
-      </b-col>
-      <b-col class="featureCallout h3">
-        <b-icon-stars class="text-warning" /><br />
+      </BCol>
+      <BCol class="featureCallout h3">
+        <IBiStarFill class="text-warning fs-1" /><br />
         {{ $t("Home.personalisierung") }}
         <ul>
           <li>
@@ -222,36 +222,36 @@
             <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
           </li>
         </ul>
-      </b-col>
-      <b-col class="featureCallout h3">
-        <b-icon-file-pdf-fill class="text-danger" /><br />
+      </BCol>
+      <BCol class="featureCallout h3">
+        <IBiFilePdfFill class="text-danger" /><br />
         {{ $t("Home.dateigenerierung") }}
         <ul>
           <li>{{ $t("Home.videos-als-mp4-und-webm") }}</li>
           <li>{{ $t("Home.countsheet-als-pdf") }}</li>
           <li>{{ $t("Home.aufstellungen-als-bild") }}</li>
         </ul>
-      </b-col>
-      <b-col class="featureCallout h3">
-        <b-icon-film class="text-secondary" /><br />
+      </BCol>
+      <BCol class="featureCallout h3">
+        <IBiFilm class="text-secondary" /><br />
         {{ $t("Home.video-export") }}
         <ul>
           <li>{{ $t("Home.teile-choreos-einfach-als-video") }}</li>
           <li>{{ $t("Home.generierung-lokal-im-browser") }}</li>
           <li>{{ $t("Home.download-als-mp4-oder-webm") }}</li>
         </ul>
-      </b-col>
-      <b-col class="featureCallout h3">
-        <b-icon-shield-fill-check class="text-primary" /><br />
+      </BCol>
+      <BCol class="featureCallout h3">
+        <IBiShieldFillCheck class="text-primary" /><br />
         {{ $t("Home.datensicherung") }}
         <ul>
           <li>{{ $t("Home.speicherung-auf-unseren-servern") }}</li>
           <li>{{ $t("Home.per-passwort-gesicherter-datenzugriff") }}</li>
           <li>{{ $t("Home.verschluesselter-datentransfer") }}</li>
         </ul>
-      </b-col>
-      <b-col class="featureCallout h3">
-        <b-icon-calendar2-range-fill /><br />
+      </BCol>
+      <BCol class="featureCallout h3">
+        <IBiCalendar2RangeFill /><br />
         {{ $t("Home.seasonwechsel") }}
         <ul>
           <li>{{ $t("Home.starte-neue-seasons-wenn-du-soweit-bist") }}</li>
@@ -260,18 +260,18 @@
             {{ $t("Home.definiere-eigene-seasons") }}
           </li>
         </ul>
-      </b-col>
-      <b-col class="featureCallout h3">
-        <b-icon-trophy-fill class="text-warning" /><br />
+      </BCol>
+      <BCol class="featureCallout h3">
+        <IBiTrophyFill class="text-warning" /><br />
         {{ $t("Home.meisterschaftsvorbereitung") }}
         <ul>
           <li>{{ $t("Home.bereite-choreos-vor") }}</li>
           <li>{{ $t("Home.gib-videos-und-countsheets") }}</li>
           <li>{{ $t("Home.mache-last-minute-auswechslungen") }}</li>
         </ul>
-      </b-col>
-      <b-col class="featureCallout h3">
-        <b-icon-archive-fill /><br />
+      </BCol>
+      <BCol class="featureCallout h3">
+        <IBiArchiveFill /><br />
         {{ $t("Home.datenarchivierung") }}
         <ul>
           <li>{{ $t("Home.regelmaessige-datensicherung") }}</li>
@@ -279,12 +279,12 @@
             {{ $t("Home.deine-daten-werden-verwendet") }}
           </li>
         </ul>
-      </b-col>
+      </BCol>
     </div>
 
     <section id="sectionC">
-      <b-row align-h="center">
-        <b-col cols="12" lg="6" class="mb-lg-0 mb-2">
+      <BRow align-h="center">
+        <BCol cols="12" lg="6" class="mb-lg-0 mb-2">
           <h2>🫰 {{ $t("Home.countsheets-teilen") }}</h2>
           <ol>
             <li>
@@ -297,20 +297,20 @@
               {{ $t("Home.erstelle-countsheets-als-video") }}
             </li>
           </ol>
-        </b-col>
+        </BCol>
 
-        <b-col cols="12" lg="6" :style="{ minHeight: '400px' }">
+        <BCol cols="12" lg="6" :style="{ minHeight: '400px' }">
           <CountOverview
             id="CountOverview"
             :count="count"
             :choreo="choreo"
-            :hitsForCurrentCount="hitsForCurrentCount"
-            :lineupsForCurrentCount="[]"
-            :teamMembers="teamMembers"
+            :hits-for-current-count="hitsForCurrentCount"
+            :lineups-for-current-count="[]"
+            :team-members="teamMembers"
             :interactive="false"
           />
-        </b-col>
-        <b-col cols="12" class="d-none d-md-flex flex-column">
+        </BCol>
+        <BCol cols="12" class="d-none d-md-flex flex-column">
           <CountSheet
             id="CountSheet"
             :count="count"
@@ -320,54 +320,54 @@
           <small class="text-muted text-center">{{
             $t("Home.beispiel-countsheet")
           }}</small>
-        </b-col>
-      </b-row>
+        </BCol>
+      </BRow>
     </section>
 
     <div
       id="featureCallouts2"
       class="featureCallouts row-reverse d-none d-md-flex"
     >
-      <b-col class="featureCallout h3">
-        <b-icon-person-plus-fill class="text-success" /><br />
+      <BCol class="featureCallout h3">
+        <IBiPersonPlusFill class="text-success" /><br />
         1. {{ $t("anmelden") }}
         <ol>
           <li>{{ $t("Home.anmelden-mit-benutzername-und-passwort") }}</li>
           <li>{{ $t("Home.gib-deinem-ersten-verein-einen-namen") }}</li>
         </ol>
-      </b-col>
-      <b-col class="featureCallout h3">
-        <b-icon-people-fill class="text-info" /><br />
+      </BCol>
+      <BCol class="featureCallout h3">
+        <IBiPeopleFill class="text-info" /><br />
         2. {{ $t("Home.team-anlegen") }}
         <ol>
           <li>{{ $t("Home.name-deines-teams") }}</li>
           <li>{{ $t("Home.aktuelle-season-des-teams") }}</li>
           <li>{{ $t("Home.seasonkader-fuellen") }}</li>
         </ol>
-      </b-col>
-      <b-col class="featureCallout h3">
-        <b-icon-layout-three-columns class="text-secondary" /><br />
+      </BCol>
+      <BCol class="featureCallout h3">
+        <IBiLayoutThreeColumns class="text-secondary" /><br />
         3. {{ $t("Home.choreos-planen") }}
         <ol>
           <li>{{ $t("Home.name-der-choreo") }}</li>
           <li>{{ $t("Home.laenge-in-counts-and-achtern") }}</li>
-          <li>{{ $tc("lineup", 2) }}</li>
+          <li>{{ $t("lineup", 2) }}</li>
           <li>{{ $t("Home.eintraege-im-countsheet") }}</li>
         </ol>
-      </b-col>
-      <b-col class="featureCallout h3">
-        <b-icon-download /><br />
+      </BCol>
+      <BCol class="featureCallout h3">
+        <IBiDownload /><br />
         4. {{ $t("Home.videos-herunterladen") }}
         <ol>
           <li>{{ $t("Home.generiere-das-video") }}</li>
           <li>{{ $t("Home.lade-das-video-runter") }}</li>
           <li>{{ $t("Home.teile-es-in-eurem-team-chat") }}</li>
         </ol>
-      </b-col>
-      <b-col class="featureCallout h3">
+      </BCol>
+      <BCol class="featureCallout h3">
         <div>
-          <b-icon-chat-fill class="text-success" />
-          <b-icon-file-earmark-arrow-up-fill class="text-danger" />
+          <IBiChatFill class="text-success" />
+          <IBiFileEarmarkArrowUpFill class="text-danger" />
         </div>
         <br />
         5. {{ $t("Home.countsheets-teilen") }}
@@ -376,12 +376,12 @@
           <li>{{ $t("Home.lade-das-pdf-herunter") }}</li>
           <li>{{ $t("Home.teile-es-in-eurem-team-chat") }}</li>
         </ol>
-      </b-col>
+      </BCol>
     </div>
 
     <section id="sectionD">
-      <b-row align-h="center">
-        <b-col cols="12" lg="6">
+      <BRow align-h="center">
+        <BCol cols="12" lg="6">
           <h2>🎞️ {{ $t("Home.videos-erstellen") }}</h2>
           <ol>
             <li>{{ $t("Home.gehe-zu-als-video-exportieren") }}</li>
@@ -390,14 +390,14 @@
             </li>
             <li>{{ $t("Home.warte-bis-video") }}</li>
           </ol>
-        </b-col>
-        <b-col cols="12" lg="6">
-          <b-form id="video-form">
-            <b-form-group
+        </BCol>
+        <BCol cols="12" lg="6">
+          <BForm id="video-form">
+            <BFormGroup
               id="checkbox1"
               :description="$t('Home.waehle-aus-wer-soll')"
             >
-              <b-form-checkbox-group
+              <BFormCheckboxGroup
                 id="selectMembers"
                 v-model="selectedTeamMembers"
                 :options="
@@ -408,70 +408,106 @@
                 "
                 stacked
               />
-            </b-form-group>
-            <b-form-group
-              id="checkbox2"
-              :description="$t('Home.soll-dein-logo')"
-            >
-              <b-form-checkbox :checked="true">{{
+            </BFormGroup>
+            <BFormGroup id="checkbox2" :description="$t('Home.soll-dein-logo')">
+              <BFormCheckbox :checked="true">{{
                 $t("Home.mit-logo")
-              }}</b-form-checkbox>
-            </b-form-group>
-            <b-form-group
+              }}</BFormCheckbox>
+            </BFormGroup>
+            <BFormGroup
               id="checkbox3"
               :description="$t('Home.soll-mit-deinem-verein')"
             >
-              <b-form-checkbox :checked="true">{{
+              <BFormCheckbox :checked="true">{{
                 $t("Home.mit-namen")
-              }}</b-form-checkbox>
-            </b-form-group>
-            <b-form-group
+              }}</BFormCheckbox>
+            </BFormGroup>
+            <BFormGroup
               id="checkbox4"
               :description="$t('Home.soll-durchlaufendem-count')"
             >
-              <b-form-checkbox :checked="true">{{
+              <BFormCheckbox :checked="true">{{
                 $t("Home.mit-count")
-              }}</b-form-checkbox>
-            </b-form-group>
-            <b-form-group
+              }}</BFormCheckbox>
+            </BFormGroup>
+            <BFormGroup
               id="checkbox5"
               :description="$t('Home.soll-mit-eintraegen')"
             >
-              <b-form-checkbox :checked="true">
+              <BFormCheckbox :checked="true">
                 {{ $t("Home.mit-countsheet-eintraegen") }}
-              </b-form-checkbox>
-            </b-form-group>
-          </b-form>
-        </b-col>
-      </b-row>
+              </BFormCheckbox>
+            </BFormGroup>
+          </BForm>
+        </BCol>
+      </BRow>
     </section>
 
+    <!-- TODO: Add an example video -->
+
     <div
+      v-show="!$store.state.loggedIn"
+      id="interestedSection"
       :style="{
-        backgroundColor: 'var(--success)',
-        color: 'white',
-        marginBottom: '10vh',
         borderRadius: '4px',
       }"
-      v-show="!$store.state.loggedIn"
-      class="text-center py-5 px-3"
-      id="interestedSection"
+      class="text-center py-5 px-3 bg-success text-light mb-5"
     >
       <h2 class="mb-1">{{ $t("Home.interesse-geweckt") }}</h2>
       <p class="mb-4">
         {{ $t("Home.zum-loslegen") }}
       </p>
-      <b-button
-        :style="{ backgroundColor: 'white', color: 'var(--success)' }"
-        class="pulse-button"
-        :to="{ name: 'Login', params: { locale: $root.$i18n.locale } }"
+      <BButton
+        class="pulse-button bg-white text-success"
+        :to="{ name: 'Login', params: { locale: $i18n.locale } }"
       >
         {{ $t("anmelden") }} /
         {{ $t("registrieren") }}
-      </b-button>
+      </BButton>
     </div>
-  </b-container>
+  </BContainer>
 </template>
+
+<script setup>
+import { useHead } from "@unhead/vue";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
+
+useHead({
+  title: computed(
+    () => `${t("general.ChoreoPlaner")} | ${t("meta.defaults.title")}`
+  ),
+  titleTemplate: null,
+  meta: [
+    {
+      name: "description",
+      content: computed(() => t("meta.defaults.description")),
+    },
+    {
+      name: "twitter:description",
+      content: computed(() => t("meta.defaults.description")),
+    },
+    {
+      property: "og:description",
+      content: computed(() => t("meta.defaults.description")),
+    },
+    {
+      property: "og:title",
+      content: computed(
+        () => `${t("general.ChoreoPlaner")} | ${t("meta.defaults.title")}`
+      ),
+    },
+    {
+      name: "twitter:title",
+      content: computed(
+        () => `${t("general.ChoreoPlaner")} | ${t("meta.defaults.title")}`
+      ),
+    },
+  ],
+});
+</script>
 
 <script>
 import CountOverview from "@/components/CountOverview.vue";
@@ -758,45 +794,6 @@ export default {
       selectedTeamMembers: [],
     };
   },
-  metaInfo() {
-    return {
-      title: `${this.$t("general.ChoreoPlaner")} | ${this.$t(
-        "meta.defaults.title"
-      )}`,
-      titleTemplate: null,
-      meta: [
-        {
-          vmid: "description",
-          name: "description",
-          content: this.$t("meta.defaults.description"),
-        },
-        {
-          vmid: "twitter:description",
-          name: "twitter:description",
-          content: this.$t("meta.defaults.description"),
-        },
-        {
-          vmid: "og:description",
-          property: "og:description",
-          content: this.$t("meta.defaults.description"),
-        },
-        {
-          vmid: "og:title",
-          property: "og:title",
-          content: `${this.$t("general.ChoreoPlaner")} | ${this.$t(
-            "meta.defaults.title"
-          )}`,
-        },
-        {
-          vmid: "twitter:title",
-          name: "twitter:title",
-          content: `${this.$t("general.ChoreoPlaner")} | ${this.$t(
-            "meta.defaults.title"
-          )}`,
-        },
-      ],
-    };
-  },
   computed: {
     hitsForCurrentCount() {
       return this.choreo.Hits.filter((h) => h.count == this.count).map((h) => ({
@@ -812,7 +809,9 @@ export default {
     },
   },
   mounted() {
-    this.selectedTeamMembers = this.teamMembers.map((t) => t.abbreviation);
+    this.selectedTeamMembers = this.teamMembers
+      .slice(0, this.teamMembers.length - 1)
+      .map((t) => t.abbreviation);
 
     const tl = gsap.timeline();
 

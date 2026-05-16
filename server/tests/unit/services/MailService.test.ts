@@ -10,6 +10,7 @@ jest.mock("@/plugins/winston", () => ({
     error: jest.fn(),
   },
   debug: jest.fn(),
+  info: jest.fn(),
 }));
 
 jest.mock("@/db/db", () => {
@@ -40,9 +41,6 @@ describe("MailService", () => {
     await syncPromise;
   });
 
-  beforeEach(async () => {
-    // Add any necessary cleanup for MailService tests here
-  });
   test("instance has adminEmails", () => {
     expect(Array.isArray(MailService.adminEmails)).toBe(true);
     expect(MailService.adminEmails).toStrictEqual(["admin@example.com"]);

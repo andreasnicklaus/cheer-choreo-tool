@@ -6,11 +6,8 @@ import { debug } from "@/utils/logging";
  * @class MessagingService
  */
 const DEFAULT_OPTIONS = {
-  variant: "info",
-  title: "Info",
-  // autoHideDelay: 5_000,
-  // appendToast: false,
-  solid: true,
+  modelValue: 5_000,
+  solid: false,
 };
 
 class MessagingService {
@@ -33,6 +30,7 @@ class MessagingService {
    * @returns {Promise}
    */
   _showMessage(message, options) {
+    if (options.variant) options.progressProps = { variant: options.variant };
     debug("_showMessage", { message, options });
     return Promise.all(
       Object.values(this.handlers).map((handler) =>
@@ -50,7 +48,7 @@ class MessagingService {
    */
   showInfo(message, title = null, options = {}) {
     debug("Showing Info message", { message, title, options });
-    if (!title) title = i18n.t("info");
+    if (!title) title = i18n.global.t("info");
     return this._showMessage(message, { title, ...options });
   }
 
@@ -63,7 +61,7 @@ class MessagingService {
    */
   showSuccess(message, title = null, options = {}) {
     debug("Showing success message", { message, title, options });
-    if (!title) title = i18n.t("login.erfolg");
+    if (!title) title = i18n.global.t("login.erfolg");
     return this._showMessage(message, {
       title,
       variant: "success",
@@ -82,13 +80,13 @@ class MessagingService {
     debug("Showing error message", { message, title, options });
     // ERROR_MESSAGES must be within this function to ensure that the right locale is used when it is called
     const ERROR_MESSAGES = [
-      i18n.t("failMessages.oh-oh"),
-      i18n.t("failMessages.satz-mit-x"),
-      i18n.t("failMessages.da-dumm"),
-      i18n.t("failMessages.check-ich-nicht"),
-      i18n.t("failMessages.probiers-nochmal"),
-      i18n.t("failMessages.computer-sagt-nein"),
-      i18n.t("failMessages.traurige-trompete"),
+      i18n.global.t("failMessages.oh-oh"),
+      i18n.global.t("failMessages.satz-mit-x"),
+      i18n.global.t("failMessages.da-dumm"),
+      i18n.global.t("failMessages.check-ich-nicht"),
+      i18n.global.t("failMessages.probiers-nochmal"),
+      i18n.global.t("failMessages.computer-sagt-nein"),
+      i18n.global.t("failMessages.traurige-trompete"),
     ];
     if (!title)
       title = ERROR_MESSAGES[Math.floor(Math.random() * ERROR_MESSAGES.length)]; // njsscan-ignore: node_insecure_random_generator
@@ -104,7 +102,7 @@ class MessagingService {
    */
   showWarning(message, title = null, options = {}) {
     debug("Showing warning message", { message, title, options });
-    if (!title) title = i18n.t("warnung");
+    if (!title) title = i18n.global.t("warnung");
     return this._showMessage(message, {
       title,
       variant: "warning",

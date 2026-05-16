@@ -6,6 +6,7 @@ import {
   InferCreationAttributes,
   Model,
   NonAttribute,
+  Op,
 } from "sequelize";
 import Club from "./club";
 import Team from "./team";
@@ -18,6 +19,7 @@ import Hit from "./hit";
 import Season from "./season";
 import Feedback from "./feedback";
 import NotificationModel from "./notification";
+import UserAccess from "./userAccess";
 import db from "../db";
 const bcrypt = require("bcrypt");
 
@@ -158,13 +160,24 @@ User.init(
           exclude: [],
         },
       },
+      includingDeleted: {
+        paranoid: false,
+      },
     },
     paranoid: true,
     hooks: {
-      afterDestroy: function (instance, _options) {
-        instance
-          .getClubs()
-          .then((clubList) => clubList.forEach((club) => club.destroy()));
+      afterDestroy: async function (instance, _options) {
+        const clubList = await instance.getClubs();
+        await Promise.all(clubList.map((club) => club.destroy()));
+
+        await UserAccess.destroy({
+          where: {
+            [Op.or]: [
+              { ownerUserId: instance.id },
+              { childUserId: instance.id },
+            ],
+          },
+        });
       },
     },
   },

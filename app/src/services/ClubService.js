@@ -43,11 +43,12 @@ class ClubService {
   /**
    * Create a new club.
    * @param {string} name - Name of the club to create
+   * @param {string|null} ownerId - ID of the owner
    * @returns {Promise<Object>} Created club
    */
-  create(name) {
-    debug("Creating new club", { name });
-    return ax.post("/club", { name }).then((res) => {
+  create(name, ownerId = null) {
+    debug("Creating new club", { name, ownerId });
+    return ax.post("/club", { name, ownerId }).then((res) => {
       debug("Successfully created club");
       return res.data;
     });

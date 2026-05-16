@@ -1,24 +1,29 @@
 <template>
-  <b-card>
-    <b-card-header class="d-flex justify-content-between align-items-center">
-      <b-card-title class="mb-0">{{
+  <BCard>
+    <BCardHeader class="d-flex justify-content-between align-items-center">
+      <BCardTitle class="mb-0">{{
         $t("countOverview.dieser-count")
-      }}</b-card-title>
-      <b-badge>
+      }}</BCardTitle>
+      <BBadge>
         {{ countToString(count) }}
-      </b-badge>
-    </b-card-header>
-    <b-list-group flush>
+      </BBadge>
+    </BCardHeader>
+    <BListGroup flush>
       <!-- HITS -->
-      <b-skeleton-wrapper :loading="!hitsForCurrentCount">
+      <BPlaceholderWrapper :loading="!hitsForCurrentCount">
         <template #loading>
-          <b-list-group-item v-for="(_, i) in Array(1)" :key="i">
-            <b-skeleton width="25%" height="30px" class="mb-2" />
-            <b-skeleton width="50%" />
-            <b-skeleton width="25%" class="mb-3" />
-          </b-list-group-item>
+          <BListGroupItem v-for="(_, i) in Array(1)" :key="i">
+            <BPlaceholder
+              width="25%"
+              height="30px"
+              class="mb-2"
+              animation="wave"
+            />
+            <BPlaceholder width="50%" animation="wave" />
+            <BPlaceholder width="25%" class="mb-3" animation="wave" />
+          </BListGroupItem>
         </template>
-        <b-list-group-item
+        <BListGroupItem
           v-for="hit in hitsForCurrentCount"
           :key="hit.id"
           :variant="
@@ -27,56 +32,58 @@
         >
           <div v-show="hit.id != editHitId">
             <h5>
-              <b-row align-h="between" align-v="center">
-                <b-col>
+              <BRow align-h="between" align-v="center">
+                <BCol>
                   {{ hit.name }}
-                </b-col>
-                <b-col cols="auto">
-                  <b-button-group>
-                    <b-button
+                </BCol>
+                <BCol cols="auto">
+                  <BButtonGroup>
+                    <BButton
+                      v-b-tooltip.hover="
+                        $t('countOverview.zum-vorigen-count-verschieben')
+                      "
                       variant="outline-primary"
-                      v-b-tooltip.hover
-                      :title="$t('countOverview.zum-vorigen-count-verschieben')"
                       :disabled="count <= 0 || !interactive"
+                      data-testid="moveHitToPreviousCount-button"
                       @click="() => moveHitToPreviousCount(hit.id)"
                     >
-                      <b-icon-chevron-left />
-                    </b-button>
-                    <b-button
-                      variant="outline-primary"
-                      v-b-tooltip.hover
-                      :title="
+                      <IBiChevronLeft />
+                    </BButton>
+                    <BButton
+                      v-b-tooltip.hover="
                         $t('countOverview.zum-naechsten-count-verschieben')
                       "
+                      variant="outline-primary"
                       :disabled="count >= choreo.counts - 1 || !interactive"
+                      data-testid="moveHitToNextCount-button"
                       @click="() => moveHitToNextCount(hit.id)"
                     >
-                      <b-icon-chevron-right />
-                    </b-button>
-                    <b-button
+                      <IBiChevronRight />
+                    </BButton>
+                    <BButton
+                      v-b-tooltip.hover="$t('countOverview.bearbeiten')"
                       variant="outline-success"
+                      :disabled="!interactive"
+                      data-testid="editHit-button"
                       @click="() => editHit(hit.id)"
-                      v-b-tooltip.hover
-                      :title="$t('countOverview.bearbeiten')"
-                      :disabled="!interactive"
                     >
-                      <b-icon-pen />
-                    </b-button>
-                    <b-button
+                      <IBiPen />
+                    </BButton>
+                    <BButton
+                      v-b-tooltip.hover="$t('countOverview.loeschen')"
                       variant="outline-danger"
-                      @click="() => $refs.deleteHitModal.open(hit.id)"
-                      v-b-tooltip.hover
-                      :title="$t('countOverview.loeschen')"
                       :disabled="!interactive"
+                      data-testid="deleteHit-button"
+                      @click="() => $refs.deleteHitModal.open(hit.id)"
                     >
-                      <b-icon-trash />
-                    </b-button>
-                  </b-button-group>
-                </b-col>
-              </b-row>
+                      <IBiTrash />
+                    </BButton>
+                  </BButtonGroup>
+                </BCol>
+              </BRow>
             </h5>
 
-            <b-col
+            <BCol
               v-show="
                 hit.Members &&
                 hit.Members.length > 0 &&
@@ -84,9 +91,9 @@
               "
               :style="{ columnCount: 2 }"
             >
-              <b-row v-for="member in hit.Members" :key="member.id">
+              <BRow v-for="member in hit.Members" :key="member.id">
                 <div
-                  class="mr-2"
+                  class="me-2"
                   :style="{
                     height: '24px',
                     width: '24px',
@@ -101,8 +108,8 @@
                   }"
                 ></div>
                 {{ member.nickname || member.name }}
-              </b-row>
-            </b-col>
+              </BRow>
+            </BCol>
             <p
               v-show="
                 !hit.Members ||
@@ -110,21 +117,21 @@
                 hit.Members.length == teamMembers.length
               "
             >
-              <b-badge variant="info">{{ $t("countOverview.alle") }}</b-badge>
+              <BBadge variant="success">{{ $t("countOverview.alle") }}</BBadge>
             </p>
           </div>
 
           <div v-show="hit.id == editHitId">
             <h5 class="mb-4">
-              <b-row align-h="between" align-v="center">
-                <b-col>
-                  <b-form-group :state="editHitNameIsValid" class="m-0">
+              <BRow align-h="between" align-v="center">
+                <BCol>
+                  <BFormGroup :state="editHitNameIsValid" class="m-0">
                     <template #invalid-feedback>
                       <span :style="{ fontSize: '14px' }">
                         {{ editHitNameStateFeedback }}
                       </span>
                     </template>
-                    <b-form-input
+                    <BFormInput
                       v-model="editHitName"
                       :style="{
                         color: '#2c3e50',
@@ -133,144 +140,140 @@
                         height: '1.2em',
                         textDecoration: 'underline dotted',
                       }"
+                      class="p-0"
+                      autofocus
+                      :placeholder="$t('countOverview.name-des-hits')"
+                      :state="editHitNameIsValid"
                       @keydown.enter="
                         () => {
                           if (editHitNameIsValid) saveHit();
                         }
                       "
                       @keydown.esc="() => (editHitId = null)"
-                      class="p-0"
-                      autofocus
-                      :placeholder="$t('countOverview.name-des-hits')"
-                      :state="editHitNameIsValid"
                     />
-                  </b-form-group>
-                </b-col>
-                <b-col cols="auto">
-                  <b-button-group>
-                    <b-button
+                  </BFormGroup>
+                </BCol>
+                <BCol cols="auto">
+                  <BButtonGroup>
+                    <BButton
+                      v-b-tooltip.hover="$t('speichern')"
                       variant="success"
-                      v-b-tooltip.hover
-                      :title="$t('speichern')"
                       :disabled="
                         !editHitName ||
                         !editHitAchterIsValid ||
                         !editHitCountIsValid ||
                         !editHitMembersIsValid
                       "
+                      data-testid="saveHit-button"
                       @click="() => saveHit()"
                     >
-                      <b-icon-check />
-                    </b-button>
-                    <b-button
+                      <IBiCheck />
+                    </BButton>
+                    <BButton
+                      v-b-tooltip.hover="$t('abbrechen')"
                       variant="danger"
-                      v-b-tooltip.hover
-                      :title="$t('abbrechen')"
                       @click="() => (editHitId = null)"
                     >
-                      <b-icon-x />
-                    </b-button>
-                  </b-button-group>
-                </b-col>
-              </b-row>
+                      <IBiX />
+                    </BButton>
+                  </BButtonGroup>
+                </BCol>
+              </BRow>
             </h5>
-            <b-col>
-              <b-form-group
-                :label="$tc('count', 1)"
+            <BCol>
+              <BFormGroup
+                :label="$t('count', 1)"
                 label-cols="2"
                 label-class="label-with-colon"
               >
-                <b-row>
-                  <b-col>
-                    <b-form-group
+                <BRow>
+                  <BCol>
+                    <BFormGroup
                       :description="$t('achter')"
                       :state="editHitAchterIsValid"
                       :invalid-feedback="editHitAchterStateFeedback"
                     >
-                      <b-form-input
+                      <BFormInput
+                        v-model="editHitAchter"
                         data-testid="editHitAchterInput"
                         type="number"
                         min="1"
-                        v-model="editHitAchter"
                         :state="editHitAchterIsValid"
                       />
-                    </b-form-group>
-                  </b-col>
-                  <b-col>
-                    <b-form-group
-                      :description="$tc('count', 1)"
+                    </BFormGroup>
+                  </BCol>
+                  <BCol>
+                    <BFormGroup
+                      :description="$t('count', 1)"
                       :state="editHitCountIsValid"
                       :invalid-feedback="editHitCountStateFeedback"
                     >
-                      <b-form-input
+                      <BFormInput
+                        v-model="editHitCount"
                         data-testid="editHitCountInput"
                         type="number"
                         min="1"
                         max="8"
-                        v-model="editHitCount"
                         :state="editHitCountIsValid"
                       />
-                    </b-form-group>
-                  </b-col>
-                </b-row>
-              </b-form-group>
+                    </BFormGroup>
+                  </BCol>
+                </BRow>
+              </BFormGroup>
 
               <hr />
 
-              <b-form-group
+              <BFormGroup
                 :label="$t('teilnehmer')"
                 label-class="label-with-colon"
                 :state="editHitMembersIsValid"
                 :invalid-feedback="editHitMembersStateFeedback"
               >
-                <b-button-group>
-                  <b-button
+                <BButtonGroup>
+                  <BButton
                     variant="light"
                     @click="
                       () => (editHitMembers = teamMembers.map((m) => m.id))
                     "
                   >
-                    <b-icon-check-all />
+                    <IBiCheckAll />
                     {{ $t("alle-auswaehlen") }}
-                  </b-button>
-                  <b-button
-                    variant="light"
-                    @click="() => (editHitMembers = [])"
-                  >
-                    <b-icon-slash />
+                  </BButton>
+                  <BButton variant="light" @click="() => (editHitMembers = [])">
+                    <IBiSlash />
                     {{ $t("keine-auswaehlen") }}
-                  </b-button>
-                  <b-button
+                  </BButton>
+                  <BButton
                     variant="light"
+                    :disabled="
+                      editHitMembers?.length == 0 ||
+                      editHitMembers?.length == teamMembers?.length
+                    "
                     @click="
                       () =>
                         (editHitMembers = teamMembers
                           .filter((m) => !editHitMembers.includes(m.id))
                           .map((m) => m.id))
                     "
-                    :disabled="
-                      editHitMembers?.length == 0 ||
-                      editHitMembers?.length == teamMembers?.length
-                    "
                   >
-                    <b-icon-arrow-repeat />
+                    <IBiArrowRepeat />
                     {{ $t("auswahl-wechseln") }}
-                  </b-button>
-                </b-button-group>
-                <b-form-checkbox-group
+                  </BButton>
+                </BButtonGroup>
+                <BFormCheckbox-group
                   id="memberSelection"
                   v-model="editHitMembers"
                   stacked
                   :style="{ columnCount: 2 }"
                 >
-                  <b-form-checkbox
+                  <BFormCheckbox
                     v-for="member in teamMembers"
                     :key="member.id"
                     :value="member.id"
                   >
-                    <b-row no-gutters class="mb-1">
+                    <BRow no-gutters class="mb-1">
                       <div
-                        class="mr-2"
+                        class="me-2"
                         :style="{
                           height: '24px',
                           width: '24px',
@@ -282,85 +285,90 @@
                         }"
                       ></div>
                       {{ member.nickname || member.name }}
-                    </b-row>
-                  </b-form-checkbox>
-                </b-form-checkbox-group>
-              </b-form-group>
-            </b-col>
+                    </BRow>
+                  </BFormCheckbox>
+                </BFormCheckbox-group>
+              </BFormGroup>
+            </BCol>
           </div>
-        </b-list-group-item>
-      </b-skeleton-wrapper>
+        </BListGroupItem>
+      </BPlaceholderWrapper>
 
       <!-- LINEUPS -->
-      <b-skeleton-wrapper :loading="!lineupsForCurrentCount">
+      <BPlaceholderWrapper :loading="!lineupsForCurrentCount">
         <template #loading>
-          <b-list-group-item v-for="(_, i) in Array(1)" :key="i">
-            <b-skeleton width="25%" height="30px" class="mb-2" />
-            <b-skeleton width="50%" />
-            <b-skeleton width="25%" class="mb-3" />
-          </b-list-group-item>
+          <BListGroupItem v-for="(_, i) in Array(1)" :key="i">
+            <BPlaceholder
+              width="25%"
+              height="30px"
+              class="mb-2"
+              animation="wave"
+            />
+            <BPlaceholder width="50%" animation="wave" />
+            <BPlaceholder width="25%" class="mb-3" animation="wave" />
+          </BListGroupItem>
         </template>
-        <b-list-group-item
+        <BListGroupItem
           v-for="lineup in lineupsForCurrentCount"
           :key="lineup.id"
           :variant="editLineupId == lineup.id ? null : 'light'"
         >
           <div v-show="lineup.id != editLineupId">
             <h5>
-              <b-row align-h="between" align-v="center">
-                <b-col>{{ $tc("lineup", 1) }}</b-col>
-                <b-col cols="auto">
-                  <b-button-group class="mr-2">
-                    <b-button
+              <BRow align-h="between" align-v="center">
+                <BCol>{{ $t("lineup", 1) }}</BCol>
+                <BCol cols="auto">
+                  <BButtonGroup class="me-2">
+                    <BButton
                       v-show="lineup.Positions.length != teamMembers.length"
-                      variant="outline-primary"
-                      v-b-tooltip.hover
-                      :title="
+                      v-b-tooltip.hover="
                         $t(
                           'countOverview.alle-teilnehmer-in-der-aufstellung-speichern'
                         )
                       "
+                      variant="outline-primary"
+                      :disabled="!interactive"
+                      data-testid="selectAllMembersForLineup-button"
                       @click="() => addAllMembersToLineup(lineup.id)"
-                      :disabled="!interactive"
                     >
-                      <b-icon-people-fill />
-                    </b-button>
-                  </b-button-group>
-                  <b-button-group>
-                    <b-button
+                      <IBiPeopleFill />
+                    </BButton>
+                  </BButtonGroup>
+                  <BButtonGroup>
+                    <BButton
+                      v-b-tooltip.hover="$t('countOverview.bearbeiten')"
                       variant="outline-success"
-                      v-b-tooltip.hover
-                      :title="$t('countOverview.bearbeiten')"
+                      :disabled="!interactive"
+                      data-testid="editLineup-button"
                       @click="() => editLineup(lineup.id)"
-                      :disabled="!interactive"
                     >
-                      <b-icon-pen />
-                    </b-button>
-                    <b-button
+                      <IBiPen />
+                    </BButton>
+                    <BButton
+                      v-b-tooltip.hover="$t('countOverview.loeschen')"
                       variant="outline-danger"
-                      v-b-tooltip.hover
-                      :title="$t('countOverview.loeschen')"
-                      @click="() => $refs.deleteLineupModal.open(lineup.id)"
                       :disabled="!interactive"
+                      data-testid="deleteLineup-button"
+                      @click="() => $refs.deleteLineupModal.open(lineup.id)"
                     >
-                      <b-icon-trash />
-                    </b-button>
-                  </b-button-group>
-                </b-col>
-              </b-row>
+                      <IBiTrash />
+                    </BButton>
+                  </BButtonGroup>
+                </BCol>
+              </BRow>
             </h5>
             <p>
               Counts:
-              <b-badge variant="light">
-                {{ countToString(lineup.startCount) }}</b-badge
+              <BBadge variant="light">
+                {{ countToString(lineup.startCount) }}</BBadge
               >
               -
-              <b-badge variant="light">
+              <BBadge variant="light">
                 {{ countToString(lineup.endCount) }}
-              </b-badge>
+              </BBadge>
             </p>
 
-            <b-col
+            <BCol
               v-show="
                 lineup.Positions &&
                 lineup.Positions.length > 0 &&
@@ -368,7 +376,7 @@
               "
               :style="{ columnCount: 2 }"
             >
-              <b-row
+              <BRow
                 v-for="position in lineup.Positions.slice().sort((a, b) =>
                   teamMembers
                     .find((m) => m.id == a.MemberId)
@@ -380,7 +388,7 @@
                 no-gutters
               >
                 <div
-                  class="mr-2"
+                  class="me-2"
                   :style="{
                     height: '24px',
                     width: '24px',
@@ -395,8 +403,8 @@
                   }"
                 ></div>
                 {{ position.Member.name }}
-              </b-row>
-            </b-col>
+              </BRow>
+            </BCol>
             <p
               v-show="
                 !lineup.Positions ||
@@ -404,21 +412,19 @@
                 lineup.Positions.length == teamMembers.length
               "
             >
-              <b-badge variant="info">{{ $t("countOverview.alle") }}</b-badge>
+              <BBadge variant="success">{{ $t("countOverview.alle") }}</BBadge>
             </p>
           </div>
 
           <div v-show="lineup.id == editLineupId">
             <h5>
-              <b-row align-h="between" align-v="center">
-                <b-col> {{ $tc("lineup", 1) }} </b-col>
-                <b-col cols="auto">
-                  <b-button-group>
-                    <b-button
+              <BRow align-h="between" align-v="center">
+                <BCol> {{ $t("lineup", 1) }} </BCol>
+                <BCol cols="auto">
+                  <BButtonGroup>
+                    <BButton
+                      v-b-tooltip.hover="$t('speichern')"
                       variant="success"
-                      v-b-tooltip.hover
-                      :title="$t('speichern')"
-                      @click="() => saveLineup()"
                       :disabled="
                         !editLineupStartAchterIsValid ||
                         !editLineupStartCountIsValid ||
@@ -426,163 +432,164 @@
                         !editLineupEndCountIsValid ||
                         !editLineupMembersIsValid
                       "
+                      data-testid="saveLineup-button"
+                      @click="() => saveLineup()"
                     >
-                      <b-icon-check />
-                    </b-button>
-                    <b-button
+                      <IBiCheck />
+                    </BButton>
+                    <BButton
+                      v-b-tooltip.hover="$t('abbrechen')"
                       variant="danger"
-                      v-b-tooltip.hover
-                      :title="$t('abbrechen')"
                       @click="() => (editLineupId = null)"
                     >
-                      <b-icon-x />
-                    </b-button>
-                  </b-button-group>
-                </b-col>
-              </b-row>
+                      <IBiX />
+                    </BButton>
+                  </BButtonGroup>
+                </BCol>
+              </BRow>
             </h5>
 
-            <b-form>
-              <b-form-group
+            <BForm>
+              <BFormGroup
                 :label="$t('nav.start')"
                 label-cols="2"
                 label-class="label-with-colon"
               >
-                <b-row>
-                  <b-col>
-                    <b-form-group
+                <BRow>
+                  <BCol>
+                    <BFormGroup
                       :description="$t('achter')"
                       :state="editLineupStartAchterIsValid"
                       :invalid-feedback="editLineupStartAchterStateFeedback"
                     >
-                      <b-form-input
+                      <BFormInput
+                        v-model="editLineupStartAchter"
                         data-testid="editLineupStartAchterInput"
                         type="number"
                         min="1"
-                        v-model="editLineupStartAchter"
                         :state="editLineupStartAchterIsValid"
                       />
-                    </b-form-group>
-                  </b-col>
-                  <b-col>
-                    <b-form-group
-                      :description="$tc('count', 1)"
+                    </BFormGroup>
+                  </BCol>
+                  <BCol>
+                    <BFormGroup
+                      :description="$t('count', 1)"
                       :state="editLineupStartCountIsValid"
                       :invalid-feedback="editLineupStartCountStateFeedback"
                     >
-                      <b-form-input
+                      <BFormInput
+                        v-model="editLineupStartCount"
                         data-testid="editLineupStartCountInput"
                         type="number"
                         min="1"
                         max="8"
-                        v-model="editLineupStartCount"
                         :state="editLineupStartCountIsValid"
                       />
-                    </b-form-group>
-                  </b-col>
-                </b-row>
-              </b-form-group>
-              <b-form-group
+                    </BFormGroup>
+                  </BCol>
+                </BRow>
+              </BFormGroup>
+              <BFormGroup
                 :label="$t('hits.ende')"
                 label-class="label-with-colon"
                 label-cols="2"
                 :state="editLineupStartIsBeforeEnd"
                 :invalid-feedback="editLineupStartIsBeforeEndStateFeedback"
               >
-                <b-row>
-                  <b-col>
-                    <b-form-group
+                <BRow>
+                  <BCol>
+                    <BFormGroup
                       :description="$t('achter')"
                       :state="editLineupEndAchterIsValid"
                       :invalid-feedback="editLineupEndAchterStateFeedback"
                     >
-                      <b-form-input
+                      <BFormInput
+                        v-model="editLineupEndAchter"
                         data-testid="editLineupEndAchterInput"
                         type="number"
                         min="1"
-                        v-model="editLineupEndAchter"
                         :state="editLineupEndAchterIsValid"
                       />
-                    </b-form-group>
-                  </b-col>
-                  <b-col>
-                    <b-form-group
-                      :description="$tc('count', 1)"
+                    </BFormGroup>
+                  </BCol>
+                  <BCol>
+                    <BFormGroup
+                      :description="$t('count', 1)"
                       :state="editLineupEndCountIsValid"
                       :invalid-feedback="editLineupEndCountStateFeedback"
                     >
-                      <b-form-input
+                      <BFormInput
+                        v-model="editLineupEndCount"
                         data-testid="editLineupEndCountInput"
                         type="number"
                         min="1"
                         max="8"
-                        v-model="editLineupEndCount"
                         :state="editLineupEndCountIsValid"
                       />
-                    </b-form-group>
-                  </b-col>
-                </b-row>
-              </b-form-group>
+                    </BFormGroup>
+                  </BCol>
+                </BRow>
+              </BFormGroup>
 
               <hr />
 
-              <b-form-group
+              <BFormGroup
                 :label="$t('teilnehmer')"
                 label-class="label-with-colon"
                 :state="editLineupMembersIsValid"
                 :invalid-feedback="editLineupMembersStateFeedback"
               >
-                <b-button-group>
-                  <b-button
+                <BButtonGroup>
+                  <BButton
                     variant="light"
+                    :disabled="editLineupMembers.length == teamMembers.length"
                     @click="
                       () => (editLineupMembers = teamMembers.map((m) => m.id))
                     "
-                    :disabled="editLineupMembers.length == teamMembers.length"
                   >
-                    <b-icon-check-all />
+                    <IBiCheckAll />
                     {{ $t("alle-auswaehlen") }}
-                  </b-button>
-                  <b-button
+                  </BButton>
+                  <BButton
                     variant="light"
-                    @click="() => (editLineupMembers = [])"
                     :disabled="editLineupMembers.length == 0"
+                    @click="() => (editLineupMembers = [])"
                   >
-                    <b-icon-slash />
+                    <IBiSlash />
                     {{ $t("keine-auswaehlen") }}
-                  </b-button>
-                  <b-button
+                  </BButton>
+                  <BButton
                     variant="light"
+                    :disabled="
+                      editLineupMembers?.length == 0 ||
+                      editLineupMembers?.length == teamMembers?.length
+                    "
                     @click="
                       () =>
                         (editLineupMembers = teamMembers
                           .filter((m) => !editLineupMembers.includes(m.id))
                           .map((m) => m.id))
                     "
-                    :disabled="
-                      editLineupMembers?.length == 0 ||
-                      editLineupMembers?.length == teamMembers?.length
-                    "
                   >
-                    <b-icon-arrow-repeat />
+                    <IBiArrowRepeat />
                     {{ $t("auswahl-wechseln") }}
-                  </b-button>
-                </b-button-group>
+                  </BButton>
+                </BButtonGroup>
 
-                <b-form-checkbox-group
+                <BFormCheckbox-group
                   id="memberSelection-lineup"
                   v-model="editLineupMembers"
                   stacked
                   :style="{ columnCount: 2 }"
                 >
-                  <b-form-checkbox
+                  <BFormCheckbox
                     v-for="member in teamMembers"
                     :key="member.id"
                     :value="member.id"
                   >
-                    <b-row no-gutters class="mb-1">
+                    <BRow no-gutters class="mb-1">
                       <div
-                        class="mr-2"
+                        class="me-2"
                         :style="{
                           height: '24px',
                           width: '24px',
@@ -594,24 +601,29 @@
                         }"
                       ></div>
                       {{ member.nickname || member.name }}
-                    </b-row>
-                  </b-form-checkbox>
-                </b-form-checkbox-group>
-              </b-form-group>
-            </b-form>
+                    </BRow>
+                  </BFormCheckbox>
+                </BFormCheckbox-group>
+              </BFormGroup>
+            </BForm>
           </div>
-        </b-list-group-item>
-      </b-skeleton-wrapper>
+        </BListGroupItem>
+      </BPlaceholderWrapper>
 
-      <b-skeleton-wrapper :loading="!choreo">
+      <BPlaceholderWrapper :loading="!choreo">
         <template #loading>
-          <b-list-group-item v-for="(_, i) in Array(1)" :key="i">
-            <b-skeleton width="25%" height="30px" class="mb-2" />
-            <b-skeleton width="50%" />
-            <b-skeleton width="25%" class="mb-3" />
-          </b-list-group-item>
+          <BListGroupItem v-for="(_, i) in Array(1)" :key="i">
+            <BPlaceholder
+              width="25%"
+              height="30px"
+              class="mb-2"
+              animation="wave"
+            />
+            <BPlaceholder width="50%" animation="wave" />
+            <BPlaceholder width="25%" class="mb-3" animation="wave" />
+          </BListGroupItem>
         </template>
-        <b-list-group-item
+        <BListGroupItem
           v-show="
             hitsForCurrentCount.length == 0 &&
             lineupsForCurrentCount.length == 0
@@ -622,53 +634,55 @@
               $t("countOverview.fuer-diesen-count-hast-du-noch-nichts-geplant")
             }}
           </p>
-        </b-list-group-item>
-      </b-skeleton-wrapper>
-    </b-list-group>
+        </BListGroupItem>
+      </BPlaceholderWrapper>
+    </BListGroup>
 
-    <b-button
-      variant="outline-success"
-      block
-      class="mt-2"
-      @click="() => $emit('openCreateHitModal')"
-      :disabled="!interactive"
-    >
-      <b-icon-plus />
-      {{ $t("countOverview.count-eintrag-hinzufuegen") }}
-    </b-button>
-    <b-button
-      variant="light"
-      block
-      class="mt-2"
-      @click="() => $refs.createLineupModal.open()"
-      :disabled="!interactive"
-    >
-      <b-icon-plus />
-      {{ $t("countOverview.aufstellung-hinzufuegen") }}
-    </b-button>
+    <div class="d-grid">
+      <BButton
+        variant="outline-success"
+        class="mt-2"
+        :disabled="!interactive"
+        @click="() => $emit('openCreateHitModal')"
+      >
+        <IBiPlus />
+        {{ $t("countOverview.count-eintrag-hinzufuegen") }}
+      </BButton>
+    </div>
+    <div class="d-grid">
+      <BButton
+        variant="light"
+        class="mt-2"
+        :disabled="!interactive"
+        @click="() => $refs.createLineupModal.open()"
+      >
+        <IBiPlus />
+        {{ $t("countOverview.aufstellung-hinzufuegen") }}
+      </BButton>
+    </div>
 
     <CreateLineupModal
       ref="createLineupModal"
       :count="count"
       :choreo="choreo"
-      :teamMembers="teamMembers"
-      :lineupsForCurrentCount="lineupsForCurrentCount"
-      :currentPositions="currentPositions"
-      @updateLineups="(lineupCopy) => $emit('updateLineups', lineupCopy)"
+      :team-members="teamMembers"
+      :lineups-for-current-count="lineupsForCurrentCount"
+      :current-positions="currentPositions"
+      @update-lineups="(lineupCopy) => $emit('updateLineups', lineupCopy)"
     />
 
     <DeleteLineupModal
       ref="deleteLineupModal"
       :choreo="choreo"
-      @updateLineups="(lineupCopy) => $emit('updateLineups', lineupCopy)"
+      @update-lineups="(lineupCopy) => $emit('updateLineups', lineupCopy)"
     />
 
     <DeleteHitModal
       ref="deleteHitModal"
       :choreo="choreo"
-      @updateHits="(hitCopy) => $emit('updateHits', hitCopy)"
+      @update-hits="(hitCopy) => $emit('updateHits', hitCopy)"
     />
-  </b-card>
+  </BCard>
 </template>
 
 <script>
@@ -713,19 +727,6 @@ import DeleteHitModal from "./modals/DeleteHitModal.vue";
 export default {
   name: "CountOverview",
   components: { CreateLineupModal, DeleteLineupModal, DeleteHitModal },
-  data: () => ({
-    editHitId: null,
-    editHitName: null,
-    editHitAchter: 1,
-    editHitCount: 1,
-    editHitMembers: [],
-    editLineupId: null,
-    editLineupStartAchter: 1,
-    editLineupStartCount: 1,
-    editLineupEndAchter: 1,
-    editLineupEndCount: 1,
-    editLineupMembers: [],
-  }),
   props: {
     count: {
       type: Number,
@@ -741,21 +742,133 @@ export default {
     },
     teamMembers: {
       type: Array,
+      default: () => [],
     },
     choreo: {
       type: Object,
+      default: () => ({}),
     },
     currentPositions: {
       type: Array,
+      default: () => [],
     },
     interactive: {
       type: Boolean,
       default: true,
     },
   },
+  emits: ["openCreateHitModal", "updateLineups", "updateHits", "updateCount"],
+  data: () => ({
+    editHitId: null,
+    editHitName: null,
+    editHitAchter: 1,
+    editHitCount: 1,
+    editHitMembers: [],
+    editLineupId: null,
+    editLineupStartAchter: 1,
+    editLineupStartCount: 1,
+    editLineupEndAchter: 1,
+    editLineupEndCount: 1,
+    editLineupMembers: [],
+  }),
+  computed: {
+    editHitNameIsValid() {
+      return Boolean(this.editHitName) && this.editHitName.trim().length >= 3;
+    },
+    editHitNameStateFeedback() {
+      if (!this.editHitName) return this.$t("erforderlich");
+      if (this.editHitName.trim().length < 3)
+        return this.$t("countOverview.hit-name-min-laenge");
+      return null;
+    },
+    editHitAchterIsValid() {
+      return Boolean(this.editHitAchter);
+    },
+    editHitAchterStateFeedback() {
+      if (!this.editHitAchter) return this.$t("erforderlich");
+      return null;
+    },
+    editHitCountIsValid() {
+      return Boolean(this.editHitCount);
+    },
+    editHitCountStateFeedback() {
+      if (!this.editHitCount) return this.$t("erforderlich");
+      return null;
+    },
+    editHitMembersIsValid() {
+      return Boolean(this.editHitMembers) && this.editHitMembers.length > 0;
+    },
+    editHitMembersStateFeedback() {
+      if (!this.editHitMembers || this.editHitMembers.length == 0)
+        return this.$t("erforderlich");
+      return null;
+    },
+    editLineupStartIsBeforeEnd() {
+      const absoluteStartCount =
+        (parseInt(this.editLineupStartAchter) - 1) * 8 +
+        parseInt(this.editLineupStartCount) -
+        1;
+      const absoluteEndCount =
+        (parseInt(this.editLineupEndAchter) - 1) * 8 +
+        parseInt(this.editLineupEndCount) -
+        1;
+      return absoluteStartCount <= absoluteEndCount;
+    },
+    editLineupStartIsBeforeEndStateFeedback() {
+      if (!this.editLineupStartIsBeforeEnd)
+        return this.$t("countOverview.start-vor-ende");
+      return null;
+    },
+    editLineupEndAchterIsValid() {
+      return (
+        Boolean(this.editLineupEndAchter) && this.editLineupStartIsBeforeEnd
+      );
+    },
+    editLineupEndAchterStateFeedback() {
+      if (!this.editLineupEndAchter) return this.$t("erforderlich");
+      return null;
+    },
+    editLineupStartAchterIsValid() {
+      return (
+        Boolean(this.editLineupStartAchter) && this.editLineupStartIsBeforeEnd
+      );
+    },
+    editLineupStartAchterStateFeedback() {
+      if (!this.editLineupStartAchter) return this.$t("erforderlich");
+      return null;
+    },
+    editLineupStartCountIsValid() {
+      return (
+        Boolean(this.editLineupStartCount) && this.editLineupStartIsBeforeEnd
+      );
+    },
+    editLineupStartCountStateFeedback() {
+      if (!this.editLineupStartCount) return this.$t("erforderlich");
+      return null;
+    },
+    editLineupEndCountIsValid() {
+      return (
+        Boolean(this.editLineupEndCount) && this.editLineupStartIsBeforeEnd
+      );
+    },
+    editLineupEndCountStateFeedback() {
+      if (!this.editLineupEndCount) return this.$t("erforderlich");
+      return null;
+    },
+    editLineupMembersIsValid() {
+      return (
+        Boolean(this.editLineupMembers) && this.editLineupMembers.length > 0
+      );
+    },
+    editLineupMembersStateFeedback() {
+      if (!this.editLineupMembers || this.editLineupMembers.length == 0)
+        return this.$t("erforderlich");
+      return null;
+    },
+  },
   methods: {
     openNewHitModal() {
-      this.$bvModal.show("modal-newHit");
+      this.$emit("openCreateHitModal");
     },
     countToString(count) {
       return `${Math.floor(count / 8) + 1} / ${(count % 8) + 1}`;
@@ -927,101 +1040,6 @@ export default {
     },
     openHitDeleteModal(hitId) {
       this.$refs.deleteHitModal(hitId);
-    },
-  },
-  computed: {
-    editHitNameIsValid() {
-      return Boolean(this.editHitName) && this.editHitName.trim().length >= 3;
-    },
-    editHitNameStateFeedback() {
-      if (!this.editHitName) return this.$t("erforderlich");
-      if (this.editHitName.trim().length < 3)
-        return this.$t("countOverview.hit-name-min-laenge");
-      return null;
-    },
-    editHitAchterIsValid() {
-      return Boolean(this.editHitAchter);
-    },
-    editHitAchterStateFeedback() {
-      if (!this.editHitAchter) return this.$t("erforderlich");
-      return null;
-    },
-    editHitCountIsValid() {
-      return Boolean(this.editHitCount);
-    },
-    editHitCountStateFeedback() {
-      if (!this.editHitCount) return this.$t("erforderlich");
-      return null;
-    },
-    editHitMembersIsValid() {
-      return Boolean(this.editHitMembers) && this.editHitMembers.length > 0;
-    },
-    editHitMembersStateFeedback() {
-      if (!this.editHitMembers || this.editHitMembers.length == 0)
-        return this.$t("erforderlich");
-      return null;
-    },
-    editLineupStartIsBeforeEnd() {
-      const absoluteStartCount =
-        (parseInt(this.editLineupStartAchter) - 1) * 8 +
-        parseInt(this.editLineupStartCount) -
-        1;
-      const absoluteEndCount =
-        (parseInt(this.editLineupEndAchter) - 1) * 8 +
-        parseInt(this.editLineupEndCount) -
-        1;
-      return absoluteStartCount <= absoluteEndCount;
-    },
-    editLineupStartIsBeforeEndStateFeedback() {
-      if (!this.editLineupStartIsBeforeEnd)
-        return this.$t("countOverview.start-vor-ende");
-      return null;
-    },
-    editLineupEndAchterIsValid() {
-      return (
-        Boolean(this.editLineupEndAchter) && this.editLineupStartIsBeforeEnd
-      );
-    },
-    editLineupEndAchterStateFeedback() {
-      if (!this.editLineupEndAchter) return this.$t("erforderlich");
-      return null;
-    },
-    editLineupStartAchterIsValid() {
-      return (
-        Boolean(this.editLineupStartAchter) && this.editLineupStartIsBeforeEnd
-      );
-    },
-    editLineupStartAchterStateFeedback() {
-      if (!this.editLineupStartAchter) return this.$t("erforderlich");
-      return null;
-    },
-    editLineupStartCountIsValid() {
-      return (
-        Boolean(this.editLineupStartCount) && this.editLineupStartIsBeforeEnd
-      );
-    },
-    editLineupStartCountStateFeedback() {
-      if (!this.editLineupStartCount) return this.$t("erforderlich");
-      return null;
-    },
-    editLineupEndCountIsValid() {
-      return (
-        Boolean(this.editLineupEndCount) && this.editLineupStartIsBeforeEnd
-      );
-    },
-    editLineupEndCountStateFeedback() {
-      if (!this.editLineupEndCount) return this.$t("erforderlich");
-      return null;
-    },
-    editLineupMembersIsValid() {
-      return (
-        Boolean(this.editLineupMembers) && this.editLineupMembers.length > 0
-      );
-    },
-    editLineupMembersStateFeedback() {
-      if (!this.editLineupMembers || this.editLineupMembers.length == 0)
-        return this.$t("erforderlich");
-      return null;
     },
   },
 };

@@ -1,10 +1,30 @@
 import { NextFunction, Response, Request, Router } from "express";
+import { z } from "zod";
 import Team from "../db/models/team";
 import TeamService from "../services/TeamService";
 import NotificationService from "../services/NotificationService";
 import { NotFoundError } from "@/utils/errors";
+import { validate } from "@/middlewares/validateMiddleware";
+import { uuidParams, uuidParamsOptional } from "@/utils/zodSchemas";
 
 const { default: AuthService } = require("../services/AuthService");
+
+const teamQuerySchema = z.object({
+  name: z.string().optional(),
+});
+
+const createTeamSchema = z.object({
+  name: z.string().min(1),
+  clubId: z.uuid(),
+  seasonId: z.uuid(),
+  ownerId: z.uuid().optional(),
+});
+const updateTeamSchema = createTeamSchema.partial();
+
+type TeamQuery = z.infer<typeof teamQuerySchema>;
+type CreateTeamBody = z.infer<typeof createTeamSchema>;
+type UpdateTeamBody = z.infer<typeof updateTeamSchema>;
+type UuidParams = z.infer<typeof uuidParams>;
 
 const router = Router();
 
@@ -47,17 +67,25 @@ const router = Router();
 router.get(
   "/{:id}",
   AuthService.authenticateUser(),
+  validate(uuidParamsOptional, "params"),
+  validate(teamQuerySchema, "query"),
   (req: Request, res: Response, next: NextFunction) => {
-    if (req.params.id)
-      return TeamService.findById(req.params.id, req.UserId)
+    const params = req.params as UuidParams;
+    const query = req.query as TeamQuery;
+    if (params.id)
+      return TeamService.findById(params.id, req.actingUserId)
         .then((team: Team | null) => {
           res.send(team);
           return next();
         })
         .catch((e: Error) => next(e));
     else {
-      if (req.query.name)
-        return TeamService.findByName(req.query.name as string, req.UserId)
+      if (query.name)
+        return TeamService.findByName(
+          query.name,
+          req.ownerIds,
+          req.actingUserId,
+        )
           .then((foundTeams: Team[]) => {
             if (!foundTeams) throw new NotFoundError();
             else res.send(foundTeams);
@@ -65,7 +93,7 @@ router.get(
           })
           .catch((e: Error) => next(e));
       else
-        return TeamService.getAll(req.UserId)
+        return TeamService.getAll(req.ownerIds, req.actingUserId)
           .then((foundTeams: Team[]) => {
             res.send(foundTeams);
             return next();
@@ -101,6 +129,9 @@ router.get(
  *                 type: string
  *               seasonId:
  *                 type: string
+ *               ownerId:
+ *                 type: string | null
+ *                 description: Owner ID. If null/undefined, falls back to actingUserId
  *     responses:
  *       200:
  *         description: Team created successfully
@@ -114,9 +145,16 @@ router.get(
 router.post(
   "/",
   AuthService.authenticateUser(),
+  validate(createTeamSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { name, clubId, seasonId } = req.body;
-    return TeamService.create(name, clubId, seasonId, req.UserId)
+    const { name, clubId, seasonId, ownerId } = req.body as CreateTeamBody;
+    return TeamService.create(
+      name,
+      clubId,
+      seasonId,
+      ownerId || req.actingUserId,
+      req.actingUserId,
+    )
       .then((team: Team | null) => {
         if (!team) throw new Error("Unknown error: Team could not be created");
         NotificationService.createOne(
@@ -125,7 +163,7 @@ router.post(
             name,
             teamId: team.id,
           }),
-          req.UserId,
+          req.actingUserId,
         );
         res.send(team);
         return next();
@@ -170,8 +208,14 @@ router.post(
 router.put(
   "/:id",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
+  validate(updateTeamSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    return TeamService.update(req.params.id, req.body, req.UserId)
+    return TeamService.update(
+      req.params.id,
+      req.body as UpdateTeamBody,
+      req.actingUserId,
+    )
       .then((team: Team) => {
         res.send(team);
         return next();
@@ -206,8 +250,9 @@ router.put(
 router.delete(
   "/:id",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
-    return TeamService.remove(req.params.id, req.UserId)
+    return TeamService.remove(req.params.id, req.actingUserId)
       .then(() => {
         res.send();
         return next();

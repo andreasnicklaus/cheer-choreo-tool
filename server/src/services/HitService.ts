@@ -1,7 +1,16 @@
 import { NotFoundError } from "@/utils/errors";
 import Hit from "../db/models/hit";
+import ChoreoService from "./ChoreoService";
+import {
+  checkReadAccess,
+  checkWriteAccess,
+  checkDeleteAccess,
+  filterAccessibleOwnerIds,
+} from "../utils/accessControl";
+import { stripProtectedUpdateFields } from "@/utils/stripProtectedFields";
 
 const { logger } = require("../plugins/winston");
+const { Op } = require("sequelize");
 
 /**
  * Service for managing Hit entities and their associations.
@@ -11,54 +20,94 @@ const { logger } = require("../plugins/winston");
  */
 class HitService {
   /**
-   * Get all Hits for a user, including their members.
-   * @async
-   * @param {string} UserId - The user's UUID.
-   * @returns {Promise<Array<Hit>>} List of Hit objects.
+   * Find or create a Hit by name, count, and choreography, and associate members.
+   *
+   * @param {string} name - The Hit's name.
+   * @param {number} count - The count value.
+   * @param {UUID} ChoreoId - The choreography ID.
+   * @param {Array<string>} [memberIds=[]] - Array of member IDs.
+   * @param {UUID} actingUserId - The acting user's UUID.
+   * @returns {Promise<Hit>} The found or created Hit.
    */
-  async getAll(UserId: string) {
-    logger.debug(`HitService getAll ${JSON.stringify({ UserId })}`);
-    return Hit.findAll({ where: { UserId }, include: "Members" });
+  async getAll(ownerIds: string[], actingUserId: string, isAdmin = false) {
+    logger.debug(
+      `HitService getAll ${JSON.stringify({ ownerIds, actingUserId, isAdmin })}`,
+    );
+
+    const accessibleOwnerIds =
+      ownerIds.length > 0
+        ? await filterAccessibleOwnerIds(ownerIds, actingUserId, isAdmin)
+        : [actingUserId];
+
+    return Hit.findAll({
+      where: { UserId: { [Op.in]: accessibleOwnerIds } },
+      include: "Members",
+    });
   }
 
   /**
    * Find a Hit by its ID and user, including all associations.
-   * @async
-   * @param {string} id - The Hit's ID.
-   * @param {string} UserId - The user's UUID.
+   * @param {UUID} id - The Hit's ID.
+   * @param {UUID} actingUserId - The acting user's UUID.
    * @returns {Promise<Hit|null>} The found Hit or null.
    */
-  async findById(id: string, UserId: string) {
-    logger.debug(`HitService findById ${JSON.stringify({ id, UserId })}`);
+  async findById(id: string, actingUserId: string, isAdmin = false) {
+    logger.debug(
+      `HitService findById ${JSON.stringify({ id, actingUserId, isAdmin })}`,
+    );
+
+    const hit = await Hit.findByPk(id);
+    if (!hit) {
+      return null;
+    }
+
+    await checkReadAccess(hit.UserId, actingUserId, isAdmin);
+
     return Hit.findOne({
-      where: { id, UserId },
+      where: { id },
       include: { all: true },
     }); // njsscan-ignore: node_nosqli_injection
   }
 
   /**
    * Find all Hits by name for a user, including all associations.
-   * @async
    * @param {string} name - The Hit's name.
-   * @param {string} UserId - The user's UUID.
+   * @param {UUID[]} ownerIds - Array of owner IDs the acting user has access to.
+   * @param {UUID} actingUserId - The acting user's UUID.
    * @returns {Promise<Array<Hit>>} List of matching Hits.
    */
-  async findByName(name: string, UserId: string) {
-    logger.debug(`HitService findByName ${JSON.stringify({ name, UserId })}`);
+  async findByName(
+    name: string,
+    ownerIds: string[],
+    actingUserId: string,
+    isAdmin = false,
+  ) {
+    logger.debug(
+      `HitService findByName ${JSON.stringify({ name, ownerIds, actingUserId, isAdmin })}`,
+    );
+
+    const accessibleOwnerIds =
+      ownerIds.length > 0
+        ? await filterAccessibleOwnerIds(ownerIds, actingUserId, isAdmin)
+        : [actingUserId];
+
     return Hit.findAll({
-      where: { name, UserId },
+      where:
+        accessibleOwnerIds.length > 0
+          ? { name, UserId: { [Op.in]: accessibleOwnerIds } }
+          : { name, UserId: actingUserId },
       include: { all: true },
     });
   }
 
   /**
    * Create a new Hit and associate members if provided.
-   * @async
    * @param {string} name - The Hit's name.
    * @param {number} count - The count value.
-   * @param {string} ChoreoId - The choreography ID.
+   * @param {UUID} ChoreoId - The choreography ID.
    * @param {Array<string>} [memberIds=[]] - Array of member IDs.
-   * @param {string} UserId - The user's UUID.
+   * @param {UUID} ownerId - The owner's UUID.
+   * @param {UUID} actingUserId - The acting user's UUID.
    * @returns {Promise<Hit>} The created Hit with members.
    */
   async create(
@@ -66,7 +115,8 @@ class HitService {
     count: number,
     ChoreoId: string,
     memberIds: Array<string> = [],
-    UserId: string,
+    actingUserId: string,
+    isAdmin = false,
   ) {
     logger.debug(
       `HitService create ${JSON.stringify({
@@ -74,33 +124,55 @@ class HitService {
         count,
         ChoreoId,
         memberIds,
-        UserId,
+        actingUserId,
+        isAdmin,
       })}`,
     );
-    return Hit.create({ name, count, ChoreoId, UserId }).then(
-      async (hit: Hit) => {
-        if (memberIds.length > 0) await hit.setMembers(memberIds);
-        return Hit.findByPk(hit.id, { include: "Members" });
-      },
+
+    // Inherit ownerId from parent Choreo
+    const choreo = await ChoreoService.findById(
+      ChoreoId,
+      actingUserId,
+      isAdmin,
     );
+    if (!choreo) {
+      throw new NotFoundError(`Choreo with ID ${ChoreoId} not found`);
+    }
+    const ownerId = choreo.UserId;
+
+    await checkWriteAccess(ownerId, actingUserId, isAdmin);
+
+    return Hit.create({
+      name,
+      count,
+      ChoreoId,
+      UserId: ownerId,
+      creatorId: actingUserId,
+      updaterId: actingUserId,
+    }).then(async (hit: Hit) => {
+      if (memberIds.length > 0) await hit.setMembers(memberIds);
+      await ChoreoService.update(hit.ChoreoId, {}, actingUserId, isAdmin);
+      return Hit.findByPk(hit.id, { include: "Members" });
+    });
   }
 
   /**
    * Find or create a Hit by name, count, and choreography, and associate members.
-   * @async
    * @param {string} name - The Hit's name.
    * @param {number} count - The count value.
-   * @param {string} ChoreoId - The choreography ID.
+   * @param {UUID} ChoreoId - The choreography ID.
    * @param {Array<string>} [memberIds=[]] - Array of member IDs.
-   * @param {string} UserId - The user's UUID.
+   * @param {UUID} ownerId - The owner's UUID.
+   * @param {UUID} actingUserId - The acting user's UUID.
    * @returns {Promise<Hit>} The found or created Hit.
    */
   async findOrCreate(
     name: string,
     count: number,
     ChoreoId: string,
-    memberIds: string[] = [],
-    UserId: string,
+    memberIds: Array<string> = [],
+    actingUserId: string,
+    isAdmin = false,
   ) {
     logger.debug(
       `HitService findOrCreate ${JSON.stringify({
@@ -108,15 +180,33 @@ class HitService {
         count,
         ChoreoId,
         memberIds,
-        UserId,
+        actingUserId,
+        isAdmin,
       })}`,
     );
+
+    // Inherit ownerId from parent Choreo
+    const choreo = await ChoreoService.findById(
+      ChoreoId,
+      actingUserId,
+      isAdmin,
+    );
+    if (!choreo) {
+      throw new NotFoundError(`Choreo with ID ${ChoreoId} not found`);
+    }
+    const ownerId = choreo.UserId;
+
+    await checkWriteAccess(ownerId, actingUserId, isAdmin);
+
     const [hit, _created] = await Hit.findOrCreate({
-      where: {
+      where: { name, count, ChoreoId, UserId: ownerId },
+      defaults: {
         name,
         count,
         ChoreoId,
-        UserId,
+        UserId: ownerId,
+        creatorId: actingUserId,
+        updaterId: actingUserId,
       },
     });
     await hit.setMembers(memberIds);
@@ -124,54 +214,73 @@ class HitService {
   }
 
   /**
-   * Update a Hit by ID and user, and update member associations if provided.
-   * @async
-   * @param {string} id - The Hit's ID.
+   * Update a hit.
+   * @param {UUID} id - The Hit's ID.
    * @param {Object} data - The update data.
-   * @param {string} UserId - The user's UUID.
+   * @param {UUID} actingUserId - The acting user's UUID.
    * @returns {Promise<Hit>} The updated Hit.
    */
   async update(
     id: string,
     data: { id?: string; name?: string; memberIds?: Array<string> },
-    UserId: string,
+    actingUserId: string,
+    isAdmin = false,
   ) {
-    logger.debug(`HitService update ${JSON.stringify({ id, data, UserId })}`);
-    return Hit.findOne({ where: { id, UserId } }) // njsscan-ignore: node_nosqli_injection
-      .then(async (foundHit: Hit | null) => {
-        if (foundHit) {
-          await foundHit.update(data);
-          await foundHit.save();
-          if (data.memberIds) await foundHit.setMembers(data.memberIds);
-          return Hit.findOne({
-            where: { id, UserId },
-            include: "Members",
-          }); // njsscan-ignore: node_nosqli_injection
-        } else {
-          logger.error(`No hit found with ID ${id} when updating`);
-          throw new NotFoundError(`No hit found with ID ${id} when updating`);
-        }
-      });
+    logger.debug(
+      `HitService update ${JSON.stringify({ id, data, actingUserId, isAdmin })}`,
+    );
+
+    const hit = await Hit.findByPk(id);
+    if (!hit) {
+      throw new NotFoundError(`No hit found with ID ${id} when updating`);
+    }
+
+    await checkWriteAccess(hit.UserId, actingUserId, isAdmin);
+
+    await hit.update({
+      ...stripProtectedUpdateFields(data),
+      updaterId: actingUserId,
+    });
+    await hit.save();
+    if (data.memberIds) await hit.setMembers(data.memberIds);
+    await ChoreoService.update(hit.ChoreoId, {}, actingUserId, isAdmin);
+    return hit;
   }
 
   /**
-   * Remove a Hit by ID and user.
-   * @async
-   * @param {string} id - The Hit's ID.
-   * @param {string} UserId - The user's UUID.
-   * @returns {Promise<void>} Resolves if deletion is successful.
+   * Remove a Hit by ID.
+   * @param {UUID} id - The Hit's ID.
+   * @param {UUID} actingUserId - The acting user's UUID.
+   * @returns {Promise<void>} Resolves when the Hit is removed.
    */
-  async remove(id: string, UserId: string) {
-    logger.debug(`HitService remove ${JSON.stringify({ id, UserId })}`);
-    return Hit.findOne({ where: { id, UserId } }) // njsscan-ignore: node_nosqli_injection
-      .then((foundHit: Hit | null) => {
-        if (foundHit) {
-          return foundHit.destroy();
-        } else {
-          logger.error(`No hit found with ID ${id} when deleting`);
-          throw new NotFoundError(`No hit found with ID ${id} when deleting`);
-        }
-      });
+  async remove(id: string, actingUserId: string, isAdmin = false) {
+    logger.debug(
+      `HitService remove ${JSON.stringify({ id, actingUserId, isAdmin })}`,
+    );
+
+    const hit = await Hit.findByPk(id);
+    if (!hit) {
+      throw new NotFoundError(`No hit found with ID ${id} when deleting`);
+    }
+
+    await checkDeleteAccess(hit.UserId, actingUserId, isAdmin);
+
+    await ChoreoService.update(hit.ChoreoId, {}, actingUserId, isAdmin);
+    return hit.destroy();
+  }
+
+  async migrateCreatorUpdater() {
+    logger.debug(`HitService migrateCreatorUpdater`);
+
+    const hits = await Hit.findAll({
+      where: { creatorId: { [Op.is]: null }, UserId: { [Op.not]: null } },
+    });
+
+    await Promise.all(
+      hits.map((hit) =>
+        hit.update({ creatorId: hit.UserId, updaterId: hit.UserId }),
+      ),
+    );
   }
 }
 

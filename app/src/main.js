@@ -1,43 +1,33 @@
-import "@babel/polyfill";
-import "mutationobserver-shim";
-import Vue from "vue";
-import "./plugins/bootstrap-vue";
-import "./plugins/vue-flag-icon";
+import { createApp } from "vue";
+import bootstrapPlugin from "./plugins/bootstrap-vue";
 import i18n from "./plugins/vue-i18n";
-import "./plugins/vue-meta";
+import headPlugin from "./plugins/vue-meta";
 import App from "./App.vue";
-import "./registerServiceWorker";
 import router from "./router";
 import store from "./store";
 import vueMatomo from "vue-matomo";
-import VueCookie from "vue-cookie";
-import VueMeta from "vue-meta";
-import VueFlagIcon from "vue-flag-icon";
+import "vue3-country-flag-icon/dist/CountryFlag.css";
+import { isPrerender } from "./utils/isPrerender";
 
-Vue.config.productionTip = false;
+const app = createApp(App);
 
-Vue.use(VueMeta, {
-  refreshOnceOnNavigation: true,
-});
+app.use(bootstrapPlugin);
+app.use(router);
+app.use(store);
+app.use(i18n);
 
-if (!window.__PRERENDER_INJECTED)
-  Vue.use(vueMatomo, {
+app.use(headPlugin);
+
+if (!isPrerender())
+  app.use(vueMatomo, {
     host: "https://matomo.choreo-planer.de",
     siteId: 3,
     router,
   });
 
-Vue.use(VueCookie);
+app.mount("#app");
 
-new Vue({
-  router,
-  store,
-  i18n,
-  VueFlagIcon,
-  render: (h) => h(App),
-}).$mount("#app");
-
-if (!window.__PRERENDER_INJECTED) {
+if (!isPrerender()) {
   // Disable Matomo Tracking Before Consent
   window._paq.push(["requireConsent"]);
   // Initialize Matomo Tracking

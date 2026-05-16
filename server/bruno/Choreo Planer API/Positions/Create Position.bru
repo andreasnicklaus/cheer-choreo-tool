@@ -1,0 +1,25 @@
+meta {
+  name: Create Position
+  method: POST
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/position/
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "x": 100,
+    "y": 200,
+    "MemberId": "{{id}}",
+    "lineupId": "{{id}}"
+  }
+}

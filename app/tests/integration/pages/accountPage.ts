@@ -2,6 +2,7 @@ import { expect, Page } from "@playwright/test";
 import TestPage from "./page";
 import { defaultUser } from "../testData/user";
 import { defaultClubs } from "../testData/club";
+import { managedByMe } from "../testData/userAccess";
 
 export default class AccountPage extends TestPage {
   route = "/account";
@@ -22,14 +23,12 @@ export default class AccountPage extends TestPage {
         this.page.getByRole("heading", { name: defaultUser.username })
       ).toBeVisible(),
       expect(this.page.getByText(defaultUser.email)).toBeVisible(),
-      expect(this.page.getByText("confirmed")).toBeVisible({
+      expect(this.page.getByText("confirmed", { exact: true })).toBeVisible({
         visible: defaultUser.emailConfirmed,
       }),
       expect(
         this.page
-          .locator("div")
-          .filter({ hasText: `${defaultUser.username} ${defaultUser.email}` })
-          .nth(1)
+          .getByText(`${defaultUser.username}${defaultUser.email}`)
           .getByText("just now")
       ).toHaveCount(2),
     ]);
@@ -49,9 +48,7 @@ export default class AccountPage extends TestPage {
     return Promise.all([
       defaultClubs.map((club, i) => {
         return expect(
-          this.page.getByRole("tab", {
-            name: `${club.name}${i == 0 ? " check circle fill" : ""}`,
-          })
+          this.page.getByRole("tab", { name: club.name })
         ).toBeVisible();
       }),
       expect(
@@ -78,10 +75,10 @@ export default class AccountPage extends TestPage {
     await this.iSwitchToDangerZone();
     return Promise.all([
       expect(
-        this.page.getByRole("button", { name: "key Change Password" })
+        this.page.getByRole("button", { name: "Change Password" })
       ).toBeVisible(),
       expect(
-        this.page.getByRole("button", { name: "trash Delete account" })
+        this.page.getByRole("button", { name: "Delete account" })
       ).toBeVisible(),
     ]);
   }
@@ -120,21 +117,21 @@ export default class AccountPage extends TestPage {
     await this.page.getByRole("tab", { name: clubName }).click();
 
     const selectClubButton = this.page.getByRole("button", {
-      name: "check Select as active club",
+      name: "Select as active club",
     });
     await this.iClickButton(selectClubButton);
 
-    return expect(
-      this.page.getByRole("tab", { name: `${clubName} check circle` })
-    ).toBeVisible();
+    const secondClubButton = this.page.getByRole("tab", {
+      name: `${clubName}`,
+    });
+    await expect(secondClubButton).toBeVisible();
+    return expect(secondClubButton).toHaveClass(/active/);
   }
 
   async iChangeSettings() {
     await this.iSwitchToSettings();
     await this.page
-      .getByRole("group", { name: "Tracking (Opt-out):" })
-      .locator("div")
-      .nth(2)
+      .getByRole("checkbox", { name: "Tracking (Opt-out): I don't" })
       .click();
 
     const saveButton = this.page.getByRole("button", { name: "Save" });
@@ -153,13 +150,13 @@ export default class AccountPage extends TestPage {
     });
     await this.iClickButton(changePasswordButton);
 
-    const passwordInput = this.page
-      .getByRole("group", { name: "New password:" })
-      .getByPlaceholder("New password");
+    const passwordInput = this.page.getByRole("textbox", {
+      name: "New password:",
+    });
     await this.iFillInput(passwordInput, newPassword);
-    const passwordRepetitionInput = this.page
-      .getByRole("group", { name: "Repetition:" })
-      .getByPlaceholder("New password");
+    const passwordRepetitionInput = this.page.getByRole("textbox", {
+      name: "Repetition:",
+    });
     await this.iFillInput(passwordRepetitionInput, newPassword);
 
     const saveButton = this.page.getByRole("button", {
@@ -191,5 +188,110 @@ export default class AccountPage extends TestPage {
     await this.iClickButton(confirmButton);
 
     await expect(this.page).toHaveURL("/en/login");
+  }
+
+  async iOpenCreateClubModal() {
+    await this.iSwitchToClubs();
+    const addClubButton = this.page.getByRole("button", {
+      name: "New club",
+      exact: true,
+    });
+    await this.iClickButton(addClubButton);
+  }
+
+  async iSeeOwnerSelectInCreateClubModal() {
+    const modal = this.page.getByRole("dialog", { name: "New club" });
+    await expect(modal.getByLabel("Owner")).toBeVisible();
+  }
+
+  async iSeeOwnerSelectOptionInCreateClubModal(text: string) {
+    const modal = this.page.getByRole("dialog", { name: "New club" });
+    const options = await modal
+      .getByRole("combobox", { name: "Owner" })
+      .locator("option")
+      .allTextContents();
+    expect(options.some((o) => o.includes(text))).toBeTruthy();
+  }
+
+  async iDontSeeOwnerSelectInCreateClubModal() {
+    const modal = this.page.getByRole("dialog", { name: "New club" });
+    await expect(modal.getByLabel("Owner")).not.toBeVisible();
+  }
+
+  iSwitchToAccess() {
+    return this.iClickButton(this.page.getByRole("tab", { name: "Access" }));
+  }
+
+  async iCheckSharedWithMe() {
+    await this.iSwitchToAccess();
+    await expect(this.page.getByText("Shared with me")).toBeVisible();
+    // Check that pending access is shown
+    if (managedByMe.length > 0) {
+      for (const access of managedByMe) {
+        if (!access.accepted) {
+          await expect(
+            this.page.getByTestId("sharedWithMeTable").getByText("Pending")
+          ).toBeVisible();
+        }
+      }
+    }
+  }
+
+  async iCheckManagedByMe() {
+    await this.iSwitchToAccess();
+    await expect(this.page.getByText("Managed by me")).toBeVisible();
+    // Check that managed users are displayed
+    if (managedByMe.length > 0) {
+      for (const access of managedByMe) {
+        await expect(
+          this.page.getByText(access.owner?.username || "")
+        ).toBeVisible();
+      }
+    }
+  }
+
+  async iInviteUser(email: string, role: string) {
+    await this.iSwitchToAccess();
+    await this.page.getByRole("button", { name: "Add user" }).click();
+
+    const emailInput = this.page.getByRole("textbox", {
+      name: "E-mail address",
+    });
+    await this.iFillInput(emailInput, email);
+
+    const roleSelect = this.page.getByRole("combobox", { name: "Role" });
+    await roleSelect.selectOption(role);
+
+    await this.page.getByRole("button", { name: "Send invitation" }).click();
+  }
+
+  async iAcceptAccess() {
+    await this.iSwitchToAccess();
+    // Click accept button for pending access
+    const acceptButton = this.page
+      .getByRole("button", { name: "Accept" })
+      .first();
+    await this.iClickButton(acceptButton);
+  }
+
+  async iDeclineAccess() {
+    await this.iSwitchToAccess();
+    // Click decline button for pending access
+    const declineButton = this.page
+      .getByRole("button", { name: "Decline" })
+      .first();
+    await this.iClickButton(declineButton);
+  }
+
+  iCheckPendingStatusInSharedWithMe() {
+    return expect(
+      this.page.getByTestId("sharedWithMeTable").getByText("Pending")
+    ).toBeVisible();
+  }
+
+  iCheckPendingStatusInManagedByMe() {
+    return expect(
+      this.page.getByTestId("managedByMeTable").getByText("Pending")
+    ).toBeVisible();
   }
 }

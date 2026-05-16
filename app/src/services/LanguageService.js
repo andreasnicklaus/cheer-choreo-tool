@@ -33,7 +33,7 @@ class LanguageService {
       localStorage.setItem(localStorageKey, language);
     document.documentElement.lang = language;
 
-    i18n.locale = language;
+    i18n.global.locale.value = language;
     if (options.routeAfterChange)
       router
         .replace({

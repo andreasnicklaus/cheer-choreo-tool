@@ -1,33 +1,34 @@
-import { test, expect, jest, beforeEach } from "@jest/globals";
-import { describe } from "node:test";
+import { describe, test, expect, vi, beforeEach } from "vitest";
 import ax from "@/services/RequestService";
 
-jest.mock("axios", () => {
-  const getMock = jest.fn();
-  const postMock = jest.fn();
-  const putMock = jest.fn();
-  const patchMock = jest.fn();
-  const deleteMock = jest.fn();
+vi.mock("axios", () => {
+  const getMock = vi.fn();
+  const postMock = vi.fn();
+  const putMock = vi.fn();
+  const patchMock = vi.fn();
+  const deleteMock = vi.fn();
 
   return {
-    create: jest.fn(() => ({
-      get: getMock,
-      post: postMock,
-      put: putMock,
-      patch: patchMock,
-      delete: deleteMock,
-    })),
+    default: {
+      create: vi.fn(() => ({
+        get: getMock,
+        post: postMock,
+        put: putMock,
+        patch: patchMock,
+        delete: deleteMock,
+      })),
+    },
   };
 });
 
-jest.mock("axios-cache-interceptor", () => {
+vi.mock("axios-cache-interceptor", () => {
   return {
-    setupCache: jest.fn((instance) => {
+    setupCache: vi.fn((instance) => {
       return {
         ...instance,
         interceptors: {
-          request: { use: jest.fn() },
-          response: { use: jest.fn() },
+          request: { use: vi.fn() },
+          response: { use: vi.fn() },
         },
       };
     }),
@@ -37,7 +38,7 @@ jest.mock("axios-cache-interceptor", () => {
 describe("RequestService", () => {
   beforeEach(() => {
     localStorage.clear();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   test("should mock axios methods", () => {

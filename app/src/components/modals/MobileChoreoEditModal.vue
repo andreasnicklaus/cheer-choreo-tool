@@ -1,12 +1,13 @@
 <template>
-  <b-modal
+  <BModal
     :id="`mobile-choreoEdit-modal-${id}`"
+    ref="modal"
     centered
     no-close-on-backdrop
     no-close-on-esc
-    hide-header-close
-    @close="(event) => event.preventDefault()"
+    no-header-close
     :title="$t('modals.mobile-choreo-edit.am-handy-nicht-moeglich')"
+    @close="(event) => event.preventDefault()"
   >
     <p class="text-muted">
       {{ $t("modals.mobile-choreo-edit.info-1") }}
@@ -14,42 +15,42 @@
     <p class="text-muted">
       {{ $t("modals.mobile-choreo-edit.info-2") }}
     </p>
-    <b-row :style="{ gap: '10px' }">
-      <b-col>
-        <b-button
+    <BRow :style="{ gap: '10px' }">
+      <BCol>
+        <BButton
           :to="{
             name: 'PDF',
-            params: { choreoId, locale: $root.$i18n.locale },
+            params: { choreoId, locale: $i18n.locale },
           }"
           variant="success"
         >
-          <b-icon-file-pdf class="mr-2" />
+          <IBiFilePdf class="me-2" />
           {{ $t("Home.countsheet-als-pdf") }}
-        </b-button>
-      </b-col>
-      <b-col>
-        <b-button
+        </BButton>
+      </BCol>
+      <BCol>
+        <BButton
           :to="{
             name: 'Video',
-            params: { choreoId, locale: $root.$i18n.locale },
+            params: { choreoId, locale: $i18n.locale },
           }"
           variant="success"
         >
-          <b-icon-film class="mr-2" />
+          <IBiFilm class="me-2" />
           {{ $t("editView.video-exportieren") }}
-        </b-button>
-      </b-col>
-    </b-row>
-    <template #modal-footer="{ cancel }">
-      <b-button
-        @click="cancel"
-        :to="{ name: 'Start', params: { locale: $root.$i18n.locale } }"
+        </BButton>
+      </BCol>
+    </BRow>
+    <template #footer="{ cancel }">
+      <BButton
+        :to="{ name: 'Start', params: { locale: $i18n.locale } }"
         variant="outline-secondary"
+        @click="cancel"
       >
         {{ $t("zur-startseite") }}
-      </b-button>
+      </BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -71,21 +72,21 @@
  */
 export default {
   name: "MobileChoreoEditModal",
-  data: () => ({
-    id: (Math.random() + 1).toString(36).substring(7),
-  }),
   props: {
     choreoId: {
       type: String,
       required: true,
     },
   },
+  data: () => ({
+    id: (Math.random() + 1).toString(36).substring(7),
+  }),
   methods: {
     open() {
-      this.$bvModal.show(`mobile-choreoEdit-modal-${this.id}`);
+      this.$refs.modal.show();
     },
     close() {
-      this.$bvModal.hide(`mobile-choreoEdit-modal-${this.id}`);
+      this.$refs.modal.hide();
     },
   },
 };

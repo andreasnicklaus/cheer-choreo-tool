@@ -1,5 +1,5 @@
 <template>
-  <b-container id="helpView" data-view>
+  <BContainer id="datenschutzView" data-view class="mt-5 mb-5">
     <h1 class="mb-4">{{ $t("datenschutz.datenschutzerklaerung") }}</h1>
     <h2>1. {{ $t("datenschutz.allgemeine-hinweise") }}</h2>
     <p>
@@ -13,7 +13,7 @@
       <a href="mailto:info@choreo-planer.de"> info@choreo-planer.de </a>
     </p>
     <h2>3. {{ $t("datenschutz.verarbeitung-personenbezogener-daten") }}</h2>
-    <ol class="ml-3">
+    <ol class="ms-3">
       <li>
         {{ $t("datenschutz.verarbeitung-personenbezogener-daten-text-1") }}
       </li>
@@ -49,50 +49,56 @@
       E-Mail:
       <a href="mailto:info@choreo-planer.de"> info@choreo-planer.de </a>
     </p>
-  </b-container>
+  </BContainer>
 </template>
 
 <script>
-/**
- * @vue-computed {MetaInfo} metaInfo
- */
+import { useHead } from "@unhead/vue";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+
 export default {
   name: "DatenschutzView",
-  metaInfo() {
-    return {
-      title: this.$t("navigation.datenschutz"),
+  setup() {
+    const { t } = useI18n();
+    return { t };
+  },
+  mounted() {
+    useHead({
+      title: computed(() => this.t("navigation.datenschutz")),
       meta: [
         {
-          vmid: "description",
           name: "description",
-          content: this.$t("meta.datenschutz.description"),
+          content: computed(() => this.t("meta.datenschutz.description")),
         },
         {
-          vmid: "twitter:description",
           name: "twitter:description",
-          content: this.$t("meta.datenschutz.description"),
+          content: computed(() => this.t("meta.datenschutz.description")),
         },
         {
-          vmid: "og:description",
           property: "og:description",
-          content: this.$t("meta.datenschutz.description"),
+          content: computed(() => this.t("meta.datenschutz.description")),
         },
         {
-          vmid: "og:title",
           property: "og:title",
-          content: `${this.$t("navigation.datenschutz")} - ${this.$t(
-            "general.ChoreoPlaner"
-          )} | ${this.$t("meta.defaults.title")}`,
+          content: computed(
+            () =>
+              `${this.t("navigation.datenschutz")} - ${this.t(
+                "general.ChoreoPlaner"
+              )} | ${this.t("meta.defaults.title")}`
+          ),
         },
         {
-          vmid: "twitter:title",
           name: "twitter:title",
-          content: `${this.$t("navigation.datenschutz")} - ${this.$t(
-            "general.ChoreoPlaner"
-          )} | ${this.$t("meta.defaults.title")}`,
+          content: computed(
+            () =>
+              `${this.t("navigation.datenschutz")} - ${this.t(
+                "general.ChoreoPlaner"
+              )} | ${this.t("meta.defaults.title")}`
+          ),
         },
       ],
-    };
+    });
   },
 };
 </script>

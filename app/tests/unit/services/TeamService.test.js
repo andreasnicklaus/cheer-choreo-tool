@@ -1,19 +1,26 @@
-import { test, expect, jest, beforeEach } from "@jest/globals";
-import { describe } from "node:test";
+import { describe, test, expect, vi, beforeEach } from "vitest";
 import ax from "@/services/RequestService";
 import TeamService from "@/services/TeamService";
 
-jest.mock("@/services/RequestService", () => ({
-  get: jest.fn(),
-  post: jest.fn(),
-  put: jest.fn(),
-  patch: jest.fn(),
-  delete: jest.fn(),
+vi.mock("@/services/RequestService", () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    patch: vi.fn(),
+    delete: vi.fn(),
+  },
+}));
+
+vi.mock("@/services/FeatureFlagService", () => ({
+  default: {
+    isEnabled: vi.fn().mockResolvedValue(true),
+  },
 }));
 
 describe("TeamService", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("getAll", () => {
@@ -94,7 +101,12 @@ describe("TeamService", () => {
 
       const result = await TeamService.create("New Team");
 
-      expect(ax.post).toHaveBeenCalledWith("/team", { name: "New Team" });
+      expect(ax.post).toHaveBeenCalledWith("/team", {
+        name: "New Team",
+        clubId: undefined,
+        seasonId: undefined,
+        ownerId: null,
+      });
       expect(result).toEqual(mockResponse.data);
     });
 
@@ -106,7 +118,12 @@ describe("TeamService", () => {
         "Network Error"
       );
 
-      expect(ax.post).toHaveBeenCalledWith("/team", { name: "New Team" });
+      expect(ax.post).toHaveBeenCalledWith("/team", {
+        name: "New Team",
+        clubId: undefined,
+        seasonId: undefined,
+        ownerId: null,
+      });
     });
   });
 

@@ -30,16 +30,49 @@
     },
     {
       "year": null,
-      "name": "Gastauftritt Vereinsfeier 2024",
-      "usersSpecific": true
+      "name": "Gastauftritt Vereinsfeier 2024"
     },
     {
       "year": 2024,
-      "name": "Seniorenfeier",
-      "usersSpecific": true
+      "name": "Seniorenfeier"
+    }
+  ],
+  "userAccess": [
+    {
+      "owner": "salachglam",
+      "child": "salachglam-junior",
+      "role": "assistant",
+      "enabled": true
+    },
+    {
+      "owner": "salachglam",
+      "child": "salachglam-athlete",
+      "role": "athlete",
+      "enabled": true
+    },
+    {
+      "owner": "salachglam",
+      "child": "salachglam-coach",
+      "role": "coach",
+      "enabled": true
     }
   ],
   "users": [
+    {
+      "username": "salachglam-coach",
+      "password": "salachglam-coach",
+      "clubs": []
+    },
+    {
+      "username": "salachglam-junior",
+      "password": "salachglam-junior",
+      "clubs": []
+    },
+    {
+      "username": "salachglam-athlete",
+      "password": "salachglam-athlete",
+      "clubs": []
+    },
     {
       "username": "salachglam",
       "password": "salachglam",

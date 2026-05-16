@@ -28,11 +28,34 @@
     "deine-vereinsinformationen-wurden-gespeichert": "Deine Vereinsinformationen wurden gespeichert!",
     "cant-delete-only-club": "Du kannst nicht deinen einzigen Verein entfernen! Erstelle zuerst einen anderen Verein.",
     "cant-delete-active-club": "Du kannst nicht deinen aktiven Verein löschen! Wähle zuerst einen anderen Verein als aktiv aus.",
+    "cant-delete-access": "Du hast keine Berechtigung, diesen Verein zu löschen.",
     "lade-ein-bild-hoch-max-mb": "Lade ein Bild hoch: max. {0} MB",
     "es-ist-nicht-moeglich-bilder-hochzuladen-die-groesser-al-mb-gross-sind": "Es ist nicht möglich, Bilder hochzuladen, die größer als {0} MB groß sind. Wähle eine kleinere Datei aus!",
     "die-e-mail-zur-bestaetigung-deiner-e-mail-adresse-wurde-erneut-verschickt-check-dein-postfach": "Die E-Mail zur Bestätigung deiner E-Mail-Adresse wurde erneut verschickt. Check dein Postfach!",
     "e-mail-versandt": "E-Mail versandt",
-    "settings-saved": "Ihre Einstellungen wurden gespeichert!"
+    "settings-saved": "Ihre Einstellungen wurden gespeichert!",
+    "zugriff": "Zugriff",
+    "owner": "Eigentümer",
+    "mit-mir-geteilt": "Mit mir geteilt",
+    "mit-mir-geteilt-info": "Personen, die dir Zugriff auf ihre Choreografien gewährt haben.",
+    "von-mir-verwaltet": "Von mir verwaltet",
+    "von-mir-verwaltet-info": "Personen, denen du Zugriff auf deine Choreografien gewährt hast.",
+    "access-tab-help": "Hier kannst du verwalten, wer Zugriff auf deine Choreografien hat. Füge Personen per E-Mail hinzu und lege fest, was sie dürfen.",
+    "no-shared-with-me": "Bitte jemanden, dir Zugriff auf seine Choreos zu gewähren.",
+    "no-managed-by-me": "Füge einen Benutzer hinzu, um deine Choreos zu teilen.",
+    "benutzer-hinzufuegen": "Benutzer hinzufügen",
+    "rolle": "Rolle",
+    "aktiv": "Aktiv",
+    "status": "Status",
+    "angenommen": "Angenommen",
+    "ausstehend": "Ausstehend",
+    "annehmen": "Annehmen",
+    "role": {
+      "coach": "Trainer",
+      "assistant": "Assistent",
+      "athlete": "Athlet"
+    },
+    "no-clubs-info": "Du gehörst noch keinem Verein an. Erstelle entweder einen oder bitte den Eigentümer deines Vereins, ihn mit dir zu teilen."
   },
   "achter": "Achter",
   "alle-auswaehlen": "Alle auswählen",
@@ -92,7 +115,7 @@
     "weitergabe-von-daten-an-dritte-text": "Ihre Daten werden nicht verkauft, vermietet oder anderweitig an Dritte weitergegeben. Es erfolgt keinerlei Weitergabe von Daten zu kommerziellen oder nicht kommerziellen Zwecken."
   },
   "download": "Download",
-  "du-kannst-das-nicht-rueckgaengig-machen": "Du kannst das nicht rückgängig machen.",
+  "du-kannst-das-nicht-rueckgaengig-machen": "Du kannst das nicht rückgängig machen!",
   "du-kannst-diese-aktion-nicht-rueckgaengig-machen": "Du kannst diese Aktion nicht rückgängig machen.",
   "e-mail-adresse": "E-Mail-Adresse",
   "editView": {
@@ -151,7 +174,7 @@
     },
     "funktionen-and-features": "Funktionen & Features",
     "funktionen-wuenschen": {
-      "answer": "**Ja!** Wir freuen uns über jede Funktion, die wir in den Choreo Planer einbauen können. Wenn du eine Funktion wünschst, kannst du uns gerne eine Mail an [info@choreo-planer.de](mailto:info@choreo-planer.de) oder eine DM auf Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner</a> schreiben. Wir werden uns dann dann überlegen, ob wir diese Funktion einbauen können. Wenn wir die Funktion einbauen, werden wir dich natürlich darüber informieren.",
+      "answer": "**Ja!** Wir freuen uns über jede Funktion, die wir in den Choreo Planer einbauen können. Wenn du eine Funktion wünschst, kannst du uns gerne eine Mail an [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) oder eine DM auf Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a> schreiben. Wir werden uns dann dann überlegen, ob wir diese Funktion einbauen können. Wenn wir die Funktion einbauen, werden wir dich natürlich darüber informieren.",
       "question": "Kann ich mir Funktionen wünschen?"
     },
     "neue-season": {
@@ -160,15 +183,15 @@
     },
     "probleme-loesen": "Probleme lösen",
     "probleme-melden": {
-      "answer": "Probleme können zur Zeit nur per Mail an [info@choreo-planer.de](mailto:info@choreo-planer.de) oder als DM auf Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner</a> gemeldet werden. Ein Kontaktformular ist geplant.",
+      "answer": "Probleme können zur Zeit nur per Mail an [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) oder als DM auf Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a> gemeldet werden. Ein Kontaktformular ist geplant.",
       "question": "Wie kann ich Probleme melden?"
     },
     "versehentlich-geloescht": {
-      "answer": "Ja, aber nicht du selber! Du kannst dich jeder Zeit dazu an uns wenden. Dann können folgende Daten wiederhergestellt werden: <ul class=\"ml-3\"> <li>Nutzerkonten</li> <li>Vereine</li> <li>Teams</li> <li>Seasons</li> <li>Choreos</li> <li>Kader</li> </ul> Bitte beschreibe in deiner Kontaktaufnahme per Mail an [info@choreo-planer.de](mailto:info@choreo-planer.de) oder als DM auf Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner</a> gleich das Datum und die Uhrzeit der Löschung, damit wir dein Problem schnell lösen können.",
+      "answer": "Ja, aber nicht du selber! Du kannst dich jeder Zeit dazu an uns wenden. Dann können folgende Daten wiederhergestellt werden: <ul class=\"ms-3\"> <li>Nutzerkonten</li> <li>Vereine</li> <li>Teams</li> <li>Seasons</li> <li>Choreos</li> <li>Kader</li> </ul> Bitte beschreibe in deiner Kontaktaufnahme per Mail an [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) oder als DM auf Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a> gleich das Datum und die Uhrzeit der Löschung, damit wir dein Problem schnell lösen können.",
       "question": "Ich habe aus Versehen etwas gelöscht. Kann ich das rückgängig machen?"
     },
     "warum-offline": {
-      "answer": "Der Choreo Planer ist ein **kostenloses** Projekt. Daher kann es sein, dass die Server nicht immer erreichbar sind. Wir haben hier eine Liste an Gründen vorbereitet, warum du die Server nicht erreichen kannst: <ol class=\"ml-3\"> <li> Die Server werden von uns gewartet. In diesem Fall kannst du nichts machen, außer zu warten und hoffen, dass wir schnell fertig sind. Wenn du wissen möchtest, wann die Server wieder erreichbar sind, kannst du uns gerne eine Mail an [info@choreo-planer.de](mailto:info@choreo-planer.de) oder eine DM auf Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner</a> schreiben. </li> <li> Unsere Internetverbindung ist ausgefallen. Da kein Budget zur Verfügung steht, um eine ausfallsichere Internetverbindung zu versichern, kann es vorkommen, dass unsere Internetverbindung ausfällt. In diesem Fall kannst du nichts machen, außer zu warten und hoffen, dass wir schnell fertig sind. Wenn du wissen möchtest, wann die Server wieder erreichbar sind, kannst du uns gerne eine Mail an [info@choreo-planer.de](mailto:info@choreo-planer.de) oder eine DM auf Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner</a> schreiben. </li> <li> Deine Internetverbindung ist ausgefallen. Wenn du unsere Webseite bereits einmal geladen hast, kannst du zwar die Webseite nochmal ohne Internetverbindung laden, aber du kannst keine neuen Daten laden. In diesem Fall kannst du selber versuchen, deine Internetverbindung wiederherzustellen. Wenn du dabei Hilfe brauchst, kannst du uns keine E-Mail schreiben, denn du hast ja kein Internet. </li> </ol> Wenn du den Choreo Planer gerne unterstützen möchtest, kannst du uns unterstützen, indem du an der Projektentwicklung mitwirkst oder eine Spende machst. Dafür haben wir noch keine Möglichkeit vorbereitet, aber wir arbeiten daran. Wenn du uns unterstützen möchtest, kannst du uns gerne eine Mail an [info@choreo-planer.de](mailto:info@choreo-planer.de) oder eine DM auf Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner</a> schreiben.",
+      "answer": "Der Choreo Planer ist ein **kostenloses** Projekt. Daher kann es sein, dass die Server nicht immer erreichbar sind. Wir haben hier eine Liste an Gründen vorbereitet, warum du die Server nicht erreichen kannst: <ol class=\"ms-3\"> <li> Die Server werden von uns gewartet. In diesem Fall kannst du nichts machen, außer zu warten und hoffen, dass wir schnell fertig sind. Wenn du wissen möchtest, wann die Server wieder erreichbar sind, kannst du uns gerne eine Mail an [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) oder eine DM auf Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a> schreiben. </li> <li> Unsere Internetverbindung ist ausgefallen. Da kein Budget zur Verfügung steht, um eine ausfallsichere Internetverbindung zu versichern, kann es vorkommen, dass unsere Internetverbindung ausfällt. In diesem Fall kannst du nichts machen, außer zu warten und hoffen, dass wir schnell fertig sind. Wenn du wissen möchtest, wann die Server wieder erreichbar sind, kannst du uns gerne eine Mail an [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) oder eine DM auf Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a> schreiben. </li> <li> Deine Internetverbindung ist ausgefallen. Wenn du unsere Webseite bereits einmal geladen hast, kannst du zwar die Webseite nochmal ohne Internetverbindung laden, aber du kannst keine neuen Daten laden. In diesem Fall kannst du selber versuchen, deine Internetverbindung wiederherzustellen. Wenn du dabei Hilfe brauchst, kannst du uns keine E-Mail schreiben, denn du hast ja kein Internet. </li> </ol> Wenn du den Choreo Planer gerne unterstützen möchtest, kannst du uns unterstützen, indem du an der Projektentwicklung mitwirkst oder eine Spende machst. Dafür haben wir noch keine Möglichkeit vorbereitet, aber wir arbeiten daran. Wenn du uns unterstützen möchtest, kannst du uns gerne eine Mail an [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) oder eine DM auf Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a> schreiben.",
       "question": "Warum können die Server offline sein?"
     },
     "was-ist-choreo-planer": {
@@ -188,7 +211,7 @@
       "question": "Für wen ist der Choreo Planer gedacht?"
     },
     "zusammenarbeiten": {
-      "answer": "Ein \"Live-Sharing\" wie es aus Google Docs oder ähnlichen Online-Tools bekannt ist, ist nicht geplant. Stattdessen ist es vorgesehen, dass Trainerinnen und Trainer eines Vereins sich **einen Zugang teilen**. Damit soll es dann auch einfach sein, Teilnehmer zwischen Teams zu verschieben. Ein mögliches \"Extrazugang anlegen\" für ein Konto ist geplant.",
+      "answer": "Ja, kannst du! Gehe in deine Kontoeinstellungen und öffne den **Zugriff**-Tab. Klicke auf **Benutzer hinzufügen**, gib ihre E-Mail-Adresse ein und wähle eine Rolle aus. Sie erhalten eine Einladung und müssen sie annehmen, bevor sie auf deine Daten zugreifen können.\n\n**Was jede Rolle tun kann:**\n- **Trainer** kann deine Choreografien ansehen, bearbeiten und löschen\n- **Assistent** kann deine Choreografien ansehen und bearbeiten\n- **Athlet** kann deine Choreografien ansehen\n\nDu kannst die Rolle jederzeit ändern oder den Zugriff entziehen.",
       "question": "Kann ich mit anderen zusammenarbeiten?"
     }
   },
@@ -207,7 +230,15 @@
     "help": "Hilfe",
     "offline": "Offline",
     "accept": "Akzeptieren",
-    "reject": "Ablehnen"
+    "reject": "Ablehnen",
+    "contact-email": "info{'@'}choreo-planer.de",
+    "shared-with-you-by": "Mit dir geteilt von",
+    "created-by": "Erstellt von",
+    "last-updated-by": "Zuletzt aktualisiert von",
+    "you": "dir",
+    "no-delete-permission": "Sie haben keine Berechtigung zum Löschen.",
+    "no-edit-permission": "Sie haben keine Berechtigung, dies zu bearbeiten.",
+    "empty-list": "Leere Liste"
   },
   "HelpView": {
     "fuer-deine-suche-gibt-es-keine-ergebnisse": "Für deine Suche \"{searchTerm}\" gibt es keine Ergebnisse",
@@ -389,7 +420,7 @@
   "login": {
     "benutzername-mindestens-laenge": "Dein Benutzername muss mindestens 6 Zeichen lang sein.",
     "bitte-angeben": "Bitte angeben",
-    "dein-online-zugang": "Dein Online-Zugang",
+    "dein-online-zugang": "Dein Zugang",
     "du-hast-noch-kein-konto": "Du hast noch kein Konto?",
     "du-hast-schon-ein-konto": "Du hast schon ein Konto?",
     "echte-email": "Deine E-Mail-Adresse muss ein valide E-Mail-Adresse sein.",
@@ -449,6 +480,9 @@
     },
     "video": {
       "description": "Exportiere die Aufstellungen deiner Choreo als Video!"
+    },
+    "contact": {
+      "description": "Sende eine Nachricht an das Choreo Planer Team für Hilfe oder Anfragen. \nSchicke uns eine E-Mail an info{'@'}choreo-planer.de."
     }
   },
   "modals": {
@@ -471,6 +505,14 @@
       "passwort-geaendert": "Passwort geändert",
       "wiederholung": "Wiederholung"
     },
+    "invite-user": {
+      "title": "Benutzer einladen",
+      "info": "Wenn ein Benutzer mit dieser E-Mail-Adresse existiert, gewähren wir ihm Zugriff auf dein Konto.",
+      "send": "Einladung senden",
+      "error": "Die Einladung konnte nicht gesendet werden.",
+      "role": "Rolle",
+      "what-each-role-can-do": "Was jede Rolle tun kann:"
+    },
     "confirm-email": {
       "bestaetige-deine-e-mail-adresse": "Bestätige deine E-Mail-Adresse",
       "info-1": "Um dein Konto zu aktivieren, bestätige deine E-Mail-Adresse mit dem Link aus der E-Mail, die wir dir geschickt haben.",
@@ -485,10 +527,13 @@
       "min-choreoname-length": "Min. 2 Zeichen"
     },
     "create-club": {
-      "example-team-names": "TSG Salach e.V., Glamorous Cheerleader, ...",
+      "example-team-names": "Glamorous Cheerleader, TSG Salach e.V. ...",
       "min-vereinsname-length": "Min. 3 Zeichen",
       "neuer-verein": "Neuer Verein",
-      "vereinsname": "Vereinsname"
+      "vereinsname": "Vereinsname",
+      "ausstehende-einladungen": "Ausstehende Einladungen",
+      "oder-neuen-verein-erstellen": "oder erstelle einen neuen Verein",
+      "go-to-settings": "Nutzereinstellungen"
     },
     "create-hit": {
       "wie-heisst-der-neue-eintrag": "Wie heißt der neue Eintrag?"
@@ -607,13 +652,42 @@
     },
     "reset-password": {
       "lost-password": "Login-Link beantragen",
-      "no-email-info": "Konten ohne E-Mail-Adresse können nur händisch zurückgesetzt werden. Schicke eine E-Mail an info@choreo-planer.de!",
+      "no-email-info": "Konten ohne E-Mail-Adresse können nur händisch zurückgesetzt werden. Schicke eine E-Mail an info{'@'}choreo-planer.de!",
       "email-info": "Wenn dein Konto mit einer E-Mail-Adresse verbunden ist, kannst du dir einen Login-Link zusenden lassen, mit dem du dich für 24 Stunden einloggen kannst. Auf der Profilseite kannst du dann dein Passwort selbst ändern.",
       "login-link-schicken": "Login-Link schicken"
     },
     "change-mat": {
       "layout-der-buehne-matte-aendern": "Layout der Bühne / Matte ändern",
       "layout-aendern": "Layout ändern"
+    },
+    "contact": {
+      "something-went-wrong": "Etwas ist schief gelaufen",
+      "thank-you": "Dankeschön!",
+      "send-us-a-message": "Sende eine Nachricht",
+      "success": "Erfolg!",
+      "try-again": "Versuche es nochmal",
+      "ups": "Ups...",
+      "your-message-was-sent-successfully": "Deine Nachricht wurde erfolgreich gesendet!",
+      "ask-a-question": "Eine Frage stellen",
+      "category": "Kategorie:",
+      "email-address": "E-Mail-Adresse:",
+      "enter-email": "Gib deine E-Mail-Adresse ein",
+      "enter-name": "Dein Name",
+      "enter-your-message-to-us": "Gib deine Nachricht an uns ein",
+      "let-us-know-what-youre-concerned-about": "Teile uns mit, worüber wir uns Gedanken machen sollen",
+      "message": "Nachricht:",
+      "other": "Sonstiges",
+      "please-enter-a-valid-email-address": "Bitte gib eine gültige E-Mail-Adresse ein",
+      "report-a-bug": "Melde einen Fehler",
+      "request-a-feature": "Fordere eine Funktion an",
+      "subject": "Betreff:",
+      "subject-of-your-message": "Betreff deiner Nachricht",
+      "there-was-an-error-with-your-message": "Bei deiner Nachricht ist ein Fehler aufgetreten.",
+      "well-never-share-your-email-with-anyone-else": "Wir geben deine E-Mail-Adresse niemals an Dritte weiter.",
+      "what-do-you-need-help-with": "Wobei benötigst du Hilfe?",
+      "what-should-we-call-you": "Wie sollen wir dich nennen?",
+      "which-expertise-should-the-respondent-have": "In welchem Feld sollte dein Kontakt Experte sein?",
+      "your-name": "Dein Name:"
     }
   },
   "name": "Name",
@@ -797,6 +871,35 @@
     "server-version": "Serverversion",
     "user-agent": "User Agent",
     "warning": "%cAchtung: %cDiese Konsole könnte genutzt werden, um Informationen über deinen Browser oder dein Gerät zu erfahren. Gib nur Informationen heraus, wenn du selbstständig nachvollziehen kannst, dass du mit einem Vertreter von Choreo Planer im Kontakt stehst.",
-    "welcome": "%cWillkommen beim Choreo Planer\n%cVielen Dank für deine Engagement im Choreo-Sport! Über diese Konsole kannst du einige Informationen über die Anwendung und deinen Browser erfahren.\n\nHier sind ein paar hilfreiche Links:\nChoreo Planer bei IG:     https://www.instagram.com/choreoplaner\nHilfe bekommen:             https://www.choreo-planer.de/hilfe\nKontakt aufnehmen:        info@choreo-planer.de"
+    "welcome": "%cWillkommen beim Choreo Planer\n%cVielen Dank für deine Engagement im Choreo-Sport! Über diese Konsole kannst du einige Informationen über die Anwendung und deinen Browser erfahren.\n\nHier sind ein paar hilfreiche Links:\nChoreo Planer bei IG:     https://www.instagram.com/choreoplaner\nHilfe bekommen:             https://www.choreo-planer.de/hilfe\nKontakt aufnehmen:        info{'@'}choreo-planer.de"
+  },
+  "contact": {
+    "contact": "Kontakt",
+    "contact-and-support": "Kontakt und Support",
+    "help-and-support": "Hilfe und Support",
+    "compose-an-email-to-our-support-team": "Verfasse eine E-Mail an unser Support-Team",
+    "documentation-and-faq": "Dokumentation",
+    "fill-out-our-contact-form": "Fülle ein Kontaktformular aus, um uns eine kurze Nachricht zu senden",
+    "got-questions": "Hast du Fragen?",
+    "help-and-quick-fixes": "Hilfe und Lösungen",
+    "learn-about-the-choreo-planer": "Erfahre mehr über den Choreo Planer und finde Antworten auf häufig gestellte Fragen",
+    "looking-for-a-contact-form": "Suchst du ein Kontaktformular?",
+    "send-a-message": "Sende eine Nachricht!",
+    "send-an-email": "Sende eine E-Mail",
+    "to-write-a-direct-message-to-the-developer-team": "um eine direkte Nachricht an das Entwicklerteam zu schreiben.",
+    "well-get-back-to-you": "Wir werden uns so schnell wie möglich bei dir melden, in der Regel innerhalb von 24 Stunden!",
+    "write-an-email": "Schreibe eine E-Mail",
+    "you-can-reach-us-at": "Du erreichst uns unter"
+  },
+  "services": {
+    "ContactService": {
+      "best-regards": "\nBeste grüße!",
+      "best-regards-username": "\nLiebe Grüße\n{username}",
+      "dear-choreo-planer-team": "Liebes Choreo Planer-Team,\n\n"
+    }
+  },
+  "accessOverviewTable": {
+    "edit": "Bearbeiten",
+    "read": "Ansehen"
   }
 }

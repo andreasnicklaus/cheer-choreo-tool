@@ -4,6 +4,7 @@ import { Sequelize } from "sequelize";
 
 jest.mock("@/plugins/winston", () => ({
   debug: jest.fn(),
+  info: jest.fn(),
   dbLogger: {
     debug: jest.fn(),
   },

@@ -71,6 +71,47 @@ class LineupService {
     else return isProposalNotRejected(proposals) ? proposals : [];
   }
 
+  getLinesForNumberOfMembers(n) {
+    switch (n) {
+      case 8:
+        return [3, 2, 3];
+      case 9:
+        return [5, 4];
+      case 10:
+        return [4, 3, 2, 1];
+      case 11:
+        return [6, 5];
+      case 12:
+        return [5, 4, 3];
+      case 13:
+        return [4, 5, 4];
+      case 14:
+        return [5, 4, 3, 2];
+      case 15:
+        return [5, 4, 3, 2, 1];
+      case 16:
+        return [5, 6, 5];
+      case 17:
+        return [6, 5, 6];
+      case 18:
+        return [6, 5, 4, 3];
+      case 19:
+        return [4, 5, 4, 3, 2, 1];
+      case 20:
+        return [6, 5, 4, 3, 2];
+      case 21:
+        return [6, 5, 4, 3, 2, 1];
+      case 22:
+        return [7, 6, 5, 4];
+      case 23:
+        return [5, 4, 5, 4, 5];
+      case 24:
+        return [4, 5, 6, 5, 4];
+      case 25:
+        return [7, 6, 5, 4, 3];
+    }
+  }
+
   proposeLineup(teamMembers, rejectedPositionProposals) {
     function createLinePositions(members, lineNumber = 0) {
       const spacing = 100 / 7;
@@ -84,47 +125,6 @@ class LineupService {
       }));
     }
 
-    function getLinesForNumberOfMembers(n) {
-      switch (n) {
-        case 8:
-          return [3, 2, 3];
-        case 9:
-          return [5, 4];
-        case 10:
-          return [4, 3, 2, 1];
-        case 11:
-          return [6, 5];
-        case 12:
-          return [5, 4, 3];
-        case 13:
-          return [4, 5, 4];
-        case 14:
-          return [5, 4, 3, 2];
-        case 15:
-          return [5, 4, 3, 2, 1];
-        case 16:
-          return [5, 6, 5];
-        case 17:
-          return [6, 5, 6];
-        case 18:
-          return [6, 5, 4, 3];
-        case 19:
-          return [4, 5, 4, 3, 2, 1];
-        case 20:
-          return [6, 5, 4, 3, 2];
-        case 21:
-          return [6, 5, 4, 3, 2, 1];
-        case 22:
-          return [7, 6, 5, 4];
-        case 23:
-          return [5, 4, 5, 4, 5];
-        case 24:
-          return [4, 5, 6, 5, 4];
-        case 25:
-          return [7, 6, 5, 4, 3];
-      }
-    }
-
     if (teamMembers.length === 0 || teamMembers.length === 1) {
       return [];
     } else if (teamMembers.length > 0 && teamMembers.length <= 7) {
@@ -133,7 +133,7 @@ class LineupService {
         rejectedPositionProposals
       );
     } else if (teamMembers.length > 7 && teamMembers.length <= 25) {
-      let lines = getLinesForNumberOfMembers(teamMembers.length);
+      let lines = this.getLinesForNumberOfMembers(teamMembers.length);
       if (
         lines.reduce((partialSum, a) => partialSum + a, 0) != teamMembers.length
       ) {

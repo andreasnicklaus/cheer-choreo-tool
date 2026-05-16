@@ -1,56 +1,40 @@
 <template>
-  <b-container id="helpView" data-view>
-    <b-card
+  <BContainer id="helpView" data-view>
+    <BCard
       :title="$t('HelpView.hilfe-bekommen')"
       border-variant="light"
       title-tag="h1"
     >
-      <b-input
+      <BInput
+        v-model="searchTerm"
         type="text"
         :placeholder="$t('suchen')"
         class="mb-2"
-        v-model="searchTerm"
       />
-      <b-card
+      <BCard
         v-for="(category, catId) in filteredFaqCategories"
         :key="category.name + category.order"
         border-variant="light"
       >
-        <h5 class="ml-1 text-muted">{{ category.name }}</h5>
-        <b-card
-          no-body
-          v-for="(faq, faqId) in category.faqs"
-          :key="faq.title"
-          border-variant="light"
-        >
-          <b-card-header class="p-1 border-0" role="tab">
-            <b-button
-              block
-              v-b-toggle="`accordion-${catId}-${faqId}`"
-              variant="outline-primary"
-              class="text-left"
-            >
-              {{ faq.title }}
-            </b-button>
-          </b-card-header>
-          <b-collapse
+        <h5 class="ms-1 text-muted">{{ category.name }}</h5>
+        <BAccordion flush>
+          <BAccordionItem
+            v-for="(faq, faqId) in category.faqs"
             :id="`accordion-${catId}-${faqId}`"
-            :accordion="`faq-accordion-${catId}`"
-            role="tabpanel"
-            :ref="`accordion-${catId}-${faqId}`"
+            :key="`accordion-${catId}-${faqId}`"
+            :title="faq.title"
           >
-            <b-card-body class="px-3 pb-0 pt-2">
-              <b-card-text>
-                <vue-markdown :breaks="false" class="mb-0">
-                  {{ faq.markdown.replace(/  +/g, " ") }}
-                </vue-markdown>
-              </b-card-text>
-            </b-card-body>
-          </b-collapse>
-        </b-card>
-      </b-card>
+            <Markdown
+              :source="faq.markdown.replace(/  +/g, ' ')"
+              :breaks="false"
+              class="mb-0"
+              :html="true"
+            />
+          </BAccordionItem>
+        </BAccordion>
+      </BCard>
 
-      <p class="text-muted" v-if="filteredFaqCategories.length == 0">
+      <p v-if="filteredFaqCategories.length == 0" class="text-muted">
         {{
           $t("HelpView.fuer-deine-suche-gibt-es-keine-ergebnisse", {
             searchTerm,
@@ -58,7 +42,7 @@
         }}
       </p>
 
-      <p>
+      <p class="mt-4">
         {{ $t("HelpView.nicht-die-richtige-antwort-dabei") }}
         <a href="mailto:info@choreo-planer.de">info@choreo-planer.de</a>
         {{ $t("HelpView.oder-auf-instagram") }}
@@ -67,12 +51,12 @@
         >
         {{ $t("HelpView.und-beschreibe-dein-problem") }}
       </p>
-      <i18n path="HelpView.documentation-text" tag="p">
+      <I18n-t keypath="HelpView.documentation-text" tag="p">
         <a href="/docs/" target="_blank">{{ $t("HelpView.documentation") }}</a>
-      </i18n>
-    </b-card>
+      </I18n-t>
+    </BCard>
 
-    <script type="application/ld+json">
+    <!-- <script type="application/ld+json">
       {{ {
             "@context": "https://schema.org/",
             "@type": "FAQPage",
@@ -91,12 +75,56 @@
             }))).flat(Infinity)
           }
         }}
-    </script>
-  </b-container>
+    </script> -->
+  </BContainer>
 </template>
 
+<script setup>
+import { useHead } from "@unhead/vue";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
+
+useHead({
+  title: computed(() => t("general.help")),
+  meta: [
+    {
+      name: "description",
+      content: computed(() => t("meta.helpView.description")),
+    },
+    {
+      name: "twitter:description",
+      content: computed(() => t("meta.helpView.description")),
+    },
+    {
+      property: "og:description",
+      content: computed(() => t("meta.helpView.description")),
+    },
+    {
+      property: "og:title",
+      content: computed(
+        () =>
+          `${t("general.help")} - ${t(
+            "general.ChoreoPlaner"
+          )} | ${t("meta.defaults.title")}`
+      ),
+    },
+    {
+      name: "twitter:title",
+      content: computed(
+        () =>
+          `${t("general.help")} - ${t(
+            "general.ChoreoPlaner"
+          )} | ${t("meta.defaults.title")}`
+      ),
+    },
+  ],
+});
+</script>
+
 <script>
-import VueMarkdown from "vue-markdown-v2";
+import Markdown from "vue3-markdown-it";
 
 /**
  * @vue-data {string} searchTerm - The search term entered by the user.
@@ -108,13 +136,13 @@ import VueMarkdown from "vue-markdown-v2";
  */
 export default {
   name: "HelpView",
+  components: {
+    Markdown,
+  },
   data: function () {
     return {
       searchTerm: null,
     };
-  },
-  components: {
-    VueMarkdown,
   },
   computed: {
     faqCategories() {
@@ -203,42 +231,6 @@ export default {
         }))
         .filter((fc) => fc.faqs.length > 0);
     },
-  },
-  metaInfo() {
-    return {
-      title: this.$t("general.help"),
-      meta: [
-        {
-          vmid: "description",
-          name: "description",
-          content: this.$t("meta.helpView.description"),
-        },
-        {
-          vmid: "twitter:description",
-          name: "twitter:description",
-          content: this.$t("meta.helpView.description"),
-        },
-        {
-          vmid: "og:description",
-          property: "og:description",
-          content: this.$t("meta.helpView.description"),
-        },
-        {
-          vmid: "og:title",
-          property: "og:title",
-          content: `${this.$t("general.help")} - ${this.$t(
-            "general.ChoreoPlaner"
-          )} | ${this.$t("meta.defaults.title")}`,
-        },
-        {
-          vmid: "twitter:title",
-          property: "twitter:title",
-          content: `${this.$t("general.help")} - ${this.$t(
-            "general.ChoreoPlaner"
-          )} | ${this.$t("meta.defaults.title")}`,
-        },
-      ],
-    };
   },
 };
 </script>

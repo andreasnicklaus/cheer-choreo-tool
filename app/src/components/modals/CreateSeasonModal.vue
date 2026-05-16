@@ -1,68 +1,68 @@
 <template>
-  <b-modal
+  <BModal
     :id="`modal-newSeason-${id}`"
+    ref="modal"
     :title="$t('modals.create-season.neue-season')"
     size="xl"
     scrollable
-    @show="reset"
     @ok="create"
   >
     <p class="text-muted">
       {{ $t("modals.create-season.team-team-name", [team?.name]) }}
     </p>
-    <b-tabs fill v-model="tabIndex">
-      <b-tab
+    <BTabs fill :index="tabIndex" @update:index="(i) => (tabIndex = i)">
+      <BTab
         :title="$t('modals.create-season.regulaere-season')"
         class="pt-2"
-        :disabled="this.seasonSelectOptions.length == 0"
+        :disabled="seasonSelectOptions.length == 0"
       >
-        <b-form>
-          <b-form-group
-            :label="$tc('season', 1)"
+        <BForm>
+          <BFormGroup
+            :label="$t('season', 1)"
             label-class="label-with-colon"
             :state="seasonIsValid"
             :invalid-feedback="seasonStateFeedback"
           >
-            <b-form-select
+            <BFormSelect
               v-model="seasonId"
               :state="seasonIsValid"
               required
-              :options="this.seasonSelectOptions"
+              :options="seasonSelectOptions"
             />
-          </b-form-group>
-        </b-form>
-      </b-tab>
-      <b-tab :title="$t('modals.create-season.extra-events')" class="pt-2">
-        <b-form>
-          <b-form-group
+          </BFormGroup>
+        </BForm>
+      </BTab>
+      <BTab :title="$t('modals.create-season.extra-events')" class="pt-2">
+        <BForm>
+          <BFormGroup
             :label="$t('modals.create-season.name-der-event-gruppe')"
             label-class="label-with-colon"
             :state="newSeasonNameIsValid"
             :invalid-feedback="newSeasonNameStateFeedback"
             :valid-feedback="$t('login.gueltig')"
           >
-            <b-form-input
+            <BFormInput
               v-model="newSeasonName"
               required
               :placeholder="$t('modals.create-season.example-event-name')"
               :state="newSeasonNameIsValid"
             />
-          </b-form-group>
-          <b-form-group
+          </BFormGroup>
+          <BFormGroup
             :label="$t('jahr')"
             label-class="label-with-colon"
             :state="newSeasonYearIsValid"
             :invalid-feedback="newSeasonYearStateFeedback"
             :valid-feedback="$t('login.gueltig')"
           >
-            <b-form-input
+            <BFormInput
               v-model="newSeasonYear"
               type="number"
               :placeholder="new Date().getFullYear().toString()"
               :state="newSeasonYearIsValid"
             />
-          </b-form-group>
-        </b-form>
+          </BFormGroup>
+        </BForm>
         <hr />
         <div class="text-muted">
           <p>
@@ -74,18 +74,33 @@
             {{ $t("modals.create-season.jahr-info") }}
           </p>
         </div>
-      </b-tab>
-    </b-tabs>
+      </BTab>
+    </BTabs>
 
     <hr />
 
-    <b-form-group
+    <BFormGroup
+      v-if="showOwnerSelect"
+      :label="$t('accountView.owner')"
+      label-class="label-with-colon"
+      :state="selectedOwnerIsValid"
+      :invalid-feedback="newSeasonOwnerStateFeedback"
+    >
+      <BFormSelect
+        v-model="selectedOwnerId"
+        :state="selectedOwnerIsValid"
+        :options="ownerOptions"
+        :placeholder="$t('accountView.owner')"
+      />
+    </BFormGroup>
+
+    <BFormGroup
       :label="$t('modals.create-season.team-mitglieder')"
       label-class="label-with-colon"
       :state="newSeasonMembersIsValid"
       :invalid-feedback="newSeasonMembersStateFeedback"
     >
-      <b-form-select
+      <BFormSelect
         v-model="seasonToCopyMembersFromId"
         :options="[
           {
@@ -96,7 +111,7 @@
         ]"
         :state="newSeasonMembersIsValid"
       />
-      <b-checkbox-group
+      <BFormCheckboxGroup
         v-model="newSeasonMemberIds"
         :options="newMemberOptions"
         stacked
@@ -104,22 +119,21 @@
         class="mt-2"
         :state="newSeasonMembersIsValid"
       />
-    </b-form-group>
+    </BFormGroup>
 
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="success" :disabled="!inputIsValid">
+    <template #footer="{ ok, cancel }">
+      <BButton variant="success" :disabled="!inputIsValid" @click="ok">
         {{ $t("erstellen") }}
-      </b-button>
-      <b-button @click="cancel" variant="danger">{{
-        $t("abbrechen")
-      }}</b-button>
+      </BButton>
+      <BButton variant="danger" @click="cancel">{{ $t("abbrechen") }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
 import SeasonService from "@/services/SeasonService";
 import SeasonTeamService from "@/services/SeasonTeamService";
+import UserAccessService from "@/services/UserAccessService";
 
 /**
  * @module Modal:CreateSeasonModal
@@ -134,6 +148,7 @@ import SeasonTeamService from "@/services/SeasonTeamService";
  * @vue-data {Array} seasonsToCopy
  * @vue-data {Number|null} seasonToCopyMembersFromId=null
  * @vue-data {Array} newSeasonMemberIds
+ * @vue-data {String|null} selectedOwnerId=null
  *
  * @vue-prop {Array} teams
  *
@@ -151,6 +166,8 @@ import SeasonTeamService from "@/services/SeasonTeamService";
  * @vue-computed {String|null} newSeasonYearStateFeedback
  * @vue-computed {Boolean} newSeasonMembersIsValid
  * @vue-computed {String|null} newSeasonMembersStateFeedback
+ * @vue-computed {Array} ownerOptions
+ * @vue-computed {Boolean} showOwnerSelect
  *
  * @vue-event {Object} seasonTeamCreated
  *
@@ -162,6 +179,17 @@ import SeasonTeamService from "@/services/SeasonTeamService";
  */
 export default {
   name: "CreateSeasonModal",
+  props: {
+    teams: {
+      type: Array,
+      default: () => [],
+    },
+    me: {
+      type: Object,
+      default: null,
+    },
+  },
+  emits: ["seasonTeamCreated"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     tabIndex: 0,
@@ -173,73 +201,8 @@ export default {
     seasonsToCopy: [],
     seasonToCopyMembersFromId: null,
     newSeasonMemberIds: [],
+    selectedOwnerId: null,
   }),
-  props: {
-    teams: {
-      type: Array,
-    },
-  },
-  mounted() {
-    this.load();
-  },
-  methods: {
-    open(teamId) {
-      this.$bvModal.show(`modal-newSeason-${this.id}`);
-      this.teamId = teamId;
-      this.load();
-    },
-    load() {
-      SeasonService.getAll().then((seasons) => {
-        this.seasons = seasons.filter(
-          (s) =>
-            !this.team?.SeasonTeams.map((st) => st.Season.id).includes(s.id)
-        );
-        this.seasonsToCopy = seasons.filter((s) =>
-          this.team?.SeasonTeams.map((st) => st.Season.id).includes(s.id)
-        );
-        this.seasonToCopyMembersFromId = null;
-        this.newSeasonMemberIds = [];
-
-        if (this.seasons.length > 0) this.seasonId = this.seasons[0].id;
-
-        if (this.seasonSelectOptions.length == 0) this.tabIndex = 1;
-      });
-    },
-    reset() {
-      this.newSeasonName = null;
-      this.newSeasonYear = null;
-      this.seasonId = null;
-      this.teamId = null;
-      this.seasonToCopyMembersFromId = null;
-      this.newSeasonMemberIds = [];
-    },
-    create() {
-      if (this.tabIndex == 0)
-        SeasonTeamService.create(
-          this.team.id,
-          this.seasonId,
-          this.newSeasonMemberIds
-        ).then((seasonTeam) => {
-          this.$emit("seasonTeamCreated", seasonTeam);
-        });
-      else {
-        if (this.newSeasonYear == "") this.newSeasonYear = null;
-        else if (this.newSeasonYear != null)
-          this.newSeasonYear = parseInt(this.newSeasonYear);
-        SeasonService.create(this.newSeasonName, this.newSeasonYear).then(
-          (season) => {
-            SeasonTeamService.create(
-              this.team.id,
-              season.id,
-              this.newSeasonMemberIds
-            ).then((seasonTeam) => {
-              this.$emit("seasonTeamCreated", seasonTeam);
-            });
-          }
-        );
-      }
-    },
-  },
   computed: {
     team() {
       return this.teams.find((t) => t.id == this.teamId);
@@ -342,6 +305,124 @@ export default {
       if (this.newSeasonMemberIds.length == 0)
         return this.$t("modals.create-season.min-team-mitglied");
       return null;
+    },
+    ownerOptions() {
+      const options = this.$store.state.owners.map((o) => {
+        const baseText = o.owner?.username || o.owner?.email || o.ownerUserId;
+        const isYou = this.me && o.ownerUserId === this.$store.state.me.id;
+        return {
+          value: o.ownerUserId,
+          text: isYou ? `${baseText} (you)` : baseText,
+        };
+      });
+
+      if (
+        this.$store.state.me &&
+        !options.some((o) => o.value === this.$store.state.me.id)
+      ) {
+        options.push({
+          value: this.$store.state.me.id,
+          text: `${this.$store.state.me.username || this.$store.state.me.email || this.$store.state.me.id} (you)`,
+        });
+      }
+
+      return options;
+    },
+    showOwnerSelect() {
+      return this.$store.state.owners.length > 0;
+    },
+    selectedOwnerIsValid() {
+      return (
+        this.selectedOwnerId != null &&
+        (this.$store.state.owners
+          .map((o) => o.ownerUserId)
+          .includes(this.selectedOwnerId) ||
+          this.selectedOwnerId === this.$store.state.me?.id)
+      );
+    },
+    newSeasonOwnerStateFeedback() {
+      if (!this.selectedOwnerId) return this.$t("erforderlich");
+      if (
+        !this.$store.state.owners
+          .map((o) => o.ownerUserId)
+          .includes(this.selectedOwnerId) &&
+        this.selectedOwnerId !== this.$store.state.me?.id
+      )
+        return this.$t("errors.unerwarteter-fehler");
+      return null;
+    },
+  },
+  mounted() {
+    this.load();
+  },
+  methods: {
+    open(teamId) {
+      this.reset();
+      this.teamId = teamId;
+      if (this.$store.state.me?.id) {
+        this.selectedOwnerId = this.$store.state.me?.id;
+      }
+      this.$refs.modal.show();
+      this.$nextTick(() => {
+        this.load();
+      });
+    },
+    load() {
+      if (!this.teamId) return;
+      SeasonService.getAll().then((seasons) => {
+        this.seasons = seasons.filter(
+          (s) =>
+            !this.team?.SeasonTeams.map((st) => st.Season.id).includes(s.id)
+        );
+        this.seasonsToCopy = seasons.filter((s) =>
+          this.team?.SeasonTeams.map((st) => st.Season.id).includes(s.id)
+        );
+        this.seasonToCopyMembersFromId = null;
+        this.newSeasonMemberIds = [];
+
+        if (this.seasons.length > 0) this.seasonId = this.seasons[0].id;
+      });
+    },
+    reset() {
+      this.tabIndex = 0;
+      this.newSeasonName = null;
+      this.newSeasonYear = null;
+      this.seasonId = null;
+      this.teamId = null;
+      this.seasonToCopyMembersFromId = null;
+      this.newSeasonMemberIds = [];
+      this.seasons = [];
+      this.seasonsToCopy = [];
+      this.selectedOwnerId = null;
+    },
+    create() {
+      const ownerId = this.selectedOwnerId || null;
+      if (this.tabIndex == 0)
+        SeasonTeamService.create(
+          this.team.id,
+          this.seasonId,
+          this.newSeasonMemberIds,
+          ownerId
+        ).then((seasonTeam) => {
+          this.$emit("seasonTeamCreated", seasonTeam);
+        });
+      else {
+        if (this.newSeasonYear == "") this.newSeasonYear = null;
+        else if (this.newSeasonYear != null)
+          this.newSeasonYear = parseInt(this.newSeasonYear);
+        SeasonService.create(this.newSeasonName, this.newSeasonYear).then(
+          (season) => {
+            SeasonTeamService.create(
+              this.team.id,
+              season.id,
+              this.newSeasonMemberIds,
+              ownerId
+            ).then((seasonTeam) => {
+              this.$emit("seasonTeamCreated", seasonTeam);
+            });
+          }
+        );
+      }
     },
   },
 };

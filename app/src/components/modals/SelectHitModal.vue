@@ -1,12 +1,13 @@
 <template>
-  <b-modal
+  <BModal
     :id="`modal-selectHitToUpdate-${id}`"
+    ref="modal"
     centered
+    :title="$t('modals.selectHit.welchen-eintrag-willst-du-aendern')"
     @ok="() => selectHit()"
     @hidden="() => (hitIdToUpdate = null)"
-    :title="$t('modals.selectHit.welchen-eintrag-willst-du-aendern')"
   >
-    <b-form-radio-group
+    <BFormRadioGroup
       id="hitToUpdateSelectGroup"
       v-model="hitIdToUpdate"
       :options="hitsForCurrentCount.map((h) => ({ text: h.name, value: h.id }))"
@@ -14,13 +15,13 @@
       stacked
       autofocus
     />
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="success">{{ $t("auswaehlen") }}</b-button>
-      <b-button @click="cancel" variant="outline-danger">{{
+    <template #footer="{ ok, cancel }">
+      <BButton variant="success" @click="ok">{{ $t("auswaehlen") }}</BButton>
+      <BButton variant="outline-danger" @click="cancel">{{
         $t("abbrechen")
-      }}</b-button>
+      }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -42,19 +43,20 @@
  */
 export default {
   name: "SelectHitModal",
+  props: {
+    hitsForCurrentCount: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  emits: ["selection"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     hitIdToUpdate: null,
   }),
-  props: {
-    hitsForCurrentCount: {
-      type: Array,
-    },
-  },
   methods: {
     open() {
-      this.$bvModal.show(`modal-selectHitToUpdate-${this.id}`);
-      this.hitsForCurrentCount[0].id;
+      this.$refs.modal.show();
     },
     selectHit() {
       this.$emit("selection", this.hitIdToUpdate);

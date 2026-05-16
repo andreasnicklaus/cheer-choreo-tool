@@ -1,9 +1,14 @@
 import test from "@playwright/test";
 import ChoreoPage from "../pages/choreoPage";
 import { mockDefaultStartRequests } from "../utils/multiRequests";
-import { mockChoreos, mockClubs } from "../utils/requests";
+import { mockAuthMe, mockChoreos, mockClubs } from "../utils/requests";
 import { defaultClubs } from "../testData/club";
-import { defaultChoreos, emptyChoreos } from "../testData/choreo";
+import {
+  defaultChoreos,
+  emptyChoreos,
+  sharedChoreos,
+} from "../testData/choreo";
+import { sharedUser } from "../testData/user";
 
 let choreoPage: ChoreoPage;
 
@@ -18,8 +23,8 @@ test.use({
 });
 
 test.describe("non-specific to choreo", () => {
-  test("should display the page with the correct title", async ({}, testInfo) => {
-    await choreoPage.iCheckTitle(Boolean(testInfo.project.use.isMobile));
+  test("should display the page with the correct title", async () => {
+    await choreoPage.iCheckTitle();
   });
 
   test("should display the page with the instant help", async ({}, testInfo) => {
@@ -62,6 +67,70 @@ test.describe("non-specific to choreo", () => {
   test("should offer a link to video export", async ({}, testInfo) => {
     if (!Boolean(testInfo.project.use.isMobile))
       await choreoPage.iSeeLinkToVideoExport();
+  });
+});
+
+test.describe("create choreo modal owner selection", () => {
+  test("should display owner selection options when user has shared access", async ({}, testInfo) => {
+    if (!Boolean(testInfo.project.use.isMobile)) {
+      await mockDefaultStartRequests(choreoPage.page);
+      await mockAuthMe(choreoPage.page, sharedUser);
+      await choreoPage.goToPage();
+      await choreoPage.iSetClubId(defaultClubs[0].id);
+      await choreoPage.iOpenCreateChoreoModal();
+      await choreoPage.iSeeOwnerSelectInCreateChoreoModal();
+      await choreoPage.iSeeOwnerSelectOptionInCreateChoreoModal("Owner User");
+      await choreoPage.iSeeOwnerSelectOptionInCreateChoreoModal("(you)");
+    }
+  });
+
+  test("should not display owner selection when user has no shared access", async ({}, testInfo) => {
+    if (!Boolean(testInfo.project.use.isMobile)) {
+      await choreoPage.iSetClubId(defaultClubs[0].id);
+      await choreoPage.iOpenCreateChoreoModal();
+      await choreoPage.iDontSeeOwnerSelectInCreateChoreoModal();
+    }
+  });
+});
+
+test.describe("owner and creator/editor display", () => {
+  test("should not display owner when user is the owner", async ({}, testInfo) => {
+    if (!Boolean(testInfo.project.use.isMobile))
+      await choreoPage.iDontSeeOwnerDisplay();
+  });
+
+  test("should display owner when choreo is shared with user", async ({}, testInfo) => {
+    if (!Boolean(testInfo.project.use.isMobile)) {
+      await mockChoreos(choreoPage.page, sharedChoreos);
+      await choreoPage.goToPage();
+      await choreoPage.iSeeOwnerDisplay("Other User");
+    }
+  });
+
+  test("should display 'you' as creator when user is the creator", async ({}, testInfo) => {
+    if (!Boolean(testInfo.project.use.isMobile))
+      await choreoPage.iSeeCreatorDisplay("you");
+  });
+
+  test("should display username as creator when creator is another user", async ({}, testInfo) => {
+    if (!Boolean(testInfo.project.use.isMobile)) {
+      await mockChoreos(choreoPage.page, sharedChoreos);
+      await choreoPage.goToPage();
+      await choreoPage.iSeeCreatorDisplay("Other User");
+    }
+  });
+
+  test("should display 'you' as last editor when user is the updater", async ({}, testInfo) => {
+    if (!Boolean(testInfo.project.use.isMobile))
+      await choreoPage.iSeeUpdaterDisplay("you");
+  });
+
+  test("should display username as last editor when updater is another user", async ({}, testInfo) => {
+    if (!Boolean(testInfo.project.use.isMobile)) {
+      await mockChoreos(choreoPage.page, sharedChoreos);
+      await choreoPage.goToPage();
+      await choreoPage.iSeeUpdaterDisplay("Other User");
+    }
   });
 });
 

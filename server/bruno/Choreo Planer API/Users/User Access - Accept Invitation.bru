@@ -1,0 +1,17 @@
+meta {
+  name: User Access - Accept Invitation
+  method: POST
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/user/access/:id/accept
+  body: none
+  auth: inherit
+}
+
+
+params:path {
+  id: 
+}

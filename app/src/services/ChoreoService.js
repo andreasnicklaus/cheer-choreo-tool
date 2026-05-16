@@ -14,17 +14,29 @@ class ChoreoService {
    */
   matTypeOptions = () => [
     {
-      label: i18n.t("matTypeOptions.by-sport"),
+      label: i18n.global.t("matTypeOptions.by-sport"),
       options: [
-        { value: "cheer", text: i18n.t("matTypeOptions.descriptions.cheer") },
+        {
+          value: "cheer",
+          text: i18n.global.t("matTypeOptions.descriptions.cheer"),
+        },
       ],
     },
     {
-      label: i18n.t("matTypeOptions.by-stage"),
+      label: i18n.global.t("matTypeOptions.by-stage"),
       options: [
-        { value: "square", text: i18n.t("matTypeOptions.descriptions.square") },
-        { value: "1:2", text: i18n.t("matTypeOptions.descriptions.1-2") },
-        { value: "3:4", text: i18n.t("matTypeOptions.descriptions.3-4") },
+        {
+          value: "square",
+          text: i18n.global.t("matTypeOptions.descriptions.square"),
+        },
+        {
+          value: "1:2",
+          text: i18n.global.t("matTypeOptions.descriptions.1-2"),
+        },
+        {
+          value: "3:4",
+          text: i18n.global.t("matTypeOptions.descriptions.3-4"),
+        },
       ],
     },
   ];
@@ -179,16 +191,24 @@ class ChoreoService {
    * @param {Array} participants - Array of participant objects
    * @returns {Promise<Object>} Created choreography
    */
-  create(name, counts, matType, seasonTeamId, participants) {
+  create(name, counts, matType, seasonTeamId, participants, ownerId = null) {
     debug("Creating choreo", {
       name,
       counts,
       matType,
       seasonTeamId,
       participants,
+      ownerId,
     });
     return ax
-      .post("/choreo", { name, counts, matType, seasonTeamId, participants })
+      .post("/choreo", {
+        name,
+        counts,
+        matType,
+        seasonTeamId,
+        participants,
+        ownerId,
+      })
       .then((res) => {
         debug("Successfully created choreo");
         return res.data;

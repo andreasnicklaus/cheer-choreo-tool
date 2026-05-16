@@ -1,11 +1,15 @@
 <template>
-  <b-skeleton-wrapper :loading="!currentPositions">
+  <BPlaceholderWrapper :loading="!currentPositions">
     <template #loading>
-      <b-skeleton :width="width + 'px'" :height="_height + 'px'"> </b-skeleton>
+      <BPlaceholder
+        :width="width + 'px'"
+        :height="_height + 'px'"
+        animation="wave"
+      />
     </template>
     <svg
       ref="svgCanvas"
-      :class="`svgCanvas ${matType}`"
+      :class="`svgCanvas ${matType} m-2`"
       :height="_height"
       :width="width"
       xmlns="http://www.w3.org/2000/svg"
@@ -54,8 +58,6 @@
             : teamMembers.find((tm) => tm.id == position.MemberId)
                 .ChoreoParticipation.color + '55'
         "
-        @mousedown="() => mouseEnter(position.MemberId)"
-        @mouseup="mouseLeave"
         :style="{
           opacity:
             selectedMemberId && position.Member.id == selectedMemberId.id
@@ -64,6 +66,8 @@
           cx: (position.x * width) / 100 + 'px',
           cy: (position.y * _height) / 100 + 'px',
         }"
+        @mousedown="() => mouseEnter(position.MemberId)"
+        @mouseup="mouseLeave"
       />
       <text
         v-for="position in proposedPositions"
@@ -122,7 +126,7 @@
         {{ i + 1 }}
       </text>
     </svg>
-  </b-skeleton-wrapper>
+  </BPlaceholderWrapper>
 </template>
 
 <script>
@@ -155,11 +159,6 @@ import gsap from "gsap";
  */
 export default {
   name: "MatComponent",
-  data: () => ({
-    selectedMemberId: null,
-    snappingDistance: 2,
-    positions: null,
-  }),
   props: {
     currentPositions: {
       type: Array,
@@ -176,6 +175,7 @@ export default {
     height: {
       type: Number,
       required: false,
+      default: null,
     },
     dotRadius: {
       type: Number,
@@ -202,9 +202,12 @@ export default {
       default: () => [],
     },
   },
-  mounted() {
-    this.positions = this.currentPositions;
-  },
+  emits: ["positionChange"],
+  data: () => ({
+    selectedMemberId: null,
+    snappingDistance: 2,
+    positions: null,
+  }),
   computed: {
     _height() {
       switch (this.matType) {
@@ -216,6 +219,16 @@ export default {
           return this.height || this.width;
       }
     },
+  },
+  watch: {
+    currentPositions: {
+      handler(value) {
+        this.positions = value;
+      },
+    },
+  },
+  mounted() {
+    this.positions = this.currentPositions;
   },
   methods: {
     mouseEnter(member) {
@@ -311,14 +324,7 @@ export default {
         });
     },
     acceptProposedPosition(memberId, x, y) {
-      this.$emit("positionChange", memberId, x, y);
-    },
-  },
-  watch: {
-    currentPositions: {
-      handler(value) {
-        this.positions = value;
-      },
+      if (this.interactive) this.$emit("positionChange", memberId, x, y);
     },
   },
 };
@@ -331,7 +337,6 @@ export default {
   background-color: #e5e5f7;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
-  -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;

@@ -1,5 +1,6 @@
 import logger from "@/plugins/winston";
 import { sendMail, verify } from "../plugins/nodemailer";
+import User from "@/db/models/user";
 const { timeStringToMillis } = require("../utils/time");
 const i18n = require("i18n");
 
@@ -26,7 +27,7 @@ class MailService {
   /**
    * Sends a notice to admin emails about a new user registration.
    * @param {string} username - The username of the new user.
-   * @param {string} userId - The ID of the new user.
+   * @param {UUID} userId - The ID of the new user.
    * @param {string} userEmail - The email of the new user.
    * @returns {Promise<void[]>} Resolves when all emails are sent.
    */
@@ -69,7 +70,7 @@ class MailService {
   /**
    * Sends a welcome email to a new user.
    * @param {string} username - The username of the new user.
-   * @param {string} userId - The ID of the new user.
+   * @param {UUID} userId - The ID of the new user.
    * @param {string} userEmail - The email of the new user.
    * @param {string} locale - The locale for the email content.
    * @returns {Promise<void>} Resolves when the email is sent.
@@ -111,7 +112,7 @@ class MailService {
   /**
    * Sends an email confirmation request to a user.
    * @param {string} username - The username of the user.
-   * @param {string} userId - The ID of the user.
+   * @param {UUID} userId - The ID of the user.
    * @param {string} userEmail - The email of the user.
    * @param {string} locale - The locale for the email content.
    * @returns {Promise<void>} Resolves when the email is sent.
@@ -308,6 +309,125 @@ class MailService {
         },
       ],
       locale,
+    );
+  }
+
+  /**
+   * Sends a contact message email to the support team.
+   * @param {string} name - The name of the sender.
+   * @param {string} email - The email of the sender.
+   * @param {string} subject - The subject of the message.
+   * @param {string} message - The content of the message.
+   * @param {string} category - The category of the message (e.g., "bug", "feedback", "other").
+   * @param {User|null} user - The user object if the sender is logged in, otherwise null.
+   * @param {string} locale - The locale for the email content.
+   * @returns {Promise<void>} Resolves when the email is sent.
+   */
+  sendContactMessage(
+    name: string,
+    email: string,
+    subject: string,
+    message: string,
+    category: string,
+    user: User | null,
+    messageLocale: string,
+  ) {
+    logger.debug(
+      `MailService sendContactMessage ${JSON.stringify({
+        name,
+        email,
+        subject,
+        message,
+        category,
+        user,
+        messageLocale,
+      })}`,
+    );
+    return Promise.all(
+      this.adminEmails.map((adminEmail) => {
+        return sendMail(
+          adminEmail,
+          i18n.__({
+            phrase: "mail.newContactMessage.new-message",
+            locale: "en",
+          }) +
+            " " +
+            subject,
+          "newContactMessage.ejs",
+          {
+            name,
+            email,
+            subject,
+            message,
+            category,
+            user,
+            messageLocale,
+            frontendDomain: process.env.FRONTEND_DOMAIN,
+          },
+          [
+            {
+              filename: "logo.png",
+              path: "https://www.choreo-planer.de/Icon.png",
+              cid: "choreo-planer-icon",
+            },
+          ],
+          "en",
+        );
+      }),
+    );
+  }
+
+  /**
+   * Sends a contact message email to the user.
+   * @param {string} name - The name of the sender.
+   * @param {string} email - The email of the sender.
+   * @param {string} subject - The subject of the message.
+   * @param {string} message - The content of the message.
+   * @param {string} category - The category of the message (e.g., "bug", "feedback", "other").
+   * @param {string} locale - The locale for the email content.
+   * @returns {Promise<void>} Resolves when the email is sent.
+   */
+  sendContactNotification(
+    name: string,
+    email: string,
+    subject: string,
+    message: string,
+    category: string,
+    locale: string,
+  ) {
+    logger.debug(
+      `MailService sendContactNotification ${JSON.stringify({
+        name,
+        email,
+        subject,
+        message,
+        category,
+        locale,
+      })}`,
+    );
+    return sendMail(
+      email,
+      i18n.__({ phrase: "mail.newContactNotification.new-message", locale }) +
+        " " +
+        subject,
+      "newContactNotification.ejs",
+      {
+        name,
+        email,
+        subject,
+        message,
+        category,
+        locale,
+        frontendDomain: process.env.FRONTEND_DOMAIN,
+      },
+      [
+        {
+          filename: "logo.png",
+          path: "https://www.choreo-planer.de/Icon.png",
+          cid: "choreo-planer-icon",
+        },
+      ],
+      "en",
     );
   }
 }

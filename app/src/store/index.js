@@ -1,15 +1,19 @@
-import Vue from "vue";
-import Vuex from "vuex";
-
-Vue.use(Vuex);
+import AuthService from "@/services/AuthService";
+import FeatureFlagService, {
+  FeatureFlagKeys,
+} from "@/services/FeatureFlagService";
+import { createStore } from "vuex";
 
 const tokenStorageKey = "choreo-planer-token";
 
-export default new Vuex.Store({
+export default createStore({
   state: {
     loggedIn: localStorage.getItem(tokenStorageKey) != null,
     clubId: null,
     isMobile: true,
+    owners: [],
+    ownersLoaded: false,
+    me: null,
   },
   getters: {
     isChristmasTime() {
@@ -30,7 +34,11 @@ export default new Vuex.Store({
   mutations: {
     setLoginState(state, loginState) {
       state.loggedIn = loginState;
-      if (!loginState) state.clubId = null;
+      if (!loginState) {
+        state.clubId = null;
+        state.owners = [];
+        state.ownersLoaded = false;
+      }
     },
     setClubId(state, id) {
       state.clubId = id;
@@ -38,7 +46,40 @@ export default new Vuex.Store({
     setMobile(state, isMobile) {
       state.isMobile = isMobile;
     },
+    setOwners(state, owners) {
+      state.owners = owners;
+      state.ownersLoaded = true;
+    },
+    clearOwners(state) {
+      state.owners = [];
+      state.ownersLoaded = false;
+    },
+    setMe(state, me) {
+      state.me = me;
+    },
+    clearMe(state) {
+      state.me = null;
+    },
   },
-  actions: {},
+  actions: {
+    async loadUserInfo({ commit }) {
+      try {
+        const me = await AuthService.getUserInfo(true);
+        commit("setMe", me);
+        const accessSharingEnabled = await FeatureFlagService.isEnabled(
+          FeatureFlagKeys.ACCESS_SHARING
+        );
+        commit(
+          "setOwners",
+          accessSharingEnabled
+            ? (me.childAccess || []).filter((access) => access.enabled)
+            : []
+        );
+      } catch {
+        commit("clearMe");
+        commit("clearOwners");
+      }
+    },
+  },
   modules: {},
 });

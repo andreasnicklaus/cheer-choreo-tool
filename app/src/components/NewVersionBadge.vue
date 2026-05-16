@@ -1,7 +1,11 @@
 <template>
-  <b-badge v-show="show" variant="success" class="newVersionBadge px-2">{{
-    $t("neu").toUpperCase()
-  }}</b-badge>
+  <BBadge
+    v-if="show"
+    variant="success"
+    class="newVersionBadge d-inline-flex gap-1 align-items-center"
+  >
+    <IBiPatchExclamationFill />{{ $t("neu").toUpperCase() }}</BBadge
+  >
 </template>
 
 <script>
@@ -22,19 +26,19 @@ import VersionService from "@/services/VersionService";
 
 export default {
   name: "NewVersionBadge",
-  data: () => ({
-    show: false,
-  }),
   props: {
     version: {
       type: String,
-      required: false,
+      default: "",
     },
     versions: {
       type: Array,
-      required: false,
+      default: () => [],
     },
   },
+  data: () => ({
+    show: false,
+  }),
 
   mounted() {
     this.init();

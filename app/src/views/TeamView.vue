@@ -1,103 +1,161 @@
 <template>
-  <b-container id="teamView" data-view>
+  <BContainer id="teamView" data-view>
     <EditableNameHeading
-      :name="$tc('team', 1)"
+      :name="$t('team')"
       :value="teams?.find((t) => t.id == teamId)?.name"
-      class="mb-3"
+      :class="me?.id != currentTeam?.UserId ? 'mb-0' : 'mb-3'"
       @input="onNameEdit"
     />
+    <BPlaceholderWrapper :loading="!currentTeam">
+      <template #loading>
+        <BPlaceholder width="25%" class="mb-4" animation="wave" />
+      </template>
+      <p
+        v-show="accessSharingEnabled && me?.id != currentTeam?.UserId"
+        class="text-muted mb-4 fw-light"
+        data-testid="owner-display"
+      >
+        {{ $t("general.shared-with-you-by") }}
+        {{ currentTeam?.User?.username || "unknown" }}
+      </p>
+    </BPlaceholderWrapper>
 
-    <b-row align-h="between" class="px-3 mb-4">
-      <b-col>
-        <b-dropdown
+    <BRow align-h="between" class="px-3 mb-4">
+      <BCol>
+        <BDropdown
           :text="
             teams.find((t) => t.id == teamId)?.name ||
             $t('teamView.waehle-ein-team')
           "
           variant="outline-primary"
         >
-          <b-dropdown-item
+          <BDropdownItem
             v-for="team in teams"
             :key="team.id"
             :to="{
               name: 'Team',
-              params: { teamId: team.id, locale: $root.$i18n.locale },
+              params: { teamId: team.id, locale: $i18n.locale },
             }"
             :variant="team.id == teamId ? 'primary' : 'outline-primary'"
           >
             {{ team.name }}
-          </b-dropdown-item>
-        </b-dropdown>
-      </b-col>
-      <b-col cols="auto">
-        <b-button-group>
-          <b-button
+          </BDropdownItem>
+        </BDropdown>
+      </BCol>
+      <BCol cols="auto">
+        <BButtonGroup>
+          <BButton
             :variant="presentation == 'table' ? 'primary' : 'outline-primary'"
-            @click="() => (presentation = 'table')"
-            v-b-tooltip.hover
-            v-bind:key="$t('teamView.tabelle')"
+            @click="() => setPresentation('table')"
           >
-            <b-icon-table />
-          </b-button>
-          <b-button
+            <IBiTable />
+          </BButton>
+          <BButton
             :variant="presentation == 'list' ? 'primary' : 'outline-primary'"
-            @click="() => (presentation = 'list')"
-            v-b-tooltip.hover
-            :title="$t('teamView.liste')"
+            @click="() => setPresentation('list')"
           >
-            <b-icon-list-ul />
-          </b-button>
-        </b-button-group>
+            <IBiListUl />
+          </BButton>
+        </BButtonGroup>
 
-        <b-dropdown
+        <BDropdown
+          v-if="
+            canDeleteTeam ||
+            (me?.id &&
+              (currentTeam?.creator?.username ||
+                currentTeam?.updater?.username))
+          "
+          v-b-tooltip.hover="$t('optionen')"
           right
           no-caret
           variant="light"
-          v-b-tooltip.hover
-          :title="$t('optionen')"
-          class="ml-2"
+          class="ms-2"
+          :style="{ display: 'inline' }"
+          data-testid="options-dropdown"
         >
           <template #button-content>
-            <b-icon-three-dots-vertical />
+            <IBiThreeDotsVertical />
           </template>
-          <b-dropdown-item
+          <BDropdownItem
+            v-if="canDeleteTeam"
+            :disabled="!currentTeam"
             @click="
               () =>
                 $refs.deleteSeasonTeamModal.open(
                   currentTeam.SeasonTeams[seasonTabIndex].id
                 )
             "
-            :disabled="!currentTeam"
           >
-            <b-icon-trash class="mr-2" />
+            <IBiTrash class="me-2" />
             {{ $t("teamView.season-loeschen") }}
-          </b-dropdown-item>
-          <b-dropdown-item
-            @click="() => $refs.deleteTeamModal.open(teamId)"
+          </BDropdownItem>
+          <BDropdownItem
+            v-if="canDeleteTeam"
             :disabled="!currentTeam"
             variant="danger"
+            @click="() => $refs.deleteTeamModal.open(teamId)"
           >
-            <b-icon-trash class="mr-2" />
+            <IBiTrash class="me-2" />
             {{ $t("teamView.team-loeschen") }}
-          </b-dropdown-item>
-        </b-dropdown>
-      </b-col>
-    </b-row>
+          </BDropdownItem>
+          <BDropdownDivider
+            v-if="
+              accessSharingEnabled &&
+              canDeleteTeam &&
+              me?.id &&
+              (currentTeam?.creator?.username || currentTeam?.updater?.username)
+            "
+          />
+          <BDropdownText
+            v-if="
+              accessSharingEnabled && currentTeam?.creator?.username && me?.id
+            "
+            class="text-muted fw-light text-nowrap"
+            data-testid="creator-display"
+            @click.stop
+          >
+            {{ $t("general.created-by") }}
+            {{
+              currentTeam.creatorId != me.id
+                ? currentTeam?.creator?.username
+                : $t("general.you")
+            }}
+          </BDropdownText>
+          <BDropdownText
+            v-if="
+              accessSharingEnabled && currentTeam?.updater?.username && me?.id
+            "
+            class="text-muted fw-light text-nowrap"
+            data-testid="updater-display"
+            @click.stop
+          >
+            {{ $t("general.last-updated-by") }}
+            {{
+              currentTeam.updaterId != me.id
+                ? currentTeam?.updater?.username
+                : $t("general.you")
+            }}
+          </BDropdownText>
+        </BDropdown>
+      </BCol>
+    </BRow>
 
-    <b-tabs fill v-model="seasonTabIndex">
-      <b-tab
-        v-for="seasonTeam in currentTeam?.SeasonTeams"
-        :key="seasonTeam.id"
-        lazy
-      >
+    <BTabs
+      v-if="currentTeam"
+      fill
+      :index="seasonTabIndex"
+      @update:index="updateSeasonTabIndex"
+    >
+      <BTab v-for="seasonTeam in currentTeam?.SeasonTeams" :key="seasonTeam.id">
         <template #title>
           {{ seasonTeam?.Season?.name }}
-          <span class="text-muted ml-2">
-            (<b-icon-person /> {{ seasonTeam.Members.length }})
+          <span class="text-muted ms-2">
+            (<IBiPerson /> {{ seasonTeam.Members.length }})
           </span>
         </template>
-        <b-table
+        <BTable
           v-if="presentation == 'table'"
+          :key="`table-${seasonTabIndex}-${sortedMembersOfCurrentTeam.length}`"
           :items="
             sortedMembersOfCurrentTeam.map((m) => ({ ...m, actions: null }))
           "
@@ -105,25 +163,30 @@
           stacked="md"
         >
           <template #cell(actions)="data">
-            <b-button-group>
-              <b-button
+            <BButtonGroup>
+              <BButton
+                v-if="canEditMember"
                 variant="outline-success"
                 @click="editMember(data.item.id)"
               >
-                <b-icon-pen />
-              </b-button>
-              <b-button
+                <IBiPen />
+              </BButton>
+              <BButton
+                v-if="canDeleteMember"
                 variant="outline-danger"
                 @click="requestMemberRemoval(data.item.id)"
               >
-                <b-icon-trash />
-              </b-button>
-            </b-button-group>
+                <IBiTrash />
+              </BButton>
+            </BButtonGroup>
           </template>
-        </b-table>
+        </BTable>
 
-        <b-list-group v-if="presentation == 'list'">
-          <b-list-group-item
+        <BListGroup
+          v-if="presentation == 'list'"
+          :key="`list-${seasonTabIndex}-${sortedMembersOfCurrentTeam.length}`"
+        >
+          <BListGroupItem
             v-for="member in sortedMembersOfCurrentTeam"
             :key="member.id"
             class="d-flex justify-content-between align-items-center"
@@ -133,117 +196,123 @@
               {{ member.nickname ? `(${member.nickname})` : "" }}
             </div>
             <div>
-              <b-badge
-                v-if="member.abbreviation"
-                variant="primary"
-                class="mr-4"
-              >
+              <BBadge v-if="member.abbreviation" variant="primary" class="me-4">
                 {{ member.abbreviation }}
-              </b-badge>
-              <b-button-group>
-                <b-button
+              </BBadge>
+              <BButtonGroup>
+                <BButton
+                  v-if="canEditMember"
                   variant="outline-success"
                   @click="editMember(member.id)"
                 >
-                  <b-icon-pen />
-                </b-button>
-                <b-button
+                  <IBiPen />
+                </BButton>
+                <BButton
+                  v-if="canDeleteMember"
                   variant="outline-danger"
                   @click="requestMemberRemoval(member.id)"
                 >
-                  <b-icon-trash />
-                </b-button>
-              </b-button-group>
+                  <IBiTrash />
+                </BButton>
+              </BButtonGroup>
             </div>
-          </b-list-group-item>
-        </b-list-group>
+          </BListGroupItem>
+        </BListGroup>
 
         <p
-          class="text-muted text-center"
           v-if="sortedMembersOfCurrentTeam.length == 0"
+          class="text-muted text-center"
         >
           {{ $t("teamView.dieses-team-hat-noch-keine-mitglieder") }}
         </p>
 
-        <b-button
-          block
-          class="my-3"
-          variant="success"
-          @click="
-            () => {
-              editMemberId = null;
-              openMemberModal();
-            }
-          "
-        >
-          <b-icon-plus />
-          {{ $t("teamView.hinzufuegen") }}
-        </b-button>
+        <div class="d-grid gap-2">
+          <BButton
+            v-if="canEditTeam"
+            class="my-3"
+            variant="success"
+            @click="
+              () => {
+                editMemberId = null;
+                openMemberModal();
+              }
+            "
+          >
+            <IBiPlus />
+            {{ $t("teamView.hinzufuegen") }}
+          </BButton>
 
-        <b-button
-          block
-          class="my-3"
-          variant="outline-success"
-          @click="
-            () => {
-              $refs.importMemberModal.open();
-            }
-          "
-        >
-          <b-icon-box-arrow-in-right />
-          {{ $t("teamView.importieren") }}
-        </b-button>
-      </b-tab>
+          <BButton
+            v-if="canEditTeam"
+            class="my-3"
+            variant="outline-success"
+            @click="
+              () => {
+                $refs.importMemberModal.open();
+              }
+            "
+          >
+            <IBiBoxArrowInRight />
+            {{ $t("teamView.importieren") }}
+          </BButton>
+        </div>
+      </BTab>
       <template #tabs-end>
-        <b-button
-          v-b-tooltip.hover
-          :title="$t('teamView.neue-season-anfangen')"
+        <BButton
+          v-if="canEditTeam"
+          v-b-tooltip.hover="$t('teamView.neue-season-anfangen')"
           variant="success"
+          data-testid="create-season-button"
           @click="() => $refs.createSeasonModal.open(currentTeam.id)"
         >
-          <b-icon-plus />
-        </b-button>
+          <IBiPlus />
+        </BButton>
       </template>
-    </b-tabs>
+    </BTabs>
 
     <CreateMemberModal
       ref="createMemberModal"
-      :currentTeam="currentTeam"
-      :editMemberId="editMemberId"
-      :seasonTabIndex="seasonTabIndex"
-      @memberCreated="onMemberCreation"
-      @memberUpdated="onMemberUpdate"
+      :current-team="currentTeam"
+      :edit-member-id="editMemberId"
+      :season-tab-index="seasonTabIndex"
+      @member-created="onMemberCreation"
+      @member-updated="onMemberUpdate"
     />
 
     <DeleteMemberModal
       ref="deleteMemberModal"
-      @memberDeleted="onMemberDeletion"
+      @member-deleted="onMemberDeletion"
     />
 
-    <DeleteTeamModal ref="deleteTeamModal" @teamDeleted="onTeamDeletion" />
+    <DeleteTeamModal ref="deleteTeamModal" @team-deleted="onTeamDeletion" />
 
     <CreateSeasonModal
       ref="createSeasonModal"
       :teams="teams"
-      @seasonTeamCreated="onSeasonTeamCreation"
+      :me="me"
+      @season-team-created="onSeasonTeamCreation"
     />
 
     <DeleteSeasonTeamModal
       ref="deleteSeasonTeamModal"
-      @seasonTeamDeleted="onSeasonTeamDeletion"
+      @season-team-deleted="onSeasonTeamDeletion"
     />
 
     <ImportMemberModal
       ref="importMemberModal"
       :teams="teams"
-      :currentTeamId="teamId"
-      :currentSeasonTeamId="currentTeam?.SeasonTeams[this.seasonTabIndex]?.id"
+      :current-team-id="teamId"
+      :current-season-team-id="currentTeam?.SeasonTeams[seasonTabIndex]?.id"
       @import="onMemberImport"
     />
-  </b-container>
+  </BContainer>
 </template>
 
 <script>
+import { useHead } from "@unhead/vue";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { mapState } from "vuex";
 import EditableNameHeading from "@/components/EditableNameHeading.vue";
 import CreateMemberModal from "@/components/modals/CreateMemberModal.vue";
 import CreateSeasonModal from "@/components/modals/CreateSeasonModal.vue";
@@ -254,6 +323,10 @@ import ImportMemberModal from "@/components/modals/ImportMemberModal.vue";
 import TeamService from "@/services/TeamService";
 import ERROR_CODES from "@/utils/error_codes";
 import { error } from "@/utils/logging";
+import { canWrite, canDelete } from "@/utils/permissions";
+import FeatureFlagService, {
+  FeatureFlagKeys,
+} from "@/services/FeatureFlagService";
 
 /**
  * @vue-data {string} presentation=table - The current presentation mode, either 'table' or 'list'.
@@ -280,52 +353,137 @@ export default {
     DeleteSeasonTeamModal,
     ImportMemberModal,
   },
+  setup() {
+    const { t } = useI18n();
+    return { t };
+  },
   data: function () {
     return {
       presentation: "table",
       teamId: null,
       teams: [],
       seasonTabIndex: 0,
-      tableFields: [
+      editMemberId: null,
+      accessSharingEnabled: true,
+    };
+  },
+  computed: {
+    ...mapState(["owners", "me"]),
+    canEditTeam() {
+      return canWrite(this.owners, this.me?.id, this.currentTeam?.UserId);
+    },
+    canDeleteTeam() {
+      return canDelete(this.owners, this.me?.id, this.currentTeam?.UserId);
+    },
+    canEditMember() {
+      return this.canEditTeam;
+    },
+    canDeleteMember() {
+      return this.canDeleteTeam;
+    },
+    tableFields() {
+      return [
         { key: "name", sortable: true },
         { key: "nickname", label: this.$t("spitzname"), sortable: true },
         { key: "abbreviation", label: this.$t("abkuerzung"), sortable: true },
-        { key: "actions", label: "", class: "text-right" },
-      ],
-      editMemberId: null,
-    };
-  },
-  mounted() {
-    this.load();
-  },
-  computed: {
+        { key: "actions", label: "", class: "text-end" },
+      ];
+    },
     currentTeam() {
       if (!this.teamId || !this.teams) return null;
 
       return this.teams.find((t) => t.id == this.teamId);
     },
     sortedMembersOfCurrentTeam() {
-      if (!this.currentTeam?.SeasonTeams[this.seasonTabIndex]?.Members)
+      // Explicitly access currentTeam to ensure Vue tracks it as a dependency
+      const team = this.currentTeam;
+      if (
+        !team ||
+        !team.SeasonTeams ||
+        !team.SeasonTeams[this.seasonTabIndex]
+      ) {
         return [];
-      return [
-        ...this.currentTeam?.SeasonTeams[this.seasonTabIndex].Members,
-      ].sort((a, b) => a.name.localeCompare(b.name));
+      }
+
+      const members = team.SeasonTeams[this.seasonTabIndex].Members;
+      if (!members || members.length === 0) {
+        return [];
+      }
+
+      // Create a new array and sort it
+      return [...members].sort((a, b) => a.name.localeCompare(b.name));
     },
+  },
+  watch: {
+    "$route.params": {
+      handler() {
+        this.teamId = this.$route.params.teamId;
+        this.load();
+      },
+      immediate: true,
+    },
+  },
+  async mounted() {
+    this.load();
+
+    useHead({
+      title: computed(() => this.currentTeam?.name || this.t("team", 1)),
+      meta: [
+        {
+          name: "description",
+          content: computed(() => this.t("meta.teamView.description")),
+        },
+        {
+          name: "twitter:description",
+          content: computed(() => this.t("meta.teamView.description")),
+        },
+        {
+          property: "og:description",
+          content: computed(() => this.t("meta.teamView.description")),
+        },
+        {
+          property: "og:title",
+          content: computed(
+            () =>
+              `${this.currentTeam?.name || "Team"} - ${this.t(
+                "general.ChoreoPlaner"
+              )} | ${this.t("meta.defaults.title")}`
+          ),
+        },
+        {
+          name: "twitter:title",
+          content: computed(
+            () =>
+              `${this.currentTeam?.name || "Team"} - ${this.t(
+                "general.ChoreoPlaner"
+              )} | ${this.t("meta.defaults.title")}`
+          ),
+        },
+      ],
+    });
+    this.accessSharingEnabled = await FeatureFlagService.isEnabled(
+      FeatureFlagKeys.ACCESS_SHARING
+    );
   },
   methods: {
     load() {
-      return TeamService.getAll().then((teams) => {
-        this.teams = teams.map((t) => ({
-          ...t,
-          SeasonTeams: t.SeasonTeams.sort(
-            (a, b) => b.Season.year - a.Season.year
-          ),
-        }));
-      });
+      return Promise.all([
+        TeamService.getAll().then((teams) => {
+          this.teams = teams.map((t) => ({
+            ...t,
+            SeasonTeams: t.SeasonTeams.sort(
+              (a, b) => b.Season.year - a.Season.year
+            ),
+          }));
+        }),
+      ]);
     },
     onNameEdit(nameNew) {
       this.currentTeam.name = nameNew;
       TeamService.setName(this.teamId, nameNew).then((team) => {
+        if (!team.SeasonTeams)
+          team.SeasonTeams =
+            this.teams.find((t) => t.id == team.id)?.SeasonTeams || [];
         const teamCopy = this.teams.filter((t) => t.id != this.currentTeam.id);
         teamCopy.push(team);
         this.teams = teamCopy;
@@ -334,6 +492,7 @@ export default {
     onMemberCreation(member) {
       this.currentTeam.SeasonTeams[this.seasonTabIndex].Members.push(member);
       this.editMemberId = null;
+      this.setLastUpdaterToMe();
     },
     onMemberUpdate(member) {
       const membersCopy = this.currentTeam.SeasonTeams[
@@ -342,6 +501,7 @@ export default {
       membersCopy.push(member);
       this.currentTeam.SeasonTeams[this.seasonTabIndex].Members = membersCopy;
       this.editMemberId = null;
+      this.setLastUpdaterToMe();
     },
     requestMemberRemoval(id) {
       this.$refs.deleteMemberModal.open(id);
@@ -351,6 +511,7 @@ export default {
         this.currentTeam.SeasonTeams[this.seasonTabIndex].Members.filter(
           (m) => m.id != MemberId
         );
+      this.setLastUpdaterToMe();
     },
     editMember(id) {
       this.editMemberId = id;
@@ -369,7 +530,7 @@ export default {
             name: "Team",
             params: {
               teamId: this.teams[0].id,
-              locale: this.$root.$i18n.locale,
+              locale: this.$i18n.locale,
             },
           })
           .catch(() => {
@@ -382,7 +543,7 @@ export default {
         this.$router
           .push({
             name: "Start",
-            params: { locale: this.$root.$i18n.locale },
+            params: { locale: this.$i18n.locale },
           })
           .catch(() => {
             error(
@@ -401,51 +562,20 @@ export default {
       this.currentTeam?.SeasonTeams[this.seasonTabIndex]?.Members.push(
         ...newMembers
       );
+      this.setLastUpdaterToMe();
     },
-  },
-  watch: {
-    "$route.params": {
-      handler() {
-        this.teamId = this.$route.params.teamId;
-      },
-      immediate: true,
+    updateSeasonTabIndex(newIndex) {
+      this.seasonTabIndex = newIndex;
     },
-  },
-  metaInfo() {
-    return {
-      title: this.currentTeam?.name || this.$tc("team", 1),
-      meta: [
-        {
-          vmid: "description",
-          name: "description",
-          content: this.$t("meta.teamView.description"),
-        },
-        {
-          vmid: "twitter:description",
-          name: "twitter:description",
-          content: this.$t("meta.teamView.description"),
-        },
-        {
-          vmid: "og:description",
-          property: "og:description",
-          content: this.$t("meta.teamView.description"),
-        },
-        {
-          vmid: "og:title",
-          property: "og:title",
-          content: `${this.currentTeam?.name || "Team"} - ${this.$t(
-            "general.ChoreoPlaner"
-          )} | ${this.$t("meta.defaults.title")}`,
-        },
-        {
-          vmid: "twitter:title",
-          name: "twitter:title",
-          content: `${this.currentTeam?.name || "Team"} - ${this.$t(
-            "general.ChoreoPlaner"
-          )} | ${this.$t("meta.defaults.title")}`,
-        },
-      ],
-    };
+    setPresentation(newPresentation) {
+      this.presentation = newPresentation;
+    },
+    setLastUpdaterToMe() {
+      if (this.me?.id && this.currentTeam?.updaterId !== this.me?.id) {
+        this.currentTeam.updaterId = this.me?.id;
+        this.currentTeam.updater = this.me;
+      }
+    },
   },
 };
 </script>

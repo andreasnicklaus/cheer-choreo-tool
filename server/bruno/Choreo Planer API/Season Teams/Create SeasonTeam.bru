@@ -1,0 +1,24 @@
+meta {
+  name: Create SeasonTeam
+  method: POST
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/seasonTeam/
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "teamId": "{{id}}",
+    "seasonId": "{{id}}",
+    "MemberIds": []
+  }
+}

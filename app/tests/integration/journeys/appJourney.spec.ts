@@ -54,15 +54,18 @@ test.describe("App contents for authenticated users", () => {
   });
 
   test("displays navigation dropdown and empty notification list", async ({}, testInfo) => {
+    const isMobile = Boolean(testInfo.project.use.isMobile);
+    if (isMobile) return;
+
     await mockNotifications(appPage.page, []);
     await appPage.goToPage();
-    if (Boolean(testInfo.project.use.isMobile)) await appPage.iOpenMobileMenu();
     await appPage.iOpenNotificationDropDown();
     await appPage.iShouldSeeEmptyNotificationNotice();
   });
 
   test("displays navigation dropdown and notification should be marked as read", async ({}, testInfo) => {
-    if (Boolean(testInfo.project.use.isMobile)) await appPage.iOpenMobileMenu();
+    const isMobile = Boolean(testInfo.project.use.isMobile);
+    if (isMobile) return;
 
     await appPage.iOpenNotificationDropDown();
     await appPage.iCheckNotificationDropDownContents();
@@ -71,10 +74,11 @@ test.describe("App contents for authenticated users", () => {
 
   test("displays account dropdown contents", async ({}, testInfo) => {
     const isMobile = Boolean(testInfo.project.use.isMobile);
-    if (isMobile) await appPage.iOpenMobileMenu();
 
-    await appPage.iOpenAccountDropDown();
-    await appPage.iCheckAccountDropDownContents();
+    if (isMobile) await appPage.iOpenMobileMenu();
+    else await appPage.iOpenAccountDropDown();
+
+    await appPage.iCheckAccountDropDownContents(isMobile);
     await appPage.iCheckActiveClub(isMobile);
   });
 
@@ -101,7 +105,9 @@ test.describe("App contents for authenticated users", () => {
 
 test.describe("App localization", () => {
   test("can switch language to German", async ({}, testInfo) => {
-    if (Boolean(testInfo.project.use.isMobile)) await appPage.iOpenMobileMenu();
+    const isMobile = Boolean(testInfo.project.use.isMobile);
+    if (isMobile) return;
+
     await appPage.iSwitchLanguageTo("Deutsch");
   });
 

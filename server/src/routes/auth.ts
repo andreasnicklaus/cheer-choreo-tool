@@ -1,14 +1,52 @@
 import { NextFunction, Request, Response, Router } from "express";
+import { z } from "zod";
 import User from "../db/models/user";
-import { UniqueConstraintError, ValidationError } from "sequelize";
+import { UniqueConstraintError } from "sequelize";
 import UserService from "../services/UserService";
 import MailService from "../services/MailService";
 import NotificationService from "../services/NotificationService";
 import FileService from "../services/FileService";
+import { validate } from "@/middlewares/validateMiddleware";
 
 const bcrypt = require("bcrypt");
 const path = require("node:path");
 const { default: AuthService } = require("../services/AuthService");
+
+const registerSchema = z.object({
+  username: z.string().min(6),
+  email: z.email().optional().nullable().default(null),
+  password: z.string().min(8),
+});
+
+const loginSchema = z.object({
+  username: z.string().min(1),
+  password: z.string().min(1),
+});
+
+const ssoRequestSchema = z.object({
+  email: z.email(),
+});
+
+const ssoSchema = z.object({
+  ssoToken: z.string().min(1),
+});
+
+const profilePictureParams = z.object({
+  filename: z.string().min(1),
+});
+
+const updateMeSchema = z.object({
+  username: z.string().min(6).optional(),
+  email: z.email().optional(),
+  emailConfirmed: z.boolean().optional(),
+});
+
+type RegisterBody = z.infer<typeof registerSchema>;
+type LoginBody = z.infer<typeof loginSchema>;
+type SsoRequestBody = z.infer<typeof ssoRequestSchema>;
+type SsoBody = z.infer<typeof ssoSchema>;
+type ProfilePictureParams = z.infer<typeof profilePictureParams>;
+type UpdateMeBody = z.infer<typeof updateMeSchema>;
 
 /**
  * @swagger
@@ -118,34 +156,49 @@ const router = Router();
  *              type: string
  *              example: User already exists
  */
-router.post("/", (req: Request, res: Response, next: NextFunction) => {
-  const { username, password, email } = req.body;
-  UserService.create(username, password, email, false, req.locale)
-    .then((user: User) => {
-      const token = AuthService.generateAccessToken(user.id);
-      res.send(token);
-      next();
-    })
-    .catch((e: Error) => {
-      if (e instanceof UniqueConstraintError) {
-        const ue = e as UniqueConstraintError;
-        res
-          .status(400)
-          .send(
-            Object.keys(ue.fields).includes("username") ||
-              Object.keys(ue.fields).includes("email")
-              ? req.t("errors.user-already-exists")
-              : null,
-          );
-        return next();
-      } else if (e instanceof ValidationError) {
-        const ve = e as ValidationError;
-        res.status(400).send(ve.errors[0].message);
-        return next();
-      }
-      next(e);
-    });
-});
+router.post(
+  "/",
+  validate(registerSchema),
+  (req: Request, res: Response, next: NextFunction) => {
+    const { username, password, email } = req.body as RegisterBody;
+
+    const searchIdentifier = email ? [username, email] : username;
+
+    UserService.findDeletedByUsernameOrEmail(searchIdentifier)
+      .then((deletedUser) => {
+        if (deletedUser) {
+          res.status(403).send(req.t("errors.account-deleted"));
+          return next();
+        }
+        return createUser();
+      })
+      .catch((e: Error) => next(e));
+
+    function createUser() {
+      UserService.create(username, password, email as string, false, req.locale)
+        .then((user: User) => {
+          const token = AuthService.generateAccessToken(user.id);
+          res.send(token);
+          next();
+        })
+        .catch((e: Error) => {
+          if (e instanceof UniqueConstraintError) {
+            const ue = e as UniqueConstraintError;
+            res
+              .status(400)
+              .send(
+                Object.keys(ue.fields).includes("username") ||
+                  Object.keys(ue.fields).includes("email")
+                  ? req.t("errors.user-already-exists")
+                  : null,
+              );
+            return next();
+          }
+          next(e);
+        });
+    }
+  },
+);
 
 /**
  * @openapi
@@ -166,28 +219,42 @@ router.post("/", (req: Request, res: Response, next: NextFunction) => {
  *      404:
  *        description: User was not found
  */
-router.post("/login", (req: Request, res: Response, next: NextFunction) => {
-  const { username, password } = req.body;
-  UserService.findByUsernameOrEmail(username, { scope: "withPasswordHash" })
-    .then(async (user: User | null) => {
-      if (!user || !bcrypt.compareSync(password, user.password)) {
-        res.status(404).send();
-        return;
-      }
+router.post(
+  "/login",
+  validate(loginSchema),
+  (req: Request, res: Response, next: NextFunction) => {
+    const { username, password } = req.body as LoginBody;
+    UserService.findByUsernameOrEmail(username, { scope: "withPasswordHash" })
+      .then(async (user: User | null) => {
+        if (!user) {
+          const deletedUser =
+            await UserService.findDeletedByUsernameOrEmail(username);
+          if (deletedUser) {
+            res.status(403).send(req.t("errors.account-deleted"));
+            return;
+          }
+          res.status(404).send();
+          return;
+        }
+        if (!bcrypt.compareSync(password, user.password)) {
+          res.status(404).send();
+          return;
+        }
 
-      // if (user.email && !user.emailConfirmed)
-      //   return res.status(400).send({
-      //     type: "EmailUnconfirmed",
-      //     message:
-      //       "Du musst dein E-Mail-Adresse bestätigen, um dein Konto zu aktivieren",
-      //   });
-      await UserService.update(user.id, { lastLoggedIn: Date.now() });
-      const token = AuthService.generateAccessToken(user.id);
-      res.send(token);
-      next();
-    })
-    .catch((e: Error) => next(e));
-});
+        // if (user.email && !user.emailConfirmed)
+        //   return res.status(400).send({
+        //     type: "EmailUnconfirmed",
+        //     message:
+        //       "Du musst dein E-Mail-Adresse bestätigen, um dein Konto zu aktivieren",
+        //   });
+        await UserService.update(user.id, { lastLoggedIn: Date.now() });
+        const token = AuthService.generateAccessToken(user.id);
+        res.send(token);
+        next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 /**
  * @openapi
@@ -216,12 +283,9 @@ router.post("/login", (req: Request, res: Response, next: NextFunction) => {
  */
 router.post(
   "/ssoRequest",
+  validate(ssoRequestSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { email } = req.body;
-    if (!email) {
-      res.status(400).send(req.t("responses.email-required"));
-      return next();
-    }
+    const { email } = req.body as SsoRequestBody;
 
     AuthService.generateSsoToken(email, req.locale)
       .then(() => {
@@ -256,28 +320,28 @@ router.post(
  *              type: string
  *              example: A SSO token is required. Please contact admin@choreo-planer.de
  */
-router.post("/sso", (req: Request, res: Response, next: NextFunction) => {
-  const { ssoToken } = req.body;
-  if (!ssoToken) {
-    res.status(400).send(req.t("responses.sso-token-required"));
-    return next();
-  }
+router.post(
+  "/sso",
+  validate(ssoSchema),
+  (req: Request, res: Response, next: NextFunction) => {
+    const { ssoToken } = req.body as SsoBody;
 
-  AuthService.resolveSsoToken(ssoToken, req.locale)
-    .then((user: User) => {
-      if (!user) {
-        res.status(404).send(req.t("responses.user-not-found"));
+    AuthService.resolveSsoToken(ssoToken, req.locale)
+      .then((user: User) => {
+        if (!user) {
+          res.status(404).send(req.t("responses.user-not-found"));
+          return next();
+        }
+        const token = AuthService.generateAccessToken(user.id);
+        res.send(token);
         return next();
-      }
-      const token = AuthService.generateAccessToken(user.id);
-      res.send(token);
-      return next();
-    })
-    .catch((e: Error) => {
-      res.status(400).send(e.message);
-      return next();
-    });
-});
+      })
+      .catch((e: Error) => {
+        res.status(400).send(e.message);
+        return next();
+      });
+  },
+);
 
 /**
  * @openapi
@@ -302,7 +366,7 @@ router.get(
   "/me",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    UserService.findById(req.UserId)
+    UserService.findById(req.actingUserId)
       .then((user: User | null) => {
         res.send(user);
         return next();
@@ -333,13 +397,14 @@ router.get(
 router.put(
   "/me",
   AuthService.authenticateUser(),
+  validate(updateMeSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { username, email, emailConfirmed } = req.body;
+    const { username, email, emailConfirmed } = req.body as UpdateMeBody;
     const data = { username, email, emailConfirmed };
-    if (email && email != req.User.email) data.emailConfirmed = false;
-    UserService.update(req.UserId, data)
+    if (email && email != req.ActingUser.email) data.emailConfirmed = false;
+    UserService.update(req.actingUserId, data)
       .then((user: User | null) => {
-        if (user && email != req.User.email)
+        if (user && email != req.ActingUser.email)
           return MailService.sendEmailConfirmationEmail(
             user.username,
             user.id,
@@ -366,7 +431,15 @@ router.put(
  *    security:
  *      - userAuthentication: []
  *    requestBody:
- *      $ref: '#/components/requestBodies/LoginRequestBody'
+ *      required: true
+ *      content:
+ *        multipart/form-data:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              profilePicture:
+ *                type: string
+ *                format: binary
  *    responses:
  *      200:
  *        description: Upload successful
@@ -392,11 +465,11 @@ router.put(
     if (!req.file) res.status(400).send(req.t("responses.no-file-uploaded"));
     else {
       const profilePictureExtension = req.file.filename.split(".").pop();
-      UserService.update(req.UserId, {
+      UserService.update(req.actingUserId, {
         profilePictureExtension,
       }).then((user: User | null) => {
         FileService.clearProfilePictureFolder(
-          req.UserId,
+          req.actingUserId,
           profilePictureExtension,
         );
         res.send(user);
@@ -434,11 +507,12 @@ router.put(
 router.get(
   "/me/profilePicture/:filename",
   AuthService.authenticateUser(),
+  validate(profilePictureParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
-    const { filename } = req.params;
+    const { filename } = req.params as ProfilePictureParams;
     const root = path.join(__dirname, "../../uploads/profilePictures");
 
-    if (filename.startsWith(req.UserId))
+    if (filename.startsWith(req.actingUserId))
       return res.sendFile(filename, { root });
 
     return next();
@@ -464,9 +538,9 @@ router.delete(
   "/me/profilePicture",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    UserService.update(req.UserId, { profilePictureExtension: null })
+    UserService.update(req.actingUserId, { profilePictureExtension: null })
       .then(() => {
-        FileService.clearProfilePictureFolder(req.UserId);
+        FileService.clearProfilePictureFolder(req.actingUserId);
         res.send();
         return next();
       })
@@ -493,7 +567,7 @@ router.get(
   "/me/resendEmailConfirmationLink",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    UserService.findById(req.UserId)
+    UserService.findById(req.actingUserId)
       .then((user: User | null) => {
         if (!user) {
           res.status(404).send(req.t("responses.user-not-found"));

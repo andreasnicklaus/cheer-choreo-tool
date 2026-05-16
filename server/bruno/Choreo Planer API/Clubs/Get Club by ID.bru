@@ -1,0 +1,17 @@
+meta {
+  name: Get Club by ID
+  method: GET
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/club/:id
+  body: none
+  auth: inherit
+}
+
+
+params:path {
+  id: 
+}

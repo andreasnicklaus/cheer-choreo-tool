@@ -1,17 +1,18 @@
 <template>
-  <b-modal
+  <BModal
     :id="`feedback-modal-${id}`"
+    ref="feedbackModal"
     :title="$t('feedback.sag-uns-deine-meinung')"
     centered
-    @ok="send"
+    @ok.prevent="send"
   >
     <p>
       {{ $t("feedback.hilf-uns-besser-zu-werden") }}
     </p>
-    <b-row align-h="center">
-      <b-col cols="auto">
-        <b-button-group>
-          <b-button
+    <BRow align-h="center">
+      <BCol cols="auto">
+        <BButtonGroup>
+          <BButton
             v-for="(_, i) in Array(5)"
             :key="i"
             variant="light"
@@ -19,88 +20,92 @@
             @mouseover="mouseOver(i)"
             @mouseleave="mouseLeave"
           >
-            <b-icon-star-fill
-              variant="primary"
+            <IBiStarFill
               v-show="hoverStars != null ? hoverStars >= i : stars >= i"
+              class="text-primary"
               :style="{ pointerEvents: 'none' }"
             />
-            <b-icon-star
+            <IBiStar
               v-show="hoverStars != null ? hoverStars < i : stars < i"
-              variant="primary"
+              class="text-primary"
               :style="{ pointerEvents: 'none' }"
             />
-          </b-button>
-        </b-button-group>
-      </b-col>
-    </b-row>
+          </BButton>
+        </BButtonGroup>
+      </BCol>
+    </BRow>
     <textarea
-      name="feedback-text"
       id="feedback-text"
-      rows="5"
       v-model="feedbackText"
+      name="feedback-text"
+      rows="5"
       class="p-2 mt-3"
       :placeholder="$t('feedback.was-gefaellt-dir-am-choreo-planer')"
     />
-    <template #modal-footer="{ ok, cancel }">
-      <b-row align-h="between" class="w-100 mr-2" no-gutters>
-        <b-col cols="auto">
-          <b-button
+    <template #footer="{ ok, cancel }">
+      <BRow align-h="between" class="w-100 me-2" no-gutters>
+        <BCol cols="auto">
+          <BButton
             v-show="!forced"
-            @click="closeWithoutSending"
             variant="link"
             class="text-muted"
+            @click="closeWithoutSending"
           >
             {{ $t("feedback.nicht-mehr-fragen") }}
-          </b-button>
-        </b-col>
-        <b-col cols="auto">
-          <b-row no-gutters :style="{ columnGap: '8px' }">
-            <b-col>
-              <b-button
-                @click="ok"
+          </BButton>
+        </BCol>
+        <BCol cols="auto">
+          <BRow no-gutters :style="{ columnGap: '8px' }">
+            <BCol>
+              <BButton
                 variant="success"
                 :disabled="stars < 0 || stars > 4 || !feedbackText"
                 to="#"
+                @click="ok"
               >
-                <b-spinner small v-show="sending" />
+                <BSpinner v-show="sending" small />
                 <span v-show="!sending"> {{ $t("feedback.abschicken") }} </span>
-              </b-button>
-            </b-col>
-            <b-col cols="auto">
-              <b-button @click="cancel" variant="outline-danger">
+              </BButton>
+            </BCol>
+            <BCol cols="auto">
+              <BButton variant="outline-danger" @click="cancel">
                 {{ $t("feedback.schliessen") }}
-              </b-button>
-            </b-col>
-          </b-row>
-        </b-col>
-      </b-row>
+              </BButton>
+            </BCol>
+          </BRow>
+        </BCol>
+      </BRow>
     </template>
 
-    <b-modal
+    <BModal
       :id="`feedback-thankyou-modal-${id}`"
+      ref="thankyouModal"
       :title="$t('feedback.dankeschoen')"
       centered
-      @ok="close"
-      @hide="close"
       header-bg-variant="success"
       header-text-variant="light"
+      @ok="close"
+      @hide="close"
     >
       <p>
         {{ $t("feedback.vielen-dank") }}
       </p>
-      <template #modal-footer="{ cancel }">
-        <b-button variant="success" @click="cancel" :style="{ color: 'white' }">
+      <template #footer="{ cancel }">
+        <BButton variant="success" :style="{ color: 'white' }" @click="cancel">
           {{ $t("feedback.schliessen") }}
-        </b-button>
+        </BButton>
       </template>
-    </b-modal>
-  </b-modal>
+    </BModal>
+  </BModal>
 </template>
 
 <script>
+import Cookies from "js-cookie";
+
 import FeedbackService from "@/services/FeedbackService";
-import { error } from "@/utils/logging";
+import { error, debug } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
+import { isPrerender } from "@/utils/isPrerender";
 
 const feedbackDeclinedCookieName = "feedback-declined";
 
@@ -127,6 +132,7 @@ const feedbackDeclinedCookieName = "feedback-declined";
 
 export default {
   name: "FeedbackPrompt",
+  emits: ["feedbackSent"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     stars: 4,
@@ -137,8 +143,15 @@ export default {
     forced: false,
     showTimer: null,
   }),
+  watch: {
+    "$route.path": {
+      handler() {
+        this.resetShowTimer();
+      },
+    },
+  },
   mounted() {
-    if (!window.__PRERENDER_INJECTED) {
+    if (!isPrerender()) {
       this.initializeShowTimer();
       FeedbackService.getAll()
         .then((feedbacks) => {
@@ -151,6 +164,9 @@ export default {
           );
           this.feedbackAlreadyGiven = false;
         });
+    } else {
+      debug("Prerendering detected, feedback prompt will not be shown");
+      this.feedbackAlreadyGiven = true; // prevent showing the feedback prompt during prerendering
     }
   },
   methods: {
@@ -158,11 +174,9 @@ export default {
       this.stars = 4;
       this.feedbackText = null;
       this.forced = force;
-      const feedbackDeclined = Boolean(
-        this.$cookie.get(feedbackDeclinedCookieName)
-      );
+      const feedbackDeclined = Boolean(Cookies.get(feedbackDeclinedCookieName));
       if (force || (!this.feedbackAlreadyGiven && !feedbackDeclined))
-        this.$bvModal.show(`feedback-modal-${this.id}`);
+        this.$refs.feedbackModal.show();
 
       this.stopShowTimer();
     },
@@ -170,8 +184,7 @@ export default {
       if (!this.isABootstrapModalOpen()) this.open();
       else this.resetShowTimer();
     },
-    send(event) {
-      event.preventDefault();
+    send() {
       this.stopShowTimer();
       FeedbackService.sendFeedback(
         parseInt(this.stars) + 1,
@@ -181,7 +194,7 @@ export default {
           stars: this.stars,
           feedbackText: this.feedbackText,
         });
-        this.$bvModal.show(`feedback-thankyou-modal-${this.id}`);
+        this.$refs.thankyouModal.show();
         this.feedbackAlreadyGiven = true;
       });
     },
@@ -193,12 +206,12 @@ export default {
     },
     closeWithoutSending() {
       this.stopShowTimer();
-      this.$cookie.set(feedbackDeclinedCookieName, true, { expires: 30 });
+      Cookies.set(feedbackDeclinedCookieName, true, { expires: 30 });
       this.close();
     },
     close() {
-      this.$bvModal.hide(`feedback-modal-${this.id}`);
-      this.$bvModal.hide(`feedback-thankyou-modal-${this.id}`);
+      this.$refs.feedbackModal.hide();
+      this.$refs.thankyouModal.hide();
     },
     isABootstrapModalOpen() {
       return document.querySelectorAll(".modal.in").length > 0;
@@ -214,13 +227,6 @@ export default {
     },
     stopShowTimer() {
       clearTimeout(this.showTimer);
-    },
-  },
-  watch: {
-    "$route.path": {
-      handler() {
-        this.resetShowTimer();
-      },
     },
   },
 };

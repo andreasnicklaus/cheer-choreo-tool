@@ -1,10 +1,6 @@
-import Vue from "vue";
-import VueI18n from "vue-i18n";
+import { createI18n } from "vue-i18n";
 import de from "../i18n/de.json";
 import en from "../i18n/en.json";
-import LanguageService from "@/services/LanguageService";
-
-Vue.use(VueI18n);
 
 const messages = {
   de,
@@ -36,11 +32,28 @@ const dateTimeFormats = {
   },
 };
 
-const i18n = new VueI18n({
-  locale: LanguageService?.loadLanguage(Object.keys(messages)) || "de",
+// Load language from localStorage or browser settings
+// (moved from LanguageService to avoid circular dependency)
+const localStorageKey = "cp-locale";
+const storedLanguage = localStorage.getItem(localStorageKey);
+const usersLanguage = window.navigator.language.split("-")[0];
+const availableLocales = Object.keys(messages);
+
+let locale = "de";
+if (storedLanguage && availableLocales.includes(storedLanguage)) {
+  locale = storedLanguage;
+} else if (availableLocales.includes(usersLanguage)) {
+  locale = usersLanguage;
+}
+
+const i18n = createI18n({
+  legacy: false,
+  globalInjection: true,
+  locale: locale,
   fallbackLocale: "de",
   messages,
-  dateTimeFormats,
+  datetimeFormats: dateTimeFormats,
+  warnHtmlMessage: false,
 });
 
 export default i18n;

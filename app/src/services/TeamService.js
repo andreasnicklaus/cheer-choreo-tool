@@ -45,11 +45,12 @@ class TeamService {
    * @param {string} name - Name of the team to create
    * @param {string} clubId - ID of the club the team belongs to
    * @param {string} seasonId - ID of the season the team is in
+   * @param {string|null} ownerId - ID of the owner
    * @returns {Promise<Object>} Created team
    */
-  create(name, clubId, seasonId) {
-    debug("Creating a new team", { clubId, name, seasonId });
-    return ax.post("/team", { name, clubId, seasonId }).then((res) => {
+  create(name, clubId, seasonId, ownerId = null) {
+    debug("Creating a new team", { clubId, name, seasonId, ownerId });
+    return ax.post("/team", { name, clubId, seasonId, ownerId }).then((res) => {
       debug("Successfully created team");
       return res.data;
     });

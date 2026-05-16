@@ -1,13 +1,13 @@
 import store from "@/store";
 import {
+  describe,
   test,
   expect,
   beforeEach,
-  jest,
+  vi,
   beforeAll,
   afterAll,
-} from "@jest/globals";
-import { describe } from "node:test";
+} from "vitest";
 
 describe("store", () => {
   beforeEach(() => {
@@ -21,43 +21,43 @@ describe("store", () => {
   describe("getters", () => {
     describe("isChristmasTime", () => {
       beforeAll(() => {
-        jest.useFakeTimers("modern");
+        vi.useFakeTimers("modern");
       });
       afterAll(() => {
-        jest.useRealTimers();
+        vi.useRealTimers();
       });
 
       test("isChristmasTime should return true for 25th of december", () => {
-        jest.setSystemTime(new Date("2023-12-25"));
+        vi.setSystemTime(new Date("2023-12-25"));
         expect(store.getters.isChristmasTime).toBeTruthy();
       });
       test("isChristmasTime should return false for 30 of november", () => {
-        jest.setSystemTime(new Date("2023-11-30"));
+        vi.setSystemTime(new Date("2023-11-30"));
         expect(store.getters.isChristmasTime).toBeFalsy();
       });
       test("isChristmasTime should return false for 28th of december", () => {
-        jest.setSystemTime(new Date("2023-12-28"));
+        vi.setSystemTime(new Date("2023-12-28"));
         expect(store.getters.isChristmasTime).toBeFalsy();
       });
     });
     describe("isEasterTime", () => {
       beforeAll(() => {
-        jest.useFakeTimers("modern");
+        vi.useFakeTimers("modern");
       });
       afterAll(() => {
-        jest.useRealTimers();
+        vi.useRealTimers();
       });
 
       test("isEasterTime should return true for 21st of march", () => {
-        jest.setSystemTime(new Date("2023-03-21"));
+        vi.setSystemTime(new Date("2023-03-21"));
         expect(store.getters.isEasterTime).toBeTruthy();
       });
       test("isEasterTime should return false for 19th of march", () => {
-        jest.setSystemTime(new Date("2023-03-19"));
+        vi.setSystemTime(new Date("2023-03-19"));
         expect(store.getters.isEasterTime).toBeFalsy();
       });
       test("isEasterTime should return false for 1st of may", () => {
-        jest.setSystemTime(new Date("2023-05-01"));
+        vi.setSystemTime(new Date("2023-05-01"));
         expect(store.getters.isEasterTime).toBeFalsy();
       });
     });

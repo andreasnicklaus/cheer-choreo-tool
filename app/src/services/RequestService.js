@@ -6,6 +6,7 @@ import router from "@/router";
 import i18n from "@/plugins/vue-i18n";
 import { logRequest, error as logError } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
+import env from "../utils/env";
 
 /**
  * Axios request service with authentication and error handling.
@@ -43,32 +44,34 @@ ax.interceptors.response.use(
       case 401:
         AuthService.removeToken();
         store.commit("setLoginState", false);
-        router
-          .push({
-            name: "Login",
-            params: { locale: i18n.locale },
-          })
-          .catch(() => {
-            logError(
-              "Redundant navigation to login",
-              ERROR_CODES.REDUNDANT_ROUTING
-            );
-          });
+        if (!error.config.skipRoutingToLogin)
+          router
+            .push({
+              name: "Login",
+              params: { locale: i18n.global.locale.value },
+            })
+            .catch(() => {
+              logError(
+                "Redundant navigation to login",
+                ERROR_CODES.REDUNDANT_ROUTING
+              );
+            });
         break;
       case 403:
         AuthService.removeToken();
         store.commit("setLoginState", false);
-        router
-          .push({
-            name: "Login",
-            params: { locale: i18n.locale },
-          })
-          .catch(() => {
-            logError(
-              "Redundant navigation to login",
-              ERROR_CODES.REDUNDANT_ROUTING
-            );
-          });
+        if (!error.config.skipRoutingToLogin)
+          router
+            .push({
+              name: "Login",
+              params: { locale: i18n.global.locale.value },
+            })
+            .catch(() => {
+              logError(
+                "Redundant navigation to login",
+                ERROR_CODES.REDUNDANT_ROUTING
+              );
+            });
         break;
       default:
     }
@@ -83,7 +86,7 @@ ax.interceptors.request.use(
       config.headers.Authorization = "Bearer " + token;
     }
 
-    const locale = i18n.locale;
+    const locale = i18n.global.locale.value;
     if (locale) config.headers["Accept-Language"] = locale;
     return config;
   },
@@ -104,9 +107,7 @@ ax.interceptors.request.use((config) => {
  * @returns {("https://api.choreo-planer.de/" | "http://localhost:3000/")}
  */
 export function getApiDomain() {
-  return process.env.NODE_ENV == "production"
-    ? "https://api.choreo-planer.de/"
-    : "http://localhost:3000/";
+  return env.PROD ? "https://api.choreo-planer.de/" : "http://localhost:3000/";
 }
 
 export default ax;

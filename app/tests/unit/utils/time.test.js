@@ -1,6 +1,5 @@
 import toTimeAgo from "@/utils/time";
-import { test, expect } from "@jest/globals";
-import { describe } from "node:test";
+import { describe, test, expect } from "vitest";
 
 describe("toTimeAgo", () => {
   test("should return 'just now' for current date", () => {

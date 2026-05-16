@@ -30,3 +30,6 @@ docs
 /playwright/.cache/
 
 coverage
+dev-dist
+
+*.d.ts

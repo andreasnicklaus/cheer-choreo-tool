@@ -1,53 +1,54 @@
 <template>
-  <b-modal
+  <BModal
     :id="`modal-participation-substitution-${id}`"
+    ref="modal"
     centered
+    :title="$t('modals.substitution.teilnehmer-auswechseln')"
     @show="reset"
     @ok="substituteParticipants"
-    :title="$t('modals.substitution.teilnehmer-auswechseln')"
   >
     <p class="text-muted">
-      {{ $tc("choreo", 1) }}: {{ choreo?.name }} ({{
+      {{ $t("choreo", 1) }}: {{ choreo?.name }} ({{
         choreo?.SeasonTeam.Team.name
       }}, {{ choreo?.SeasonTeam.Season.name }})
     </p>
-    <b-form-group
+    <BFormGroup
       :label="$t('modals.substitution.auswechseln')"
       label-class="label-with-colon"
       :state="memberToReplaceIdIsValid"
       :invalid-feedback="memberToReplaceIdStateFeedback"
     >
-      <b-form-select
+      <BFormSelect
         v-model="memberToReplaceId"
         :state="memberToReplaceIdIsValid"
         required
         :options="participantOptions"
         :autofocus="memberToReplaceId == null"
       />
-    </b-form-group>
-    <b-form-group
+    </BFormGroup>
+    <BFormGroup
       :label="$t('modals.substitution.einwechseln')"
       label-class="label-with-colon"
       :state="memberToSubInIdIsValid"
       :invalid-feedback="memberToSubInIdStateFeedback"
     >
-      <b-form-select
+      <BFormSelect
         v-model="memberToSubInId"
         :state="memberToSubInIdIsValid"
         required
         :options="nonParticipantOptions"
         :autofocus="memberToSubInId == null"
       />
-    </b-form-group>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="success">{{
+    </BFormGroup>
+    <template #footer="{ ok, cancel }">
+      <BButton variant="success" @click="ok">{{
         $t("modals.substitution.auswechseln")
-      }}</b-button>
-      <b-button @click="cancel" variant="outline-danger">{{
+      }}</BButton>
+      <BButton variant="outline-danger" @click="cancel">{{
         $t("abbrechen")
-      }}</b-button>
+      }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
 <script>
@@ -81,14 +82,10 @@ import ChoreoService from "@/services/ChoreoService";
  */
 export default {
   name: "ParticipantSubstitutionModal",
-  data: () => ({
-    id: (Math.random() + 1).toString(36).substring(7),
-    memberToReplaceId: null,
-    memberToSubInId: null,
-  }),
   props: {
     choreo: {
       type: Object,
+      default: null,
     },
     participants: {
       type: Array,
@@ -99,26 +96,12 @@ export default {
       required: true,
     },
   },
-  methods: {
-    open(memberToReplaceId = null, memberToSubInId = null) {
-      this.$bvModal.show(`modal-participation-substitution-${this.id}`);
-      this.memberToReplaceId = memberToReplaceId;
-      this.memberToSubInId = memberToSubInId;
-    },
-    reset() {
-      this.memberToReplaceId = null;
-      this.memberToSubInId = null;
-    },
-    substituteParticipants() {
-      ChoreoService.replaceParticipant(
-        this.choreo.id,
-        this.memberToReplaceId,
-        this.memberToSubInId
-      ).then((choreo) => {
-        this.$emit("substitution", choreo);
-      });
-    },
-  },
+  emits: ["substitution"],
+  data: () => ({
+    id: (Math.random() + 1).toString(36).substring(7),
+    memberToReplaceId: null,
+    memberToSubInId: null,
+  }),
   computed: {
     participantOptions() {
       return this.participants.map((p) => ({
@@ -145,6 +128,26 @@ export default {
     memberToSubInIdStateFeedback() {
       if (!this.memberToSubInId) return this.$t("erfolgreich");
       return null;
+    },
+  },
+  methods: {
+    open(memberToReplaceId = null, memberToSubInId = null) {
+      this.$refs.modal.show();
+      this.memberToReplaceId = memberToReplaceId;
+      this.memberToSubInId = memberToSubInId;
+    },
+    reset() {
+      this.memberToReplaceId = null;
+      this.memberToSubInId = null;
+    },
+    substituteParticipants() {
+      ChoreoService.replaceParticipant(
+        this.choreo.id,
+        this.memberToReplaceId,
+        this.memberToSubInId
+      ).then((choreo) => {
+        this.$emit("substitution", choreo);
+      });
     },
   },
 };

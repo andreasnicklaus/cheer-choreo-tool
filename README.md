@@ -12,7 +12,7 @@
 ![Website status](https://img.shields.io/website?url=https%3A%2F%2Fwww.choreo-planer.de&style=for-the-badge)
 ![Backend status](https://img.shields.io/website?url=https%3A%2F%2Fapi.choreo-planer.de&style=for-the-badge&label=Backend)
 
-![Backend server build status](<https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/docker-server-image.yml?style=for-the-badge&logo=docker&logoColor=white&label=Backend%20Build%20(Server)>)
+![Backend server build status](https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/server.yml?style=for-the-badge&logo=docker&logoColor=white&label=Backend%20Build%20(Server))
 ![Frontend build status](https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/pages.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=Frontend%20Build)
 
 ![Last commit](https://img.shields.io/github/last-commit/andreasnicklaus/cheer-choreo-tool?style=for-the-badge&label=Last%20Major%20Update)
@@ -38,11 +38,11 @@ graph
 
   subgraph Github
     subgraph pages[Github Pages]
-      subgraph vue[Vue JS UI]
+      subgraph vue[Vue 3 + Vite UI]
         VueMatomo
-        bootstrap-vue
-        vue-18n
-        vue-meta
+        bootstrap-vue-next
+        vue-i18n
+        unhead
       end
     end
     githubactions(Github Actions)
@@ -57,6 +57,7 @@ graph
         ReverseProxy
         Matomo
         Watchtower
+        Unleash
         ReverseProxy[Reverse Proxy]
         sequelize
         db[(Postgres Database)]
@@ -74,6 +75,7 @@ graph
   ReverseProxy --> api
   ReverseProxy --> Watchtower
   ReverseProxy --> Matomo
+  ReverseProxy --> Unleash
 
   sequelize --> db
   Matomo --> dba
@@ -107,6 +109,36 @@ graph
 See [LICENSE](LICENSE) for the license of this project.
 
 ## :sparkles: Version history
+
+### 1.0.0 - 2026-04-06 (alias: 0.13.1)
+
+- Sharing access to different users in order to work on the same clubs, teams and choreos
+
+### 0.13.0 - 2026-04-06
+
+#### ⚠️ Breaking Changes
+
+- Migrated from Vue 2 to Vue 3 with Composition API
+- Migrated from Vue CLI to Vite build system
+- Migrated from Jest to Vitest for unit testing
+- Upgraded Bootstrap 4 → Bootstrap 5
+
+#### Added
+
+- Development agent skills for AI-assisted development
+- ESLint with strict rules and auto-fix
+- VSCode extension recommendations
+- CI/CD workflow improvements with better caching
+- Support for soft-deleted user accounts with recover functionality
+
+#### Changed
+
+- vue-meta replaced with @unhead/vue
+- Various dependency updates
+
+#### Fixed
+
+- Spelling and translation errors
 
 ### 0.12.0 - 2025-12-22
 

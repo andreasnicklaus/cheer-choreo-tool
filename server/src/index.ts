@@ -8,12 +8,11 @@ import express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const helmet = require("helmet");
-const { rateLimit } = require("express-rate-limit");
 const robots = require("express-robots-txt");
 const permissionsPolicy = require("permissions-policy");
 
 // DATABASE
-import db from "./db";
+import db, { syncPromise } from "./db";
 
 // MIDDLEWARES
 const {
@@ -23,6 +22,7 @@ import {
   errorLoggingMiddleWare,
   loggerMiddleWare,
 } from "./middlewares/loggingMiddleware";
+import { totalRateLimit } from "./middlewares/rateLimitMiddleware";
 
 const favicon = require("serve-favicon");
 
@@ -44,6 +44,7 @@ import { seasonRouter } from "./routes/season";
 import { seasonTeamRouter } from "./routes/seasonTeam";
 import { feedbackRouter } from "./routes/feedback";
 import { notificationRouter } from "./routes/notification";
+import { contactRouter } from "./routes/contact";
 
 // ADMIN ROUTER
 import { adminRouter } from "./routes/admin/index";
@@ -53,30 +54,37 @@ const port = 3000;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
-const corsWhiteList = [process.env.FRONTEND_DOMAIN, "http://localhost:8080"];
+const corsWhiteList = [
+  process.env.FRONTEND_DOMAIN,
+  "http://localhost:8080",
+  "http://localhost:8081",
+  "http://localhost:8082",
+  "http://localhost:8083",
+];
 app.use(
   cors({
     origin: function (
       origin: string | undefined,
       callback: { (err: Error | null, allow?: boolean): void },
     ) {
-      if (corsWhiteList.indexOf(origin) !== -1) {
+      if (
+        !origin ||
+        corsWhiteList.includes(origin) ||
+        origin.includes("localhost")
+      ) {
         callback(null, true);
       } else {
         callback(null, false);
       }
     },
+    allowedHeaders: "*",
+    exposedHeaders: ["X-CSRF-Token"],
   }),
 );
 app.use(robots(__dirname + "/public/robots.txt"));
 
 app.set("trust proxy", 1);
-app.use(
-  rateLimit({
-    windowMs: 1 * 60 * 1000, // 1 minutes
-    max: 100,
-  }),
-);
+app.use(totalRateLimit);
 
 app.use((_req: Request, res: Response, next: NextFunction) => {
   res.locals.cspNonce = require("crypto").randomBytes(32).toString("hex");
@@ -259,6 +267,7 @@ app.use("/season", seasonRouter);
 app.use("/seasonTeam", seasonTeamRouter);
 app.use("/feedback", feedbackRouter);
 app.use("/notifications", notificationRouter);
+app.use("/contact", contactRouter);
 
 app.use("/admin", adminRouter);
 
@@ -272,7 +281,8 @@ const swaggerOptions = {
     openapi: "3.1.1",
     info: {
       title: "Choreo Planer",
-      description: "This is the Choreo Planer API documentation",
+      description:
+        "This is the official Choreo Planer API documentation. Use this documentation as reference to integrate with the Choreo Planer backend.",
       license: {
         name: "MIT",
         url: "https://mit-license.org/",
@@ -282,6 +292,10 @@ const swaggerOptions = {
         email: "admin@choreo-planer.de",
       },
       version,
+    },
+    externalDocs: {
+      description: "Backend Code Documentation",
+      url: "https://api.choreo-planer.de/docs/",
     },
     servers: [
       {
@@ -366,12 +380,17 @@ function startServer() {
     .then(() => {
       logger.info("DB Connection established");
 
+      return syncPromise;
+    })
+    .then(() => {
       app.listen(port, (error) => {
         if (error) throw error;
         logger.info(`App listening on http://localhost:${port}`);
       });
     })
-    .catch(() => {
+    .catch((e) => {
+      logger.error("Encountered error during startup:", e.message);
+      logger.error(e.stack);
       logger.error(
         "Unable to authenticate with the database. Restarting in 1 sec",
       );

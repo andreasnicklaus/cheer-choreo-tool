@@ -1,95 +1,96 @@
 <template>
-  <div id="app" :class="{ mobile: $store.state.isMobile }">
+  <BApp id="app" :class="{ mobile: $store.state.isMobile }">
     <AppInstallWindow />
-    <HeadNav :onlineStatus="online" :serverVersion="serverVersion" />
+    <HeadNav :online-status="online" :server-version="serverVersion" />
     <router-view :style="{ minHeight: 'calc(100vh - 116px)' }" class="mb-2" />
     <footer class="p-4 px-5 pt-5 d-flex flex-column align-items-center">
-      <b-row align-h="around" class="w-75 footer-link" :style="{ gap: '20px' }">
-        <b-col cols="auto">
+      <BRow align-h="around" class="w-75 footer-link" :style="{ gap: '20px' }">
+        <BCol cols="auto">
           <h5>
-            <b>{{ $tc("navigation.internalLinks") }}</b>
+            <b>{{ $t("navigation.internalLinks") }}</b>
           </h5>
-          <b-button
+          <BButton
             variant="link"
-            :to="{ name: 'Home', params: { locale: $root.$i18n.locale } }"
+            :to="{ name: 'Home', params: { locale: $i18n.locale } }"
           >
-            {{ $tc("navigation.StartPage") }} </b-button
+            {{ $t("navigation.StartPage") }} </BButton
           ><br />
-          <b-button
+          <BButton
             variant="link"
-            :to="{ name: 'Help', params: { locale: $root.$i18n.locale } }"
+            :to="{ name: 'Help', params: { locale: $i18n.locale } }"
           >
-            {{ $tc("general.help") }} </b-button
+            {{ $t("general.help") }} </BButton
           ><br />
-          <b-button
+          <BButton
+            variant="link"
+            :to="{ name: 'Contact', params: { locale: $i18n.locale } }"
+            >{{ $t("contact.contact-and-support") }}</BButton
+          ><br />
+          <BButton
             variant="link"
             :to="{
               name: 'Impressum',
-              params: { locale: $root.$i18n.locale },
+              params: { locale: $i18n.locale },
             }"
           >
-            {{ $tc("navigation.impressum") }} </b-button
+            {{ $t("navigation.impressum") }} </BButton
           ><br />
-          <b-button
+          <BButton
             variant="link"
             :to="{
               name: 'Datenschutz',
-              params: { locale: $root.$i18n.locale },
+              params: { locale: $i18n.locale },
             }"
           >
-            {{ $tc("navigation.datenschutz") }} </b-button
+            {{ $t("navigation.datenschutz") }} </BButton
           ><br />
-          <b-button
+          <BButton
             variant="link"
-            @click="() => this.$refs.feedbackPrompt.open(true)"
+            @click="() => $refs.feedbackPrompt.open(true)"
           >
-            {{ $tc("navigation.feedback-geben") }} </b-button
+            {{ $t("navigation.feedback-geben") }} </BButton
           ><br />
-          <b-button variant="link" href="/docs/" target="_blank">
+          <BButton variant="link" href="/docs/" target="_blank">
             {{ $t("HelpView.documentation_capitalized") }}
-          </b-button>
-        </b-col>
-        <b-col cols="auto">
+          </BButton>
+        </BCol>
+        <BCol cols="auto">
           <h5>
-            <b>{{ $tc("navigation.externe-links") }}</b>
+            <b>{{ $t("navigation.externe-links") }}</b>
           </h5>
-          <b-button
+          <BButton
             variant="link"
             href="https://www.instagram.com/choreoplaner/"
             target="_blank"
           >
-            <b-icon-instagram class="mr-2" />{{
-              $tc("navigation.instagram")
-            }}</b-button
+            <IBiInstagram class="me-2" />{{
+              $t("navigation.instagram")
+            }}</BButton
           ><br />
-          <b-button
+          <BButton
             variant="link"
             href="https://www.facebook.com/choreoplaner/"
             target="_blank"
           >
-            <b-icon-facebook class="mr-2" />{{
-              $tc("navigation.facebook")
-            }}</b-button
+            <IBiFacebook class="me-2" />{{ $t("navigation.facebook") }}</BButton
           ><br />
-          <b-button
+          <BButton
             variant="link"
             href="https://github.com/andreasnicklaus/cheer-choreo-tool"
             target="_blank"
           >
-            <b-icon-github class="mr-2" />{{
-              $tc("navigation.github")
-            }}</b-button
+            <IBiGithub class="me-2" />{{ $t("navigation.github") }}</BButton
           ><br />
-        </b-col>
-      </b-row>
+        </BCol>
+      </BRow>
       <hr :style="{ width: '100%', borderColor: '000225' }" class="my-3" />
-      <b-row align-h="center" class="mt-1">
-        <b-col cols="auto">
-          <span class="mr-2">
+      <BRow align-h="center" class="mt-1">
+        <BCol cols="auto">
+          <span class="me-2">
             Andreas Nicklaus @{{ new Date().getFullYear() }}
           </span>
-        </b-col>
-        <b-col cols="auto">
+        </BCol>
+        <BCol cols="auto">
           <img
             src="https://uptime.betterstack.com/status-badges/v3/monitor/1l68q.svg"
             :alt="`Status-Anzeige der Server: Server sind ${
@@ -99,8 +100,8 @@
             height="20"
             loading="lazy"
           />
-        </b-col>
-        <b-col cols="auto">
+        </BCol>
+        <BCol cols="auto">
           <span
             class="mx-2"
             :style="{
@@ -111,20 +112,22 @@
           >
             Version: {{ applicationVersion }}
             <span
-              v-b-tooltip.hover
-              :title="`Die Version der Webseite (${applicationVersion}) entspricht nicht der Version der Server (${serverVersion})!`"
               v-show="serverVersion && serverVersion != applicationVersion"
+              v-b-tooltip.hover="
+                `Die Version der Webseite (${applicationVersion}) entspricht nicht der Version der Server (${serverVersion})!`
+              "
+              data-testid="serverVersionTooltip"
             >
-              <b-icon-exclamation-triangle-fill />
+              <IBiExclamationTriangleFill />
             </span>
           </span>
-        </b-col>
-      </b-row>
+        </BCol>
+      </BRow>
     </footer>
     <ConsentWindow />
     <FeedbackPrompt ref="feedbackPrompt" />
 
-    <script type="application/ld+json">
+    <!-- <script type="application/ld+json">
       {{
         {
           "@context": "https://schema.org/",
@@ -143,9 +146,115 @@
             }))
         }
       }}
-    </script>
-  </div>
+    </script> -->
+  </BApp>
 </template>
+
+<script setup>
+import { useToast } from "bootstrap-vue-next";
+import { computed, getCurrentInstance } from "vue";
+import { useHead } from "@unhead/vue";
+import { useRoute } from "vue-router";
+import { getApiDomain } from "./services/RequestService";
+import { useI18n } from "vue-i18n";
+
+const { create } = useToast();
+const instance = getCurrentInstance();
+if (instance) {
+  instance.appContext.app.config.globalProperties.$showToast = create;
+}
+
+const { t } = useI18n();
+const route = useRoute();
+
+useHead({
+  titleTemplate: (title) =>
+    title
+      ? `${title} - ${t("general.ChoreoPlaner")} | ${t("meta.defaults.title")}`
+      : t("meta.defaults.title"),
+  meta: [
+    {
+      vmid: "keywords",
+      name: "keywords",
+      content: computed(() => t("meta.defaults.keywords")),
+    },
+    {
+      vmid: "author",
+      name: "author",
+      content: "Andreas Nicklaus",
+    },
+    {
+      vmid: "description",
+      name: "description",
+      content: computed(() => t("meta.defaults.description")),
+    },
+    {
+      vmid: "twitter:description",
+      name: "twitter:description",
+      content: computed(() => t("meta.defaults.description")),
+    },
+    {
+      vmid: "og:description",
+      property: "og:description",
+      content: computed(() => t("meta.defaults.description")),
+    },
+    {
+      vmid: "og:url",
+      property: "og:url",
+      content: computed(() => "https://www.choreo-planer.de" + route.path),
+    },
+    {
+      vmid: "og:title",
+      property: "og:title",
+      content: computed(
+        () => `${t("general.ChoreoPlaner")} | ${t("meta.defaults.title")}`
+      ),
+    },
+    {
+      vmid: "twitter:title",
+      name: "twitter:title",
+      content: computed(
+        () => `${t("general.ChoreoPlaner")} | ${t("meta.defaults.title")}`
+      ),
+    },
+    {
+      vmid: "twitter:url",
+      property: "twitter:url",
+      content: computed(() => "https://www.choreo-planer.de" + route.path),
+    },
+    {
+      vmid: "twitter:domain",
+      property: "twitter:domain",
+      content: "https://www.choreo-planer.de",
+    },
+    {
+      vmid: "og:image",
+      property: "og:image",
+      content: "/PreviewImage.png",
+    },
+    {
+      vmid: "twitter:image",
+      name: "twitter:image",
+      content: "/PreviewImage.png",
+    },
+    {
+      vmid: "Content-Security-Policy",
+      "http-equiv": "Content-Security-Policy",
+      content: computed(
+        () =>
+          `default-src 'self' https: blob:; script-src 'self' https: blob: 'unsafe-eval' 'unsafe-inline'; style-src 'self' https: blob: 'unsafe-inline'; connect-src 'self' https: blob: ${getApiDomain()}; img-src 'self' https: blob: data: ${getApiDomain()};`
+      ),
+    },
+  ],
+  link: [
+    {
+      vmid: "canonical",
+      rel: "canonical",
+      href: computed(() => "https://www.choreo-planer.de" + route.path),
+    },
+  ],
+});
+</script>
 
 <script>
 import AppInstallWindow from "./components/AppInstallWindow.vue";
@@ -155,8 +264,13 @@ import HeadNav from "./components/HeadNav.vue";
 import { getApiDomain } from "./services/RequestService";
 import breakpoints from "@/utils/breakpoints";
 import MessagingService from "./services/MessagingService";
+import { isPrerender } from "@/utils/isPrerender";
 import { debug, error, logWelcomeMessage } from "@/utils/logging";
 import VersionService from "./services/VersionService";
+import env from "@/utils/env";
+
+import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 
 /**
  * @vue-data {boolean} online
@@ -170,121 +284,9 @@ export default {
   data: () => ({
     online: true,
     serverVersion: null,
-    applicationVersion: process.env.VUE_APP_VERSION,
+    applicationVersion: env.VITE_VERSION,
     breakpoints,
   }),
-  metaInfo() {
-    return {
-      titleTemplate: `%s - ${this.$t("general.ChoreoPlaner")} | ${this.$t(
-        "meta.defaults.title"
-      )}`,
-      meta: [
-        {
-          vmid: "keywords",
-          name: "keywords",
-          content: this.$t("meta.defaults.keywords"),
-        },
-        {
-          vmid: "author",
-          name: "author",
-          content: "Andreas Nicklaus",
-        },
-        {
-          vmid: "description",
-          name: "description",
-          content: this.$t("meta.defaults.description"),
-        },
-        {
-          vmid: "twitter:description",
-          name: "twitter:description",
-          content: this.$t("meta.defaults.description"),
-        },
-        {
-          vmid: "og:description",
-          property: "og:description",
-          content: this.$t("meta.defaults.description"),
-        },
-        {
-          vmid: "og:url",
-          property: "og:url",
-          content: "https://www.choreo-planer.de" + this.$route.path,
-        },
-        {
-          vmid: "og:title",
-          property: "og:title",
-          content: `${this.$t("general.ChoreoPlaner")} | ${this.$t(
-            "meta.defaults.title"
-          )}`,
-        },
-        {
-          vmid: "twitter:title",
-          name: "twitter:title",
-          content: `${this.$t("general.ChoreoPlaner")} | ${this.$t(
-            "meta.defaults.title"
-          )}`,
-        },
-        {
-          vmid: "twitter:url",
-          property: "twitter:url",
-          content: "https://www.choreo-planer.de" + this.$route.path,
-        },
-        {
-          vmid: "twitter:domain",
-          property: "twitter:domain",
-          content: "https://www.choreo-planer.de",
-        },
-        {
-          vmid: "og:image",
-          property: "og:image",
-          content: "/PreviewImage.png",
-        },
-        {
-          vmid: "twitter:image",
-          name: "twitter:image",
-          content: "/PreviewImage.png",
-        },
-        {
-          vmid: "Content-Security-Policy",
-          "http-equiv": "Content-Security-Policy",
-          content: `default-src 'self' https: blob:; script-src 'self' https: blob: 'unsafe-eval' 'unsafe-inline'; style-src 'self' https: blob: 'unsafe-inline'; connect-src 'self' https: blob: ${getApiDomain()}; img-src 'self' https: blob: data: ${getApiDomain()};`,
-        },
-      ],
-      link: [
-        {
-          vmid: "canonical",
-          rel: "canonical",
-          href: "https://www.choreo-planer.de" + this.$route.path,
-        },
-      ],
-    };
-  },
-  mounted() {
-    debug("Started App", {
-      VUE_APP_VERSION: process.env.VUE_APP_VERSION,
-    });
-    MessagingService.subscribe("App", (message, options) =>
-      this.$bvToast.toast(message, options)
-    );
-
-    logWelcomeMessage();
-
-    if (!window.__PRERENDER_INJECTED)
-      VersionService.getServerVersion().then((version) => {
-        if (version) {
-          this.online = true;
-          this.serverVersion = version;
-        } else {
-          this.online = false;
-          error(
-            "The servers are currently offline. Please refresh or try again later."
-          );
-          MessagingService.showError(
-            this.$t("errors.offline"),
-            this.$t("general.offline")
-          );
-        }
-      });
-  },
   watch: {
     "breakpoints.screen.mobile": {
       handler(value) {
@@ -292,6 +294,46 @@ export default {
       },
       immediate: true,
     },
+  },
+  mounted() {
+    debug("Started App", {
+      VITE_VERSION: env.VITE_VERSION,
+    });
+    MessagingService.subscribe("App", (message, options) => {
+      this.$showToast?.({ body: message, ...options });
+    });
+
+    this.$store.dispatch("loadUserInfo");
+
+    logWelcomeMessage();
+
+    // Check prerender status - use setTimeout to ensure window.__PRERENDER__ is set
+    const checkPrerender = () => {
+      if (isPrerender()) {
+        debug("Prerendering mode - skipping server version check");
+        this.online = true;
+        this.serverVersion = this.applicationVersion;
+      } else {
+        VersionService.getServerVersion().then((version) => {
+          if (version) {
+            this.online = true;
+            this.serverVersion = version;
+          } else {
+            this.online = false;
+            error(
+              "The servers are currently offline. Please refresh or try again later."
+            );
+            MessagingService.showError(
+              this.$t("errors.offline"),
+              this.$t("general.offline")
+            );
+          }
+        });
+      }
+    };
+
+    // Use nextTick to ensure DOM is fully ready
+    this.$nextTick(checkPrerender);
   },
 };
 </script>
@@ -304,12 +346,10 @@ html {
 .modal-open {
   padding: 0 !important;
 }
-.b-toaster {
-  z-index: 9999999;
+.toast-container {
+  z-index: 9999999 !important;
 }
-</style>
 
-<style lang="scss">
 .label-with-colon::after {
   content: ":";
 }
@@ -329,7 +369,70 @@ div:has(.betteruptime-announcement)
   ~ .betteruptime-announcement__placeholder
   ~ .betteruptime-announcement__placeholder {
   display: none !important;
+}
 
+.placeholder,
+.placeholder-wave {
+  border-radius: 4px;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.fs-7 {
+  font-size: 0.9em !important;
+}
+
+/*
+ * Fix button group rounded corners when buttons have tooltips.
+ *
+ * bootstrap-vue-next's v-b-tooltip directive inserts a <span> wrapper element
+ * as a sibling to each button that has a tooltip. This breaks the DOM adjacency
+ * of buttons within a BButtonGroup, which is required for Bootstrap's border-radius
+ * rules to work correctly (using :first-of-type, :last-of-type, etc.).
+ *
+ * This CSS makes the tooltip wrapper spans invisible to the layout engine (display: contents),
+ * and manually applies the correct border-radius to buttons based on their position.
+ */
+.btn-group {
+  /* Make tooltip wrapper spans invisible to layout */
+  > span:not([class]):not([style]):not([role]) {
+    display: contents;
+  }
+
+  /* Only child: keep all corners rounded */
+  > .btn:only-of-type,
+  > a[role="button"]:only-of-type {
+    border-radius: var(--bs-btn-border-radius) !important;
+  }
+
+  /* First button (not only): round left corners */
+  > .btn:first-of-type:not(:last-of-type),
+  > a[role="button"]:first-of-type:not(:last-of-type) {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-top-left-radius: var(--bs-btn-border-radius) !important;
+    border-bottom-left-radius: var(--bs-btn-border-radius) !important;
+  }
+
+  /* Last button (not only): round right corners */
+  > .btn:last-of-type:not(:first-of-type),
+  > a[role="button"]:last-of-type:not(:first-of-type) {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-top-right-radius: var(--bs-btn-border-radius) !important;
+    border-bottom-right-radius: var(--bs-btn-border-radius) !important;
+  }
+
+  /* Middle buttons: no rounded corners */
+  > .btn:not(:first-of-type):not(:last-of-type),
+  > a[role="button"]:not(:first-of-type):not(:last-of-type) {
+    border-radius: 0 !important;
+  }
+}
+
+.nav-link:not(.dropdown-toggle) {
+  display: flex;
+  gap: 4px;
 }
 </style>
 
