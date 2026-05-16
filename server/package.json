@@ -43,7 +43,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "ejs": "^5.0.0",
-    "eslint": "^9.39.4",
+    "eslint": "^10.0.0",
     "express": "^5.2.1",
     "express-basic-auth": "^1.2.1",
     "express-rate-limit": "^8.5.2",
@@ -76,7 +76,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
-    "@eslint/js": "^9.39.4",
+    "@eslint/js": "^10.0.0",
     "@jest/globals": "^30.4.1",
     "@sequelize/sqlite3": "^7.0.0-alpha.47",
     "@types/bcrypt": "^6.0.0",
