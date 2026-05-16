@@ -68,7 +68,7 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "tsc-alias": "^1.8.17",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.0",
     "typescript-cp": "^0.1.9",
     "unleash-client": "^6.11.0",
     "winston": "^3.19.0",
@@ -90,7 +90,6 @@
     "nodemon": "^3.1.14",
     "prettier": "^3.8.3",
     "ts-jest": "^29.4.9",
-    "ts-node": "^10.9.2",
     "tsx": "^4.22.0"
   },
   "overrides": {
