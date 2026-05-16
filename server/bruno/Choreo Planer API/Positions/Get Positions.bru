@@ -1,0 +1,17 @@
+meta {
+  name: Get Positions
+  method: GET
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/position/
+  body: none
+  auth: inherit
+}
+
+
+params:query {
+  lineupId: {{id}}
+}

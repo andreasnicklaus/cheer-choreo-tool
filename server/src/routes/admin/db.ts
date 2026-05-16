@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
+import { z } from "zod";
 import User from "../../db/models/user";
 import Club from "../../db/models/club";
 import Team from "../../db/models/team";
@@ -16,6 +17,43 @@ import ChoreoService from "../../services/ChoreoService";
 import search from "../../utils/fuzzySearch";
 import sequelizeDataTypeToHtmlInputType from "../../utils/datatypeConverter";
 import { FaultyInputError } from "@/utils/errors";
+import { validate } from "../../middlewares/validateMiddleware";
+
+const entityEnum = z.enum(["clubs", "teams", "seasons", "members", "choreos"]);
+const entityParams = z.object({ entity: entityEnum });
+const entityDeleteParams = z.object({
+  entity: entityEnum,
+  id: z.string().min(1),
+});
+const dbGetQuerySchema = z.object({
+  UserId: z.string().optional(),
+  s: z.string().optional(),
+});
+const dbCreateBodySchema = z.object({
+  name: z.string().optional(),
+  UserId: z.string().optional(),
+  ClubId: z.string().optional(),
+  SeasonId: z.string().optional(),
+  SeasonTeamId: z.string().optional(),
+  nickname: z.string().optional(),
+  abbreviation: z.string().optional(),
+  year: z.coerce.number().optional(),
+  counts: z.coerce.number().optional(),
+  matType: z.string().optional(),
+});
+const dbUpdateBodySchema = z.object({
+  id: z.string().min(1),
+  name: z.string().optional(),
+  UserId: z.string().optional(),
+  ClubId: z.string().optional(),
+  SeasonId: z.string().optional(),
+  SeasonTeamId: z.string().optional(),
+  nickname: z.string().optional(),
+  abbreviation: z.string().optional(),
+  year: z.coerce.number().optional(),
+  counts: z.coerce.number().optional(),
+  matType: z.string().optional(),
+});
 
 type entityList = { value: string; name: string }[];
 
@@ -30,6 +68,8 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
 
 router.get(
   "/:entity",
+  validate(entityParams, "params"),
+  validate(dbGetQuerySchema, "query"),
   async (req: Request, res: Response, next: NextFunction) => {
     const UserId = (req.query.UserId ?? null) as string;
     const searchTerm = req.query.s ?? null;
@@ -165,6 +205,8 @@ router.get(
 
 router.post(
   "/:entity",
+  validate(entityParams, "params"),
+  validate(dbCreateBodySchema, "body"),
   async (req: Request, res: Response, next: NextFunction) => {
     const { entity } = req.params;
     const data = req.body;
@@ -246,6 +288,8 @@ router.post(
 
 router.post(
   "/:entity/update",
+  validate(entityParams, "params"),
+  validate(dbUpdateBodySchema, "body"),
   async (req: Request, res: Response, next: NextFunction) => {
     const { entity } = req.params;
     const { id, ...data } = req.body;
@@ -291,6 +335,7 @@ router.post(
 
 router.delete(
   "/:entity/:id",
+  validate(entityDeleteParams, "params"),
   async (req: Request, res: Response, next: NextFunction) => {
     const { entity, id } = req.params;
     const adminId = req.Admin?.id || req.AdminId;

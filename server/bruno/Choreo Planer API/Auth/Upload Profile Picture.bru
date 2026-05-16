@@ -1,0 +1,17 @@
+meta {
+  name: Upload Profile Picture
+  method: PUT
+  type: http
+  seq: 7
+}
+
+put {
+  url: {{baseUrl}}/auth/me/profilePicture
+  body: formUrlEncoded
+  auth: inherit
+}
+
+
+body:form-urlencoded {
+  profilePicture: 
+}

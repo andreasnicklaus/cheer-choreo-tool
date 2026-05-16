@@ -286,6 +286,7 @@
           :snapping="snapping"
           :proposed-positions="proposedPositions"
           :mat-type="choreo?.matType"
+          :interactive="canEditChoreo"
           @position-change="onPositionChange"
         />
       </BCol>
@@ -298,6 +299,7 @@
           :lineups-for-current-count="lineupsForCurrentCount"
           :team-members="teamMembers"
           :current-positions="currentPositions"
+          :interactive="canEditChoreo"
           @update-hits="onUpdateHits"
           @update-lineups="onUpdateLineups"
           @update-count="onUpdateCount"

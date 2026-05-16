@@ -1,8 +1,17 @@
 import { NextFunction, Request, Response, Router } from "express";
+import { z } from "zod";
 import Feedback from "../db/models/feedback";
 import FeedbackService from "../services/FeedbackService";
+import { validate } from "@/middlewares/validateMiddleware";
 
 const { default: AuthService } = require("../services/AuthService");
+
+const createFeedbackSchema = z.object({
+  stars: z.number().int().min(1).max(5),
+  text: z.string().min(1),
+});
+
+type CreateFeedbackBody = z.infer<typeof createFeedbackSchema>;
 
 const router = Router();
 
@@ -44,8 +53,9 @@ const router = Router();
 router.post(
   "/",
   AuthService.authenticateUser(false),
+  validate(createFeedbackSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { stars, text } = req.body;
+    const { stars, text } = req.body as CreateFeedbackBody;
     const UserId = req.actingUserId;
     FeedbackService.create(stars, text, UserId)
       .then((feedback: Feedback) => {
