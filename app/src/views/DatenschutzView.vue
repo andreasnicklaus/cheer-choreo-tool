@@ -28,6 +28,58 @@
     <p>
       {{ $t("datenschutz.weitergabe-von-daten-an-dritte-text") }}
     </p>
+    <h3>4.1 {{ $t("datenschutz.social-login") }}</h3>
+    <p>
+      {{ $t("datenschutz.social-login-text") }}
+    </p>
+    <h4>{{ $t("datenschutz.social-login-daten") }}</h4>
+    <ol>
+      <li>
+        {{ $t("datenschutz.social-login-daten-text-1") }}
+      </li>
+      <li>
+        {{ $t("datenschutz.social-login-daten-text-2") }}
+      </li>
+    </ol>
+    <h4>{{ $t("datenschutz.social-login-zweck") }}</h4>
+    <p>
+      {{ $t("datenschutz.social-login-zweck-text") }}
+    </p>
+    <h4>{{ $t("datenschutz.social-login-anbieter") }}</h4>
+    <p>
+      {{ $t("datenschutz.social-login-anbieter-text") }}
+    </p>
+    <ol>
+      <li>
+        Google:
+        <a href="https://policies.google.com/privacy" target="_blank"
+          >https://policies.google.com/privacy</a
+        >
+      </li>
+      <li>
+        GitHub:
+        <a
+          :href="
+            $i18n.locale === 'en'
+              ? 'https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement'
+              : 'https://docs.github.com/de/site-policy/privacy-policies/github-privacy-statement'
+          "
+          target="_blank"
+        >
+          {{
+            $i18n.locale === "en"
+              ? "https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement"
+              : "https://docs.github.com/de/site-policy/privacy-policies/github-privacy-statement"
+          }}
+        </a>
+      </li>
+      <li>
+        Facebook:
+        <a href="https://www.facebook.com/about/privacy" target="_blank"
+          >https://www.facebook.com/about/privacy</a
+        >
+      </li>
+    </ol>
     <h2>5. {{ $t("datenschutz.ihre-rechte") }}</h2>
     <p>
       {{ $t("datenschutz.ihre-rechte-text") }} <br />

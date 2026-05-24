@@ -25,7 +25,6 @@
           height="200"
         />
         <h1 id="title" class="text-center display-4">
-          {{ $t("Home.dein") }}
           {{ $t("general.ChoreoPlaner") }}
         </h1>
         <b-row
@@ -470,6 +469,33 @@
         {{ $t("registrieren") }}
       </b-button>
     </div>
+
+    <section
+      id="sectionAbout"
+      :style="{
+        display: 'grid',
+        placeItems: 'center',
+        padding: '10vh 0',
+      }"
+    >
+      <b-row align-h="center" class="w-100">
+        <b-col cols="12" lg="8" class="text-center">
+          <h2 class="mb-5">{{ $t("Home.about") }}</h2>
+          <b-card class="mb-4">
+            <h3>{{ $t("Home.about-was-ist") }}</h3>
+            <p>{{ $t("Home.about-was-ist-text") }}</p>
+          </b-card>
+          <b-card class="mb-4">
+            <h3>{{ $t("Home.about-funktionen") }}</h3>
+            <p>{{ $t("Home.about-funktionen-text") }}</p>
+          </b-card>
+          <b-card class="mb-4">
+            <h3>{{ $t("Home.about-zielgruppe") }}</h3>
+            <p>{{ $t("Home.about-zielgruppe-text") }}</p>
+          </b-card>
+        </b-col>
+      </b-row>
+    </section>
   </b-container>
 </template>
 
