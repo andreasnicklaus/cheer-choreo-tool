@@ -291,7 +291,7 @@ export default class AppPage extends TestPage {
 
   async iCheckGermanLocalization() {
     await expect(
-      this.page.getByRole("heading", { name: "Dein Choreo Planer" })
+      this.page.getByRole("heading", { name: "Choreo Planer", exact: true })
     ).toBeVisible();
     await expect(this.page).toHaveTitle(
       "Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport"
