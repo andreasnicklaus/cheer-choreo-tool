@@ -16,15 +16,16 @@ export default class HomePage extends TestPage {
 
   iCheckAllSections() {
     const headingTitles = [
-      "Your Choreo Planner",
-      "Create choreos",
-      "Share countsheets",
-      "Create videos",
-      "Interested?",
+      { name: "Choreo Planner", exact: true },
+      { name: "Create choreos" },
+      { name: "Share countsheets" },
+      { name: "Create videos" },
+      { name: "Interested?" },
+      { name: "About Choreo Planner" },
     ];
     return Promise.all(
       headingTitles.map((title) =>
-        expect(this.page.getByRole("heading", { name: title })).toBeVisible()
+        expect(this.page.getByRole("heading", title)).toBeVisible()
       )
     );
   }

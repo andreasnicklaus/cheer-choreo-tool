@@ -112,7 +112,19 @@
     "verarbeitung-personenbezogener-daten-text-2": "Verwendung von Cookies: Die Website verwendet keine Cookies, um Nutzerdaten zu speichern oder zu verfolgen.",
     "verarbeitung-personenbezogener-daten-text-3": "Server-Logfiles: Beim Besuch der Website werden technische Daten automatisch durch den Webserver erfasst (z. B. IP-Adresse, Datum und Uhrzeit des Zugriffs, aufgerufene Seiten). Diese Daten werden anonymisiert gespeichert und dienen ausschließlich der technischen Überwachung und Verbesserung des Betriebs. Eine Zuordnung zu bestimmten Personen erfolgt nicht.",
     "weitergabe-von-daten-an-dritte": "Weitergabe von Daten an Dritte",
-    "weitergabe-von-daten-an-dritte-text": "Ihre Daten werden nicht verkauft, vermietet oder anderweitig an Dritte weitergegeben. Es erfolgt keinerlei Weitergabe von Daten zu kommerziellen oder nicht kommerziellen Zwecken."
+    "weitergabe-von-daten-an-dritte-text": "Ihre Daten werden nicht verkauft, vermietet oder anderweitig an Dritte weitergegeben. Es erfolgt keinerlei Weitergabe von Daten zu kommerziellen oder nicht kommerziellen Zwecken.",
+    "social-login": "Social Login",
+    "social-login-text": "Du kannst dich optional über externe Dienste anmelden (Social Login). Bei der Nutzung dieser Funktion werden folgende Daten von dem jeweiligen Anbieter abgerufen:",
+    "social-login-daten": "Welche Daten werden abgerufen?",
+    "social-login-daten-text-1": "E-Mail-Adresse: Zur Identifikation und Verknüpfung mit deinem Konto",
+    "social-login-daten-text-2": "Öffentliches Profil: Name und Profilbild (optional, je nach Anbieter)",
+    "social-login-zweck": "Wofür werden diese Daten verwendet?",
+    "social-login-zweck-text": "Die über den Social Login abgerufenen Daten werden ausschließlich zur Authentifizierung und zum Anlegen/Verknüpfen deines Kontos im Choreo Planer verwendet. Sie werden nicht für Werbezwecke oder an Dritte weitergegeben.",
+    "social-login-anbieter": "Informationen zu den Anbietern",
+    "social-login-anbieter-text": "Die Nutzung des Social Logins unterliegt zusätzlich den Datenschutzbestimmungen der jeweiligen Anbieter:",
+    "social-login-anbieter-text-1": "Google: https://policies.google.com/privacy",
+    "social-login-anbieter-text-2": "GitHub: https://docs.github.com/de/site-policy/privacy-policies/github-privacy-statement",
+    "social-login-anbieter-text-3": "Facebook: https://www.facebook.com/about/privacy"
   },
   "download": "Download",
   "du-kannst-das-nicht-rueckgaengig-machen": "Du kannst das nicht rückgängig machen!",
@@ -376,7 +388,14 @@
     "stage-3-4": "Bühne (3:4)",
     "stage-1-1": "Bühne (1:1)",
     "choose-the-layout-of-your-stage": "Wähle das Layout deiner Bühne",
-    "zur-uebersicht": "Zur Übersicht"
+    "zur-uebersicht": "Zur Übersicht",
+    "about": "Über den Choreo Planer",
+    "about-was-ist": "Was ist der Choreo Planer?",
+    "about-was-ist-text": "Der Choreo Planer ist ein Online-Tool für Trainerinnen und Trainer von Cheerleading-Teams, Tanzgruppen und anderen Choreo-Sportarten. Er ermöglicht es dir, Choreografien digital zu planen, Aufstellungen zu erstellen, Countsheets zu verwalten und Trainingsvideos zu generieren.",
+    "about-funktionen": "Was kann der Choreo Planer?",
+    "about-funktionen-text": "Erstelle Choreografien mit intuitiven Tools zur Visualisierung von Aufstellungen, verwalte Mitglieder in Vereinen, Teams und Seasons, generiere PDFs von Countsheets und exportiere Animationsvideos, um deine Choreos einfach mit dem Team zu teilen.",
+    "about-zielgruppe": "Für wen ist der Choreo Planer?",
+    "about-zielgruppe-text": "Der Choreo Planer ist für Trainerinnen und Trainer, die ihre Choreografieplanung digitalisieren und vereinfachen möchten. Die Endprodukte (Countsheets, Bilder und Videos) können an die Teammitglieder weitergegeben werden, um das Lernen der Choreos zu erleichtern."
   },
   "impressumView": {
     "angaben-gemaess-5-tmg": "Angaben gemäß § 5 TMG",
