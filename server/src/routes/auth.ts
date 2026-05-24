@@ -7,6 +7,12 @@ import MailService from "../services/MailService";
 import NotificationService from "../services/NotificationService";
 import FileService from "../services/FileService";
 import { validate } from "@/middlewares/validateMiddleware";
+import passport from "passport";
+import FeatureFlagService, {
+  FeatureFlagKey,
+} from "@/services/FeatureFlagService";
+import { AuthProvider, isProviderConfigured } from "@/plugins/passport";
+import { logger } from "@/plugins/winston";
 
 const bcrypt = require("bcrypt");
 const path = require("node:path");
@@ -545,6 +551,122 @@ router.delete(
         return next();
       })
       .catch((e: Error) => next(e));
+  },
+);
+
+const supportedSocialProviders = [
+  AuthProvider.GOOGLE,
+  AuthProvider.GITHUB,
+  AuthProvider.FACEBOOK,
+];
+
+async function checkSocialLoginEnabled(
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const enabled = await FeatureFlagService.isEnabled(
+    FeatureFlagKey.SOCIAL_LOGIN,
+  );
+  if (!enabled) {
+    logger.warn(
+      "Social login request blocked because social login is disabled",
+    );
+    return res.status(404).json({ error: "Social login is disabled" });
+  }
+  next();
+}
+
+// Important: place dynamic provider routes at the end so they don't shadow static routes like /me
+router.get(
+  "/:provider",
+  checkSocialLoginEnabled,
+  (req: Request, res: Response, next: NextFunction) => {
+    const { provider } = req.params;
+
+    if (!supportedSocialProviders.includes(provider as AuthProvider)) {
+      logger.warn(`Unsupported social provider requested: ${provider}`);
+      return res.status(400).json({
+        error: `Unsupported provider: ${provider}`,
+        fix: "Use one of: google, github, facebook",
+      });
+    }
+
+    if (!isProviderConfigured(provider)) {
+      logger.warn(
+        `Social provider ${provider} requested but not configured; check environment variables`,
+      );
+      return res.status(503).json({
+        error: `${provider} login is currently not available`,
+      });
+    }
+
+    let authOptions: Record<string, unknown> | undefined = undefined;
+    if (provider === AuthProvider.GOOGLE) {
+      authOptions = { scope: ["profile", "email"] };
+    } else if (provider === AuthProvider.GITHUB) {
+      authOptions = { scope: ["user:email"] };
+    } else if (provider === AuthProvider.FACEBOOK) {
+      authOptions = { scope: ["email"] };
+    }
+
+    passport.authenticate(provider, authOptions)(req, res, next);
+  },
+);
+
+router.get(
+  "/:provider/callback",
+  checkSocialLoginEnabled,
+  (req: Request, res: Response, next: NextFunction) => {
+    const { provider } = req.params;
+
+    if (!supportedSocialProviders.includes(provider as AuthProvider)) {
+      logger.warn(`Unsupported social provider callback: ${provider}`);
+      return res.status(400).json({
+        error: `Unsupported provider: ${provider}`,
+        fix: "Use one of: google, github, facebook",
+      });
+    }
+
+    if (!isProviderConfigured(provider)) {
+      logger.warn(
+        `Social provider ${provider} callback received but provider not configured`,
+      );
+      const redirectUrl = `${process.env.OAUTH_REDIRECT_BASE_URL}/auth/callback?error=provider_not_available&errorDescription=${encodeURIComponent(
+        `${provider} login is currently not available`,
+      )}`;
+      return res.redirect(redirectUrl);
+    }
+
+    passport.authenticate(
+      provider,
+      { session: false },
+      (err: unknown, user: unknown) => {
+        if (err || !user) {
+          const errorCode =
+            err instanceof Error
+              ? "authentication_error"
+              : "authentication_failed";
+          const errorDescription =
+            err instanceof Error
+              ? err.message
+              : `Authentication callback failed for provider ${provider}`;
+          const redirectUrl = `${process.env.OAUTH_REDIRECT_BASE_URL}/auth/callback?error=${encodeURIComponent(errorCode)}&errorDescription=${encodeURIComponent(errorDescription)}`;
+          logger.error(
+            `Social auth callback error for provider=${provider}: ${errorDescription}`,
+          );
+          return res.redirect(redirectUrl);
+        }
+
+        const userId = (user as { id: string }).id;
+        const token = AuthService.generateAccessToken(userId);
+        const redirectUrl = `${process.env.OAUTH_REDIRECT_BASE_URL}/auth/callback?token=${encodeURIComponent(token)}`;
+        logger.debug(
+          `Social auth callback succeeded for provider=${provider} userId=${userId}`,
+        );
+        return res.redirect(redirectUrl);
+      },
+    )(req, res, next);
   },
 );
 

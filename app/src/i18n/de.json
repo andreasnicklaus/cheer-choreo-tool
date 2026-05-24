@@ -898,6 +898,16 @@
       "dear-choreo-planer-team": "Liebes Choreo Planer-Team,\n\n"
     }
   },
+  "auth": {
+    "signInWithGoogle": "Mit Google anmelden",
+    "signInWithGithub": "Mit GitHub anmelden",
+    "signInWithFacebook": "Mit Facebook anmelden",
+    "orContinueWith": "oder",
+    "socialLoginFailed": "Social-Login fehlgeschlagen. Bitte versuche es erneut.",
+    "socialLoginDisabled": "Social-Login ist derzeit deaktiviert.",
+    "redirecting": "Weiterleitung...",
+    "connectedViaProvider": "Verbunden über {provider}"
+  },
   "accessOverviewTable": {
     "edit": "Bearbeiten",
     "read": "Ansehen"

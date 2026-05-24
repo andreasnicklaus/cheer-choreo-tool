@@ -795,6 +795,9 @@
           <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
         </template>
         <BFormGroup
+          v-if="
+            user == null || user.provider == null || user.provider === 'local'
+          "
           label-cols="12"
           label-cols-md="4"
           label-cols-lg="2"
@@ -813,6 +816,18 @@
           </BButton>
         </BFormGroup>
         <BFormGroup
+          v-if="user && user.provider && user.provider !== 'local'"
+          label-cols="12"
+          label-cols-md="4"
+          label-cols-lg="2"
+          :label="$t('accountView.gefahrenbereich')"
+          label-class="label-with-colon"
+        >
+          <p class="text-muted mb-0">
+            {{ $t("auth.connectedViaProvider", { provider: user.provider }) }}
+          </p>
+        </BFormGroup>
+        <BFormGroup
           label-cols="12"
           label-cols-md="4"
           label-cols-lg="2"
@@ -823,6 +838,7 @@
           <BButton
             variant="danger"
             class="d-block"
+            :disabled="user && user.provider && user.provider !== 'local'"
             @click="() => $refs.deleteAccountModal.open()"
           >
             <IBiTrash />

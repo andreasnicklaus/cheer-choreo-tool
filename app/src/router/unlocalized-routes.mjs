@@ -13,6 +13,12 @@ export default [
     meta: { prerender: true },
   },
   {
+    path: "auth/callback",
+    name: "AuthCallback",
+    component: () => import("../views/AuthCallback.vue"),
+    meta: { sitemap: { ignoreRoute: true } },
+  },
+  {
     path: "start",
     name: "Start",
     component: () => import("../views/StartView.vue"),

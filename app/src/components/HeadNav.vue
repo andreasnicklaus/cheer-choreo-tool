@@ -575,17 +575,21 @@ export default {
   methods: {
     load() {
       if (this.$store.state.loggedIn) {
-        AuthService.getUserInfo()
-          .then((user) => {
-            this.user = user;
-            this.loadProfileImage();
-          })
-          .catch(() => {
-            error(
-              "Could not load user info",
-              ERROR_CODES.USER_INFO_QUERY_FAILED
-            );
-          });
+        // AuthService.getUserInfo()
+        //   .then((user) => {
+        //     this.user = user;
+        //     this.loadProfileImage();
+        //   })
+        //   .catch(() => {
+        //     error(
+        //       "Could not load user info",
+        //       ERROR_CODES.USER_INFO_QUERY_FAILED
+        //     );
+        //   });
+
+        this.$store.dispatch("loadUserInfo").catch(() => {
+          error("Could not load user info", ERROR_CODES.USER_INFO_QUERY_FAILED);
+        });
 
         if (this.$store.state.clubId) {
           ClubService.getById(this.$store.state.clubId)
@@ -636,7 +640,11 @@ export default {
           });
     },
     checkEmailConfirmation() {
-      if (this.user?.email && !this.user?.emailConfirmed) {
+      if (
+        this.$store.state.me &&
+        this.$store.state.me?.email &&
+        !this.$store.state.me?.emailConfirmed
+      ) {
         warn(
           "You logged into an account without email or without confirmed email address. Please add and confirm your email address to ensure that all features work properly."
         );
@@ -667,12 +675,12 @@ export default {
       navigator.share(this.shareData);
     },
     loadProfileImage() {
-      if (this.user?.profilePictureExtension == null)
+      if (this.$store.state.me?.profilePictureExtension == null)
         this.currentProfilePictureBlob = null;
       else
         AuthService.getProfileImage(
-          this.user.id,
-          this.user.profilePictureExtension
+          this.$store.state.me.id,
+          this.$store.state.me.profilePictureExtension
         ).then((response) => {
           this.currentProfilePictureBlob = URL.createObjectURL(response.data);
         });

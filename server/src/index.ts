@@ -30,6 +30,10 @@ const favicon = require("serve-favicon");
 const { logger } = require("./plugins/winston");
 import logConfig from "@/utils/logConfig";
 
+// PASSPORT
+import { configurePassport } from "./plugins/passport";
+configurePassport();
+
 // ROUTERS
 import { choreoRouter } from "./routes/choreo";
 import { teamRouter } from "./routes/team";

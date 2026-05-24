@@ -3,6 +3,7 @@ import User from "../db/models/user";
 import MailService from "./MailService";
 import NotificationService from "./NotificationService";
 import FeatureFlagService, { FeatureFlagKey } from "./FeatureFlagService";
+import { AuthProvider } from "@/plugins/passport";
 
 const { Op } = require("sequelize");
 const { logger } = require("../plugins/winston");
@@ -57,10 +58,8 @@ class UserService {
     if (!accessSharingEnabled) {
       const user = await User.findByPk(id, { include: ["Clubs"] });
       if (user) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (user as any).childAccess = [];
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (user as any).ownerAccess = [];
+        user.childAccess = [];
+        user.ownerAccess = [];
       }
       return user;
     }
@@ -218,6 +217,94 @@ class UserService {
       },
     });
     return [user, created];
+  }
+
+  /**
+   * Generate a username candidate for a social login user.
+   *
+   * @param provider - The provider used for social login.
+   * @param displayName - The display name returned by the provider.
+   * @returns A sanitized username suitable for creation.
+   */
+  generateSocialUsername(
+    provider: AuthProvider,
+    displayName: string | null,
+  ): string {
+    logger.debug(
+      `UserService generateSocialUsername provider=${provider} displayName=${displayName}`,
+    );
+
+    const base = displayName
+      ? displayName.replace(/[^a-zA-Z0-9_]/g, "").slice(0, 20)
+      : `${provider}_${Math.random().toString(36).slice(2, 10)}`;
+    const padded =
+      base.length < 6 ? `${base}${"0".repeat(6 - base.length)}` : base;
+    return padded;
+  }
+
+  /**
+   * Find an existing social user or create a new one from OAuth profile data.
+   *
+   * @param provider - The provider used for social login.
+   * @param socialId - The unique provider identifier for the user.
+   * @param email - The email address returned by the provider.
+   * @param displayName - The display name returned by the provider.
+   * @returns The existing or newly created user.
+   */
+  async findOrCreateSocialUser(
+    provider: AuthProvider,
+    socialId: string,
+    email: string | undefined | null,
+    displayName: string | null,
+  ): Promise<User> {
+    logger.debug(
+      `UserService findOrCreateSocialUser provider=${provider} socialId=${socialId} email=${email} displayName=${displayName}`,
+    );
+
+    const existing = await User.findOne({ where: { provider, socialId } });
+    if (existing) {
+      logger.debug(
+        `Existing social user found provider=${provider} socialId=${socialId}`,
+      );
+      await existing.update({ lastLoggedIn: new Date() });
+      return existing;
+    }
+
+    const baseUsername = this.generateSocialUsername(provider, displayName);
+    let username = baseUsername;
+    let suffix = 0;
+    while (await User.findOne({ where: { username } })) {
+      suffix++;
+      username = `${baseUsername.slice(0, 20 - suffix.toString().length)}${suffix}`;
+    }
+
+    if (!email) {
+      logger.warn(
+        `Social user registration without email for provider=${provider} socialId=${socialId}`,
+      );
+    }
+
+    try {
+      const user = await User.create({
+        username,
+        email: email ?? undefined,
+        provider,
+        socialId,
+        password: undefined,
+        emailConfirmed: true,
+      });
+      logger.debug(
+        `Created social user provider=${provider} socialId=${socialId} username=${username}`,
+      );
+      return user;
+    } catch (error) {
+      logger.error(
+        `Failed to create social user provider=${provider} socialId=${socialId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+      throw error;
+    }
   }
 
   /**

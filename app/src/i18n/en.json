@@ -898,6 +898,16 @@
       "best-regards-username": "\nBest regards\n{username}"
     }
   },
+  "auth": {
+    "signInWithGoogle": "Sign in with Google",
+    "signInWithGithub": "Sign in with GitHub",
+    "signInWithFacebook": "Sign in with Facebook",
+    "orContinueWith": "or",
+    "socialLoginFailed": "Social login failed. Please try again.",
+    "socialLoginDisabled": "Social login is currently disabled.",
+    "redirecting": "Redirecting...",
+    "connectedViaProvider": "Connected via {provider}"
+  },
   "accessOverviewTable": {
     "edit": "Edit",
     "read": "Read"
