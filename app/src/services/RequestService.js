@@ -42,8 +42,10 @@ ax.interceptors.response.use(
 
     switch (error.response.status) {
       case 401:
-        AuthService.removeToken();
-        store.commit("setLoginState", false);
+        if (error.config?.headers?.Authorization) {
+          AuthService.removeToken();
+          store.commit("setLoginState", false);
+        }
         if (!error.config.skipRoutingToLogin)
           router
             .push({
@@ -58,8 +60,10 @@ ax.interceptors.response.use(
             });
         break;
       case 403:
-        AuthService.removeToken();
-        store.commit("setLoginState", false);
+        if (error.config?.headers?.Authorization) {
+          AuthService.removeToken();
+          store.commit("setLoginState", false);
+        }
         if (!error.config.skipRoutingToLogin)
           router
             .push({

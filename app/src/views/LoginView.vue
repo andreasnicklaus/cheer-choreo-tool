@@ -396,27 +396,36 @@ export default {
           this.showFailMessage(e.response.data);
         });
 
-    FeatureFlagService.isEnabled(FeatureFlagKeys.SOCIAL_LOGIN).then(
-      (enabled) => {
-        this.socialLoginEnabled = enabled;
-      }
-    );
-
-    FeatureFlagService.isEnabled(FeatureFlagKeys.GOOGLE_OAUTH).then(
-      (enabled) => {
-        this.googleOAuthEnabled = enabled;
-      }
-    );
-
-    FeatureFlagService.isEnabled(FeatureFlagKeys.GITHUB_OAUTH).then(
-      (enabled) => {
-        this.githubOAuthEnabled = enabled;
-      }
-    );
-
-    FeatureFlagService.isEnabled(FeatureFlagKeys.FACEBOOK_OAUTH).then(
-      (enabled) => {
-        this.facebookOAuthEnabled = enabled;
+    Promise.all([
+      FeatureFlagService.isEnabled(FeatureFlagKeys.SOCIAL_LOGIN),
+      FeatureFlagService.isEnabled(FeatureFlagKeys.GOOGLE_OAUTH).then(
+        (enabled) => {
+          this.googleOAuthEnabled = enabled;
+          return enabled;
+        }
+      ),
+      FeatureFlagService.isEnabled(FeatureFlagKeys.GITHUB_OAUTH).then(
+        (enabled) => {
+          this.githubOAuthEnabled = enabled;
+          return enabled;
+        }
+      ),
+      FeatureFlagService.isEnabled(FeatureFlagKeys.FACEBOOK_OAUTH).then(
+        (enabled) => {
+          this.facebookOAuthEnabled = enabled;
+          return enabled;
+        }
+      ),
+    ]).then(
+      ([
+        socialLoginEnabled,
+        googleOAuthEnabled,
+        githubOAuthEnabled,
+        facebookOAuthEnabled,
+      ]) => {
+        this.socialLoginEnabled =
+          socialLoginEnabled &&
+          (googleOAuthEnabled || githubOAuthEnabled || facebookOAuthEnabled);
       }
     );
 

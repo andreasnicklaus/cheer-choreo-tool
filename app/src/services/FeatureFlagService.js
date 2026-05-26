@@ -17,10 +17,13 @@ const unleash = new UnleashClient({
  */
 export const FeatureFlagKeys = {
   MOBILE_EDITING: "mobile-editing",
-  SOCIAL_LOGIN: "social-login",
   CONTACT_FORM_WITH_LOGIN: "contact-with-login",
   CONTACT_FORM_WITHOUT_LOGIN: "contact-without-login",
   ACCESS_SHARING: "access-sharing",
+  SOCIAL_LOGIN: "social-login",
+  GOOGLE_OAUTH: "google-oauth",
+  GITHUB_OAUTH: "github-oauth",
+  FACEBOOK_OAUTH: "facebook-oauth",
 };
 
 /**

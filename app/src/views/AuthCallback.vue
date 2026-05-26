@@ -59,10 +59,9 @@ export default {
       console.log("Login token saved, loading user info...");
       store.commit("setLoginState", true);
       console.log("Login state set to true, dispatching loadUserInfo...");
-      await store.dispatch("loadUserInfo");
       console.log("User info loaded, redirecting to start...");
       this.$router
-        .push(this.$route.query?.redirectUrl || `/${this.$i18n.locale}/start`)
+        .push({ name: "Start", params: { locale: this.$i18n.locale } })
         .then(() => {
           console.log("Redirected to start");
         })
