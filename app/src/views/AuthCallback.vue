@@ -22,7 +22,6 @@ export default {
   },
   async mounted() {
     const query = this.$route.query;
-    console.log("🚀 ~ query:", query);
     const removeQueryParams = () => {
       const cleanedQuery = { ...this.$route.query };
       delete cleanedQuery.token;

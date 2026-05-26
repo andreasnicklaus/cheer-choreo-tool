@@ -14,7 +14,6 @@ const tokenStorageKey = "choreo-planer-token";
  */
 class AuthService {
   saveLoginToken(token) {
-    console.log("🚀 ~ AuthService ~ saveLoginToken ~ token:", token);
     localStorage.setItem(tokenStorageKey, token);
   }
   /**
@@ -238,7 +237,6 @@ class AuthService {
    * @returns {void}
    */
   removeToken() {
-    console.log("🚀 ~ AuthService ~ removeToken ~ removeToken");
     return localStorage.removeItem(tokenStorageKey);
   }
 
@@ -248,10 +246,6 @@ class AuthService {
    * @returns {Promise<object>} Returns the user information from the server
    */
   getUserInfo(skipRoutingOnFailure = false) {
-    console.log(
-      "🚀 ~ AuthService ~ getUserInfo ~ getUserInfo",
-      skipRoutingOnFailure
-    );
     console.trace();
 
     return ax

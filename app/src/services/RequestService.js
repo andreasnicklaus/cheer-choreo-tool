@@ -82,7 +82,6 @@ ax.interceptors.response.use(
 ax.interceptors.request.use(
   (config) => {
     const token = AuthService.getAuthToken();
-    console.log("🚀 ~ token:", token);
     if (token) {
       config.headers.Authorization = "Bearer " + token;
     } else {
