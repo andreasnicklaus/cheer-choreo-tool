@@ -1,7 +1,6 @@
 import { defineConfig } from "vite";
 import { readFileSync, existsSync, writeFileSync } from "fs";
 import vue from "@vitejs/plugin-vue";
-import tsconfigPaths from "vite-tsconfig-paths";
 import Icons from "unplugin-icons/vite";
 import Components from "unplugin-vue-components/vite";
 import IconsResolve from "unplugin-icons/resolver";
@@ -47,6 +46,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {},
+    tsconfigPaths: true,
   },
   optimizeDeps: {
     include: ["vue3-html2pdf", "jspdf"],
@@ -58,7 +58,6 @@ export default defineConfig({
   plugins: [
     vue(),
     preserveManifestTrailingNewline(),
-    tsconfigPaths(),
     Components({
       resolvers: [IconsResolve()],
       dts: true,
