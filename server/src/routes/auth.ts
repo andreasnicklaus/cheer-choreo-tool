@@ -7,7 +7,7 @@ import MailService from "../services/MailService";
 import NotificationService from "../services/NotificationService";
 import FileService from "../services/FileService";
 import { validate } from "@/middlewares/validateMiddleware";
-import passport from "passport";
+import passport, { AuthenticateOptions } from "passport";
 import FeatureFlagService, {
   FeatureFlagKey,
 } from "@/services/FeatureFlagService";
@@ -601,7 +601,7 @@ router.get(
       });
     }
 
-    let authOptions: Record<string, unknown> | undefined = undefined;
+    let authOptions: AuthenticateOptions = {};
     if (provider === AuthProvider.GOOGLE) {
       authOptions = { scope: ["profile", "email"] };
     } else if (provider === AuthProvider.GITHUB) {
