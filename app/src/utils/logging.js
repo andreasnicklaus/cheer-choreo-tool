@@ -24,7 +24,7 @@ const sendLogsToIngest = SOURCE_TOKEN && INGESTING_HOST && !isTestEnvironment;
 // const sendLogsToIngest = env.PROD;
 
 console.image = async function (url, size = 100) {
-  const img = await fetch("/Icon.png");
+  const img = await fetch(url);
   const blob = await img.blob();
   await new Promise((resolve) => {
     const reader = new FileReader();
@@ -57,7 +57,7 @@ const DEFAULT_TEXT_STYLE =
  * @returns {void}
  */
 export async function logWelcomeMessage() {
-  // console.clear();
+  console.clear();
 
   await console.image("/Icon.png");
 

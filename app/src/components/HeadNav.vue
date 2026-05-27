@@ -329,7 +329,7 @@
               :src="currentProfilePictureBlob"
             />
             <span v-show="$store.state.isMobile" class="mx-2">{{
-              user?.username
+              me?.username
             }}</span>
           </template>
           <BDropdownGroup :header="$t('konto')">
@@ -345,7 +345,7 @@
                 variant="primary"
                 :src="currentProfilePictureBlob"
               />
-              {{ user?.username }}
+              {{ me?.username }}
             </BDropdownItem>
           </BDropdownGroup>
 
@@ -394,7 +394,7 @@
               variant="primary"
               :src="currentProfilePictureBlob"
             />
-            {{ user?.username }}
+            {{ me?.username }}
           </BNavItem>
           <hr />
           <p class="text-muted fs-7 mb-0">{{ $t("nav.vereine") }}</p>
@@ -428,21 +428,21 @@
 
     <CreateClubModal
       ref="createClubModal"
-      :me="user"
+      :me="me"
       @club-created="reloadPage"
     />
 
     <CreateChoreoModal
       ref="createChoreoModal"
       :teams="teams"
-      :me="user"
+      :me="me"
       @add-choreo="reloadPage"
     />
 
     <CreateTeamModal
       v-if="$store.state.loggedIn"
       ref="createTeamModal"
-      :me="user"
+      :me="me"
       @team-created="onTeamCreated"
     />
   </BNavbar>
@@ -462,6 +462,7 @@ import { error, warn } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
 import CountryFlag from "vue3-country-flag-icon";
 import Markdown from "vue3-markdown-it";
+import { mapState } from "vuex";
 
 /**
  * @module Component:HeadNav
@@ -469,7 +470,6 @@ import Markdown from "vue3-markdown-it";
  * @vue-data {Array} teams - List of teams the user owns.
  * @vue-data {Array} choreos - List of choreographies associated with the user.
  * @vue-data {Array} clubs - List of clubs the user owns.
- * @vue-data {Object} user=null - The currently logged-in user object.
  * @vue-data {Boolean} shareable=false - Whether the current page can be shared using the Web Share API.
  * @vue-data {Array} flags - List of available languages with their flags and local names.
  * @vue-data {Object} currentProfilePictureBlob=null - Blob URL for the user's profile picture.
@@ -508,7 +508,6 @@ export default {
     teams: [],
     choreos: [],
     clubs: [],
-    user: null,
     shareable: false,
     flags: [
       {
@@ -527,6 +526,7 @@ export default {
     showNotificationsDropdown: false,
   }),
   computed: {
+    ...mapState(["me"]),
     shareData() {
       return {
         url: window.location.href,
@@ -548,14 +548,8 @@ export default {
       },
       immediate: true,
     },
-    "$store.state.owners": {
-      handler() {
-        this.load();
-      },
-    },
   },
   created() {
-    this.load();
     setTimeout(this.checkEmailConfirmation, 1000);
     this.loadInterval = setInterval(this.load, 60_000);
     this.loadNotificationsInterval = setInterval(
@@ -575,18 +569,6 @@ export default {
   methods: {
     load() {
       if (this.$store.state.loggedIn) {
-        // AuthService.getUserInfo()
-        //   .then((user) => {
-        //     this.user = user;
-        //     this.loadProfileImage();
-        //   })
-        //   .catch(() => {
-        //     error(
-        //       "Could not load user info",
-        //       ERROR_CODES.USER_INFO_QUERY_FAILED
-        //     );
-        //   });
-
         this.$store.dispatch("loadUserInfo").catch(() => {
           error("Could not load user info", ERROR_CODES.USER_INFO_QUERY_FAILED);
         });
@@ -640,11 +622,7 @@ export default {
           });
     },
     checkEmailConfirmation() {
-      if (
-        this.$store.state.me &&
-        this.$store.state.me?.email &&
-        !this.$store.state.me?.emailConfirmed
-      ) {
+      if (this.me && this.me?.email && !this.me?.emailConfirmed) {
         warn(
           "You logged into an account without email or without confirmed email address. Please add and confirm your email address to ensure that all features work properly."
         );

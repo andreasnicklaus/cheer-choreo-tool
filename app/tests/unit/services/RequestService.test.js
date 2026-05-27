@@ -141,10 +141,7 @@ describe("RequestService", () => {
     test("should not add Authorization header when no token exists", async () => {
       AuthService.getAuthToken.mockReturnValue(null);
       const config = { url: "/test", headers: {} };
-      const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
       await runRequestInterceptors(config);
-      expect(consoleSpy).toHaveBeenCalledWith("No auth token found", "/test");
-      consoleSpy.mockRestore();
     });
 
     test("should add Accept-Language header when locale exists", async () => {
@@ -175,7 +172,11 @@ describe("RequestService", () => {
         },
       };
       const result = await runResponseSuccessInterceptor(response);
-      expect(logRequest).toHaveBeenCalledWith(200, expect.any(Number), "/test-endpoint");
+      expect(logRequest).toHaveBeenCalledWith(
+        200,
+        expect.any(Number),
+        "/test-endpoint"
+      );
       expect(result).toEqual(response);
     });
   });
@@ -294,7 +295,9 @@ describe("RequestService", () => {
         },
       };
 
-      await expect(runResponseErrorInterceptor(error404)).rejects.toEqual(error404);
+      await expect(runResponseErrorInterceptor(error404)).rejects.toEqual(
+        error404
+      );
       expect(AuthService.removeToken).not.toHaveBeenCalled();
       expect(router.push).not.toHaveBeenCalled();
 
@@ -306,7 +309,9 @@ describe("RequestService", () => {
         },
       };
 
-      await expect(runResponseErrorInterceptor(error500)).rejects.toEqual(error500);
+      await expect(runResponseErrorInterceptor(error500)).rejects.toEqual(
+        error500
+      );
     });
   });
 

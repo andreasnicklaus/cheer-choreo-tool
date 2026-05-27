@@ -88,8 +88,6 @@ ax.interceptors.request.use(
     const token = AuthService.getAuthToken();
     if (token) {
       config.headers.Authorization = "Bearer " + token;
-    } else {
-      console.log("No auth token found", config.url);
     }
 
     const locale = i18n.global.locale.value;

@@ -246,8 +246,6 @@ class AuthService {
    * @returns {Promise<object>} Returns the user information from the server
    */
   getUserInfo(skipRoutingOnFailure = false) {
-    console.trace();
-
     return ax
       .get("/auth/me", { skipRoutingToLogin: skipRoutingOnFailure })
       .then((res) => res.data);
