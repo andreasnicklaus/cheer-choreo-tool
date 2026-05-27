@@ -110,8 +110,9 @@ See [LICENSE](LICENSE) for the license of this project.
 
 ## :sparkles: Version history
 
-### 1.0.0 - 2026-04-06 (alias: 0.13.1)
+### 1.0.0 - 2026-05-27 (alias: 0.13.2)
 
+- Social Login: Allow users to log in via Google, Github or Facebook
 - Sharing access to different users in order to work on the same clubs, teams and choreos
 
 ### 0.13.0 - 2026-04-06

@@ -567,7 +567,7 @@
       <BTab v-if="accessSharingEnabled">
         <template #title>
           {{ $t("accountView.zugriff") }}
-          <NewVersionBadge :versions="['0.13.1', '1.0.0']" />
+          <NewVersionBadge :versions="['0.13', '1.0.0']" />
         </template>
         <BAlert variant="info" :model-value="true" class="my-3">
           {{ $t("accountView.access-tab-help") }}
