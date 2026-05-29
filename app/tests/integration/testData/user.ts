@@ -21,6 +21,7 @@ export type User = {
   username: string;
   email: string;
   emailConfirmed: boolean;
+  provider: string;
   profilePictureExtension: string | null;
   Clubs: typeof defaultClubs;
   childAccess?: UserAccess[];
@@ -35,6 +36,7 @@ export const defaultUser: User = {
   username: "Default User",
   email: "default.user@choreo-planer.de",
   emailConfirmed: true,
+  provider: "local",
   profilePictureExtension: null,
   Clubs: defaultClubs,
   childAccess: [],
