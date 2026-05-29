@@ -235,7 +235,7 @@ class UserService {
     );
 
     const base = displayName
-      ? displayName.replace(/[^a-zA-Z0-9_]/g, "").slice(0, 20)
+      ? displayName.replace(/[^a-zA-Z0-9_]/g, "").slice(0, 40)
       : `${provider}_${Math.random().toString(36).slice(2, 10)}`;
     const padded =
       base.length < 6 ? `${base}${"0".repeat(6 - base.length)}` : base;
@@ -272,10 +272,9 @@ class UserService {
 
     const baseUsername = this.generateSocialUsername(provider, displayName);
     let username = baseUsername;
-    let suffix = 0;
     while (await User.findOne({ where: { username } })) {
-      suffix++;
-      username = `${baseUsername.slice(0, 20 - suffix.toString().length)}${suffix}`;
+      const suffix = Math.floor(Math.random() * 9999) + 1;
+      username = `${baseUsername}-${suffix}`;
     }
 
     if (!email) {
