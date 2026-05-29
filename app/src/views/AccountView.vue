@@ -211,6 +211,7 @@
                   v-model="email"
                   :placeholder="$t('e-mail-adresse')"
                   :state="emailIsValid"
+                  :disabled="user?.provider !== 'local'"
                 />
                 <template #append>
                   <BInputGroupText
@@ -820,12 +821,15 @@
           label-cols="12"
           label-cols-md="4"
           label-cols-lg="2"
-          :label="$t('accountView.gefahrenbereich')"
+          :label="$t('accountView.passwort-aendern')"
           label-class="label-with-colon"
         >
-          <p class="text-muted mb-0">
+          <BBadge variant="primary" class="mt-2">
+            <IBiGoogle v-if="user.provider === 'google'" class="me-1" />
+            <IBiGithub v-if="user.provider === 'github'" class="me-1" />
+            <IBiFacebook v-if="user.provider === 'facebook'" class="me-1" />
             {{ $t("auth.connectedViaProvider", { provider: user.provider }) }}
-          </p>
+          </BBadge>
         </BFormGroup>
         <BFormGroup
           label-cols="12"
@@ -833,7 +837,11 @@
           label-cols-lg="2"
           :label="$t('accountView.konto-loeschen')"
           label-class="label-with-colon"
-          :description="$t('accountView.konto-loeschen-descriptions')"
+          :description="
+            user.provider === 'local'
+              ? $t('accountView.konto-loeschen-descriptions')
+              : $t('accountView.konto-loeschen-descriptions-social')
+          "
         >
           <BButton
             variant="danger"

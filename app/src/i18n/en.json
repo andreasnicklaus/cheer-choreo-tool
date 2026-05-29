@@ -15,6 +15,7 @@
     "unbekannter-fehler": "An unknown error occurred. Reload the page or log in again to display the page.",
     "zuletzt-geaendert-am": "Last updated",
     "konto-loeschen-descriptions": "Only delete your account if you no longer want to use the app. Your data will be marked as inactive.",
+    "konto-loeschen-descriptions-social": "Since you logged in via an external service, you cannot delete your account here. Deactivate your account in the settings of the respective service.",
     "gefahrenbereich": "Danger zone",
     "profilbild": "Profile picture",
     "bild-entfernen": "Remove image",

@@ -79,7 +79,6 @@
             </BDropdownText>
             <BDropdownDivider />
           </BDropdownGroup>
-          <BDropdownDivider v-show="teams && teams.length > 0" />
           <BDropdownText
             v-show="!teams || teams.length == 0"
             class="text-muted small"
