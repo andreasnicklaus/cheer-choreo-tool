@@ -71,7 +71,7 @@ export default {
       return;
     }
 
-    // redirectToLogin();
+    redirectToLogin();
   },
 };
 </script>

@@ -52,6 +52,50 @@ export function mockFeatureFlagRequests(page: Page) {
             },
             impressionData: true,
           },
+          {
+            name: "social-login",
+            enabled: true,
+            variant: {
+              name: "disabled",
+              enabled: false,
+              feature_enabled: true,
+              featureEnabled: true,
+            },
+            impressionData: true,
+          },
+          {
+            name: "google-oauth",
+            enabled: true,
+            variant: {
+              name: "disabled",
+              enabled: false,
+              feature_enabled: true,
+              featureEnabled: true,
+            },
+            impressionData: true,
+          },
+          {
+            name: "github-oauth",
+            enabled: true,
+            variant: {
+              name: "disabled",
+              enabled: false,
+              feature_enabled: true,
+              featureEnabled: true,
+            },
+            impressionData: true,
+          },
+          {
+            name: "facebook-oauth",
+            enabled: true,
+            variant: {
+              name: "disabled",
+              enabled: false,
+              feature_enabled: true,
+              featureEnabled: true,
+            },
+            impressionData: true,
+          },
         ],
       }),
     });

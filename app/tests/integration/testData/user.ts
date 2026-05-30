@@ -42,6 +42,27 @@ export const defaultUser: User = {
   childAccess: [],
 };
 
+export const googleUser: User = {
+  ...defaultUser,
+  id: "google-user-id",
+  provider: "google",
+  email: "google.user@example.com",
+};
+
+export const githubUser: User = {
+  ...defaultUser,
+  id: "github-user-id",
+  provider: "github",
+  email: "github.user@example.com",
+};
+
+export const facebookUser: User = {
+  ...defaultUser,
+  id: "facebook-user-id",
+  provider: "facebook",
+  email: "facebook.user@example.com",
+};
+
 export const sharedUser: User = {
   ...defaultUser,
   childAccess: [

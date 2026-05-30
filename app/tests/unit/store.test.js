@@ -163,7 +163,9 @@ describe("store", () => {
           FeatureFlagKeys.ACCESS_SHARING
         );
         expect(store.state.me).toEqual(mockMe);
-        expect(store.state.owners).toEqual([{ enabled: true, name: "Owner 1" }]);
+        expect(store.state.owners).toEqual([
+          { enabled: true, name: "Owner 1" },
+        ]);
         expect(store.state.ownersLoaded).toBe(true);
       });
 
