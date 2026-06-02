@@ -166,7 +166,7 @@ export function debug(...messages) {
  */
 export function warn(...messages) {
   console.warn(generateTimeStamp(), "WARN", ...messages);
-  if (sendLogsToIngest) {
+  if (sendLogsToIngest && !isPrerender()) {
     logtail.warn(messages.join(), {
       state: store?.state,
       version: VersionService.getAppVersion(),
