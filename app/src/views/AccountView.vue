@@ -211,6 +211,7 @@
                   v-model="email"
                   :placeholder="$t('e-mail-adresse')"
                   :state="emailIsValid"
+                  :disabled="user?.provider !== 'local'"
                 />
                 <template #append>
                   <BInputGroupText
@@ -567,7 +568,7 @@
       <BTab v-if="accessSharingEnabled">
         <template #title>
           {{ $t("accountView.zugriff") }}
-          <NewVersionBadge :versions="['0.13.1', '1.0.0']" />
+          <NewVersionBadge :versions="['0.13', '1.0.0']" />
         </template>
         <BAlert variant="info" :model-value="true" class="my-3">
           {{ $t("accountView.access-tab-help") }}
@@ -795,6 +796,9 @@
           <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
         </template>
         <BFormGroup
+          v-if="
+            user == null || user.provider == null || user.provider === 'local'
+          "
           label-cols="12"
           label-cols-md="4"
           label-cols-lg="2"
@@ -813,16 +817,36 @@
           </BButton>
         </BFormGroup>
         <BFormGroup
+          v-if="user && user.provider && user.provider !== 'local'"
+          label-cols="12"
+          label-cols-md="4"
+          label-cols-lg="2"
+          :label="$t('accountView.passwort-aendern')"
+          label-class="label-with-colon"
+        >
+          <BBadge variant="primary" class="mt-2">
+            <IBiGoogle v-if="user.provider === 'google'" class="me-1" />
+            <IBiGithub v-if="user.provider === 'github'" class="me-1" />
+            <IBiFacebook v-if="user.provider === 'facebook'" class="me-1" />
+            {{ $t("auth.connectedViaProvider", { provider: user.provider }) }}
+          </BBadge>
+        </BFormGroup>
+        <BFormGroup
           label-cols="12"
           label-cols-md="4"
           label-cols-lg="2"
           :label="$t('accountView.konto-loeschen')"
           label-class="label-with-colon"
-          :description="$t('accountView.konto-loeschen-descriptions')"
+          :description="
+            user.provider === 'local'
+              ? $t('accountView.konto-loeschen-descriptions')
+              : $t('accountView.konto-loeschen-descriptions-social')
+          "
         >
           <BButton
             variant="danger"
             class="d-block"
+            :disabled="user && user.provider && user.provider !== 'local'"
             @click="() => $refs.deleteAccountModal.open()"
           >
             <IBiTrash />

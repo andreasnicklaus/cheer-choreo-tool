@@ -30,6 +30,14 @@ const favicon = require("serve-favicon");
 const { logger } = require("./plugins/winston");
 import logConfig from "@/utils/logConfig";
 
+// SESSION
+import session from "express-session";
+
+// PASSPORT
+import passport from "passport";
+import { configurePassport } from "./plugins/passport";
+configurePassport();
+
 // ROUTERS
 import { choreoRouter } from "./routes/choreo";
 import { teamRouter } from "./routes/team";
@@ -197,6 +205,25 @@ app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 require("./plugins/i18n");
 const i18n = require("i18n");
 app.use(i18n.init);
+
+// SESSION & PASSPORT
+const sessionSecret = process.env.SESSION_SECRET || "choreo-session-secret";
+app.use(
+  session({
+    secret: sessionSecret,
+    resave: false,
+    saveUninitialized: false,
+    name: "choreo.sid",
+    cookie: {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 10 * 60 * 1000, // 10 minutes — only needed during OAuth flow
+    },
+  }),
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 /**
  * @swagger

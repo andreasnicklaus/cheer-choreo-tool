@@ -184,6 +184,73 @@
       </BTab>
     </BTabs>
 
+    <hr v-if="socialLoginEnabled" class="my-4" />
+    <p v-if="socialLoginEnabled" class="text-center text-muted mb-3">
+      {{ $t("auth.orContinueWith") }}
+    </p>
+    <div
+      v-if="socialLoginEnabled"
+      class="d-flex flex-column flex-md-row gap-2 justify-content-center"
+    >
+      <BButton
+        v-if="googleOAuthEnabled"
+        variant="outline-secondary"
+        :href="`${backendDomain}/auth/google`"
+        :disabled="loading"
+        class="google-login-button"
+      >
+        <!-- <div class="gsi-material-button-icon"> -->
+        <svg
+          version="1.1"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 48 48"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          :style="{ width: '1.2em', height: '1.2em' }"
+          class="mb-1 me-1 google-icon"
+        >
+          <path
+            fill="#EA4335"
+            d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+          ></path>
+          <path
+            fill="#4285F4"
+            d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
+          ></path>
+          <path
+            fill="#FBBC05"
+            d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+          ></path>
+          <path
+            fill="#34A853"
+            d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+          ></path>
+          <path fill="none" d="M0 0h48v48H0z"></path>
+        </svg>
+        <!-- </div> -->
+        {{ $t("auth.signInWithGoogle") }}
+      </BButton>
+      <BButton
+        v-if="githubOAuthEnabled"
+        variant="outline-secondary"
+        :href="`${backendDomain}/auth/github`"
+        :disabled="loading"
+        class="github-login-button"
+      >
+        <IBiGithub class="mb-1 me-1 github-icon" />
+        {{ $t("auth.signInWithGithub") }}
+      </BButton>
+      <BButton
+        v-if="facebookOAuthEnabled"
+        variant="outline-secondary"
+        :href="`${backendDomain}/auth/facebook`"
+        :disabled="loading"
+        class="facebook-login-button"
+      >
+        <IBiFacebook class="mb-1 me-1 facebook-icon" />
+        {{ $t("auth.signInWithFacebook") }}
+      </BButton>
+    </div>
+
     <ConfirmEmailModal ref="confirmEmailModal" />
 
     <PasswordResetModal
@@ -202,6 +269,10 @@ import PasswordResetModal from "@/components/modals/PasswordResetModal.vue";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import AuthService from "@/services/AuthService";
 import MessagingService from "@/services/MessagingService";
+import FeatureFlagService, {
+  FeatureFlagKeys,
+} from "@/services/FeatureFlagService";
+import { getApiDomain } from "@/services/RequestService";
 import ERROR_CODES from "@/utils/error_codes";
 import { error, log } from "@/utils/logging";
 import { emailRegex } from "@/utils/validation";
@@ -241,6 +312,10 @@ export default {
     passwordRepetition: null,
     tabIndex: 0,
     loading: false,
+    socialLoginEnabled: false,
+    googleOAuthEnabled: false,
+    githubOAuthEnabled: false,
+    facebookOAuthEnabled: false,
   }),
   computed: {
     failMessages() {
@@ -299,6 +374,9 @@ export default {
     isWelcome() {
       return this.$route.path == "/willkommen";
     },
+    backendDomain() {
+      return getApiDomain().replace(/\/$/, "");
+    },
   },
   mounted() {
     if (this.$store.state.loggedIn) {
@@ -317,6 +395,39 @@ export default {
           error(e, ERROR_CODES.SSO_LOGIN_FAILED);
           this.showFailMessage(e.response.data);
         });
+
+    Promise.all([
+      FeatureFlagService.isEnabled(FeatureFlagKeys.SOCIAL_LOGIN),
+      FeatureFlagService.isEnabled(FeatureFlagKeys.GOOGLE_OAUTH).then(
+        (enabled) => {
+          this.googleOAuthEnabled = enabled;
+          return enabled;
+        }
+      ),
+      FeatureFlagService.isEnabled(FeatureFlagKeys.GITHUB_OAUTH).then(
+        (enabled) => {
+          this.githubOAuthEnabled = enabled;
+          return enabled;
+        }
+      ),
+      FeatureFlagService.isEnabled(FeatureFlagKeys.FACEBOOK_OAUTH).then(
+        (enabled) => {
+          this.facebookOAuthEnabled = enabled;
+          return enabled;
+        }
+      ),
+    ]).then(
+      ([
+        socialLoginEnabled,
+        googleOAuthEnabled,
+        githubOAuthEnabled,
+        facebookOAuthEnabled,
+      ]) => {
+        this.socialLoginEnabled =
+          socialLoginEnabled &&
+          (googleOAuthEnabled || githubOAuthEnabled || facebookOAuthEnabled);
+      }
+    );
 
     const baseMeta = [
       {
@@ -475,3 +586,36 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.btn.github-login-button {
+  border-color: #101411;
+  .github-icon {
+    color: #0a241b;
+  }
+  &:hover {
+    background-color: #0a241b;
+    .github-icon {
+      color: #bfffd1;
+    }
+  }
+}
+.btn.google-login-button {
+  &:hover {
+    background-color: #f5f5f5;
+    color: #202020;
+  }
+}
+.btn.facebook-login-button {
+  .facebook-icon {
+    color: #0064e0;
+  }
+  &:hover {
+    background-color: #0064e0;
+    color: white;
+    .facebook-icon {
+      color: white;
+    }
+  }
+}
+</style>

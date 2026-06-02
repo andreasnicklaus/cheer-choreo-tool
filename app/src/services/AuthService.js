@@ -13,6 +13,9 @@ const tokenStorageKey = "choreo-planer-token";
  * @class AuthService
  */
 class AuthService {
+  saveLoginToken(token) {
+    localStorage.setItem(tokenStorageKey, token);
+  }
   /**
    * Make a login request with username and password and store the authentication token
    *
@@ -34,7 +37,7 @@ class AuthService {
         }
 
         debug("Successfully logged in as", username);
-        localStorage.setItem(tokenStorageKey, token);
+        this.saveLoginToken(token);
         store.commit("setLoginState", true);
         store.dispatch("loadUserInfo");
         return true;
@@ -68,7 +71,7 @@ class AuthService {
         }
 
         debug("Successfully logged in with SSO token");
-        localStorage.setItem(tokenStorageKey, token);
+        this.saveLoginToken(token);
         store.commit("setLoginState", true);
 
         return true;
@@ -120,7 +123,7 @@ class AuthService {
         }
 
         debug("Successfully registered as", username);
-        localStorage.setItem(tokenStorageKey, token);
+        this.saveLoginToken(token);
         store.commit("setLoginState", true);
         store.dispatch("loadUserInfo");
         return true;

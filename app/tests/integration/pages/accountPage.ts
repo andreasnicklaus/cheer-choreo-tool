@@ -294,4 +294,46 @@ export default class AccountPage extends TestPage {
       this.page.getByTestId("managedByMeTable").getByText("Pending")
     ).toBeVisible();
   }
+
+  iSeeEmailDisabled() {
+    return expect(
+      this.page.getByRole("textbox", { name: "E-mail address" })
+    ).toBeDisabled();
+  }
+
+  iSeeEmailEnabled() {
+    return expect(
+      this.page.getByRole("textbox", { name: "E-mail address" })
+    ).toBeEnabled();
+  }
+
+  iSeePasswordChangeForm() {
+    return expect(
+      this.page.getByRole("button", { name: "Change Password" })
+    ).toBeVisible();
+  }
+
+  iDontSeePasswordChangeForm() {
+    return expect(
+      this.page.getByRole("button", { name: "Change Password" })
+    ).not.toBeVisible();
+  }
+
+  iSeeSocialBadge(provider: string) {
+    return expect(
+      this.page.getByText(`Connected via ${provider}`)
+    ).toBeVisible();
+  }
+
+  iSeeDeleteAccountEnabled() {
+    return expect(
+      this.page.getByRole("button", { name: "Delete account" })
+    ).toBeEnabled();
+  }
+
+  iSeeDeleteAccountDisabled() {
+    return expect(
+      this.page.getByRole("button", { name: "Delete account" })
+    ).toBeDisabled();
+  }
 }

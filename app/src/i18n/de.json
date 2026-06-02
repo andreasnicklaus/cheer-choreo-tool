@@ -15,6 +15,7 @@
     "unbekannter-fehler": "Ein unbekannter Fehler ist aufgetreten. Lade die Seite neu oder logge dich erneut ein, um die Seite anzuzeigen.",
     "zuletzt-geaendert-am": "Zuletzt geändert",
     "konto-loeschen-descriptions": "Lösche dein Konto nur, wenn du die App nicht mehr verwenden möchtest. Deine Daten werden als inaktiv markiert.",
+    "konto-loeschen-descriptions-social": "Da du dich über einen externen Dienst angemeldet hast, kannst du dein Konto nicht hier löschen. Deaktiviere deinen Account in den Einstellungen des jeweiligen Dienstes.",
     "gefahrenbereich": "Gefahrenbereich",
     "profilbild": "Profilbild",
     "bild-entfernen": "Bild entfernen",
@@ -916,6 +917,16 @@
       "best-regards-username": "\nLiebe Grüße\n{username}",
       "dear-choreo-planer-team": "Liebes Choreo Planer-Team,\n\n"
     }
+  },
+  "auth": {
+    "signInWithGoogle": "Mit Google anmelden",
+    "signInWithGithub": "Mit GitHub anmelden",
+    "signInWithFacebook": "Mit Facebook anmelden",
+    "orContinueWith": "oder",
+    "socialLoginFailed": "Social-Login fehlgeschlagen. Bitte versuche es erneut.",
+    "socialLoginDisabled": "Social-Login ist derzeit deaktiviert.",
+    "redirecting": "Weiterleitung...",
+    "connectedViaProvider": "Verbunden über {provider}"
   },
   "accessOverviewTable": {
     "edit": "Bearbeiten",

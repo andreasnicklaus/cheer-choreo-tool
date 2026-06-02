@@ -7,6 +7,7 @@ import NotificationService from "@/services/NotificationService";
 jest.mock("@/plugins/winston", () => ({
   logger: {
     debug: jest.fn(),
+    warn: jest.fn(),
     error: jest.fn(),
   },
   debug: jest.fn(),
@@ -43,6 +44,9 @@ jest.mock("i18n", () => ({
   __: jest.fn().mockReturnValue("i18nTranslation"),
   configure: jest.fn(),
 }));
+
+// Import AuthProvider after mocks are set up
+import { AuthProvider } from "@/plugins/passport";
 
 jest.mock("@/services/FeatureFlagService", () => ({
   __esModule: true,
@@ -321,6 +325,137 @@ describe("UserService", () => {
       ]);
       expect(result).not.toBeNull();
       expect(result?.email).toBe("deleted@example.com");
+    });
+  });
+
+  describe("generateSocialUsername", () => {
+    test("sanitizes special characters from display name", () => {
+      const result = UserService.generateSocialUsername(
+        AuthProvider.GOOGLE,
+        "John!@#Doe",
+      );
+      expect(result).toBe("JohnDoe");
+    });
+
+    test("truncates display name to 40 characters", () => {
+      const result = UserService.generateSocialUsername(
+        AuthProvider.GITHUB,
+        "A".repeat(100),
+      );
+      expect(result.length).toBeLessThanOrEqual(40);
+    });
+
+    test("pads result to at least 6 characters", () => {
+      const result = UserService.generateSocialUsername(
+        AuthProvider.FACEBOOK,
+        "ab",
+      );
+      expect(result.length).toBeGreaterThanOrEqual(6);
+    });
+
+    test("falls back to provider-based name when displayName is null", () => {
+      const result = UserService.generateSocialUsername(
+        AuthProvider.GOOGLE,
+        null,
+      );
+      expect(result).toMatch(/^google_/);
+      expect(result.length).toBeGreaterThanOrEqual(6);
+    });
+
+    test("falls back to provider-based name when displayName is empty", () => {
+      const result = UserService.generateSocialUsername(
+        AuthProvider.GITHUB,
+        "",
+      );
+      expect(result).toMatch(/^github_/);
+      expect(result.length).toBeGreaterThanOrEqual(6);
+    });
+  });
+
+  describe("findOrCreateSocialUser", () => {
+    test("returns existing user when provider and socialId match", async () => {
+      const existing = await User.create({
+        username: "socialuser",
+        provider: AuthProvider.GOOGLE,
+        socialId: "google-123",
+        email: "social@example.com",
+        emailConfirmed: true,
+        password: undefined,
+      });
+
+      const result = await UserService.findOrCreateSocialUser(
+        AuthProvider.GOOGLE,
+        "google-123",
+        "social@example.com",
+        "Social User",
+      );
+
+      expect(result.id).toBe(existing.id);
+    });
+
+    test("creates new user when provider and socialId do not match", async () => {
+      const result = await UserService.findOrCreateSocialUser(
+        AuthProvider.GOOGLE,
+        "new-google-id",
+        "newuser@example.com",
+        "New User",
+      );
+
+      expect(result).toBeDefined();
+      expect(result.provider).toBe(AuthProvider.GOOGLE);
+      expect(result.socialId).toBe("new-google-id");
+      expect(result.email).toBe("newuser@example.com");
+      expect(result.emailConfirmed).toBe(true);
+    });
+
+    test("generates unique username when display name collides", async () => {
+      await User.create({
+        username: "NewUser",
+        provider: AuthProvider.GOOGLE,
+        socialId: "existing-google-id",
+        email: "existing@example.com",
+        emailConfirmed: true,
+        password: undefined,
+      });
+
+      const result = await UserService.findOrCreateSocialUser(
+        AuthProvider.GOOGLE,
+        "another-google-id",
+        "another@example.com",
+        "NewUser",
+      );
+
+      expect(result).toBeDefined();
+      expect(result.username).not.toBe("NewUser");
+    });
+
+    test("handles missing email", async () => {
+      const result = await UserService.findOrCreateSocialUser(
+        AuthProvider.GITHUB,
+        "github-no-email",
+        undefined,
+        "No Email User",
+      );
+
+      expect(result).toBeDefined();
+      expect(result.provider).toBe(AuthProvider.GITHUB);
+      expect(result.socialId).toBe("github-no-email");
+      expect(result.email).toBeUndefined();
+      expect(result.emailConfirmed).toBe(true);
+    });
+
+    test("handles missing display name", async () => {
+      const result = await UserService.findOrCreateSocialUser(
+        AuthProvider.FACEBOOK,
+        "fb-noname",
+        "fb@example.com",
+        null,
+      );
+
+      expect(result).toBeDefined();
+      expect(result.provider).toBe(AuthProvider.FACEBOOK);
+      expect(result.socialId).toBe("fb-noname");
+      expect(result.username).toMatch(/^facebook_/);
     });
   });
 });

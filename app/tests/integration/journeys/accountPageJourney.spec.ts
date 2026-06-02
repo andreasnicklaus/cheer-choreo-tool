@@ -3,7 +3,12 @@ import AccountPage from "../pages/accountPage";
 import { mockDefaultStartRequests } from "../utils/multiRequests";
 import { mockAuthMe } from "../utils/requests";
 import { defaultClubs } from "../testData/club";
-import { sharedUser } from "../testData/user";
+import {
+  sharedUser,
+  googleUser,
+  facebookUser,
+  githubUser,
+} from "../testData/user";
 
 let accountPage: AccountPage;
 
@@ -67,6 +72,71 @@ test.describe("Danger Zone", () => {
 
   test("should allow deleting the account in the danger zone", async () => {
     await accountPage.iDeleteAccount();
+  });
+});
+
+test.describe("Provider-based UI for local user", () => {
+  test("should have email input enabled for local user", async () => {
+    await accountPage.iSeeEmailEnabled();
+  });
+
+  test("should show password change form in Danger Zone for local user", async () => {
+    await accountPage.iSwitchToDangerZone();
+    await accountPage.iSeePasswordChangeForm();
+  });
+
+  test("should have delete account enabled for local user", async () => {
+    await accountPage.iSwitchToDangerZone();
+    await accountPage.iSeeDeleteAccountEnabled();
+  });
+});
+
+test.describe("Provider-based UI for social user (Google)", () => {
+  test.beforeEach(async () => {
+    await mockDefaultStartRequests(accountPage.page);
+    await mockAuthMe(accountPage.page, googleUser);
+    await accountPage.goToPage();
+  });
+
+  test("should have email input disabled for social user", async () => {
+    await accountPage.iSeeEmailDisabled();
+  });
+
+  test("should show social login badge and hide password change form in Danger Zone", async () => {
+    await accountPage.iSwitchToDangerZone();
+    await accountPage.iSeeSocialBadge("google");
+    await accountPage.iDontSeePasswordChangeForm();
+  });
+
+  test("should disable delete account for social user", async () => {
+    await accountPage.iSwitchToDangerZone();
+    await accountPage.iSeeDeleteAccountDisabled();
+  });
+});
+
+test.describe("Provider-based UI for social user (Facebook)", () => {
+  test.beforeEach(async () => {
+    await mockDefaultStartRequests(accountPage.page);
+    await mockAuthMe(accountPage.page, facebookUser);
+    await accountPage.goToPage();
+  });
+
+  test("should show social login badge with Facebook provider", async () => {
+    await accountPage.iSwitchToDangerZone();
+    await accountPage.iSeeSocialBadge("facebook");
+  });
+});
+
+test.describe("Provider-based UI for social user (Github)", () => {
+  test.beforeEach(async () => {
+    await mockDefaultStartRequests(accountPage.page);
+    await mockAuthMe(accountPage.page, githubUser);
+    await accountPage.goToPage();
+  });
+
+  test("should show social login badge with Github provider", async () => {
+    await accountPage.iSwitchToDangerZone();
+    await accountPage.iSeeSocialBadge("github");
   });
 });
 

@@ -67,4 +67,117 @@ export default class LoginPage extends TestPage {
     const registrationTab = this.page.getByRole("tab", { name: "Register" });
     return this.iClickButton(registrationTab);
   }
+
+  iSeeGoogleButton() {
+    return expect(
+      this.page.getByRole("button", { name: "Sign in with Google" })
+    ).toBeVisible();
+  }
+
+  iSeeGitHubButton() {
+    return expect(
+      this.page.getByRole("button", { name: "Sign in with GitHub" })
+    ).toBeVisible();
+  }
+
+  iSeeFacebookButton() {
+    return expect(
+      this.page.getByRole("button", { name: "Sign in with Facebook" })
+    ).toBeVisible();
+  }
+
+  iDontSeeOAuthButtons() {
+    return expect(
+      this.page.getByRole("button", { name: "Sign in with Google" })
+    ).not.toBeVisible();
+  }
+
+  async iClickOnGoogleButton() {
+    const button = this.page.getByRole("button", {
+      name: "Sign in with Google",
+    });
+    await this.iClickButton(button);
+  }
+
+  async iClickOnGitHubButton() {
+    const button = this.page.getByRole("button", {
+      name: "Sign in with GitHub",
+    });
+    await this.iClickButton(button);
+  }
+
+  async iClickOnFacebookButton() {
+    const button = this.page.getByRole("button", {
+      name: "Sign in with Facebook",
+    });
+    await this.iClickButton(button);
+  }
+
+  async iDisableSocialLogin() {
+    await this.page.route("https://features.choreo-planer.de/**", (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          toggles: [
+            {
+              name: "social-login",
+              enabled: false,
+              variant: {
+                name: "disabled",
+                enabled: false,
+                feature_enabled: true,
+                featureEnabled: true,
+              },
+              impressionData: true,
+            },
+            {
+              name: "google-oauth",
+              enabled: false,
+              variant: {
+                name: "disabled",
+                enabled: false,
+                feature_enabled: true,
+                featureEnabled: true,
+              },
+              impressionData: true,
+            },
+            {
+              name: "github-oauth",
+              enabled: false,
+              variant: {
+                name: "disabled",
+                enabled: false,
+                feature_enabled: true,
+                featureEnabled: true,
+              },
+              impressionData: true,
+            },
+            {
+              name: "facebook-oauth",
+              enabled: false,
+              variant: {
+                name: "disabled",
+                enabled: false,
+                feature_enabled: true,
+                featureEnabled: true,
+              },
+              impressionData: true,
+            },
+          ],
+        }),
+      });
+    });
+  }
+
+  async iSeeSocialLoginError() {
+    await expect(this.page.getByText("Social login failed")).toBeVisible();
+  }
+
+  async iVerifyLoginToken() {
+    const token = await this.page.evaluate(() =>
+      localStorage.getItem("choreo-planer-token")
+    );
+    expect(token).toBe("test-jwt-token");
+  }
 }

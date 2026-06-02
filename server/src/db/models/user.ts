@@ -21,6 +21,7 @@ import Feedback from "./feedback";
 import NotificationModel from "./notification";
 import UserAccess from "./userAccess";
 import db from "../db";
+import { AuthProvider } from "@/plugins/passport";
 const bcrypt = require("bcrypt");
 
 /**
@@ -72,8 +73,10 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare email?: string;
   declare emailConfirmed: CreationOptional<boolean>;
   declare profilePictureExtension?: string;
-  declare password: string;
+  declare password?: string;
   declare lastLoggedIn?: Date;
+  declare provider: CreationOptional<AuthProvider>;
+  declare socialId?: string;
 
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
@@ -90,6 +93,8 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare seasons: NonAttribute<Season[]>;
   declare feedbacks: NonAttribute<Feedback[]>;
   declare notifications: NonAttribute<NotificationModel[]>;
+  declare ownerAccess: NonAttribute<UserAccess[]>;
+  declare childAccess: NonAttribute<UserAccess[]>;
 
   declare getClubs: HasManyGetAssociationsMixin<Club>;
 }
@@ -103,8 +108,7 @@ User.init(
     },
     username: {
       type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
+      allowNull: true,
       validate: {
         len: {
           args: [6, 999],
@@ -133,11 +137,30 @@ User.init(
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       set(value) {
-        const salt = bcrypt.genSaltSync(10, "a");
-        this.setDataValue("password", bcrypt.hashSync(value, salt));
+        if (value == null) {
+          this.setDataValue("password", undefined);
+        } else {
+          const salt = bcrypt.genSaltSync(10, "a");
+          this.setDataValue("password", bcrypt.hashSync(value, salt));
+        }
       },
+    },
+    provider: {
+      type: DataTypes.ENUM(...Object.values(AuthProvider)),
+      allowNull: false,
+      defaultValue: AuthProvider.LOCAL,
+      validate: {
+        isIn: {
+          args: [Object.values(AuthProvider)],
+          msg: "Provider must be one of: local, google, github, facebook",
+        },
+      },
+    },
+    socialId: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     lastLoggedIn: {
       type: DataTypes.DATE,
@@ -166,6 +189,16 @@ User.init(
     },
     paranoid: true,
     hooks: {
+      beforeValidate: function (instance) {
+        if (instance.getDataValue("provider") === "local") {
+          if (instance.getDataValue("username") == null) {
+            throw new Error("Username is required for local users");
+          }
+          if (instance.getDataValue("password") === null) {
+            throw new Error("Password is required for local users");
+          }
+        }
+      },
       afterDestroy: async function (instance, _options) {
         const clubList = await instance.getClubs();
         await Promise.all(clubList.map((club) => club.destroy()));
@@ -180,6 +213,24 @@ User.init(
         });
       },
     },
+    indexes: [
+      // Enforce username uniqueness only for local provider users.
+      {
+        unique: true,
+        fields: ["username"],
+        where: {
+          provider: AuthProvider.LOCAL,
+        },
+      },
+      {
+        unique: true,
+        fields: ["email", "provider"],
+      },
+      {
+        unique: true,
+        fields: ["socialId", "provider"],
+      },
+    ],
   },
 );
 
