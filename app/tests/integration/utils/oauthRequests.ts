@@ -10,10 +10,9 @@ export async function mockOAuthProviderRequest(
 ) {
   await page.route(`${API_URL}/auth/${provider}`, async (route) => {
     await route.fulfill({
-      status: 302,
-      headers: {
-        Location: `${APP_URL}/en/auth/callback?token=${token}`,
-      },
+      status: 200,
+      contentType: "text/html",
+      body: `<html><head><meta http-equiv="refresh" content="0;url=${APP_URL}/en/auth/callback?token=${token}"></head><body></body></html>`,
     });
   });
 }
@@ -21,10 +20,9 @@ export async function mockOAuthProviderRequest(
 export async function mockOAuthProviderError(page: Page, provider: string) {
   await page.route(`${API_URL}/auth/${provider}`, async (route) => {
     await route.fulfill({
-      status: 302,
-      headers: {
-        Location: `${APP_URL}/en/auth/callback?error=access_denied&errorDescription=Cancelled`,
-      },
+      status: 200,
+      contentType: "text/html",
+      body: `<html><head><meta http-equiv="refresh" content="0;url=${APP_URL}/en/auth/callback?error=access_denied&errorDescription=Cancelled"></head><body></body></html>`,
     });
   });
 }
