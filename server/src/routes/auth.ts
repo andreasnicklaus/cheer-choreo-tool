@@ -601,14 +601,18 @@ router.get(
       });
     }
 
-    let authOptions: AuthenticateOptions = {};
+    const authOptions: AuthenticateOptions = {};
     if (provider === AuthProvider.GOOGLE) {
-      authOptions = { scope: ["profile", "email"] };
+      authOptions.scope = ["profile", "email"];
     } else if (provider === AuthProvider.GITHUB) {
-      authOptions = { scope: ["user:email"] };
+      authOptions.scope = ["user:email"];
     } else if (provider === AuthProvider.FACEBOOK) {
-      authOptions = { scope: ["email"] };
+      authOptions.scope = ["email"];
     }
+    // passport-oauth2 requires `state: true` (boolean, not string) to activate
+    // the SessionStore which auto-generates and verifies a random state for CSRF.
+    // The @types/passport type has state?:string which is inaccurate here.
+    (authOptions as { scope?: string[]; state?: boolean }).state = true;
 
     passport.authenticate(provider, authOptions)(req, res, next);
   },
