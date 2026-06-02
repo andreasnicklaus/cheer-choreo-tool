@@ -206,7 +206,7 @@ export function error(message, errorCode = ERROR_CODES.UNKNOWN_ERROR) {
 export function logRequest(status, time, url) {
   const message = `${url} responded with status ${status} in ${time} ms`;
   if (!status || status >= 400) {
-    if (sendLogsToIngest) {
+    if (sendLogsToIngest && !isPrerender()) {
       logtail.warn(message, {
         state: store?.state,
         version: VersionService.getAppVersion(),
