@@ -332,9 +332,9 @@ export default {
 
 <style lang="scss" scoped>
 .svgCanvas {
-  border: 1px solid #a5a8f7;
+  border: 1px solid var(--color-mat-border);
   border-radius: 4px;
-  background-color: #e5e5f7;
+  background-color: var(--color-mat-bg);
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -343,7 +343,11 @@ export default {
   background-repeat: repeat;
 
   &.cheer {
-    background-image: linear-gradient(to right, #444cf766 5px, #e5e5f744 5px);
+    background-image: linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-mat-grid) 40%, transparent) 5px,
+      color-mix(in srgb, var(--color-mat-bg) 27%, transparent) 5px
+    );
   }
 }
 </style>

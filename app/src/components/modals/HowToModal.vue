@@ -17,16 +17,7 @@
             <hr />
             <I18n-t keypath="modals.howto.lineup-text-2" tag="p">
               <b>{{ $t("modals.howto.aufstellungen-anlegen") }}:</b>
-              <span
-                :style="{
-                  height: '24px',
-                  width: '24px !important',
-                  backgroundColor: '#ffab0655',
-                  borderRadius: '50%',
-                  border: 'solid 2px #ffab06',
-                  display: 'inline-block',
-                }"
-              />
+              <span class="tutorial-dot" />
             </I18n-t>
             <hr />
             <I18n-t keypath="modals.howto.lineup-text-3" tag="p">
@@ -168,3 +159,18 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.tutorial-dot {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-color: color-mix(
+    in srgb,
+    var(--color-tutorial-highlight) 33%,
+    transparent
+  );
+  border-radius: 50%;
+  border: 2px solid var(--color-tutorial-highlight);
+}
+</style>

@@ -589,32 +589,32 @@ export default {
 
 <style lang="scss" scoped>
 .btn.github-login-button {
-  border-color: #101411;
+  border-color: var(--bs-body-color);
   .github-icon {
-    color: #0a241b;
+    color: var(--bs-body-color);
   }
   &:hover {
-    background-color: #0a241b;
+    background-color: var(--bs-body-color);
     .github-icon {
-      color: #bfffd1;
+      color: var(--bs-body-bg);
     }
   }
 }
 .btn.google-login-button {
   &:hover {
-    background-color: #f5f5f5;
-    color: #202020;
+    background-color: var(--bs-light);
+    color: var(--bs-body-color);
   }
 }
 .btn.facebook-login-button {
   .facebook-icon {
-    color: #0064e0;
+    color: var(--bs-primary);
   }
   &:hover {
-    background-color: #0064e0;
-    color: white;
+    background-color: var(--bs-primary);
+    color: var(--bs-white);
     .facebook-icon {
-      color: white;
+      color: var(--bs-white);
     }
   }
 }

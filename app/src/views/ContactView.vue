@@ -20,7 +20,7 @@
           <BCol v-show="showContactCallout">
             <BCard
               footer-bg-variant="transparent"
-              footer-border-variant="white"
+              footer-border-variant="light"
               class="h-100"
             >
               <BCardTitle>
@@ -42,7 +42,7 @@
           <BCol v-show="showEmailCallout">
             <BCard
               footer-bg-variant="transparent"
-              footer-border-variant="white"
+              footer-border-variant="light"
               class="h-100"
             >
               <BCardTitle>
@@ -67,7 +67,7 @@
           <BCol>
             <BCard
               footer-bg-variant="transparent"
-              footer-border-variant="white"
+              footer-border-variant="light"
               class="h-100"
             >
               <BCardTitle>

@@ -302,10 +302,23 @@
           <IBiQuestionCircle />
           <span class="d-sm-none ms-2">{{ $t("general.help") }}</span>
         </BNavItem>
+        <BNavItem
+          v-b-tooltip.hover.bottom="
+            isDark ? $t('nav.hellen-modus') : $t('nav.dunklen-modus')
+          "
+          button
+          @click="toggleTheme"
+        >
+          <IBiSunFill v-if="isDark" />
+          <IBiMoonStarsFill v-else />
+          <span class="d-sm-none ms-2">{{
+            isDark ? $t("nav.hellen-modus") : $t("nav.dunklen-modus")
+          }}</span>
+        </BNavItem>
         <BButton
           v-if="!$store.state.loggedIn"
           variant="primary"
-          :style="{ color: 'white' }"
+          class="text-white"
           :to="
             $store.state.loggedIn
               ? null
@@ -448,6 +461,7 @@
 </template>
 
 <script>
+import { useTheme } from "@/composables/useTheme";
 import AuthService from "@/services/AuthService";
 import ClubService from "@/services/ClubService";
 import CreateChoreoModal from "./modals/CreateChoreoModal.vue";
@@ -525,6 +539,9 @@ export default {
     showNotificationsDropdown: false,
   }),
   computed: {
+    isDark() {
+      return useTheme().isDark.value;
+    },
     ...mapState(["me"]),
     shareData() {
       return {
@@ -566,6 +583,9 @@ export default {
       clearInterval(this.loadNotificationsInterval);
   },
   methods: {
+    toggleTheme() {
+      useTheme().toggleTheme();
+    },
     load() {
       if (this.$store.state.loggedIn) {
         this.$store.dispatch("loadUserInfo").catch(() => {
@@ -684,8 +704,8 @@ export default {
 
 <style lang="scss" scoped>
 .dropdown-submenu:hover:not(:has(div.collapse:hover)) {
-  color: #16181b;
-  background-color: #e9ecef;
+  color: var(--bs-body-color);
+  background-color: var(--bs-light);
 }
 
 .BDropdownText {

@@ -450,7 +450,7 @@
       :style="{
         borderRadius: '4px',
       }"
-      class="text-center py-5 px-3 bg-success text-light mb-5"
+      class="text-center py-5 px-3 bg-success text-white mb-5"
     >
       <h2 class="mb-1">{{ $t("Home.interesse-geweckt") }}</h2>
       <p class="mb-4">
@@ -1084,7 +1084,7 @@ h1 {
 h2 {
   text-align: center;
   section > & {
-    color: #0069d9;
+    color: var(--bs-primary);
   }
   font-weight: bold;
   margin-bottom: 32px;
@@ -1178,42 +1178,50 @@ ul {
   -moz-animation: none;
   -ms-animation: none;
   animation: none;
-  color: #ffffff;
+  color: var(--bs-white);
 }
 
 @-webkit-keyframes pulsing {
   50% {
-    box-shadow: 0 0 0 20px #6927d300;
+    box-shadow: 0 0 0 20px
+      color-mix(in srgb, var(--color-pulse-shadow) 0%, transparent);
   }
   100% {
-    box-shadow: 0 0 0 20px #6927d300;
+    box-shadow: 0 0 0 20px
+      color-mix(in srgb, var(--color-pulse-shadow) 0%, transparent);
   }
 }
 
 @-moz-keyframes pulsing {
   50% {
-    box-shadow: 0 0 0 20px #6927d300;
+    box-shadow: 0 0 0 20px
+      color-mix(in srgb, var(--color-pulse-shadow) 0%, transparent);
   }
   100% {
-    box-shadow: 0 0 0 20px #6927d300;
+    box-shadow: 0 0 0 20px
+      color-mix(in srgb, var(--color-pulse-shadow) 0%, transparent);
   }
 }
 
 @-ms-keyframes pulsing {
   50% {
-    box-shadow: 0 0 0 20px #6927d300;
+    box-shadow: 0 0 0 20px
+      color-mix(in srgb, var(--color-pulse-shadow) 0%, transparent);
   }
   100% {
-    box-shadow: 0 0 0 20px #6927d300;
+    box-shadow: 0 0 0 20px
+      color-mix(in srgb, var(--color-pulse-shadow) 0%, transparent);
   }
 }
 
 @keyframes pulsing {
   50% {
-    box-shadow: 0 0 0 20px #6927d300;
+    box-shadow: 0 0 0 20px
+      color-mix(in srgb, var(--color-pulse-shadow) 0%, transparent);
   }
   100% {
-    box-shadow: 0 0 0 20px #6927d300;
+    box-shadow: 0 0 0 20px
+      color-mix(in srgb, var(--color-pulse-shadow) 0%, transparent);
   }
 }
 </style>

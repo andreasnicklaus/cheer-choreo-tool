@@ -5,9 +5,9 @@
     :style="{
       position: 'fixed',
       bottom: 0,
-      backgroundColor: '#fff',
+      backgroundColor: 'var(--bs-body-bg)',
       borderRadius: '20px 20px 0 0 ',
-      boxShadow: '0px 0px 25px #aaa',
+      boxShadow: 'var(--shadow-lg)',
       zIndex: 2,
     }"
   >

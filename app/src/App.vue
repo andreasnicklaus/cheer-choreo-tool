@@ -157,6 +157,9 @@ import { useHead } from "@unhead/vue";
 import { useRoute } from "vue-router";
 import { getApiDomain } from "./services/RequestService";
 import { useI18n } from "vue-i18n";
+import { useTheme } from "./composables/useTheme";
+
+useTheme();
 
 const { create } = useToast();
 const instance = getCurrentInstance();
@@ -268,9 +271,6 @@ import { isPrerender } from "@/utils/isPrerender";
 import { debug, error, logWelcomeMessage } from "@/utils/logging";
 import VersionService from "./services/VersionService";
 import env from "@/utils/env";
-
-import "bootstrap/dist/css/bootstrap.css";
-import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 
 /**
  * @vue-data {boolean} online
@@ -438,34 +438,33 @@ div:has(.betteruptime-announcement)
 
 <style lang="scss" scoped>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   // text-align: center;
-  color: #2c3e50;
+  color: var(--bs-body-color);
   overflow-wrap: break-word;
   word-wrap: break-word;
   hyphens: auto;
 }
 
 .router-link-active {
-  color: #2c3e50 !important;
+  color: var(--bs-body-color) !important;
 }
 
 footer a,
 footer .btn-link {
-  color: white !important;
+  color: var(--color-footer-text) !important;
   text-decoration: underline;
   &.router-link-active:not(:hover) {
-    color: white !important;
+    color: var(--color-footer-text) !important;
   }
   &:hover {
-    color: #d6d6d6 !important;
+    color: var(--color-footer-text-hover) !important;
   }
 }
 
 footer {
-  color: white;
-  background-color: #0150a4;
+  color: var(--color-footer-text);
+  background-color: var(--color-footer-bg);
 }
 </style>

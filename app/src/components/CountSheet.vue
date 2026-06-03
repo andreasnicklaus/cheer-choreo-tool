@@ -79,7 +79,7 @@
                 fontSize: fontSize ? fontSize + 'px' : null,
                 color:
                   Math.floor(count / 8) == i && count % 8 == label - 1
-                    ? 'white'
+                    ? 'var(--bs-white)'
                     : null,
               }"
               :variant="

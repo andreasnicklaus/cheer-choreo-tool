@@ -807,16 +807,16 @@ h5 {
 }
 
 .collapse-submenu:hover:has(:not(div):hover) {
-  background-color: #ffffff;
+  background-color: var(--bs-body-bg);
 
   &.list-group-item-info {
-    background-color: #bee5eb;
+    background-color: var(--bs-info-border-subtle);
   }
   &.list-group-item-success {
-    background-color: #c3e6cb;
+    background-color: var(--bs-success-border-subtle);
   }
   &.list-group-item-warning {
-    background-color: #ffeeba;
+    background-color: var(--bs-warning-border-subtle);
   }
 }
 </style>

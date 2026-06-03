@@ -713,6 +713,8 @@
   "name": "Name",
   "nav": {
     "ausloggen": "Log out",
+    "dunklen-modus": "Activate dark mode",
+    "hellen-modus": "Activate light mode",
     "checkEmail": {
       "text": "You should find the link to confirm your mailbox. Please also check your spam folder.",
       "title": "Please confirm your email address"

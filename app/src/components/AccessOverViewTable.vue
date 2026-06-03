@@ -36,16 +36,16 @@
     ]"
   >
     <template #cell(read)="data">
-      <IBiCheckCircleFill v-if="data.value" color="green" />
-      <IBiX v-else color="red" />
+      <IBiCheckCircleFill v-if="data.value" color="var(--bs-success)" />
+      <IBiX v-else color="var(--bs-danger)" />
     </template>
     <template #cell(edit)="data">
-      <IBiCheckCircleFill v-if="data.value" color="green" />
-      <IBiX v-else color="red" />
+      <IBiCheckCircleFill v-if="data.value" color="var(--bs-success)" />
+      <IBiX v-else color="var(--bs-danger)" />
     </template>
     <template #cell(delete)="data">
-      <IBiCheckCircleFill v-if="data.value" color="green" />
-      <IBiX v-else color="red" />
+      <IBiCheckCircleFill v-if="data.value" color="var(--bs-success)" />
+      <IBiX v-else color="var(--bs-danger)" />
     </template>
   </BTable>
 </template>

@@ -575,7 +575,7 @@
         </BAlert>
         <BRow class="mb-3">
           <BCol>
-            <BCard border-variant="white" header-bg-variant="white">
+            <BCard border-variant="light" header-bg-variant="light">
               <template #header>
                 <h5 class="mb-0">{{ $t("accountView.mit-mir-geteilt") }}</h5>
                 <small class="text-muted">
@@ -640,10 +640,10 @@
         <BRow class="mb-5">
           <BCol>
             <BCard
-              border-variant="white"
-              header-bg-variant="white"
-              footer-bg-variant="white"
-              footer-border-variant="white"
+              border-variant="light"
+              header-bg-variant="light"
+              footer-bg-variant="light"
+              footer-border-variant="light"
             >
               <template #header>
                 <h5 class="mb-0">{{ $t("accountView.von-mir-verwaltet") }}</h5>

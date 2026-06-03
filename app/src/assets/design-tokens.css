@@ -1,0 +1,80 @@
+/* ============================================
+   Design Tokens — Cheer Choreo Tool
+   ============================================
+   Strategy:
+   - Use Bootstrap's own CSS vars wherever possible
+   - Only add custom vars for app-specific concepts
+   - All tokens live under [data-bs-theme] selectors
+   ============================================ */
+
+:root,
+[data-bs-theme="light"] {
+  /* ---- App-specific custom tokens ---- */
+
+  /* Footer */
+  --color-footer-bg: #0150a4;
+  --color-footer-text: #ffffff;
+  --color-footer-text-hover: #d6d6d6;
+
+  /* Primary hover (not provided by Bootstrap) */
+  --color-primary-hover: #003d7a;
+
+  /* ---- Shadows ---- */
+  --shadow-lg: 0px 0px 25px rgba(0, 0, 0, 0.15);
+
+  /* ---- Misc ---- */
+  --color-mat-border: #a5a8f7;
+  --color-mat-bg: #e5e5f7;
+  --color-mat-grid: #444cf7;
+  --color-pulse-shadow: #6927d3;
+
+  /* ---- Tutorial highlight color ---- */
+  --color-tutorial-highlight: #ffab06;
+}
+
+[data-bs-theme="dark"] {
+  /* ---- App-specific custom tokens (dark) ---- */
+  --color-footer-bg: #0d2137;
+  --color-footer-text: #dee2e6;
+  --color-footer-text-hover: #adb5bd;
+  --color-primary-hover: #6ba3e0;
+
+  /* ---- Shadows (darker in dark mode) ---- */
+  --shadow-lg: 0px 0px 25px rgba(0, 0, 0, 0.5);
+
+  /* ---- Misc (dark) ---- */
+  --color-mat-border: #495057;
+  --color-mat-bg: #2b3035;
+  --color-mat-grid: #6c757d;
+  --color-pulse-shadow: #9d6be8;
+
+  /* ---- Tutorial highlight ---- */
+  --color-tutorial-highlight: #ffab06;
+
+  /* ---- Bootstrap variant overrides ----
+     Make "light" / "dark" theme-aware so
+     variant="light" renders dark in dark mode.
+  */
+  --bs-light-rgb: 45, 47, 50;
+  --bs-light-bg: #2d2f32;
+  --bs-light-color: #dee2e6;
+  --bs-dark-rgb: 26, 28, 30;
+  --bs-dark-bg: #1a1c1e;
+  --bs-dark-color: #adb5bd;
+}
+
+/* ---- Font application ---- */
+body {
+  font-family: 'Roboto', Avenir, Helvetica, Arial, sans-serif;
+  font-weight: 400;
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: 'Roboto', Avenir, Helvetica, Arial, sans-serif;
+  font-weight: 700;
+}
+
+code, kbd, pre, samp {
+  font-family: 'Courier New', Courier, monospace;
+}

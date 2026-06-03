@@ -235,14 +235,14 @@ export default {
 <style lang="scss" scoped>
 textarea {
   width: 100%;
-  border: solid var(--lt-color-gray-300) 2px;
+  border: solid var(--bs-border-color) 2px;
   border-radius: 4px;
   resize: none;
   outline: none;
 
   &:focus,
   &:focus-visible {
-    border-color: var(--lt-color-gray-500);
+    border-color: var(--bs-secondary-color);
   }
 }
 </style>

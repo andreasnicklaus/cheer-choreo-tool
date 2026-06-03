@@ -713,6 +713,8 @@
   "name": "Name",
   "nav": {
     "ausloggen": "Ausloggen",
+    "dunklen-modus": "Dunklen Modus aktivieren",
+    "hellen-modus": "Hellen Modus aktivieren",
     "checkEmail": {
       "text": "Du solltest den Link zur Bestätigung in deinem Postfach finden. Bitte überprüfe auch deinen Spam-Ordner.",
       "title": "Bitte bestätige deine E-Mail-Adresse"
