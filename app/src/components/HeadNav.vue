@@ -1,31 +1,38 @@
 <template>
-  <BNavbar toggleable="sm" class="me-2" no-auto-close>
-    <BNavbarBrand :to="{ name: 'Home', params: { locale: $i18n.locale } }">
+  <BNavbar sticky="top" toggleable="sm" class="me-2" no-auto-close>
+    <BNavbarBrand
+      :to="{ name: 'Home', params: { locale: $i18n.locale } }"
+      class="em-primary"
+    >
+      <!-- TODO: replace christmas and easter icons -->
       <img
         :src="
           $store.getters.isChristmasTime
             ? '/Icon-Christmas.png'
             : $store.getters.isEasterTime
               ? '/Icon-Easter.png'
-              : '/Icon.png'
+              : isDark
+                ? '/Icon-PrimaryDark.svg'
+                : '/Icon-PrimaryLight.svg'
         "
         :alt="$t('choreo-planer-icon')"
         width="50"
         height="50"
       />
+      <span class="ms-2 hero em">{{ $t("general.ChoreoPlaner") }}</span>
     </BNavbarBrand>
 
     <BNavbarToggle target="nav-collapse"></BNavbarToggle>
 
     <BCollapse id="nav-collapse" is-nav>
       <BNavbarNav>
-        <BNavItem
+        <!-- <BNavItem
           :to="{ name: 'Home', params: { locale: $i18n.locale } }"
           :active-class="$route.name == 'Home' ? 'router-link-active' : ''"
         >
           <IBiHouseFill class="me-1" />
           {{ $t("nav.start") }}
-        </BNavItem>
+        </BNavItem> -->
         <BNavItem
           :to="{ name: 'Start', params: { locale: $i18n.locale } }"
           :disabled="!$store.state.loggedIn"
@@ -307,11 +314,11 @@
             isDark ? $t('nav.hellen-modus') : $t('nav.dunklen-modus')
           "
           button
-          @click="toggleTheme"
+          @click.prevent="toggleTheme"
         >
-          <IBiSunFill v-if="isDark" />
-          <IBiMoonStarsFill v-else />
-          <span class="d-sm-none ms-2">{{
+          <IBiSunFill v-if="isDark" class="me-2" />
+          <IBiMoonStarsFill v-else class="me-2" />
+          <span class="d-sm-none">{{
             isDark ? $t("nav.hellen-modus") : $t("nav.dunklen-modus")
           }}</span>
         </BNavItem>
@@ -703,9 +710,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.navbar {
+  background: color-mix(in srgb, var(--bs-body-bg) 80%, transparent);
+  // border-radius: 16px;
+  box-shadow: 0 4px 50px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(15.8px);
+  -webkit-backdrop-filter: blur(15.8px);
+  // border: 1px solid rgba(0, 0, 0, 0.16);
+}
+
 .dropdown-submenu:hover:not(:has(div.collapse:hover)) {
   color: var(--bs-body-color);
-  background-color: var(--bs-light);
+  background-color: var(--color-accent-soft);
 }
 
 .BDropdownText {

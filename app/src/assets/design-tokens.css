@@ -11,70 +11,327 @@
 [data-bs-theme="light"] {
   /* ---- App-specific custom tokens ---- */
 
-  /* Footer */
-  --color-footer-bg: #0150a4;
-  --color-footer-text: #ffffff;
-  --color-footer-text-hover: #d6d6d6;
-
-  /* Primary hover (not provided by Bootstrap) */
-  --color-primary-hover: #003d7a;
-
-  /* ---- Shadows ---- */
-  --shadow-lg: 0px 0px 25px rgba(0, 0, 0, 0.15);
-
-  /* ---- Misc ---- */
-  --color-mat-border: #a5a8f7;
-  --color-mat-bg: #e5e5f7;
-  --color-mat-grid: #444cf7;
-  --color-pulse-shadow: #6927d3;
-
-  /* ---- Tutorial highlight color ---- */
+  /* ==========================================
+     C) Rainbow + Pink — playful youth
+     ========================================== */
+  --color-footer-bg: #6a1b9a;
+  --color-footer-text: #ddcbe8;
+  --color-footer-text-hover: color-mix(
+    in srgb,
+    var(--color-footer-text) 30%,
+    white
+  );
+  --color-primary-hover: #9321a7;
+  --shadow-lg: 0px 0px 25px rgba(106, 27, 154, 0.15);
+  --color-mat-border: #4dd0e1;
+  --color-mat-bg: #e0f7fa;
+  --color-mat-grid: #00acc1;
+  --color-pulse-shadow: #00bcd4;
   --color-tutorial-highlight: #ffab06;
+  --color-accent: #00838f;
+  --color-accent-soft: #e0f7fa;
+  --color-surface: #fefaff;
+  --bs-card-bg: var(--color-surface);
+  --bs-card-cap-bg: var(--color-surface);
+  --bs-body-bg: #fefaff;
+  --bs-body-color: #212529;
+  --bs-tertiary-bg: #f8f0f8;
+  --bs-tertiary-bg-rgb: 248, 240, 248;
+  --bs-primary: #ab47bc;
+  --bs-primary-rgb: 171, 71, 188;
+  --bs-primary-bg-subtle: #f3e5f5;
+  --bs-primary-text-emphasis: #6a1b9a;
+  --bs-primary-border-subtle: #ce93d8;
+  --bs-link-color: var(--color-accent);
+  --bs-link-color-rgb: 0, 131, 143;
+  --bs-link-hover-color: #005662;
+  --bs-link-hover-color-rgb: 0, 86, 98;
+  --bs-secondary: #00897b;
+  /* --bs-secondary-color: #668784; */
+  --bs-secondary-rgb: 0, 137, 123;
+  --bs-secondary-hover: #00695c;
+  --bs-secondary-bg-subtle: #e0f2f1;
+  --bs-secondary-text-emphasis: #004d40;
+  --bs-secondary-border-subtle: #80cbc4;
+  --bs-border-color: #e0f7fa;
+
+  /* ==========================================
+     Social Login Colors
+     ========================================== */
+  --color-facebook-text: #1877f2;
+  --color-facebook-bg: #1877f2;
+  --color-facebook-text-hover: white;
+  --color-facebook-bg-hover: #1877f2;
+  --color-github-text: #0a241b;
+  --color-github-bg: #0a241b;
+  --color-github-text-hover: #bfffd1;
+  --color-github-bg-hover: #101411;
+  --color-google-text: #202020;
+  --color-google-bg: #202020;
+  --color-google-text-hover: #f5f5f5;
+  --color-google-bg-hover: #202020;
+
+  --hero-gradient-start: var(--bs-primary);
+  --hero-gradient-mid: var(--color-primary-hover);
+  --hero-gradient-end: color-mix(
+    in srgb,
+    var(--color-accent) 50%,
+    var(--color-primary-hover)
+  );
 }
 
 [data-bs-theme="dark"] {
-  /* ---- App-specific custom tokens (dark) ---- */
-  --color-footer-bg: #0d2137;
-  --color-footer-text: #dee2e6;
-  --color-footer-text-hover: #adb5bd;
-  --color-primary-hover: #6ba3e0;
-
-  /* ---- Shadows (darker in dark mode) ---- */
+  /* ==========================================
+     C) Rainbow + Pink
+     ========================================== */
+  --color-footer-bg: #1a0a2e;
+  --color-footer-text: #e1bee7;
+  --color-footer-text-hover: #fff176;
+  --color-primary-hover: #bc51ff;
   --shadow-lg: 0px 0px 25px rgba(0, 0, 0, 0.5);
-
-  /* ---- Misc (dark) ---- */
-  --color-mat-border: #495057;
-  --color-mat-bg: #2b3035;
-  --color-mat-grid: #6c757d;
-  --color-pulse-shadow: #9d6be8;
-
-  /* ---- Tutorial highlight ---- */
+  --color-mat-border: #00838f;
+  --color-mat-bg: #0a2a30;
+  --color-mat-grid: #4dd0e1;
+  --color-pulse-shadow: #4dd0e1;
   --color-tutorial-highlight: #ffab06;
+  --color-accent: #4dd0e1;
+  --color-accent-soft: #0a2a30;
+  --color-surface: #1e0a2e;
+  --bs-card-bg: var(--color-surface);
+  --bs-card-cap-bg: var(--color-surface);
+  --bs-body-bg: #0d0518;
+  --bs-body-color: #f9ebfb;
+  --bs-tertiary-bg: #261135;
+  --bs-tertiary-bg-rgb: 38, 17, 53;
+  --bs-primary: #ce93d8;
+  --bs-primary-rgb: 206, 147, 216;
+  --bs-primary-bg-subtle: #3a1a4e;
+  --bs-primary-text-emphasis: #d1a3d9;
+  --bs-primary-border-subtle: #7b1fa2;
+  --bs-link-color: var(--color-accent);
+  --bs-link-color-rgb: 77, 208, 225;
+  --bs-link-hover-color: #80deea;
+  --bs-link-hover-color-rgb: 128, 222, 234;
+  --bs-border-color: #2a0f3a;
+  --bs-secondary: #4db6ac;
+  /* --bs-secondary-color: #64e0d4; */
+  --bs-secondary-rgb: 77, 182, 172;
+  --bs-secondary-hover: #80cbc4;
+  --bs-secondary-bg-subtle: #0d3230;
+  --bs-secondary-text-emphasis: #80cbc4;
+  --bs-secondary-border-subtle: #00897b;
+
+  /* ==========================================
+     Social Login Colors
+     ========================================== */
+  --color-facebook-text: #1877f2;
+  --color-facebook-bg: #1877f2;
+  --color-facebook-text-hover: white;
+  --color-facebook-bg-hover: #1877f2;
+  --color-github-text: #bfffd1;
+  --color-github-bg: #bfffd1;
+  --color-github-text-hover: #08872b;
+  --color-github-bg-hover: #e4ebe6;
+  --color-google-text: #f5f5f5;
+  --color-google-bg: #f5f5f5;
+  --color-google-text-hover: #202020;
+  --color-google-bg-hover: #f5f5f5;
 
   /* ---- Bootstrap variant overrides ----
      Make "light" / "dark" theme-aware so
-     variant="light" renders dark in dark mode.
-  */
+     variant="light" renders dark in dark mode. */
   --bs-light-rgb: 45, 47, 50;
   --bs-light-bg: #2d2f32;
   --bs-light-color: #dee2e6;
   --bs-dark-rgb: 26, 28, 30;
   --bs-dark-bg: #1a1c1e;
   --bs-dark-color: #adb5bd;
+
+  --hero-gradient-start: var(--color-primary-hover);
+  --hero-gradient-mid: var(--color-primary-hover);
+  --hero-gradient-end: color-mix(
+    in srgb,
+    var(--color-accent) 50%,
+    var(--color-primary-hover)
+  );
+}
+
+/* ---- Nav-pills override ----
+   Wire active pill background to theme primary
+   instead of Bootstrap's hardcoded #0d6efd. */
+:root,
+[data-bs-theme] .nav-pills {
+  --bs-nav-pills-link-active-bg: var(--bs-primary);
+}
+:root .nav-tabs {
+  --bs-nav-tabs-link-active-bg: color-mix(
+    in srgb,
+    var(--bs-body-bg) 80%,
+    transparent
+  );
+}
+
+/* ---- Button variant overrides ----
+   Wire primary, secondary, light to theme tokens.
+   .btn-success/danger/warning/info keep their
+   semantic defaults (function overrides design). */
+
+.btn-primary {
+  --bs-btn-bg: var(--bs-primary);
+  --bs-btn-border-color: var(--bs-primary);
+  --bs-btn-hover-bg: var(--color-primary-hover);
+  --bs-btn-hover-border-color: var(--color-primary-hover);
+  --bs-btn-active-bg: var(--color-primary-hover);
+  --bs-btn-active-border-color: var(--color-primary-hover);
+  --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb);
+  --bs-btn-disabled-bg: var(--bs-primary);
+  --bs-btn-disabled-border-color: var(--bs-primary);
+}
+
+.btn-secondary {
+  --bs-btn-bg: var(--bs-secondary);
+  --bs-btn-border-color: var(--bs-secondary);
+  --bs-btn-hover-bg: var(--bs-secondary-hover);
+  --bs-btn-hover-border-color: var(--bs-secondary-hover);
+  --bs-btn-active-bg: var(--bs-secondary-hover);
+  --bs-btn-active-border-color: var(--bs-secondary-hover);
+  --bs-btn-focus-shadow-rgb: var(--bs-secondary-rgb);
+  --bs-btn-disabled-bg: var(--bs-secondary);
+  --bs-btn-disabled-border-color: var(--bs-secondary);
+}
+
+.btn-light {
+  --bs-btn-bg: var(--color-surface);
+  --bs-btn-border-color: var(--bs-border-color);
+  --bs-btn-color: var(--bs-body-color);
+  --bs-btn-hover-bg: var(--color-accent-soft);
+  --bs-btn-hover-border-color: var(--bs-border-color);
+  --bs-btn-hover-color: var(--bs-body-color);
+  --bs-btn-active-bg: var(--color-accent-soft);
+  --bs-btn-active-border-color: var(--bs-border-color);
+  --bs-btn-active-color: var(--bs-body-color);
+  --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb);
+  --bs-btn-disabled-bg: var(--color-surface);
+  --bs-btn-disabled-border-color: var(--bs-border-color);
+  --bs-btn-disabled-color: var(--bs-body-color);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--bs-primary);
+  --bs-btn-border-color: var(--bs-primary);
+  --bs-btn-hover-bg: var(--bs-primary);
+  --bs-btn-hover-border-color: var(--bs-primary);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-bg: var(--bs-primary);
+  --bs-btn-active-border-color: var(--bs-primary);
+  --bs-btn-active-color: #fff;
+  --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb);
+  --bs-btn-disabled-color: var(--bs-primary);
+  --bs-btn-disabled-border-color: var(--bs-primary);
+}
+
+.btn-outline-secondary {
+  --bs-btn-color: var(--bs-secondary);
+  --bs-btn-border-color: var(--bs-secondary);
+  --bs-btn-hover-bg: var(--bs-secondary);
+  --bs-btn-hover-border-color: var(--bs-secondary);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-bg: var(--bs-secondary);
+  --bs-btn-active-border-color: var(--bs-secondary);
+  --bs-btn-active-color: #fff;
+  --bs-btn-focus-shadow-rgb: var(--bs-secondary-rgb);
+  --bs-btn-disabled-color: var(--bs-secondary);
+  --bs-btn-disabled-border-color: var(--bs-secondary);
 }
 
 /* ---- Font application ---- */
 body {
-  font-family: 'Roboto', Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Inter", "Roboto", Avenir, Helvetica, Arial, sans-serif;
   font-weight: 400;
+  min-height: 100vh;
+  background:
+    radial-gradient(
+      ellipse 600px 300px at 30vw 55vh,
+      color-mix(in srgb, var(--bs-primary) 15%, transparent),
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 450px at 70vw 30vh,
+      color-mix(in srgb, var(--bs-primary) 10%, transparent),
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 840px at 80vw 95vh,
+      color-mix(in srgb, var(--color-accent) 10%, transparent),
+      transparent 100%
+    ),
+    var(--bs-body-bg);
+  background-attachment: fixed;
 }
 
-h1, h2, h3, h4, h5, h6,
-.h1, .h2, .h3, .h4, .h5, .h6 {
-  font-family: 'Roboto', Avenir, Helvetica, Arial, sans-serif;
+/* Colorful callout boxes */
+.callout {
+  padding: 1rem 1.25rem;
+  border-left: 4px solid var(--bs-primary);
+  background-color: rgba(var(--bs-primary-rgb), 0.06);
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+}
+
+.callout-accent {
+  border-left: 4px solid var(--color-accent);
+  background-color: color-mix(in srgb, var(--color-accent) 6%, transparent);
+}
+
+/* Emphasis in primary / accent color */
+em,
+.em {
+  font-family: "Fraunces", Georgia, "Times New Roman", Times, serif;
+  color: var(--bs-primary);
+  font-weight: 600;
+  font-style: normal;
+}
+
+b:not(footer *),
+strong {
+  color: var(--bs-primary-text-emphasis);
+}
+
+.hero {
+  background: linear-gradient(
+    to right,
+    var(--hero-gradient-start) 10%,
+    var(--hero-gradient-mid) 50%,
+    var(--hero-gradient-end)
+  );
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+  font-family: "Fraunces", Georgia, "Times New Roman", Times, serif;
   font-weight: 700;
 }
 
-code, kbd, pre, samp {
-  font-family: 'Courier New', Courier, monospace;
+code,
+kbd,
+pre,
+samp {
+  font-family: "Courier New", Courier, monospace;
+}
+
+:root {
+  scroll-behavior: auto;
 }

@@ -22,13 +22,11 @@
           >
             <IBiStarFill
               v-show="hoverStars != null ? hoverStars >= i : stars >= i"
-              class="text-primary"
-              :style="{ pointerEvents: 'none' }"
+              :style="{ color: 'var(--color-accent)', pointerEvents: 'none' }"
             />
             <IBiStar
               v-show="hoverStars != null ? hoverStars < i : stars < i"
-              class="text-primary"
-              :style="{ pointerEvents: 'none' }"
+              :style="{ color: 'var(--color-accent)', pointerEvents: 'none' }"
             />
           </BButton>
         </BButtonGroup>

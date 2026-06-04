@@ -1,8 +1,8 @@
 <template>
   <BContainer id="loginView" class="mt-4 my-4" data-view>
     <h1>{{ $t("login.dein-online-zugang") }}</h1>
-    <BTabs v-model="tabIndex" fill>
-      <BTab :title="$t('anmelden')" class="mt-4">
+    <BTabs :index="tabIndex" fill @update:index="(index) => (tabIndex = index)">
+      <BTab :title="$t('anmelden')" class="mt-4 p-3">
         <BForm @submit.prevent="onLoginSubmit" @reset.prevent="onReset">
           <BFormGroup
             :label="$t('username')"
@@ -67,7 +67,7 @@
           </a>
         </BForm>
       </BTab>
-      <BTab :title="$t('registrieren')" class="mt-4">
+      <BTab :title="$t('registrieren')" class="mt-4 p-3">
         <BForm @submit.prevent="onRegisterSubmit" @reset.prevent="onReset">
           <BFormGroup
             :label="$t('username')"
@@ -589,33 +589,27 @@ export default {
 
 <style lang="scss" scoped>
 .btn.github-login-button {
-  border-color: var(--bs-body-color);
-  .github-icon {
-    color: var(--bs-body-color);
-  }
+  color: var(--color-github-text);
+  border-color: var(--color-github-bg);
   &:hover {
-    background-color: var(--bs-body-color);
-    .github-icon {
-      color: var(--bs-body-bg);
-    }
+    color: var(--color-github-text-hover);
+    background-color: var(--color-github-bg-hover);
   }
 }
 .btn.google-login-button {
+  color: var(--color-google-text);
+  border-color: var(--color-google-bg);
   &:hover {
-    background-color: var(--bs-light);
-    color: var(--bs-body-color);
+    color: var(--color-google-text-hover);
+    background-color: var(--color-google-bg-hover);
   }
 }
 .btn.facebook-login-button {
-  .facebook-icon {
-    color: var(--bs-primary);
-  }
+  color: var(--color-facebook-text);
+  border-color: var(--color-facebook-bg);
   &:hover {
-    background-color: var(--bs-primary);
-    color: var(--bs-white);
-    .facebook-icon {
-      color: var(--bs-white);
-    }
+    color: var(--color-facebook-text-hover);
+    background-color: var(--color-facebook-bg-hover);
   }
 }
 </style>

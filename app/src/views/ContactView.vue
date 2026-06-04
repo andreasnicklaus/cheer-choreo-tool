@@ -15,7 +15,7 @@
           >. {{ $t("contact.well-get-back-to-you") }}
         </p>
       </BCol>
-      <BCol cols="12">
+      <BCol cols="12" class="my-5">
         <BRow class="row-cols-1 row-cols-md-3 g-4">
           <BCol v-show="showContactCallout">
             <BCard
@@ -24,10 +24,10 @@
               class="h-100"
             >
               <BCardTitle>
-                <IBiChatRightText />
+                <IBiChatRightText class="me-2" />
                 {{ $t("contact.send-a-message") }}
               </BCardTitle>
-              <BCardText class="text-muted">
+              <BCardText class="my-4 text-muted">
                 {{ $t("contact.fill-out-our-contact-form") }}
               </BCardText>
               <template #footer>
@@ -46,12 +46,12 @@
               class="h-100"
             >
               <BCardTitle>
-                <IBiEnvelope />
+                <IBiEnvelope class="me-2" />
                 {{ $t("contact.write-an-email") }}
               </BCardTitle>
-              <BCardSubtitle class="my-4">
+              <BCardText class="my-4 text-muted">
                 {{ $t("contact.compose-an-email-to-our-support-team") }}
-              </BCardSubtitle>
+              </BCardText>
               <template #footer>
                 <div class="d-grid">
                   <BButton
@@ -71,12 +71,12 @@
               class="h-100"
             >
               <BCardTitle>
-                <IBiBook />
+                <IBiBook class="me-2" />
                 {{ $t("contact.documentation-and-faq") }}
               </BCardTitle>
-              <BCardSubtitle class="my-4">
+              <BCardText class="my-4 text-muted">
                 {{ $t("contact.learn-about-the-choreo-planer") }}
-              </BCardSubtitle>
+              </BCardText>
               <template #footer>
                 <div class="d-grid">
                   <BButton

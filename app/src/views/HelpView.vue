@@ -16,7 +16,7 @@
         :key="category.name + category.order"
         border-variant="light"
       >
-        <h5 class="ms-1 text-muted">{{ category.name }}</h5>
+        <h5 class="ms-1">{{ category.name }}</h5>
         <BAccordion flush>
           <BAccordionItem
             v-for="(faq, faqId) in category.faqs"

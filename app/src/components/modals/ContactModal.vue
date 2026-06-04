@@ -11,6 +11,7 @@
     "
     centered
     scrollable
+    size="lg"
     :header-bg-variant="bgVariant"
     :header-text-variant="textVariant"
     :body-bg-variant="bgVariant"
