@@ -88,7 +88,7 @@ export default class AccountPage extends TestPage {
     await this.iFillInput(usernameInput, newUsername);
 
     const emailInput = this.page.getByRole("textbox", {
-      name: "E-mail address",
+      name: "Email address",
     });
     await this.iFillInput(emailInput, newEmail);
 
@@ -255,7 +255,7 @@ export default class AccountPage extends TestPage {
     await this.page.getByRole("button", { name: "Add user" }).click();
 
     const emailInput = this.page.getByRole("textbox", {
-      name: "E-mail address",
+      name: "Email address",
     });
     await this.iFillInput(emailInput, email);
 
@@ -297,13 +297,13 @@ export default class AccountPage extends TestPage {
 
   iSeeEmailDisabled() {
     return expect(
-      this.page.getByRole("textbox", { name: "E-mail address" })
+      this.page.getByRole("textbox", { name: "Email address" })
     ).toBeDisabled();
   }
 
   iSeeEmailEnabled() {
     return expect(
-      this.page.getByRole("textbox", { name: "E-mail address" })
+      this.page.getByRole("textbox", { name: "Email address" })
     ).toBeEnabled();
   }
 

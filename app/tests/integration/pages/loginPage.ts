@@ -25,7 +25,7 @@ export default class LoginPage extends TestPage {
 
   async iInputEmail(email: string) {
     const emailInput = this.page.getByRole("textbox", {
-      name: "E-mail address",
+      name: "Email address",
     });
     await this.iFillInput(emailInput, email);
   }

@@ -17,7 +17,7 @@ export default class HomePage extends TestPage {
   iCheckAllSections() {
     const headingTitles = [
       { name: "Choreo Planner", exact: true },
-      { name: "Create choreos" },
+      { name: "Create choreos", exact: true },
       { name: "Share countsheets" },
       { name: "Create videos" },
       { name: "Interested?" },
@@ -35,7 +35,7 @@ export default class HomePage extends TestPage {
       expect(this.page.locator("#logoImg")).toBeVisible(),
       expect(this.page.locator("#logoImg")).toHaveAttribute(
         "src",
-        /\/Icon.*\.png/
+        /\/Icon-.*\.png/
       ),
       expect(this.page.locator("#logoImg")).toHaveAttribute(
         "alt",

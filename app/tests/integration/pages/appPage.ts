@@ -68,7 +68,7 @@ export default class AppPage extends TestPage {
       expect(this.page.locator(".navbar-brand > img")).toBeVisible(),
       expect(this.page.locator(".navbar-brand > img")).toHaveAttribute(
         "src",
-        /\/Icon.*\.png/g
+        /\/Icon-.*\.svg/g
       ),
       expect(nav).toContainText("Start"),
       expect(nav).toContainText("Choreos"),
