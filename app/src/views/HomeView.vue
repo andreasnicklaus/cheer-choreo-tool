@@ -27,9 +27,21 @@
           height="400"
           class="mb-5"
         />
-        <p id="subtitle" class="w-100 text-align-start mb-0 fs-5">
-          <span class="hero"> - {{ $t("general.ChoreoPlaner") }}</span>
-        </p>
+        <div id="subtitle" class="w-100 d-flex flex-row align-items-center">
+          <hr
+            :style="{
+              width: '40px',
+              color: 'var(--hero-gradient-start)',
+              borderWidth: '2px',
+              opacity: 1,
+              borderRadius: '1px',
+            }"
+            class="me-2"
+          />
+          <p id="subtitleText" class="w-100 text-align-start mb-0 fs-5">
+            <span class="hero"> {{ $t("general.ChoreoPlaner") }}</span>
+          </p>
+        </div>
         <h1 id="title" :style="{ fontSize: '4em' }" class="mb-4">
           <i18n-t keypath="Home.choreos-that-impress">
             <span id="impressSpan" class="hero">{{
