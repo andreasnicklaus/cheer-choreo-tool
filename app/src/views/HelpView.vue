@@ -9,7 +9,7 @@
         v-model="searchTerm"
         type="text"
         :placeholder="$t('suchen')"
-        class="mb-2"
+        class="mb-4 mt-2"
       />
       <BCard
         v-for="(category, catId) in filteredFaqCategories"

@@ -7,7 +7,7 @@
         ? $t('modals.create-member.mitglied-bearbeiten')
         : $t('modals.create-member.neues-mitglied')
     "
-    centered
+    scrollable
     @show="resetMemberModal"
     @hidden="resetMemberModal"
     @ok="saveMember"
@@ -70,7 +70,9 @@
       >
         {{ $t("speichern") }}
       </BButton>
-      <BButton variant="danger" @click="cancel">{{ $t("abbrechen") }}</BButton>
+      <BButton variant="outline-danger" @click="cancel">{{
+        $t("abbrechen")
+      }}</BButton>
     </template>
   </BModal>
 </template>

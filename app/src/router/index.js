@@ -8,7 +8,12 @@ import LanguageService from "@/services/LanguageService";
 const router = createRouter({
   history: createWebHistory(env.BASE_URL),
   routes,
-  scrollBehavior() {
+  scrollBehavior(to, from) {
+    const localeOnlyChange =
+      to.name === from.name &&
+      JSON.stringify({ ...to.params, locale: undefined }) ===
+        JSON.stringify({ ...from.params, locale: undefined });
+    if (localeOnlyChange) return;
     return { left: 0, top: 0 };
   },
 });

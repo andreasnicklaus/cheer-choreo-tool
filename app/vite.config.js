@@ -49,7 +49,7 @@ export default defineConfig({
     tsconfigPaths: true,
   },
   optimizeDeps: {
-    include: ["vue3-html2pdf", "jspdf"],
+    include: ["vue3-html2pdf", "jspdf", "html2pdf.js"],
     exclude: [],
     esbuildOptions: {
       target: "esnext",

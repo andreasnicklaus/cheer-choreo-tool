@@ -468,7 +468,11 @@
     "passwort-vergessen": "Forgot your password?",
     "account-exists": "It seems that there is already a user with this name or email address ...",
     "login-link-was-sent": "A password link was sent to your email address. Check your mailbox!",
-    "erfolg": "Success"
+    "erfolg": "Success",
+    "information-text-4": {
+      "visit-our-help-center": "Visit our help center",
+      "need-more-information": "Need some more help?"
+    }
   },
   "meta": {
     "account": {
@@ -572,7 +576,7 @@
       "jahr-info": "The year of an extra season helps to sort. Leave the field empty if the squad cannot be assigned to a specific year.",
       "keine-mitglieder-kopieren": "Copy no members",
       "min-team-mitglied": "Min. 1 team member required",
-      "name-der-event-gruppe": "Name of the event group:",
+      "name-der-event-gruppe": "Name of the event group",
       "name-info": "The name of an extra season describes a squad and choreos for which purpose or period.",
       "neue-season": "New season",
       "regulaere-season": "Regular season",
@@ -614,7 +618,7 @@
       "countsheet-info-2": "{0} click on {1} or use the shortcuts {2} or {3} or make a {4} in the countsheet to create a new entry. You can set the name and choose who this entry applies. By default, the entry is created on the current count.",
       "countsheet-info-3": "{0} Entries can be found in the list of list and countsheet entries. Click on {1} next to the entry you want to edit or use the shortcut {2} and click on {3} after editing to save your changes.",
       "countsheet-info-box": "If you make the trouble to indicate who the entry applies, you can later hand out personal countsheets.",
-      "doppelklick-auf-die-zelle": "Double click on the cell",
+      "doppelklick-auf-die-zelle": "double click on the cell",
       "download-info-1": "{0} Click in the menu at the top right on {1} and select {2} to put together and download the countsheet.",
       "download-info-2": "{0} Click in the menu at the top right on {1} and select {2} to create and download your video.",
       "eintraege-bearbeiten": "Edit entries",
@@ -624,7 +628,7 @@
       "lineup-text-2": "{0} To create your first lineup, simply click on a participant on the mat and place the marker {1} to the desired area. A new lineup is automatically created or the participant is added to an existing lineup.",
       "lineup-text-3": "{0} If lineups do not apply equally for everyone, you need several lists on the same count. If necessary, remove participants from the lineup by clicking on the list of lineups and countsheet entries on {1} and removing the ticks at the participants. Then click on {2}, select the participants for the second group and then pull the markers to the right place on the mat.",
       "steuerung": "Controls",
-      "ueberschneidung-warnung": "If you define lineups that overlap for a participant, animations are not displayed correctly!",
+      "ueberschneidung-warnung": "If you define multiple lineups that overlap for a participant, animations are not displayed correctly!",
       "video-und-countsheet-downloaden": "Download video and countsheet"
     },
     "import-member": {

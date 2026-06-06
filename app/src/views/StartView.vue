@@ -285,7 +285,7 @@
               <BListGroupItem
                 v-for="team in teams"
                 :key="team.id"
-                :variant="useFolderColors ? 'info' : 'light'"
+                :variant="useFolderColors ? 'info' : null"
                 href="#"
                 class="collapse-submenu p-0"
               >
@@ -341,7 +341,7 @@
                             }"
                             :underline-opacity="0"
                           >
-                            <BListGroupItem variant="light" button>
+                            <BListGroupItem button>
                               <b>
                                 <BRow align-h="between" align-v="center">
                                   <BCol>
@@ -397,7 +397,8 @@
                                       <BButton
                                         v-if="canDeleteChoreo(choreo)"
                                         variant="outline-danger"
-                                        @click="deleteChoreo(choreo.id)"
+                                        href="#"
+                                        @click.prevent="deleteChoreo(choreo.id)"
                                       >
                                         <IBiTrash />
                                       </BButton>
@@ -525,6 +526,12 @@
       :me="me"
       @season-team-created="onSeasonTeamCreation"
     />
+
+    <DeleteChoreoModal
+      ref="deleteChoreoModal"
+      :choreo-id="deleteChoreoId"
+      @choreo-deleted="onChoreoDeleted"
+    />
   </BContainer>
 </template>
 
@@ -537,6 +544,7 @@ import CreateChoreoModal from "@/components/modals/CreateChoreoModal.vue";
 import CreateClubModal from "@/components/modals/CreateClubModal.vue";
 import CreateSeasonModal from "@/components/modals/CreateSeasonModal.vue";
 import CreateTeamModal from "@/components/modals/CreateTeamModal.vue";
+import DeleteChoreoModal from "@/components/modals/DeleteChoreoModal.vue";
 import ClubService from "@/services/ClubService";
 import ChoreoService from "@/services/ChoreoService";
 import { canWrite, canDelete } from "@/utils/permissions";
@@ -570,6 +578,7 @@ export default {
     CreateTeamModal,
     CreateClubModal,
     CreateSeasonModal,
+    DeleteChoreoModal,
   },
   setup() {
     const { t } = useI18n();
@@ -588,6 +597,7 @@ export default {
     loading: true,
     filterCollapseVisible: false,
     accessSharingEnabled: true,
+    deleteChoreoId: null,
   }),
   computed: {
     ...mapState(["owners", "me"]),
@@ -663,16 +673,17 @@ export default {
   },
   methods: {
     deleteChoreo(choreoId) {
-      ChoreoService.remove(choreoId).then(() => {
-        // Remove from local state
-        this.teams = this.teams.map((t) => ({
-          ...t,
-          SeasonTeams: t.SeasonTeams.map((st) => ({
-            ...st,
-            Choreos: st.Choreos.filter((c) => c.id !== choreoId),
-          })),
-        }));
-      });
+      this.deleteChoreoId = choreoId;
+      this.$refs.deleteChoreoModal.open();
+    },
+    onChoreoDeleted(choreoId) {
+      this.teams = this.teams.map((t) => ({
+        ...t,
+        SeasonTeams: t.SeasonTeams.map((st) => ({
+          ...st,
+          Choreos: st.Choreos.filter((c) => c.id !== choreoId),
+        })),
+      }));
     },
     load() {
       this.filterCollapseVisible = !this.$store.state.isMobile;

@@ -468,7 +468,11 @@
     "passwort-vergessen": "Passwort vergessen?",
     "account-exists": "Es scheint so als gäbe es bereits einen Nutzer mit diesem Namen oder E-Mail-Adresse ...",
     "login-link-was-sent": "Ein Passwort-Link wurde an deine E-Mail-Adresse geschickt. Check dein Postfach!",
-    "erfolg": "Erfolg"
+    "erfolg": "Erfolg",
+    "information-text-4": {
+      "need-more-information": "Benötigst du noch weitere Hilfe?",
+      "visit-our-help-center": "Besuche unser Hilfecenter"
+    }
   },
   "meta": {
     "account": {
@@ -580,7 +584,7 @@
       "jahr-info": "Das Jahr einer Extra-Season hilft beim Sortieren. Lass das Feld leer, wenn der Kader keinem Jahr zuzuordnen ist.",
       "keine-mitglieder-kopieren": "Keine Mitglieder kopieren",
       "min-team-mitglied": "Min. 1 Team-Mitglied erforderlich",
-      "name-der-event-gruppe": "Name der Event-Gruppe:",
+      "name-der-event-gruppe": "Name der Event-Gruppe",
       "name-info": "Der Name einer Extra-Season beschreibt für welchen Zweck oder Zeitraum ein Kader und Choreos bestehen.",
       "neue-season": "Neue Season",
       "regulaere-season": "Reguläre Season",
@@ -632,7 +636,7 @@
       "lineup-text-2": "{0} Um deine erste Aufstellung anzulegen, klicke einfach einen Teilnehmer auf der Matte an und platziere den Marker {1} an die gewünschte Stelle. Es wird automatisch eine neue Aufstellung angelegt oder der Teilnehmer zu einer bestehenden Aufstellung hinzugefügt.",
       "lineup-text-3": "{0} Wenn Aufstellungen nicht für alle gleich lang gelten, brauchst du auf denselben Count mehrere Aufstellungen. Entferne dafür ggf. Teilnehmer aus der Aufstellung, indem du in der Liste an Aufstellung und Countsheet-Einträgen auf {1} klickst und die Häkchen bei den Teilnehmern entfernst. Klicke dann auf {2}, wähle die Teilnehmer für die zweite Gruppe aus und ziehe die Marker dann auf der Matte an die richtige Stelle.",
       "steuerung": "Steuerung",
-      "ueberschneidung-warnung": "Wenn du Aufstellungen definierst, die sich für einen Teilnehmer überschneiden, werden Animationen nicht richtig angezeigt!",
+      "ueberschneidung-warnung": "Wenn du mehrere Aufstellungen definierst, die sich für einen Teilnehmer überschneiden, werden Animationen nicht richtig angezeigt!",
       "video-und-countsheet-downloaden": "Video und Countsheet downloaden"
     },
     "import-member": {

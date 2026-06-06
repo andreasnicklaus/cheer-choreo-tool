@@ -23,10 +23,10 @@
   );
   --color-primary-hover: #9321a7;
   --shadow-lg: 0px 0px 25px rgba(106, 27, 154, 0.15);
-  --color-mat-border: #4dd0e1;
-  --color-mat-bg: #e0f7fa;
-  --color-mat-grid: #00acc1;
-  --color-pulse-shadow: #00bcd4;
+  --color-mat-border: #a5a8f7;
+  --color-mat-bg: #e5e5f7;
+  --color-mat-grid: #a9abf1;
+  --color-pulse-shadow: #a5a8f7;
   --color-tutorial-highlight: #ffab06;
   --color-accent: #00838f;
   --color-accent-soft: #e0f7fa;
@@ -53,7 +53,8 @@
   --bs-secondary-bg-subtle: #e0f2f1;
   --bs-secondary-text-emphasis: #004d40;
   --bs-secondary-border-subtle: #80cbc4;
-  --bs-border-color: #e0f7fa;
+  --bs-border-color: #88ccd4;
+  --bs-form-switch-focus-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%234db6ac'/%3e%3c/svg%3e");
 
   /* ==========================================
      Social Login Colors
@@ -85,14 +86,18 @@
      C) Rainbow + Pink
      ========================================== */
   --color-footer-bg: #1a0a2e;
-  --color-footer-text: #e1bee7;
-  --color-footer-text-hover: #fff176;
+  --color-footer-text: #ebd3f0;
+  --color-footer-text-hover: color-mix(
+    in srgb,
+    var(--color-footer-text) 0%,
+    white
+  );
   --color-primary-hover: #bc51ff;
   --shadow-lg: 0px 0px 25px rgba(0, 0, 0, 0.5);
-  --color-mat-border: #00838f;
-  --color-mat-bg: #0a2a30;
-  --color-mat-grid: #4dd0e1;
-  --color-pulse-shadow: #4dd0e1;
+  --color-mat-border: #a5a8f7;
+  --color-mat-bg: #e5e5f7;
+  --color-mat-grid: #a9abf1;
+  --color-pulse-shadow: #a5a8f7;
   --color-tutorial-highlight: #ffab06;
   --color-accent: #4dd0e1;
   --color-accent-soft: #0a2a30;
@@ -103,16 +108,17 @@
   --bs-body-color: #f9ebfb;
   --bs-tertiary-bg: #261135;
   --bs-tertiary-bg-rgb: 38, 17, 53;
-  --bs-primary: #ce93d8;
-  --bs-primary-rgb: 206, 147, 216;
+  --bs-primary: #cc7eda;
+  --bs-primary-rgb: 204, 126, 218;
   --bs-primary-bg-subtle: #3a1a4e;
-  --bs-primary-text-emphasis: #d1a3d9;
+  --bs-primary-text-emphasis: #c65fd8;
   --bs-primary-border-subtle: #7b1fa2;
   --bs-link-color: var(--color-accent);
   --bs-link-color-rgb: 77, 208, 225;
   --bs-link-hover-color: #80deea;
   --bs-link-hover-color-rgb: 128, 222, 234;
-  --bs-border-color: #2a0f3a;
+  --bs-border-color: #330c49;
+  --bs-form-switch-focus-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%2380cbc4'/%3e%3c/svg%3e");
   --bs-secondary: #4db6ac;
   /* --bs-secondary-color: #64e0d4; */
   --bs-secondary-rgb: 77, 182, 172;
@@ -142,6 +148,7 @@
      variant="light" renders dark in dark mode. */
   --bs-light-rgb: 45, 47, 50;
   --bs-light-bg: #2d2f32;
+  --bs-light-bg-subtle: #230a2e;
   --bs-light-color: #dee2e6;
   --bs-dark-rgb: 26, 28, 30;
   --bs-dark-bg: #1a1c1e;
@@ -154,6 +161,10 @@
     var(--color-accent) 50%,
     var(--color-primary-hover)
   );
+
+  & .text-bg-light {
+    color: #dee2e6 !important;
+  }
 }
 
 /* ---- Nav-pills override ----
@@ -292,7 +303,7 @@ em,
   font-style: normal;
 }
 
-b:not(footer *),
+b:not(footer *):not(.regularColor),
 strong {
   color: var(--bs-primary-text-emphasis);
 }
@@ -330,6 +341,36 @@ kbd,
 pre,
 samp {
   font-family: "Courier New", Courier, monospace;
+}
+
+/* ---- Form check & switch overrides ----
+   Wire checked/focus states to theme tokens
+   instead of Bootstrap's hardcoded blues. */
+
+.form-check-input:checked {
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+.form-check-input:focus {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+.form-check-input[type="checkbox"]:indeterminate {
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+.form-switch .form-check-input:checked {
+  background-color: var(--bs-secondary);
+  border-color: var(--bs-secondary);
+}
+
+.form-switch .form-check-input:focus {
+  border-color: var(--bs-secondary);
+  box-shadow: 0 0 0 0.25rem rgba(var(--bs-secondary-rgb), 0.25);
+  --bs-form-switch-bg: var(--bs-form-switch-focus-bg);
 }
 
 :root {

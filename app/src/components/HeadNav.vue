@@ -4,13 +4,16 @@
       :to="{ name: 'Home', params: { locale: $i18n.locale } }"
       class="em-primary"
     >
-      <!-- TODO: replace christmas and easter icons -->
       <img
         :src="
           $store.getters.isChristmasTime
-            ? '/Icon-Christmas.png'
+            ? isDark
+              ? '/Icon-ChristmasDark.svg'
+              : '/Icon-ChristmasLight.svg'
             : $store.getters.isEasterTime
-              ? '/Icon-Easter.png'
+              ? isDark
+                ? '/Icon-EasterDark.svg'
+                : '/Icon-EasterLight.svg'
               : isDark
                 ? '/Icon-PrimaryDark.svg'
                 : '/Icon-PrimaryLight.svg'
@@ -272,7 +275,7 @@
             v-for="({ lang, flag, localName }, i) in flags"
             :key="`lang${i}`"
             :value="lang"
-            @click="() => LanguageService.setLanguage(lang)"
+            @click.prevent="() => LanguageService.setLanguage(lang)"
           >
             <CountryFlag :iso="flag" mode="rounded" class="me-1" />
             <span>{{ localName }}</span>
@@ -714,8 +717,8 @@ export default {
   background: color-mix(in srgb, var(--bs-body-bg) 80%, transparent);
   // border-radius: 16px;
   box-shadow: 0 4px 50px rgba(0, 0, 0, 0.06);
-  backdrop-filter: blur(15.8px);
-  -webkit-backdrop-filter: blur(15.8px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   // border: 1px solid rgba(0, 0, 0, 0.16);
 }
 

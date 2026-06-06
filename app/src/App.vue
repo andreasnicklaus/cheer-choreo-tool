@@ -2,7 +2,7 @@
   <BApp id="app" :class="{ mobile: $store.state.isMobile }">
     <AppInstallWindow />
     <HeadNav :online-status="online" :server-version="serverVersion" />
-    <router-view :style="{ minHeight: 'calc(100vh - 116px)' }" class="mb-2" />
+    <router-view :style="{ minHeight: 'calc(100vh - 116px)' }" class="my-4" />
     <footer class="p-4 px-5 pt-5 d-flex flex-column align-items-center">
       <BRow
         class="w-75 justify-content-md-around justify-content-start"
@@ -436,6 +436,10 @@ div:has(.betteruptime-announcement)
 .nav-link:not(.dropdown-toggle, [role="tab"]) {
   display: flex;
   gap: 4px;
+}
+
+.b-form-group {
+  margin-bottom: 8px;
 }
 </style>
 

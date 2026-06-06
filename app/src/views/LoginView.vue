@@ -32,7 +32,7 @@
             ></BFormInput>
           </BFormGroup>
 
-          <div class="d-flex my-2">
+          <div class="d-flex mb-2 mt-3">
             <div class="d-grid" :style="{ width: '100%' }">
               <BButton
                 type="submit"
@@ -135,7 +135,7 @@
             ></BFormInput>
           </BFormGroup>
 
-          <div class="d-flex my-2">
+          <div class="d-flex mb-2 mt-3">
             <div class="d-grid" :style="{ width: '100%' }">
               <BButton
                 type="submit"
@@ -179,6 +179,13 @@
             <I18n-t keypath="login.information-text-3" tag="p">
               <b>{{ $t("login.information-text-3-highlight") }}</b>
             </I18n-t>
+            <p>
+              {{ $t("login.information-text-4.need-more-information") }}
+              <a href="#" @click="() => $router.push('/help')">{{
+                $t("login.information-text-4.visit-our-help-center")
+              }}</a
+              >.
+            </p>
           </BCardText>
         </BCard>
       </BTab>

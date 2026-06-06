@@ -3,7 +3,6 @@
     :id="`modal-newSeason-${id}`"
     ref="modal"
     :title="$t('modals.create-season.neue-season')"
-    size="xl"
     scrollable
     @ok="create"
   >
@@ -125,7 +124,9 @@
       <BButton variant="success" :disabled="!inputIsValid" @click="ok">
         {{ $t("erstellen") }}
       </BButton>
-      <BButton variant="danger" @click="cancel">{{ $t("abbrechen") }}</BButton>
+      <BButton variant="outline-danger" @click="cancel">{{
+        $t("abbrechen")
+      }}</BButton>
     </template>
   </BModal>
 </template>

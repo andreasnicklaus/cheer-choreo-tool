@@ -601,7 +601,7 @@ export default {
         case "cheer":
           context.fillStyle = this.hexToRgba(
             this.cssVar("--color-mat-grid"),
-            0.4
+            1
           );
           for (let i = 0; i < 6; i++) {
             context.fillRect(
@@ -644,7 +644,7 @@ export default {
       context.strokeStyle = color;
       context.stroke();
 
-      context.fillStyle = this.cssVar("--bs-body-color");
+      context.fillStyle = "#212529";
       context.textBaseline = "middle";
       context.textAlign = "center";
       context.font = (16 / 500) * this.width + "px Sans-Serif";

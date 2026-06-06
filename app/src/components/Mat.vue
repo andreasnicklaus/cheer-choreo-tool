@@ -343,10 +343,13 @@ export default {
   background-repeat: repeat;
 
   &.cheer {
+    --mat-line-width: 3.5px;
     background-image: linear-gradient(
       to right,
-      color-mix(in srgb, var(--color-mat-grid) 40%, transparent) 5px,
-      color-mix(in srgb, var(--color-mat-bg) 27%, transparent) 5px
+      var(--color-mat-grid) var(--mat-line-width),
+      var(--color-mat-bg) var(--mat-line-width)
+        calc(100% - var(--mat-line-width)),
+      var(--color-mat-grid) calc(100% - var(--mat-line-width))
     );
   }
 }

@@ -11,20 +11,25 @@
       <BCol
         class="d-flex flex-column justify-content-center align-items-center"
       >
+        <!-- TODO: re-export the logos in dark with the updated color #cc7eda -->
         <img
           id="logoImg"
           :src="
             $store.getters.isChristmasTime
-              ? '/Icon-Christmas.png'
+              ? isDark
+                ? '/Icon-ChristmasDark.svg'
+                : '/Icon-ChristmasLight.svg'
               : $store.getters.isEasterTime
-                ? '/Icon-Easter.png'
+                ? isDark
+                  ? '/Icon-EasterDark.svg'
+                  : '/Icon-EasterLight.svg'
                 : isDark
                   ? '/Icon-PrimaryDark.svg'
                   : '/Icon-PrimaryLight.svg'
           "
           :alt="$t('choreo-planer-icon')"
           width="300"
-          height="400"
+          height="300"
           class="mb-5"
         />
         <div id="subtitle" class="w-100 d-flex flex-row align-items-center">
@@ -891,7 +896,7 @@ export default {
       "#impressSpan",
       {
         opacity: 0,
-        duration: 3,
+        duration: 2,
       },
       "<"
     );
@@ -1160,23 +1165,13 @@ ul {
 
   &.row-reverse {
     flex-direction: row-reverse;
+  }
+  .featureCallout {
+    white-space: nowrap;
 
-    .featureCallout {
-      white-space: nowrap;
-
-      & > ul,
-      & > ol {
-        white-space: normal;
-      }
-
-      &:nth-of-type(1) {
-        margin-right: 0;
-        margin-left: 24px;
-      }
-      &:last-of-type {
-        margin-left: 0;
-        margin-right: 24px;
-      }
+    & > ul,
+    & > ol {
+      white-space: normal;
     }
   }
 
@@ -1207,12 +1202,13 @@ ul {
       font-size: 60px;
       margin-bottom: 16px;
     }
-
-    &:nth-of-type(1) {
-      margin-left: 0;
-    }
-    &:last-of-type {
-      margin-right: 0;
+    .row-reverse > & {
+      &:nth-of-type(1) {
+        margin-left: 0;
+      }
+      &:last-of-type {
+        margin-right: 0;
+      }
     }
   }
 }

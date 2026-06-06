@@ -3,7 +3,7 @@
     :id="`modal-newClub-${id}`"
     ref="modal"
     :title="$t('modals.create-club.neuer-verein')"
-    centered
+    scrollable
     :no-close-on-backdrop="preventClosing && pendingInvites.length === 0"
     :no-close-on-esc="preventClosing && pendingInvites.length === 0"
     :no-header-close="preventClosing && pendingInvites.length === 0"
@@ -90,7 +90,7 @@
       </BButton>
       <BButton
         v-if="!preventClosing || pendingInvites.length > 0"
-        variant="danger"
+        variant="outline-danger"
         @click="cancel"
       >
         {{ $t("abbrechen") }}
