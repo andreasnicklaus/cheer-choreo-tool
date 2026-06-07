@@ -375,7 +375,6 @@ router.get(
     UserService.findById(req.actingUserId)
       .then((user: User | null) => {
         res.send(user);
-        return next();
       })
       .catch((e: Error) => next(e));
   },
@@ -418,10 +417,8 @@ router.put(
             req.locale,
           ).then(() => {
             res.send();
-            return next();
           });
         res.send(user);
-        return next();
       })
       .catch((e: Error) => next(e));
   },
