@@ -2,58 +2,88 @@
    Design Tokens — Cheer Choreo Tool
    ============================================
    Strategy:
-   - Use Bootstrap's own CSS vars wherever possible
-   - Only add custom vars for app-specific concepts
-   - All tokens live under [data-bs-theme] selectors
+   - Define palette shades first (50 – 900)
+   - Assign semantic tokens to shade variables
+   - Only raw values for outliers & brand colors
    ============================================ */
 
 :root,
 [data-bs-theme="light"] {
-  /* ---- App-specific custom tokens ---- */
+  /* ==========================================
+     Primary palette (purple)
+     ========================================== */
+  --primary-50: #f3e5f5;
+  --primary-100: #e0bce6;
+  --primary-200: #ce93d8;
+  --primary-300: #bc6dca;
+  --primary-400: #ab47bc;
+  --primary-500: #9f34b1;
+  --primary-600: #9321a7;
+  --primary-700: #7e1ea0;
+  --primary-800: #6a1b9a;
+  --primary-900: #4a136c;
 
   /* ==========================================
-     C) Rainbow + Pink — playful youth
+     Secondary palette (teal / cyan)
      ========================================== */
-  --color-footer-bg: #6a1b9a;
-  --color-footer-text: #ddcbe8;
+  --secondary-50: #e0f7fa;
+  --secondary-100: #e0f2f1;
+  --secondary-200: #80cbc4;
+  --secondary-300: #60b9b6;
+  --secondary-400: #40a7a9;
+  --secondary-500: #20959c;
+  --secondary-600: #00838f;
+  --secondary-700: #00897b;
+  --secondary-800: #00695c;
+  --secondary-900: #004d40;
+
+  /* ==========================================
+     App-specific custom tokens
+     ========================================== */
+  --color-footer-bg: var(--primary-800);
+  --color-footer-text: var(--primary-100);
   --color-footer-text-hover: color-mix(
     in srgb,
     var(--color-footer-text) 30%,
     white
   );
-  --color-primary-hover: #9321a7;
-  --shadow-lg: 0px 0px 25px rgba(106, 27, 154, 0.15);
+  --color-primary-hover: var(--primary-600);
+  --shadow-lg: 0px 0px 25px rgba(37, 37, 37, 0.15);
   --color-mat-border: #a5a8f7;
   --color-mat-bg: #e5e5f7;
   --color-mat-grid: #a9abf1;
-  --color-pulse-shadow: #a5a8f7;
+  --color-pulse-shadow: var(--bs-secondary);
   --color-tutorial-highlight: #ffab06;
-  --color-accent: #00838f;
-  --color-accent-soft: #e0f7fa;
-  --color-surface: #fefaff;
+  --color-accent: var(--secondary-600);
+  --color-accent-soft: var(--secondary-50);
+  --color-surface: color-mix(in srgb, var(--primary-50) 80%, white);
+
+  /* ==========================================
+     Bootstrap semantic overrides
+     ========================================== */
   --bs-card-bg: var(--color-surface);
   --bs-card-cap-bg: var(--color-surface);
-  --bs-body-bg: #fefaff;
-  --bs-body-color: #212529;
+  --bs-body-bg: var(--color-surface);
+  --bs-body-color: color-mix(in srgb, var(--primary-900) 60%, black);
   --bs-tertiary-bg: #f8f0f8;
   --bs-tertiary-bg-rgb: 248, 240, 248;
-  --bs-primary: #ab47bc;
+  --bs-primary: var(--primary-400);
   --bs-primary-rgb: 171, 71, 188;
-  --bs-primary-bg-subtle: #f3e5f5;
-  --bs-primary-text-emphasis: #6a1b9a;
-  --bs-primary-border-subtle: #ce93d8;
+  --bs-primary-bg-subtle: var(--primary-50);
+  --bs-primary-text-emphasis: var(--primary-800);
+  --bs-primary-border-subtle: var(--primary-200);
   --bs-link-color: var(--color-accent);
   --bs-link-color-rgb: 0, 131, 143;
-  --bs-link-hover-color: #005662;
-  --bs-link-hover-color-rgb: 0, 86, 98;
-  --bs-secondary: #00897b;
+  --bs-link-hover-color: var(--secondary-800);
+  --bs-link-hover-color-rgb: 0, 105, 92;
+  --bs-secondary: var(--secondary-700);
   /* --bs-secondary-color: #668784; */
   --bs-secondary-rgb: 0, 137, 123;
-  --bs-secondary-hover: #00695c;
-  --bs-secondary-bg-subtle: #e0f2f1;
-  --bs-secondary-text-emphasis: #004d40;
-  --bs-secondary-border-subtle: #80cbc4;
-  --bs-border-color: #88ccd4;
+  --bs-secondary-hover: var(--secondary-800);
+  --bs-secondary-bg-subtle: var(--secondary-100);
+  --bs-secondary-text-emphasis: var(--secondary-900);
+  --bs-secondary-border-subtle: var(--secondary-200);
+  --bs-border-color: var(--secondary-200);
   --bs-form-switch-focus-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%234db6ac'/%3e%3c/svg%3e");
 
   /* ==========================================
@@ -83,49 +113,83 @@
 
 [data-bs-theme="dark"] {
   /* ==========================================
-     C) Rainbow + Pink
+     Primary palette (purple)
+     50 = lightest, 900 = darkest
      ========================================== */
-  --color-footer-bg: #1a0a2e;
-  --color-footer-text: #ebd3f0;
+  --primary-50: #d8bcde;
+  --primary-100: #d29ddc;
+  --primary-200: #cc7eda;
+  --primary-300: #c96ed9;
+  --primary-400: #c65fd8;
+  --primary-500: #bc51ff;
+  --primary-600: #9b38d0;
+  --primary-700: #7b1fa2;
+  --primary-800: #5a1c78;
+  --primary-900: #3a1a4e;
+
+  /* ==========================================
+     Secondary palette (teal / cyan)
+     50 = lightest, 900 = darkest
+     ========================================== */
+  --secondary-50: #b3c6a7;
+  --secondary-100: #99c8b5;
+  --secondary-200: #80cbc4;
+  --secondary-300: #4dd0e1;
+  --secondary-400: #4db6ac;
+  --secondary-500: #33a79c;
+  --secondary-600: #19988b;
+  --secondary-700: #00897b;
+  --secondary-800: #0d3230;
+  --secondary-900: #0a2a30;
+
+  /* ==========================================
+     App-specific custom tokens
+     ========================================== */
+  --color-footer-bg: var(--primary-900);
+  --color-footer-text: var(--primary-50);
   --color-footer-text-hover: color-mix(
     in srgb,
     var(--color-footer-text) 0%,
     white
   );
-  --color-primary-hover: #bc51ff;
-  --shadow-lg: 0px 0px 25px rgba(0, 0, 0, 0.5);
+  --color-primary-hover: var(--primary-500);
+  --shadow-lg: 0px 0px 25px rgba(0, 0, 0, 0.25);
   --color-mat-border: #a5a8f7;
   --color-mat-bg: #e5e5f7;
   --color-mat-grid: #a9abf1;
-  --color-pulse-shadow: #a5a8f7;
+  --color-pulse-shadow: var(--bs-secondary);
   --color-tutorial-highlight: #ffab06;
-  --color-accent: #4dd0e1;
-  --color-accent-soft: #0a2a30;
-  --color-surface: #1e0a2e;
+  --color-accent: var(--secondary-300);
+  --color-accent-soft: var(--secondary-900);
+  --color-surface: color-mix(in srgb, var(--primary-900) 60%, black);
+
+  /* ==========================================
+     Bootstrap semantic overrides
+     ========================================== */
   --bs-card-bg: var(--color-surface);
   --bs-card-cap-bg: var(--color-surface);
-  --bs-body-bg: #0d0518;
-  --bs-body-color: #f9ebfb;
+  --bs-body-bg: var(--color-surface);
+  --bs-body-color: color-mix(in srgb, var(--primary-200) 40%, white);
   --bs-tertiary-bg: #261135;
   --bs-tertiary-bg-rgb: 38, 17, 53;
-  --bs-primary: #cc7eda;
+  --bs-primary: var(--primary-200);
   --bs-primary-rgb: 204, 126, 218;
-  --bs-primary-bg-subtle: #3a1a4e;
-  --bs-primary-text-emphasis: #c65fd8;
-  --bs-primary-border-subtle: #7b1fa2;
+  --bs-primary-bg-subtle: var(--primary-900);
+  --bs-primary-text-emphasis: var(--primary-400);
+  --bs-primary-border-subtle: var(--primary-700);
   --bs-link-color: var(--color-accent);
   --bs-link-color-rgb: 77, 208, 225;
-  --bs-link-hover-color: #80deea;
-  --bs-link-hover-color-rgb: 128, 222, 234;
-  --bs-border-color: #330c49;
+  --bs-link-hover-color: var(--secondary-500);
+  --bs-link-hover-color-rgb: 51, 167, 156;
+  --bs-border-color: var(--primary-900);
   --bs-form-switch-focus-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%2380cbc4'/%3e%3c/svg%3e");
-  --bs-secondary: #4db6ac;
+  --bs-secondary: var(--secondary-400);
   /* --bs-secondary-color: #64e0d4; */
   --bs-secondary-rgb: 77, 182, 172;
-  --bs-secondary-hover: #80cbc4;
-  --bs-secondary-bg-subtle: #0d3230;
-  --bs-secondary-text-emphasis: #80cbc4;
-  --bs-secondary-border-subtle: #00897b;
+  --bs-secondary-hover: var(--secondary-200);
+  --bs-secondary-bg-subtle: var(--secondary-800);
+  --bs-secondary-text-emphasis: var(--secondary-200);
+  --bs-secondary-border-subtle: var(--secondary-700);
 
   /* ==========================================
      Social Login Colors
@@ -147,8 +211,16 @@
      Make "light" / "dark" theme-aware so
      variant="light" renders dark in dark mode. */
   --bs-light-rgb: 45, 47, 50;
-  --bs-light-bg: #2d2f32;
-  --bs-light-bg-subtle: #230a2e;
+  --bs-light-bg: --bs-light-bg-subtle: color-mix(
+      in srgb,
+      var(--color-surface) 90%,
+      var(--primary-900)
+    );
+  --bs-light-bg-subtle: color-mix(
+    in srgb,
+    var(--color-surface) 60%,
+    var(--primary-900)
+  );
   --bs-light-color: #dee2e6;
   --bs-dark-rgb: 26, 28, 30;
   --bs-dark-bg: #1a1c1e;
@@ -284,7 +356,7 @@ body {
 .callout {
   padding: 1rem 1.25rem;
   border-left: 4px solid var(--bs-primary);
-  background-color: rgba(var(--bs-primary-rgb), 0.06);
+  background-color: rgb(from var(--bs-primary) r g b / 0.06);
   border-radius: 0.375rem;
   margin-bottom: 1rem;
 }
@@ -304,7 +376,7 @@ em,
 }
 
 b:not(footer *):not(.regularColor),
-strong {
+strong:not(.betteruptime-announcement *) {
   color: var(--bs-primary-text-emphasis);
 }
 
@@ -354,7 +426,7 @@ samp {
 
 .form-check-input:focus {
   border-color: var(--bs-primary);
-  box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+  box-shadow: 0 0 0 0.25rem rgb(from var(--bs-primary) r g b / 0.25);
 }
 
 .form-check-input[type="checkbox"]:indeterminate {
@@ -369,7 +441,7 @@ samp {
 
 .form-switch .form-check-input:focus {
   border-color: var(--bs-secondary);
-  box-shadow: 0 0 0 0.25rem rgba(var(--bs-secondary-rgb), 0.25);
+  box-shadow: 0 0 0 0.25rem rgb(from var(--bs-secondary) r g b / 0.25);
   --bs-form-switch-bg: var(--bs-form-switch-focus-bg);
 }
 
