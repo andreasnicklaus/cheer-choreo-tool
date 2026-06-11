@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import { readFileSync, existsSync, writeFileSync } from "fs";
 import vue from "@vitejs/plugin-vue";
+import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
 import Icons from "unplugin-icons/vite";
 import Components from "unplugin-vue-components/vite";
 import IconsResolve from "unplugin-icons/resolver";
@@ -50,13 +51,11 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ["vue3-html2pdf", "jspdf", "html2pdf.js"],
-    exclude: [],
-    rolldownOptions: {
-      target: "esnext",
-    },
+    exclude: ["vue-i18n"],
   },
   plugins: [
     vue(),
+    VueI18nPlugin({}),
     preserveManifestTrailingNewline(),
     Components({
       resolvers: [IconsResolve()],
@@ -172,6 +171,7 @@ export default defineConfig({
     ),
   },
   build: {
+    target: "esnext",
     commonjsOptions: {
       transformMixedEsModules: true,
     },
