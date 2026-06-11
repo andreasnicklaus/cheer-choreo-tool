@@ -714,7 +714,7 @@ export default {
 
 <style lang="scss" scoped>
 .navbar {
-  background: color-mix(in srgb, var(--bs-body-bg) 80%, transparent);
+  background: var(--color-navbar-bg);
   // border-radius: 16px;
   box-shadow: 0 4px 50px rgba(0, 0, 0, 0.06);
   backdrop-filter: blur(8px);

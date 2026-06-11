@@ -42,11 +42,7 @@
      ========================================== */
   --color-footer-bg: var(--primary-800);
   --color-footer-text: var(--primary-100);
-  --color-footer-text-hover: color-mix(
-    in srgb,
-    var(--color-footer-text) 30%,
-    white
-  );
+  --color-footer-text-hover: #f6ebf8;
   --color-primary-hover: var(--primary-600);
   --shadow-lg: 0px 0px 25px rgba(37, 37, 37, 0.15);
   --color-mat-border: #a5a8f7;
@@ -56,7 +52,7 @@
   --color-tutorial-highlight: #ffab06;
   --color-accent: var(--secondary-600);
   --color-accent-soft: var(--secondary-50);
-  --color-surface: color-mix(in srgb, var(--primary-50) 80%, white);
+  --color-surface: #f5eaf7;
 
   /* ==========================================
      Bootstrap semantic overrides
@@ -64,7 +60,7 @@
   --bs-card-bg: var(--color-surface);
   --bs-card-cap-bg: var(--color-surface);
   --bs-body-bg: var(--color-surface);
-  --bs-body-color: color-mix(in srgb, var(--primary-900) 60%, black);
+  --bs-body-color: #2c0b41;
   --bs-tertiary-bg: #f8f0f8;
   --bs-tertiary-bg-rgb: 248, 240, 248;
   --bs-primary: var(--primary-400);
@@ -104,11 +100,18 @@
 
   --hero-gradient-start: var(--bs-primary);
   --hero-gradient-mid: var(--color-primary-hover);
-  --hero-gradient-end: color-mix(
-    in srgb,
-    var(--color-accent) 50%,
-    var(--color-primary-hover)
-  );
+  --hero-gradient-end: #4a529b;
+
+  /* Pre-computed helpers for HTML-to-PDF compatibility */
+  --callout-bg: rgba(171, 71, 188, 0.06);
+  --callout-accent-bg: rgba(0, 131, 143, 0.06);
+  --body-bg-grad-1: rgba(171, 71, 188, 0.15);
+  --body-bg-grad-2: rgba(171, 71, 188, 0.1);
+  --body-bg-grad-3: rgba(0, 131, 143, 0.1);
+  --focus-ring-primary: rgba(171, 71, 188, 0.25);
+  --focus-ring-secondary: rgba(0, 137, 123, 0.25);
+  --color-navtabs-active-bg: rgba(245, 234, 247, 0.8);
+  --color-navbar-bg: rgba(245, 234, 247, 0.8);
 }
 
 [data-bs-theme="dark"] {
@@ -147,11 +150,7 @@
      ========================================== */
   --color-footer-bg: var(--primary-900);
   --color-footer-text: var(--primary-50);
-  --color-footer-text-hover: color-mix(
-    in srgb,
-    var(--color-footer-text) 0%,
-    white
-  );
+  --color-footer-text-hover: #ffffff;
   --color-primary-hover: var(--primary-500);
   --shadow-lg: 0px 0px 25px rgba(0, 0, 0, 0.25);
   --color-mat-border: #a5a8f7;
@@ -161,7 +160,7 @@
   --color-tutorial-highlight: #ffab06;
   --color-accent: var(--secondary-300);
   --color-accent-soft: var(--secondary-900);
-  --color-surface: color-mix(in srgb, var(--primary-900) 60%, black);
+  --color-surface: #23102f;
 
   /* ==========================================
      Bootstrap semantic overrides
@@ -169,7 +168,7 @@
   --bs-card-bg: var(--color-surface);
   --bs-card-cap-bg: var(--color-surface);
   --bs-body-bg: var(--color-surface);
-  --bs-body-color: color-mix(in srgb, var(--primary-200) 40%, white);
+  --bs-body-color: #ebcbf0;
   --bs-tertiary-bg: #261135;
   --bs-tertiary-bg-rgb: 38, 17, 53;
   --bs-primary: var(--primary-200);
@@ -211,16 +210,8 @@
      Make "light" / "dark" theme-aware so
      variant="light" renders dark in dark mode. */
   --bs-light-rgb: 45, 47, 50;
-  --bs-light-bg: --bs-light-bg-subtle: color-mix(
-      in srgb,
-      var(--color-surface) 90%,
-      var(--primary-900)
-    );
-  --bs-light-bg-subtle: color-mix(
-    in srgb,
-    var(--color-surface) 60%,
-    var(--primary-900)
-  );
+  --bs-light-bg: #251132;
+  --bs-light-bg-subtle: #2c143b;
   --bs-light-color: #dee2e6;
   --bs-dark-rgb: 26, 28, 30;
   --bs-dark-bg: #1a1c1e;
@@ -228,11 +219,18 @@
 
   --hero-gradient-start: var(--color-primary-hover);
   --hero-gradient-mid: var(--color-primary-hover);
-  --hero-gradient-end: color-mix(
-    in srgb,
-    var(--color-accent) 50%,
-    var(--color-primary-hover)
-  );
+  --hero-gradient-end: #8591f0;
+
+  /* Pre-computed helpers for HTML-to-PDF compatibility */
+  --callout-bg: rgba(204, 126, 218, 0.06);
+  --callout-accent-bg: rgba(77, 208, 225, 0.06);
+  --body-bg-grad-1: rgba(204, 126, 218, 0.15);
+  --body-bg-grad-2: rgba(204, 126, 218, 0.1);
+  --body-bg-grad-3: rgba(77, 208, 225, 0.1);
+  --focus-ring-primary: rgba(204, 126, 218, 0.25);
+  --focus-ring-secondary: rgba(77, 182, 172, 0.25);
+  --color-navtabs-active-bg: rgba(35, 16, 47, 0.8);
+  --color-navbar-bg: rgba(35, 16, 47, 0.8);
 
   & .text-bg-light {
     color: #dee2e6 !important;
@@ -247,11 +245,7 @@
   --bs-nav-pills-link-active-bg: var(--bs-primary);
 }
 :root .nav-tabs {
-  --bs-nav-tabs-link-active-bg: color-mix(
-    in srgb,
-    var(--bs-body-bg) 80%,
-    transparent
-  );
+  --bs-nav-tabs-link-active-bg: var(--color-navtabs-active-bg);
 }
 
 /* ---- Button variant overrides ----
@@ -335,17 +329,17 @@ body {
   background:
     radial-gradient(
       ellipse 600px 300px at 30vw 55vh,
-      color-mix(in srgb, var(--bs-primary) 15%, transparent),
+      var(--body-bg-grad-1),
       transparent 100%
     ),
     radial-gradient(
       circle 450px at 70vw 30vh,
-      color-mix(in srgb, var(--bs-primary) 10%, transparent),
+      var(--body-bg-grad-2),
       transparent 100%
     ),
     radial-gradient(
       circle 840px at 80vw 95vh,
-      color-mix(in srgb, var(--color-accent) 10%, transparent),
+      var(--body-bg-grad-3),
       transparent 100%
     ),
     var(--bs-body-bg);
@@ -356,14 +350,14 @@ body {
 .callout {
   padding: 1rem 1.25rem;
   border-left: 4px solid var(--bs-primary);
-  background-color: rgb(from var(--bs-primary) r g b / 0.06);
+  background-color: var(--callout-bg);
   border-radius: 0.375rem;
   margin-bottom: 1rem;
 }
 
 .callout-accent {
   border-left: 4px solid var(--color-accent);
-  background-color: color-mix(in srgb, var(--color-accent) 6%, transparent);
+  background-color: var(--callout-accent-bg);
 }
 
 /* Emphasis in primary / accent color */
@@ -426,7 +420,7 @@ samp {
 
 .form-check-input:focus {
   border-color: var(--bs-primary);
-  box-shadow: 0 0 0 0.25rem rgb(from var(--bs-primary) r g b / 0.25);
+  box-shadow: 0 0 0 0.25rem var(--focus-ring-primary);
 }
 
 .form-check-input[type="checkbox"]:indeterminate {
@@ -441,7 +435,7 @@ samp {
 
 .form-switch .form-check-input:focus {
   border-color: var(--bs-secondary);
-  box-shadow: 0 0 0 0.25rem rgb(from var(--bs-secondary) r g b / 0.25);
+  box-shadow: 0 0 0 0.25rem var(--focus-ring-secondary);
   --bs-form-switch-bg: var(--bs-form-switch-focus-bg);
 }
 

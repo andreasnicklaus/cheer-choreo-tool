@@ -137,11 +137,7 @@ export default {
   display: inline-block;
   width: 24px;
   height: 24px;
-  background-color: color-mix(
-    in srgb,
-    var(--color-tutorial-highlight) 33%,
-    transparent
-  );
+  background-color: rgba(255, 171, 6, 0.33);
   border-radius: 50%;
   border: 2px solid var(--color-tutorial-highlight);
 }

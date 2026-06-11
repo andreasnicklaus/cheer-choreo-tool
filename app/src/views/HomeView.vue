@@ -1231,45 +1231,37 @@ ul {
 
 @-webkit-keyframes pulsing {
   50% {
-    box-shadow: 0 0 0 20px
-      color-mix(in srgb, var(--color-pulse-shadow) 0%, transparent);
+    box-shadow: 0 0 0 20px transparent;
   }
   100% {
-    box-shadow: 0 0 0 20px
-      color-mix(in srgb, var(--color-pulse-shadow) 0%, transparent);
+    box-shadow: 0 0 0 20px transparent;
   }
 }
 
 @-moz-keyframes pulsing {
   50% {
-    box-shadow: 0 0 0 20px
-      color-mix(in srgb, var(--color-pulse-shadow) 0%, transparent);
+    box-shadow: 0 0 0 20px transparent;
   }
   100% {
-    box-shadow: 0 0 0 20px
-      color-mix(in srgb, var(--color-pulse-shadow) 0%, transparent);
+    box-shadow: 0 0 0 20px transparent;
   }
 }
 
 @-ms-keyframes pulsing {
   50% {
-    box-shadow: 0 0 0 20px
-      color-mix(in srgb, var(--color-pulse-shadow) 0%, transparent);
+    box-shadow: 0 0 0 20px transparent;
   }
   100% {
-    box-shadow: 0 0 0 20px
-      color-mix(in srgb, var(--color-pulse-shadow) 0%, transparent);
+    box-shadow: 0 0 0 20px transparent;
   }
 }
 
 @keyframes pulsing {
   50% {
-    box-shadow: 0 0 0 20px
-      color-mix(in srgb, var(--color-pulse-shadow) 0%, transparent);
+    box-shadow: 0 0 0 20px transparent;
   }
   100% {
-    box-shadow: 0 0 0 20px
-      color-mix(in srgb, var(--color-pulse-shadow) 0%, transparent);
+    box-shadow: 0 0 0 20px transparent;
   }
 }
 </style>
