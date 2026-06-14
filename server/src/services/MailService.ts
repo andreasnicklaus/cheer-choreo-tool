@@ -20,7 +20,17 @@ class MailService {
    * @constructor
    */
   constructor() {
-    verify();
+    if (
+      process.env.SMTP_SERVER &&
+      process.env.SMTP_PORT &&
+      process.env.SMTP_FROM_ADDRESS &&
+      process.env.SMTP_USER &&
+      process.env.SMTP_PASSWORD &&
+      process.env.EMAIL_ADMIN_ADDRESSES &&
+      process.env.BACKEND_DOMAIN
+    ) {
+      verify();
+    }
     this.adminEmails = process.env.EMAIL_ADMIN_ADDRESSES?.split(",") || [];
   }
 

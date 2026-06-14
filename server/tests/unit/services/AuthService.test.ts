@@ -186,7 +186,9 @@ describe("AuthService", () => {
     jest
       .spyOn(UserService, "findByUsernameOrEmail")
       .mockResolvedValue(testUser);
-    const mailSpy = jest.spyOn(MailService, "sendSsoEmail").mockResolvedValue();
+    const mailSpy = jest
+      .spyOn(MailService, "sendSsoEmail")
+      .mockResolvedValue(undefined);
     const notifSpy = jest
       .spyOn(NotificationService, "createOne")
       .mockResolvedValue({} as NotificationModel);

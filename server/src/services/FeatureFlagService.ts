@@ -19,6 +19,7 @@ export enum FeatureFlagKey {
 class FeatureFlagService {
   initialization: Promise<void>;
   unleash: ReturnType<typeof initialize>;
+  private _ready = false;
 
   /**
    * Create a new FeatureFlagService and start initialization.
@@ -27,46 +28,53 @@ class FeatureFlagService {
    */
   constructor() {
     this.unleash = {} as Unleash; // only for type safety
-    const UNLEASH_API_KEY = process.env.UNLEASH_API_KEY;
+
+    if (!process.env.UNLEASH_API_KEY) {
+      this._ready = false;
+      this.initialization = Promise.resolve();
+      return;
+    }
 
     this.initialization = new Promise((resolve) => {
       this.unleash = initialize({
         url: "https://features.choreo-planer.de/api",
         appName: "choreo-planer-server",
         customHeaders: {
-          Authorization: UNLEASH_API_KEY ?? "",
+          Authorization: process.env.UNLEASH_API_KEY ?? "",
         },
       });
 
-      this.unleash.on("synchronized", resolve);
+      this.unleash.on("synchronized", () => {
+        this._ready = true;
+        resolve();
+      });
     });
   }
 
-  /**
-   * Validate that required environment variables are present.
-   *
-   * @throws {Error} If api key is not set.
-   * @returns {true} When validation passes.
-   */
-  static validate() {
-    const UNLEASH_API_KEY = process.env.UNLEASH_API_KEY;
+  isConfigured(): boolean {
+    return !!process.env.UNLEASH_API_KEY;
+  }
 
-    if (!UNLEASH_API_KEY) {
-      throw new Error("UNLEASH_API_KEY is not set in environment variables");
-    }
-    return true;
+  isReady(): boolean {
+    return this._ready;
   }
 
   /**
    * Check whether a feature flag is enabled.
    *
    * Waits for the client to finish initialization before querying.
+   * Returns `false` when feature flags are not configured.
    *
    * @param {FeatureFlagKey} flagName - The feature flag key to check.
    * @returns {Promise<boolean>} True if the flag is enabled; otherwise false.
    */
   async isEnabled(flagName: FeatureFlagKey) {
-    FeatureFlagService.validate();
+    if (!this.isConfigured()) {
+      logger.warn(
+        `FeatureFlagService.isEnabled "${flagName}" — UNLEASH_API_KEY not set, returning false`,
+      );
+      return false;
+    }
     logger.debug(`FeatureFlagService.isEnabled "${flagName}"`);
     await this.initialization;
     const result = this.unleash.isEnabled(flagName);
@@ -80,19 +88,26 @@ class FeatureFlagService {
    * Retrieve all feature flag definitions.
    *
    * Filters out stale flags and returns an array of simplified flag states.
+   * Returns an empty array when feature flags are not configured.
    *
    * @returns {Promise<Array<{name: string, enabled: boolean}>>}
    *          Array of feature flag states.
    */
   async getAll() {
-    FeatureFlagService.validate();
+    if (!this.isConfigured()) {
+      logger.warn(
+        "FeatureFlagService.getAll — UNLEASH_API_KEY not set, returning empty array",
+      );
+      return [];
+    }
     logger.debug(`FeatureFlagService.getAll`);
     await this.initialization;
     const result = this.unleash.getFeatureToggleDefinitions();
     logger.debug(`Feature Flags: ${JSON.stringify(result)}`);
-    return result.map(({ name, enabled, stale }) => ({
+    return result.map(({ name, enabled, stale, description }) => ({
       name,
       enabled: enabled && !stale,
+      description: description || name,
     }));
   }
 }

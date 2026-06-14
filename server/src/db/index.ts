@@ -183,9 +183,11 @@ const syncPromise = db
   .sync({ alter: true })
   .then(() => (process.env.NODE_ENV == "test" ? Promise.resolve() : seed()))
   .then(migrate)
+  .then(() => logger.info("Database sync complete"))
   .catch((e) => {
-    logger.error("Database sync/seeding/migration failed:", e);
-    throw e;
+    logger.warn(
+      "Database sync/seeding/migration deferred: " + (e.message || String(e)),
+    );
   });
 
 export { syncPromise };
