@@ -7,7 +7,7 @@
     "build": "npm run icons && npm run docs && vite build && npm run prerender && npm run sitemap",
     "prerender": "node scripts/prerender.mjs",
     "preview": "vite preview",
-    "icons": "vue-asset-generate -a ./public/Icon.png && vue-asset-generate -a ./public/Icon-Dark.png -o ./temp-icons --no-manifest && copy .\\temp-icons\\favicon.ico .\\public\\favicon-dark.ico && rmdir /s /q .\\temp-icons",
+    "icons": "vue-asset-generate -a ./public/Icon.png && vue-asset-generate -a ./public/Icon-Dark.png -o ./temp-icons --no-manifest && node scripts/copy-dark-favicon.mjs",
     "sitemap": "node scripts/generate-sitemap.mjs",
     "docs": "jsdoc -c jsdoc.json",
     "docs:watch": "concurrently --kill-others \"live-server ./public/docs\" \"nodemon --exec npm run docs\"",
