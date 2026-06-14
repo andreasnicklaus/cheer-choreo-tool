@@ -11,7 +11,6 @@
       <BCol
         class="d-flex flex-column justify-content-center align-items-center"
       >
-        <!-- TODO: re-export the logos in dark with the updated color #cc7eda -->
         <img
           id="logoImg"
           :src="
