@@ -12,7 +12,7 @@ const robots = require("express-robots-txt");
 const permissionsPolicy = require("permissions-policy");
 
 // DATABASE
-import db, { syncPromise } from "./db";
+import db from "./db";
 
 // MIDDLEWARES
 const {
@@ -29,6 +29,9 @@ const favicon = require("serve-favicon");
 // LOGGER
 const { logger } = require("./plugins/winston");
 import logConfig from "@/utils/logConfig";
+
+// HEALTH
+import { getHealthReport } from "@/utils/healthCheck";
 
 // SESSION
 import session from "express-session";
@@ -236,17 +239,19 @@ app.use(passport.session());
  * @openapi
  * /:
  *    get:
- *      description: Status page for the API server
+ *      description: Server Status
  *      tags:
  *      - General
  *      responses:
  *        200:
  *          description: Returns a status page with a positive status message and the server version
  */
-app.get("/", (_req: Request, res: Response) => {
+app.get("/", async (_req: Request, res: Response) => {
+  const health = await getHealthReport();
   res.render("../src/views/status", {
     version,
     frontendDomain: process.env.FRONTEND_DOMAIN,
+    health,
   }); // njsscan-ignore: express_lfr_warning
 });
 
@@ -269,15 +274,90 @@ app.get("/version", (_req: Request, res: Response) => {
  * @openapi
  * /health:
  *   get:
- *     description: Healthcheck
+ *     description: Healthcheck with detailed service status
  *     tags:
  *     - General
  *     responses:
  *       200:
- *         description: Returns status code 200 for healthchecks (not logged)
+ *         description: All required services are healthy
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   enum: [healthy, degraded, unhealthy]
+ *                 version:
+ *                   type: string
+ *                 uptime:
+ *                   type: integer
+ *                 formattedUptime:
+ *                   type: string
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                 services:
+ *                   type: object
+ *                   properties:
+ *                     database:
+ *                       type: object
+ *                       properties:
+ *                         status:
+ *                           type: string
+ *                           enum: [healthy, unhealthy]
+ *                         required:
+ *                           type: boolean
+ *                         message:
+ *                           type: string
+ *                     mail:
+ *                       type: object
+ *                       properties:
+ *                         status:
+ *                           type: string
+ *                           enum: [healthy, unhealthy, unconfigured, error]
+ *                         required:
+ *                           type: boolean
+ *                         message:
+ *                           type: string
+ *                     featureFlags:
+ *                       type: object
+ *                       properties:
+ *                         status:
+ *                           type: string
+ *                           enum: [healthy, unhealthy, unconfigured, error]
+ *                         required:
+ *                           type: boolean
+ *                         message:
+ *                           type: string
+ *                     logging:
+ *                       type: object
+ *                       properties:
+ *                         status:
+ *                           type: string
+ *                           enum: [healthy, unconfigured]
+ *                         required:
+ *                           type: boolean
+ *                 featureFlags:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                       enabled:
+ *                         type: boolean
+ *                 oauthProviders:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *       503:
+ *         description: One or more required services are unhealthy
  */
-app.get("/health", (_req: Request, res: Response, next: NextFunction) => {
-  res.status(200).send();
+app.get("/health", async (_req: Request, res: Response, next: NextFunction) => {
+  const report = await getHealthReport();
+  const httpStatus = report.services.database.status === "healthy" ? 200 : 503;
+  res.status(httpStatus).json(report);
   next();
 });
 
@@ -404,25 +484,15 @@ function startServer() {
   logConfig();
 
   db.authenticate()
-    .then(() => {
-      logger.info("DB Connection established");
+    .then(() => logger.info("DB Connection established"))
+    .catch((e) =>
+      logger.warn("DB not available at startup: " + (e.message || String(e))),
+    );
 
-      return syncPromise;
-    })
-    .then(() => {
-      app.listen(port, (error) => {
-        if (error) throw error;
-        logger.info(`App listening on http://localhost:${port}`);
-      });
-    })
-    .catch((e) => {
-      logger.error("Encountered error during startup:", e.message);
-      logger.error(e.stack);
-      logger.error(
-        "Unable to authenticate with the database. Restarting in 1 sec",
-      );
-      setTimeout(startServer, 1000);
-    });
+  app.listen(port, (error) => {
+    if (error) throw error;
+    logger.info(`App listening on http://localhost:${port}`);
+  });
 }
 
 startServer();

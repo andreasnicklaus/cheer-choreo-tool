@@ -1,7 +1,7 @@
-import { describe, test, expect } from "@jest/globals";
+import { describe, test, expect, jest } from "@jest/globals";
 process.env.EMAIL_ADMIN_ADDRESSES = "admin@example.com";
 import MailService from "@/services/MailService";
-import { sendMail } from "@/plugins/nodemailer";
+import { sendMail, verify } from "@/plugins/nodemailer";
 import { timeStringToMillis } from "@/utils/time";
 
 jest.mock("@/plugins/winston", () => ({
@@ -24,7 +24,7 @@ jest.mock("@/db/db", () => {
 
 jest.mock("@/plugins/nodemailer", () => ({
   sendMail: jest.fn(),
-  verify: jest.fn().mockResolvedValue(true),
+  verify: jest.fn<() => void>(),
 }));
 
 jest.mock("i18n", () => ({
@@ -44,6 +44,27 @@ describe("MailService", () => {
   test("instance has adminEmails", () => {
     expect(Array.isArray(MailService.adminEmails)).toBe(true);
     expect(MailService.adminEmails).toStrictEqual(["admin@example.com"]);
+  });
+
+  test("constructor skips verify when env vars missing", () => {
+    expect(verify).not.toHaveBeenCalled();
+  });
+
+  test("constructor calls verify when all env vars are set", () => {
+    const envBackup = { ...process.env };
+    jest.isolateModules(() => {
+      process.env.SMTP_SERVER = "smtp.example.com";
+      process.env.SMTP_PORT = "587";
+      process.env.SMTP_FROM_ADDRESS = "from@example.com";
+      process.env.SMTP_USER = "user";
+      process.env.SMTP_PASSWORD = "pass";
+      process.env.EMAIL_ADMIN_ADDRESSES = "admin@example.com";
+      process.env.BACKEND_DOMAIN = "example.com";
+      const { verify: isolatedVerify } = require("@/plugins/nodemailer");
+      require("@/services/MailService");
+      expect(isolatedVerify).toHaveBeenCalled();
+    });
+    process.env = envBackup;
   });
 
   test("sendUserRegistrationNotice calls nodeMailer.sendMail", async () => {
