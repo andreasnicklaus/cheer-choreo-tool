@@ -71,7 +71,12 @@ export default defineConfig({
       devOptions: {
         enabled: true,
       },
-      includeAssets: ["favicon.ico", "apple-touch-icon.png", "mask-icon.svg"],
+      includeAssets: [
+        "favicon.ico",
+        "favicon-dark.ico",
+        "apple-touch-icon.png",
+        "mask-icon.svg",
+      ],
       manifest: {
         name: "Choreo Planer",
         short_name: "Choreo Planer",
