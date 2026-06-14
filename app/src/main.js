@@ -7,6 +7,7 @@ import router from "./router";
 import store from "./store";
 import vueMatomo from "vue-matomo";
 import "vue3-country-flag-icon/dist/CountryFlag.css";
+import "./assets/design-tokens.css";
 import { isPrerender } from "./utils/isPrerender";
 
 const app = createApp(App);

@@ -3,7 +3,7 @@
     :id="`modal-newTeam-${id}`"
     ref="modal"
     :title="$t('nav.neues-team')"
-    centered
+    scrollable
     @show="resetTeamModal"
     @ok="createTeam"
   >
@@ -59,7 +59,9 @@
       >
         {{ $t("erstellen") }}
       </BButton>
-      <BButton variant="danger" @click="cancel">{{ $t("abbrechen") }}</BButton>
+      <BButton variant="outline-danger" @click="cancel">{{
+        $t("abbrechen")
+      }}</BButton>
     </template>
   </BModal>
 </template>

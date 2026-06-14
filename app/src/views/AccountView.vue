@@ -38,7 +38,7 @@
           </template>
           <h1>{{ user?.username }}</h1>
           <p class="text-muted">
-            <span class="d-block d-md-inline me-2">
+            <span v-if="user?.email" class="d-block d-md-inline me-2">
               {{ user?.email }}
             </span>
             <BBadge v-if="!user?.email" variant="secondary">
@@ -64,14 +64,16 @@
             </BBadge>
           </p>
           <BRow v-show="user" class="text-muted text-start">
-            <BCol cols="6" md="4"> {{ $t("accountView.erstellt-am") }}: </BCol>
-            <BCol v-if="user" cols="6" md="8">
+            <BCol cols="6" md="4" lg="2">
+              {{ $t("accountView.erstellt-am") }}:
+            </BCol>
+            <BCol v-if="user" cols="6" md="8" lg="10">
               {{ toTimeAgo(user?.createdAt) }}
             </BCol>
-            <BCol cols="6" md="4">
+            <BCol cols="6" md="4" lg="2">
               {{ $t("accountView.zuletzt-geaendert-am") }}:
             </BCol>
-            <BCol v-if="user" cols="6" md="8">
+            <BCol v-if="user" cols="6" md="8" lg="10">
               {{ toTimeAgo(user?.createdAt) }}
             </BCol>
           </BRow>
@@ -570,12 +572,12 @@
           {{ $t("accountView.zugriff") }}
           <NewVersionBadge :versions="['0.13', '1.0.0']" />
         </template>
-        <BAlert variant="info" :model-value="true" class="my-3">
+        <BAlert variant="secondary" :model-value="true" class="my-3">
           {{ $t("accountView.access-tab-help") }}
         </BAlert>
         <BRow class="mb-3">
           <BCol>
-            <BCard border-variant="white" header-bg-variant="white">
+            <BCard border-variant="light" header-bg-variant="light">
               <template #header>
                 <h5 class="mb-0">{{ $t("accountView.mit-mir-geteilt") }}</h5>
                 <small class="text-muted">
@@ -640,10 +642,10 @@
         <BRow class="mb-5">
           <BCol>
             <BCard
-              border-variant="white"
-              header-bg-variant="white"
-              footer-bg-variant="white"
-              footer-border-variant="white"
+              border-variant="light"
+              header-bg-variant="light"
+              footer-bg-variant="light"
+              footer-border-variant="light"
             >
               <template #header>
                 <h5 class="mb-0">{{ $t("accountView.von-mir-verwaltet") }}</h5>
@@ -685,7 +687,7 @@
                     </template>
                     <template #cell(accepted)="row">
                       <BBadge
-                        :variant="row.item.accepted ? 'success' : 'warning'"
+                        :variant="row.item.accepted ? 'success' : 'secondary'"
                       >
                         {{
                           row.item.accepted

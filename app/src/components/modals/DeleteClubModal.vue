@@ -10,7 +10,7 @@
     <p class="m-0">{{ $t("du-kannst-das-nicht-rueckgaengig-machen") }}</p>
     <template #footer="{ ok, cancel }">
       <BButton variant="danger" @click="ok">{{ $t("loeschen") }}</BButton>
-      <BButton variant="outline-secondary" @click="cancel">
+      <BButton variant="light" @click="cancel">
         {{ $t("abbrechen") }}
       </BButton>
     </template>

@@ -4,6 +4,7 @@
     ref="modal"
     :title="$t('modals.create-lineup.neue-aufstellung')"
     size="lg"
+    scrollable
     @show="resetLineupModal"
     @hidden="resetLineupModal"
     @ok="createLineup"
@@ -111,7 +112,7 @@
         :state="editLineupMembersIsValid"
         :invalid-feedback="editLineupMembersStateFeedback"
       >
-        <BButtonGroup>
+        <BButtonGroup class="mb-2">
           <BButton
             variant="light"
             :disabled="
@@ -221,7 +222,9 @@
       >
         {{ $t("speichern") }}
       </BButton>
-      <BButton variant="danger" @click="cancel">{{ $t("abbrechen") }}</BButton>
+      <BButton variant="outline-danger" @click="cancel">{{
+        $t("abbrechen")
+      }}</BButton>
     </template>
   </BModal>
 </template>

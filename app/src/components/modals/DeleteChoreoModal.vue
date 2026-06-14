@@ -9,7 +9,7 @@
     {{ $t("du-kannst-das-nicht-rueckgaengig-machen") }}
     <template #footer="{ ok, cancel }">
       <BButton variant="danger" @click="ok">{{ $t("loeschen") }}</BButton>
-      <BButton variant="outline-secondary" @click="cancel">
+      <BButton variant="light" @click="cancel">
         {{ $t("abbrechen") }}
       </BButton>
     </template>
@@ -18,8 +18,6 @@
 
 <script>
 import ChoreoService from "@/services/ChoreoService";
-import ERROR_CODES from "@/utils/error_codes";
-import { error } from "@/utils/logging";
 
 /**
  * @module Modal:DeleteChoreoModal
@@ -28,9 +26,11 @@ import { error } from "@/utils/logging";
  *
  * @vue-prop {String} choreoId
  *
+ * @vue-event {string} choreoDeleted - Emitted when choreo has been deleted
+ *
  * @example
  * <template>
- *  <DeleteChoreoModal ref="deleteChoreoModal" choreoId="abc" />
+ *  <DeleteChoreoModal ref="deleteChoreoModal" choreoId="abc" @choreoDeleted="handler" />
  *  <Button @click="() => $refs.deleteChoreoModal.open()" />
  * </template>
  */
@@ -42,6 +42,7 @@ export default {
       default: "",
     },
   },
+  emits: ["choreoDeleted"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
   }),
@@ -51,17 +52,7 @@ export default {
     },
     removeChoreo() {
       ChoreoService.remove(this.choreoId).then(() => {
-        this.$router
-          .push({
-            name: "Start",
-            params: { locale: this.$i18n.locale },
-          })
-          .catch(() => {
-            error(
-              "Redundant navigation to start",
-              ERROR_CODES.REDUNDANT_ROUTING
-            );
-          });
+        this.$emit("choreoDeleted", this.choreoId);
       });
     },
   },

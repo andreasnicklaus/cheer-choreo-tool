@@ -3,7 +3,7 @@
     :id="`modal-newHit-${id}`"
     ref="modal"
     :title="$t('shortcut-tutorial.neuer-eintrag')"
-    centered
+    scrollable
     size="lg"
     @show="resetModal"
     @hidden="resetModal"
@@ -83,7 +83,7 @@
         :invalid-feedback="newHitMembersStateFeedback"
         :valid-feedback="$t('login.gueltig')"
       >
-        <BButtonGroup>
+        <BButtonGroup class="mb-2">
           <BButton
             variant="light"
             :disabled="newHitMembers?.length == teamMembers?.length"
@@ -158,7 +158,9 @@
       >
         {{ $t("speichern") }}
       </BButton>
-      <BButton variant="danger" @click="cancel">{{ $t("abbrechen") }}</BButton>
+      <BButton variant="outline-danger" @click="cancel">{{
+        $t("abbrechen")
+      }}</BButton>
     </template>
   </BModal>
 </template>
@@ -166,56 +168,56 @@
 <script>
 import HitService from "@/services/HitService";
 
-function generateHitNameProposals() {
-  const preDirections = [null, "this.$t('hits.high')", "this.$t('hits.low')"];
+function generateHitNameProposals(t) {
+  const preDirections = [null, t("hits.high"), t("hits.low")];
   const postDirections = [
     null,
-    "this.$t('hits.nach-rechts')",
-    "this.$t('hits.rechts')",
-    "this.$t('hits.nach-links')",
-    "this.$t('hits.links')",
-    "this.$t('hits.nach-hinten')",
-    "this.$t('hits.hinten')",
-    "this.$t('hits.nach-vorne')",
-    "this.$t('hits.vorne')",
+    t("hits.nach-rechts"),
+    t("hits.rechts"),
+    t("hits.nach-links"),
+    t("hits.links"),
+    t("hits.nach-hinten"),
+    t("hits.hinten"),
+    t("hits.nach-vorne"),
+    t("hits.vorne"),
   ];
 
   const preActions = [
     null,
-    "this.$t('hits.set')",
-    "this.$t('hits.go')",
-    "this.$t('hits.start')",
-    "this.$t('hits.dip')",
-    "this.$t('hits.half-up')",
+    t("hits.set"),
+    t("hits.go"),
+    t("hits.start"),
+    t("hits.dip"),
+    t("hits.half-up"),
   ];
 
   const actions = [
     null,
     "V",
-    "this.$t('hits.elevator')",
-    "this.$t('hits.stretch')",
-    "this.$t('hits.lib')",
-    "this.$t('hits.tick-tock')",
-    "this.$t('hits.scale')",
-    "this.$t('hits.arabesque')",
-    "this.$t('hits.rad')",
-    "this.$t('hits.bogengang')",
-    "this.$t('hits.flick-flack')",
-    "this.$t('hits.pinguin')",
-    "this.$t('hits.playmobil')",
-    "this.$t('hits.clap')",
-    "this.$t('hits.toetouch')",
-    "this.$t('hits.pyra')",
-    "this.$t('hits.radwende')",
-    "this.$t('hits.spagat')",
-    "this.$t('hits.kneel')",
-    "this.$t('hits.knien')",
-    "this.$t('hits.full-around')",
-    "this.$t('hits.half-around')",
-    "this.$t('hits.trophy')",
-    "this.$t('hits.basket')",
-    "this.$t('hits.log-roll')",
-    "this.$t('hits.cradle')",
+    t("hits.elevator"),
+    t("hits.stretch"),
+    t("hits.lib"),
+    t("hits.tick-tock"),
+    t("hits.scale"),
+    t("hits.arabesque"),
+    t("hits.rad"),
+    t("hits.bogengang"),
+    t("hits.flick-flack"),
+    t("hits.pinguin"),
+    t("hits.playmobil"),
+    t("hits.clap"),
+    t("hits.toetouch"),
+    t("hits.pyra"),
+    t("hits.radwende"),
+    t("hits.spagat"),
+    t("hits.kneel"),
+    t("hits.knien"),
+    t("hits.full-around"),
+    t("hits.half-around"),
+    t("hits.trophy"),
+    t("hits.basket"),
+    t("hits.log-roll"),
+    t("hits.cradle"),
     "1",
     "2",
     "3",
@@ -225,16 +227,16 @@ function generateHitNameProposals() {
     "7",
     "8",
     "9",
-    "this.$t('hits.wurf')",
+    t("hits.wurf"),
   ];
 
   const standAlones = [
-    "this.$t('hits.clean')",
-    "this.$t('hits.raussetzen')",
-    "this.$t('hits.loslaufen')",
-    "this.$t('hits.umgreifen')",
-    "this.$t('hits.greifen')",
-    "this.$t('hits.ende')",
+    t("hits.clean"),
+    t("hits.raussetzen"),
+    t("hits.loslaufen"),
+    t("hits.umgreifen"),
+    t("hits.greifen"),
+    t("hits.ende"),
   ];
 
   const combinations = preDirections
@@ -253,7 +255,6 @@ function generateHitNameProposals() {
 
   return [...standAlones, ...combinations].filter((s) => s && s.length > 0);
 }
-const hitNameProposals = generateHitNameProposals();
 
 /**
  * @module Modal:CreateHitModal
@@ -320,7 +321,7 @@ export default {
     newHitAchter: 1,
     newHitCount: 1,
     newHitMembers: null,
-    hitNameProposals,
+    hitNameProposals: [],
   }),
   computed: {
     newHitNameIsValid() {
@@ -354,6 +355,9 @@ export default {
         return this.$t("erforderlich");
       return null;
     },
+  },
+  mounted() {
+    this.hitNameProposals = generateHitNameProposals(this.$t);
   },
   methods: {
     open() {

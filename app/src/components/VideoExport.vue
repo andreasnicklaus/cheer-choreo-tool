@@ -594,12 +594,15 @@ export default {
 
       const context = canvas.getContext("2d");
 
-      context.fillStyle = "#e5e5f7";
+      context.fillStyle = this.cssVar("--color-mat-bg");
       context.fillRect(0, 0, canvas.width, canvas.height);
 
       switch (this.choreo.matType) {
         case "cheer":
-          context.fillStyle = "#444cf766";
+          context.fillStyle = this.hexToRgba(
+            this.cssVar("--color-mat-grid"),
+            1
+          );
           for (let i = 0; i < 6; i++) {
             context.fillRect(
               (canvas.width / 7) * (i + 1),
@@ -641,7 +644,7 @@ export default {
       context.strokeStyle = color;
       context.stroke();
 
-      context.fillStyle = "black";
+      context.fillStyle = "#212529";
       context.textBaseline = "middle";
       context.textAlign = "center";
       context.font = (16 / 500) * this.width + "px Sans-Serif";
@@ -663,7 +666,7 @@ export default {
 
       if (!context) return;
 
-      context.fillStyle = "grey";
+      context.fillStyle = this.cssVar("--bs-secondary-color");
       context.textBaseline = "middle";
       context.textAlign = "right";
       context.font = (16 / 500) * this.width + "px Sans-Serif";
@@ -684,7 +687,7 @@ export default {
 
       if (!context) return;
 
-      context.fillStyle = "grey";
+      context.fillStyle = this.cssVar("--bs-secondary-color");
       context.textBaseline = "middle";
       context.textAlign = "center";
       context.font = (16 / 500) * this.width + "px Sans-Serif";
@@ -701,7 +704,7 @@ export default {
 
       if (!context) return;
 
-      context.fillStyle = "grey";
+      context.fillStyle = this.cssVar("--bs-secondary-color");
       context.textBaseline = "middle";
       context.textAlign = "left";
       context.font = (16 / 500) * this.width + "px Sans-Serif";
@@ -889,6 +892,17 @@ export default {
         const targetBps = roundToDecimals(this.choreo.counts / totalSeconds, 1);
         if (this.bps !== targetBps) this.bps = targetBps;
       }
+    },
+    cssVar(name) {
+      return getComputedStyle(document.documentElement)
+        .getPropertyValue(name)
+        .trim();
+    },
+    hexToRgba(hex, alpha) {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
     },
   },
 };

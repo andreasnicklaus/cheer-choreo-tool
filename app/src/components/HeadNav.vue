@@ -1,31 +1,41 @@
 <template>
-  <BNavbar toggleable="sm" class="me-2" no-auto-close>
-    <BNavbarBrand :to="{ name: 'Home', params: { locale: $i18n.locale } }">
+  <BNavbar sticky="top" toggleable="sm" class="me-2" no-auto-close>
+    <BNavbarBrand
+      :to="{ name: 'Home', params: { locale: $i18n.locale } }"
+      class="em-primary"
+    >
       <img
         :src="
           $store.getters.isChristmasTime
-            ? '/Icon-Christmas.png'
+            ? isDark
+              ? '/Icon-ChristmasDark.svg'
+              : '/Icon-ChristmasLight.svg'
             : $store.getters.isEasterTime
-              ? '/Icon-Easter.png'
-              : '/Icon.png'
+              ? isDark
+                ? '/Icon-EasterDark.svg'
+                : '/Icon-EasterLight.svg'
+              : isDark
+                ? '/Icon-PrimaryDark.svg'
+                : '/Icon-PrimaryLight.svg'
         "
         :alt="$t('choreo-planer-icon')"
         width="50"
         height="50"
       />
+      <span class="ms-2 hero em">{{ $t("general.ChoreoPlaner") }}</span>
     </BNavbarBrand>
 
     <BNavbarToggle target="nav-collapse"></BNavbarToggle>
 
     <BCollapse id="nav-collapse" is-nav>
       <BNavbarNav>
-        <BNavItem
+        <!-- <BNavItem
           :to="{ name: 'Home', params: { locale: $i18n.locale } }"
           :active-class="$route.name == 'Home' ? 'router-link-active' : ''"
         >
           <IBiHouseFill class="me-1" />
           {{ $t("nav.start") }}
-        </BNavItem>
+        </BNavItem> -->
         <BNavItem
           :to="{ name: 'Start', params: { locale: $i18n.locale } }"
           :disabled="!$store.state.loggedIn"
@@ -265,7 +275,7 @@
             v-for="({ lang, flag, localName }, i) in flags"
             :key="`lang${i}`"
             :value="lang"
-            @click="() => LanguageService.setLanguage(lang)"
+            @click.prevent="() => LanguageService.setLanguage(lang)"
           >
             <CountryFlag :iso="flag" mode="rounded" class="me-1" />
             <span>{{ localName }}</span>
@@ -302,10 +312,23 @@
           <IBiQuestionCircle />
           <span class="d-sm-none ms-2">{{ $t("general.help") }}</span>
         </BNavItem>
+        <BNavItem
+          v-b-tooltip.hover.bottom="
+            isDark ? $t('nav.hellen-modus') : $t('nav.dunklen-modus')
+          "
+          button
+          @click.prevent="toggleTheme"
+        >
+          <IBiSunFill v-if="isDark" class="me-2" />
+          <IBiMoonStarsFill v-else class="me-2" />
+          <span class="d-sm-none">{{
+            isDark ? $t("nav.hellen-modus") : $t("nav.dunklen-modus")
+          }}</span>
+        </BNavItem>
         <BButton
           v-if="!$store.state.loggedIn"
           variant="primary"
-          :style="{ color: 'white' }"
+          class="text-white"
           :to="
             $store.state.loggedIn
               ? null
@@ -448,6 +471,7 @@
 </template>
 
 <script>
+import { useTheme } from "@/composables/useTheme";
 import AuthService from "@/services/AuthService";
 import ClubService from "@/services/ClubService";
 import CreateChoreoModal from "./modals/CreateChoreoModal.vue";
@@ -525,6 +549,9 @@ export default {
     showNotificationsDropdown: false,
   }),
   computed: {
+    isDark() {
+      return useTheme().isDark.value;
+    },
     ...mapState(["me"]),
     shareData() {
       return {
@@ -566,6 +593,9 @@ export default {
       clearInterval(this.loadNotificationsInterval);
   },
   methods: {
+    toggleTheme() {
+      useTheme().toggleTheme();
+    },
     load() {
       if (this.$store.state.loggedIn) {
         this.$store.dispatch("loadUserInfo").catch(() => {
@@ -683,9 +713,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.navbar {
+  background: var(--color-navbar-bg);
+  // border-radius: 16px;
+  box-shadow: 0 4px 50px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  // border: 1px solid rgba(0, 0, 0, 0.16);
+}
+
 .dropdown-submenu:hover:not(:has(div.collapse:hover)) {
-  color: #16181b;
-  background-color: #e9ecef;
+  color: var(--bs-body-color);
+  background-color: var(--color-accent-soft);
 }
 
 .BDropdownText {

@@ -16,6 +16,8 @@
         margin: [15, 10],
         filename: choreo?.name ? choreo.name + '.pdf' : 'Countsheet.pdf',
       }"
+      @before-download="onBeforeDownload"
+      @has-downloaded="onHasDownloaded"
     >
       <template #pdf-content>
         <section>
@@ -332,6 +334,7 @@ export default {
     currentClubLogoBlob: null,
     countSheetRefs: {},
     countSheetInfoRefs: {},
+    savedTheme: null,
   }),
   computed: {
     currentClub() {
@@ -467,6 +470,9 @@ export default {
     generatePdf() {
       this.sloganIndex = Math.floor(Math.random() * this.slogans.length);
 
+      this.savedTheme = document.documentElement.getAttribute("data-bs-theme");
+      document.documentElement.setAttribute("data-bs-theme", "light");
+
       this.$refs.loadingModal.open();
 
       setTimeout(() => {
@@ -476,6 +482,13 @@ export default {
           this.$refs.html2pdf.generatePdf();
         });
       }, 500);
+    },
+    onBeforeDownload() {},
+    onHasDownloaded() {
+      if (this.savedTheme) {
+        document.documentElement.setAttribute("data-bs-theme", this.savedTheme);
+        this.savedTheme = null;
+      }
     },
     async calculateHitSplits() {
       let startIndex = 0;

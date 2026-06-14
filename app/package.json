@@ -7,7 +7,7 @@
     "build": "npm run icons && npm run docs && vite build && npm run prerender && npm run sitemap",
     "prerender": "node scripts/prerender.mjs",
     "preview": "vite preview",
-    "icons": "vue-asset-generate -a ./public/Icon.png -b #FFFFFF",
+    "icons": "vue-asset-generate -a ./public/Icon.png && vue-asset-generate -a ./public/Icon-Dark.png -o ./temp-icons --no-manifest && node scripts/copy-dark-favicon.mjs",
     "sitemap": "node scripts/generate-sitemap.mjs",
     "docs": "jsdoc -c jsdoc.json",
     "docs:watch": "concurrently --kill-others \"live-server ./public/docs\" \"nodemon --exec npm run docs\"",
@@ -25,6 +25,7 @@
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
+    "@intlify/unplugin-vue-i18n": "^11.2.3",
     "@logtail/browser": "^0.5.8",
     "@unhead/vue": "^3.0.0",
     "@vueuse/core": "^14.3.0",

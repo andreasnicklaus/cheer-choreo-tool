@@ -17,26 +17,13 @@
             <hr />
             <I18n-t keypath="modals.howto.lineup-text-2" tag="p">
               <b>{{ $t("modals.howto.aufstellungen-anlegen") }}:</b>
-              <span
-                :style="{
-                  height: '24px',
-                  width: '24px !important',
-                  backgroundColor: '#ffab0655',
-                  borderRadius: '50%',
-                  border: 'solid 2px #ffab06',
-                  display: 'inline-block',
-                }"
-              />
+              <span class="tutorial-dot" />
             </I18n-t>
             <hr />
             <I18n-t keypath="modals.howto.lineup-text-3" tag="p">
               <b>{{ $t("modals.howto.aufstellungen-aufteilen") }}:</b>
               <IBiPen />
-              <BButton
-                variant="light"
-                disabled
-                :style="{ display: 'inline-block' }"
-              >
+              <BButton variant="light" :style="{ display: 'inline-block' }">
                 <IBiPlus />{{ $t("modals.howto.aufstellung-hinzufuegen") }}
               </BButton>
             </I18n-t>
@@ -56,12 +43,8 @@
             <hr />
             <I18n-t keypath="modals.howto.countsheet-info-2" tag="p">
               <b>{{ $t("modals.howto.eintraege-hinzufuegen") }}:</b>
-              <BButton
-                variant="outline-success"
-                disabled
-                :style="{ display: 'inline-block' }"
-              >
-                <IBiPlus />{{ $t("modals.howto.eintrag-hinzufuegen") }}
+              <BButton variant="success" :style="{ display: 'inline-block' }">
+                <IBiPlus />{{ $t("countOverview.count-eintrag-hinzufuegen") }}
               </BButton>
               <BBadge variant="light">H</BBadge>
               <BBadge variant="light">N</BBadge>
@@ -75,11 +58,7 @@
               <b>{{ $t("modals.howto.eintraege-bearbeiten") }}:</b>
               <IBiPen />
               <BBadge variant="light">Ä</BBadge>
-              <BButton
-                variant="success"
-                disabled
-                :style="{ display: 'inline-block' }"
-              >
+              <BButton variant="success" :style="{ display: 'inline-block' }">
                 <IBiCheck />
               </BButton>
             </I18n-t>
@@ -99,18 +78,10 @@
           <BCardText>
             <I18n-t keypath="modals.howto.download-info-1" tag="p">
               <b>{{ $t("modals.howto.countsheet-als-pdf-downloaden") }}:</b>
-              <BButton
-                variant="light"
-                disabled
-                :style="{ display: 'inline-block' }"
-              >
+              <BButton variant="light" :style="{ display: 'inline-block' }">
                 <IBiThreeDotsVertical />
               </BButton>
-              <BButton
-                variant="light"
-                disabled
-                :style="{ display: 'inline-block' }"
-              >
+              <BButton variant="light" :style="{ display: 'inline-block' }">
                 <IBiFilePdf /> {{ $t("Home.countsheet-als-pdf") }}
               </BButton>
             </I18n-t>
@@ -119,18 +90,10 @@
               <b
                 >{{ $t("modals.howto.aufstellungen-als-video-downloaden") }}:</b
               >
-              <BButton
-                variant="light"
-                disabled
-                :style="{ display: 'inline-block' }"
-              >
+              <BButton variant="light" :style="{ display: 'inline-block' }">
                 <IBiThreeDotsVertical />
               </BButton>
-              <BButton
-                variant="light"
-                disabled
-                :style="{ display: 'inline-block' }"
-              >
+              <BButton variant="light" :style="{ display: 'inline-block' }">
                 <IBiFilm /> {{ $t("editView.video-exportieren") }}
               </BButton>
             </I18n-t>
@@ -168,3 +131,14 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.tutorial-dot {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-color: rgba(255, 171, 6, 0.33);
+  border-radius: 50%;
+  border: 2px solid var(--color-tutorial-highlight);
+}
+</style>

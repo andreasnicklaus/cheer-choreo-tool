@@ -15,7 +15,7 @@
         <BButton variant="link" class="me-2" @click="dismiss">
           <u>{{ $t("app-install.nein-danke") }}</u>
         </BButton>
-        <BButton variant="success" :style="{ color: 'white' }" @click="install">
+        <BButton variant="success" class="text-white" @click="install">
           <IBiDownload class="me-2" />
           {{ $t("app-install.installieren") }}
         </BButton>

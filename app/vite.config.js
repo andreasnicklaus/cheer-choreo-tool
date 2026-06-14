@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import { readFileSync, existsSync, writeFileSync } from "fs";
 import vue from "@vitejs/plugin-vue";
+import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
 import Icons from "unplugin-icons/vite";
 import Components from "unplugin-vue-components/vite";
 import IconsResolve from "unplugin-icons/resolver";
@@ -49,14 +50,12 @@ export default defineConfig({
     tsconfigPaths: true,
   },
   optimizeDeps: {
-    include: ["vue3-html2pdf", "jspdf"],
-    exclude: [],
-    esbuildOptions: {
-      target: "esnext",
-    },
+    include: ["vue3-html2pdf", "jspdf", "html2pdf.js"],
+    exclude: ["vue-i18n"],
   },
   plugins: [
     vue(),
+    VueI18nPlugin({}),
     preserveManifestTrailingNewline(),
     Components({
       resolvers: [IconsResolve()],
@@ -64,7 +63,7 @@ export default defineConfig({
     }),
     Icons({
       compiler: "vue3",
-      autoInstall: true,
+      autoInstall: false,
     }),
     VitePWA({
       registerType: "autoUpdate",
@@ -72,7 +71,12 @@ export default defineConfig({
       devOptions: {
         enabled: true,
       },
-      includeAssets: ["favicon.ico", "apple-touch-icon.png", "mask-icon.svg"],
+      includeAssets: [
+        "favicon.ico",
+        "favicon-dark.ico",
+        "apple-touch-icon.png",
+        "mask-icon.svg",
+      ],
       manifest: {
         name: "Choreo Planer",
         short_name: "Choreo Planer",
@@ -172,9 +176,40 @@ export default defineConfig({
     ),
   },
   build: {
+    target: "esnext",
     commonjsOptions: {
       transformMixedEsModules: true,
     },
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules/bootstrap")) return "vendor-bootstrap";
+          if (id.includes("node_modules/gsap")) return "vendor-gsap";
+          if (id.includes("node_modules/@ffmpeg")) return "vendor-ffmpeg";
+          if (
+            id.includes("node_modules/jspdf") ||
+            id.includes("node_modules/html2pdf")
+          )
+            return "vendor-pdf";
+          if (id.includes("node_modules/axios")) return "vendor-http";
+          if (/node_modules[/\\]@unhead/.test(id)) return "vendor-unhead";
+          if (
+            /node_modules[/\\]vue3-markdown-it/.test(id) ||
+            /node_modules[/\\]markdown-it/.test(id)
+          )
+            return "vendor-markdown";
+          if (/node_modules[/\\]bootstrap-icons/.test(id))
+            return "vendor-bootstrap-icons";
+          if (/node_modules[/\\]javascript-time-ago/.test(id))
+            return "vendor-time";
+          if (/node_modules[/\\]unleash-proxy-client/.test(id))
+            return "vendor-feature-flags";
+          if (id.includes("node_modules/vue")) return "vendor-vue";
+          if (id.includes("node_modules")) return "vendor-other";
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1200,
   },
   test: {
     globals: true,

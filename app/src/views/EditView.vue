@@ -84,10 +84,11 @@
               <BCol :style="{ whiteSpace: 'nowrap' }">
                 <p class="mb-0">
                   {{ $t("achter") }}:
-                  <b>{{ Math.floor(count / 8) + 1 }}</b>
+                  <b class="regularColor">{{ Math.floor(count / 8) + 1 }}</b>
                 </p>
                 <p class="mb-0">
-                  {{ $t("count", 1) }}: <b>{{ (count % 8) + 1 }}</b>
+                  {{ $t("count", 1) }}:
+                  <b class="regularColor">{{ (count % 8) + 1 }}</b>
                 </p>
               </BCol>
             </BRow>
@@ -476,7 +477,11 @@
       :choreo="choreo"
       @mat-type-update="onMatTypeUpdate"
     />
-    <DeleteChoreoModal ref="deleteChoreoModal" :choreo-id="choreoId" />
+    <DeleteChoreoModal
+      ref="deleteChoreoModal"
+      :choreo-id="choreoId"
+      @choreo-deleted="onChoreoDeleted"
+    />
     <HowToModal ref="howToModal" />
     <SelectHitModal
       ref="selectHitModal"
@@ -1052,6 +1057,12 @@ export default {
       this.choreo.matType = matType;
       this.setLastUpdaterToMe();
       this.showSuccessMessage();
+    },
+    onChoreoDeleted() {
+      this.$router.push({
+        name: "Start",
+        params: { locale: this.$i18n.locale },
+      });
     },
     openCreateHitModal() {
       this.$refs.createHitModal.open();

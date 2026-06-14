@@ -68,7 +68,6 @@
                 label != $t('achter') &&
                 i * 8 + parseInt(label) <= choreo.counts
               "
-              :disabled="!interactive"
               class="p-1 py-2"
               squared
               :style="{
@@ -79,7 +78,7 @@
                 fontSize: fontSize ? fontSize + 'px' : null,
                 color:
                   Math.floor(count / 8) == i && count % 8 == label - 1
-                    ? 'white'
+                    ? 'var(--bs-white)'
                     : null,
               }"
               :variant="
@@ -87,8 +86,16 @@
                   ? 'primary'
                   : 'outline-primary'
               "
-              @click="() => setCount(i, parseInt(label - 1))"
-              @dblclick="() => $emit('openCreateHitModal')"
+              @click="
+                () => {
+                  if (interactive) setCount(i, parseInt(label - 1));
+                }
+              "
+              @dblclick="
+                () => {
+                  if (interactive) $emit('openCreateHitModal');
+                }
+              "
             >
               <span v-show="acht[label].length > 0">
                 <p v-for="hit in acht[label]" :key="hit.name" class="mb-0">

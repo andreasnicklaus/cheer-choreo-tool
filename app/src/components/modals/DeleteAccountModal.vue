@@ -24,7 +24,7 @@
       >
         {{ $t("modals.delete-account.account-loeschen") }}
       </BButton>
-      <BButton variant="outline-secondary" @click="cancel">
+      <BButton variant="light" @click="cancel">
         {{ $t("abbrechen") }}
       </BButton>
     </template>
@@ -41,7 +41,7 @@
         <BButton variant="danger" @click="ok">{{
           $t("jetzt-loeschen")
         }}</BButton>
-        <BButton variant="outline-secondary" @click="cancel">
+        <BButton variant="light" @click="cancel">
           {{ $t("abbrechen") }}
         </BButton>
       </template>

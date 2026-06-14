@@ -1,8 +1,8 @@
 <template>
   <BContainer id="loginView" class="mt-4 my-4" data-view>
     <h1>{{ $t("login.dein-online-zugang") }}</h1>
-    <BTabs v-model="tabIndex" fill>
-      <BTab :title="$t('anmelden')" class="mt-4">
+    <BTabs :index="tabIndex" fill @update:index="(index) => (tabIndex = index)">
+      <BTab :title="$t('anmelden')" class="mt-4 p-3">
         <BForm @submit.prevent="onLoginSubmit" @reset.prevent="onReset">
           <BFormGroup
             :label="$t('username')"
@@ -32,7 +32,7 @@
             ></BFormInput>
           </BFormGroup>
 
-          <div class="d-flex my-2">
+          <div class="d-flex mb-2 mt-3">
             <div class="d-grid" :style="{ width: '100%' }">
               <BButton
                 type="submit"
@@ -67,7 +67,7 @@
           </a>
         </BForm>
       </BTab>
-      <BTab :title="$t('registrieren')" class="mt-4">
+      <BTab :title="$t('registrieren')" class="mt-4 p-3">
         <BForm @submit.prevent="onRegisterSubmit" @reset.prevent="onReset">
           <BFormGroup
             :label="$t('username')"
@@ -135,7 +135,7 @@
             ></BFormInput>
           </BFormGroup>
 
-          <div class="d-flex my-2">
+          <div class="d-flex mb-2 mt-3">
             <div class="d-grid" :style="{ width: '100%' }">
               <BButton
                 type="submit"
@@ -179,6 +179,13 @@
             <I18n-t keypath="login.information-text-3" tag="p">
               <b>{{ $t("login.information-text-3-highlight") }}</b>
             </I18n-t>
+            <p>
+              {{ $t("login.information-text-4.need-more-information") }}
+              <a href="#" @click="() => $router.push('/help')">{{
+                $t("login.information-text-4.visit-our-help-center")
+              }}</a
+              >.
+            </p>
           </BCardText>
         </BCard>
       </BTab>
@@ -589,33 +596,27 @@ export default {
 
 <style lang="scss" scoped>
 .btn.github-login-button {
-  border-color: #101411;
-  .github-icon {
-    color: #0a241b;
-  }
+  color: var(--color-github-text);
+  border-color: var(--color-github-bg);
   &:hover {
-    background-color: #0a241b;
-    .github-icon {
-      color: #bfffd1;
-    }
+    color: var(--color-github-text-hover);
+    background-color: var(--color-github-bg-hover);
   }
 }
 .btn.google-login-button {
+  color: var(--color-google-text);
+  border-color: var(--color-google-bg);
   &:hover {
-    background-color: #f5f5f5;
-    color: #202020;
+    color: var(--color-google-text-hover);
+    background-color: var(--color-google-bg-hover);
   }
 }
 .btn.facebook-login-button {
-  .facebook-icon {
-    color: #0064e0;
-  }
+  color: var(--color-facebook-text);
+  border-color: var(--color-facebook-bg);
   &:hover {
-    background-color: #0064e0;
-    color: white;
-    .facebook-icon {
-      color: white;
-    }
+    color: var(--color-facebook-text-hover);
+    background-color: var(--color-facebook-bg-hover);
   }
 }
 </style>

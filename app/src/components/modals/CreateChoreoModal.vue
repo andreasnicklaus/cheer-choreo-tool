@@ -3,7 +3,6 @@
     :id="`modal-newChoreo-${id}`"
     ref="modal"
     :title="$t('nav.neue-choreo')"
-    centered
     scrollable
     size="xl"
     @show="resetChoreoModal"
@@ -153,7 +152,7 @@
               animation="wave"
             />
           </template>
-          <BButtonGroup>
+          <BButtonGroup class="mb-2">
             <BButton
               variant="light"
               :disabled="
@@ -241,7 +240,9 @@
       >
         {{ $t("erstellen") }}
       </BButton>
-      <BButton variant="danger" @click="cancel">{{ $t("abbrechen") }}</BButton>
+      <BButton variant="outline-danger" @click="cancel">{{
+        $t("abbrechen")
+      }}</BButton>
     </template>
   </BModal>
 </template>

@@ -134,7 +134,7 @@
                     <BFormInput
                       v-model="editHitName"
                       :style="{
-                        color: '#2c3e50',
+                        color: 'var(--bs-body-color)',
                         border: 'none',
                         fontSize: '20px',
                         height: '1.2em',

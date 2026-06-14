@@ -68,9 +68,8 @@ export default class AppPage extends TestPage {
       expect(this.page.locator(".navbar-brand > img")).toBeVisible(),
       expect(this.page.locator(".navbar-brand > img")).toHaveAttribute(
         "src",
-        /\/Icon.*\.png/g
+        /\/Icon-.*\.svg/g
       ),
-      expect(nav).toContainText("Start"),
       expect(nav).toContainText("Choreos"),
       expect(nav).toContainText("Teams"),
       expect(nav).toContainText("Deutsch"),
@@ -78,9 +77,8 @@ export default class AppPage extends TestPage {
       expect(nav).toContainText("Help"),
       expect(nav).toContainText("Log in"),
 
-      expect(navLinks.nth(0)).toHaveAttribute("href", "/en"),
-      expect(navLinks.nth(1)).toHaveAttribute("href", "/en/start"),
-      expect(navLinks.nth(1)).toBeDisabled(),
+      expect(navLinks.nth(0)).toHaveAttribute("href", "/en/start"),
+      expect(navLinks.nth(0)).toBeDisabled(),
       expect(this.page.getByRole("button", { name: "Choreos" })).toBeDisabled(),
       expect(this.page.getByRole("button", { name: "Teams" })).toBeDisabled(),
       expect(
@@ -294,7 +292,7 @@ export default class AppPage extends TestPage {
 
   async iCheckGermanLocalization() {
     await expect(
-      this.page.getByRole("heading", { name: "Choreo Planer", exact: true })
+      this.page.locator("#subtitleText").getByText("Choreo Planer")
     ).toBeVisible();
     await expect(this.page).toHaveTitle(
       "Choreo Planer | Das kostenlose Online-Tool für Choreo-Sport"

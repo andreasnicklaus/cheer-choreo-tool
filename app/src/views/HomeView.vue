@@ -9,26 +9,52 @@
       }"
     >
       <BCol
-        class="d-flex flex-column justify-content-center align-items-center w-75"
+        class="d-flex flex-column justify-content-center align-items-center"
       >
         <img
           id="logoImg"
           :src="
             $store.getters.isChristmasTime
-              ? '/Icon-Christmas.png'
+              ? isDark
+                ? '/Icon-ChristmasDark.svg'
+                : '/Icon-ChristmasLight.svg'
               : $store.getters.isEasterTime
-                ? '/Icon-Easter.png'
-                : '/Icon.png'
+                ? isDark
+                  ? '/Icon-EasterDark.svg'
+                  : '/Icon-EasterLight.svg'
+                : isDark
+                  ? '/Icon-PrimaryDark.svg'
+                  : '/Icon-PrimaryLight.svg'
           "
           :alt="$t('choreo-planer-icon')"
-          width="200"
-          height="200"
+          width="300"
+          height="300"
+          class="mb-5"
         />
-        <h1 id="title" class="text-center display-4">
-          {{ $t("general.ChoreoPlaner") }}
+        <div id="subtitle" class="w-100 d-flex flex-row align-items-center">
+          <hr
+            :style="{
+              width: '40px',
+              color: 'var(--hero-gradient-start)',
+              borderWidth: '2px',
+              opacity: 1,
+              borderRadius: '1px',
+            }"
+            class="me-2"
+          />
+          <p id="subtitleText" class="w-100 text-align-start mb-0 fs-5">
+            <span class="hero"> {{ $t("general.ChoreoPlaner") }}</span>
+          </p>
+        </div>
+        <h1 id="title" :style="{ fontSize: '4em' }" class="mb-4">
+          <i18n-t keypath="Home.choreos-that-impress">
+            <span id="impressSpan" class="hero">{{
+              $t("Home.choreos-that-impress-word")
+            }}</span>
+          </i18n-t>
         </h1>
         <BRow
-          class="w-100 my-4"
+          class="w-75 mt-4"
           align-h="around"
           :style="{ fontWeight: 'bold' }"
         >
@@ -241,7 +267,7 @@
         </ul>
       </BCol>
       <BCol class="featureCallout h3">
-        <IBiShieldFillCheck class="text-primary" /><br />
+        <IBiShieldFillCheck :style="{ color: 'var(--color-accent)' }" /><br />
         {{ $t("Home.datensicherung") }}
         <ul>
           <li>{{ $t("Home.speicherung-auf-unseren-servern") }}</li>
@@ -447,17 +473,14 @@
     <div
       v-show="!$store.state.loggedIn"
       id="interestedSection"
-      :style="{
-        borderRadius: '4px',
-      }"
-      class="text-center py-5 px-3 bg-success text-light mb-5"
+      class="text-center py-5 px-3 callout-accent mb-5"
     >
       <h2 class="mb-1">{{ $t("Home.interesse-geweckt") }}</h2>
       <p class="mb-4">
         {{ $t("Home.zum-loslegen") }}
       </p>
       <BButton
-        class="pulse-button bg-white text-success"
+        class="btn-primary pulse-button"
         :to="{ name: 'Login', params: { locale: $i18n.locale } }"
       >
         {{ $t("anmelden") }} /
@@ -540,6 +563,7 @@ import CountOverview from "@/components/CountOverview.vue";
 import CountSheet from "@/components/CountSheet.vue";
 import Mat from "@/components/Mat.vue";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
+import { useTheme } from "@/composables/useTheme";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 
@@ -821,6 +845,9 @@ export default {
     };
   },
   computed: {
+    isDark() {
+      return useTheme().isDark.value;
+    },
     hitsForCurrentCount() {
       return this.choreo.Hits.filter((h) => h.count == this.count).map((h) => ({
         ...h,
@@ -854,6 +881,24 @@ export default {
       },
       "<"
     );
+
+    tl.from(
+      "#subtitle",
+      {
+        opacity: 0,
+        duration: 1,
+        delay: 0.5,
+      },
+      "<+=0.2"
+    );
+    tl.from(
+      "#impressSpan",
+      {
+        opacity: 0,
+        duration: 2,
+      },
+      "<"
+    );
     tl.from(
       "#callout1",
       {
@@ -872,7 +917,7 @@ export default {
         duration: 1,
         delay: 0.4,
       },
-      "<+=0.2"
+      "<"
     );
     tl.from(
       "#callout3",
@@ -882,7 +927,7 @@ export default {
         duration: 1,
         delay: 0.6,
       },
-      "<+=0.2"
+      "<"
     );
 
     gsap.registerPlugin(ScrollTrigger);
@@ -1084,7 +1129,7 @@ h1 {
 h2 {
   text-align: center;
   section > & {
-    color: #0069d9;
+    color: var(--bs-primary);
   }
   font-weight: bold;
   margin-bottom: 32px;
@@ -1119,16 +1164,13 @@ ul {
 
   &.row-reverse {
     flex-direction: row-reverse;
+  }
+  .featureCallout {
+    white-space: nowrap;
 
-    .featureCallout {
-      &:nth-of-type(1) {
-        margin-right: 0;
-        margin-left: 48px;
-      }
-      &:last-of-type {
-        margin-left: 0;
-        margin-right: 48px;
-      }
+    & > ul,
+    & > ol {
+      white-space: normal;
     }
   }
 
@@ -1136,15 +1178,19 @@ ul {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: max-content;
     hyphens: manual;
     font-weight: 800;
     font-size: 2em;
     text-align: center;
-    margin: 0 48px;
+    margin: 0 24px;
+    padding: 2.5rem 3.5rem;
+    border-left: 4px solid var(--color-accent);
+    background-color: rgba(var(--bs-primary-rgb), 0.06);
+    border-radius: 0.375rem;
 
     & > ul,
     & > ol {
+      width: 100%;
       text-align: start;
       margin-top: 24px;
       margin-left: 24px;
@@ -1155,18 +1201,19 @@ ul {
       font-size: 60px;
       margin-bottom: 16px;
     }
-
-    &:nth-of-type(1) {
-      margin-left: 0;
-    }
-    &:last-of-type {
-      margin-right: 0;
+    .row-reverse > & {
+      &:nth-of-type(1) {
+        margin-left: 0;
+      }
+      &:last-of-type {
+        margin-right: 0;
+      }
     }
   }
 }
 
 .pulse-button {
-  box-shadow: 0 0 0 0 white;
+  box-shadow: 0 0 0 0 var(--color-accent);
   -webkit-animation: pulsing 2s infinite cubic-bezier(0.66, 0, 0, 1);
   -moz-animation: pulsing 2s infinite cubic-bezier(0.66, 0, 0, 1);
   -ms-animation: pulsing 2s infinite cubic-bezier(0.66, 0, 0, 1);
@@ -1178,42 +1225,42 @@ ul {
   -moz-animation: none;
   -ms-animation: none;
   animation: none;
-  color: #ffffff;
+  color: var(--bs-white);
 }
 
 @-webkit-keyframes pulsing {
   50% {
-    box-shadow: 0 0 0 20px #6927d300;
+    box-shadow: 0 0 0 20px transparent;
   }
   100% {
-    box-shadow: 0 0 0 20px #6927d300;
+    box-shadow: 0 0 0 20px transparent;
   }
 }
 
 @-moz-keyframes pulsing {
   50% {
-    box-shadow: 0 0 0 20px #6927d300;
+    box-shadow: 0 0 0 20px transparent;
   }
   100% {
-    box-shadow: 0 0 0 20px #6927d300;
+    box-shadow: 0 0 0 20px transparent;
   }
 }
 
 @-ms-keyframes pulsing {
   50% {
-    box-shadow: 0 0 0 20px #6927d300;
+    box-shadow: 0 0 0 20px transparent;
   }
   100% {
-    box-shadow: 0 0 0 20px #6927d300;
+    box-shadow: 0 0 0 20px transparent;
   }
 }
 
 @keyframes pulsing {
   50% {
-    box-shadow: 0 0 0 20px #6927d300;
+    box-shadow: 0 0 0 20px transparent;
   }
   100% {
-    box-shadow: 0 0 0 20px #6927d300;
+    box-shadow: 0 0 0 20px transparent;
   }
 }
 </style>

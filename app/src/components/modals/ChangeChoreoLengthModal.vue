@@ -52,7 +52,9 @@
       <BButton variant="success" :disabled="!newCountIsValid" @click="ok">
         {{ $t("modals.change-length.laenge-aendern") }}
       </BButton>
-      <BButton variant="danger" @click="cancel">{{ $t("abbrechen") }}</BButton>
+      <BButton variant="outline-danger" @click="cancel">{{
+        $t("abbrechen")
+      }}</BButton>
     </template>
   </BModal>
 </template>
