@@ -1,4 +1,10 @@
-import { describe, expect, beforeAll, afterEach } from "@jest/globals";
+import {
+  describe,
+  expect,
+  beforeAll,
+  beforeEach,
+  afterEach,
+} from "@jest/globals";
 import UserService from "@/services/UserService";
 import User from "@/db/models/user";
 import MailService from "@/services/MailService";
@@ -373,6 +379,10 @@ describe("UserService", () => {
   });
 
   describe("findOrCreateSocialUser", () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
     test("returns existing user when provider and socialId match", async () => {
       const existing = await User.create({
         username: "socialuser",
@@ -391,6 +401,9 @@ describe("UserService", () => {
       );
 
       expect(result.id).toBe(existing.id);
+      expect(MailService.sendWelcomeEmail).not.toHaveBeenCalled();
+      expect(MailService.sendUserRegistrationNotice).not.toHaveBeenCalled();
+      expect(NotificationService.createOne).not.toHaveBeenCalled();
     });
 
     test("creates new user when provider and socialId do not match", async () => {
@@ -406,6 +419,22 @@ describe("UserService", () => {
       expect(result.socialId).toBe("new-google-id");
       expect(result.email).toBe("newuser@example.com");
       expect(result.emailConfirmed).toBe(true);
+      expect(MailService.sendWelcomeEmail).toHaveBeenCalledWith(
+        "NewUser",
+        result.id,
+        "newuser@example.com",
+        "en",
+      );
+      expect(MailService.sendUserRegistrationNotice).toHaveBeenCalledWith(
+        "NewUser",
+        result.id,
+        "newuser@example.com",
+      );
+      expect(NotificationService.createOne).toHaveBeenCalledWith(
+        "i18nTranslation",
+        "i18nTranslation",
+        result.id,
+      );
     });
 
     test("generates unique username when display name collides", async () => {
@@ -427,6 +456,36 @@ describe("UserService", () => {
 
       expect(result).toBeDefined();
       expect(result.username).not.toBe("NewUser");
+      expect(MailService.sendWelcomeEmail).toHaveBeenCalledWith(
+        result.username,
+        result.id,
+        "another@example.com",
+        "en",
+      );
+      expect(MailService.sendUserRegistrationNotice).toHaveBeenCalled();
+      expect(NotificationService.createOne).toHaveBeenCalled();
+    });
+
+    test("forwards locale to notifications", async () => {
+      const result = await UserService.findOrCreateSocialUser(
+        AuthProvider.GOOGLE,
+        "locale-test-id",
+        "locale@example.com",
+        "Locale User",
+        "de",
+      );
+
+      expect(MailService.sendWelcomeEmail).toHaveBeenCalledWith(
+        "LocaleUser",
+        result.id,
+        "locale@example.com",
+        "de",
+      );
+      expect(NotificationService.createOne).toHaveBeenCalledWith(
+        "i18nTranslation",
+        "i18nTranslation",
+        result.id,
+      );
     });
 
     test("handles missing email", async () => {
@@ -442,6 +501,9 @@ describe("UserService", () => {
       expect(result.socialId).toBe("github-no-email");
       expect(result.email).toBeUndefined();
       expect(result.emailConfirmed).toBe(true);
+      expect(MailService.sendWelcomeEmail).not.toHaveBeenCalled();
+      expect(MailService.sendUserRegistrationNotice).toHaveBeenCalled();
+      expect(NotificationService.createOne).toHaveBeenCalled();
     });
 
     test("handles missing display name", async () => {
@@ -456,6 +518,14 @@ describe("UserService", () => {
       expect(result.provider).toBe(AuthProvider.FACEBOOK);
       expect(result.socialId).toBe("fb-noname");
       expect(result.username).toMatch(/^facebook_/);
+      expect(MailService.sendWelcomeEmail).toHaveBeenCalledWith(
+        result.username,
+        result.id,
+        "fb@example.com",
+        "en",
+      );
+      expect(MailService.sendUserRegistrationNotice).toHaveBeenCalled();
+      expect(NotificationService.createOne).toHaveBeenCalled();
     });
   });
 });
