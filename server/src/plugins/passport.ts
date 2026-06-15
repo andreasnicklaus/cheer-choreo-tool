@@ -1,4 +1,5 @@
 import passport from "passport";
+import type { Request } from "express";
 import {
   Strategy as GoogleStrategy,
   Profile as GoogleProfile,
@@ -71,8 +72,10 @@ export function configurePassport() {
           clientID: googleClientId,
           clientSecret: googleClientSecret,
           callbackURL: `${backendDomain}/auth/google/callback`,
+          passReqToCallback: true,
         },
         async (
+          req: Request,
           _accessToken: string,
           _refreshToken: string,
           profile: GoogleProfile,
@@ -89,6 +92,7 @@ export function configurePassport() {
               profile.id,
               email,
               displayName,
+              req.locale ?? "en",
             );
             logger.info(
               `Google social auth succeeded for socialId=${profile.id} userId=${user.id}`,
@@ -121,8 +125,10 @@ export function configurePassport() {
           clientSecret: githubClientSecret,
           callbackURL: `${backendDomain}/auth/github/callback`,
           scope: ["user:email"],
+          passReqToCallback: true,
         },
         async (
+          req: Request,
           _accessToken: string,
           _refreshToken: string,
           profile: GitHubProfile,
@@ -139,6 +145,7 @@ export function configurePassport() {
               profile.id,
               email,
               displayName,
+              req.locale ?? "en",
             );
             logger.info(
               `GitHub social auth succeeded for socialId=${profile.id} userId=${user.id}`,
@@ -171,8 +178,10 @@ export function configurePassport() {
           clientSecret: facebookAppSecret,
           callbackURL: `${backendDomain}/auth/facebook/callback`,
           profileFields: ["id", "emails", "displayName", "name"],
+          passReqToCallback: true,
         },
         async (
+          req: Request,
           _accessToken: string,
           _refreshToken: string,
           profile: FacebookProfile,
@@ -189,6 +198,7 @@ export function configurePassport() {
               profile.id,
               email,
               displayName,
+              req.locale ?? "en",
             );
             logger.info(
               `Facebook social auth succeeded for socialId=${profile.id} userId=${user.id}`,

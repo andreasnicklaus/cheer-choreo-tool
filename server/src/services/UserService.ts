@@ -256,6 +256,7 @@ class UserService {
     socialId: string,
     email: string | undefined | null,
     displayName: string | null,
+    locale: string = "en",
   ): Promise<User> {
     logger.debug(
       `UserService findOrCreateSocialUser provider=${provider} socialId=${socialId} email=${email} displayName=${displayName}`,
@@ -295,6 +296,27 @@ class UserService {
       logger.debug(
         `Created social user provider=${provider} socialId=${socialId} username=${username}`,
       );
+
+      MailService.sendUserRegistrationNotice(
+        user.username,
+        user.id,
+        email ?? "",
+      ).catch(logger.error);
+      NotificationService.createOne(
+        i18n.__({ phrase: "notifications.welcome.title", locale }),
+        i18n.__({ phrase: "notifications.welcome.message", locale }),
+        user.id,
+      );
+
+      if (email) {
+        MailService.sendWelcomeEmail(
+          user.username,
+          user.id,
+          email,
+          locale,
+        ).catch(logger.error);
+      }
+
       return user;
     } catch (error) {
       logger.error(
