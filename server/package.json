@@ -44,7 +44,7 @@
     "@typescript-eslint/parser": "^8.59.3",
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.2",
-    "clean-jsdoc-theme": "^4.3.2",
+    "clean-jsdoc-theme": "^5.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "ejs": "^6.0.0",
