@@ -9,8 +9,8 @@
   >
     <p class="text-muted">
       {{ $t("choreo", 1) }}: {{ choreo?.name }} ({{
-        choreo?.SeasonTeam.Team.name
-      }}, {{ choreo?.SeasonTeam.Season.name }})
+        choreo?.SeasonTeam?.Team?.name
+      }}, {{ choreo?.SeasonTeam?.Season?.name }})
     </p>
     <BFormGroup
       :label="$t('modals.substitution.auswechseln')"
@@ -51,8 +51,11 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import ChoreoService from "@/services/ChoreoService";
+import { defineComponent, PropType } from "vue";
+import { BModal } from "bootstrap-vue-next";
+import type { Choreo, Member, Participant } from "@/types";
 
 /**
  * @module Modal:ParticipantSubstitutionModal
@@ -80,27 +83,27 @@ import ChoreoService from "@/services/ChoreoService";
  *   <Button @click="() => $refs.participantSubstitutionModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "ParticipantSubstitutionModal",
   props: {
     choreo: {
-      type: Object,
+      type: Object as PropType<Choreo>,
       default: null,
     },
     participants: {
-      type: Array,
+      type: Array as PropType<Participant[]>,
       required: true,
     },
     nonParticipants: {
-      type: Array,
+      type: Array as PropType<Member[]>,
       required: true,
     },
   },
   emits: ["substitution"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
-    memberToReplaceId: null,
-    memberToSubInId: null,
+    memberToReplaceId: null as string | null,
+    memberToSubInId: null as string | null,
   }),
   computed: {
     participantOptions() {
@@ -120,19 +123,22 @@ export default {
     },
     memberToReplaceIdStateFeedback() {
       if (!this.memberToReplaceId) return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     memberToSubInIdIsValid() {
       return Boolean(this.memberToSubInId);
     },
     memberToSubInIdStateFeedback() {
       if (!this.memberToSubInId) return this.$t("erfolgreich");
-      return null;
+      return undefined;
     },
   },
   methods: {
-    open(memberToReplaceId = null, memberToSubInId = null) {
-      this.$refs.modal.show();
+    open(
+      memberToReplaceId: string | null = null,
+      memberToSubInId: string | null = null
+    ) {
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
       this.memberToReplaceId = memberToReplaceId;
       this.memberToSubInId = memberToSubInId;
     },
@@ -143,12 +149,12 @@ export default {
     substituteParticipants() {
       ChoreoService.replaceParticipant(
         this.choreo.id,
-        this.memberToReplaceId,
-        this.memberToSubInId
+        this.memberToReplaceId as unknown as string,
+        this.memberToSubInId as unknown as string
       ).then((choreo) => {
         this.$emit("substitution", choreo);
       });
     },
   },
-};
+});
 </script>

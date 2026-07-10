@@ -59,8 +59,10 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import SeasonTeamService from "@/services/SeasonTeamService";
+import { defineComponent, PropType } from "vue";
+import type { Team } from "@/types";
 
 /**
  * @module Modal:ImportMemberModal
@@ -94,11 +96,11 @@ import SeasonTeamService from "@/services/SeasonTeamService";
  *  <Button @click="() => $refs.importMemberModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "ImportMemberModal",
   props: {
     teams: {
-      type: Array,
+      type: Array as PropType<Team[]>,
       default: () => [],
     },
     currentTeamId: {
@@ -113,9 +115,9 @@ export default {
   emits: ["import"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
-    teamId: null,
-    seasonId: null,
-    memberIds: [],
+    teamId: undefined as string | undefined,
+    seasonId: undefined as string | undefined,
+    memberIds: [] as string[],
   }),
   computed: {
     teamOptions() {
@@ -139,7 +141,7 @@ export default {
         (st) => st.id != this.currentSeasonTeamId && st.Season?.id
       ).map((st) => ({
         text: st.Season?.name || "Unknown",
-        value: st.Season.id,
+        value: st.Season?.id,
       }));
     },
     selectedSeasonTeam() {
@@ -167,14 +169,14 @@ export default {
           [this.selectedTeam?.name]
         );
       if (!this.teamId) return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     seasonIdIsValid() {
       return Boolean(this.seasonId);
     },
     seasonIdStateFeedback() {
       if (!this.seasonId) return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     memberIdsIsValid() {
       return Boolean(this.memberIds) && this.memberIds.length > 0;
@@ -182,7 +184,7 @@ export default {
     memberIdsStateFeedback() {
       if (!this.memberIds || this.memberIds.length == 0)
         return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
   },
   watch: {
@@ -199,26 +201,28 @@ export default {
   },
   methods: {
     open() {
-      this.$refs.modal.show();
+      (this.$refs.modal as any).show();
     },
     reset() {
       this.teamId = this.currentTeamId;
       if (this.seasonOptions.length == 0) {
-        this.teamId = this.teamOptions.filter(
-          (to) => to.value != this.currentTeamId
-        )[0]?.value;
+        this.teamId = (
+          this.teamOptions as { text: string; value: string }[]
+        ).filter((to) => to.value != this.currentTeamId)[0]?.value;
       }
-      this.seasonId = this.seasonOptions[0]?.value;
+      this.seasonId = (
+        this.seasonOptions as { text: string; value: string }[]
+      )[0]?.value;
       this.memberIds = [];
     },
     importMembers() {
       SeasonTeamService.importMembers(
-        this.currentSeasonTeamId,
+        this.currentSeasonTeamId as string,
         this.memberIds
       ).then((members) => {
         this.$emit("import", members);
       });
     },
   },
-};
+});
 </script>

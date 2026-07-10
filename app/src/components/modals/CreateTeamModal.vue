@@ -66,10 +66,12 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import SeasonService from "@/services/SeasonService";
 import TeamService from "@/services/TeamService";
-import UserAccessService from "@/services/UserAccessService";
+import { defineComponent, PropType } from "vue";
+import type { Season } from "@/types";
+import type { OwnerAccess } from "@/types";
 
 /**
  * @module Modal:CreateTeamModal
@@ -97,21 +99,25 @@ import UserAccessService from "@/services/UserAccessService";
  *  <Button @click="() => $refs.createTeamModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "CreateTeamModal",
   props: {
     me: {
-      type: Object,
+      type: Object as PropType<{
+        id: string;
+        username?: string;
+        email?: string;
+      }>,
       default: null,
     },
   },
   emits: ["teamCreated"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
-    newTeamName: null,
-    seasons: [],
-    seasonId: null,
-    selectedOwnerId: null,
+    newTeamName: undefined as string | undefined,
+    seasons: [] as Season[],
+    seasonId: undefined as string | undefined,
+    selectedOwnerId: undefined as string | undefined,
   }),
   computed: {
     newTeamNameIsValid() {
@@ -121,7 +127,7 @@ export default {
       if (!this.newTeamName) return this.$t("erforderlich");
       if (this.newTeamName.length < 3)
         return this.$t("modals.create-team.min-team-name-laenge");
-      return null;
+      return undefined;
     },
     seasonSelectOptions() {
       const years = Array.from(new Set(this.seasons.map((s) => s.year)));
@@ -149,10 +155,10 @@ export default {
         return this.$t("erforderlich");
       if (!this.seasons.map((s) => s.id).includes(this.seasonId))
         return this.$t("errors.unerwarteter-fehler");
-      return null;
+      return undefined;
     },
     ownerOptions() {
-      const options = this.$store.state.owners.map((o) => {
+      const options = this.$store.state.owners.map((o: OwnerAccess) => {
         const baseText = o.owner?.username || o.owner?.email || o.ownerUserId;
         const isYou = this.me && o.ownerUserId === this.me.id;
         return {
@@ -161,7 +167,12 @@ export default {
         };
       });
 
-      if (this.me && !options.some((o) => o.value === this.me.id)) {
+      if (
+        this.me &&
+        !options.some(
+          (o: { value: string; text: string }) => o.value === this.me.id
+        )
+      ) {
         options.push({
           value: this.me.id,
           text: `${this.me.username || this.me.email || this.me.id} (you)`,
@@ -177,7 +188,7 @@ export default {
       return (
         this.selectedOwnerId != null &&
         (this.$store.state.owners
-          .map((o) => o.ownerUserId)
+          .map((o: OwnerAccess) => o.ownerUserId)
           .includes(this.selectedOwnerId) ||
           this.selectedOwnerId === this.$store.state.me?.id)
       );
@@ -186,12 +197,12 @@ export default {
       if (!this.selectedOwnerId) return this.$t("erforderlich");
       if (
         !this.$store.state.owners
-          .map((o) => o.ownerUserId)
+          .map((o: OwnerAccess) => o.ownerUserId)
           .includes(this.selectedOwnerId) &&
         this.selectedOwnerId !== this.$store.state.me?.id
       )
         return this.$t("errors.unerwarteter-fehler");
-      return null;
+      return undefined;
     },
   },
   mounted() {
@@ -200,13 +211,13 @@ export default {
   methods: {
     open() {
       this.load();
-      this.$refs.modal.show();
+      (this.$refs.modal as any).show();
       if (this.$store.state.me?.id) {
         this.selectedOwnerId = this.$store.state.me?.id;
       }
     },
     load() {
-      SeasonService.getAll().then((seasons) => {
+      SeasonService.getAll().then((seasons: Season[]) => {
         this.seasons = seasons.filter(
           (s) => s.year == null || s.year <= new Date().getFullYear() + 1
         );
@@ -216,22 +227,22 @@ export default {
         const relevantCurrentSeasons = this.seasons.filter(
           (s) => s.year == currentRelevantYear
         );
-        this.seasonId = relevantCurrentSeasons[0].id;
+        this.seasonId = relevantCurrentSeasons[0]?.id;
       });
     },
     resetTeamModal() {
-      this.newTeamName = null;
-      this.selectedOwnerId = null;
+      this.newTeamName = undefined;
+      this.selectedOwnerId = undefined;
     },
     createTeam() {
       const ownerId = this.selectedOwnerId || null;
       TeamService.create(
-        this.newTeamName,
+        this.newTeamName as string,
         this.$store.state.clubId,
-        this.seasonId,
+        this.seasonId!,
         ownerId
       ).then((team) => this.$emit("teamCreated", team));
     },
   },
-};
+});
 </script>

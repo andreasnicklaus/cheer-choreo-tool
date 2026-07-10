@@ -32,10 +32,10 @@
                 {{ choreo?.name }}
               </BCol>
               <BCol v-if="includeTeamName" cols="auto">
-                {{ choreo?.SeasonTeam.Team?.name }}
+                {{ choreo?.SeasonTeam?.Team?.name }}
               </BCol>
               <BCol v-if="includeDate" cols="auto">
-                {{ new Date(date).toLocaleDateString("de-de") }}
+                {{ new Date(date!).toLocaleDateString("de-de") }}
               </BCol>
               <BCol v-if="includeLogo" cols="auto">
                 <img
@@ -68,10 +68,10 @@
               :start-count="split.startIndex"
               :choreo="
                 choreo
-                  ? {
+                  ? ({
                       ...choreo,
                       counts: split.nItems,
-                      Hits: choreo?.Hits.filter(
+                      Hits: (choreo.Hits || []).filter(
                         (h) =>
                           (!h.Members ||
                             h.Members.length == 0 ||
@@ -82,8 +82,8 @@
                           h.count >= split.startIndex &&
                           h.count <= split.startIndex + split.nItems
                       ),
-                    }
-                  : choreo
+                    } as Choreo)
+                  : undefined
               "
               :sticky-header="false"
               :font-size="12"
@@ -105,8 +105,8 @@
           {{ $t("video-export-comp.ausgewaehlte-choreo") }}: {{ choreo.name }}
         </p>
         <p class="m-0">
-          {{ $t("team", 1) }}: {{ choreo.SeasonTeam.Team.name }} ({{
-            choreo.SeasonTeam.Season.name
+          {{ $t("team", 1) }}: {{ choreo.SeasonTeam?.Team?.name }} ({{
+            choreo.SeasonTeam?.Season?.name
           }})
         </p>
       </BCardSubtitle>
@@ -180,7 +180,7 @@
           <BCol md="6" cols="12" class="mb-3">
             <BPlaceholderWrapper
               :loading="
-                !choreo || !choreo.SeasonTeam.Team || !choreo.Participants
+                !choreo || !choreo.SeasonTeam?.Team || !choreo.Participants
               "
             >
               <template #loading>
@@ -233,9 +233,11 @@
             <BAlert
               variant="warning"
               :show="
-                choreo &&
-                includeMemberNames &&
-                includedMembers.length >= teamMembers.length
+                !!(
+                  choreo &&
+                  includeMemberNames &&
+                  includedMembers.length >= teamMembers.length
+                )
               "
             >
               {{ $t("pdf.alle-namen-warnung") }}
@@ -268,7 +270,7 @@
   </BContainer>
 </template>
 
-<script>
+<script lang="ts">
 import { useHead } from "@unhead/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
@@ -277,7 +279,9 @@ import LoadingModal from "@/components/modals/LoadingModal.vue";
 import AuthService from "@/services/AuthService";
 import ChoreoService from "@/services/ChoreoService";
 import ClubService from "@/services/ClubService";
+import type { Choreo, Member, Club } from "@/types";
 import VueHtml2pdf from "vue3-html2pdf";
+import { defineComponent } from "vue";
 
 /**
  * @vue-data {Object|null} user=null - The currently logged-in user.
@@ -308,37 +312,52 @@ import VueHtml2pdf from "vue3-html2pdf";
  * @vue-computed {MetaInfo} metaInfo
  */
 
-export default {
+export default defineComponent({
   name: "PdfView",
   components: { CountSheet, VueHtml2pdf, LoadingModal },
   setup() {
     const { t } = useI18n();
     return { t };
   },
-  data: () => ({
-    user: null,
-    choreoId: null,
-    choreo: null,
-    teamMembers: [],
-    hitSplits: [],
-    sloganIndex: 0,
-    sloganInterval: null,
-    includeDate: true,
-    includeTeamName: true,
-    includeChoreoName: true,
-    includeMemberNames: false,
-    includedMembers: [],
-    includeLogo: true,
-    loading: true,
-    date: new Date().toISOString().split("T")[0],
-    currentClubLogoBlob: null,
-    countSheetRefs: {},
-    countSheetInfoRefs: {},
-    savedTheme: null,
-  }),
+  data() {
+    return {
+      user: null as
+        | (import("@/types").User & {
+            Clubs?: Array<import("@/types").Club & { logoExtension?: string }>;
+          })
+        | null,
+      choreoId: null as string | null,
+      choreo: null as
+        | (Choreo & {
+            Hits?: {
+              id: string;
+              name: string;
+              count: number;
+              Members?: { id: string; name: string; nickname?: string }[];
+            }[];
+          })
+        | null,
+      teamMembers: [] as Member[],
+      hitSplits: [] as { startIndex: number; nItems: number }[],
+      sloganIndex: 0,
+      sloganInterval: null as ReturnType<typeof setInterval> | null,
+      includeDate: true,
+      includeTeamName: true,
+      includeChoreoName: true,
+      includeMemberNames: false,
+      includedMembers: [] as string[],
+      includeLogo: true,
+      loading: true,
+      date: new Date().toISOString().split("T")[0] as string,
+      currentClubLogoBlob: undefined as string | undefined,
+      countSheetRefs: {} as Record<number, any>,
+      countSheetInfoRefs: {} as Record<number, any>,
+      savedTheme: null as string | null,
+    };
+  },
   computed: {
     currentClub() {
-      return this.user?.Clubs.find((c) => c.id == this.$store.state.clubId);
+      return this.user?.Clubs?.find((c) => c.id == this.$store.state.clubId);
     },
     slogans() {
       return [
@@ -361,22 +380,22 @@ export default {
     dateIsValid() {
       return (
         !this.includeDate ||
-        (Boolean(this.date) && Boolean(new Date(this.date)))
+        (Boolean(this.date) && Boolean(new Date(this.date!)))
       );
     },
-    dateStateFeedback() {
-      if (!this.includeDate) return null;
-      if (Boolean(this.date) && Boolean(new Date(this.date)))
+    dateStateFeedback(): string | undefined {
+      if (!this.includeDate) return undefined;
+      if (Boolean(this.date) && Boolean(new Date(this.date!)))
         return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     includedMembersIsValid() {
       return this.includedMembers.length > 0;
     },
-    includedMembersStateFeedback() {
+    includedMembersStateFeedback(): string | undefined {
       if (this.includedMembers.length <= 0)
         return this.$t("pdf.min-teilnehmer-erforderlich");
-      return null;
+      return undefined;
     },
   },
   mounted() {
@@ -389,22 +408,18 @@ export default {
       ),
       meta: [
         {
-          vmid: "description",
           name: "description",
           content: computed(() => this.t("meta.pdfView.description")),
         },
         {
-          vmid: "twitter:description",
           name: "twitter:description",
           content: computed(() => this.t("meta.pdfView.description")),
         },
         {
-          vmid: "og:description",
           property: "og:description",
           content: computed(() => this.t("meta.pdfView.description")),
         },
         {
-          vmid: "og:title",
           property: "og:title",
           content: computed(
             () =>
@@ -416,7 +431,6 @@ export default {
           ),
         },
         {
-          vmid: "twitter:title",
           name: "twitter:title",
           content: computed(
             () =>
@@ -430,38 +444,46 @@ export default {
       ],
     });
     this.loadUserInfo();
-    this.choreoId = this.$route.params.choreoId;
+    this.choreoId = this.$route.params.choreoId as string;
     this.loadChoreo();
     this.sloganInterval = setInterval(() => {
       this.sloganIndex = Math.floor(Math.random() * this.slogans.length);
-    }, 3000);
+    }, 3000) as unknown as ReturnType<typeof setInterval>;
   },
   methods: {
-    setCountSheetRef(el, startIndex) {
+    setCountSheetRef(el: any, startIndex: number) {
       if (el) {
         this.countSheetRefs[startIndex] = el;
       }
     },
-    setCountSheetInfoRef(el, startIndex) {
+    setCountSheetInfoRef(el: any, startIndex: number) {
       if (el) {
         this.countSheetInfoRefs[startIndex] = el;
       }
     },
     loadChoreo() {
-      ChoreoService.getById(this.choreoId).then((choreo) => {
-        this.choreo = choreo;
-        this.teamMembers = choreo.Participants.sort((a, b) =>
-          a.name.localeCompare(b.name)
-        );
-        this.includedMembers = choreo.Participants.map((m) => m.id);
+      ChoreoService.getById(this.choreoId!).then((choreo) => {
+        this.choreo = choreo as Choreo & {
+          Hits?: {
+            id: string;
+            name: string;
+            count: number;
+            Members?: { id: string; name: string; nickname?: string }[];
+          }[];
+        };
+        // Choreo.Participants are returned from the API as Member instances
+        // with a nested ChoreoParticipation (the join table). Cast to Participant
+        // (Member & { ChoreoParticipation }) and then treat as Member[] where needed.
+        this.teamMembers = choreo.Participants || [];
+        this.includedMembers = (choreo.Participants || []).map((m) => m.id);
         this.calculateHitSplits().then(() => {
-          if (this.sloganInterval) clearInterval(this.sloganInterval);
+          if (this.sloganInterval) clearInterval(this.sloganInterval!);
           this.loading = false;
         });
       });
     },
     loadUserInfo() {
-      return AuthService.getUserInfo().then((user) => {
+      return AuthService.getUserInfo().then((user: any) => {
         this.user = user;
         this.includeLogo = Boolean(this.currentClub?.logoExtension);
         this.loadClubLogo();
@@ -473,13 +495,13 @@ export default {
       this.savedTheme = document.documentElement.getAttribute("data-bs-theme");
       document.documentElement.setAttribute("data-bs-theme", "light");
 
-      this.$refs.loadingModal.open();
+      (this.$refs.loadingModal as any).open();
 
       setTimeout(() => {
         this.calculateHitSplits().then(() => {
-          this.$refs.loadingModal.close();
-          clearInterval(this.sloganInterval);
-          this.$refs.html2pdf.generatePdf();
+          (this.$refs.loadingModal as any).close();
+          clearInterval(this.sloganInterval!);
+          (this.$refs.html2pdf as any).generatePdf();
         });
       }, 500);
     },
@@ -494,9 +516,9 @@ export default {
       let startIndex = 0;
       let nItems = 8;
 
-      let confirmedHitSplits = [];
+      let confirmedHitSplits: { startIndex: number; nItems: number }[] = [];
 
-      while (startIndex + nItems <= this.choreo.counts) {
+      while (startIndex + nItems <= this.choreo!.counts) {
         this.hitSplits = [
           ...confirmedHitSplits,
           {
@@ -505,34 +527,36 @@ export default {
           },
         ];
 
-        const [height, infoHeight] = await new Promise((resolve, reject) => {
-          this.$nextTick(() => {
-            // Give slot content time to render and populate refs
-            setTimeout(() => {
-              const countSheetSplit = this.countSheetRefs[startIndex];
-              const countSheetSplitInfo = this.countSheetInfoRefs[startIndex];
+        const [height, infoHeight] = await new Promise<[number, number]>(
+          (resolve, reject) => {
+            this.$nextTick(() => {
+              // Give slot content time to render and populate refs
+              setTimeout(() => {
+                const countSheetSplit = this.countSheetRefs[startIndex];
+                const countSheetSplitInfo = this.countSheetInfoRefs[startIndex];
 
-              if (!countSheetSplit || !countSheetSplitInfo) {
-                console.error("Refs not found for startIndex:", startIndex, {
-                  countSheetSplit,
-                  countSheetSplitInfo,
-                  availableCountSheetRefs: Object.keys(this.countSheetRefs),
-                  availableInfoRefs: Object.keys(this.countSheetInfoRefs),
-                });
-                return reject(
-                  new Error(
-                    `Required refs not found for startIndex ${startIndex}. PDF generation cannot continue.`
-                  )
-                );
-              }
+                if (!countSheetSplit || !countSheetSplitInfo) {
+                  console.error("Refs not found for startIndex:", startIndex, {
+                    countSheetSplit,
+                    countSheetSplitInfo,
+                    availableCountSheetRefs: Object.keys(this.countSheetRefs),
+                    availableInfoRefs: Object.keys(this.countSheetInfoRefs),
+                  });
+                  return reject(
+                    new Error(
+                      `Required refs not found for startIndex ${startIndex}. PDF generation cannot continue.`
+                    )
+                  );
+                }
 
-              resolve([
-                countSheetSplit.$el.clientHeight,
-                countSheetSplitInfo.$el.clientHeight,
-              ]);
-            }, 200);
-          });
-        });
+                resolve([
+                  countSheetSplit.$el.clientHeight,
+                  countSheetSplitInfo.$el.clientHeight,
+                ]);
+              }, 200);
+            });
+          }
+        );
 
         const maxHeight = 950 - infoHeight;
 
@@ -548,8 +572,8 @@ export default {
 
       const lastElement = this.hitSplits.sort(
         (a, b) => b.startIndex - a.startIndex
-      )[0];
-      lastElement.nItems = this.choreo.counts - lastElement.startIndex;
+      )[0]!;
+      lastElement.nItems = this.choreo!.counts - lastElement.startIndex;
 
       this.hitSplits = this.hitSplits.sort(
         (a, b) => a.startIndex - b.startIndex
@@ -557,15 +581,12 @@ export default {
     },
     loadClubLogo() {
       if (this.currentClub?.logoExtension == null)
-        this.currentClubLogoBlob = null;
+        this.currentClubLogoBlob = undefined;
       else
-        ClubService.getClubLogo(
-          this.currentClub.id,
-          this.currentClub.logoExtension
-        ).then((response) => {
-          this.currentClubLogoBlob = URL.createObjectURL(response.data);
+        ClubService.getClubLogo(this.currentClub.id).then((response) => {
+          this.currentClubLogoBlob = URL.createObjectURL(response);
         });
     },
   },
-};
+});
 </script>

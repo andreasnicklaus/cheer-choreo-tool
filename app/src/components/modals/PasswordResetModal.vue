@@ -53,13 +53,15 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import AuthService from "@/services/AuthService";
 import MessagingService from "@/services/MessagingService";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import { error } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
 import { emailRegex } from "@/utils/validation";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * @module Modal:PasswordResetModal
@@ -79,18 +81,20 @@ import { emailRegex } from "@/utils/validation";
  *  <Button @click="() => $refs.passwordResetModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "LoadingModal",
   components: { NewVersionBadge },
   emits: ["passwordResetRequested"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
-    email: null,
+    email: "",
     loading: false,
   }),
   computed: {
     emailIsValid() {
-      return this.email != null && this.email.match(emailRegex)?.length > 0;
+      if (this.email.length === 0) return false;
+      const match = this.email.match(emailRegex);
+      return match != null && match.length > 0;
     },
     emailError() {
       if (this.email == null || this.email.length == 0)
@@ -98,21 +102,21 @@ export default {
       const emailRegexMatches = this.email.match(emailRegex);
       if (!emailRegexMatches || emailRegexMatches.length <= 0)
         return this.$t("login.echte-email");
-      else return null;
+      else return undefined;
     },
   },
   methods: {
     open() {
-      this.$refs.modal.show();
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     close() {
-      this.$refs.modal.hide();
+      (this.$refs.modal as InstanceType<typeof BModal>).hide();
     },
     resetPasswordResetModal() {
-      this.email = null;
+      this.email = "";
       this.loading = false;
     },
-    initializePasswordReset(event) {
+    initializePasswordReset(event: any) {
       this.loading = true;
       AuthService.requestSSO(this.email)
         .then(() => {
@@ -129,5 +133,5 @@ export default {
         });
     },
   },
-};
+});
 </script>

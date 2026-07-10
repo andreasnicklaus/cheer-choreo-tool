@@ -4,11 +4,12 @@
   </BContainer>
 </template>
 
-<script>
+<script lang="ts">
 import VideoExport from "@/components/VideoExport.vue";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   name: "VideoView",
   components: { VideoExport },
-};
+});
 </script>

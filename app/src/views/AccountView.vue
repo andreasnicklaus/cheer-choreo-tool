@@ -68,13 +68,13 @@
               {{ $t("accountView.erstellt-am") }}:
             </BCol>
             <BCol v-if="user" cols="6" md="8" lg="10">
-              {{ toTimeAgo(user?.createdAt) }}
+              {{ toTimeAgo(user?.createdAt ?? null) }}
             </BCol>
             <BCol cols="6" md="4" lg="2">
               {{ $t("accountView.zuletzt-geaendert-am") }}:
             </BCol>
             <BCol v-if="user" cols="6" md="8" lg="10">
-              {{ toTimeAgo(user?.createdAt) }}
+              {{ toTimeAgo(user?.createdAt ?? null) }}
             </BCol>
           </BRow>
         </BPlaceholderWrapper>
@@ -126,7 +126,7 @@
                         size="80px"
                         :src="
                           profilePictureDeletion
-                            ? null
+                            ? undefined
                             : newProfilePictureBlob || currentProfilePictureBlob
                         "
                       />
@@ -320,10 +320,7 @@
           <p class="text-muted text-center w-75 mx-auto">
             {{ $t("accountView.no-clubs-info") }}
           </p>
-          <BButton
-            variant="success"
-            @click="() => $refs.createClubModal.open()"
-          >
+          <BButton variant="success" @click="openCreateClubModal">
             <IBiPlus /> {{ $t("modals.create-club.neuer-verein") }}
           </BButton>
         </BContainer>
@@ -380,7 +377,7 @@
                           size="80px"
                           :src="
                             clubLogoDeletion
-                              ? null
+                              ? undefined
                               : newClubLogoBlob || currentClubLogoBlob
                           "
                         />
@@ -454,13 +451,13 @@
                     {{ $t("accountView.erstellt-am") }}:
                   </BCol>
                   <BCol cols="6" md="8">
-                    {{ toTimeAgo(club?.createdAt) }}
+                    {{ toTimeAgo(club?.createdAt ?? null) }}
                   </BCol>
                   <BCol cols="6" md="4">
                     {{ $t("accountView.zuletzt-geaendert-am") }}:
                   </BCol>
                   <BCol cols="6" md="8">
-                    {{ toTimeAgo(club?.updatedAt) }}
+                    {{ toTimeAgo(club?.updatedAt ?? null) }}
                   </BCol>
                 </BRow>
               </BPlaceholderWrapper>
@@ -543,10 +540,7 @@
                   $store.state.clubId == club.id
                 "
                 class="mt-2"
-                @click="
-                  () =>
-                    currentClub && $refs.deleteClubModal.open(currentClub.id)
-                "
+                @click="openDeleteClubModal"
               >
                 <IBiExclamationTriangleFill />
                 {{ $t("accountView.verein-loeschen") }}
@@ -560,7 +554,7 @@
             <BButton
               variant="link"
               class="text-success text-start"
-              @click="() => $refs.createClubModal.open()"
+              @click="openCreateClubModal"
             >
               <IBiPlus /> {{ $t("modals.create-club.neuer-verein") }}
             </BButton>
@@ -657,7 +651,7 @@
                 <div class="d-grid">
                   <BButton
                     variant="outline-success"
-                    @click="$refs.inviteUserModal.open()"
+                    @click="openInviteUserModal"
                   >
                     <IBiPlus /> {{ $t("accountView.benutzer-hinzufuegen") }}
                   </BButton>
@@ -799,7 +793,7 @@
         </template>
         <BFormGroup
           v-if="
-            user == null || user.provider == null || user.provider === 'local'
+            user == null || user?.provider == null || user?.provider === 'local'
           "
           label-cols="12"
           label-cols-md="4"
@@ -812,7 +806,7 @@
           <BButton
             variant="warning"
             class="d-block"
-            @click="() => $refs.changePasswordModal.open()"
+            @click="openChangePasswordModal"
           >
             <IBiKey />
             {{ $t("accountView.passwort-aendern") }}
@@ -840,7 +834,7 @@
           :label="$t('accountView.konto-loeschen')"
           label-class="label-with-colon"
           :description="
-            user.provider === 'local'
+            user?.provider === 'local'
               ? $t('accountView.konto-loeschen-descriptions')
               : $t('accountView.konto-loeschen-descriptions-social')
           "
@@ -848,8 +842,12 @@
           <BButton
             variant="danger"
             class="d-block"
-            :disabled="user && user.provider && user.provider !== 'local'"
-            @click="() => $refs.deleteAccountModal.open()"
+            :disabled="
+              user != null &&
+              user?.provider != null &&
+              user?.provider !== 'local'
+            "
+            @click="openDeleteAccountModal"
           >
             <IBiTrash />
             {{ $t("accountView.konto-loeschen") }}
@@ -868,7 +866,7 @@
   </BContainer>
 </template>
 
-<script>
+<script lang="ts">
 import Cookies from "js-cookie";
 
 import AuthService from "@/services/AuthService";
@@ -884,17 +882,50 @@ import MessagingService from "@/services/MessagingService";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import { error, log } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
-import { mapState } from "vuex";
+// mapState was imported previously but is not used in this component
 import { useHead } from "@unhead/vue";
 import { useI18n } from "vue-i18n";
 import { emailRegex } from "@/utils/validation";
 import { canWrite, canDelete } from "@/utils/permissions";
+import { defineComponent } from "vue";
 import FeatureFlagService, {
   FeatureFlagKeys,
 } from "@/services/FeatureFlagService";
 
 const MB = 1_048_576;
 const MAX_IMAGE_MB = 2;
+
+interface AccountClub {
+  id: string;
+  name: string;
+  UserId?: string;
+  logoExtension?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+interface ChildAccess {
+  id: string;
+  role: string;
+  accepted?: boolean;
+  enabled?: boolean;
+  owner?: { username: string };
+  child?: { username: string };
+}
+
+interface AccountUser {
+  id: string;
+  username?: string;
+  email?: string;
+  emailConfirmed?: boolean;
+  profilePictureExtension?: string;
+  provider?: string;
+  createdAt?: string;
+  Clubs: AccountClub[];
+  childAccess?: ChildAccess[];
+}
+
+type OwnerAccessLike = { ownerUserId: string; role: string; enabled?: boolean };
 
 /**
  * @vue-data {Number} MAX_IMAGE_MB=2 - Maximum size for profile and club images in MB.
@@ -940,7 +971,7 @@ const MAX_IMAGE_MB = 2;
  * @vue-method declineAccess(id) Decline an access invitation.
  */
 
-export default {
+export default defineComponent({
   name: "AccountView",
   components: {
     ChangePasswordModal,
@@ -957,14 +988,14 @@ export default {
     return {
       MAX_IMAGE_MB,
       loading: true,
-      user: null,
-      newProfilePicture: null,
-      currentProfilePictureBlob: null,
-      username: null,
-      email: null,
-      newClubLogo: null,
-      currentClubLogoBlob: null,
-      clubName: null,
+      user: null as AccountUser | null,
+      newProfilePicture: null as File | null,
+      currentProfilePictureBlob: undefined as string | undefined,
+      username: null as string | null,
+      email: null as string | null,
+      newClubLogo: null as File | null,
+      currentClubLogoBlob: undefined as string | undefined,
+      clubName: null as string | null,
       tracking: Boolean(Cookies.get("mtm_consent")),
       profilePictureIsHovered: false,
       profilePictureDeletion: false,
@@ -972,9 +1003,9 @@ export default {
       clubLogoDeletion: false,
       clubTabIndex: 0,
       accessSharingEnabled: true,
-      sharedWithMe: [],
-      managedByMe: [],
-      clubs: [],
+      sharedWithMe: [] as ChildAccess[],
+      managedByMe: [] as ChildAccess[],
+      clubs: [] as AccountClub[],
     };
   },
   computed: {
@@ -996,12 +1027,25 @@ export default {
         ? URL.createObjectURL(this.newClubLogo)
         : this.currentClubLogoBlob;
     },
-    ...mapState(["owners", "me"]),
+    owners(): OwnerAccessLike[] {
+      return this.$store.state.owners as OwnerAccessLike[];
+    },
+    me(): AccountUser | null {
+      return this.$store.state.me as AccountUser | null;
+    },
     canWriteCurrentClub() {
-      return canWrite(this.owners, this.me?.id, this.currentClub?.UserId);
+      return canWrite(
+        this.owners,
+        this.me?.id ?? "",
+        this.currentClub?.UserId ?? ""
+      );
     },
     canDeleteCurrentClub() {
-      return canDelete(this.owners, this.me?.id, this.currentClub?.UserId);
+      return canDelete(
+        this.owners,
+        this.me?.id ?? "",
+        this.currentClub?.UserId ?? ""
+      );
     },
     sharedWithMeFields() {
       return [
@@ -1040,11 +1084,13 @@ export default {
         return this.$t("login.bitte-angeben");
       else if (this.username.length < 6)
         return this.$t("login.benutzername-mindestens-laenge");
-      else return null;
+      else return undefined;
     },
 
     emailIsValid() {
-      return this.email != null && this.email.match(emailRegex)?.length > 0;
+      if (this.email == null) return false;
+      const m = this.email.match(emailRegex);
+      return m != null && m.length > 0;
     },
     emailError() {
       if (this.email == null || this.email.length == 0)
@@ -1052,7 +1098,7 @@ export default {
       const emailRegexMatches = this.email.match(emailRegex);
       if (!emailRegexMatches || emailRegexMatches.length <= 0)
         return this.$t("login.echte-email");
-      else return null;
+      else return undefined;
     },
 
     clubNameIsValid() {
@@ -1063,17 +1109,16 @@ export default {
         return this.$t("login.bitte-angeben");
       else if (this.clubName.length < 3)
         return this.$t("modals.create-club.min-vereinsname-length");
-      else return null;
+      else return undefined;
     },
     newProfilePictureIsValid() {
-      if (!this.newProfilePicture) return true;
-      else {
-        if (this.newProfilePicture.size > MAX_IMAGE_MB * MB) return false;
-      }
+      const pic = this.newProfilePicture;
+      if (!pic) return true;
+      if (pic.size > MAX_IMAGE_MB * MB) return false;
       return true;
     },
     newProfilePictureError() {
-      if (!this.newProfilePicture) return null;
+      if (!this.newProfilePicture) return undefined;
       else {
         if (this.newProfilePicture.size > MAX_IMAGE_MB * MB)
           return this.$t(
@@ -1081,17 +1126,16 @@ export default {
             [MAX_IMAGE_MB]
           );
       }
-      return null;
+      return undefined;
     },
     newClubLogoIsValid() {
-      if (!this.newClubLogo) return true;
-      else {
-        if (this.newClubLogo.size > MAX_IMAGE_MB * MB) return false;
-      }
+      const logo = this.newClubLogo;
+      if (!logo) return true;
+      if (logo.size > MAX_IMAGE_MB * MB) return false;
       return true;
     },
     newClubLogoError() {
-      if (!this.newClubLogo) return null;
+      if (!this.newClubLogo) return undefined;
       else {
         if (this.newClubLogo.size > MAX_IMAGE_MB * MB)
           return this.$t(
@@ -1099,7 +1143,7 @@ export default {
             [MAX_IMAGE_MB]
           );
       }
-      return null;
+      return undefined;
     },
   },
   watch: {
@@ -1137,7 +1181,7 @@ export default {
           name: "twitter:title",
           content: `${this.t("konto")} - ${this.t("general.ChoreoPlaner")} | ${this.t("meta.defaults.title")}`,
         },
-      ],
+      ] as any,
     });
 
     this.loading = true;
@@ -1146,9 +1190,11 @@ export default {
       this.accessSharingEnabled = await FeatureFlagService.isEnabled(
         FeatureFlagKeys.ACCESS_SHARING
       );
-      if (this.$store.state.clubId) {
+      if (this.$store.state.clubId && this.user) {
         this.clubTabIndex = this.user.Clubs.indexOf(
-          this.user.Clubs.find((club) => club.id == this.$store.state.clubId)
+          this.user.Clubs.find(
+            (club: AccountClub) => club.id == this.$store.state.clubId
+          )!
         );
       }
     });
@@ -1158,7 +1204,7 @@ export default {
     init() {
       return AuthService.getUserInfo()
         .then((user) => {
-          this.user = user;
+          this.user = user as AccountUser;
           return Promise.all([
             this.loadProfileImage(),
             this.loadUserAccess(),
@@ -1179,59 +1225,58 @@ export default {
     },
     loadClubs() {
       return ClubService.getAll().then((clubs) => {
-        this.clubs = clubs;
+        this.clubs = clubs as AccountClub[];
       });
     },
     loadUserAccess() {
       UserAccessService.getOwners().then((access) => {
-        this.sharedWithMe = access.filter((a) => a.enabled);
+        this.sharedWithMe = (access as ChildAccess[]).filter((a) => a.enabled);
       });
       UserAccessService.getChildren().then((access) => {
-        this.managedByMe = access;
+        this.managedByMe = access as ChildAccess[];
       });
     },
-    updateAccess(id, data) {
+    updateAccess(id: string, data: Partial<ChildAccess>) {
       UserAccessService.update(id, data).then(() => {
         this.loadUserAccess();
       });
     },
-    removeAccess(id) {
+    removeAccess(id: string) {
       UserAccessService.remove(id).then(() => {
         this.loadUserAccess();
       });
     },
-    acceptAccess(id) {
+    acceptAccess(id: string) {
       UserAccessService.accept(id).then(() => {
         this.loadUserAccess();
         this.$store.dispatch("loadUserInfo");
         this.loadClubs();
       });
     },
-    declineAccess(id) {
+    declineAccess(id: string) {
       UserAccessService.decline(id).then(() => {
         this.loadUserAccess();
       });
     },
     loadProfileImage() {
       if (this.user?.profilePictureExtension == null)
-        this.currentProfilePictureBlob = null;
+        this.currentProfilePictureBlob = undefined;
       else
         AuthService.getProfileImage(
           this.user.id,
           this.user.profilePictureExtension
         ).then((response) => {
-          this.currentProfilePictureBlob = URL.createObjectURL(response.data);
+          this.currentProfilePictureBlob = URL.createObjectURL(
+            (response as { data: Blob }).data
+          );
         });
     },
     loadClubLogo() {
       if (this.currentClub?.logoExtension == null)
-        this.currentClubLogoBlob = null;
+        this.currentClubLogoBlob = undefined;
       else
-        ClubService.getClubLogo(
-          this.currentClub.id,
-          this.currentClub.logoExtension
-        ).then((response) => {
-          this.currentClubLogoBlob = URL.createObjectURL(response.data);
+        ClubService.getClubLogo(this.currentClub.id).then((response) => {
+          this.currentClubLogoBlob = URL.createObjectURL(response);
         });
     },
     loadUserSettings() {
@@ -1239,15 +1284,19 @@ export default {
       this.resetClubInfo();
       this.resetSettings();
     },
-    selectCurrentClub(id) {
+    selectCurrentClub(id: string) {
       this.$store.commit("setClubId", id);
     },
     saveSettings() {
       if (!this.tracking) {
-        window._paq.push(["forgetConsentGiven"]);
+        (window as unknown as { _paq: unknown[] })._paq.push([
+          "forgetConsentGiven",
+        ]);
         Cookies.remove("mtm_consent");
       } else {
-        window._paq.push(["rememberConsentGiven"]);
+        (window as unknown as { _paq: unknown[] })._paq.push([
+          "rememberConsentGiven",
+        ]);
       }
       MessagingService.showSuccess(
         this.$t("accountView.settings-saved"),
@@ -1258,11 +1307,12 @@ export default {
       this.tracking = Boolean(Cookies.get("mtm_consent"));
     },
     submitProfilePicture() {
-      this.newProfilePicture = this.$refs.profilePictureFile.files[0];
+      this.newProfilePicture =
+        (this.$refs.profilePictureFile as HTMLInputElement).files?.[0] ?? null;
       this.profilePictureDeletion = false;
     },
-    submitClubLogo(clubId, event) {
-      this.newClubLogo = event.target.files[0];
+    submitClubLogo(clubId: string, event: Event) {
+      this.newClubLogo = (event.target as HTMLInputElement).files?.[0] ?? null;
       this.clubLogoDeletion = false;
     },
     saveUserInfo() {
@@ -1272,7 +1322,9 @@ export default {
       } else if (this.newProfilePicture)
         queries.push(AuthService.updateProfilePicture(this.newProfilePicture));
 
-      queries.push(AuthService.updateUserInfo(this.username, this.email));
+      queries.push(
+        AuthService.updateUserInfo(this.username ?? "", this.email ?? "")
+      );
 
       Promise.all(queries)
         .then(() => {
@@ -1295,10 +1347,11 @@ export default {
     resetUserInfo() {
       this.newProfilePicture = null;
       this.profilePictureDeletion = false;
-      this.username = this.user?.username;
-      this.email = this.user?.email;
+      this.username = this.user?.username ?? null;
+      this.email = this.user?.email ?? null;
     },
     saveClubInfo() {
+      if (!this.currentClub) return;
       const queries = [];
       if (this.clubLogoDeletion) {
         queries.push(ClubService.deleteClubLogo(this.currentClub.id));
@@ -1309,7 +1362,7 @@ export default {
       }
       queries.push(
         ClubService.update(this.currentClub.id, {
-          name: this.clubName,
+          name: this.clubName ?? undefined,
         })
       );
 
@@ -1334,7 +1387,7 @@ export default {
         });
     },
     resetClubInfo() {
-      this.clubName = this.clubs[this.clubTabIndex]?.name;
+      this.clubName = this.clubs[this.clubTabIndex]?.name ?? null;
       this.clubLogoDeletion = false;
       this.newClubLogo = null;
       this.loadClubLogo();
@@ -1356,11 +1409,40 @@ export default {
         );
       });
     },
-    updateClubTabIndex(index) {
+    updateClubTabIndex(index: number) {
       this.clubTabIndex = index;
     },
+    openCreateClubModal() {
+      (
+        this.$refs.createClubModal as InstanceType<typeof CreateClubModal>
+      ).open();
+    },
+    openDeleteClubModal() {
+      if (this.currentClub) {
+        (
+          this.$refs.deleteClubModal as InstanceType<typeof DeleteClubModal>
+        ).open(this.currentClub.id);
+      }
+    },
+    openInviteUserModal() {
+      (
+        this.$refs.inviteUserModal as InstanceType<typeof InviteUserModal>
+      ).open();
+    },
+    openChangePasswordModal() {
+      (
+        this.$refs.changePasswordModal as InstanceType<
+          typeof ChangePasswordModal
+        >
+      ).open();
+    },
+    openDeleteAccountModal() {
+      (
+        this.$refs.deleteAccountModal as InstanceType<typeof DeleteAccountModal>
+      ).open();
+    },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

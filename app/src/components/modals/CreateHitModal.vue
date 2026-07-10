@@ -30,12 +30,10 @@
           id="hitName-options"
         >
           <option
-            v-for="proposal in hitNameProposals.filter((p) =>
-              p.toLowerCase().startsWith(newHitName.toLowerCase())
-            )"
-            :key="proposal"
+            v-for="hitProposal in filteredHitNameProposals"
+            :key="hitProposal"
           >
-            {{ proposal }}
+            {{ hitProposal }}
           </option>
         </datalist>
       </BFormGroup>
@@ -108,7 +106,7 @@
             @click="
               () =>
                 (newHitMembers = teamMembers
-                  .filter((m) => !newHitMembers.includes(m.id))
+                  .filter((m) => !newHitMembers?.includes(m.id))
                   .map((m) => m.id))
             "
           >
@@ -165,10 +163,12 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import HitService from "@/services/HitService";
+import { defineComponent, PropType } from "vue";
+import type { Member, Hit, Participant } from "@/types";
 
-function generateHitNameProposals(t) {
+function generateHitNameProposals(t: (key: string) => string) {
   const preDirections = [null, t("hits.high"), t("hits.low")];
   const postDirections = [
     null,
@@ -253,7 +253,9 @@ function generateHitNameProposals(t) {
     })
     .flat(Infinity);
 
-  return [...standAlones, ...combinations].filter((s) => s && s.length > 0);
+  return [...standAlones, ...combinations].filter(
+    (s) => s && s.length > 0
+  ) as string[];
 }
 
 /**
@@ -289,11 +291,11 @@ function generateHitNameProposals(t) {
  *  <Button @click="() => $refs.createHitModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "CreateHitModal",
   props: {
     teamMembers: {
-      type: Array,
+      type: Array as PropType<Participant[]>,
       default: () => [],
     },
     choreoId: {
@@ -305,7 +307,7 @@ export default {
       default: 0,
     },
     hitsForCurrentCount: {
-      type: Array,
+      type: Array as PropType<Hit[]>,
       default: () => [],
     },
     maxCount: {
@@ -317,56 +319,65 @@ export default {
   emits: ["hitCreated"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
-    newHitName: null,
+    newHitName: undefined as string | undefined,
     newHitAchter: 1,
     newHitCount: 1,
-    newHitMembers: null,
-    hitNameProposals: [],
+    newHitMembers: undefined as string[] | undefined,
+    hitNameProposals: [] as string[],
   }),
   computed: {
+    filteredHitNameProposals(): string[] {
+      return this.hitNameProposals.filter(
+        (p) =>
+          this.newHitName != null &&
+          p.toLowerCase().startsWith(this.newHitName.toLowerCase())
+      );
+    },
     newHitNameIsValid() {
-      return Boolean(this.newHitName) && this.newHitName.trim().length >= 3;
+      const n = this.newHitName;
+      return n != null && n.trim().length >= 3;
     },
     newHitNameStateFeedback() {
       if (!this.newHitName) return this.$t("erforderlich");
       if (this.newHitName.trim().length < 3)
         return this.$t("countOverview.hit-name-min-laenge");
-      return null;
+      return undefined;
     },
     newHitAchterIsValid() {
       return Boolean(this.newHitAchter);
     },
     newHitAchterStateFeedback() {
       if (!this.newHitAchter) return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     newHitCountIsValid() {
       return Boolean(this.newHitCount);
     },
     newHitCountStateFeedback() {
       if (!this.newHitCount) return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     newHitMembersIsValid() {
-      return Boolean(this.newHitMembers) && this.newHitMembers.length > 0;
+      const m = this.newHitMembers;
+      return m != null && m.length > 0;
     },
     newHitMembersStateFeedback() {
       if (!this.newHitMembers || this.newHitMembers.length == 0)
         return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
   },
   mounted() {
-    this.hitNameProposals = generateHitNameProposals(this.$t);
+    this.hitNameProposals = generateHitNameProposals(this.$t) as string[];
   },
   methods: {
     open() {
-      this.$refs.modal.show();
+      (this.$refs.modal as any).show();
     },
     resetModal() {
       this.newHitAchter = Math.floor(this.count / 8) + 1;
       this.newHitCount = (this.count % 8) + 1;
-      this.newHitName = "";
+      this.newHitName = undefined;
       if (!this.newHitMembers)
         this.newHitMembers = this.teamMembers
           .filter(
@@ -379,9 +390,9 @@ export default {
     },
     createHit() {
       const count =
-        (parseInt(this.newHitAchter) - 1) * 8 + parseInt(this.newHitCount) - 1;
+        (Number(this.newHitAchter) - 1) * 8 + Number(this.newHitCount) - 1;
       HitService.create(
-        this.newHitName,
+        this.newHitName as string,
         count,
         this.choreoId,
         this.newHitMembers
@@ -390,5 +401,5 @@ export default {
       });
     },
   },
-};
+});
 </script>

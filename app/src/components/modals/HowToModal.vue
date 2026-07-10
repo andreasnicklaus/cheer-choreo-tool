@@ -104,8 +104,10 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import EditViewShortcutTutorial from "../EditViewShortcutTutorial.vue";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * @module Modal:HowToModal
@@ -118,7 +120,7 @@ import EditViewShortcutTutorial from "../EditViewShortcutTutorial.vue";
  *  <Button @click="() => $refs.howToModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "HowToModal",
   components: { EditViewShortcutTutorial },
   data: () => ({
@@ -126,10 +128,10 @@ export default {
   }),
   methods: {
     open() {
-      this.$refs.modal.show();
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

@@ -7,8 +7,8 @@
           {{ choreo.name }}
         </p>
         <p class="m-0">
-          {{ $t("team", 1) }}: {{ choreo.SeasonTeam.Team.name }} ({{
-            choreo.SeasonTeam.Season.name
+          {{ $t("team", 1) }}: {{ choreo.SeasonTeam?.Team?.name }} ({{
+            choreo.SeasonTeam?.Season?.name
           }})
         </p>
       </BCardSubtitle>
@@ -211,10 +211,7 @@
             </BButton>
           </BCol>
           <BCol v-if="downloadUrl" md="auto" cols="12" class="d-grid">
-            <BButton
-              variant="outline-success"
-              @click="() => $refs.videoDownloadModal.open()"
-            >
+            <BButton variant="outline-success" @click="openVideoDownloadModal">
               <IBiDownload />
               {{ $t("video-export-comp.herunterladen") }}
             </BButton>
@@ -280,7 +277,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { useHead } from "@unhead/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
@@ -295,6 +292,8 @@ import ClubService from "@/services/ClubService";
 import { debug, error, warn } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
 import { roundToDecimals } from "@/utils/numbers";
+import { defineComponent } from "vue";
+import type { User, Choreo, Member, Participant } from "@/types";
 
 /**
  * @module Component:VideoExport
@@ -331,7 +330,7 @@ import { roundToDecimals } from "@/utils/numbers";
  * @example <VideoExport />
  */
 
-export default {
+export default defineComponent({
   name: "VideoExport",
   components: { VideoDownloadModal },
   setup() {
@@ -340,43 +339,44 @@ export default {
   },
   data: () => ({
     width: 1800,
-    downloadUrl: null,
-    mediaRecorder: null,
-    recordingChunks: [],
-    count: null,
-    animationTimeline: null,
+    downloadUrl: undefined as string | undefined,
+    mediaRecorder: undefined as MediaRecorder | undefined,
+    recordingChunks: [] as Blob[],
+    count: undefined as number | undefined,
+    animationTimeline: undefined as gsap.core.Timeline | undefined,
     bps: 2.5,
-    user: null,
-    choreo: null,
-    teamMembers: [],
+    user: undefined as
+      | (User & {
+          Clubs?: Array<{
+            id: string;
+            logoExtension?: string | null;
+            name?: string;
+          }>;
+        })
+      | undefined,
+    choreo: undefined as Choreo | undefined,
+    // Participants are returned as Member instances with a nested ChoreoParticipation
+    teamMembers: [] as (Member & { ChoreoParticipation?: { color: string } })[],
     animationIsRunning: false,
     recordingIsRunning: false,
     includeCount: true,
     includeTeamName: true,
     includeChoreoName: true,
-    includedMembers: [],
+    includedMembers: [] as string[],
     includeClubLogo: false,
-    currentClubLogoBlob: null,
+    currentClubLogoBlob: undefined as string | undefined,
     downloadOptions: [
-      {
-        id: "webm",
-        ext: ".webm",
-        name: "Webm",
-      },
-      {
-        id: "mp4",
-        ext: ".mp4",
-        name: "MP4",
-      },
-    ],
-    ffmpeg: null,
-    mp4Url: null,
+      { id: "webm", ext: ".webm", name: "Webm" },
+      { id: "mp4", ext: ".mp4", name: "MP4" },
+    ] as Array<{ id: string; ext: string; name: string }>,
+    ffmpeg: undefined as FFmpeg | undefined,
+    mp4Url: undefined as string | undefined,
     animationMinutes: 0,
     animationSeconds: 0,
   }),
   computed: {
     currentClub() {
-      return this.user?.Clubs.find((c) => c.id == this.$store.state.clubId);
+      return this.user?.Clubs?.find((c) => c.id == this.$store.state.clubId);
     },
     waitingSlogan() {
       const slogans = [
@@ -392,13 +392,13 @@ export default {
         this.$t("loading-slogans.schminke-wird-aufgetragen"),
         this.$t("loading-slogans.zopf-wird-gebunden"),
       ];
-      if (this.choreo.SeasonTeam.Team.name)
+      if (this.choreo?.SeasonTeam?.Team?.name)
         slogans.push(
           this.$t("loading-slogans.go-team", {
             name: this.choreo.SeasonTeam.Team.name,
           })
         );
-      return slogans[Math.floor(this.count / 10) % slogans.length];
+      return slogans[Math.floor((this.count ?? 0) / 10) % slogans.length];
     },
     height() {
       switch (this.choreo?.matType) {
@@ -509,7 +509,7 @@ export default {
               )} | ${this.t("meta.defaults.title")}`
           ),
         },
-      ],
+      ] as any,
     });
     Promise.all([this.loadUserInfo(), this.loadChoreo()]).then(() => {
       this.drawCanvas();
@@ -524,25 +524,25 @@ export default {
   methods: {
     startPreview() {
       this.animationIsRunning = true;
-      this.animationTimeline.play();
+      this.animationTimeline?.play();
     },
     pausePreview() {
       this.animationIsRunning = false;
-      this.animationTimeline.pause();
+      this.animationTimeline?.pause();
     },
     resetPreview() {
       this.count = 0;
-      this.animationTimeline.time(0);
+      this.animationTimeline?.time(0);
     },
     startRecording() {
       this.mediaRecorder?.stop();
-      this.animationTimeline.pause();
+      this.animationTimeline?.pause();
 
       this.count = 0;
       this.recordingIsRunning = true;
       this.animationIsRunning = true;
-      this.mp4Url = null;
-      this.downloadUrl = null;
+      this.mp4Url = undefined;
+      this.downloadUrl = undefined;
       this.recordingChunks = [];
 
       this.mediaRecorder?.start();
@@ -555,23 +555,33 @@ export default {
       this.animationTimeline?.pause();
     },
     loadChoreo() {
-      return ChoreoService.getById(this.$route.params.choreoId)
-        .then((choreo) => {
+      return ChoreoService.getById(this.$route.params.choreoId as string)
+        .then((choreo: Choreo) => {
           this.choreo = choreo;
-          this.teamMembers = choreo.Participants.sort((a, b) =>
-            a.name.localeCompare(b.name)
-          );
-          this.includedMembers = this.teamMembers.map((m) => m.id);
+          const participants = (choreo.Participants || []) as Participant[];
+          participants.sort((a, b) => a.name.localeCompare(b.name));
+          // teamMembers expects Member-like objects; Participant extends Member
+          this.teamMembers = participants as (Member & {
+            ChoreoParticipation?: { color: string };
+          })[];
+          this.includedMembers = participants.map((p) => p.id);
           this.addAnimationsFromChoreo();
           this.initializeRecorder();
         })
-        .catch((e) => {
+        .catch((e: { response: { data: string } }) => {
           error("Could not load choreo", ERROR_CODES.CHOREO_QUERY_FAILED);
           MessagingService.showError(e.response.data, this.$t("fehler"));
         });
     },
     loadUserInfo() {
-      return AuthService.getUserInfo().then((user) => {
+      return AuthService.getUserInfo().then((res: unknown) => {
+        const user = res as User & {
+          Clubs?: Array<{
+            id: string;
+            logoExtension?: string | null;
+            name?: string;
+          }>;
+        };
         this.user = user;
         this.includeClubLogo = Boolean(this.currentClub?.logoExtension);
         return this.loadClubLogo().then(() => user);
@@ -579,25 +589,23 @@ export default {
     },
     async loadClubLogo() {
       if (this.currentClub?.logoExtension == null)
-        return (this.currentClubLogoBlob = null);
+        return (this.currentClubLogoBlob = undefined);
       else
-        return ClubService.getClubLogo(
-          this.currentClub.id,
-          this.currentClub.logoExtension
-        ).then((response) => {
-          this.currentClubLogoBlob = URL.createObjectURL(response.data);
+        return ClubService.getClubLogo(this.currentClub.id).then((response) => {
+          this.currentClubLogoBlob = URL.createObjectURL(response);
         });
     },
     drawBackground() {
-      const canvas = this.$refs.videoCanvas;
+      const canvas = this.$refs.videoCanvas as HTMLCanvasElement;
       if (!canvas) return;
 
       const context = canvas.getContext("2d");
+      if (!context) return;
 
       context.fillStyle = this.cssVar("--color-mat-bg");
       context.fillRect(0, 0, canvas.width, canvas.height);
 
-      switch (this.choreo.matType) {
+      switch (this.choreo?.matType) {
         case "cheer":
           context.fillStyle = this.hexToRgba(
             this.cssVar("--color-mat-grid"),
@@ -617,15 +625,16 @@ export default {
       }
     },
     clearCanvas() {
-      const canvas = this.$refs.videoCanvas;
+      const canvas = this.$refs.videoCanvas as HTMLCanvasElement;
       if (!canvas) return;
 
       const context = canvas.getContext("2d");
+      if (!context) return;
       context.clearRect(0, 0, canvas.width, canvas.height);
       this.drawBackground();
     },
-    drawSinglePosition(x, y, color, text) {
-      const canvas = this.$refs.videoCanvas;
+    drawSinglePosition(x: number, y: number, color: string, text: string) {
+      const canvas = this.$refs.videoCanvas as HTMLCanvasElement;
       const context = canvas?.getContext("2d");
       if (!context) return;
 
@@ -654,14 +663,16 @@ export default {
         (y * canvas.height) / 100
       );
     },
-    drawPositions(positions) {
+    drawPositions(
+      positions: Array<{ x: number; y: number; color?: string; text: string }>
+    ) {
       this.clearCanvas();
       positions.forEach((p) =>
-        this.drawSinglePosition(p.x, p.y, p.color, p.text)
+        this.drawSinglePosition(p.x, p.y, p.color || "", p.text)
       );
     },
     drawCount() {
-      const canvas = this.$refs.videoCanvas;
+      const canvas = this.$refs.videoCanvas as HTMLCanvasElement;
       const context = canvas?.getContext("2d");
 
       if (!context) return;
@@ -671,8 +682,8 @@ export default {
       context.textAlign = "right";
       context.font = (16 / 500) * this.width + "px Sans-Serif";
 
-      const text = `${Math.floor(this.count / 8) + 1}/${
-        Math.floor(this.count % 8) + 1
+      const text = `${Math.floor((this.count ?? 0) / 8) + 1}/${
+        Math.floor((this.count ?? 0) % 8) + 1
       }`;
 
       context.fillText(
@@ -682,7 +693,7 @@ export default {
       );
     },
     drawTeamName() {
-      const canvas = this.$refs.videoCanvas;
+      const canvas = this.$refs.videoCanvas as HTMLCanvasElement;
       const context = canvas?.getContext("2d");
 
       if (!context) return;
@@ -693,13 +704,13 @@ export default {
       context.font = (16 / 500) * this.width + "px Sans-Serif";
 
       context.fillText(
-        this.choreo.SeasonTeam.Team.name,
+        this.choreo?.SeasonTeam?.Team?.name ?? "",
         canvas.width / 2,
         canvas.height - (20 / 500) * this.width
       );
     },
     drawChoreoName() {
-      const canvas = this.$refs.videoCanvas;
+      const canvas = this.$refs.videoCanvas as HTMLCanvasElement;
       const context = canvas?.getContext("2d");
 
       if (!context) return;
@@ -710,18 +721,18 @@ export default {
       context.font = (16 / 500) * this.width + "px Sans-Serif";
 
       context.fillText(
-        this.choreo.name,
+        this.choreo?.name ?? "",
         (20 / 500) * this.width,
         canvas.height - (20 / 500) * this.width
       );
     },
     drawClubLogo() {
-      const canvas = this.$refs.videoCanvas;
+      const canvas = this.$refs.videoCanvas as HTMLCanvasElement;
       const context = canvas?.getContext("2d");
 
       if (!context) return;
 
-      const clubLogo = this.$refs.clubLogo;
+      const clubLogo = this.$refs.clubLogo as HTMLImageElement;
 
       const imageWidthFactor = canvas.width / 2 / clubLogo.naturalWidth;
       const imageHeightFactor = canvas.height / 2 / clubLogo.naturalHeight;
@@ -743,8 +754,13 @@ export default {
         positions
           .filter((p) => this.includedMembers.includes(p.MemberId))
           .map((p) => ({
-            text: p.Member.abbreviation || p.Member.nickname || p.Member.name,
-            color: p.Member?.ChoreoParticipation?.color,
+            text:
+              p.Member?.abbreviation ||
+              p.Member?.nickname ||
+              (p.Member as { name?: string })?.name ||
+              "",
+            color: (p.Member as { ChoreoParticipation?: { color: string } })
+              ?.ChoreoParticipation?.color,
             x: p.x,
             y: p.y,
           }))
@@ -755,11 +771,12 @@ export default {
       if (this.includeClubLogo && this.currentClubLogoBlob) this.drawClubLogo();
     },
     addAnimationsFromChoreo() {
+      if (!this.choreo?.counts) return;
       const counts = this.choreo.counts;
       const bps = this.bps;
-      const setCount = (value) => {
+      const setCount = (value: number) => {
         this.count = value;
-        if (this.count >= this.choreo.counts) this.stopRecording();
+        if ((this.count ?? 0) >= counts) this.stopRecording();
       };
 
       this.animationTimeline = gsap.timeline({
@@ -778,16 +795,19 @@ export default {
       if (!this.choreo) return [];
       return ChoreoService.getPositionsFromChoreoAndCount(
         this.choreo,
-        this.count,
-        this.choreo.Participants.sort((a, b) => a.name.localeCompare(b.name))
+        this.count ?? 0,
+        (this.choreo.Participants || []).sort((a, b) =>
+          a.name.localeCompare(b.name)
+        )
       );
     },
     initializeRecorder() {
-      if (!this.$refs.videoCanvas) {
+      const canvas = this.$refs.videoCanvas as HTMLCanvasElement;
+      if (!canvas) {
         return setTimeout(this.initializeRecorder, 50);
       }
 
-      if (!this.$refs.videoCanvas.captureStream) {
+      if (!canvas.captureStream) {
         MessagingService.showError(
           this.$t("video-export-comp.dein-browser-unterstuetzt-kein-video"),
           this.$t("fehler")
@@ -795,27 +815,31 @@ export default {
         return;
       }
 
-      const stream = this.$refs.videoCanvas.captureStream(1000);
+      const stream = canvas.captureStream(1000);
       try {
         this.mediaRecorder = new MediaRecorder(stream, {
           mimeType: "video/webm; codecs=vp9",
         });
-      } catch (e) {
+      } catch {
         warn("VP9 not supported, falling back to VP8");
         this.mediaRecorder = new MediaRecorder(stream, {
           mimeType: "video/webm; codecs=vp8",
         });
       }
-      this.mediaRecorder.ondataavailable = (event) => {
+      this.mediaRecorder.ondataavailable = (event: BlobEvent) => {
         this.recordingChunks.push(event.data);
       };
       this.mediaRecorder.onstop = () => {
-        this.mp4Url = null;
-        this.downloadUrl = null;
+        this.mp4Url = undefined;
+        this.downloadUrl = undefined;
         this.downloadUrl = URL.createObjectURL(
           new Blob(this.recordingChunks, { type: "video/webm" })
         );
-        this.$refs.videoDownloadModal.open();
+        (
+          this.$refs.videoDownloadModal as InstanceType<
+            typeof VideoDownloadModal
+          >
+        ).open();
       };
     },
     initializeFfmpeg() {
@@ -826,21 +850,24 @@ export default {
         toBlobURL(`${baseURL}/ffmpeg-core.wasm`, "application/wasm"),
       ]).then(([coreURL, wasmURL]) => {
         return this.ffmpeg
-          .load({
+          ?.load({
             coreURL,
             wasmURL,
           })
           .then(() => {
-            this.ffmpeg.on("log", ({ message }) => {
+            this.ffmpeg?.on("log", ({ message }: { message: string }) => {
               debug(message);
             });
-            this.ffmpeg.on("progress", ({ progress, time }) => {
-              debug({ progress, time });
-            });
+            this.ffmpeg?.on(
+              "progress",
+              ({ progress, time }: { progress: number; time: number }) => {
+                debug({ progress, time });
+              }
+            );
           });
       });
     },
-    selectDownloadOption(optionId) {
+    selectDownloadOption(optionId: string) {
       switch (optionId) {
         case "mp4":
           this.downloadMp4();
@@ -856,11 +883,12 @@ export default {
       if (this.mp4Url) this.downloadUrl = this.mp4Url;
       const name = "record.webm";
 
-      fetchFile(this.downloadUrl).then(async (vid) => {
+      if (!this.ffmpeg || !this.downloadUrl) return;
+      fetchFile(this.downloadUrl).then(async (vid: any) => {
         this.initializeFfmpeg().then(() => {
-          this.ffmpeg.writeFile(name, vid).then(() => {
-            this.ffmpeg.exec(["-i", name, "output.mp4"]).then(() => {
-              this.ffmpeg.readFile("output.mp4").then((data) => {
+          this.ffmpeg!.writeFile(name, vid).then(() => {
+            this.ffmpeg!.exec(["-i", name, "output.mp4"]).then(() => {
+              this.ffmpeg!.readFile("output.mp4").then((data: any) => {
                 const url = URL.createObjectURL(
                   new Blob([data.buffer], { type: "video/mp4" })
                 );
@@ -879,6 +907,7 @@ export default {
       });
     },
     calculateAnimationTime() {
+      if (!this.choreo?.counts) return;
       const totalSeconds = roundToDecimals(this.choreo.counts / this.bps, 0);
       this.animationMinutes = Math.floor(totalSeconds / 60);
       this.animationSeconds = totalSeconds % 60;
@@ -889,21 +918,29 @@ export default {
         0
       );
       if (totalSeconds > 0 && this.choreo?.counts) {
-        const targetBps = roundToDecimals(this.choreo.counts / totalSeconds, 1);
+        const targetBps = roundToDecimals(
+          (this.choreo.counts as number) / totalSeconds,
+          1
+        );
         if (this.bps !== targetBps) this.bps = targetBps;
       }
     },
-    cssVar(name) {
+    cssVar(name: string) {
       return getComputedStyle(document.documentElement)
         .getPropertyValue(name)
         .trim();
     },
-    hexToRgba(hex, alpha) {
+    hexToRgba(hex: string, alpha: number) {
       const r = parseInt(hex.slice(1, 3), 16);
       const g = parseInt(hex.slice(3, 5), 16);
       const b = parseInt(hex.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, ${alpha})`;
     },
+    openVideoDownloadModal() {
+      (
+        this.$refs.videoDownloadModal as InstanceType<typeof VideoDownloadModal>
+      ).open();
+    },
   },
-};
+});
 </script>

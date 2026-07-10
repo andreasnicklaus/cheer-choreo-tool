@@ -13,9 +13,10 @@
     "docs:watch": "concurrently --kill-others \"live-server ./public/docs\" \"nodemon --exec npm run docs\"",
     "docs:update": "nodemon --exec npm run docs",
     "test": "npm run test:unit && npm run test:e2e",
+    "typecheck": "tsc --noEmit && vue-tsc --noEmit",
     "lint": "eslint src --max-warnings 0",
     "lint:fix": "eslint src --fix",
-    "test:pretest": "npm run lint && tsc --noEmit",
+    "test:pretest": "npm run lint && npm run typecheck && npm run format:check",
     "test:e2e": "npm run test:pretest && playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:unit": "npm run test:pretest &&vitest run",
@@ -50,9 +51,11 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.28.6",
+    "@babel/preset-typescript": "^7.29.7",
     "@estruyf/github-actions-reporter": "^1.12.0",
     "@iconify-json/bi": "^1.2.7",
     "@playwright/test": "^1.60.0",
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^25.8.0",
     "@vitejs/plugin-vue": "^6.0.6",
     "@vitest/coverage-v8": "^4.1.6",
@@ -89,7 +92,7 @@
     "ignore": [
       "./public/docs"
     ],
-    "ext": "vue,js,md"
+    "ext": "vue,js,ts,md"
   },
   "overrides": {
     "node-sass": "npm:sass@^1.98.0",

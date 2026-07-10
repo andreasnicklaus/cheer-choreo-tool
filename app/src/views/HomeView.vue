@@ -426,7 +426,7 @@
                 id="selectMembers"
                 v-model="selectedTeamMembers"
                 :options="
-                  teamMembers.map((t) => ({
+                  teamMembers.map((t: any) => ({
                     text: t.nickname,
                     value: t.abbreviation,
                   }))
@@ -517,7 +517,7 @@
   </BContainer>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { useHead } from "@unhead/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
@@ -558,7 +558,7 @@ useHead({
 });
 </script>
 
-<script>
+<script lang="ts">
 import CountOverview from "@/components/CountOverview.vue";
 import CountSheet from "@/components/CountSheet.vue";
 import Mat from "@/components/Mat.vue";
@@ -566,6 +566,7 @@ import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import { useTheme } from "@/composables/useTheme";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
+import { defineComponent } from "vue";
 
 /**
  * @vue-data {Number} count=0 - The current count value, used to highlight the selected cell.
@@ -580,7 +581,7 @@ import { ScrollTrigger } from "gsap/all";
  * @vue-meta {MetaInfo} metaInfo
  */
 
-export default {
+export default defineComponent({
   name: "HomeView",
   components: {
     Mat,
@@ -628,7 +629,7 @@ export default {
             color: "#FFFF22",
           },
         },
-      ],
+      ] as any,
       choreo: {
         counts: 40,
         Hits: [
@@ -782,7 +783,7 @@ export default {
           },
         ],
         Lineups: [],
-      },
+      } as any,
       currentPositions: [
         {
           MemberId: "a",
@@ -841,7 +842,7 @@ export default {
           y: 10,
         },
       ],
-      selectedTeamMembers: [],
+      selectedTeamMembers: [] as string[],
     };
   },
   computed: {
@@ -849,13 +850,15 @@ export default {
       return useTheme().isDark.value;
     },
     hitsForCurrentCount() {
-      return this.choreo.Hits.filter((h) => h.count == this.count).map((h) => ({
-        ...h,
-        id: (Math.random() + 1).toString(36).substring(7),
-      }));
+      return this.choreo.Hits.filter((h: any) => h.count == this.count).map(
+        (h: any) => ({
+          ...h,
+          id: (Math.random() + 1).toString(36).substring(7),
+        })
+      );
     },
     matWidth() {
-      const w = document.getElementById("app")?.clientWidth;
+      const w = document.getElementById("app")?.clientWidth ?? 0;
       if (w < 576) return 300;
       else if (w < 992) return 400;
       else return 500;
@@ -864,7 +867,7 @@ export default {
   mounted() {
     this.selectedTeamMembers = this.teamMembers
       .slice(0, this.teamMembers.length - 1)
-      .map((t) => t.abbreviation);
+      .map((t: any) => t.abbreviation);
 
     const tl = gsap.timeline();
 
@@ -953,11 +956,11 @@ export default {
       opacity: 0,
     });
 
-    const homeViewWidth = document.getElementById("homeView").clientWidth;
+    const homeViewWidth = document.getElementById("homeView")!.clientWidth;
     const featureCallouts1Width =
-      document.getElementById("featureCallouts1").clientWidth;
+      document.getElementById("featureCallouts1")!.clientWidth;
     const featureCallouts2Width =
-      document.getElementById("featureCallouts2").clientWidth;
+      document.getElementById("featureCallouts2")!.clientWidth;
 
     gsap.to("#featureCallouts1", {
       scrollTrigger: {
@@ -1086,7 +1089,7 @@ export default {
           `#${matId} #t${id}`,
           {
             keyframes: positions.map((p) => ({
-              ease: p.ease,
+              ease: (p as any).ease,
               x: p.x * this.matWidth,
               y: p.y * this.matWidth * heightFactor,
             })),
@@ -1097,7 +1100,7 @@ export default {
           `#${matId} #c${id}`,
           {
             keyframes: positions.map((p) => ({
-              ease: p.ease,
+              ease: (p as any).ease,
               cx: p.x * this.matWidth,
               cy: p.y * this.matWidth * heightFactor,
             })),
@@ -1118,7 +1121,7 @@ export default {
       },
     });
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

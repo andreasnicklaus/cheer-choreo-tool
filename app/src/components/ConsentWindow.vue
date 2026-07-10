@@ -44,8 +44,9 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import Cookies from "js-cookie";
+import { defineComponent } from "vue";
 
 const cookieName = "mtm_consent";
 const dismissCookieName = "consent-dismissed";
@@ -57,7 +58,7 @@ const dismissCookieName = "consent-dismissed";
  *
  * @example <ConsentWindow />
  */
-export default {
+export default defineComponent({
   name: "ConsentWindow",
   data: () => ({
     showConsentWindow: false,
@@ -65,9 +66,9 @@ export default {
   mounted() {
     if (localStorage.getItem("isTestEnvironment") !== "true") {
       const consent = Cookies.get(cookieName);
-      if (!consent) {
+      if (!consent && consent != "false") {
         const dismissed = Cookies.get(dismissCookieName);
-        if (!dismissed) this.showConsentWindow = true;
+        if (!dismissed && dismissed != "false") this.showConsentWindow = true;
       } else {
         window._paq?.push(["rememberConsentGiven"]);
       }
@@ -80,8 +81,8 @@ export default {
     },
     closeWithoutConsent() {
       this.showConsentWindow = false;
-      Cookies.set(dismissCookieName, true, { expires: 1 });
+      Cookies.set(dismissCookieName, "true", { expires: 1 });
     },
   },
-};
+});
 </script>

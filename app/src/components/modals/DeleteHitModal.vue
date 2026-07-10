@@ -17,8 +17,10 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import HitService from "@/services/HitService";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * @module Modal:DeleteHitModal
@@ -36,7 +38,7 @@ import HitService from "@/services/HitService";
  *  <Button @click="() => $refs.deleteHitModal.open('abc')" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "DeleteHitModal",
   props: {
     choreo: {
@@ -47,24 +49,24 @@ export default {
   emits: ["updateHits"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
-    deleteHitId: null,
+    deleteHitId: null as string | null,
   }),
   methods: {
-    open(deleteHitId) {
+    open(deleteHitId: string) {
       this.deleteHitId = deleteHitId;
-      this.$refs.modal.show();
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     resetDeleteHitModal() {
       this.deleteHitId = null;
     },
     deleteHit() {
-      HitService.remove(this.deleteHitId).then(() => {
+      HitService.remove(this.deleteHitId!).then(() => {
         this.$emit(
           "updateHits",
-          this.choreo.Hits.filter((h) => h.id != this.deleteHitId)
+          this.choreo.Hits.filter((h: any) => h.id != this.deleteHitId)
         );
       });
     },
   },
-};
+});
 </script>

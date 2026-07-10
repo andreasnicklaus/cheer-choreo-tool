@@ -22,7 +22,9 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 /**
  * @module Modal:LoadingModal
  *
@@ -39,7 +41,7 @@
  * @example <LoadingModal />
  * @example <LoadingModal description="Bitte warten..." />
  */
-export default {
+export default defineComponent({
   name: "LoadingModal",
   props: {
     description: {
@@ -52,11 +54,11 @@ export default {
   }),
   methods: {
     open() {
-      this.$refs.modal?.show();
+      (this.$refs.modal as InstanceType<typeof BModal>)?.show();
     },
     close() {
-      this.$refs.modal?.hide();
+      (this.$refs.modal as InstanceType<typeof BModal>)?.hide();
     },
   },
-};
+});
 </script>

@@ -22,7 +22,9 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 /**
  * @module Modal:ConfirmEmailModal
  *
@@ -31,7 +33,7 @@
  *
  * @example <ConfirmEmailModal />
  */
-export default {
+export default defineComponent({
   name: "ConfirmEmailModal",
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
@@ -40,8 +42,8 @@ export default {
   methods: {
     open(isError = false) {
       this.isError = isError;
-      this.$refs.modal.show();
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
   },
-};
+});
 </script>

@@ -4,17 +4,16 @@
   </BContainer>
 </template>
 
-<script>
-import { useHead } from "@unhead/vue";
-import { computed } from "vue";
+<script lang="ts">
 import { useI18n } from "vue-i18n";
 import store from "@/store";
 import AuthService from "@/services/AuthService";
 import MessagingService from "@/services/MessagingService";
 import ERROR_CODES from "@/utils/error_codes";
 import { error } from "@/utils/logging";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   name: "AuthCallback",
   setup() {
     const { t } = useI18n();
@@ -39,7 +38,8 @@ export default {
     };
     const redirectToLogin = () =>
       this.$router.push(
-        this.$route.query?.redirectUrl || `/${this.$i18n.locale}/login`
+        this.$route.query?.redirectUrl?.toString() ||
+          `/${this.$i18n.locale}/login`
       );
 
     removeQueryParams();
@@ -48,14 +48,14 @@ export default {
       redirectToLogin().then(() => {
         MessagingService.showError(
           this.$t("auth.socialLoginFailed"),
-          query.error
+          query.error?.toString()
         );
       });
       return;
     }
 
     if (query.token) {
-      AuthService.saveLoginToken(query.token);
+      AuthService.saveLoginToken(query.token.toString());
       console.log("Login token saved, loading user info...");
       store.commit("setLoginState", true);
       console.log("Login state set to true, dispatching loadUserInfo...");
@@ -73,5 +73,5 @@ export default {
 
     redirectToLogin();
   },
-};
+});
 </script>

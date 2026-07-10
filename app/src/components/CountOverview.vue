@@ -45,7 +45,7 @@
                       variant="outline-primary"
                       :disabled="count <= 0 || !interactive"
                       data-testid="moveHitToPreviousCount-button"
-                      @click="() => moveHitToPreviousCount(hit.id)"
+                      @click="() => moveHitToPreviousCount(hit.id!)"
                     >
                       <IBiChevronLeft />
                     </BButton>
@@ -56,7 +56,7 @@
                       variant="outline-primary"
                       :disabled="count >= choreo.counts - 1 || !interactive"
                       data-testid="moveHitToNextCount-button"
-                      @click="() => moveHitToNextCount(hit.id)"
+                      @click="() => moveHitToNextCount(hit.id!)"
                     >
                       <IBiChevronRight />
                     </BButton>
@@ -65,7 +65,7 @@
                       variant="outline-success"
                       :disabled="!interactive"
                       data-testid="editHit-button"
-                      @click="() => editHit(hit.id)"
+                      @click="() => editHit(hit.id!)"
                     >
                       <IBiPen />
                     </BButton>
@@ -74,7 +74,7 @@
                       variant="outline-danger"
                       :disabled="!interactive"
                       data-testid="deleteHit-button"
-                      @click="() => $refs.deleteHitModal.open(hit.id)"
+                      @click="openHitDeleteModal(hit.id!)"
                     >
                       <IBiTrash />
                     </BButton>
@@ -98,13 +98,13 @@
                     height: '24px',
                     width: '24px',
                     backgroundColor:
-                      teamMembers.find((tm) => tm.id == member.id)
-                        .ChoreoParticipation.color + '55',
+                      teamMembers.find((tm) => tm.id == member.id)!
+                        .ChoreoParticipation!.color + '55',
                     borderRadius: '50%',
                     border:
                       'solid 2px ' +
-                      teamMembers.find((tm) => tm.id == member.id)
-                        .ChoreoParticipation.color,
+                      teamMembers.find((tm) => tm.id == member.id)!
+                        .ChoreoParticipation!.color,
                   }"
                 ></div>
                 {{ member.nickname || member.name }}
@@ -144,12 +144,13 @@
                       autofocus
                       :placeholder="$t('countOverview.name-des-hits')"
                       :state="editHitNameIsValid"
-                      @keydown.enter="
-                        () => {
-                          if (editHitNameIsValid) saveHit();
+                      @keydown="
+                        (e: KeyboardEvent) => {
+                          if (e.key === 'Enter' && editHitNameIsValid)
+                            saveHit();
+                          else if (e.key === 'Escape') editHitId = null;
                         }
                       "
-                      @keydown.esc="() => (editHitId = null)"
                     />
                   </BFormGroup>
                 </BCol>
@@ -278,10 +279,10 @@
                           height: '24px',
                           width: '24px',
                           backgroundColor:
-                            member.ChoreoParticipation.color + '55',
+                            member.ChoreoParticipation!.color + '55',
                           borderRadius: '50%',
                           border:
-                            'solid 2px ' + member.ChoreoParticipation.color,
+                            'solid 2px ' + member.ChoreoParticipation!.color,
                         }"
                       ></div>
                       {{ member.nickname || member.name }}
@@ -320,7 +321,9 @@
                 <BCol cols="auto">
                   <BButtonGroup class="me-2">
                     <BButton
-                      v-show="lineup.Positions.length != teamMembers.length"
+                      v-show="
+                        (lineup.Positions?.length ?? 0) != teamMembers.length
+                      "
                       v-b-tooltip.hover="
                         $t(
                           'countOverview.alle-teilnehmer-in-der-aufstellung-speichern'
@@ -349,7 +352,7 @@
                       variant="outline-danger"
                       :disabled="!interactive"
                       data-testid="deleteLineup-button"
-                      @click="() => $refs.deleteLineupModal.open(lineup.id)"
+                      @click="openDeleteLineupModal(lineup.id)"
                     >
                       <IBiTrash />
                     </BButton>
@@ -377,13 +380,15 @@
               :style="{ columnCount: 2 }"
             >
               <BRow
-                v-for="position in lineup.Positions.slice().sort((a, b) =>
-                  teamMembers
-                    .find((m) => m.id == a.MemberId)
-                    .name.localeCompare(
-                      teamMembers.find((m) => m.id == b.MemberId).name
-                    )
-                )"
+                v-for="position in (lineup.Positions ?? [])
+                  .slice()
+                  .sort((a, b) =>
+                    teamMembers
+                      .find((m) => m.id == a.MemberId)!
+                      .name.localeCompare(
+                        teamMembers.find((m) => m.id == b.MemberId)!.name
+                      )
+                  )"
                 :key="position.id"
                 no-gutters
               >
@@ -393,16 +398,16 @@
                     height: '24px',
                     width: '24px',
                     backgroundColor:
-                      teamMembers.find((tm) => tm.id == position.MemberId)
-                        .ChoreoParticipation.color + '55',
+                      teamMembers.find((tm) => tm.id == position.MemberId)!
+                        .ChoreoParticipation!.color + '55',
                     borderRadius: '50%',
                     border:
                       'solid 2px ' +
-                      teamMembers.find((tm) => tm.id == position.MemberId)
-                        .ChoreoParticipation.color,
+                      teamMembers.find((tm) => tm.id == position.MemberId)!
+                        .ChoreoParticipation!.color,
                   }"
                 ></div>
-                {{ position.Member.name }}
+                {{ position.Member!.name }}
               </BRow>
             </BCol>
             <p
@@ -594,10 +599,10 @@
                           height: '24px',
                           width: '24px',
                           backgroundColor:
-                            member.ChoreoParticipation.color + '55',
+                            member.ChoreoParticipation!.color + '55',
                           borderRadius: '50%',
                           border:
-                            'solid 2px ' + member.ChoreoParticipation.color,
+                            'solid 2px ' + member.ChoreoParticipation!.color,
                         }"
                       ></div>
                       {{ member.nickname || member.name }}
@@ -654,7 +659,7 @@
         variant="light"
         class="mt-2"
         :disabled="!interactive"
-        @click="() => $refs.createLineupModal.open()"
+        @click="openCreateLineupModal"
       >
         <IBiPlus />
         {{ $t("countOverview.aufstellung-hinzufuegen") }}
@@ -664,9 +669,9 @@
     <CreateLineupModal
       ref="createLineupModal"
       :count="count"
-      :choreo="choreo"
-      :team-members="teamMembers"
-      :lineups-for-current-count="lineupsForCurrentCount"
+      :choreo="choreo as any"
+      :team-members="teamMembers as any"
+      :lineups-for-current-count="lineupsForCurrentCount as any"
       :current-positions="currentPositions"
       @update-lineups="(lineupCopy) => $emit('updateLineups', lineupCopy)"
     />
@@ -685,13 +690,54 @@
   </BCard>
 </template>
 
-<script>
+<script lang="ts">
 import HitService from "@/services/HitService";
 import LineupService from "@/services/LineupService";
 import PositionService from "@/services/PositionService";
 import CreateLineupModal from "./modals/CreateLineupModal.vue";
 import DeleteLineupModal from "./modals/DeleteLineupModal.vue";
 import DeleteHitModal from "./modals/DeleteHitModal.vue";
+import { defineComponent, PropType } from "vue";
+import type { Lineup } from "@/types";
+
+interface LocalMember {
+  id: string;
+  name: string;
+  nickname?: string;
+  ChoreoParticipation?: { color: string };
+}
+
+interface LocalHit {
+  id?: string;
+  name: string;
+  count: number;
+  Members?: LocalMember[];
+}
+
+interface LocalPosition {
+  id?: string;
+  MemberId: string;
+  Member?: LocalMember;
+}
+
+interface LocalLineup {
+  id: string;
+  startCount: number;
+  endCount: number;
+  Positions?: LocalPosition[];
+}
+
+interface LocalChoreo {
+  counts: number;
+  Hits: LocalHit[];
+  Lineups: LocalLineup[];
+}
+
+interface LocalCurrentPosition {
+  MemberId: string;
+  x: number;
+  y: number;
+}
 
 /**
  * @module Component:CountOverview
@@ -724,7 +770,7 @@ import DeleteHitModal from "./modals/DeleteHitModal.vue";
  * @example <CountOverview :count="0" :choreo="choreoObj" :teamMembers="members" @updateHits="handler" @updateLineups="handler" @updateCount="handler" @openCreateHitModal="handler" />
  * @example <CountOverview :count="0" :choreo="choreoObj" :teamMembers="members" :interactive="false"  @updateHits="handler" @updateLineups="handler" @updateCount="handler" @openCreateHitModal="handler" />
  */
-export default {
+export default defineComponent({
   name: "CountOverview",
   components: { CreateLineupModal, DeleteLineupModal, DeleteHitModal },
   props: {
@@ -733,24 +779,24 @@ export default {
       required: true,
     },
     hitsForCurrentCount: {
-      type: Array,
+      type: Array as PropType<LocalHit[]>,
       required: true,
     },
     lineupsForCurrentCount: {
-      type: Array,
+      type: Array as PropType<LocalLineup[]>,
       required: true,
     },
     teamMembers: {
-      type: Array,
-      default: () => [],
+      type: Array as PropType<LocalMember[]>,
+      default: () => [] as LocalMember[],
     },
     choreo: {
-      type: Object,
-      default: () => ({}),
+      type: Object as PropType<LocalChoreo>,
+      default: () => ({ counts: 0, Hits: [], Lineups: [] }) as LocalChoreo,
     },
     currentPositions: {
-      type: Array,
-      default: () => [],
+      type: Array as PropType<LocalCurrentPosition[]>,
+      default: () => [] as LocalCurrentPosition[],
     },
     interactive: {
       type: Boolean,
@@ -759,41 +805,41 @@ export default {
   },
   emits: ["openCreateHitModal", "updateLineups", "updateHits", "updateCount"],
   data: () => ({
-    editHitId: null,
-    editHitName: null,
-    editHitAchter: 1,
-    editHitCount: 1,
-    editHitMembers: [],
-    editLineupId: null,
-    editLineupStartAchter: 1,
-    editLineupStartCount: 1,
-    editLineupEndAchter: 1,
-    editLineupEndCount: 1,
-    editLineupMembers: [],
+    editHitId: null as string | null,
+    editHitName: null as string | null,
+    editHitAchter: 1 as number,
+    editHitCount: 1 as number,
+    editHitMembers: [] as string[],
+    editLineupId: null as string | null,
+    editLineupStartAchter: 1 as number,
+    editLineupStartCount: 1 as number,
+    editLineupEndAchter: 1 as number,
+    editLineupEndCount: 1 as number,
+    editLineupMembers: [] as string[],
   }),
   computed: {
     editHitNameIsValid() {
-      return Boolean(this.editHitName) && this.editHitName.trim().length >= 3;
+      return Boolean(this.editHitName) && this.editHitName!.trim().length >= 3;
     },
     editHitNameStateFeedback() {
       if (!this.editHitName) return this.$t("erforderlich");
       if (this.editHitName.trim().length < 3)
         return this.$t("countOverview.hit-name-min-laenge");
-      return null;
+      return undefined;
     },
     editHitAchterIsValid() {
       return Boolean(this.editHitAchter);
     },
     editHitAchterStateFeedback() {
       if (!this.editHitAchter) return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     editHitCountIsValid() {
       return Boolean(this.editHitCount);
     },
     editHitCountStateFeedback() {
       if (!this.editHitCount) return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     editHitMembersIsValid() {
       return Boolean(this.editHitMembers) && this.editHitMembers.length > 0;
@@ -801,23 +847,19 @@ export default {
     editHitMembersStateFeedback() {
       if (!this.editHitMembers || this.editHitMembers.length == 0)
         return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     editLineupStartIsBeforeEnd() {
       const absoluteStartCount =
-        (parseInt(this.editLineupStartAchter) - 1) * 8 +
-        parseInt(this.editLineupStartCount) -
-        1;
+        (this.editLineupStartAchter - 1) * 8 + this.editLineupStartCount - 1;
       const absoluteEndCount =
-        (parseInt(this.editLineupEndAchter) - 1) * 8 +
-        parseInt(this.editLineupEndCount) -
-        1;
+        (this.editLineupEndAchter - 1) * 8 + this.editLineupEndCount - 1;
       return absoluteStartCount <= absoluteEndCount;
     },
     editLineupStartIsBeforeEndStateFeedback() {
       if (!this.editLineupStartIsBeforeEnd)
         return this.$t("countOverview.start-vor-ende");
-      return null;
+      return undefined;
     },
     editLineupEndAchterIsValid() {
       return (
@@ -826,7 +868,7 @@ export default {
     },
     editLineupEndAchterStateFeedback() {
       if (!this.editLineupEndAchter) return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     editLineupStartAchterIsValid() {
       return (
@@ -835,7 +877,7 @@ export default {
     },
     editLineupStartAchterStateFeedback() {
       if (!this.editLineupStartAchter) return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     editLineupStartCountIsValid() {
       return (
@@ -844,7 +886,7 @@ export default {
     },
     editLineupStartCountStateFeedback() {
       if (!this.editLineupStartCount) return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     editLineupEndCountIsValid() {
       return (
@@ -853,7 +895,7 @@ export default {
     },
     editLineupEndCountStateFeedback() {
       if (!this.editLineupEndCount) return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     editLineupMembersIsValid() {
       return (
@@ -863,117 +905,120 @@ export default {
     editLineupMembersStateFeedback() {
       if (!this.editLineupMembers || this.editLineupMembers.length == 0)
         return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
   },
   methods: {
     openNewHitModal() {
       this.$emit("openCreateHitModal");
     },
-    countToString(count) {
+    countToString(count: number) {
       return `${Math.floor(count / 8) + 1} / ${(count % 8) + 1}`;
     },
-    moveHitToPreviousCount(hitId) {
+    moveHitToPreviousCount(hitId: string) {
       HitService.setCount(hitId, this.count - 1).then(() => {
         let hitsCopy = this.choreo.Hits;
-        hitsCopy.find((h) => h.id == hitId).count = this.count - 1;
+        hitsCopy.find((h: LocalHit) => h.id == hitId)!.count = this.count - 1;
         this.$emit("updateHits", hitsCopy);
         this.$emit("updateCount", this.count - 1);
       });
     },
-    moveHitToNextCount(hitId) {
+    moveHitToNextCount(hitId: string) {
       HitService.setCount(hitId, this.count + 1).then(() => {
         let hitsCopy = this.choreo.Hits;
-        hitsCopy.find((h) => h.id == hitId).count = this.count + 1;
+        hitsCopy.find((h: LocalHit) => h.id == hitId)!.count = this.count + 1;
         this.$emit("updateHits", hitsCopy);
         this.$emit("updateCount", this.count + 1);
       });
     },
-    editHit(id) {
+    editHit(id: string) {
       this.editHitId = id;
-      const selectedHit = this.hitsForCurrentCount.find((h) => h.id == id);
+      const selectedHit = this.hitsForCurrentCount.find(
+        (h: LocalHit) => h.id == id
+      )!;
       this.editHitName = selectedHit.name;
       this.editHitMembers =
         selectedHit.Members && selectedHit.Members.length > 0
-          ? selectedHit.Members.map((m) => m.id)
-          : this.teamMembers.map((m) => m.id);
+          ? selectedHit.Members.map((m: LocalMember) => m.id)
+          : this.teamMembers.map((m: LocalMember) => m.id);
       this.editHitCount = (selectedHit.count % 8) + 1;
       this.editHitAchter = Math.floor(selectedHit.count / 8) + 1;
     },
     saveHit() {
-      const absoluteCount =
-        (parseInt(this.editHitAchter) - 1) * 8 +
-        parseInt(this.editHitCount) -
-        1;
+      const achterAtStart = Number(this.editHitAchter);
+      const countAtStart = Number(this.editHitCount);
+      const absoluteCount = (achterAtStart - 1) * 8 + countAtStart - 1;
       HitService.update(
-        this.editHitId,
-        this.editHitName,
+        this.editHitId!,
+        this.editHitName!,
         absoluteCount,
         this.editHitMembers
-      ).then((hit) => {
-        let hitsCopy = this.choreo.Hits.filter((h) => h.id != hit.id);
+      ).then((hit: LocalHit) => {
+        let hitsCopy = this.choreo.Hits.filter((h: LocalHit) => h.id != hit.id);
         hitsCopy.push(hit);
         this.$emit("updateHits", hitsCopy);
 
         this.editHitId = null;
       });
     },
-    editLineup(lineupId) {
+    editLineup(lineupId: string) {
       this.editLineupId = lineupId;
       const selectedLineup = this.lineupsForCurrentCount.find(
-        (l) => l.id == lineupId
-      );
+        (l: LocalLineup) => l.id == lineupId
+      )!;
       this.editLineupStartCount = (selectedLineup.startCount % 8) + 1;
       this.editLineupStartAchter =
         Math.floor(selectedLineup.startCount / 8) + 1;
       this.editLineupEndCount = (selectedLineup.endCount % 8) + 1;
       this.editLineupEndAchter = Math.floor(selectedLineup.endCount / 8) + 1;
       this.editLineupMembers =
-        selectedLineup.Positions.length > 0
-          ? selectedLineup.Positions?.map((p) => p.MemberId)
-          : this.teamMembers.map((m) => m.id);
+        selectedLineup.Positions && selectedLineup.Positions.length > 0
+          ? selectedLineup.Positions.map((p: LocalPosition) => p.MemberId)
+          : this.teamMembers.map((m: LocalMember) => m.id);
     },
     saveLineup() {
-      const absoluteStartCount =
-        (parseInt(this.editLineupStartAchter) - 1) * 8 +
-        parseInt(this.editLineupStartCount) -
-        1;
-      const absoluteEndCount =
-        (parseInt(this.editLineupEndAchter) - 1) * 8 +
-        parseInt(this.editLineupEndCount) -
-        1;
-
-      LineupService.update(this.editLineupId, {
+      const startAchter = Number(this.editLineupStartAchter);
+      const startCount = Number(this.editLineupStartCount);
+      const endAchter = Number(this.editLineupEndAchter);
+      const endCount = Number(this.editLineupEndCount);
+      const absoluteStartCount = (startAchter - 1) * 8 + startCount - 1;
+      const absoluteEndCount = (endAchter - 1) * 8 + endCount - 1;
+      LineupService.update(this.editLineupId!, {
         startCount: absoluteStartCount,
         endCount: absoluteEndCount,
-      }).then((lineup) => {
+      }).then((lineup: Lineup | LocalLineup) => {
+        const lineupLocal = lineup as LocalLineup;
         const memberIdsWithoutPositions = this.teamMembers
-          .filter((m) => !this.editLineupMembers.includes(m.id))
-          .map((m) => m.id);
-        const positionsToDelete = this.lineupsForCurrentCount
-          .find((l) => l.id == lineup.id)
-          .Positions.filter((p) =>
-            memberIdsWithoutPositions.includes(p.MemberId)
-          );
+          .filter((m: LocalMember) => !this.editLineupMembers.includes(m.id))
+          .map((m: LocalMember) => m.id);
+        const positionsToDelete = (
+          this.lineupsForCurrentCount.find(
+            (l: LocalLineup) => l.id == lineupLocal.id
+          )!.Positions ?? []
+        ).filter((p: LocalPosition) =>
+          memberIdsWithoutPositions.includes(p.MemberId)
+        );
         const positionDeletion = Promise.all(
-          positionsToDelete.map((p) =>
-            PositionService.remove(p.id).then(() => p.id)
+          positionsToDelete.map((p: LocalPosition) =>
+            PositionService.remove(p.id!).then(() => p.id!)
           )
         );
 
-        const memberIdsOfMembersWithPosition = this.lineupsForCurrentCount
-          .find((l) => l.id == lineup.id)
-          .Positions.map((p) => p.MemberId);
+        const memberIdsOfMembersWithPosition = (
+          this.lineupsForCurrentCount.find(
+            (l: LocalLineup) => l.id == lineupLocal.id
+          )!.Positions ?? []
+        ).map((p: LocalPosition) => p.MemberId);
         const memberIdsToAdd = this.editLineupMembers.filter(
-          (mId) => !memberIdsOfMembersWithPosition.includes(mId)
+          (mId: string) => !memberIdsOfMembersWithPosition.includes(mId)
         );
         const positionCreation = Promise.all(
-          memberIdsToAdd.map((mId) => {
+          memberIdsToAdd.map((mId: string) => {
             const positionOfMember = this.currentPositions.find(
-              (p) => p.MemberId == mId
-            );
+              (p: LocalCurrentPosition) => p.MemberId == mId
+            )!;
             return PositionService.create(
-              lineup.id,
+              lineupLocal.id,
               positionOfMember.x,
               positionOfMember.y,
               mId
@@ -983,17 +1028,17 @@ export default {
 
         return Promise.all([positionDeletion, positionCreation]).then(
           ([deletedPositionIds, createdPositions]) => {
-            const lineupCopy = this.choreo.Lineups.filter(
-              (l) => l.id != lineup.id
+            const lineupCopy = this.choreo!.Lineups.filter(
+              (l: LocalLineup) => l.id != lineupLocal.id
             );
 
-            const positionsCopy = lineup.Positions.filter(
-              (p) => !deletedPositionIds.includes(p.id)
+            const positionsCopy = (lineupLocal.Positions ?? []).filter(
+              (p: LocalPosition) => !deletedPositionIds.includes(p.id!)
             );
-            positionsCopy.push(...createdPositions);
-            lineup.Positions = positionsCopy;
+            positionsCopy.push(...(createdPositions as LocalPosition[]));
+            lineupLocal.Positions = positionsCopy;
 
-            lineupCopy.push(lineup);
+            lineupCopy.push(lineupLocal);
             this.$emit("updateLineups", lineupCopy);
           }
         );
@@ -1001,21 +1046,24 @@ export default {
 
       this.editLineupId = null;
     },
-    addAllMembersToLineup(lineupId) {
+    addAllMembersToLineup(lineupId: string) {
       const lineupToUpdate = this.lineupsForCurrentCount.find(
-        (l) => l.id == lineupId
-      );
+        (l: LocalLineup) => l.id == lineupId
+      )!;
       const memberIdsWithoutPositions = this.teamMembers
         .filter(
-          (m) => !lineupToUpdate.Positions.map((p) => p.MemberId).includes(m.id)
+          (m: LocalMember) =>
+            !lineupToUpdate
+              .Positions!.map((p: LocalPosition) => p.MemberId)
+              .includes(m.id)
         )
-        .map((m) => m.id);
+        .map((m: LocalMember) => m.id);
 
       const positionCreation = Promise.all(
-        memberIdsWithoutPositions.map((mId) => {
+        memberIdsWithoutPositions.map((mId: string) => {
           const positionOfMember = this.currentPositions.find(
-            (p) => p.MemberId == mId
-          );
+            (p: LocalCurrentPosition) => p.MemberId == mId
+          )!;
           return PositionService.create(
             lineupToUpdate.id,
             positionOfMember.x,
@@ -1026,21 +1074,33 @@ export default {
       );
 
       positionCreation.then((createdPositions) => {
-        const lineupCopy = this.choreo.Lineups.filter(
-          (l) => l.id != lineupToUpdate.id
+        const lineupCopy = this.choreo!.Lineups.filter(
+          (l: LocalLineup) => l.id != lineupToUpdate.id
         );
 
-        const positionsCopy = lineupToUpdate.Positions;
-        positionsCopy.push(...createdPositions);
+        const positionsCopy = lineupToUpdate.Positions!;
+        positionsCopy.push(...(createdPositions as LocalPosition[]));
         lineupToUpdate.Positions = positionsCopy;
 
         lineupCopy.push(lineupToUpdate);
         this.$emit("updateLineups", lineupCopy);
       });
     },
-    openHitDeleteModal(hitId) {
-      this.$refs.deleteHitModal(hitId);
+    openHitDeleteModal(hitId: string) {
+      (this.$refs.deleteHitModal as InstanceType<typeof DeleteHitModal>)?.open(
+        hitId
+      );
+    },
+    openDeleteLineupModal(lineupId: string) {
+      (
+        this.$refs.deleteLineupModal as InstanceType<typeof DeleteLineupModal>
+      )?.open(lineupId);
+    },
+    openCreateLineupModal() {
+      (
+        this.$refs.createLineupModal as InstanceType<typeof CreateLineupModal>
+      ).open();
     },
   },
-};
+});
 </script>

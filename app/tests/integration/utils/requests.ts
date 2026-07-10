@@ -17,12 +17,11 @@ const API_URL = "https://api.choreo-planer.de";
 
 export async function authAnyBackEndRequest(page: Page) {
   await page.route("**/*", async (route) => {
-    if (
-      route.request().url().includes(API_URL) &&
-      (await checkAuthorization(route.request()))
-    )
+    const url = route.request().url();
+    const method = route.request().method();
+    if (url.includes(API_URL) && (await checkAuthorization(route.request()))) {
       await route.fulfill({ status: 204 });
-    else await route.continue();
+    } else await route.continue();
   });
 }
 
@@ -227,8 +226,10 @@ export async function mockLineups(page: Page, lineups = defaultLineups) {
     lineups
       .map((lineup) =>
         page.route(`${API_URL}/lineup/${lineup.id}`, async (route) => {
-          if (await checkAuthorization(route.request()))
-            if (route.request().method() === "PUT") {
+          if (await checkAuthorization(route.request())) {
+            const method = route.request().method();
+            const url = route.request().url();
+            if (method === "PUT") {
               const postData = JSON.parse(route.request().postData() as string);
               await route.fulfill({
                 json: {
@@ -240,6 +241,7 @@ export async function mockLineups(page: Page, lineups = defaultLineups) {
               await route.fulfill({
                 json: lineup,
               });
+          }
         })
       )
       .flat(),
@@ -306,8 +308,10 @@ export async function mockHits(page: Page, hits = defaultHits) {
     hits
       .map((hit) =>
         page.route(`${API_URL}/hit/${hit.id}`, async (route) => {
-          if (await checkAuthorization(route.request()))
-            if (route.request().method() === "PUT") {
+          if (await checkAuthorization(route.request())) {
+            const method = route.request().method();
+            const url = route.request().url();
+            if (method === "PUT") {
               const postData = JSON.parse(route.request().postData() as string);
               await route.fulfill({
                 json: {
@@ -319,6 +323,7 @@ export async function mockHits(page: Page, hits = defaultHits) {
               await route.fulfill({
                 json: hit,
               });
+          }
         })
       )
       .flat(),

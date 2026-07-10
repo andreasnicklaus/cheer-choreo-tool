@@ -144,7 +144,7 @@
               v-b-tooltip.hover="$t('editView.anleitung')"
               variant="light"
               data-testid="instructions-button"
-              @click="() => $refs.howToModal.open()"
+              @click="openHowToModal"
             >
               <IBiQuestion />
             </BButton>
@@ -184,14 +184,14 @@
               <BDropdownGroup :header="$t('editView.choreo-einstellungen')">
                 <BDropdownItem
                   :disabled="!choreo"
-                  @click="() => $refs.changeChoreoLengthModal.open()"
+                  @click="openChangeChoreoLengthModal"
                 >
                   <IBiHash class="me-2" />
                   {{ $t("editView.laenge-anpassen") }}
                 </BDropdownItem>
                 <BDropdownItem
                   :disabled="!choreo"
-                  @click="() => $refs.changeMatLayoutModal.open()"
+                  @click="openChangeMatLayoutModal"
                 >
                   <IBiLayoutThreeColumns class="me-2" />
                   {{ $t("editView.change-mat-layout") }}
@@ -226,7 +226,7 @@
                 <BDropdownItem
                   :disabled="!choreo || !canDeleteChoreo"
                   variant="danger"
-                  @click="() => $refs.deleteChoreoModal.open()"
+                  @click="openDeleteChoreoModal"
                 >
                   <IBiTrash class="me-2" />
                   {{ $t("editView.choreo-loeschen") }}
@@ -247,7 +247,7 @@
               >
                 {{ $t("general.created-by") }}
                 {{
-                  choreo.creatorId != me.id
+                  choreo.creatorId != me?.id
                     ? choreo?.creator?.username
                     : $t("general.you")
                 }}
@@ -310,7 +310,7 @@
           v-if="proposedPositions && proposedPositions.length > 0"
           :subtitle="$t('editView.acceptProposal')"
           border-variant="light"
-          align="right"
+          align="end"
           class="mt-2"
         >
           <BDropdown
@@ -319,7 +319,7 @@
             variant="light"
             class="me-2"
             right
-            @click="(e) => rejectProposedLineup(e)"
+            @click="(e: MouseEvent) => rejectProposedLineup(e)"
           >
             <template #button-content>
               <IBiX />
@@ -370,7 +370,7 @@
             <BInput
               type="color"
               :value="data.item.ChoreoParticipation.color"
-              @input="(event) => changeColor(data.item.id, event)"
+              @input="(event: string) => changeColor(data.item.id, event)"
             />
           </template>
           <template #cell(actions)="data">
@@ -410,8 +410,8 @@
 
         <p class="text-muted">
           <b>{{ $t("editView.nicht-teilnehmende-mitglieder-des-teams") }}:</b>
-          {{ choreo?.SeasonTeam.Team.name }} ({{
-            choreo?.SeasonTeam.Season.name
+          {{ choreo?.SeasonTeam?.Team?.name }} ({{
+            choreo?.SeasonTeam?.Season?.name
           }})
         </p>
         <BTable
@@ -495,22 +495,25 @@
       :non-participants="notParticipatingMembers"
       @substitution="onSubstitution"
     />
-    <MobileChoreoEditModal ref="mobileChoreoEditModal" :choreo-id="choreoId" />
+    <MobileChoreoEditModal
+      v-if="choreoId"
+      ref="mobileChoreoEditModal"
+      :choreo-id="choreoId"
+    />
   </BContainer>
 </template>
 
-<script>
+<script lang="ts">
 import { useHead } from "@unhead/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { mapState } from "vuex";
 import Mat from "@/components/Mat.vue";
 import ChoreoService from "@/services/ChoreoService";
 import CountSheet from "@/components/CountSheet.vue";
 import EditableNameHeading from "@/components/EditableNameHeading.vue";
 import CountOverview from "@/components/CountOverview.vue";
 import PositionService from "@/services/PositionService";
-import LineupService from "@/services/LineupService";
+import LineupService, { PositionProposal } from "@/services/LineupService";
 import CreateHitModal from "@/components/modals/CreateHitModal.vue";
 import HowToModal from "@/components/modals/HowToModal.vue";
 import DeleteChoreoModal from "@/components/modals/DeleteChoreoModal.vue";
@@ -528,6 +531,35 @@ import { roundToDecimals, clamp } from "@/utils/numbers";
 import FeatureFlagService from "@/services/FeatureFlagService";
 import { FeatureFlagKeys } from "@/services/FeatureFlagService";
 import { canWrite, canDelete } from "@/utils/permissions";
+import type {
+  Choreo,
+  Lineup,
+  Member,
+  Hit,
+  User,
+  SeasonTeam,
+  Participant,
+} from "@/types";
+import { defineComponent } from "vue";
+import { OwnerAccess } from "@/types";
+
+interface ProposedPosition {
+  MemberId: string;
+  x: number;
+  y: number;
+  Member: Member;
+}
+
+interface PositionUpdate {
+  timeout: ReturnType<typeof setTimeout>;
+  x: number;
+  y: number;
+}
+
+interface LastKeyEvent {
+  time: number;
+  code: string;
+}
 
 /**
  * @vue-data {string|null} choreoId=null - The ID of the choreo being edited.
@@ -559,7 +591,7 @@ import { canWrite, canDelete } from "@/utils/permissions";
  *
  * @vue-computed {MetaInfo} metaInfo
  */
-export default {
+export default defineComponent({
   name: "EditView",
   components: {
     Mat,
@@ -583,7 +615,7 @@ export default {
   data: function () {
     return {
       loading: true,
-      choreoId: null,
+      choreoId: undefined as string | undefined,
       matHeight: 500,
       matWidth: 500,
       snapping: true,
@@ -603,60 +635,78 @@ export default {
         { key: "color", label: this.$t("editView.farbe") },
         { key: "actions", label: "", class: "text-end" },
       ],
-      choreo: null,
-      lastKeyEvent: null,
+      choreo: undefined as Choreo | undefined,
+      lastKeyEvent: null as LastKeyEvent | null,
       transitionMs: 800,
-      positionUpdates: {},
+      positionUpdates: {} as Record<string, PositionUpdate>,
       lineupCreationInProgress: false,
-      playInterval: null,
+      playInterval: null as ReturnType<typeof setInterval> | null,
       countBackButtonHasNeverBeenUsed: true,
       countStartButtonHasNeverBeenUsed: true,
       countNextButtonHasNeverBeenUsed: true,
       countEndButtonHasNeverBeenUsed: true,
-      proposedPositions: [],
-      rejectedPositionProposals: [],
+      proposedPositions: [] as ProposedPosition[],
+      rejectedPositionProposals: [] as ProposedPosition[][],
       mobileEditingEnabled: true,
       accessSharingEnabled: true,
     };
   },
   computed: {
-    ...mapState(["owners", "me"]),
-    canEditChoreo() {
-      return canWrite(this.owners, this.me?.id, this.choreo?.UserId);
+    owners(): OwnerAccess[] {
+      return this.$store.state.owners;
     },
-    canDeleteChoreo() {
-      return canDelete(this.owners, this.me?.id, this.choreo?.UserId);
+    me(): User | null {
+      return this.$store.state.me;
     },
-    canEditParticipants() {
-      return this.canEditChoreo;
-    },
-    teamMembers() {
-      if (!this.choreo?.Participants) return [];
-      return Array.from(this.choreo.Participants).sort((a, b) =>
-        a.name.localeCompare(b.name)
+    canEditChoreo(): boolean {
+      return canWrite(
+        this.owners,
+        this.me?.id ?? "",
+        this.choreo?.UserId ?? ""
       );
     },
-    notParticipatingMembers() {
+    canDeleteChoreo(): boolean {
+      return canDelete(
+        this.owners,
+        this.me?.id ?? "",
+        this.choreo?.UserId ?? ""
+      );
+    },
+    canEditParticipants(): boolean {
+      return this.canEditChoreo;
+    },
+    teamMembers(): Participant[] {
+      if (!this.choreo?.Participants) return [];
+      // Participants are Member instances returned with nested ChoreoParticipation
+      return Array.from(this.choreo.Participants as Participant[]).sort(
+        (a, b) => a.name.localeCompare(b.name)
+      );
+    },
+    notParticipatingMembers(): Member[] {
       if (!this.choreo?.SeasonTeam?.Members) return [];
+      const participantIds = (this.choreo?.Participants || []).map(
+        (p: Participant) => (p as Participant).id
+      );
       return this.choreo.SeasonTeam.Members.filter(
-        (m) => !this.choreo.Participants.map((p) => p.id).includes(m.id)
+        (m) => !participantIds.includes(m.id)
       ).sort((a, b) => a.name.localeCompare(b.name));
     },
     currentPositions() {
+      if (!this.choreo) return [];
       return ChoreoService.getPositionsFromChoreoAndCount(
         this.choreo,
         this.count,
         this.teamMembers
       );
     },
-    hitsForCurrentCount() {
+    hitsForCurrentCount(): Hit[] {
       if (!this.choreo || !this.choreo.Hits) return [];
 
       return this.choreo.Hits.filter((a) => {
         return a.count == this.count;
-      }).sort((a, b) => b.Members?.length - a.Members?.length);
+      }).sort((a, b) => (b.Members?.length ?? 0) - (a.Members?.length ?? 0));
     },
-    lineupsForCurrentCount() {
+    lineupsForCurrentCount(): Lineup[] {
       if (!this.choreo || !this.choreo.Lineups) return [];
 
       return this.choreo.Lineups.filter((a) => {
@@ -667,10 +717,14 @@ export default {
   watch: {
     "$route.params": {
       handler() {
-        this.choreoId = this.$route.params.choreoId;
+        this.choreoId = this.$route.params.choreoId as string;
         if (this.$store.state.isMobile && !this.mobileEditingEnabled) {
           if (this.$refs.mobileChoreoEditModal)
-            this.$refs.mobileChoreoEditModal.open(this.choreoId);
+            (
+              this.$refs.mobileChoreoEditModal as InstanceType<
+                typeof MobileChoreoEditModal
+              >
+            ).open();
         } else this.loadChoreo();
       },
       immediate: true,
@@ -701,7 +755,11 @@ export default {
 
       if (this.$store.state.isMobile && !this.mobileEditingEnabled) {
         if (this.$refs.mobileChoreoEditModal)
-          this.$refs.mobileChoreoEditModal.open(this.choreoId);
+          (
+            this.$refs.mobileChoreoEditModal as InstanceType<
+              typeof MobileChoreoEditModal
+            >
+          ).open();
       } else this.loadChoreo();
     });
 
@@ -709,22 +767,18 @@ export default {
       title: computed(() => this.choreo?.name || this.t("pdf.laedt-choreo")),
       meta: [
         {
-          vmid: "description",
           name: "description",
           content: computed(() => this.t("meta.editView.description")),
         },
         {
-          vmid: "twitter:description",
           name: "twitter:description",
           content: computed(() => this.t("meta.editView.description")),
         },
         {
-          vmid: "og:description",
           property: "og:description",
           content: computed(() => this.t("meta.editView.description")),
         },
         {
-          vmid: "og:title",
           property: "og:title",
           content: computed(
             () =>
@@ -735,7 +789,6 @@ export default {
           ),
         },
         {
-          vmid: "twitter:title",
           name: "twitter:title",
           content: computed(
             () =>
@@ -751,36 +804,40 @@ export default {
   methods: {
     loadChoreo() {
       this.loading = true;
-      ChoreoService.getById(this.choreoId)
-        .then((choreo) => {
-          if (!choreo) return;
+      if (this.choreoId) {
+        ChoreoService.getById(this.choreoId)
+          .then((choreo) => {
+            if (!choreo) return;
 
-          this.choreo = choreo;
+            this.choreo = choreo;
 
-          if (choreo.Lineups.length == 0 && choreo.Hits.length == 0)
-            this.$refs.howToModal.open();
+            if (choreo.Lineups.length == 0 && choreo.Hits.length == 0)
+              (this.$refs.howToModal as InstanceType<typeof HowToModal>).open();
 
-          this.updateProposedPositions();
-        })
-        .catch((e) => {
-          error(e, ERROR_CODES.CLUB_QUERY_FAILED);
-          this.$router
-            .push({
-              name: "Start",
-              params: { locale: this.$i18n.locale },
-            })
-            .catch(() => {
-              error(
-                "Redundant navigation to start",
-                ERROR_CODES.REDUNDANT_ROUTING
-              );
-            });
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+            this.updateProposedPositions();
+          })
+          .catch((e) => {
+            error(e, ERROR_CODES.CLUB_QUERY_FAILED);
+            this.$router
+              .push({
+                name: "Start",
+                params: { locale: this.$i18n.locale },
+              })
+              .catch(() => {
+                error(
+                  "Redundant navigation to start",
+                  ERROR_CODES.REDUNDANT_ROUTING
+                );
+              });
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      }
     },
-    onPositionChange(MemberId, x, y, isRetry = false) {
+    onPositionChange(MemberId: string, x: number, y: number, isRetry = false) {
+      if (!this.choreoId || !this.choreo) return;
+
       const positionToUpdate = this.lineupsForCurrentCount
         .map((l) => l.Positions.filter((p) => p.MemberId == MemberId))
         .flat()[0];
@@ -789,47 +846,55 @@ export default {
         const memberTimeout = this.positionUpdates[MemberId];
         if (memberTimeout) clearTimeout(memberTimeout.timeout);
 
-        const pos = this.choreo.Lineups.find(
+        const pos = this.choreo?.Lineups.find(
           (l) => l.id == positionToUpdate.LineupId
-        ).Positions.find((p) => p.id == positionToUpdate.id);
-
+        )?.Positions.find((p) => p.id == positionToUpdate.id);
+        if (!pos) {
+          error(
+            `Position for member ${MemberId} not found in choreo lineups`,
+            ERROR_CODES.POSITION_NOT_FOUND
+          );
+          return;
+        }
         // Store original position to revert in case of error
         const originalX = pos.x;
         const originalY = pos.y;
 
         this.positionUpdates[MemberId] = {
           timeout: setTimeout(() => {
-            if (positionToUpdate.id) this.updateProposedPositions();
-            PositionService.update(
-              positionToUpdate.LineupId,
-              positionToUpdate.id,
-              x,
-              y
-            )
-              .then(() => {
-                this.showSuccessMessage(this.$t("lineup", 1));
-              })
-              .catch((e) => {
-                if (e.status === 409) {
-                  if (!isRetry) {
-                    MessagingService.showWarning(
-                      this.$t("editView.too-fast-message"),
-                      this.$t("editView.too-fast-callout")
-                    );
-                    this.onPositionChange(MemberId, x, y, true);
+            if (positionToUpdate.id && positionToUpdate.LineupId) {
+              this.updateProposedPositions();
+              PositionService.update(
+                positionToUpdate.LineupId,
+                positionToUpdate.id,
+                x,
+                y
+              )
+                .then(() => {
+                  this.showSuccessMessage(this.$t("lineup", 1));
+                })
+                .catch((e) => {
+                  if (e.status === 409) {
+                    if (!isRetry) {
+                      MessagingService.showWarning(
+                        this.$t("editView.too-fast-message"),
+                        this.$t("editView.too-fast-callout")
+                      );
+                      this.onPositionChange(MemberId, x, y, true);
+                    }
+                  } else {
+                    console.error(e);
+                    MessagingService.showError(e.message);
                   }
-                } else {
-                  console.error(e);
-                  MessagingService.showError(e.message);
-                }
 
-                // Set temporarily to (0,0) to trigger update
-                pos.x = 0;
-                pos.y = 0;
-                // Revert position
-                pos.x = originalX;
-                pos.y = originalY;
-              });
+                  // Set temporarily to (0,0) to trigger update
+                  pos.x = 0;
+                  pos.y = 0;
+                  // Revert position
+                  pos.x = originalX;
+                  pos.y = originalY;
+                });
+            }
           }, 1000),
           x,
           y,
@@ -855,10 +920,11 @@ export default {
             this.count,
             this.choreoId
           ).then((lineup) => {
-            let lineupCopy = this.choreo.Lineups;
+            let lineupCopy = this.choreo?.Lineups;
+            if (!lineupCopy) lineupCopy = [];
             if (!lineup.Positions) lineup.Positions = [];
             lineupCopy.push(lineup);
-            this.choreo.Lineups = lineupCopy;
+            if (this.choreo) this.choreo.Lineups = lineupCopy;
             this.lineupCreationInProgress = false;
 
             return this.createPositionOnExistingLineup(lineup, x, y, MemberId);
@@ -869,10 +935,12 @@ export default {
 
           this.positionUpdates[MemberId] = {
             timeout: setTimeout(() => {
-              let lineupCopy = this.choreo.Lineups;
+              let lineupCopy = this.choreo?.Lineups;
+              if (!lineupCopy) lineupCopy = [];
               let positionsCopy = lineupCopy.find(
                 (l) => l.id == lineupToUpdate.id
-              ).Positions;
+              )?.Positions;
+              if (!positionsCopy) positionsCopy = [];
               positionsCopy = positionsCopy.filter(
                 (p) => p.MemberId != MemberId
               );
@@ -883,9 +951,11 @@ export default {
                 x,
                 y,
               });
-              lineupCopy.find((l) => l.id == lineupToUpdate.id).Positions =
-                positionsCopy;
-              this.choreo.Lineups = lineupCopy;
+              const foundLineup = lineupCopy.find(
+                (l) => l.id == lineupToUpdate.id
+              );
+              if (foundLineup) foundLineup.Positions = positionsCopy;
+              if (this.choreo) this.choreo.Lineups = lineupCopy;
 
               return this.createPositionOnExistingLineup(
                 lineupToUpdate,
@@ -902,25 +972,32 @@ export default {
 
       this.setLastUpdaterToMe();
     },
-    createPositionOnExistingLineup(lineupToUpdate, x, y, MemberId) {
+    createPositionOnExistingLineup(
+      lineupToUpdate: Lineup,
+      x: number,
+      y: number,
+      MemberId: string
+    ) {
       return PositionService.create(lineupToUpdate.id, x, y, MemberId).then(
         (position) => {
-          let lineupCopy = this.choreo.Lineups;
+          let lineupCopy = this.choreo?.Lineups;
+          if (!lineupCopy) lineupCopy = [];
           let positionsCopy = lineupCopy.find(
             (l) => l.id == lineupToUpdate.id
-          ).Positions;
+          )?.Positions;
+          if (!positionsCopy) positionsCopy = [];
           positionsCopy = positionsCopy.filter((p) => p.MemberId != MemberId);
           positionsCopy.push(position);
-          lineupCopy.find((l) => l.id == lineupToUpdate.id).Positions =
-            positionsCopy;
-          this.choreo.Lineups = lineupCopy;
+          const foundLineup = lineupCopy.find((l) => l.id == lineupToUpdate.id);
+          if (foundLineup) foundLineup.Positions = positionsCopy;
+          if (this.choreo) this.choreo.Lineups = lineupCopy;
           this.showSuccessMessage(this.$t("lineup", 1));
           this.updateProposedPositions();
           this.setLastUpdaterToMe();
         }
       );
     },
-    onKeyPress(event) {
+    onKeyPress(event: KeyboardEvent) {
       // Prevent keyboard shortcuts if the user is typing in a text input field
       const inputElements = Array.from(document.getElementsByTagName("input"));
       const activeElement = document.activeElement;
@@ -949,19 +1026,21 @@ export default {
           if (this.count > 0) this.setCounter(this.count - 1);
           break;
         case "ArrowRight":
-          if (this.count < this.choreo.counts - 1)
+          if (this.choreo && this.count < this.choreo.counts - 1)
             this.setCounter(this.count + 1);
           break;
         case "ArrowDown":
-          if (this.count < this.choreo.counts - 8)
+          if (this.choreo && this.count < this.choreo.counts - 8)
             this.setCounter(this.count + 8);
           break;
         case "ArrowUp":
-          if (this.count > 7) this.setCounter(this.count - 8);
+          if (this.choreo && this.count > 7) this.setCounter(this.count - 8);
           break;
         case "KeyH":
         case "KeyN":
-          this.$refs.countOverview.openNewHitModal();
+          (
+            this.$refs.countOverview as InstanceType<typeof CountOverview>
+          ).openNewHitModal();
           break;
         case "Quote":
           this.initiateHitUpdate();
@@ -972,7 +1051,7 @@ export default {
         default:
       }
     },
-    setCounter(count) {
+    setCounter(count: number) {
       // the order does matter!
       // 1. store the old positions for animation
       // 2. persist the inflight position updates in the local choreo copy and reset the object
@@ -982,7 +1061,10 @@ export default {
       this.count = count;
 
       if (this.$refs.Mat)
-        this.$refs.Mat.animatePositions(oldPositions, this.currentPositions);
+        (this.$refs.Mat as InstanceType<typeof Mat>).animatePositions(
+          oldPositions,
+          this.currentPositions
+        );
       this.updateProposedPositions();
     },
     resetPositionUpdates() {
@@ -997,12 +1079,14 @@ export default {
             .flat()[0];
 
           if (positionToUpdate) {
-            const pos = this.choreo.Lineups.find(
+            const pos = this.choreo?.Lineups.find(
               (l) => l.id == positionToUpdate.LineupId
-            ).Positions.find((p) => p.id == positionToUpdate.id);
+            )?.Positions.find((p) => p.id == positionToUpdate.id);
 
-            pos.x = roundToDecimals(positionUpdate.x, 2);
-            pos.y = roundToDecimals(positionUpdate.y, 2);
+            if (pos) {
+              pos.x = roundToDecimals(positionUpdate.x, 2);
+              pos.y = roundToDecimals(positionUpdate.y, 2);
+            }
           }
         }
       );
@@ -1011,10 +1095,10 @@ export default {
     playPause() {
       if (!this.playInterval) {
         this.playInterval = setInterval(() => {
-          if (this.count + 1 < this.choreo.counts) {
+          if (this.choreo && this.count + 1 < this.choreo.counts) {
             this.setCounter(this.count + 1);
           } else {
-            clearInterval(this.playInterval);
+            if (this.playInterval) clearInterval(this.playInterval);
             this.playInterval = null;
           }
         }, this.transitionMs);
@@ -1023,38 +1107,39 @@ export default {
         this.playInterval = null;
       }
     },
-    countToString(count) {
+    countToString(count: number) {
       return `${Math.floor(count / 8) + 1} / ${(count % 8) + 1}`;
     },
-    onNameEdit(nameNew) {
+    onNameEdit(nameNew: string) {
+      if (!this.choreoId || !this.choreo) return;
       this.choreo.name = nameNew;
       ChoreoService.changeName(this.choreoId, nameNew).then(() => {
-        this.choreo.name = nameNew;
+        if (this.choreo?.name) this.choreo.name = nameNew;
         this.setLastUpdaterToMe();
         this.showSuccessMessage();
       });
     },
-    onUpdateHits(hits) {
-      this.choreo.Hits = hits;
+    onUpdateHits(hits: Hit[]) {
+      if (this.choreo?.Hits) this.choreo.Hits = hits;
       this.setLastUpdaterToMe();
       this.showSuccessMessage(this.$t("countsheet", 1));
     },
-    onUpdateLineups(lineups) {
-      this.choreo.Lineups = lineups;
+    onUpdateLineups(lineups: Lineup[]) {
+      if (this.choreo?.Lineups) this.choreo.Lineups = lineups;
       this.setLastUpdaterToMe();
       this.showSuccessMessage(this.$t("lineup", 1));
       this.updateProposedPositions();
     },
-    onUpdateCount(count) {
+    onUpdateCount(count: number) {
       if (this.moveWithCountEdit) this.setCounter(count);
     },
-    onCountUpdate(counts) {
-      this.choreo.counts = counts;
+    onCountUpdate(counts: number) {
+      if (this.choreo?.counts) this.choreo.counts = counts;
       this.setLastUpdaterToMe();
       this.showSuccessMessage();
     },
-    onMatTypeUpdate(matType) {
-      this.choreo.matType = matType;
+    onMatTypeUpdate(matType: string) {
+      if (this.choreo?.matType) this.choreo.matType = matType;
       this.setLastUpdaterToMe();
       this.showSuccessMessage();
     },
@@ -1065,31 +1150,41 @@ export default {
       });
     },
     openCreateHitModal() {
-      this.$refs.createHitModal.open();
+      (this.$refs.createHitModal as InstanceType<typeof CreateHitModal>).open();
     },
-    onHitCreated(hit) {
-      let hitsCopy = this.choreo.Hits;
+    onHitCreated(hit: Hit) {
+      let hitsCopy = this.choreo?.Hits;
+      if (!hitsCopy) hitsCopy = [];
       hitsCopy.push(hit);
-      this.choreo.Hits = hitsCopy;
+      if (this.choreo) this.choreo.Hits = hitsCopy;
       this.setLastUpdaterToMe();
       this.showSuccessMessage(this.$t("countsheet", 1));
     },
     initiateHitUpdate() {
       if (this.hitsForCurrentCount.length == 0) return;
-      else if (this.hitsForCurrentCount.length == 1)
+      else if (
+        this.hitsForCurrentCount.length == 1 &&
+        this.hitsForCurrentCount[0]?.id
+      )
         this.onHitSelection(this.hitsForCurrentCount[0].id);
       else {
-        this.$refs.selectHitModal.open();
+        (
+          this.$refs.selectHitModal as InstanceType<typeof SelectHitModal>
+        ).open();
       }
     },
-    onHitSelection(hitId) {
-      this.$refs.countOverview.editHit(hitId);
+    onHitSelection(hitId: string) {
+      (this.$refs.countOverview as InstanceType<typeof CountOverview>).editHit(
+        hitId
+      );
       this.scrollToCountOverView();
     },
     scrollToCountOverView() {
-      this.$refs.countOverview.$el.scrollIntoView({ behavior: "smooth" });
+      (
+        this.$refs.countOverview as InstanceType<typeof CountOverview>
+      ).$el.scrollIntoView({ behavior: "smooth" });
     },
-    showSuccessMessage(savedType) {
+    showSuccessMessage(savedType?: string) {
       debug("Saved successfully");
       MessagingService.showSuccess(
         savedType
@@ -1114,55 +1209,83 @@ export default {
       this.countNextButtonHasNeverBeenUsed = false;
     },
     skipToEnd() {
-      this.setCounter(this.choreo.counts - 1);
+      this.setCounter(this.choreo?.counts ? this.choreo.counts - 1 : 0);
       this.countEndButtonHasNeverBeenUsed = false;
     },
-    subOutParticipant(MemberId) {
-      this.$refs.participantSubstitutionModal.open(MemberId, null);
+    subOutParticipant(MemberId: string) {
+      (
+        this.$refs.participantSubstitutionModal as InstanceType<
+          typeof ParticipantSubstitutionModal
+        >
+      ).open(MemberId, null);
     },
-    subInMember(MemberId) {
-      this.$refs.participantSubstitutionModal.open(null, MemberId);
+    subInMember(MemberId: string) {
+      (
+        this.$refs.participantSubstitutionModal as InstanceType<
+          typeof ParticipantSubstitutionModal
+        >
+      ).open(null, MemberId);
     },
-    removeParticipant(MemberId) {
+    removeParticipant(MemberId: string) {
+      if (!this.choreoId || !this.choreo) return;
       ChoreoService.removeParticipant(this.choreoId, MemberId).then(() => {
-        this.choreo.Participants = this.choreo.Participants.filter(
-          (p) => p.id != MemberId
-        );
+        if (this.choreo && this.choreo.Participants)
+          this.choreo.Participants = this.choreo.Participants.filter(
+            (p) => p.id != MemberId
+          );
         this.setLastUpdaterToMe();
         this.updateProposedPositions();
       });
     },
-    addParticipant(MemberId) {
+    addParticipant(MemberId: string) {
+      if (!this.choreoId || !this.choreo) return;
+
       const color = ColorService.getRandom(
-        this.choreo.Participants.map((p) => p.ChoreoParticipation.color)
+        (this.choreo?.Participants || []).map(
+          (p: Participant) => p.ChoreoParticipation.color
+        )
       );
+
       ChoreoService.addParticipant(this.choreoId, MemberId, color).then(() => {
+        if (!this.choreo?.SeasonTeam?.Members) return;
+        const member = this.choreo.SeasonTeam.Members.find(
+          (m) => m.id == MemberId
+        );
+        if (!member) return;
         const memberToAdd = {
-          ...this.choreo.SeasonTeam.Members.find((m) => m.id == MemberId),
+          ...(member as Member),
           ChoreoParticipation: { color },
-        };
-        this.choreo.Participants = [...this.choreo.Participants, memberToAdd];
+        } as Participant;
+        if (this.choreo.Participants)
+          this.choreo.Participants = [...this.choreo.Participants, memberToAdd];
+        else this.choreo.Participants = [memberToAdd];
         this.setLastUpdaterToMe();
         this.updateProposedPositions();
       });
     },
-    onSubstitution(choreo) {
+    onSubstitution(choreo: Choreo) {
       this.choreo = choreo;
       this.updateProposedPositions();
     },
-    changeColor(participantId, color) {
+    changeColor(participantId: string, color: string) {
+      if (!this.choreoId || !this.choreo) return;
       ChoreoService.changeParticipantColor(
         this.choreoId,
         participantId,
         color
       ).then(() => {
-        this.choreo.Participants.find(
-          (p) => p.id == participantId
-        ).ChoreoParticipation.color = color;
+        if (this.choreo?.Participants) {
+          const foundParticipant = (
+            this.choreo.Participants as Participant[]
+          ).find((p) => p.id == participantId);
+          if (foundParticipant)
+            foundParticipant.ChoreoParticipation.color = color;
+        }
         this.setLastUpdaterToMe();
       });
     },
-    findPreviousPosition(memberId) {
+    findPreviousPosition(memberId: string) {
+      if (!this.choreo || !this.choreo.Lineups) return null;
       const previousRelevantLineups = this.choreo.Lineups.filter(
         (lineup) =>
           lineup.endCount < this.count &&
@@ -1171,6 +1294,7 @@ export default {
       if (previousRelevantLineups.length == 0) return null;
 
       const previousRelevantLineup = previousRelevantLineups[0];
+      if (!previousRelevantLineup?.Positions) return null;
       const previousPosition = previousRelevantLineup.Positions.find(
         (pos) => pos.MemberId == memberId
       );
@@ -1183,9 +1307,10 @@ export default {
         return;
       }
 
-      const currentlyPositionedMembers = this.lineupsForCurrentCount
+      let currentlyPositionedMembers = this.lineupsForCurrentCount
         .map((lineup) => lineup.Positions.map((pos) => pos.Member))
-        .flat();
+        .flat()
+        .filter((m) => m !== undefined && m !== null);
 
       Object.keys(this.positionUpdates).forEach((MemberId) => {
         const member = this.teamMembers.find((m) => m.id == MemberId);
@@ -1198,7 +1323,8 @@ export default {
 
       if (currentlyPositionedMembers.length == 0) {
         const lastLineupEnd = Math.max(
-          ...this.choreo.Lineups.map((l) => l.endCount)
+          0,
+          ...(this.choreo?.Lineups?.map((l) => l.endCount) ?? [0])
         );
         if (this.count > lastLineupEnd) {
           try {
@@ -1218,8 +1344,14 @@ export default {
           currentlyPositionedMembers
         ).filter((movement) => movement !== null);
 
+        if (!movements || movements.length == 0) {
+          this.setProposedPositions([]);
+          return;
+        }
+
         // if all movements are the same, propose new positions based on that movement
         const allMovementsEqual = movements.every((movement) => {
+          if (!movements[0]) return false;
           return (
             movement &&
             Math.abs(movement.movementX - movements[0].movementX) < 1 &&
@@ -1228,22 +1360,29 @@ export default {
         });
 
         if (allMovementsEqual) {
+          const movementProposals =
+            this.calculateProposedPositionsBasedOnMovement(
+              currentlyPositionedMembers,
+              movements
+            ).filter((p) => p !== null);
           this.setProposedPositions(
             LineupService.filterRejectedProposals(
-              this.calculateProposedPositionsBasedOnMovement(
-                currentlyPositionedMembers,
-                movements
-              ),
+              movementProposals as PositionProposal[],
               this.rejectedPositionProposals
             )
           );
           return;
         } else {
           if (currentlyPositionedMembers.length > 1) {
+            const lineProposals = this.calculateProposedPositionsBasedOnLine(
+              currentlyPositionedMembers
+            );
             const proposedPositions = LineupService.filterRejectedProposals(
-              this.calculateProposedPositionsBasedOnLine(
-                currentlyPositionedMembers
-              ),
+              lineProposals
+                ? (lineProposals.filter(
+                    (p) => p !== null
+                  ) as PositionProposal[])
+                : [],
               this.rejectedPositionProposals
             );
             if (proposedPositions) {
@@ -1257,7 +1396,7 @@ export default {
         return;
       }
     },
-    setProposedPositions(proposedPositions) {
+    setProposedPositions(proposedPositions: ProposedPosition[]) {
       if (proposedPositions.length == 0) {
         this.proposedPositions = [];
         return;
@@ -1276,6 +1415,7 @@ export default {
     },
     async acceptProposedLineup() {
       const [first, ...rest] = this.proposedPositions;
+      if (!first) return;
       await this.onPositionChange(first.MemberId, first.x, first.y);
       rest.forEach((proposedPosition) => {
         this.onPositionChange(
@@ -1286,13 +1426,15 @@ export default {
       });
       this.updateProposedPositions();
     },
-    rejectProposedLineup(event) {
-      if (event?.target?.closest(".dropdown-toggle")) return;
+    rejectProposedLineup(event?: MouseEvent) {
+      const target = event?.target;
+      if (target instanceof HTMLElement && target.closest(".dropdown-toggle"))
+        return;
       this.rejectedPositionProposals.push(this.proposedPositions);
       this.proposedPositions = [];
     },
     calculateMovementsForCurrentlyPositionedMembers(
-      currentlyPositionedMembers
+      currentlyPositionedMembers: Member[]
     ) {
       const movements = currentlyPositionedMembers.map((member) => {
         const currentRelevantLineup = this.lineupsForCurrentCount.find(
@@ -1304,11 +1446,13 @@ export default {
           (pos) => pos.MemberId == member.id
         );
 
+        if (!currentPosition) return null;
+
         if (this.positionUpdates[member.id]) {
           currentPosition = {
             ...currentPosition,
-            x: this.positionUpdates[member.id].x,
-            y: this.positionUpdates[member.id].y,
+            x: this.positionUpdates[member.id]?.x ?? 0,
+            y: this.positionUpdates[member.id]?.y ?? 0,
           };
         }
 
@@ -1324,8 +1468,8 @@ export default {
       return movements;
     },
     calculateProposedPositionsBasedOnMovement(
-      currentlyPositionedMembers,
-      movements
+      currentlyPositionedMembers: Member[],
+      movements: { MemberId: string; movementX: number; movementY: number }[]
     ) {
       const proposedPositions = this.teamMembers
         .filter((member) => {
@@ -1338,6 +1482,8 @@ export default {
           const previousPosition = this.findPreviousPosition(member.id);
           if (!previousPosition) return null;
 
+          if (!movements[0]) return null;
+
           return {
             MemberId: member.id,
             x: clamp(previousPosition.x + movements[0].movementX, 0, 100, 1),
@@ -1347,23 +1493,41 @@ export default {
         });
       return proposedPositions;
     },
-    calculateProposedPositionsBasedOnLine(currentlyPositionedMembers) {
+    calculateProposedPositionsBasedOnLine(
+      currentlyPositionedMembers: Member[]
+    ) {
       const currentPosition1 = this.currentPositions.find(
-        (p) => p.MemberId == currentlyPositionedMembers[0].id
+        (p) =>
+          currentlyPositionedMembers[0] &&
+          p.MemberId == currentlyPositionedMembers[0].id
       );
 
+      if (!currentPosition1) return null;
+
       if (this.positionUpdates[currentPosition1.MemberId]) {
-        currentPosition1.x = this.positionUpdates[currentPosition1.MemberId].x;
-        currentPosition1.y = this.positionUpdates[currentPosition1.MemberId].y;
+        currentPosition1.x =
+          this.positionUpdates[currentPosition1.MemberId]?.x ??
+          currentPosition1.x;
+        currentPosition1.y =
+          this.positionUpdates[currentPosition1.MemberId]?.y ??
+          currentPosition1.y;
       }
 
-      const currentPosition2 = this.currentPositions.find((p) => {
-        return p.MemberId == currentlyPositionedMembers[1].id;
-      });
+      const currentPosition2 = this.currentPositions.find(
+        (p) =>
+          currentlyPositionedMembers[1] &&
+          p.MemberId == currentlyPositionedMembers[1].id
+      );
+
+      if (!currentPosition2) return null;
 
       if (this.positionUpdates[currentPosition2.MemberId]) {
-        currentPosition2.x = this.positionUpdates[currentPosition2.MemberId].x;
-        currentPosition2.y = this.positionUpdates[currentPosition2.MemberId].y;
+        currentPosition2.x =
+          this.positionUpdates[currentPosition2.MemberId]?.x ??
+          currentPosition2.x;
+        currentPosition2.y =
+          this.positionUpdates[currentPosition2.MemberId]?.y ??
+          currentPosition2.y;
       }
 
       const xDiff = roundToDecimals(currentPosition1.x - currentPosition2.x, 2);
@@ -1375,11 +1539,15 @@ export default {
             (p) => p.MemberId == member.id
           );
 
+          if (!currentPosition) return false;
+
           if (this.positionUpdates[currentPosition.MemberId]) {
             currentPosition.x =
-              this.positionUpdates[currentPosition.MemberId].x;
+              this.positionUpdates[currentPosition.MemberId]?.x ??
+              currentPosition.x;
             currentPosition.y =
-              this.positionUpdates[currentPosition.MemberId].y;
+              this.positionUpdates[currentPosition.MemberId]?.y ??
+              currentPosition.y;
           }
 
           if (
@@ -1421,6 +1589,9 @@ export default {
         const currentMember = this.currentPositions.find(
           (p) => p.MemberId == m.id
         );
+
+        if (!currentMember) return false;
+
         if (yDiff > 0)
           isBetweenPositions = currentMember.y >= currentPosition2.y;
         else if (yDiff < 0)
@@ -1447,6 +1618,28 @@ export default {
       });
       return proposedPositions;
     },
+    openHowToModal() {
+      (this.$refs.howToModal as InstanceType<typeof HowToModal>).open();
+    },
+    openChangeChoreoLengthModal() {
+      (
+        this.$refs.changeChoreoLengthModal as InstanceType<
+          typeof ChangeChoreoLengthModal
+        >
+      ).open();
+    },
+    openChangeMatLayoutModal() {
+      (
+        this.$refs.changeMatLayoutModal as InstanceType<
+          typeof ChangeMatLayoutModal
+        >
+      ).open();
+    },
+    openDeleteChoreoModal() {
+      (
+        this.$refs.deleteChoreoModal as InstanceType<typeof DeleteChoreoModal>
+      ).open();
+    },
     setLastUpdaterToMe() {
       if (this.me?.id && this.choreo?.updaterId === this.me?.id) {
         this.choreo.updaterId = this.me?.id;
@@ -1454,5 +1647,5 @@ export default {
       }
     },
   },
-};
+});
 </script>
