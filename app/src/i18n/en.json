@@ -56,7 +56,14 @@
       "assistant": "Assistant",
       "athlete": "Athlete"
     },
-    "no-clubs-info": "You currently do not belong to any clubs. Either create one or ask the owner of you club to give you access to it."
+    "no-clubs-info": "You currently do not belong to any clubs. Either create one or ask the owner of you club to give you access to it.",
+    "ai-access": "AI Access",
+    "ai-access-description": "Generate an access token to connect AI assistants to your choreos.",
+    "ai-access-configure": "Configure",
+    "mcp-token-expiry-7d": "Valid for 7 days",
+    "mcp-token-expiry-30d": "Valid for 30 days",
+    "mcp-token-expiry-90d": "Valid for 90 days",
+    "mcp-token-expiry-365d": "Valid for 1 year"
   },
   "achter": "Eight",
   "alle-auswaehlen": "Select all",
@@ -646,6 +653,25 @@
     },
     "loading": {
       "wird-geladen": "Loading"
+    },
+    "mcp-info": {
+      "title": "Work with AI",
+      "description": "Connect AI assistants like Claude, Cursor, or OpenCode to your choreos. Once set up, you can plan, edit, and refine choreos together with AI — directly from your favorite tools.",
+      "server-url": "Server URL",
+      "server-url-description": "Use this URL to connect to the server:",
+      "authentication": "Access Token",
+      "authentication-description": "Generate an access token to authenticate with the server.",
+      "generate-token": "Generate Token",
+      "token-success": "Token generated successfully! Copy it now and store it securely.",
+      "token-warning": "This token will only be shown once. Store it in a safe place!",
+      "configuration": "Client Configuration",
+      "configuration-description": "Copy the settings for your AI tool into its configuration:",
+      "claude-desktop": "Claude Desktop",
+      "opencode": "OpenCode",
+      "cursor": "Cursor",
+      "generic": "Generic",
+      "security": "Security",
+      "security-description": "Treat your token like a password. Never share it with others and store it in a safe place."
     },
     "mobile-choreo-edit": {
       "am-handy-nicht-moeglich": "Not possible on a small screen",

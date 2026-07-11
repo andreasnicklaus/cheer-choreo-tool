@@ -56,7 +56,14 @@
       "assistant": "Assistent",
       "athlete": "Athlet"
     },
-    "no-clubs-info": "Du gehörst noch keinem Verein an. Erstelle entweder einen oder bitte den Eigentümer deines Vereins, ihn mit dir zu teilen."
+    "no-clubs-info": "Du gehörst noch keinem Verein an. Erstelle entweder einen oder bitte den Eigentümer deines Vereins, ihn mit dir zu teilen.",
+    "ai-access": "KI-Zugang",
+    "ai-access-description": "Erstelle ein Zugriffstoken, um KI-Assistenten mit deinen Choreos zu verbinden.",
+    "ai-access-configure": "Einrichten",
+    "mcp-token-expiry-7d": "7 Tage gültig",
+    "mcp-token-expiry-30d": "30 Tage gültig",
+    "mcp-token-expiry-90d": "90 Tage gültig",
+    "mcp-token-expiry-365d": "1 Jahr gültig"
   },
   "achter": "Achter",
   "alle-auswaehlen": "Alle auswählen",
@@ -646,6 +653,25 @@
     },
     "loading": {
       "wird-geladen": "Wird geladen"
+    },
+    "mcp-info": {
+      "title": "Mit KI arbeiten",
+      "description": "Verbinde KI-Assistenten wie Claude, Cursor oder OpenCode mit deinen Choreos. Einmal eingerichtet, kannst du Choreos gemeinsam mit KI planen, bearbeiten und verfeinern — direkt aus deinen Lieblingstools.",
+      "server-url": "Server-URL",
+      "server-url-description": "Verwende diese URL, um dich mit dem Server zu verbinden:",
+      "authentication": "Zugriffstoken",
+      "authentication-description": "Erstelle ein Zugriffstoken, um dich beim Server zu authentifizieren.",
+      "generate-token": "Token erstellen",
+      "token-success": "Token erfolgreich erstellt! Kopiere ihn jetzt und speichere ihn sicher.",
+      "token-warning": "Dieses Token wird nur einmal angezeigt. Speichere es an einem sicheren Ort!",
+      "configuration": "Client-Konfiguration",
+      "configuration-description": "Kopiere die Einstellungen für dein KI-Tool in dessen Konfiguration:",
+      "claude-desktop": "Claude Desktop",
+      "opencode": "OpenCode",
+      "cursor": "Cursor",
+      "generic": "Generisch",
+      "security": "Sicherheit",
+      "security-description": "Gehe mit deinem Token wie mit einem Passwort um. Teile es niemals mit anderen und speichere es an einem sicheren Ort."
     },
     "mobile-choreo-edit": {
       "am-handy-nicht-moeglich": "Am Handy nicht möglich",
