@@ -50,8 +50,8 @@
     "vuex": "^4.1.0"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.28.6",
-    "@babel/preset-typescript": "^7.29.7",
+    "@babel/eslint-parser": "^8.0.0",
+    "@babel/preset-typescript": "^8.0.0",
     "@estruyf/github-actions-reporter": "^1.12.0",
     "@iconify-json/bi": "^1.2.7",
     "@playwright/test": "^1.60.0",
