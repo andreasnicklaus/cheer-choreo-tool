@@ -131,7 +131,7 @@ export default class AccountPage extends TestPage {
   async iChangeSettings() {
     await this.iSwitchToSettings();
     await this.page
-      .getByRole("checkbox", { name: "Tracking (Opt-out): I don't" })
+      .getByRole("checkbox", { name: "I don't want my data to be" })
       .click();
 
     const saveButton = this.page.getByRole("button", { name: "Save" });
