@@ -6,7 +6,11 @@
     variant="light"
     body-class="w-100 me-2"
   >
-    <BRow align-h="end" align-v="center" :style="{ rowGap: '1rem' }">
+    <BRow
+      class="justify-content-end justify-content-md-between"
+      align-v="center"
+      :style="{ rowGap: '1rem' }"
+    >
       <BCol cols="12" md="auto">
         <h4>{{ $t("app-install.app-herunterladen") }}</h4>
         {{ $t("app-install.install-info") }}
