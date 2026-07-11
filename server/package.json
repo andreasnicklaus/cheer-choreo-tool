@@ -32,6 +32,7 @@
   "dependencies": {
     "@logtail/node": "^0.5.8",
     "@logtail/winston": "^0.5.8",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@sequelize/postgres": "^7.0.0-alpha.47",
     "@types/express": "^5.0.6",
     "@types/express-session": "^1.19.0",

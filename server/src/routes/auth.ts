@@ -47,12 +47,17 @@ const updateMeSchema = z.object({
   emailConfirmed: z.boolean().optional(),
 });
 
+const mcpTokenSchema = z.object({
+  expiresIn: z.string().optional().default("30d"),
+});
+
 type RegisterBody = z.infer<typeof registerSchema>;
 type LoginBody = z.infer<typeof loginSchema>;
 type SsoRequestBody = z.infer<typeof ssoRequestSchema>;
 type SsoBody = z.infer<typeof ssoSchema>;
 type ProfilePictureParams = z.infer<typeof profilePictureParams>;
 type UpdateMeBody = z.infer<typeof updateMeSchema>;
+type McpTokenBody = z.infer<typeof mcpTokenSchema>;
 
 /**
  * @swagger
@@ -712,6 +717,19 @@ router.get(
         });
       })
       .catch((e: Error) => next(e));
+  },
+);
+
+router.post(
+  "/mcp-token",
+  AuthService.authenticateUser(),
+  validate(mcpTokenSchema),
+  (req: Request, res: Response) => {
+    const { expiresIn } = req.body as McpTokenBody;
+    const token = AuthService.generateAccessToken(req.actingUserId, {
+      expiresIn,
+    });
+    res.send({ token });
   },
 );
 

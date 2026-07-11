@@ -57,6 +57,9 @@ import { feedbackRouter } from "./routes/feedback";
 import { notificationRouter } from "./routes/notification";
 import { contactRouter } from "./routes/contact";
 
+// MCP
+import { mcpRouter } from "./mcp";
+
 // ADMIN ROUTER
 import { adminRouter } from "./routes/admin/index";
 
@@ -89,7 +92,7 @@ app.use(
       }
     },
     allowedHeaders: "*",
-    exposedHeaders: ["X-CSRF-Token"],
+    exposedHeaders: ["X-CSRF-Token", "mcp-session-id"],
   }),
 );
 app.use(robots(__dirname + "/public/robots.txt"));
@@ -370,6 +373,7 @@ app.use("/member", memberRouter);
 app.use("/position", positionRouter);
 app.use("/user", userRouter);
 app.use("/auth", authRouter);
+app.use("/mcp", mcpRouter);
 app.use("/season", seasonRouter);
 app.use("/seasonTeam", seasonTeamRouter);
 app.use("/feedback", feedbackRouter);
