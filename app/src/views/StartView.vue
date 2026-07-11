@@ -84,7 +84,7 @@
                         {{
                           teams
                             .find((t) => t.id == team.id)
-                            .SeasonTeams.filter(
+                            ?.SeasonTeams.filter(
                               (st) =>
                                 seasonFilterIds.length == 0 ||
                                 seasonFilterIds.includes(st.Season.id)
@@ -416,7 +416,7 @@
                                 class="m-0 fw-light"
                               >
                                 {{ $t("general.shared-with-you-by") }}
-                                {{ choreo.User.username }}
+                                {{ choreo.User?.username }}
                               </p>
                               <router-link
                                 :to="{
@@ -451,11 +451,10 @@
                             class="text-muted"
                             button
                             @click="
-                              () =>
-                                $refs.createChoreoModal.open(
-                                  team.id,
-                                  seasonTeam.Season.id
-                                )
+                              openCreateChoreoModal(
+                                team.id,
+                                seasonTeam.Season.id
+                              )
                             "
                           >
                             <IBiPlusSquare class="me-1" />
@@ -467,7 +466,7 @@
                     <BListGroupItem
                       class="text-muted"
                       button
-                      @click="() => $refs.createSeasonModal.open(team.id)"
+                      @click="openCreateSeasonModal(team.id)"
                     >
                       <IBiPlusSquare class="me-1" />
                       <span>{{ $t("start.saison-anfangen") }}</span>
@@ -479,7 +478,7 @@
                 :variant="teams.length == 0 ? 'success' : 'light'"
                 :class="{ 'text-muted': teams.length > 0 }"
                 button
-                @click="() => $refs.createTeamModal.open()"
+                @click="openCreateTeamModal"
               >
                 <IBiPlusSquare class="me-1" />
                 <span>{{ $t("start.team-hinzufuegen") }}</span>
@@ -535,24 +534,58 @@
   </BContainer>
 </template>
 
-<script>
+<script lang="ts">
 import { useHead } from "@unhead/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { mapState } from "vuex";
 import CreateChoreoModal from "@/components/modals/CreateChoreoModal.vue";
 import CreateClubModal from "@/components/modals/CreateClubModal.vue";
 import CreateSeasonModal from "@/components/modals/CreateSeasonModal.vue";
 import CreateTeamModal from "@/components/modals/CreateTeamModal.vue";
 import DeleteChoreoModal from "@/components/modals/DeleteChoreoModal.vue";
 import ClubService from "@/services/ClubService";
-import ChoreoService from "@/services/ChoreoService";
 import { canWrite, canDelete } from "@/utils/permissions";
 import FeatureFlagService, {
   FeatureFlagKeys,
 } from "@/services/FeatureFlagService";
 import { error } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
+import { defineComponent } from "vue";
+import { OwnerAccess } from "@/types";
+
+interface ChoreoData {
+  id: string;
+  name: string;
+  counts: number;
+  updatedAt?: string;
+  UserId?: string;
+  User?: { id: string; username?: string };
+}
+
+interface SeasonData {
+  id: string;
+  name: string;
+  year: number;
+}
+
+interface SeasonTeamData {
+  id: string;
+  SeasonID: string;
+  Season: SeasonData;
+  Choreos: ChoreoData[];
+}
+
+interface TeamData {
+  id: string;
+  name: string;
+  SeasonTeams: SeasonTeamData[];
+}
+
+interface ClubData {
+  id: string;
+  name: string;
+  Teams: TeamData[];
+}
 
 /**
  * @vue-data {boolean} useFolderColors=true - Whether to use folder colors for teams and seasons.
@@ -571,7 +604,7 @@ import ERROR_CODES from "@/utils/error_codes";
  *
  * @vue-computed {MetaInfo} metaInfo
  */
-export default {
+export default defineComponent({
   name: "StartView",
   components: {
     CreateChoreoModal,
@@ -586,38 +619,45 @@ export default {
   },
   data: () => ({
     useFolderColors: true,
-    club: null,
-    teams: [],
-    seasons: [],
-    teamFilterIds: [],
-    seasonFilterIds: [],
-    searchTerm: null,
+    club: null as ClubData | null,
+    teams: [] as TeamData[],
+    seasons: [] as SeasonData[],
+    teamFilterIds: [] as string[],
+    seasonFilterIds: [] as string[],
+    searchTerm: null as string | null,
     minCount: 0,
     maxCount: 400,
     loading: true,
     filterCollapseVisible: false,
     accessSharingEnabled: true,
-    deleteChoreoId: null,
+    deleteChoreoId: undefined as string | undefined,
   }),
   computed: {
-    ...mapState(["owners", "me"]),
-    canEditChoreo() {
-      return (choreo) => canWrite(this.owners, this.me?.id, choreo?.UserId);
+    owners(): OwnerAccess[] {
+      return this.$store.state.owners;
     },
-    canDeleteChoreo() {
-      return (choreo) => canDelete(this.owners, this.me?.id, choreo?.UserId);
+    me(): { id: string; username?: string } | undefined {
+      return this.$store.state.me ?? undefined;
     },
-    choreos() {
+    canEditChoreo(): (choreo: ChoreoData) => boolean {
+      return (choreo: ChoreoData) =>
+        canWrite(this.owners, this.me?.id ?? "", choreo.UserId ?? "");
+    },
+    canDeleteChoreo(): (choreo: ChoreoData) => boolean {
+      return (choreo: ChoreoData) =>
+        canDelete(this.owners, this.me?.id ?? "", choreo.UserId ?? "");
+    },
+    choreos(): ChoreoData[] {
       return this.teams
-        .map((t) =>
-          t.SeasonTeams.map((st) =>
-            st.Choreos.map((c) => ({
+        .map((t: TeamData) =>
+          t.SeasonTeams.map((st: SeasonTeamData) =>
+            st.Choreos.map((c: ChoreoData) => ({
               ...c,
               SeasonTeam: { ...st, Team: t },
             }))
           )
         )
-        .flat(Infinity);
+        .flat(Infinity) as ChoreoData[];
     },
   },
   watch: {
@@ -672,81 +712,97 @@ export default {
     });
   },
   methods: {
-    deleteChoreo(choreoId) {
+    deleteChoreo(choreoId: string) {
       this.deleteChoreoId = choreoId;
-      this.$refs.deleteChoreoModal.open();
+      (
+        this.$refs.deleteChoreoModal as InstanceType<typeof DeleteChoreoModal>
+      ).open();
     },
-    onChoreoDeleted(choreoId) {
-      this.teams = this.teams.map((t) => ({
+    onChoreoDeleted(choreoId: string) {
+      this.teams = this.teams.map((t: TeamData) => ({
         ...t,
-        SeasonTeams: t.SeasonTeams.map((st) => ({
+        SeasonTeams: t.SeasonTeams.map((st: SeasonTeamData) => ({
           ...st,
-          Choreos: st.Choreos.filter((c) => c.id !== choreoId),
+          Choreos: st.Choreos.filter((c: ChoreoData) => c.id !== choreoId),
         })),
       }));
     },
     load() {
       this.filterCollapseVisible = !this.$store.state.isMobile;
-      let getClubPromise = null;
+      let getClubPromise: Promise<ClubData | undefined | void> | null = null;
 
       if (this.$store.state.clubId) {
-        getClubPromise = ClubService.getById(this.$store.state.clubId);
+        getClubPromise = ClubService.getById(
+          this.$store.state.clubId
+        ) as Promise<ClubData>;
       } else {
-        getClubPromise = ClubService.getAll().then((clubList) => {
-          if (clubList.length == 0) {
-            this.$refs.createClubModal.open();
-          } else {
-            const club = clubList[0];
-            return club;
+        getClubPromise = (ClubService.getAll() as Promise<ClubData[]>).then(
+          (clubList: ClubData[]) => {
+            if (clubList.length == 0) {
+              (
+                this.$refs.createClubModal as InstanceType<
+                  typeof CreateClubModal
+                >
+              ).open();
+            } else {
+              const club = clubList[0];
+              return club;
+            }
           }
-        });
+        );
       }
 
-      getClubPromise.then((club) => {
+      getClubPromise.then((club: ClubData | undefined | void) => {
         if (!club) this.$store.commit("setClubId", null);
         else {
           this.club = club;
           this.teams =
-            club?.Teams.map((t) => ({
+            club?.Teams.map((t: TeamData) => ({
               ...t,
               SeasonTeams: t.SeasonTeams.sort(
-                (a, b) => b.Season.year - a.Season.year
-              ).map((st) => ({
+                (a: SeasonTeamData, b: SeasonTeamData) =>
+                  b.Season.year - a.Season.year
+              ).map((st: SeasonTeamData) => ({
                 ...st,
                 Choreos: st.Choreos.sort(
-                  (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+                  (a: ChoreoData, b: ChoreoData) =>
+                    new Date(b.updatedAt!).getTime() -
+                    new Date(a.updatedAt!).getTime()
                 ),
               })),
-            })).sort((a, b) => a.name.localeCompare(b.name)) || [];
+            })).sort((a: TeamData, b: TeamData) =>
+              a.name.localeCompare(b.name)
+            ) || [];
           this.seasons = Array.from(
             new Set(
               this.teams
-                .map((t) =>
+                .map((t: TeamData) =>
                   t.SeasonTeams.sort(
-                    (a, b) => b.Season.year - a.Season.year
-                  ).map((st) => JSON.stringify(st.Season))
+                    (a: SeasonTeamData, b: SeasonTeamData) =>
+                      b.Season.year - a.Season.year
+                  ).map((st: SeasonTeamData) => JSON.stringify(st.Season))
                 )
-                .flat(Infinity)
+                .flat(Infinity) as string[]
             )
-          ).map((s) => JSON.parse(s));
+          ).map((s: string) => JSON.parse(s));
           this.minCount =
             this.choreos.length > 0
-              ? Math.min(...this.choreos.map((c) => c.counts))
+              ? Math.min(...this.choreos.map((c: ChoreoData) => c.counts))
               : 0;
           this.maxCount =
             this.choreos.length > 0
-              ? Math.max(...this.choreos.map((c) => c.counts))
+              ? Math.max(...this.choreos.map((c: ChoreoData) => c.counts))
               : 0;
           this.loading = false;
         }
       });
     },
-    addOrRemoveTeamFilter(teamId) {
+    addOrRemoveTeamFilter(teamId: string) {
       if (this.teamFilterIds.includes(teamId))
         this.teamFilterIds.splice(this.teamFilterIds.indexOf(teamId), 1);
       else this.teamFilterIds.push(teamId);
     },
-    addOrRemoveSeasonFilter(seasonId) {
+    addOrRemoveSeasonFilter(seasonId: string) {
       if (this.seasonFilterIds.includes(seasonId))
         this.seasonFilterIds.splice(this.seasonFilterIds.indexOf(seasonId), 1);
       else this.seasonFilterIds.push(seasonId);
@@ -759,13 +815,15 @@ export default {
       this.maxCount = Math.max(...this.choreos.map((c) => c.counts));
     },
     onClubCreated() {
-      this.$refs.createClubModal.close();
+      (
+        this.$refs.createClubModal as InstanceType<typeof CreateClubModal>
+      ).close();
       this.load();
     },
     addChoreo() {
       this.load();
     },
-    onTeamCreated(team) {
+    onTeamCreated(team: TeamData) {
       this.$router
         .push({
           name: "Team",
@@ -775,13 +833,13 @@ export default {
           error("Redundant navigation to team", ERROR_CODES.REDUNDANT_ROUTING);
         });
     },
-    choreoCountStringBySeasonTeam(seasonTeam) {
+    choreoCountStringBySeasonTeam(seasonTeam: SeasonTeamData) {
       const count = seasonTeam.Choreos.filter(
         (c) => c.counts >= this.minCount && c.counts <= this.maxCount
       ).length;
       return `${count} ${this.$t("choreo", count)}`;
     },
-    seasonCountStringByTeam(team) {
+    seasonCountStringByTeam(team: TeamData) {
       const count = team.SeasonTeams.filter(
         (st) =>
           this.seasonFilterIds.length == 0 ||
@@ -789,11 +847,26 @@ export default {
       ).flat(Infinity).length;
       return `${count} ${this.$t("season", count)}`;
     },
+    openCreateChoreoModal(teamId: string, seasonId: string) {
+      (
+        this.$refs.createChoreoModal as InstanceType<typeof CreateChoreoModal>
+      ).open(teamId, seasonId);
+    },
+    openCreateSeasonModal(teamId: string) {
+      (
+        this.$refs.createSeasonModal as InstanceType<typeof CreateSeasonModal>
+      ).open(teamId);
+    },
+    openCreateTeamModal() {
+      (
+        this.$refs.createTeamModal as InstanceType<typeof CreateTeamModal>
+      ).open();
+    },
     onSeasonTeamCreation() {
       this.load();
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

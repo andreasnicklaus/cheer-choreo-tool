@@ -17,16 +17,12 @@
           <IBiPen data-testid="edit-button" />
         </BButton>
 
-        <BInputGroup
-          v-else
-          @keydown.esc="cancelEditing"
-          @keydown.enter="approveEdit"
-        >
+        <BInputGroup v-else>
           <BFormInput
-            v-model="valueReplica"
+            v-model="valueReplica as string"
+            type="text"
             autofocus
             :style="{
-              fontSize: '2rem',
               fontWeight: 'bold',
               color: 'var(--bs-body-color)',
               border: 'none',
@@ -36,6 +32,12 @@
             }"
             class="p-0"
             data-testid="editHeading-input"
+            @keydown="
+              (e: any) => {
+                if (e.key === 'Escape') cancelEditing();
+                if (e.key === 'Enter') approveEdit();
+              }
+            "
           />
           <template #append>
             <BButtonGroup>
@@ -61,7 +63,8 @@
   </h1>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from "vue";
 /**
  * @module Component:EditableNameHeading
  *
@@ -77,7 +80,7 @@
  * @example <EditableNameHeading name="Title" v-model="value" />
  * @example <EditableNameHeading name="Title" v-model="value" placeholder="Enter name" />
  */
-export default {
+export default defineComponent({
   name: "EditableNameHeading",
   props: {
     name: {
@@ -96,7 +99,7 @@ export default {
   emits: ["input"],
   data: () => ({
     edit: false,
-    valueReplica: null,
+    valueReplica: undefined as String | undefined,
   }),
   watch: {
     value() {
@@ -117,5 +120,5 @@ export default {
       this.edit = false;
     },
   },
-};
+});
 </script>

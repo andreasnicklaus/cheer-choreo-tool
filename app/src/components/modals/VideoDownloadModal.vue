@@ -120,7 +120,15 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, PropType } from "vue";
+import { BModal } from "bootstrap-vue-next";
+
+interface DownloadOption {
+  id: string;
+  name: string;
+  ext: string;
+}
 /**
  * @module Modal:VideoDownloadModal
  *
@@ -144,7 +152,7 @@
  * @example <VideoDownloadModal :choreo="choreoObj" :width="800" :downloadUrl="url" :downloadOptions="options" @downloadOptionChanged="handler" />
  * @example <VideoDownloadModal :downloadUrl="url" :downloadOptions="options" @downloadOptionChanged="handler" />
  */
-export default {
+export default defineComponent({
   name: "VideoDownloadModal",
   props: {
     choreo: {
@@ -160,7 +168,7 @@ export default {
       default: "",
     },
     downloadOptions: {
-      type: Array,
+      type: Array as PropType<DownloadOption[]>,
       default: () => [],
     },
   },
@@ -170,20 +178,22 @@ export default {
     selectedDownloadOptionId: "mp4",
   }),
   computed: {
-    selectedDownloadOption() {
-      return this.downloadOptions.find(
-        (o) => o.id == this.selectedDownloadOptionId
+    selectedDownloadOption(): DownloadOption {
+      return (
+        this.downloadOptions.find(
+          (o: DownloadOption) => o.id == this.selectedDownloadOptionId
+        ) || { id: "", name: "", ext: "" }
       );
     },
   },
   methods: {
     open() {
-      this.$refs.modal.show();
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
-    selectDownloadOption(optionId) {
+    selectDownloadOption(optionId: string) {
       this.selectedDownloadOptionId = optionId;
       this.$emit("downloadOptionChanged", optionId);
     },
   },
-};
+});
 </script>

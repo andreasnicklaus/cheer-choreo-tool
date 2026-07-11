@@ -5,7 +5,7 @@
     centered
     :title="$t('modals.selectHit.welchen-eintrag-willst-du-aendern')"
     @ok="() => selectHit()"
-    @hidden="() => (hitIdToUpdate = null)"
+    @hidden="() => (hitIdToUpdate = undefined)"
   >
     <BFormRadioGroup
       id="hitToUpdateSelectGroup"
@@ -24,7 +24,14 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, PropType } from "vue";
+import { BModal } from "bootstrap-vue-next";
+
+interface HitOption {
+  id: string;
+  name: string;
+}
 /**
  * @module Modal:SelectHitModal
  *
@@ -41,26 +48,26 @@
  *   <Button @click="() => $refs.selectHitModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "SelectHitModal",
   props: {
     hitsForCurrentCount: {
-      type: Array,
+      type: Array as PropType<HitOption[]>,
       default: () => [],
     },
   },
   emits: ["selection"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
-    hitIdToUpdate: null,
+    hitIdToUpdate: undefined as string | undefined,
   }),
   methods: {
     open() {
-      this.$refs.modal.show();
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     selectHit() {
       this.$emit("selection", this.hitIdToUpdate);
     },
   },
-};
+});
 </script>

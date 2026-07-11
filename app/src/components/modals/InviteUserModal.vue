@@ -56,11 +56,13 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import UserAccessService from "@/services/UserAccessService";
 import MessagingService from "@/services/MessagingService";
 import AccessOverViewTable from "../AccessOverViewTable.vue";
 import { emailRegex } from "@/utils/validation";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * Modal to invite users to share access to your account.
@@ -68,22 +70,19 @@ import { emailRegex } from "@/utils/validation";
  * <InviteUserModal ref="inviteUserModal" @invited="loadManagedByMe" />
  * <Button @click="() => $refs.inviteUserModal.open()" />
  */
-export default {
+export default defineComponent({
   name: "InviteUserModal",
   components: { AccessOverViewTable },
   emits: ["invited"],
   data: () => ({
-    email: null,
+    email: "",
     role: "athlete",
   }),
   computed: {
     emailState() {
-      return Boolean(
-        this.email != null &&
-        this.email.length > 0 &&
-        this.email.match(emailRegex) &&
-        this.email.match(emailRegex)?.length > 0
-      );
+      if (this.email.length === 0) return false;
+      const match = this.email.match(emailRegex);
+      return match != null && match.length > 0;
     },
     emailStateFeedback() {
       if (!this.email) return this.$t("erforderlich");
@@ -92,7 +91,7 @@ export default {
         this.email.match(emailRegex)?.length == 0
       )
         return this.$t("modals.contact.please-enter-a-valid-email-address");
-      return null;
+      return undefined;
     },
     roleOptions() {
       return [
@@ -104,17 +103,17 @@ export default {
   },
   methods: {
     open() {
-      this.$refs.modal.show();
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     reset() {
-      this.email = null;
+      this.email = "";
       this.role = "athlete";
     },
     invite() {
       UserAccessService.invite(this.email, this.role)
         .then(() => {
           this.$emit("invited");
-          this.$refs.modal.hide();
+          (this.$refs.modal as InstanceType<typeof BModal>).hide();
         })
         .catch(() => {
           MessagingService.showError(
@@ -124,5 +123,5 @@ export default {
         });
     },
   },
-};
+});
 </script>

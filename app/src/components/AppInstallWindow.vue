@@ -6,8 +6,12 @@
     variant="light"
     body-class="w-100 me-2"
   >
-    <BRow align-h="end" align-v="center" :style="{ rowGap: '1rem' }">
-      <BCol cols="12" md="">
+    <BRow
+      class="justify-content-end justify-content-md-between"
+      align-v="center"
+      :style="{ rowGap: '1rem' }"
+    >
+      <BCol cols="12" md="auto">
         <h4>{{ $t("app-install.app-herunterladen") }}</h4>
         {{ $t("app-install.install-info") }}
       </BCol>
@@ -24,8 +28,9 @@
   </BAlert>
 </template>
 
-<script>
+<script lang="ts">
 import Cookies from "js-cookie";
+import { defineComponent } from "vue";
 
 const cookieName = "install-dismissed";
 
@@ -37,18 +42,18 @@ const cookieName = "install-dismissed";
  * @example
  * <AppInstallWindow />
  */
-export default {
+export default defineComponent({
   name: "AppInstallWindow",
   data: () => ({
-    installationPrompt: null,
+    installationPrompt: null as (Event & { prompt?: () => void }) | null,
   }),
   mounted() {
-    if (localStorage.getItem("isTestEnvironment"))
-      this.installationPrompt = {
-        prompt: () => {
-          this.installationPrompt = null;
-        },
+    if (localStorage.getItem("isTestEnvironment")) {
+      this.installationPrompt = new Event("beforeinstallprompt");
+      this.installationPrompt.prompt = () => {
+        this.installationPrompt = null;
       };
+    }
 
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
@@ -71,8 +76,10 @@ export default {
       this.installationPrompt = null;
     },
     async install() {
-      this.installationPrompt?.prompt();
+      if (this.installationPrompt?.prompt) {
+        await this.installationPrompt.prompt();
+      }
     },
   },
-};
+});
 </script>

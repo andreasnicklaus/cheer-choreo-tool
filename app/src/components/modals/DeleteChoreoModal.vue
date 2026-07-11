@@ -16,8 +16,10 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import ChoreoService from "@/services/ChoreoService";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * @module Modal:DeleteChoreoModal
@@ -34,7 +36,7 @@ import ChoreoService from "@/services/ChoreoService";
  *  <Button @click="() => $refs.deleteChoreoModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "DeleteChoreoModal",
   props: {
     choreoId: {
@@ -48,7 +50,7 @@ export default {
   }),
   methods: {
     open() {
-      this.$refs.modal.show();
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     removeChoreo() {
       ChoreoService.remove(this.choreoId).then(() => {
@@ -56,5 +58,5 @@ export default {
       });
     },
   },
-};
+});
 </script>

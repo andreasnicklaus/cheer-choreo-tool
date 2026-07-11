@@ -17,8 +17,10 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import LineupService from "@/services/LineupService";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * @module Modal:DeleteLineupModal
@@ -36,7 +38,7 @@ import LineupService from "@/services/LineupService";
  *  <Button @click="() => $refs.deleteLineupModal.open('abc')" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "DeleteLineupModal",
   props: {
     choreo: {
@@ -47,24 +49,24 @@ export default {
   emits: ["updateLineups"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
-    deleteLineupId: null,
+    deleteLineupId: null as string | null,
   }),
   methods: {
-    open(deleteLineupId) {
+    open(deleteLineupId: string) {
       this.deleteLineupId = deleteLineupId;
-      this.$refs.modal.show();
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     resetDeleteLineupModal() {
       this.deleteLineupId = null;
     },
     deleteLineup() {
-      LineupService.remove(this.deleteLineupId).then(() => {
+      LineupService.remove(this.deleteLineupId!).then(() => {
         this.$emit(
           "updateLineups",
-          this.choreo.Lineups.filter((l) => l.id != this.deleteLineupId)
+          this.choreo.Lineups.filter((l: any) => l.id != this.deleteLineupId)
         );
       });
     },
   },
-};
+});
 </script>

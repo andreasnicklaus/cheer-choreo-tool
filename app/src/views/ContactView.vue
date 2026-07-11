@@ -19,7 +19,7 @@
         <BRow class="row-cols-1 row-cols-md-3 g-4">
           <BCol v-show="showContactCallout">
             <BCard
-              footer-bg-variant="transparent"
+              footer-bg-variant="light-subtle"
               footer-border-variant="light"
               class="h-100"
             >
@@ -41,7 +41,7 @@
           </BCol>
           <BCol v-show="showEmailCallout">
             <BCard
-              footer-bg-variant="transparent"
+              footer-bg-variant="light-subtle"
               footer-border-variant="light"
               class="h-100"
             >
@@ -66,7 +66,7 @@
           </BCol>
           <BCol>
             <BCard
-              footer-bg-variant="transparent"
+              footer-bg-variant="light-subtle"
               footer-border-variant="light"
               class="h-100"
             >
@@ -110,7 +110,7 @@
   </BContainer>
 </template>
 
-<script>
+<script lang="ts">
 import { useHead } from "@unhead/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
@@ -118,6 +118,7 @@ import FeatureFlagService from "@/services/FeatureFlagService";
 import { FeatureFlagKeys } from "@/services/FeatureFlagService";
 
 import ContactModal from "@/components/modals/ContactModal.vue";
+import { defineComponent } from "vue";
 
 /**
  *
@@ -125,7 +126,7 @@ import ContactModal from "@/components/modals/ContactModal.vue";
  * @vue-computed {MetaInfo} metaInfo
  */
 
-export default {
+export default defineComponent({
   name: "ContactView",
   components: { ContactModal },
   data: function () {
@@ -196,10 +197,10 @@ export default {
       });
     },
     openContactForm() {
-      this.$refs.contactModal.open();
+      (this.$refs.contactModal as InstanceType<typeof ContactModal>).open();
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped></style>

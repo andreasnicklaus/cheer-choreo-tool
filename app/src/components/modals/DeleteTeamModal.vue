@@ -17,8 +17,10 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import TeamService from "@/services/TeamService";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * @module Modal:DeleteTeamModal
@@ -34,26 +36,26 @@ import TeamService from "@/services/TeamService";
  *  <Button @click="() => $refs.deleteTeamModal.open('abc')" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "DeleteTeamModal",
   emits: ["teamDeleted"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
-    deleteTeamId: null,
+    deleteTeamId: null as string | null,
   }),
   methods: {
-    open(deleteTeamId) {
+    open(deleteTeamId: string) {
       this.deleteTeamId = deleteTeamId;
-      this.$refs.modal.show();
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     reset() {
       this.deleteTeamId = null;
     },
     deleteTeam() {
-      TeamService.remove(this.deleteTeamId).then(() => {
+      TeamService.remove(this.deleteTeamId!).then(() => {
         this.$emit("teamDeleted", this.deleteTeamId);
       });
     },
   },
-};
+});
 </script>

@@ -7,8 +7,8 @@
     @show="
       () => {
         if (choreo) {
-          newChoreoAchter = Math.floor(choreo.counts / 8);
-          newChoreoCount = choreo.counts % 8;
+          newChoreoAchter = Math.floor(choreo.counts / 8).toString();
+          newChoreoCount = (choreo.counts % 8).toString();
         }
       }
     "
@@ -59,8 +59,10 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import ChoreoService from "@/services/ChoreoService";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * @module Modal:ChangeChoreoLengthModal
@@ -85,7 +87,7 @@ import ChoreoService from "@/services/ChoreoService";
  *  <Button @click="() => $refs.changeChoreoLengthModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "ChangeChoreoLengthModal",
   props: {
     choreo: {
@@ -96,8 +98,8 @@ export default {
   emits: ["countUpdate"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
-    newChoreoAchter: 1,
-    newChoreoCount: 0,
+    newChoreoAchter: "1",
+    newChoreoCount: "0",
   }),
   computed: {
     timeEstimationString() {
@@ -112,12 +114,16 @@ export default {
     achterIsValid() {
       const counts =
         parseInt(this.newChoreoAchter) * 8 + parseInt(this.newChoreoCount);
-      return this.newChoreoAchter >= 0 && counts > 0;
+      return parseInt(this.newChoreoAchter) >= 0 && counts > 0;
     },
     countIsValid() {
       const counts =
         parseInt(this.newChoreoAchter) * 8 + parseInt(this.newChoreoCount);
-      return this.newChoreoCount >= 0 && this.newChoreoCount <= 7 && counts > 0;
+      return (
+        parseInt(this.newChoreoCount) >= 0 &&
+        parseInt(this.newChoreoCount) <= 7 &&
+        counts > 0
+      );
     },
     newCountIsValid() {
       const counts =
@@ -128,12 +134,12 @@ export default {
       const counts =
         parseInt(this.newChoreoAchter) * 8 + parseInt(this.newChoreoCount);
       if (counts == 0) return this.$t("modals.change-length.choreo-min-length");
-      return null;
+      return undefined;
     },
   },
   methods: {
     open() {
-      this.$refs.modal.show();
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     changeChoreoLength() {
       const counts =
@@ -143,5 +149,5 @@ export default {
       });
     },
   },
-};
+});
 </script>

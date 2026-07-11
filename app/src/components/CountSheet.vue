@@ -55,7 +55,7 @@
           }"
         >
           <span v-show="label == $t('achter')">
-            {{ acht[label] + 1 }}
+            {{ acht[label] ?? 0 + 1 }}
           </span>
           <div
             class="d-grid"
@@ -77,18 +77,18 @@
                 height: '100%',
                 fontSize: fontSize ? fontSize + 'px' : null,
                 color:
-                  Math.floor(count / 8) == i && count % 8 == label - 1
+                  Math.floor(count / 8) == i && count % 8 == parseInt(label) - 1
                     ? 'var(--bs-white)'
                     : null,
               }"
               :variant="
-                Math.floor(count / 8) == i && count % 8 == label - 1
+                Math.floor(count / 8) == i && count % 8 == parseInt(label) - 1
                   ? 'primary'
                   : 'outline-primary'
               "
               @click="
                 () => {
-                  if (interactive) setCount(i, parseInt(label - 1));
+                  if (interactive) setCount(i, parseInt(label) - 1);
                 }
               "
               @dblclick="
@@ -97,12 +97,22 @@
                 }
               "
             >
-              <span v-show="acht[label].length > 0">
-                <p v-for="hit in acht[label]" :key="hit.name" class="mb-0">
+              <span
+                v-show="
+                  acht[label] &&
+                  label !== $t('achter') &&
+                  (acht[label] as Hit[]).length > 0
+                "
+              >
+                <p
+                  v-for="hit in acht[label] as Hit[]"
+                  :key="hit.name"
+                  class="mb-0"
+                >
                   {{ hit.name }}
                 </p>
               </span>
-              <span v-show="acht[label].length == 0">-</span>
+              <span v-show="(acht[label] as Hit[]).length == 0">-</span>
             </BButton>
           </div>
         </BTd>
@@ -111,7 +121,10 @@
   </BTableSimple>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, PropType } from "vue";
+import type { Choreo, Hit } from "@/types";
+
 /**
  * @module Component:CountSheet
  *
@@ -132,7 +145,7 @@
  * @example <CountSheet :count="0" :fontSize="16" @setCounter="handler" @openCreateHitModal="handler" />
  * @example <CountSheet :count="0" :choreo="choreoObj" :interactive="false" :stickyHeader="false" :fontSize="18" :startCount="2" :fixed="true" @setCounter="handler" @openCreateHitModal="handler" />
  */
-export default {
+export default defineComponent({
   name: "CountSheet",
   props: {
     count: {
@@ -140,7 +153,7 @@ export default {
       required: true,
     },
     choreo: {
-      type: Object,
+      type: Object as PropType<Choreo>,
       default: () => ({}),
     },
     interactive: {
@@ -189,16 +202,16 @@ export default {
     },
   },
   methods: {
-    setCount(achter, count) {
+    setCount(achter: number, count: number) {
       this.$emit("setCounter", achter * 8 + count);
     },
-    findActionsForCount(count) {
+    findActionsForCount(count: number) {
       return this.choreo.Hits.filter((a) => {
         return a.count == count;
       });
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

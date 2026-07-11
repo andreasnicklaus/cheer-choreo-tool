@@ -53,7 +53,9 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 /**
  * @module Modal:MobileChoreoEditModal
  *
@@ -70,7 +72,7 @@
  *   <Button @click="() => $refs.mobileChoreoEditModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "MobileChoreoEditModal",
   props: {
     choreoId: {
@@ -83,11 +85,11 @@ export default {
   }),
   methods: {
     open() {
-      this.$refs.modal.show();
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     close() {
-      this.$refs.modal.hide();
+      (this.$refs.modal as InstanceType<typeof BModal>).hide();
     },
   },
-};
+});
 </script>

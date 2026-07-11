@@ -36,12 +36,13 @@
   </BContainer>
 </template>
 
-<script>
+<script lang="ts">
 import { useHead } from "@unhead/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   name: "ImpressumView",
   setup() {
     const { t } = useI18n();
@@ -84,5 +85,5 @@ export default {
       ],
     });
   },
-};
+});
 </script>

@@ -32,4 +32,4 @@ docs
 coverage
 dev-dist
 
-*.d.ts
+components.d.ts

@@ -2,12 +2,13 @@
   "plugins": [
     "node_modules/jsdoc-vuejs",
     "plugins/fix-memberof",
-    "plugins/markdown"
+    "plugins/markdown",
+    "scripts/jsdoc-strip-types.js"
   ],
   "source": {
     "include": ["src"],
     "exclude": ["public/docs"],
-    "includePattern": "\\.(vue|js)?$",
+    "includePattern": "\\.(vue|[jt]s)?$",
     "excludePattern": "(^|\\/|\\\\)_"
   },
   "opts": {

@@ -54,21 +54,23 @@
           </template>
           <BDropdownGroup
             v-for="team in teams.filter((t) =>
-              t.SeasonTeams.some((st) => st.Choreos?.length > 0)
+              t.SeasonTeams.some(
+                (st) => st.Choreos?.length && st.Choreos.length > 0
+              )
             )"
             :key="team.id"
             :header="team.name"
           >
             <BDropdownText
               v-for="seasonTeam in team.SeasonTeams.filter(
-                (st) => st.Choreos?.length > 0
+                (st) => st.Choreos?.length && st.Choreos.length > 0
               )"
               :key="seasonTeam.id"
               v-b-toggle="`collapse-${seasonTeam.id}`"
               class="dropdown-submenu"
             >
               <span class="d-flex justify-content-between align-items-center">
-                {{ seasonTeam.Season.name }}
+                {{ seasonTeam.Season?.name }}
                 <IBiCaretDownFill class="ms-auto" variant="secondary" />
               </span>
               <BCollapse :id="`collapse-${seasonTeam.id}`">
@@ -100,7 +102,7 @@
           <BDropdownItem
             v-show="$store.state.clubId"
             variant="success"
-            @click="() => $refs.createChoreoModal.open()"
+            @click="openCreateChoreoModal"
           >
             <IBiPlus />
             {{ $t("nav.neue-choreo") }}
@@ -134,7 +136,7 @@
           <BDropdownItem
             v-show="$store.state.clubId"
             variant="success"
-            @click="() => $refs.createTeamModal.open()"
+            @click="openCreateTeamModal"
           >
             <IBiPlus />
             {{ $t("nav.neues-team") }}
@@ -331,7 +333,7 @@
           class="text-white"
           :to="
             $store.state.loggedIn
-              ? null
+              ? undefined
               : { name: 'Login', params: { locale: $i18n.locale } }
           "
         >
@@ -383,10 +385,7 @@
               {{ club.name }}
             </BDropdownItem>
           </BDropdownGroup>
-          <BDropdownItem
-            variant="success"
-            @click="() => $refs.createClubModal.open()"
-          >
+          <BDropdownItem variant="success" @click="openCreateClubModal">
             <IBiPlus />
             {{ $t("nav.neuer-verein") }}
           </BDropdownItem>
@@ -428,10 +427,7 @@
           >
             {{ club.name }}
           </BNavItem>
-          <BNavItem
-            variant="success"
-            @click="() => $refs.createClubModal.open()"
-          >
+          <BNavItem variant="success" @click="openCreateClubModal">
             <IBiPlus />
             {{ $t("nav.neuer-verein") }}
           </BNavItem>
@@ -470,7 +466,7 @@
   </BNavbar>
 </template>
 
-<script>
+<script lang="ts">
 import { useTheme } from "@/composables/useTheme";
 import AuthService from "@/services/AuthService";
 import ClubService from "@/services/ClubService";
@@ -485,7 +481,8 @@ import { error, warn } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
 import CountryFlag from "vue3-country-flag-icon";
 import Markdown from "vue3-markdown-it";
-import { mapState } from "vuex";
+import { defineComponent } from "vue";
+import { Choreo, Club, Notification, OwnerAccess, Team, User } from "@/types";
 
 /**
  * @module Component:HeadNav
@@ -509,7 +506,7 @@ import { mapState } from "vuex";
  *
  * @example <HeadNav :teams="teams" />
  */
-export default {
+export default defineComponent({
   name: "HeadNav",
   components: {
     CreateChoreoModal,
@@ -528,9 +525,9 @@ export default {
     },
   },
   data: () => ({
-    teams: [],
-    choreos: [],
-    clubs: [],
+    teams: [] as Team[],
+    choreos: [] as Choreo[],
+    clubs: [] as Club[],
     shareable: false,
     flags: [
       {
@@ -541,10 +538,10 @@ export default {
       { flag: "us", lang: "en", localName: "English" },
     ],
     LanguageService,
-    currentProfilePictureBlob: null,
-    loadInterval: null,
-    loadNotificationsInterval: null,
-    notifications: [],
+    currentProfilePictureBlob: undefined as string | undefined,
+    loadInterval: null as ReturnType<typeof setInterval> | null,
+    loadNotificationsInterval: null as ReturnType<typeof setInterval> | null,
+    notifications: [] as Notification[],
     showAllNotifications: false,
     showNotificationsDropdown: false,
   }),
@@ -552,7 +549,12 @@ export default {
     isDark() {
       return useTheme().isDark.value;
     },
-    ...mapState(["me"]),
+    owners(): OwnerAccess[] {
+      return this.$store.state.owners;
+    },
+    me(): User | undefined {
+      return this.$store.state.me ?? undefined;
+    },
     shareData() {
       return {
         url: window.location.href,
@@ -584,7 +586,7 @@ export default {
     );
   },
   mounted() {
-    if (navigator.canShare && navigator.share)
+    if (navigator.canShare && typeof navigator.share === "function")
       this.shareable = navigator.canShare(this.shareData);
   },
   beforeUnmount() {
@@ -608,7 +610,7 @@ export default {
               this.teams = club?.Teams || [];
               this.choreos = this.teams
                 .map((t) => t.SeasonTeams.map((st) => st.Choreos))
-                .flat(Infinity);
+                .flat(Infinity) as Choreo[];
             })
             .catch(() => {
               error(
@@ -628,7 +630,7 @@ export default {
             this.teams = club?.Teams || [];
             this.choreos = this.teams
               .map((t) => t.SeasonTeams.map((st) => st.Choreos))
-              .flat(Infinity);
+              .flat(Infinity) as Choreo[];
           })
           .catch(() => {
             error("Could not load clubs", ERROR_CODES.CLUB_QUERY_FAILED);
@@ -665,10 +667,10 @@ export default {
     logout() {
       AuthService.logout();
     },
-    selectCurrentClub(id) {
+    selectCurrentClub(id: string) {
       this.$store.commit("setClubId", id);
     },
-    onTeamCreated(team) {
+    onTeamCreated(team: Team) {
       this.teams.push(team);
       this.$router.push({
         name: "Team",
@@ -683,33 +685,50 @@ export default {
     },
     loadProfileImage() {
       if (this.$store.state.me?.profilePictureExtension == null)
-        this.currentProfilePictureBlob = null;
+        this.currentProfilePictureBlob = undefined;
       else
         AuthService.getProfileImage(
           this.$store.state.me.id,
           this.$store.state.me.profilePictureExtension
         ).then((response) => {
-          this.currentProfilePictureBlob = URL.createObjectURL(response.data);
+          this.currentProfilePictureBlob = URL.createObjectURL(
+            response.data
+          ) as string;
         });
     },
     toTimeAgo,
-    markNotificationAsNotRead(notificationId) {
+    markNotificationAsNotRead(notificationId: string) {
       NotificationService.markAsNotRead(notificationId).then(() => {
         this.loadNotifications();
       });
     },
-    markNotificationAsRead(notificationId) {
+    markNotificationAsRead(notificationId: string) {
       NotificationService.markAsRead(notificationId).then(() => {
         this.loadNotifications();
       });
     },
-    deleteNotification(notificationId) {
+    deleteNotification(notificationId: string) {
       NotificationService.delete(notificationId).then(() => {
         this.loadNotifications();
       });
     },
+    openCreateChoreoModal() {
+      (
+        this.$refs.createChoreoModal as InstanceType<typeof CreateChoreoModal>
+      ).open();
+    },
+    openCreateTeamModal() {
+      (
+        this.$refs.createTeamModal as InstanceType<typeof CreateTeamModal>
+      ).open();
+    },
+    openCreateClubModal() {
+      (
+        this.$refs.createClubModal as InstanceType<typeof CreateClubModal>
+      ).open();
+    },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

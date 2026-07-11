@@ -99,9 +99,12 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import ClubService from "@/services/ClubService";
 import UserAccessService from "@/services/UserAccessService";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
+import type { OwnerAccess } from "@/types";
 
 /**
  * @module Modal:CreateClubModal
@@ -131,7 +134,7 @@ import UserAccessService from "@/services/UserAccessService";
  *  <Button @click="() => $refs.createClubModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "CreateClubModal",
   props: {
     preventClosing: {
@@ -142,8 +145,8 @@ export default {
   emits: ["clubCreated"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
-    newClubName: null,
-    selectedOwnerId: null,
+    newClubName: undefined as string | undefined,
+    selectedOwnerId: undefined as string | undefined,
   }),
   computed: {
     newClubNameIsValid() {
@@ -153,10 +156,10 @@ export default {
       if (!this.newClubName) return this.$t("erforderlich");
       if (this.newClubName.length < 3)
         return this.$t("modals.create-club.min-vereinsname-length");
-      return null;
+      return undefined;
     },
     ownerOptions() {
-      const options = this.$store.state.owners.map((o) => {
+      const options = this.$store.state.owners.map((o: OwnerAccess) => {
         const baseText = o.owner?.username || o.owner?.email || o.ownerUserId;
         const isYou =
           this.$store.state.me && o.ownerUserId === this.$store.state.me.id;
@@ -168,7 +171,10 @@ export default {
 
       if (
         this.$store.state.me &&
-        !options.some((o) => o.value === this.$store.state.me.id)
+        !options.some(
+          (o: { value: string; text: string }) =>
+            o.value === this.$store.state.me.id
+        )
       ) {
         options.push({
           value: this.$store.state.me.id,
@@ -184,7 +190,7 @@ export default {
     pendingInvites() {
       return (
         this.$store.state.me?.childAccess?.filter(
-          (a) => !a.accepted && a.enabled
+          (a: any) => !a.accepted && a.enabled
         ) || []
       );
     },
@@ -192,7 +198,7 @@ export default {
       return (
         this.selectedOwnerId != null &&
         (this.$store.state.owners
-          .map((o) => o.ownerUserId)
+          .map((o: OwnerAccess) => o.ownerUserId)
           .includes(this.selectedOwnerId) ||
           this.selectedOwnerId === this.$store.state.me?.id)
       );
@@ -201,42 +207,42 @@ export default {
       if (!this.selectedOwnerId) return this.$t("erforderlich");
       if (
         !this.$store.state.owners
-          .map((o) => o.ownerUserId)
+          .map((o: OwnerAccess) => o.ownerUserId)
           .includes(this.selectedOwnerId) &&
         this.selectedOwnerId !== this.$store.state.me?.id
       )
         return this.$t("errors.unerwarteter-fehler");
-      return null;
+      return undefined;
     },
   },
   methods: {
     open() {
-      this.$refs.modal.show();
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
       if (this.$store.state.me?.id) {
         this.selectedOwnerId = this.$store.state.me?.id;
       }
     },
     close() {
-      this.$refs.modal.hide();
+      (this.$refs.modal as InstanceType<typeof BModal>).hide();
     },
     resetClubModal() {
-      this.newClubName = null;
-      this.selectedOwnerId = null;
+      this.newClubName = undefined;
+      this.selectedOwnerId = undefined;
     },
     createAndSelectClub() {
       const ownerId = this.selectedOwnerId || null;
-      ClubService.create(this.newClubName, ownerId).then((club) => {
+      ClubService.create(this.newClubName as string, ownerId).then((club) => {
         this.$store.commit("setClubId", club.id);
         this.$emit("clubCreated", club);
       });
     },
-    acceptInvite(id) {
+    acceptInvite(id: string) {
       UserAccessService.accept(id)
         .then(() => this.$store.dispatch("loadUserInfo"))
         .then(() => ClubService.getAll())
         .then((clubList) => {
           if (clubList.length > 0) {
-            this.$store.commit("setClubId", clubList[0].id);
+            this.$store.commit("setClubId", clubList[0]?.id ?? "");
             this.$emit("clubCreated", clubList[0]);
             this.close();
           }
@@ -250,5 +256,5 @@ export default {
       });
     },
   },
-};
+});
 </script>

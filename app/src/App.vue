@@ -47,10 +47,7 @@
           >
             {{ $t("navigation.datenschutz") }} </BButton
           ><br />
-          <BButton
-            variant="link"
-            @click="() => $refs.feedbackPrompt.open(true)"
-          >
+          <BButton variant="link" @click="openFeedbackPrompt(true)">
             {{ $t("navigation.feedback-geben") }} </BButton
           ><br />
           <BButton variant="link" href="/docs/" target="_blank">
@@ -153,21 +150,27 @@
   </BApp>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { useToast } from "bootstrap-vue-next";
-import { computed, getCurrentInstance } from "vue";
+import { computed, getCurrentInstance, ref } from "vue";
 import { useHead } from "@unhead/vue";
 import { useRoute } from "vue-router";
 import { getApiDomain } from "./services/RequestService";
 import { useI18n } from "vue-i18n";
 import { useTheme } from "./composables/useTheme";
+import FeedbackPrompt from "./components/FeedbackPrompt.vue";
+
+const feedbackPrompt = ref<InstanceType<typeof FeedbackPrompt>>();
+function openFeedbackPrompt(force: boolean) {
+  feedbackPrompt.value?.open(force);
+}
 
 useTheme();
 
 const { create } = useToast();
 const instance = getCurrentInstance();
 if (instance) {
-  instance.appContext.app.config.globalProperties.$showToast = create;
+  instance.appContext.app.config.globalProperties.$showToast = create as any;
 }
 
 const { t } = useI18n();
@@ -251,29 +254,28 @@ useHead({
           `default-src 'self' https: blob:; script-src 'self' https: blob: 'unsafe-eval' 'unsafe-inline'; style-src 'self' https: blob: 'unsafe-inline'; connect-src 'self' https: blob: ${getApiDomain()}; img-src 'self' https: blob: data: ${getApiDomain()};`
       ),
     },
-  ],
+  ] as any,
   link: [
     {
       vmid: "canonical",
-      rel: "canonical",
+      rel: "canonical" as any,
       href: computed(() => "https://www.choreo-planer.de" + route.path),
-    },
+    } as any,
   ],
 });
 </script>
 
-<script>
+<script lang="ts">
 import AppInstallWindow from "./components/AppInstallWindow.vue";
 import ConsentWindow from "./components/ConsentWindow.vue";
-import FeedbackPrompt from "./components/FeedbackPrompt.vue";
 import HeadNav from "./components/HeadNav.vue";
-import { getApiDomain } from "./services/RequestService";
 import breakpoints from "@/utils/breakpoints";
 import MessagingService from "./services/MessagingService";
 import { isPrerender } from "@/utils/isPrerender";
 import { debug, error, logWelcomeMessage } from "@/utils/logging";
 import VersionService from "./services/VersionService";
 import env from "@/utils/env";
+import { defineComponent } from "vue";
 
 /**
  * @vue-data {boolean} online
@@ -282,11 +284,11 @@ import env from "@/utils/env";
  * @vue-data {Breakpoints} breakpoints
  * @vue-computed {MetaInfo} metaInfo
  */
-export default {
+export default defineComponent({
   components: { HeadNav, ConsentWindow, AppInstallWindow, FeedbackPrompt },
   data: () => ({
     online: true,
-    serverVersion: null,
+    serverVersion: undefined as string | undefined,
     applicationVersion: env.VITE_VERSION,
     breakpoints,
   }),
@@ -302,8 +304,8 @@ export default {
     debug("Started App", {
       VITE_VERSION: env.VITE_VERSION,
     });
-    MessagingService.subscribe("App", (message, options) => {
-      this.$showToast?.({ body: message, ...options });
+    MessagingService.subscribe("App", async (message, options) => {
+      this.$showToast?.({ body: message, ...(options as any) });
     });
 
     this.$store.dispatch("loadUserInfo");
@@ -338,7 +340,7 @@ export default {
     // Use nextTick to ensure DOM is fully ready
     this.$nextTick(checkPrerender);
   },
-};
+});
 </script>
 
 <style lang="scss">

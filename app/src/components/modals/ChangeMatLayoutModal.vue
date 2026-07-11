@@ -42,9 +42,11 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import ChoreoService from "@/services/ChoreoService";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * @module Modal:ChangeMatLayoutModal
@@ -66,7 +68,7 @@ import NewVersionBadge from "@/components/NewVersionBadge.vue";
  *  <Button @click="() => $refs.changeMatLayoutModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "ChangeMatLayoutModal",
   components: { NewVersionBadge },
   props: {
@@ -78,7 +80,7 @@ export default {
   emits: ["matTypeUpdate"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
-    newMatType: null,
+    newMatType: "cheer",
   }),
   computed: {
     matTypeOptions() {
@@ -88,7 +90,7 @@ export default {
       if (!this.newMatType) return this.$t("erforderlich");
       if (!["cheer", "square", "1:2", "3:4"].includes(this.newMatType))
         return this.$t("errors.unerwarteter-fehler");
-      return null;
+      return undefined;
     },
     newMatTypeIsValid() {
       return (
@@ -99,7 +101,7 @@ export default {
   },
   methods: {
     open() {
-      this.$refs.modal.show();
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     changeMatType() {
       ChoreoService.changeMatType(this.choreo.id, this.newMatType).then(() => {
@@ -107,5 +109,5 @@ export default {
       });
     },
   },
-};
+});
 </script>

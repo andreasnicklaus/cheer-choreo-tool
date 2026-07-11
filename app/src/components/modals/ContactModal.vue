@@ -157,12 +157,14 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import AuthService from "@/services/AuthService";
 import ContactService from "@/services/ContactService";
 import { debug } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
 import { emailRegex } from "@/utils/validation";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * @module Modal:ContactModal
@@ -185,7 +187,7 @@ import { emailRegex } from "@/utils/validation";
  *
  * @example <ContactModal />
  */
-export default {
+export default defineComponent({
   name: "ContactModal",
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
@@ -193,11 +195,11 @@ export default {
     messageWasSuccess: false,
     messageWasError: false,
     errorMessage: null,
-    email: null,
-    name: null,
+    email: undefined as string | undefined,
+    name: undefined as string | undefined,
     category: "question",
-    subject: null,
-    message: null,
+    subject: null as string | null,
+    message: null as string | null,
   }),
   computed: {
     bgVariant() {
@@ -214,10 +216,11 @@ export default {
     },
     nameStateFeedback() {
       if (!this.name || this.name.length == 0) return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     emailIsValid() {
-      return this.email != null && this.email.match(emailRegex)?.length > 0;
+      const match = this.email?.match(emailRegex);
+      return Boolean(this.email && (match?.length ?? 0) > 0);
     },
     emailStateFeedback() {
       if (!this.email) return this.$t("erforderlich");
@@ -226,7 +229,7 @@ export default {
         this.email.match(emailRegex)?.length == 0
       )
         return this.$t("modals.contact.please-enter-a-valid-email-address");
-      return null;
+      return undefined;
     },
     subjectIsValid() {
       return this.subject != null && this.subject.length > 0;
@@ -234,7 +237,7 @@ export default {
     subjectStateFeedback() {
       if (!this.subject || this.subject.length == 0)
         return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     messageIsValid() {
       return this.message != null && this.message.length > 0;
@@ -242,7 +245,7 @@ export default {
     messageStateFeedback() {
       if (!this.message || this.message.length == 0)
         return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     allValid() {
       return (
@@ -265,16 +268,16 @@ export default {
       this.errorMessage = null;
 
       this.initUserMessage(this.name);
-      this.$refs.modal.show();
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     send() {
       this.sending = true;
       ContactService.sendContactMessage({
-        name: this.name,
-        email: this.email,
-        subject: this.subject,
-        message: this.message,
-        category: this.category,
+        name: this.name!,
+        email: this.email!,
+        subject: this.subject!,
+        message: this.message!,
+        category: this.category!,
       })
         .then(() => {
           this.messageWasSuccess = true;
@@ -312,18 +315,18 @@ export default {
             );
           });
     },
-    initUserMessage(username = null) {
+    initUserMessage(username: string | null = null) {
       this.message =
         ContactService.messageSuffix +
         ContactService.createMessageAppendix(username);
     },
     close() {
-      this.$refs.modal.hide();
+      (this.$refs.modal as InstanceType<typeof BModal>).hide();
     },
     resetAfterError() {
       this.messageWasError = false;
       this.errorMessage = null;
     },
   },
-};
+});
 </script>

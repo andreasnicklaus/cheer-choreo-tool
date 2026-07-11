@@ -49,8 +49,10 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import AuthService from "@/services/AuthService";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * @module Modal:DeleteAccountModal
@@ -64,7 +66,7 @@ import AuthService from "@/services/AuthService";
  *  <Button @click="() => $refs.deleteAccountModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "DeleteAccountModal",
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
@@ -72,14 +74,14 @@ export default {
   }),
   methods: {
     open() {
-      this.$refs.modal.show();
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     openConfirmModal() {
-      this.$refs.confirmModal.show();
+      (this.$refs.confirmModal as InstanceType<typeof BModal>).show();
     },
     deleteMember() {
       AuthService.deleteAccount();
     },
   },
-};
+});
 </script>

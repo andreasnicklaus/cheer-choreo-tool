@@ -9,21 +9,7 @@
     @hidden="resetLineupModal"
     @ok="createLineup"
   >
-    <BForm
-      @keydown.enter="
-        () => {
-          if (
-            editLineupStartAchter &&
-            editLineupStartCount &&
-            editLineupEndAchter &&
-            editLineupEndCount
-          ) {
-            $refs.modal.hide();
-            createLineup();
-          }
-        }
-      "
-    >
+    <BForm @keydown.enter="onKeydownEnter">
       <BFormGroup
         :label="$t('modals.create-lineup.start')"
         label-cols="2"
@@ -229,9 +215,12 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import LineupService from "@/services/LineupService";
 import PositionService from "@/services/PositionService";
+import { defineComponent, PropType } from "vue";
+import { BModal } from "bootstrap-vue-next";
+import type { Choreo, Participant, Lineup, Position } from "@/types";
 
 /**
  * @module Modal:CreateLineupModal
@@ -270,7 +259,7 @@ import PositionService from "@/services/PositionService";
  *  <Button @click="() => $refs.createLineupModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "CreateLineupModal",
   props: {
     count: {
@@ -278,19 +267,19 @@ export default {
       required: true,
     },
     choreo: {
-      type: Object,
+      type: Object as PropType<Choreo>,
       default: null,
     },
     teamMembers: {
-      type: Array,
+      type: Array as PropType<Participant[]>,
       default: () => [],
     },
     lineupsForCurrentCount: {
-      type: Array,
+      type: Array as PropType<Lineup[]>,
       required: true,
     },
     currentPositions: {
-      type: Array,
+      type: Array as PropType<Position[]>,
       default: () => [],
     },
   },
@@ -301,52 +290,52 @@ export default {
     editLineupStartCount: 1,
     editLineupEndAchter: 1,
     editLineupEndCount: 1,
-    editLineupMembers: [],
+    editLineupMembers: [] as string[],
   }),
   computed: {
     startIsBeforeEnd() {
       const absoluteStartCount =
-        (parseInt(this.editLineupStartAchter) - 1) * 8 +
-        parseInt(this.editLineupStartCount) -
+        (parseInt(String(this.editLineupStartAchter)) - 1) * 8 +
+        parseInt(String(this.editLineupStartCount)) -
         1;
       const absoluteEndCount =
-        (parseInt(this.editLineupEndAchter) - 1) * 8 +
-        parseInt(this.editLineupEndCount) -
+        (parseInt(String(this.editLineupEndAchter)) - 1) * 8 +
+        parseInt(String(this.editLineupEndCount)) -
         1;
       return absoluteStartCount <= absoluteEndCount;
     },
     startIsBeforeEndStateFeedback() {
       if (!this.startIsBeforeEnd)
         return this.$t("countOverview.start-vor-ende");
-      return null;
+      return undefined;
     },
     editLineupEndAchterIsValid() {
       return Boolean(this.editLineupEndAchter) && this.startIsBeforeEnd;
     },
     editLineupEndAchterStateFeedback() {
       if (!this.editLineupEndAchter) return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     editLineupStartAchterIsValid() {
       return Boolean(this.editLineupStartAchter) && this.startIsBeforeEnd;
     },
     editLineupStartAchterStateFeedback() {
       if (!this.editLineupStartAchter) return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     editLineupStartCountIsValid() {
       return Boolean(this.editLineupStartCount) && this.startIsBeforeEnd;
     },
     editLineupStartCountStateFeedback() {
       if (!this.editLineupStartCount) return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     editLineupEndCountIsValid() {
       return Boolean(this.editLineupEndCount) && this.startIsBeforeEnd;
     },
     editLineupEndCountStateFeedback() {
       if (!this.editLineupEndCount) return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     editLineupMembersIsValid() {
       return (
@@ -356,12 +345,12 @@ export default {
     editLineupMembersStateFeedback() {
       if (!this.editLineupMembers || this.editLineupMembers.length == 0)
         return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
   },
   methods: {
     open() {
-      this.$refs.modal.show();
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     resetLineupModal() {
       this.editLineupStartCount = (this.count % 8) + 1;
@@ -375,26 +364,38 @@ export default {
         .map((m) => m.id)
         .filter((mId) => !positionedMemberIds.includes(mId));
     },
+    onKeydownEnter() {
+      if (
+        this.editLineupStartAchter &&
+        this.editLineupStartCount &&
+        this.editLineupEndAchter &&
+        this.editLineupEndCount
+      ) {
+        (this.$refs.modal as InstanceType<typeof BModal>).hide();
+        this.createLineup();
+      }
+    },
     createLineup() {
       const absoluteStartCount =
-        (parseInt(this.editLineupStartAchter) - 1) * 8 +
-        parseInt(this.editLineupStartCount) -
+        (parseInt(String(this.editLineupStartAchter)) - 1) * 8 +
+        parseInt(String(this.editLineupStartCount)) -
         1;
       const absoluteEndCount =
-        (parseInt(this.editLineupEndAchter) - 1) * 8 +
-        parseInt(this.editLineupEndCount) -
+        (parseInt(String(this.editLineupEndAchter)) - 1) * 8 +
+        parseInt(String(this.editLineupEndCount)) -
         1;
 
+      const choreo = this.choreo as Choreo;
       LineupService.create(
         absoluteStartCount,
         absoluteEndCount,
-        this.choreo.id
+        choreo.id
       ).then((lineup) => {
         return Promise.all(
           this.editLineupMembers.map((mId) => {
-            const positionOfMember = this.currentPositions.find(
+            const positionOfMember = (this.currentPositions as Position[]).find(
               (p) => p.MemberId == mId
-            );
+            ) as Position;
             return PositionService.create(
               lineup.id,
               positionOfMember.x,
@@ -403,9 +404,7 @@ export default {
             );
           })
         ).then((createdPositions) => {
-          const lineupCopy = this.choreo.Lineups.filter(
-            (l) => l.id != lineup.id
-          );
+          const lineupCopy = choreo.Lineups.filter((l) => l.id != lineup.id);
 
           const positionsCopy = lineup.Positions || [];
           positionsCopy.push(...createdPositions);
@@ -417,5 +416,5 @@ export default {
       });
     },
   },
-};
+});
 </script>

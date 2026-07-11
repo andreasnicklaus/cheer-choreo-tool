@@ -131,10 +131,12 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import SeasonService from "@/services/SeasonService";
 import SeasonTeamService from "@/services/SeasonTeamService";
-import UserAccessService from "@/services/UserAccessService";
+import { defineComponent, PropType } from "vue";
+import { BModal } from "bootstrap-vue-next";
+import type { Team, Season } from "@/types";
 
 /**
  * @module Modal:CreateSeasonModal
@@ -178,15 +180,19 @@ import UserAccessService from "@/services/UserAccessService";
  *  <Button @click="() => $refs.createSeasonModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "CreateSeasonModal",
   props: {
     teams: {
-      type: Array,
+      type: Array as PropType<Team[]>,
       default: () => [],
     },
     me: {
-      type: Object,
+      type: Object as PropType<{
+        id: string;
+        username?: string;
+        email?: string;
+      }>,
       default: null,
     },
   },
@@ -194,15 +200,15 @@ export default {
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     tabIndex: 0,
-    newSeasonName: null,
-    newSeasonYear: null,
-    seasons: [],
-    seasonId: null,
-    teamId: null,
-    seasonsToCopy: [],
-    seasonToCopyMembersFromId: null,
-    newSeasonMemberIds: [],
-    selectedOwnerId: null,
+    newSeasonName: undefined as string | undefined,
+    newSeasonYear: undefined as string | number | undefined,
+    seasons: [] as Season[],
+    seasonId: undefined as string | undefined,
+    teamId: undefined as string | number | undefined,
+    seasonsToCopy: [] as Season[],
+    seasonToCopyMembersFromId: undefined as string | undefined,
+    newSeasonMemberIds: [] as string[],
+    selectedOwnerId: undefined as string | undefined,
   }),
   computed: {
     team() {
@@ -234,7 +240,7 @@ export default {
     },
     newMemberOptions() {
       const seasonTeam = this.team?.SeasonTeams.find(
-        (st) => st.Season.id == this.seasonToCopyMembersFromId
+        (st) => st.Season?.id == this.seasonToCopyMembersFromId
       );
       if (!seasonTeam) return [];
 
@@ -255,46 +261,47 @@ export default {
     seasonIsValid() {
       return (
         this.seasons.length > 0 &&
-        this.seasons.map((s) => s.id).includes(this.seasonId)
+        this.seasons.map((s) => s.id).includes(this.seasonId ?? "")
       );
     },
     seasonStateFeedback() {
       if (
         !this.seasonId ||
-        !this.seasons.map((s) => s.id).includes(this.seasonId)
+        !this.seasons.map((s) => s.id).includes(this.seasonId ?? "")
       )
         return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     newSeasonIsValid() {
       return this.newSeasonNameIsValid && this.newSeasonYearIsValid;
     },
     newSeasonNameIsValid() {
       return (
-        Boolean(this.newSeasonName) && this.newSeasonName.trim().length > 0
+        Boolean(this.newSeasonName) &&
+        (this.newSeasonName ?? "").trim().length > 0
       );
     },
     newSeasonNameStateFeedback() {
       if (!this.newSeasonName || this.newSeasonName.trim().length == 0)
         return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     newSeasonYearIsValid() {
       return (
         this.newSeasonYear == "" ||
         this.newSeasonYear == null ||
-        (parseInt(this.newSeasonYear) > 1990 &&
-          parseInt(this.newSeasonYear) < 2200)
+        (parseInt(String(this.newSeasonYear)) > 1990 &&
+          parseInt(String(this.newSeasonYear)) < 2200)
       );
     },
     newSeasonYearStateFeedback() {
       if (this.newSeasonYear == "" || this.newSeasonYear == null)
         return this.$t("erforderlich");
-      if (parseInt(this.newSeasonYear) <= 1990)
+      if (parseInt(String(this.newSeasonYear)) <= 1990)
         return this.$t("modals.create-season.choreos-vor-1990");
-      if (parseInt(this.newSeasonYear) >= 2200)
+      if (parseInt(String(this.newSeasonYear)) >= 2200)
         return this.$t("modals.create-season.choreos-nach-2200");
-      return null;
+      return undefined;
     },
     newSeasonMembersIsValid() {
       return (
@@ -305,9 +312,10 @@ export default {
     newSeasonMembersStateFeedback() {
       if (this.newSeasonMemberIds.length == 0)
         return this.$t("modals.create-season.min-team-mitglied");
-      return null;
+      return undefined;
     },
     ownerOptions() {
+      // @ts-ignore
       const options = this.$store.state.owners.map((o) => {
         const baseText = o.owner?.username || o.owner?.email || o.ownerUserId;
         const isYou = this.me && o.ownerUserId === this.$store.state.me.id;
@@ -319,7 +327,8 @@ export default {
 
       if (
         this.$store.state.me &&
-        !options.some((o) => o.value === this.$store.state.me.id)
+        // @ts-ignore
+        !options.some((o) => o["value"] === this.$store.state.me["id"])
       ) {
         options.push({
           value: this.$store.state.me.id,
@@ -336,7 +345,8 @@ export default {
       return (
         this.selectedOwnerId != null &&
         (this.$store.state.owners
-          .map((o) => o.ownerUserId)
+          // @ts-ignore
+          .map((o) => o["ownerUserId"])
           .includes(this.selectedOwnerId) ||
           this.selectedOwnerId === this.$store.state.me?.id)
       );
@@ -345,25 +355,26 @@ export default {
       if (!this.selectedOwnerId) return this.$t("erforderlich");
       if (
         !this.$store.state.owners
-          .map((o) => o.ownerUserId)
+          // @ts-ignore
+          .map((o) => o["ownerUserId"])
           .includes(this.selectedOwnerId) &&
         this.selectedOwnerId !== this.$store.state.me?.id
       )
         return this.$t("errors.unerwarteter-fehler");
-      return null;
+      return undefined;
     },
   },
   mounted() {
     this.load();
   },
   methods: {
-    open(teamId) {
+    open(teamId: string | number) {
       this.reset();
       this.teamId = teamId;
       if (this.$store.state.me?.id) {
         this.selectedOwnerId = this.$store.state.me?.id;
       }
-      this.$refs.modal.show();
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
       this.$nextTick(() => {
         this.load();
       });
@@ -373,58 +384,59 @@ export default {
       SeasonService.getAll().then((seasons) => {
         this.seasons = seasons.filter(
           (s) =>
-            !this.team?.SeasonTeams.map((st) => st.Season.id).includes(s.id)
+            !this.team?.SeasonTeams.map((st) => st.Season?.id).includes(s.id)
         );
         this.seasonsToCopy = seasons.filter((s) =>
-          this.team?.SeasonTeams.map((st) => st.Season.id).includes(s.id)
+          this.team?.SeasonTeams.map((st) => st.Season?.id).includes(s.id)
         );
-        this.seasonToCopyMembersFromId = null;
+        this.seasonToCopyMembersFromId = undefined;
         this.newSeasonMemberIds = [];
 
-        if (this.seasons.length > 0) this.seasonId = this.seasons[0].id;
+        if (this.seasons.length > 0)
+          this.seasonId = this.seasons[0]?.id ?? undefined;
       });
     },
     reset() {
       this.tabIndex = 0;
-      this.newSeasonName = null;
-      this.newSeasonYear = null;
-      this.seasonId = null;
-      this.teamId = null;
-      this.seasonToCopyMembersFromId = null;
+      this.newSeasonName = undefined;
+      this.newSeasonYear = undefined;
+      this.seasonId = undefined;
+      this.teamId = undefined;
+      this.seasonToCopyMembersFromId = undefined;
       this.newSeasonMemberIds = [];
       this.seasons = [];
       this.seasonsToCopy = [];
-      this.selectedOwnerId = null;
+      this.selectedOwnerId = undefined;
     },
     create() {
       const ownerId = this.selectedOwnerId || null;
       if (this.tabIndex == 0)
         SeasonTeamService.create(
-          this.team.id,
-          this.seasonId,
-          this.newSeasonMemberIds,
-          ownerId
+          (this.team as Team).id,
+          this.seasonId ?? "",
+          this.newSeasonMemberIds
         ).then((seasonTeam) => {
           this.$emit("seasonTeamCreated", seasonTeam);
         });
       else {
-        if (this.newSeasonYear == "") this.newSeasonYear = null;
+        if (this.newSeasonYear == "") this.newSeasonYear = undefined;
         else if (this.newSeasonYear != null)
-          this.newSeasonYear = parseInt(this.newSeasonYear);
-        SeasonService.create(this.newSeasonName, this.newSeasonYear).then(
-          (season) => {
-            SeasonTeamService.create(
-              this.team.id,
-              season.id,
-              this.newSeasonMemberIds,
-              ownerId
-            ).then((seasonTeam) => {
-              this.$emit("seasonTeamCreated", seasonTeam);
-            });
-          }
-        );
+          this.newSeasonYear = parseInt(String(this.newSeasonYear));
+        SeasonService.create(
+          this.newSeasonName ?? "",
+          this.newSeasonYear ?? 0,
+          ownerId
+        ).then((season) => {
+          SeasonTeamService.create(
+            (this.team as Team).id,
+            season.id,
+            this.newSeasonMemberIds
+          ).then((seasonTeam) => {
+            this.$emit("seasonTeamCreated", seasonTeam);
+          });
+        });
       }
     },
   },
-};
+});
 </script>

@@ -36,7 +36,7 @@
               name: 'Team',
               params: { teamId: team.id, locale: $i18n.locale },
             }"
-            :variant="team.id == teamId ? 'primary' : 'outline-primary'"
+            :variant="ddVariant(team.id == teamId)"
           >
             {{ team.name }}
           </BDropdownItem>
@@ -79,12 +79,7 @@
           <BDropdownItem
             v-if="canDeleteTeam"
             :disabled="!currentTeam"
-            @click="
-              () =>
-                $refs.deleteSeasonTeamModal.open(
-                  currentTeam.SeasonTeams[seasonTabIndex].id
-                )
-            "
+            @click="openDeleteSeasonTeamModal"
           >
             <IBiTrash class="me-2" />
             {{ $t("teamView.season-loeschen") }}
@@ -93,7 +88,7 @@
             v-if="canDeleteTeam"
             :disabled="!currentTeam"
             variant="danger"
-            @click="() => $refs.deleteTeamModal.open(teamId)"
+            @click="openDeleteTeamModal"
           >
             <IBiTrash class="me-2" />
             {{ $t("teamView.team-loeschen") }}
@@ -246,11 +241,7 @@
             v-if="canEditTeam"
             class="my-3"
             variant="outline-success"
-            @click="
-              () => {
-                $refs.importMemberModal.open();
-              }
-            "
+            @click="openImportMemberModal"
           >
             <IBiBoxArrowInRight />
             {{ $t("teamView.importieren") }}
@@ -263,7 +254,7 @@
           v-b-tooltip.hover="$t('teamView.neue-season-anfangen')"
           variant="success"
           data-testid="create-season-button"
-          @click="() => $refs.createSeasonModal.open(currentTeam.id)"
+          @click="openCreateSeasonModal"
         >
           <IBiPlus />
         </BButton>
@@ -272,8 +263,8 @@
 
     <CreateMemberModal
       ref="createMemberModal"
-      :current-team="currentTeam"
-      :edit-member-id="editMemberId"
+      :current-team="currentTeam ?? undefined"
+      :edit-member-id="editMemberId ?? undefined"
       :season-tab-index="seasonTabIndex"
       @member-created="onMemberCreation"
       @member-updated="onMemberUpdate"
@@ -289,7 +280,7 @@
     <CreateSeasonModal
       ref="createSeasonModal"
       :teams="teams"
-      :me="me"
+      :me="me ?? undefined"
       @season-team-created="onSeasonTeamCreation"
     />
 
@@ -301,18 +292,19 @@
     <ImportMemberModal
       ref="importMemberModal"
       :teams="teams"
-      :current-team-id="teamId"
-      :current-season-team-id="currentTeam?.SeasonTeams[seasonTabIndex]?.id"
+      :current-team-id="teamId ?? undefined"
+      :current-season-team-id="
+        (currentTeam?.SeasonTeams ?? [])[seasonTabIndex]?.id ?? undefined
+      "
       @import="onMemberImport"
     />
   </BContainer>
 </template>
 
-<script>
+<script lang="ts">
 import { useHead } from "@unhead/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { mapState } from "vuex";
 import EditableNameHeading from "@/components/EditableNameHeading.vue";
 import CreateMemberModal from "@/components/modals/CreateMemberModal.vue";
 import CreateSeasonModal from "@/components/modals/CreateSeasonModal.vue";
@@ -324,9 +316,29 @@ import TeamService from "@/services/TeamService";
 import ERROR_CODES from "@/utils/error_codes";
 import { error } from "@/utils/logging";
 import { canWrite, canDelete } from "@/utils/permissions";
+import { defineComponent } from "vue";
 import FeatureFlagService, {
   FeatureFlagKeys,
 } from "@/services/FeatureFlagService";
+import type { User, UserAccess, SeasonTeam, Season, Member } from "@/types";
+import type { Team } from "@/types";
+
+interface ExtendedSeasonTeam extends SeasonTeam {
+  Members: Member[];
+  Season: Season;
+}
+
+interface ExtendedTeam extends Team {
+  UserId?: string;
+  User?: User;
+  SeasonTeams: ExtendedSeasonTeam[];
+  updater?: User;
+  creator?: User;
+  updaterId?: string;
+  creatorId?: string;
+}
+
+type OwnerAccess = { ownerUserId: string; role: string; enabled?: boolean };
 
 /**
  * @vue-data {string} presentation=table - The current presentation mode, either 'table' or 'list'.
@@ -342,7 +354,7 @@ import FeatureFlagService, {
  * @vue-computed {MetaInfo} metaInfo
  */
 
-export default {
+export default defineComponent({
   name: "TeamView",
   components: {
     EditableNameHeading,
@@ -360,20 +372,25 @@ export default {
   data: function () {
     return {
       presentation: "table",
-      teamId: null,
-      teams: [],
+      teamId: null as string | null,
+      teams: [] as ExtendedTeam[],
       seasonTabIndex: 0,
-      editMemberId: null,
+      editMemberId: null as string | null,
       accessSharingEnabled: true,
     };
   },
   computed: {
-    ...mapState(["owners", "me"]),
+    owners(): OwnerAccess[] {
+      return this.$store.state.owners;
+    },
+    me(): User | null {
+      return this.$store.state.me;
+    },
     canEditTeam() {
-      return canWrite(this.owners, this.me?.id, this.currentTeam?.UserId);
+      return canWrite(this.owners, this.me?.id!, this.currentTeam?.UserId!);
     },
     canDeleteTeam() {
-      return canDelete(this.owners, this.me?.id, this.currentTeam?.UserId);
+      return canDelete(this.owners, this.me?.id!, this.currentTeam?.UserId!);
     },
     canEditMember() {
       return this.canEditTeam;
@@ -389,35 +406,30 @@ export default {
         { key: "actions", label: "", class: "text-end" },
       ];
     },
-    currentTeam() {
+    currentTeam(): ExtendedTeam | null {
       if (!this.teamId || !this.teams) return null;
 
-      return this.teams.find((t) => t.id == this.teamId);
+      return this.teams.find((t) => t.id == this.teamId) ?? null;
     },
     sortedMembersOfCurrentTeam() {
-      // Explicitly access currentTeam to ensure Vue tracks it as a dependency
       const team = this.currentTeam;
-      if (
-        !team ||
-        !team.SeasonTeams ||
-        !team.SeasonTeams[this.seasonTabIndex]
-      ) {
-        return [];
-      }
+      if (!team || !team.SeasonTeams) return [];
 
-      const members = team.SeasonTeams[this.seasonTabIndex].Members;
-      if (!members || members.length === 0) {
-        return [];
-      }
+      const seasonTeam = team.SeasonTeams[this.seasonTabIndex];
+      if (!seasonTeam) return [];
 
-      // Create a new array and sort it
-      return [...members].sort((a, b) => a.name.localeCompare(b.name));
+      const members = seasonTeam.Members;
+      if (!members || members.length === 0) return [];
+
+      return [...members].sort((a: Member, b: Member) =>
+        a.name.localeCompare(b.name)
+      );
     },
   },
   watch: {
     "$route.params": {
       handler() {
-        this.teamId = this.$route.params.teamId;
+        this.teamId = this.$route.params.teamId as string;
         this.load();
       },
       immediate: true,
@@ -468,68 +480,77 @@ export default {
   methods: {
     load() {
       return Promise.all([
-        TeamService.getAll().then((teams) => {
-          this.teams = teams.map((t) => ({
-            ...t,
-            SeasonTeams: t.SeasonTeams.sort(
-              (a, b) => b.Season.year - a.Season.year
-            ),
-          }));
+        TeamService.getAll().then((response: Team[]) => {
+          this.teams = response.map((t) => {
+            const et = t as ExtendedTeam;
+            const seasonTeams = [...(et.SeasonTeams || [])].sort(
+              (a: ExtendedSeasonTeam, b: ExtendedSeasonTeam) =>
+                b.Season.year - a.Season.year
+            );
+            return { ...et, SeasonTeams: seasonTeams };
+          });
         }),
       ]);
     },
-    onNameEdit(nameNew) {
-      this.currentTeam.name = nameNew;
-      TeamService.setName(this.teamId, nameNew).then((team) => {
+    onNameEdit(nameNew: string) {
+      this.currentTeam!.name = nameNew;
+      TeamService.setName(this.teamId!, nameNew).then((response) => {
+        const team = response as ExtendedTeam;
         if (!team.SeasonTeams)
           team.SeasonTeams =
             this.teams.find((t) => t.id == team.id)?.SeasonTeams || [];
-        const teamCopy = this.teams.filter((t) => t.id != this.currentTeam.id);
+        const teamCopy = this.teams.filter((t) => t.id != this.currentTeam!.id);
         teamCopy.push(team);
         this.teams = teamCopy;
       });
     },
-    onMemberCreation(member) {
-      this.currentTeam.SeasonTeams[this.seasonTabIndex].Members.push(member);
+    onMemberCreation(member: Member) {
+      const seasonTeam = this.currentTeam!.SeasonTeams[this.seasonTabIndex]!;
+      seasonTeam.Members.push(member);
       this.editMemberId = null;
       this.setLastUpdaterToMe();
     },
-    onMemberUpdate(member) {
-      const membersCopy = this.currentTeam.SeasonTeams[
-        this.seasonTabIndex
-      ].Members.filter((m) => m.id != this.editMemberId);
+    onMemberUpdate(member: Member) {
+      const seasonTeam = this.currentTeam!.SeasonTeams[this.seasonTabIndex]!;
+      const membersCopy = seasonTeam.Members.filter(
+        (m: Member) => m.id != this.editMemberId
+      );
       membersCopy.push(member);
-      this.currentTeam.SeasonTeams[this.seasonTabIndex].Members = membersCopy;
+      seasonTeam.Members = membersCopy;
       this.editMemberId = null;
       this.setLastUpdaterToMe();
     },
-    requestMemberRemoval(id) {
-      this.$refs.deleteMemberModal.open(id);
+    requestMemberRemoval(id: string) {
+      (
+        this.$refs.deleteMemberModal as InstanceType<typeof DeleteMemberModal>
+      ).open(id);
     },
-    onMemberDeletion(MemberId) {
-      this.currentTeam.SeasonTeams[this.seasonTabIndex].Members =
-        this.currentTeam.SeasonTeams[this.seasonTabIndex].Members.filter(
-          (m) => m.id != MemberId
-        );
+    onMemberDeletion(MemberId: string) {
+      const seasonTeam = this.currentTeam!.SeasonTeams[this.seasonTabIndex]!;
+      seasonTeam.Members = seasonTeam.Members.filter(
+        (m: Member) => m.id != MemberId
+      );
       this.setLastUpdaterToMe();
     },
-    editMember(id) {
+    editMember(id: string) {
       this.editMemberId = id;
       this.openMemberModal();
     },
     openMemberModal() {
       this.$nextTick(() => {
-        this.$refs.createMemberModal.open();
+        (
+          this.$refs.createMemberModal as InstanceType<typeof CreateMemberModal>
+        ).open();
       });
     },
-    onTeamDeletion(teamId) {
-      this.teams = this.teams.filter((t) => t.id != teamId);
+    onTeamDeletion(teamId: string) {
+      this.teams = this.teams.filter((t: ExtendedTeam) => t.id != teamId);
       if (this.teams.length > 0)
         this.$router
           .push({
             name: "Team",
             params: {
-              teamId: this.teams[0].id,
+              teamId: this.teams[0]!.id,
               locale: this.$i18n.locale,
             },
           })
@@ -558,24 +579,53 @@ export default {
     onSeasonTeamDeletion() {
       this.load();
     },
-    onMemberImport(newMembers) {
+    onMemberImport(newMembers: Member[]) {
       this.currentTeam?.SeasonTeams[this.seasonTabIndex]?.Members.push(
         ...newMembers
       );
       this.setLastUpdaterToMe();
     },
-    updateSeasonTabIndex(newIndex) {
+    updateSeasonTabIndex(newIndex: number) {
       this.seasonTabIndex = newIndex;
     },
-    setPresentation(newPresentation) {
+    setPresentation(newPresentation: string) {
       this.presentation = newPresentation;
     },
+    ddVariant(isActive: boolean) {
+      return (isActive ? "primary" : "outline-primary") as any;
+    },
+    openDeleteSeasonTeamModal() {
+      const seasonTeamId =
+        (this.currentTeam?.SeasonTeams ?? [])[this.seasonTabIndex]?.id ?? "";
+      (
+        this.$refs.deleteSeasonTeamModal as InstanceType<
+          typeof DeleteSeasonTeamModal
+        >
+      ).open(seasonTeamId);
+    },
+    openDeleteTeamModal() {
+      (this.$refs.deleteTeamModal as InstanceType<typeof DeleteTeamModal>).open(
+        this.teamId ?? ""
+      );
+    },
+    openImportMemberModal() {
+      (
+        this.$refs.importMemberModal as InstanceType<typeof ImportMemberModal>
+      ).open();
+    },
+    openCreateSeasonModal() {
+      (
+        this.$refs.createSeasonModal as InstanceType<typeof CreateSeasonModal>
+      ).open(this.currentTeam?.id ?? "");
+    },
     setLastUpdaterToMe() {
-      if (this.me?.id && this.currentTeam?.updaterId !== this.me?.id) {
-        this.currentTeam.updaterId = this.me?.id;
-        this.currentTeam.updater = this.me;
+      const team = this.currentTeam;
+      const me = this.me;
+      if (me && me.id && team && team.updaterId !== me.id) {
+        team.updaterId = me.id;
+        team.updater = me;
       }
     },
   },
-};
+});
 </script>

@@ -64,11 +64,13 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import AuthService from "@/services/AuthService";
 import MessagingService from "@/services/MessagingService";
 import ERROR_CODES from "@/utils/error_codes";
 import { error, log } from "@/utils/logging";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * @module Modal:ChangePasswordModal
@@ -84,21 +86,21 @@ import { error, log } from "@/utils/logging";
  *
  * @example <ChangePasswordModal />
  */
-export default {
+export default defineComponent({
   name: "ChangePasswordModal",
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
-    newPassword: null,
-    passwordRepetition: null,
+    newPassword: null as string | null,
+    passwordRepetition: null as string | null,
   }),
   computed: {
     newPasswordIsValid() {
-      return Boolean(this.newPassword) && this.newPassword.length >= 6;
+      return Boolean(this.newPassword && this.newPassword.length >= 6);
     },
     newPasswordStateFeedback() {
       if (!this.newPassword || this.newPassword.length < 6)
         return this.$t("modals.change-password.min-password-length");
-      return null;
+      return undefined;
     },
     passwordRepetitionIsValid() {
       return (
@@ -112,35 +114,36 @@ export default {
         return this.$t(
           "modals.change-password.die-wiederholung-entspricht-nicht-dem-ersten-passwort"
         );
-      return null;
+      return undefined;
     },
   },
   methods: {
     open() {
-      this.$refs.modal.show();
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     changePassword() {
-      AuthService.changePassword(this.newPassword)
-        .then(() => {
-          log("Your password has been changed");
-          MessagingService.showSuccess(
-            this.$t("modals.change-password.dein-passwort-wurde-geaendert"),
-            this.$t("modals.change-password.passwort-geaendert")
-          );
-        })
-        .catch(() => {
-          error(
-            "Password replacement is not allowed",
-            ERROR_CODES.PASSWORD_CHANGE_NOT_ALLOWED
-          );
-          MessagingService.showError(
-            this.$t(
-              "modals.change-password.dein-neues-passwort-ist-nicht-erlaubt"
-            ),
-            this.$t("accountView.das-hat-nicht-funktioniert")
-          );
-        });
+      if (this.newPassword && this.passwordRepetition)
+        AuthService.changePassword(this.newPassword)
+          .then(() => {
+            log("Your password has been changed");
+            MessagingService.showSuccess(
+              this.$t("modals.change-password.dein-passwort-wurde-geaendert"),
+              this.$t("modals.change-password.passwort-geaendert")
+            );
+          })
+          .catch(() => {
+            error(
+              "Password replacement is not allowed",
+              ERROR_CODES.PASSWORD_CHANGE_NOT_ALLOWED
+            );
+            MessagingService.showError(
+              this.$t(
+                "modals.change-password.dein-neues-passwort-ist-nicht-erlaubt"
+              ),
+              this.$t("accountView.das-hat-nicht-funktioniert")
+            );
+          });
     },
   },
-};
+});
 </script>

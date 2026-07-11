@@ -8,8 +8,9 @@
   >
 </template>
 
-<script>
+<script lang="ts">
 import VersionService from "@/services/VersionService";
+import { defineComponent, PropType } from "vue";
 
 /**
  * @module Component:NewVersionBadge
@@ -24,7 +25,7 @@ import VersionService from "@/services/VersionService";
  * @example <NewVersionBadge :versions="['1.2.3', '1.2.4']" />
  */
 
-export default {
+export default defineComponent({
   name: "NewVersionBadge",
   props: {
     version: {
@@ -32,7 +33,7 @@ export default {
       default: "",
     },
     versions: {
-      type: Array,
+      type: Array as PropType<string[]>,
       default: () => [],
     },
   },
@@ -52,7 +53,7 @@ export default {
         );
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

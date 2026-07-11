@@ -97,13 +97,15 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import Cookies from "js-cookie";
 
 import FeedbackService from "@/services/FeedbackService";
 import { error, debug } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
 import { isPrerender } from "@/utils/isPrerender";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 const feedbackDeclinedCookieName = "feedback-declined";
 
@@ -128,18 +130,18 @@ const feedbackDeclinedCookieName = "feedback-declined";
  * </template>
  */
 
-export default {
+export default defineComponent({
   name: "FeedbackPrompt",
   emits: ["feedbackSent"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     stars: 4,
-    feedbackText: null,
-    hoverStars: null,
+    feedbackText: null as string | null,
+    hoverStars: null as number | null,
     sending: false,
     feedbackAlreadyGiven: false,
     forced: false,
-    showTimer: null,
+    showTimer: null as ReturnType<typeof setTimeout> | null,
   }),
   watch: {
     "$route.path": {
@@ -174,7 +176,7 @@ export default {
       this.forced = force;
       const feedbackDeclined = Boolean(Cookies.get(feedbackDeclinedCookieName));
       if (force || (!this.feedbackAlreadyGiven && !feedbackDeclined))
-        this.$refs.feedbackModal.show();
+        (this.$refs.feedbackModal as InstanceType<typeof BModal>)?.show();
 
       this.stopShowTimer();
     },
@@ -184,19 +186,18 @@ export default {
     },
     send() {
       this.stopShowTimer();
-      FeedbackService.sendFeedback(
-        parseInt(this.stars) + 1,
-        this.feedbackText
-      ).then(() => {
-        this.$emit("feedbackSent", {
-          stars: this.stars,
-          feedbackText: this.feedbackText,
-        });
-        this.$refs.thankyouModal.show();
-        this.feedbackAlreadyGiven = true;
-      });
+      FeedbackService.sendFeedback(this.stars + 1, this.feedbackText).then(
+        () => {
+          this.$emit("feedbackSent", {
+            stars: this.stars,
+            feedbackText: this.feedbackText,
+          });
+          (this.$refs.thankyouModal as InstanceType<typeof BModal>)?.show();
+          this.feedbackAlreadyGiven = true;
+        }
+      );
     },
-    mouseOver(stars) {
+    mouseOver(stars: number) {
       this.hoverStars = stars;
     },
     mouseLeave() {
@@ -204,12 +205,12 @@ export default {
     },
     closeWithoutSending() {
       this.stopShowTimer();
-      Cookies.set(feedbackDeclinedCookieName, true, { expires: 30 });
+      Cookies.set(feedbackDeclinedCookieName, "true", { expires: 30 });
       this.close();
     },
     close() {
-      this.$refs.feedbackModal.hide();
-      this.$refs.thankyouModal.hide();
+      (this.$refs.feedbackModal as InstanceType<typeof BModal>)?.hide();
+      (this.$refs.thankyouModal as InstanceType<typeof BModal>)?.hide();
     },
     isABootstrapModalOpen() {
       return document.querySelectorAll(".modal.in").length > 0;
@@ -224,10 +225,10 @@ export default {
       }
     },
     stopShowTimer() {
-      clearTimeout(this.showTimer);
+      if (this.showTimer) clearTimeout(this.showTimer);
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

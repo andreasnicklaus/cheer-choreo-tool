@@ -79,7 +79,7 @@
   </BContainer>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { useHead } from "@unhead/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
@@ -123,8 +123,9 @@ useHead({
 });
 </script>
 
-<script>
+<script lang="ts">
 import Markdown from "vue3-markdown-it";
+import { defineComponent } from "vue";
 
 /**
  * @vue-data {string} searchTerm - The search term entered by the user.
@@ -134,14 +135,14 @@ import Markdown from "vue3-markdown-it";
  *
  * @vue-computed {MetaInfo} metaInfo
  */
-export default {
+export default defineComponent({
   name: "HelpView",
   components: {
     Markdown,
   },
   data: function () {
     return {
-      searchTerm: null,
+      searchTerm: null as string | null,
     };
   },
   computed: {
@@ -222,15 +223,17 @@ export default {
       return this.faqCategories
         .map((fc) => ({
           ...fc,
-          faqs: fc.faqs.filter(
-            (f) =>
-              fc.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-              f.title.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-              f.markdown.toLowerCase().includes(this.searchTerm.toLowerCase())
-          ),
+          faqs: fc.faqs.filter((f) => {
+            const term = this.searchTerm!.toLowerCase();
+            return (
+              fc.name.toLowerCase().includes(term) ||
+              f.title.toLowerCase().includes(term) ||
+              f.markdown.toLowerCase().includes(term)
+            );
+          }),
         }))
         .filter((fc) => fc.faqs.length > 0);
     },
   },
-};
+});
 </script>

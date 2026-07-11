@@ -61,7 +61,7 @@
             </a>
           </p>
 
-          <a href="#" @click="() => $refs.passwordResetModal.open()"
+          <a href="#" @click="openPasswordResetModal"
             >{{ $t("login.passwort-vergessen") }}
             <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
           </a>
@@ -267,7 +267,7 @@
   </BContainer>
 </template>
 
-<script>
+<script lang="ts">
 import { useHead } from "@unhead/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
@@ -283,6 +283,7 @@ import { getApiDomain } from "@/services/RequestService";
 import ERROR_CODES from "@/utils/error_codes";
 import { error, log } from "@/utils/logging";
 import { emailRegex } from "@/utils/validation";
+import { defineComponent } from "vue";
 
 /**
  * @vue-data {string|null} username=null - The username for login or registration.
@@ -305,7 +306,7 @@ import { emailRegex } from "@/utils/validation";
  *
  * @vue-computed {MetaInfo} metaInfo
  */
-export default {
+export default defineComponent({
   name: "LoginView",
   components: { ConfirmEmailModal, PasswordResetModal, NewVersionBadge },
   setup() {
@@ -313,10 +314,10 @@ export default {
     return { t };
   },
   data: () => ({
-    username: null,
-    email: null,
-    password: null,
-    passwordRepetition: null,
+    username: undefined as string | undefined,
+    email: undefined as string | undefined,
+    password: undefined as string | undefined,
+    passwordRepetition: undefined as string | undefined,
     tabIndex: 0,
     loading: false,
     socialLoginEnabled: false,
@@ -341,31 +342,34 @@ export default {
     },
     usernameError() {
       if (this.username == null || this.username.length == 0)
-        return this.$t("login.bitte-angeben");
+        return this.$t("login.bitte-angeben") as string;
       else if (this.username.length < 6)
-        return this.$t("login.benutzername-mindestens-laenge");
-      else return null;
+        return this.$t("login.benutzername-mindestens-laenge") as string;
+      else return undefined;
     },
     emailIsValid() {
-      return this.email != null && this.email.match(emailRegex)?.length > 0;
+      return (
+        this.email != null &&
+        (this.email as string).match(emailRegex)?.length != null
+      );
     },
     emailError() {
       if (this.email == null || this.email.length == 0)
-        return this.$t("login.bitte-angeben");
+        return this.$t("login.bitte-angeben") as string;
       const emailRegexMatches = this.email.match(emailRegex);
       if (!emailRegexMatches || emailRegexMatches.length <= 0)
-        return this.$t("login.echte-email");
-      else return null;
+        return this.$t("login.echte-email") as string;
+      else return undefined;
     },
     passwordIsValid() {
       return this.password != null && this.password.length >= 6;
     },
     passwordError() {
       if (this.password == null || this.password.length == 0)
-        return this.$t("login.bitte-angeben");
+        return this.$t("login.bitte-angeben") as string;
       else if (this.password.length < 6)
-        return this.$t("login.passwort-mindest-laenge");
-      else return null;
+        return this.$t("login.passwort-mindest-laenge") as string;
+      else return undefined;
     },
     passwordRepetitionIsValid() {
       return (
@@ -375,8 +379,8 @@ export default {
     },
     passwordRepetitionError() {
       if (this.passwordRepetition != this.password)
-        return this.$t("login.wiederholung-gleicht-nicht-passwort");
-      else return null;
+        return this.$t("login.wiederholung-gleicht-nicht-passwort") as string;
+      else return undefined;
     },
     isWelcome() {
       return this.$route.path == "/willkommen";
@@ -393,14 +397,14 @@ export default {
 
     const query = this.$route.query;
     if (query?.sso)
-      AuthService.ssoLogin(query.sso)
+      AuthService.ssoLogin(query.sso as string)
         .then(() => {
           window._paq.push(["trackGoal", 2]);
           this.redirect();
         })
         .catch((e) => {
           error(e, ERROR_CODES.SSO_LOGIN_FAILED);
-          this.showFailMessage(e.response.data);
+          this.showFailMessage(e.response?.data);
         });
 
     Promise.all([
@@ -439,32 +443,32 @@ export default {
     const baseMeta = [
       {
         name: "description",
-        content: computed(() => this.t("meta.loginView.description")),
+        content: computed(() => this.$t("meta.loginView.description")),
       },
       {
         name: "twitter:description",
-        content: computed(() => this.t("meta.loginView.description")),
+        content: computed(() => this.$t("meta.loginView.description")),
       },
       {
         property: "og:description",
-        content: computed(() => this.t("meta.loginView.description")),
+        content: computed(() => this.$t("meta.loginView.description")),
       },
       {
         property: "og:title",
         content: computed(
           () =>
-            `${this.t("anmelden")} - ${this.t(
+            `${this.$t("anmelden")} - ${this.$t(
               "general.ChoreoPlaner"
-            )} | ${this.t("login.meta.dein-zugang-zu-allen-funktionen")}`
+            )} | ${this.$t("login.meta.dein-zugang-zu-allen-funktionen")}`
         ),
       },
       {
         name: "twitter:title",
         content: computed(
           () =>
-            `${this.t("anmelden")} - ${this.t(
+            `${this.$t("anmelden")} - ${this.$t(
               "general.ChoreoPlaner"
-            )} | ${this.t("login.meta.dein-zugang-zu-allen-funktionen")}`
+            )} | ${this.$t("login.meta.dein-zugang-zu-allen-funktionen")}`
         ),
       },
     ];
@@ -473,11 +477,11 @@ export default {
       baseMeta.push(
         {
           property: "og:image",
-          content: "/Willkommen.png",
+          content: computed(() => "/Willkommen.png"),
         },
         {
           name: "twitter:image",
-          content: "/Willkommen.png",
+          content: computed(() => "/Willkommen.png"),
         }
       );
     }
@@ -485,9 +489,9 @@ export default {
     useHead({
       title: computed(
         () =>
-          `${this.t("anmelden")} - ${this.t(
+          `${this.$t("anmelden")} - ${this.$t(
             "general.ChoreoPlaner"
-          )} | ${this.t("login.meta.dein-zugang-zu-allen-funktionen")}`
+          )} | ${this.$t("login.meta.dein-zugang-zu-allen-funktionen")}`
       ),
       titleTemplate: null,
       meta: baseMeta,
@@ -496,7 +500,10 @@ export default {
   methods: {
     redirect() {
       this.$router
-        .push(this.$route.query?.redirectUrl || `/${this.$i18n.locale}/start`)
+        .push(
+          (this.$route.query?.redirectUrl as string) ||
+            `/${this.$i18n.locale}/start`
+        )
         .catch(() => {
           error(
             "Redundant navigation to redirect url or start",
@@ -504,26 +511,28 @@ export default {
           );
         });
     },
-    showFailMessage(message, title = null) {
+    showFailMessage(message: any, title: string | undefined = undefined) {
       MessagingService.showError(message, title);
     },
     onReset() {
-      this.username = null;
-      this.email = null;
-      this.password = null;
-      this.passwordRepetition = null;
+      this.username = undefined;
+      this.email = undefined;
+      this.password = undefined;
+      this.passwordRepetition = undefined;
       this.loading = false;
     },
     onLoginSubmit() {
+      if (!this.username || !this.password) return;
       this.loading = true;
 
-      AuthService.login(this.username, this.password, this.email)
+      AuthService.login(this.username, this.password)
         .then(() => {
           this.loading = false;
           window._paq.push(["trackGoal", 2]);
           this.$router
             .push(
-              this.$route.query?.redirectUrl || `/${this.$i18n.locale}/start`
+              (this.$route.query?.redirectUrl as string) ||
+                `/${this.$i18n.locale}/start`
             )
             .catch(() => {
               error(
@@ -535,15 +544,19 @@ export default {
         .catch((e) => {
           error(e, ERROR_CODES.LOGIN_FAILED);
           this.loading = false;
-          if (e.status == 400 && e.response.data.type == "EmailUnconfirmed")
-            this.$refs.confirmEmailModal.open(true);
+          if (e.status == 400 && e.response?.data?.type == "EmailUnconfirmed")
+            (
+              this.$refs.confirmEmailModal as InstanceType<
+                typeof ConfirmEmailModal
+              >
+            ).open(true);
           else {
             if (e.code == "ERR_NETWORK")
               return this.showFailMessage(
                 e.response?.data || this.$t("login.server-offline")
               );
             this.showFailMessage(
-              e.response.data ||
+              e.response?.data ||
                 this.$t(
                   "login.bitte-kontrolliere-nutzernamen-email-und-passwort"
                 )
@@ -552,6 +565,7 @@ export default {
         });
     },
     onRegisterSubmit() {
+      if (!this.username || !this.password || !this.email) return;
       this.loading = true;
 
       AuthService.register(this.username, this.password, this.email)
@@ -561,7 +575,8 @@ export default {
           // this.$refs.confirmEmailModal.open();
           this.$router
             .push(
-              this.$route.query?.redirectUrl || `/${this.$i18n.locale}/start`
+              (this.$route.query?.redirectUrl as string) ||
+                `/${this.$i18n.locale}/start`
             )
             .catch(() => {
               error(
@@ -580,6 +595,11 @@ export default {
           this.showFailMessage(this.$t("login.account-exists"));
         });
     },
+    openPasswordResetModal() {
+      (
+        this.$refs.passwordResetModal as InstanceType<typeof PasswordResetModal>
+      ).open();
+    },
     onPasswordReset() {
       log("A password link was sent to your email address. Check your inbox!");
       MessagingService.showSuccess(
@@ -591,7 +611,7 @@ export default {
       );
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

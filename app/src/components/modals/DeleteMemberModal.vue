@@ -17,8 +17,10 @@
   </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import MemberService from "@/services/MemberService";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * @module Modal:DeleteMemberModal
@@ -34,26 +36,26 @@ import MemberService from "@/services/MemberService";
  *  <Button @click="() => $refs.deleteMemberModal.open('abc')" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "DeleteMemberModal",
   emits: ["memberDeleted"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
-    deleteMemberId: null,
+    deleteMemberId: null as string | null,
   }),
   methods: {
-    open(deleteMemberId) {
+    open(deleteMemberId: string) {
       this.deleteMemberId = deleteMemberId;
-      this.$refs.modal.show();
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     resetMemberDeleteModal() {
       this.deleteMemberId = null;
     },
     deleteMember() {
-      MemberService.remove(this.deleteMemberId).then(() => {
+      MemberService.remove(this.deleteMemberId!).then(() => {
         this.$emit("memberDeleted", this.deleteMemberId);
       });
     },
   },
-};
+});
 </script>
