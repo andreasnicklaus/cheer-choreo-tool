@@ -66,18 +66,12 @@ export default class ChoreoPage extends TestPage {
     });
     await this.iClickButton(editLengthButton);
 
-    const achterInput = this.page
-      .locator("div")
-      .filter({ hasText: /^Eight$/ })
-      .getByRole("spinbutton");
+    const achterInput = this.page.getByTestId("choreoLength-achter-input");
 
     const newAchter = 1;
     await this.iFillInput(achterInput, newAchter.toString());
 
-    const countInput = this.page
-      .locator("div")
-      .filter({ hasText: /^Counts/ })
-      .getByRole("spinbutton");
+    const countInput = this.page.getByTestId("choreoLength-count-input");
 
     const newCount = 1;
     await this.iFillInput(countInput, newCount.toString());

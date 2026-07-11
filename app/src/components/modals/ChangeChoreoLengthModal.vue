@@ -26,6 +26,7 @@
           min="0"
           :state="achterIsValid"
           autofocus
+          data-testid="choreoLength-achter-input"
         />
       </BFormGroup>
       <BFormGroup
@@ -41,6 +42,7 @@
           min="0"
           max="7"
           :state="countIsValid"
+          data-testid="choreoLength-count-input"
         />
       </BFormGroup>
       <p class="text-muted">
