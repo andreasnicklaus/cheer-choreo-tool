@@ -6,12 +6,8 @@
     "scripts/jsdoc-strip-types.js"
   ],
   "source": {
-    "include": [
-      "src"
-    ],
-    "exclude": [
-      "public/docs"
-    ],
+    "include": ["src"],
+    "exclude": ["public/docs"],
     "includePattern": "\\.(vue|[jt]s)?$",
     "excludePattern": "(^|\\/|\\\\)_"
   },
