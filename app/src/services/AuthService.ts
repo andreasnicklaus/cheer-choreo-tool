@@ -304,6 +304,14 @@ class AuthService {
       return res.data;
     });
   }
+
+  generateMcpToken(expiresIn: string = "30d"): Promise<{ token: string }> {
+    debug("Generating MCP token with expiration", expiresIn);
+    return ax.post("/auth/mcp-token", { expiresIn }).then((res) => {
+      debug("Successfully generated MCP token");
+      return res.data;
+    });
+  }
 }
 
 export default new AuthService();

@@ -56,7 +56,14 @@
       "assistant": "Assistent",
       "athlete": "Athlet"
     },
-    "no-clubs-info": "Du gehörst noch keinem Verein an. Erstelle entweder einen oder bitte den Eigentümer deines Vereins, ihn mit dir zu teilen."
+    "no-clubs-info": "Du gehörst noch keinem Verein an. Erstelle entweder einen oder bitte den Eigentümer deines Vereins, ihn mit dir zu teilen.",
+    "ai-access": "KI-Zugang",
+    "ai-access-description": "Erstelle ein Zugriffstoken, um KI-Assistenten mit deinen Choreos zu verbinden.",
+    "ai-access-configure": "Einrichten",
+    "mcp-token-expiry-7d": "7 Tage gültig",
+    "mcp-token-expiry-30d": "30 Tage gültig",
+    "mcp-token-expiry-90d": "90 Tage gültig",
+    "mcp-token-expiry-365d": "1 Jahr gültig"
   },
   "achter": "Achter",
   "alle-auswaehlen": "Alle auswählen",
@@ -226,6 +233,10 @@
     "zusammenarbeiten": {
       "answer": "Ja, kannst du! Gehe in deine Kontoeinstellungen und öffne den **Zugriff**-Tab. Klicke auf **Benutzer hinzufügen**, gib ihre E-Mail-Adresse ein und wähle eine Rolle aus. Sie erhalten eine Einladung und müssen sie annehmen, bevor sie auf deine Daten zugreifen können.\n\n**Was jede Rolle tun kann:**\n- **Trainer** kann deine Choreografien ansehen, bearbeiten und löschen\n- **Assistent** kann deine Choreografien ansehen und bearbeiten\n- **Athlet** kann deine Choreografien ansehen\n\nDu kannst die Rolle jederzeit ändern oder den Zugriff entziehen.",
       "question": "Kann ich mit anderen zusammenarbeiten?"
+    },
+    "ki-nutzen": {
+      "answer": "Ja! Der Choreo Planer unterstützt **MCP** (Model Context Protocol), das es KI-Assistenten wie Claude, Cursor und anderen ermöglicht, sich direkt mit deinen Choreos zu verbinden. Um dies einzurichten, gehe in deine **Konto**-Einstellungen und öffne den **Gefahrenbereich**-Tab. Klicke unter **KI-Zugang** auf **Konfigurieren**, um ein Token zu generieren und die Konfiguration für dein KI-Tool zu erhalten.",
+      "question": "Kann ich KI nutzen, um mir bei der Erstellung meiner Choreos zu helfen?"
     }
   },
   "feedback": {
@@ -398,7 +409,10 @@
     "about-funktionen": "Was kann der Choreo Planer?",
     "about-funktionen-text": "Erstelle Choreografien mit intuitiven Tools zur Visualisierung von Aufstellungen, verwalte Mitglieder in Vereinen, Teams und Seasons, generiere PDFs von Countsheets und exportiere Animationsvideos, um deine Choreos einfach mit dem Team zu teilen.",
     "about-zielgruppe": "Für wen ist der Choreo Planer?",
-    "about-zielgruppe-text": "Der Choreo Planer ist für Trainerinnen und Trainer, die ihre Choreografieplanung digitalisieren und vereinfachen möchten. Die Endprodukte (Countsheets, Bilder und Videos) können an die Teammitglieder weitergegeben werden, um das Lernen der Choreos zu erleichtern."
+    "about-zielgruppe-text": "Der Choreo Planer ist für Trainerinnen und Trainer, die ihre Choreografieplanung digitalisieren und vereinfachen möchten. Die Endprodukte (Countsheets, Bilder und Videos) können an die Teammitglieder weitergegeben werden, um das Lernen der Choreos zu erleichtern.",
+    "ai-supported-title": "KI-gestützte Choreo-Erstellung",
+    "ai-supported-description": "Lass KI-Agenten deine Choreografien über das Model Context Protocol (MCP) erstellen und verwalten. Von Vereinen und Teams bis hin zu Aufstellungen und Positionen — alles in natürlicher Sprache.",
+    "ai-supported-cta": "Loslegen"
   },
   "impressumView": {
     "angaben-gemaess-5-tmg": "Angaben gemäß § 5 TMG",
@@ -646,6 +660,25 @@
     },
     "loading": {
       "wird-geladen": "Wird geladen"
+    },
+    "mcp-info": {
+      "title": "Mit KI arbeiten",
+      "description": "Verbinde KI-Assistenten wie Claude, Cursor oder OpenCode mit deinen Choreos. Einmal eingerichtet, kannst du Choreos gemeinsam mit KI planen, bearbeiten und verfeinern — direkt aus deinen Lieblingstools.",
+      "server-url": "Server-URL",
+      "server-url-description": "Verwende diese URL, um dich mit dem Server zu verbinden:",
+      "authentication": "Zugriffstoken",
+      "authentication-description": "Erstelle ein Zugriffstoken, um dich beim Server zu authentifizieren.",
+      "generate-token": "Token erstellen",
+      "token-success": "Token erfolgreich erstellt! Kopiere ihn jetzt und speichere ihn sicher.",
+      "token-warning": "Dieses Token wird nur einmal angezeigt. Speichere es an einem sicheren Ort!",
+      "configuration": "Client-Konfiguration",
+      "configuration-description": "Kopiere die Einstellungen für dein KI-Tool in dessen Konfiguration:",
+      "claude-desktop": "Claude Desktop",
+      "opencode": "OpenCode",
+      "cursor": "Cursor",
+      "generic": "Generisch",
+      "security": "Sicherheit",
+      "security-description": "Gehe mit deinem Token wie mit einem Passwort um. Teile es niemals mit anderen und speichere es an einem sicheren Ort."
     },
     "mobile-choreo-edit": {
       "am-handy-nicht-moeglich": "Am Handy nicht möglich",

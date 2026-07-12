@@ -206,11 +206,13 @@ export default defineComponent({
     },
   },
   emits: ["positionChange"],
-  data: () => ({
-    selectedMemberId: null as string | null,
-    snappingDistance: 2,
-    positions: [] as Position[],
-  }),
+  data() {
+    return {
+      selectedMemberId: null as string | null,
+      snappingDistance: 2,
+      positions: [...(this.currentPositions || [])] as Position[],
+    };
+  },
   computed: {
     _height(): number {
       switch (this.matType) {

@@ -827,6 +827,23 @@
             {{ $t("auth.connectedViaProvider", { provider: user.provider }) }}
           </BBadge>
         </BFormGroup>
+        <hr />
+        <BFormGroup
+          label-cols="12"
+          label-cols-md="4"
+          label-cols-lg="2"
+          :label="$t('accountView.ai-access')"
+          label-class="label-with-colon"
+        >
+          <BButton variant="secondary" class="mb-2" @click="openMcpInfoModal">
+            <IBiGear />
+            {{ $t("accountView.ai-access-configure") }}
+          </BButton>
+          <div class="text-muted small">
+            {{ $t("accountView.ai-access-description") }}
+          </div>
+        </BFormGroup>
+        <hr />
         <BFormGroup
           label-cols="12"
           label-cols-md="4"
@@ -863,6 +880,7 @@
     <ChangePasswordModal ref="changePasswordModal" />
 
     <DeleteAccountModal ref="deleteAccountModal" />
+    <McpInfoModal ref="mcpInfoModal" />
   </BContainer>
 </template>
 
@@ -873,6 +891,7 @@ import AuthService from "@/services/AuthService";
 import ChangePasswordModal from "@/components/modals/ChangePasswordModal.vue";
 import DeleteAccountModal from "@/components/modals/DeleteAccountModal.vue";
 import DeleteClubModal from "@/components/modals/DeleteClubModal.vue";
+import McpInfoModal from "@/components/modals/McpInfoModal.vue";
 import toTimeAgo from "@/utils/time";
 import ClubService from "@/services/ClubService";
 import UserAccessService from "@/services/UserAccessService";
@@ -979,6 +998,7 @@ export default defineComponent({
     CreateClubModal,
     DeleteClubModal,
     NewVersionBadge,
+    McpInfoModal,
   },
   setup() {
     const { t } = useI18n();
@@ -1440,6 +1460,9 @@ export default defineComponent({
       (
         this.$refs.deleteAccountModal as InstanceType<typeof DeleteAccountModal>
       ).open();
+    },
+    openMcpInfoModal() {
+      (this.$refs.mcpInfoModal as InstanceType<typeof McpInfoModal>).open();
     },
   },
 });

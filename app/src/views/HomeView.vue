@@ -206,6 +206,31 @@
       </BRow>
     </section>
 
+    <section id="section-ai" class="mb-3">
+      <BRow class="justify-content-center">
+        <BCol cols="12" lg="8" class="text-center">
+          <h2 class="mb-2">
+            <IBiStars class="text-primary me-2" />{{
+              $t("Home.ai-supported-title")
+            }}
+            <IBiStars class="text-primary ms-2" />
+          </h2>
+          <p class="text-muted mb-3">
+            {{ $t("Home.ai-supported-description") }}
+          </p>
+          <BButton
+            variant="primary"
+            :to="{
+              name: 'Login',
+              params: { locale: $i18n.locale },
+            }"
+          >
+            {{ $t("Home.ai-supported-cta") }}
+          </BButton>
+        </BCol>
+      </BRow>
+    </section>
+
     <div id="featureCallouts1" class="featureCallouts d-none d-md-flex">
       <BCol class="featureCallout h3">
         <IBiPeopleFill class="text-info" /><br />
@@ -1147,6 +1172,13 @@ section {
   }
   & > .row {
     row-gap: 10vh;
+  }
+  &#section-ai {
+    min-height: auto;
+    padding: 2rem 0;
+    & > .row {
+      row-gap: 0;
+    }
   }
 }
 

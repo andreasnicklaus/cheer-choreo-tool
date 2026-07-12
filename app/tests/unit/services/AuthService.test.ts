@@ -433,6 +433,48 @@ describe("AuthService", () => {
     });
   });
 
+  describe("generateMcpToken", () => {
+    test("should call the MCP token endpoint with default expiry", async () => {
+      ax.post.mockResolvedValue({
+        data: { token: "mcp-test-token" },
+        status: 200,
+      });
+
+      const result = await AuthService.generateMcpToken();
+
+      expect(ax.post).toHaveBeenCalledTimes(1);
+      expect(ax.post).toHaveBeenCalledWith("/auth/mcp-token", {
+        expiresIn: "30d",
+      });
+      expect(result).toEqual({ token: "mcp-test-token" });
+    });
+
+    test("should call the MCP token endpoint with custom expiry", async () => {
+      ax.post.mockResolvedValue({
+        data: { token: "mcp-7d-token" },
+        status: 200,
+      });
+
+      const result = await AuthService.generateMcpToken("7d");
+
+      expect(ax.post).toHaveBeenCalledTimes(1);
+      expect(ax.post).toHaveBeenCalledWith("/auth/mcp-token", {
+        expiresIn: "7d",
+      });
+      expect(result).toEqual({ token: "mcp-7d-token" });
+    });
+
+    test("should throw error on MCP token request failure", async () => {
+      ax.post.mockRejectedValue(new Error("Request failed"));
+
+      await expect(AuthService.generateMcpToken()).rejects.toThrow(
+        "Request failed"
+      );
+
+      expect(ax.post).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe("resendEmailConfirmationLink", () => {
     test("should call the resend email confirmation link endpoint", async () => {
       ax.get.mockResolvedValue({

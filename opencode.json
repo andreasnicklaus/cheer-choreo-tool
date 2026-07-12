@@ -3,7 +3,11 @@
   "mcp": {
     "chrome-devtools": {
       "type": "local",
-      "command": ["npx", "-y", "chrome-devtools-mcp@latest"],
+      "command": [
+        "npx",
+        "-y",
+        "chrome-devtools-mcp@latest"
+      ],
       "enabled": true
     },
     "github": {
@@ -26,8 +30,19 @@
     },
     "context7": {
       "type": "local",
-      "command": ["npx", "-y", "@upstash/context7-mcp@latest"],
+      "command": [
+        "npx",
+        "-y",
+        "@upstash/context7-mcp@latest"
+      ],
       "enabled": true
+    },
+    "cheer-choreo-dev": {
+      "type": "remote",
+      "url": "http://localhost:3000/mcp",
+      "headers": {
+        "Authorization": "Bearer <YOUR-JWT-TOKEN>"
+      }
     }
   }
 }
