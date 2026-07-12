@@ -121,6 +121,16 @@ describe("MCP guide resource", () => {
     await server.close();
   });
 
+  test("server provides instructions to guide agents", () => {
+    const instructions = client.getInstructions();
+    expect(instructions).toBeDefined();
+    expect(instructions).toContain(
+      "read the usage guide resource",
+    );
+    expect(instructions).toContain("guide://cheer-choreo-tool");
+    expect(instructions).toContain("data model hierarchy");
+  });
+
   test("lists the guide resource", async () => {
     const { resources } = await client.listResources();
     expect(resources).toHaveLength(1);
@@ -161,5 +171,24 @@ describe("MCP guide resource", () => {
     const content = result.contents[0] as { text: string };
 
     expect(content.text).toBe(guideFile);
+  });
+
+  test("lists the read-guide prompt", async () => {
+    const { prompts } = await client.listPrompts();
+    expect(prompts).toHaveLength(1);
+    expect(prompts[0].name).toBe("read-guide");
+    expect(prompts[0].description).toContain("usage guide");
+  });
+
+  test("getPrompt returns guide content as messages", async () => {
+    const result = await client.getPrompt({ name: "read-guide" });
+    expect(result.messages).toHaveLength(1);
+    expect(result.messages[0].role).toBe("assistant");
+
+    const content = result.messages[0].content as { type: string; text: string };
+    expect(content.type).toBe("text");
+    expect(content.text).toContain("# Cheer Choreo Tool — MCP Usage Guide");
+    expect(content.text).toContain("## Data Model");
+    expect(content.text).toContain("## Typical Workflow");
   });
 });

@@ -807,11 +807,13 @@ function loadGuideContent(): string {
   return fs.readFileSync(guidePath, "utf8");
 }
 
+const MCP_INSTRUCTIONS = `IMPORTANT: Before using any Cheer Choreo Tool, always read the usage guide resource at "guide://cheer-choreo-tool". The guide describes the data model hierarchy (Club → Team → SeasonTeam → Member/Choreo → Hit/Lineup → Position), required tool call order, parameter formats, and typical workflows. Failing to read the guide first will result in incorrect API calls — e.g. missing required IDs, wrong hierarchy order, or invalid count ranges.`;
+
 export function createMcpServer(): McpServer {
-  const server = new McpServer({
-    name: "cheer-choreo-tool",
-    version,
-  });
+  const server = new McpServer(
+    { name: "cheer-choreo-tool", version },
+    { instructions: MCP_INSTRUCTIONS },
+  );
 
   for (const [name, def] of Object.entries(toolCallbacks)) {
     server.tool(name, def.description, def.schema, def.handler);
@@ -829,6 +831,20 @@ export function createMcpServer(): McpServer {
     },
     async (uri) => ({
       contents: [{ uri: uri.href, text: guideContent }],
+    }),
+  );
+
+  server.registerPrompt(
+    "read-guide",
+    {
+      title: "Read Usage Guide",
+      description:
+        "Read the Cheer Choreo Tool usage guide covering the data model, tools, and workflows",
+    },
+    async () => ({
+      messages: [
+        { role: "assistant", content: { type: "text", text: guideContent } },
+      ],
     }),
   );
 
