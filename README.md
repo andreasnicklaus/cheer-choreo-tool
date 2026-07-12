@@ -123,8 +123,11 @@ See [LICENSE](LICENSE) for the license of this project.
 
 ## :sparkles: Version history
 
-### 1.0.0 - 2026-05-27 (alias: 0.13.2)
+### 1.0.0 -  2026-07-12 (alias: 0.13.3)
 
+- MCP support
+- Migrating Vue to Typescript
+- Visual bugfixes
 - Social Login: Allow users to log in via Google, Github or Facebook
 - Sharing access to different users in order to work on the same clubs, teams and choreos
 

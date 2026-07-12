@@ -89,7 +89,7 @@ export default class AppPage extends TestPage {
 
   iCheckAppVersion() {
     return Promise.all([
-      expect(this.page.getByText("Version:")).toContainText("0.13.2"),
+      expect(this.page.getByText("Version:")).toContainText("0.13.3"),
     ]);
   }
 
@@ -110,7 +110,7 @@ export default class AppPage extends TestPage {
     await this.page.getByTestId("serverVersionTooltip").hover();
     return expect(
       this.page.getByText(
-        `Die Version der Webseite (0.13.2) entspricht nicht der Version der Server (${serverVersion})!`
+        `Die Version der Webseite (0.13.3) entspricht nicht der Version der Server (${serverVersion})!`
       )
     ).toBeVisible();
   }
