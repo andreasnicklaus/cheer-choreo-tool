@@ -124,9 +124,7 @@ describe("MCP guide resource", () => {
   test("server provides instructions to guide agents", () => {
     const instructions = client.getInstructions();
     expect(instructions).toBeDefined();
-    expect(instructions).toContain(
-      "read the usage guide resource",
-    );
+    expect(instructions).toContain("read the usage guide resource");
     expect(instructions).toContain("guide://cheer-choreo-tool");
     expect(instructions).toContain("data model hierarchy");
   });
@@ -185,7 +183,10 @@ describe("MCP guide resource", () => {
     expect(result.messages).toHaveLength(1);
     expect(result.messages[0].role).toBe("assistant");
 
-    const content = result.messages[0].content as { type: string; text: string };
+    const content = result.messages[0].content as {
+      type: string;
+      text: string;
+    };
     expect(content.type).toBe("text");
     expect(content.text).toContain("# Cheer Choreo Tool — MCP Usage Guide");
     expect(content.text).toContain("## Data Model");
