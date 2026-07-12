@@ -233,6 +233,10 @@
     "zusammenarbeiten": {
       "answer": "Ja, kannst du! Gehe in deine Kontoeinstellungen und öffne den **Zugriff**-Tab. Klicke auf **Benutzer hinzufügen**, gib ihre E-Mail-Adresse ein und wähle eine Rolle aus. Sie erhalten eine Einladung und müssen sie annehmen, bevor sie auf deine Daten zugreifen können.\n\n**Was jede Rolle tun kann:**\n- **Trainer** kann deine Choreografien ansehen, bearbeiten und löschen\n- **Assistent** kann deine Choreografien ansehen und bearbeiten\n- **Athlet** kann deine Choreografien ansehen\n\nDu kannst die Rolle jederzeit ändern oder den Zugriff entziehen.",
       "question": "Kann ich mit anderen zusammenarbeiten?"
+    },
+    "ki-nutzen": {
+      "answer": "Ja! Der Choreo Planer unterstützt **MCP** (Model Context Protocol), das es KI-Assistenten wie Claude, Cursor und anderen ermöglicht, sich direkt mit deinen Choreos zu verbinden. Um dies einzurichten, gehe in deine **Konto**-Einstellungen und öffne den **Gefahrenbereich**-Tab. Klicke unter **KI-Zugang** auf **Konfigurieren**, um ein Token zu generieren und die Konfiguration für dein KI-Tool zu erhalten.",
+      "question": "Kann ich KI nutzen, um mir bei der Erstellung meiner Choreos zu helfen?"
     }
   },
   "feedback": {

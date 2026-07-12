@@ -214,6 +214,10 @@ export default defineComponent({
               title: this.$t("faq.zusammenarbeiten.question"),
               markdown: this.$t("faq.zusammenarbeiten.answer"),
             },
+            {
+              title: this.$t("faq.ki-nutzen.question"),
+              markdown: this.$t("faq.ki-nutzen.answer"),
+            },
           ],
         },
       ].sort((a, b) => a.order - b.order);
