@@ -31,6 +31,19 @@
 
 [![](https://img.shields.io/badge/Visit%20www.choreo--planer.de-orange?style=for-the-badge&logo=googlechrome&logoColor=white)](https://www.choreo-planer.de)
 
+## Features
+
+- **Choreography Planning** – Create and manage choreos with counts, hits, lineups, and member positions on multiple mat types
+- **Member Management** – Organize teams, season squads, and participants across clubs
+- **Season Transitions** – Start new seasons, carry over rosters, and define custom seasons
+- **File Generation** – Export countsheets as PDF, lineups as images, and videos as MP4/WebM
+- **Video Export** – Generate choreo videos locally in the browser with customizable duration and format
+- **Sharing & Collaboration** – Grant access to coaches and team members for real-time collaboration
+- **Personalization** – Brand with club logos, team colors, and custom mat layouts
+- **AI-Powered (MCP)** – Connect AI agents via the Model Context Protocol to create and manage choreos programmatically
+- **Data Security** – Encrypted transfer, password-protected access, and regular backups
+- **Multi-Language** – Full English and German support
+
 ## Architecture
 
 ```mermaid

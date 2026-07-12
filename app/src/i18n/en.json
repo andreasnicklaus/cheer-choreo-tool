@@ -409,7 +409,10 @@
     "about-funktionen": "What can Choreo Planner do?",
     "about-funktionen-text": "Create choreographies with intuitive tools for visualizing formations, manage members in clubs, teams, and seasons, generate PDFs of countsheets, and export animation videos to easily share your choreos with the team.",
     "about-zielgruppe": "Who is Choreo Planner for?",
-    "about-zielgruppe-text": "Choreo Planner is for coaches who want to digitize and simplify their choreography planning. The end products (countsheets, images, and videos) can be shared with team members to facilitate learning the choreographies."
+    "about-zielgruppe-text": "Choreo Planner is for coaches who want to digitize and simplify their choreography planning. The end products (countsheets, images, and videos) can be shared with team members to facilitate learning the choreographies.",
+    "ai-supported-title": "AI-Powered Choreo Creation",
+    "ai-supported-description": "Let AI agents create and manage your choreographies through the Model Context Protocol (MCP). From clubs and teams to lineups and positions — all via natural language.",
+    "ai-supported-cta": "Get started"
   },
   "impressumView": {
     "angaben-gemaess-5-tmg": "Information according to § 5 TMG",
