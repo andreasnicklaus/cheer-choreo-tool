@@ -41,7 +41,7 @@
       "type": "remote",
       "url": "http://localhost:3000/mcp",
       "headers": {
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiJjMmVjNjljMy1lY2EwLTRiNTctYTBiMS05NTZmMWM4YzA4MzkiLCJpYXQiOjE3ODM3OTg1MTksImV4cCI6MTc4NjM5MDUxOX0.E_2F5AGEcz9bORaaLbAd6Y4iXIiIUy-zQtuDMSrXCMI"
+        "Authorization": "Bearer <YOUR-JWT-TOKEN>"
       }
     }
   }
