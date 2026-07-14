@@ -1,5 +1,6 @@
 import { defineConfig } from "vitest/config";
 import { readFileSync, existsSync, writeFileSync } from "fs";
+import { fileURLToPath, URL } from "node:url";
 import vue from "@vitejs/plugin-vue";
 import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
 import Icons from "unplugin-icons/vite";
@@ -50,7 +51,9 @@ export default defineConfig({
     port: 8080,
   },
   resolve: {
-    alias: {},
+    alias: {
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+    },
     tsconfigPaths: true,
   },
   optimizeDeps: {
