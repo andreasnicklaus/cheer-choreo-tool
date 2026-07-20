@@ -790,24 +790,34 @@ export const toolCallbacks: Record<string, ToolDef> = {
 
 const { version } = require("../../package.json");
 
-function loadGuideContent(): string {
-  const guideCandidates = [
-    path.resolve(__dirname, "resources", "guide.md"),
-    path.resolve(__dirname, "..", "..", "src", "mcp", "resources", "guide.md"),
+function loadResourceFiles(): Record<string, string> {
+  const resourceCandidates = [
+    path.resolve(__dirname, "resources"),
+    path.resolve(__dirname, "..", "..", "src", "mcp", "resources"),
   ];
 
-  const guidePath = guideCandidates.find((candidate) =>
+  const resourceDir = resourceCandidates.find((candidate) =>
     fs.existsSync(candidate),
   );
 
-  if (!guidePath) {
-    throw new Error("Unable to locate MCP guide resource file");
+  if (!resourceDir) {
+    throw new Error("Unable to locate MCP resource directory");
   }
 
-  return fs.readFileSync(guidePath, "utf8");
+  const files = ["guide.md", "hits.md", "lineups.md"];
+  const resources: Record<string, string> = {};
+
+  for (const file of files) {
+    const filePath = path.join(resourceDir, file);
+    if (fs.existsSync(filePath)) {
+      resources[file] = fs.readFileSync(filePath, "utf8");
+    }
+  }
+
+  return resources;
 }
 
-const MCP_INSTRUCTIONS = `IMPORTANT: Before using any Cheer Choreo Tool, always read the usage guide resource at "guide://cheer-choreo-tool". The guide describes the data model hierarchy (Club → Team → SeasonTeam → Member/Choreo → Hit/Lineup → Position), required tool call order, parameter formats, and typical workflows. Failing to read the guide first will result in incorrect API calls — e.g. missing required IDs, wrong hierarchy order, or invalid count ranges.`;
+const MCP_INSTRUCTIONS = `IMPORTANT: Before using any Cheer Choreo Tool, always read the usage guide resources. Read ALL THREE: "guide://cheer-choreo-tool/guide", "guide://cheer-choreo-tool/hits", and "guide://cheer-choreo-tool/lineups". Together they describe: the data model hierarchy (Club → Team → SeasonTeam → Member/Choreo → Hit/Lineup → Position), hit naming conventions, lineup rules, position tables, required tool call order, parameter formats, and typical workflows. Key concept: Hits and Lineups are independent entities — hits describe actions at a count, lineups describe formations over a count range. They do not reference each other. Always clarify with the user whether they are digitizing an existing choreo or starting from scratch before creating data.`;
 
 export function createMcpServer(): McpServer {
   const server = new McpServer(
@@ -819,31 +829,63 @@ export function createMcpServer(): McpServer {
     server.tool(name, def.description, def.schema, def.handler);
   }
 
-  const guideContent = loadGuideContent();
+  const resources = loadResourceFiles();
 
-  server.registerResource(
-    "guide",
-    "guide://cheer-choreo-tool",
+  const resourceDefs: Array<{
+    name: string;
+    path: string;
+    description: string;
+  }> = [
     {
+      name: "guide",
+      path: "guide",
       description:
-        "Usage guide for the Cheer Choreo Tool MCP — describes the data model, available tools, parameters, and typical workflows",
-      mimeType: "text/markdown",
+        "Usage guide for the Cheer Choreo Tool MCP — data model, available tools, parameters, and typical workflows",
     },
-    async (uri) => ({
-      contents: [{ uri: uri.href, text: guideContent }],
-    }),
-  );
+    {
+      name: "hits",
+      path: "hits",
+      description:
+        "Hit naming conventions — pre-directions, pre-actions, actions, post-directions, standalone hits, and examples",
+    },
+    {
+      name: "lineups",
+      path: "lineups",
+      description:
+        "Lineup rules and position tables — count ranges, formation patterns by participant count, and best practices",
+    },
+  ];
+
+  for (const def of resourceDefs) {
+    const content = resources[`${def.name}.md`];
+    if (!content) continue;
+
+    const uri = `guide://cheer-choreo-tool/${def.path}`;
+    server.registerResource(
+      def.name,
+      uri,
+      {
+        description: def.description,
+        mimeType: "text/markdown",
+      },
+      async (resUri) => ({
+        contents: [{ uri: resUri.href, text: content }],
+      }),
+    );
+  }
+
+  const allContent = Object.values(resources).join("\n\n");
 
   server.registerPrompt(
     "read-guide",
     {
       title: "Read Usage Guide",
       description:
-        "Read the Cheer Choreo Tool usage guide covering the data model, tools, and workflows",
+        "Read the Cheer Choreo Tool usage guide covering the data model, hit naming, lineup rules, and workflows",
     },
     async () => ({
       messages: [
-        { role: "assistant", content: { type: "text", text: guideContent } },
+        { role: "assistant", content: { type: "text", text: allContent } },
       ],
     }),
   );

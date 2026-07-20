@@ -4,6 +4,29 @@
 
 This MCP server provides access to the Cheer Choreo Tool, a choreography planning application for cheerleading teams. It exposes tools for managing clubs, teams, seasons, members, choreographies, hits, lineups, and positions.
 
+## Core Entities: Hits and Lineups
+
+A choreography consists of two independent core entities: **hits** and **lineups**. Understanding their independence is essential.
+
+- **Hits** describe _actions_ — named events like stunts, skills, or movements at a specific count. A hit is never a formation name.
+- **Lineups** describe _formations_ — count ranges during which a set of member positions is held on the mat.
+
+**They are independent.** A hit can exist without a lineup. A lineup can exist without a hit. They do not reference each other. You do not need to create a lineup before creating a hit, and hits do not need to correspond to lineup boundaries.
+
+For detailed hit naming conventions, see the hits sub-guide. For lineup rules, formation patterns, and position tables, see the lineups sub-guide.
+
+## Agent Interaction Guidelines
+
+Before creating any choreography data, the agent should clarify the user's intent:
+
+1. **Ask what the choreo is for.** Is it for a competition, training session, showcase, or something else? This affects the length, complexity, and style of the choreography.
+2. **Ask whether the user already has a choreo they want to digitize, or is starting from scratch.**
+   - **Digitizing an existing choreo:** The user has positions and hits planned on paper, in another tool, or in their head. The workflow is bulk-creating positions and hits to match the existing plan. Ask the user to describe or share their choreography plan (e.g. count-by-count breakdown, formation diagrams).
+   - **Starting from scratch:** The user needs guidance on building a choreography from the beginning. Walk them through the workflow step by step — choosing a mat type, creating the choreo, adding members, then building lineups and hits iteratively.
+3. **Ask about team size and member count** before creating any positions. The member count directly determines which formation patterns are available.
+
+Only after these questions are answered should the agent begin creating clubs, teams, members, or choreographies.
+
 ## Data Model
 
 The entities form a hierarchy:
@@ -221,118 +244,14 @@ Here's a concrete example of setting up a choreography:
 
 After creating entities, use `get_*` to fetch full details with nested relations.
 
-## Choreography Length Guide
-
-| Duration | Counts  | Description                           |
-| -------- | ------- | ------------------------------------- |
-| Short    | 8–64    | Quick intro/outro, transition segment |
-| Medium   | 64–128  | Standard routine segment              |
-| Long     | 128-384 | Full competition routine              |
-| Extended | 384+    | Large-scale performance piece         |
-
-Most competition choreos fall in the 64–128 count range. When creating a choreo, consider the music structure and how many formation changes are needed.
-
-## Position Combinations by Participant Count
-
-Use these reference patterns when creating positions for lineups. All coordinates assume the mat coordinate system (X: 0=right, 100=left; Y: 0=front, 100=back). Center the formation on the mat by adjusting X/Y offsets.
-
-### Single & Pairs (1–2)
-
-| Count | Pattern      | Positions          |
-| ----- | ------------ | ------------------ |
-| 1     | Center       | (50, 50)           |
-| 2     | Side by side | (40, 50), (60, 50) |
-
-### Triangles & Small Groups (3–5)
-
-| Count | Pattern  | Positions                                        |
-| ----- | -------- | ------------------------------------------------ |
-| 3     | Triangle | (50, 40), (40, 60), (60, 60)                     |
-| 4     | Diamond  | (50, 30), (35, 50), (65, 50), (50, 70)           |
-| 4     | Square   | (40, 40), (60, 40), (40, 60), (60, 60)           |
-| 5     | Cross    | (50, 30), (30, 50), (50, 50), (70, 50), (50, 70) |
-| 5     | Pentagon | (50, 30), (25, 45), (75, 55), (35, 70), (65, 70) |
-
-### Medium Groups (6–10)
-
-| Count | Pattern          | Positions                                                                                          |
-| ----- | ---------------- | -------------------------------------------------------------------------------------------------- |
-| 6     | 2×3 Grid         | (35, 35), (50, 35), (65, 35), (35, 65), (50, 65), (65, 65)                                         |
-| 6     | Hexagon          | (50, 30), (25, 40), (75, 40), (25, 60), (75, 60), (50, 70)                                         |
-| 7     | Diamond + center | (50, 25), (30, 40), (50, 40), (70, 40), (30, 60), (50, 60), (70, 60)                               |
-| 8     | 2×4 Grid         | (30, 30), (45, 30), (55, 30), (70, 30), (30, 70), (45, 70), (55, 70), (70, 70)                     |
-| 8     | Octagon          | (40, 30), (60, 30), (25, 40), (75, 40), (25, 60), (75, 60), (40, 70), (60, 70)                     |
-| 9     | 3×3 Grid         | (30, 30), (50, 30), (70, 30), (30, 50), (50, 50), (70, 50), (30, 70), (50, 70), (70, 70)           |
-| 10    | 2×5 Grid         | (20, 30), (35, 30), (50, 30), (65, 30), (80, 30), (20, 70), (35, 70), (50, 70), (65, 70), (80, 70) |
-
-### Large Groups (11–16)
-
-| Count | Pattern            | Positions                                                                                                                                                      |
-| ----- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 11    | Diamond expand     | (50, 20), (30, 30), (50, 30), (70, 30), (20, 50), (50, 50), (80, 50), (30, 70), (50, 70), (70, 70), (50, 80)                                                   |
-| 12    | 3×4 Grid           | (25, 30), (42, 30), (58, 30), (75, 30), (25, 50), (42, 50), (58, 50), (75, 50), (25, 70), (42, 70), (58, 70), (75, 70)                                         |
-| 12    | Hexagon double     | (35, 30), (65, 30), (20, 50), (80, 50), (35, 70), (65, 70), (40, 45), (60, 45), (50, 50), (40, 55), (60, 55), (35, 50)                                         |
-| 13    | Diamond + 3×3 core | (50, 20), (30, 35), (50, 35), (70, 35), (20, 50), (40, 50), (50, 50), (60, 50), (80, 50), (30, 65), (50, 65), (70, 65), (50, 80)                               |
-| 14    | V formation        | (50, 25), (35, 35), (65, 35), (25, 45), (50, 45), (75, 45), (20, 55), (50, 55), (80, 55), (25, 65), (75, 65), (35, 75), (65, 75), (50, 85)                     |
-| 15    | 3×5 Grid           | (20, 25), (35, 25), (50, 25), (65, 25), (80, 25), (20, 50), (35, 50), (50, 50), (65, 50), (80, 50), (20, 75), (35, 75), (50, 75), (65, 75), (80, 75)           |
-| 16    | 4×4 Grid           | (25, 25), (42, 25), (58, 25), (75, 25), (25, 42), (42, 42), (58, 42), (75, 42), (25, 58), (42, 58), (58, 58), (75, 58), (25, 75), (42, 75), (58, 75), (75, 75) |
-
-### Very Large Groups (17–25)
-
-| Count | Pattern                | Positions                                                                                                                                                                                                                                                |
-| ----- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 17    | Diamond + 4×4          | (50, 20), (30, 30), (50, 30), (70, 30), (20, 40), (40, 40), (60, 40), (80, 40), (50, 50), (20, 60), (40, 60), (60, 60), (80, 60), (30, 70), (50, 70), (70, 70), (50, 80)                                                                                 |
-| 18    | 3×6 Grid               | (15, 25), (30, 25), (45, 25), (55, 25), (70, 25), (85, 25), (15, 50), (30, 50), (45, 50), (55, 50), (70, 50), (85, 50), (15, 75), (30, 75), (45, 75), (55, 75), (70, 75), (85, 75)                                                                       |
-| 19    | Chevron                | (50, 20), (35, 30), (65, 30), (25, 40), (50, 40), (75, 40), (15, 50), (40, 50), (60, 50), (85, 50), (25, 60), (50, 60), (75, 60), (35, 70), (65, 70), (50, 80), (50, 35), (50, 65), (50, 45)                                                             |
-| 20    | 4×5 Grid               | (15, 25), (30, 25), (50, 25), (70, 25), (85, 25), (15, 40), (30, 40), (50, 40), (70, 40), (85, 40), (15, 60), (30, 60), (50, 60), (70, 60), (85, 60), (15, 75), (30, 75), (50, 75), (70, 75), (85, 75)                                                   |
-| 21    | Diamond + 4×4 + center | (50, 15), (30, 25), (50, 25), (70, 25), (20, 35), (40, 35), (60, 35), (80, 35), (15, 50), (35, 50), (50, 50), (65, 50), (85, 50), (20, 65), (40, 65), (60, 65), (80, 65), (30, 75), (50, 75), (70, 75), (50, 85)                                         |
-| 22    | 2×11 spread            | (10, 30), (20, 30), (30, 30), (40, 30), (50, 30), (60, 30), (70, 30), (80, 30), (90, 30), (95, 30), (5, 30), (10, 70), (20, 70), (30, 70), (40, 70), (50, 70), (60, 70), (70, 70), (80, 70), (90, 70), (95, 70), (5, 70)                                 |
-| 23    | W formation            | (30, 20), (70, 20), (20, 30), (40, 30), (60, 30), (80, 30), (30, 40), (50, 40), (70, 40), (15, 50), (35, 50), (50, 50), (65, 50), (85, 50), (30, 60), (50, 60), (70, 60), (20, 70), (40, 70), (60, 70), (80, 70), (30, 80), (70, 80)                     |
-| 24    | 4×6 Grid               | (15, 20), (30, 20), (45, 20), (55, 20), (70, 20), (85, 20), (15, 40), (30, 40), (45, 40), (55, 40), (70, 40), (85, 40), (15, 60), (30, 60), (45, 60), (55, 60), (70, 60), (85, 60), (15, 80), (30, 80), (45, 80), (55, 80), (70, 80), (85, 80)           |
-| 25    | 5×5 Grid               | (20, 20), (35, 20), (50, 20), (65, 20), (80, 20), (20, 35), (35, 35), (50, 35), (65, 35), (80, 35), (20, 50), (35, 50), (50, 50), (65, 50), (80, 50), (20, 65), (35, 65), (50, 65), (65, 65), (80, 65), (20, 80), (35, 80), (50, 80), (65, 80), (80, 80) |
-
-### Cheer Stunt Groups (4–5 participants)
-
-For counts with hits, positions typically represent stunt groups positioned close together:
-
-| Count | Pattern               | Positions                                                                              |
-| ----- | --------------------- | -------------------------------------------------------------------------------------- |
-| 4     | Stunt group           | Back: (50, 70), Base L: (35, 50), Base R: (65, 50), Flyer: (50, 30)                    |
-| 5     | Stunt group + spotter | Back: (50, 70), Base L: (35, 50), Base R: (65, 50), Flyer: (50, 30), Spotter: (65, 70) |
-
-Multiple stunt groups should be spaced evenly across the mat (e.g., two groups at X=30 and X=70).
-
-### Concentric Circles
-
-| Count | Pattern           | Positions                                                                                                        |
-| ----- | ----------------- | ---------------------------------------------------------------------------------------------------------------- |
-| 5     | 1 inner + 4 outer | Inner: (50, 50), Outer: (35, 35), (35, 65), (65, 35), (65, 65)                                                   |
-| 8     | 1 inner + 7 outer | Inner: (50, 50), Outer: (30, 50), (38, 25), (38, 75), (50, 15), (50, 85), (62, 25), (62, 75)                     |
-| 9     | 1 inner + 8 outer | Inner: (50, 50), Outer: (30, 35), (30, 50), (30, 65), (50, 25), (50, 75), (70, 35), (70, 50), (70, 65)           |
-| 10    | 2 inner + 8 outer | Inner: (45, 50), (55, 50), Outer: (30, 30), (30, 50), (30, 70), (50, 20), (50, 80), (70, 30), (70, 50), (70, 70) |
-
-### Tips for Position Combinations
-
-- **Mix patterns across lineups:** Use different formations (grid → diamond → V) to keep the choreo visually interesting.
-- **Leave gaps:** Not every lineup needs positions for all participants. Some members may exit the mat or hold positions from a previous lineup.
-- **Stunt groups:** For 4–5 person stunt groups, keep members close together with the flyer elevated (front/center), bases on sides, and back/spotter behind.
-- **Adjust spacing:** These are reference coordinates. Scale positions closer together or further apart based on the mat type and team size.
-
 ## Best Practices
-
-### Lineup & Position Management
-
-- **Lineups need positions to be meaningful.** Always create positions for a lineup after creating it — an empty lineup is just a count range with no visual formation.
-- **Leave gaps between lineups.** Don't make every lineup span the entire choreo. Gaps create natural transition points and keep formations interesting.
-- **Not all lineups need all participants.** Some members may move the mat, hold position, or be stationary during certain segments. Only create positions for active participants.
-- **Positions don't need to match lineup counts.** A lineup spanning counts 0–15 can have positions that only appear for part of that range (the positions exist for the whole lineup duration). During that lineup, multiple hits may happen. Hits do not need not necessarily happen during a lineup.
-- **Prefer update over delete+create.** When redoing a lineup, use `update_lineup` and `update_position` rather than deleting and recreating. This preserves entity history.
 
 ### Choreo Creation
 
 - **Hide IDs from users.** When presenting data back, show names and human-readable values, not UUIDs.
 - **Check existing data first.** Before creating new entities, use `list_*` and `get_*` to understand what already exists.
 - **Use `findOrCreate` for positions.** `create_position` with the same lineupId and memberId updates the existing position instead of creating a duplicate.
+- **Prefer bulk creation over singular creation.** Creating positions and hits one by one is slow. Use bulk operations whenever possible.
 
 ## Notes
 
@@ -340,3 +259,5 @@ Multiple stunt groups should be spaced evenly across the mat (e.g., two groups a
 - UUIDs are strings (e.g. "550e8400-e29b-41d4-a716-446655440000").
 - Optional params shown in `[brackets]` above; omit them to leave the field unchanged.
 - `create_position` uses `findOrCreate` — calling it with the same lineupId and memberId updates the existing position instead of creating a duplicate.
+- For hit naming conventions and examples, refer to the hits sub-guide.
+- For lineup rules, formation patterns, and position tables, refer to the lineups sub-guide.
