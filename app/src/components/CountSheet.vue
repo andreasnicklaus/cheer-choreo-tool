@@ -59,7 +59,7 @@
             class="d-grid align-content-center"
             style="height: 100%"
           >
-            {{ (acht[label] ?? 0) + 1 }}
+            {{ ((acht[label] as number) ?? 0) + 1 }}
           </div>
           <div
             v-else
