@@ -416,11 +416,12 @@ class HitService {
     }
 
     if (membershipPairs.length > 0) {
-      const values = membershipPairs
-        .map(() => "(?, ?, ?, ?)")
-        .join(", ");
+      const values = membershipPairs.map(() => "(?, ?, ?, ?)").join(", ");
       const flatParams = membershipPairs.flatMap(([hitId, memberId]) => [
-        hitId, memberId, now, now,
+        hitId,
+        memberId,
+        now,
+        now,
       ]);
       db.query(
         `INSERT INTO "HitMemberships" ("HitId", "MemberId", "createdAt", "updatedAt")

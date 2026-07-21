@@ -99,7 +99,9 @@ jest.mock("@/services/HitService", () => ({
     create: jest.fn().mockResolvedValue({ id: "hit-1", name: "Hit 1" }),
     mcpCreate: jest.fn().mockResolvedValue({ id: "hit-1", name: "Hit 1" }),
     bulkCreate: jest.fn().mockResolvedValue([{ id: "hit-1", name: "Hit 1" }]),
-    mcpBulkCreate: jest.fn().mockResolvedValue([{ id: "hit-1", name: "Hit 1" }]),
+    mcpBulkCreate: jest
+      .fn()
+      .mockResolvedValue([{ id: "hit-1", name: "Hit 1" }]),
     update: jest.fn().mockResolvedValue({ id: "hit-1", name: "Updated" }),
     remove: jest.fn().mockResolvedValue(undefined),
   },

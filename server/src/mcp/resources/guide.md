@@ -124,13 +124,13 @@ The `id` is the member UUID; `color` is optional for visual identification.
 
 ### Hits
 
-| Tool       | Description                                    | Required params       |
-| ---------- | ---------------------------------------------- | --------------------- |
-| list_hits  | List all accessible hits                       | —                     |
-| create_hit | Create a hit at a count in a choreo            | name, count, choreoId |
-| create_hits | Bulk create multiple hits in a choreo         | choreoId, hits[] |
-| update_hit | Update a hit's name and/or member associations | id, [name, memberIds] |
-| delete_hit | Delete a hit                                   | id                    |
+| Tool        | Description                                    | Required params       |
+| ----------- | ---------------------------------------------- | --------------------- |
+| list_hits   | List all accessible hits                       | —                     |
+| create_hit  | Create a hit at a count in a choreo            | name, count, choreoId |
+| create_hits | Bulk create multiple hits in a choreo          | choreoId, hits[]      |
+| update_hit  | Update a hit's name and/or member associations | id, [name, memberIds] |
+| delete_hit  | Delete a hit                                   | id                    |
 
 **Count numbering:** Counts are 0-based and must be < choreo.counts.
 For a 32-count choreo, valid counts are 0-31.

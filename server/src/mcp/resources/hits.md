@@ -17,6 +17,7 @@ A hit name is built by concatenating up to four parts **in this exact order**:
 Each bracket is optional. Parts that are omitted are simply left out of the final name.
 
 **The ONLY valid hit names are:**
+
 - The standalone names listed in the "Standalone Hits" section below
 - Any combination produced by the cross-product of the values in the PreDirection, PreAction, Action, and PostDirection tables below (omitting nulls and joining with spaces)
 
@@ -33,52 +34,52 @@ No other hit names exist. If a name doesn't match one of these patterns, it is i
 
 ### Pre-Actions (optional prefix)
 
-| Value  |
-| ------ |
-| Set    |
-| Go     |
-| Start  |
-| Dip    |
+| Value   |
+| ------- |
+| Set     |
+| Go      |
+| Start   |
+| Dip     |
 | Half up |
 
 ### Actions (required for combinations)
 
-| Value        |
-| ------------ |
-| V            |
-| Elevator     |
-| Stretch      |
-| Lib          |
-| Tick Tock    |
-| Scale        |
-| Arabesque    |
-| Bike turn    |
-| Arch walk    |
-| Flick Flack  |
-| Penguin      |
-| Playmobile   |
-| Clap         |
-| Toetouch     |
-| Pyra         |
-| Split        |
-| Kneel        |
-| Kneeling     |
-| Full around  |
-| Half Around  |
-| Trophy       |
-| Basket       |
-| Log roll     |
-| Cradle       |
-| Throw        |
-| 1            |
-| 2            |
-| 3            |
-| 4            |
-| 5            |
-| 6            |
-| 7            |
-| 8            |
-| 9            |
+| Value       |
+| ----------- |
+| V           |
+| Elevator    |
+| Stretch     |
+| Lib         |
+| Tick Tock   |
+| Scale       |
+| Arabesque   |
+| Bike turn   |
+| Arch walk   |
+| Flick Flack |
+| Penguin     |
+| Playmobile  |
+| Clap        |
+| Toetouch    |
+| Pyra        |
+| Split       |
+| Kneel       |
+| Kneeling    |
+| Full around |
+| Half Around |
+| Trophy      |
+| Basket      |
+| Log roll    |
+| Cradle      |
+| Throw       |
+| 1           |
+| 2           |
+| 3           |
+| 4           |
+| 5           |
+| 6           |
+| 7           |
+| 8           |
+| 9           |
 
 ### Post-Directions (optional suffix)
 
@@ -95,60 +96,60 @@ No other hit names exist. If a name doesn't match one of these patterns, it is i
 
 ### Standalone Hits (used as-is, do NOT combine with other parts)
 
-| Value      |
-| ---------- |
-| Clean      |
-| Set down   |
-| Run        |
+| Value       |
+| ----------- |
+| Clean       |
+| Set down    |
+| Run         |
 | Switch grip |
-| Grab       |
-| End        |
+| Grab        |
+| End         |
 
 ## Valid Examples
 
 Every name in this table is valid. Notice how each is built from the parts above:
 
-| Hit Name                 | Parts Used              |
-| ------------------------ | ----------------------- |
-| Elevator                 | Action                  |
-| High Set Elevator        | PreDir + PreAct + Action |
-| Low Lib Stretch left     | PreDir + PreAct + Action + PostDir |
-| Clean                    | Standalone              |
-| Trophy back              | Action + PostDir        |
-| Half up Cradle           | PreAct + Action         |
-| High Scale to the right  | PreDir + Action + PostDir |
-| Dip Flick Flack          | PreAct + Action         |
-| Start Pyra to the left   | PreAct + Action + PostDir |
-| Set down                 | Standalone              |
-| High V                   | PreDir + Action         |
-| Low Elevator             | PreDir + Action         |
-| Go Stretch               | PreAct + Action         |
-| Bike turn to the back    | Action + PostDir        |
-| Kneel                    | Action                  |
-| Trophy                   | Action                  |
-| 1 to the right           | Action + PostDir        |
-| High Set Lib left        | PreDir + PreAct + Action + PostDir |
-| Dip Cradle               | PreAct + Action         |
-| Start Scale forward      | PreAct + Action + PostDir |
+| Hit Name                | Parts Used                         |
+| ----------------------- | ---------------------------------- |
+| Elevator                | Action                             |
+| High Set Elevator       | PreDir + PreAct + Action           |
+| Low Lib Stretch left    | PreDir + PreAct + Action + PostDir |
+| Clean                   | Standalone                         |
+| Trophy back             | Action + PostDir                   |
+| Half up Cradle          | PreAct + Action                    |
+| High Scale to the right | PreDir + Action + PostDir          |
+| Dip Flick Flack         | PreAct + Action                    |
+| Start Pyra to the left  | PreAct + Action + PostDir          |
+| Set down                | Standalone                         |
+| High V                  | PreDir + Action                    |
+| Low Elevator            | PreDir + Action                    |
+| Go Stretch              | PreAct + Action                    |
+| Bike turn to the back   | Action + PostDir                   |
+| Kneel                   | Action                             |
+| Trophy                  | Action                             |
+| 1 to the right          | Action + PostDir                   |
+| High Set Lib left       | PreDir + PreAct + Action + PostDir |
+| Dip Cradle              | PreAct + Action                    |
+| Start Scale forward     | PreAct + Action + PostDir          |
 
 ## INVALID Examples (do NOT create these)
 
-| Invalid Name              | Why It Is Wrong                                              |
-| ------------------------- | ------------------------------------------------------------ |
-| Pre-Action - Step Right   | "Pre-Action" and "Step" are not valid parts; uses dashes    |
-| Formation 5               | Hits describe actions, not formations                        |
-| Jump                      | "Jump" is not a valid Action                                 |
-| High Step Right           | "Step" is not a valid Action                                 |
-| Go Down                   | "Down" is not a valid PostDirection                          |
-| Set down left             | "Set down" is a standalone — cannot combine with PostDir     |
-| Clean to the right        | "Clean" is a standalone — cannot combine with PostDir        |
-| Low Set down              | "Set down" is a standalone — cannot combine with PreDir/PreAct |
-| Elevator-right            | Parts must be separated by spaces, not dashes                |
-| High set Elevator         | "set" must be capitalized as "Set"                           |
-| Half-up Elevator          | "Half up" is two words, not hyphenated                       |
-| Big V                     | "Big" is not a valid PreDirection                            |
-| Run to the left           | "Run" is a standalone — cannot combine with PostDir           |
-| Half up Stretch to the back | This is actually VALID — included here to show the pattern |
+| Invalid Name                | Why It Is Wrong                                                |
+| --------------------------- | -------------------------------------------------------------- |
+| Pre-Action - Step Right     | "Pre-Action" and "Step" are not valid parts; uses dashes       |
+| Formation 5                 | Hits describe actions, not formations                          |
+| Jump                        | "Jump" is not a valid Action                                   |
+| High Step Right             | "Step" is not a valid Action                                   |
+| Go Down                     | "Down" is not a valid PostDirection                            |
+| Set down left               | "Set down" is a standalone — cannot combine with PostDir       |
+| Clean to the right          | "Clean" is a standalone — cannot combine with PostDir          |
+| Low Set down                | "Set down" is a standalone — cannot combine with PreDir/PreAct |
+| Elevator-right              | Parts must be separated by spaces, not dashes                  |
+| High set Elevator           | "set" must be capitalized as "Set"                             |
+| Half-up Elevator            | "Half up" is two words, not hyphenated                         |
+| Big V                       | "Big" is not a valid PreDirection                              |
+| Run to the left             | "Run" is a standalone — cannot combine with PostDir            |
+| Half up Stretch to the back | This is actually VALID — included here to show the pattern     |
 
 ## Agent Guidance
 
