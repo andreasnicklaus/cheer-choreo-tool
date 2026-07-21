@@ -37,6 +37,10 @@ As a rough estimate: a choreography with **320 counts** should have between **10
 
 **If lineups overlap, then only for different members.** Multiple lineups on the same count are possible, for example if one half of participants moves while the other is stationary. A single member can never be part in two overlapping formations.
 
+### Choreography must end with a lineup
+
+**One lineup in every choreography must have `endCount` equal to the choreography's `counts`.** This ensures the choreography has an active formation all the way to the end. The last lineup typically spans the final few counts (e.g., if `counts=320`, a lineup with `startCount=316, endCount=320`).
+
 ## Choreography Length Guide
 
 | Duration | Counts  | Description                           |
@@ -146,7 +150,7 @@ Multiple stunt groups should be spaced evenly across the mat (e.g., two groups a
 
 ### Agent Guidance
 
-- **Prefer bulk creation over singular position creation.** Creating positions one by one is slow. Create all positions for a lineup in bulk whenever possible.
+- **Prefer bulk creation over singular position creation.** Creating positions one by one is slow. Use `create_positions` with an array of `{x, y, memberId}` objects whenever you need to place multiple members in a lineup.
 - **Never create a lineup longer than 16 counts.** Break longer formation segments into multiple lineups.
 - **Always leave gaps between lineups.** The gaps (4–8 counts) represent transitions and walks — they are not mistakes.
 - **Neighbouring lineups must have different count ranges.** Two consecutive lineups with the same start/end counts are invalid.

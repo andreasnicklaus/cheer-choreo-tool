@@ -97,6 +97,9 @@ jest.mock("@/services/HitService", () => ({
   default: {
     getAll: jest.fn().mockResolvedValue([]),
     create: jest.fn().mockResolvedValue({ id: "hit-1", name: "Hit 1" }),
+    mcpCreate: jest.fn().mockResolvedValue({ id: "hit-1", name: "Hit 1" }),
+    bulkCreate: jest.fn().mockResolvedValue([{ id: "hit-1", name: "Hit 1" }]),
+    mcpBulkCreate: jest.fn().mockResolvedValue([{ id: "hit-1", name: "Hit 1" }]),
     update: jest.fn().mockResolvedValue({ id: "hit-1", name: "Updated" }),
     remove: jest.fn().mockResolvedValue(undefined),
   },
@@ -121,6 +124,13 @@ jest.mock("@/services/PositionService", () => ({
   default: {
     findByLineupId: jest.fn().mockResolvedValue([]),
     findOrCreate: jest.fn().mockResolvedValue({ id: "pos-1", x: 1, y: 2 }),
+    mcpFindOrCreate: jest.fn().mockResolvedValue({ id: "pos-1", x: 1, y: 2 }),
+    bulkFindOrCreate: jest
+      .fn()
+      .mockResolvedValue([{ id: "pos-1", x: 1, y: 2 }]),
+    mcpBulkFindOrCreate: jest
+      .fn()
+      .mockResolvedValue([{ id: "pos-1", x: 1, y: 2 }]),
     update: jest.fn().mockResolvedValue({ id: "pos-1", x: 5, y: 5 }),
     remove: jest.fn().mockResolvedValue(undefined),
   },
@@ -544,12 +554,12 @@ describe("MCP tools", () => {
   });
 
   describe("create_hit", () => {
-    test("calls HitService.create with all params", async () => {
+    test("calls HitService.mcpCreate with all params", async () => {
       await toolCallbacks.create_hit.handler(
         { name: "Hit 1", count: 0, choreoId: "choreo-1", memberIds: ["m1"] },
         makeExtra(),
       );
-      expect(HitService.create).toHaveBeenCalledWith(
+      expect(HitService.mcpCreate).toHaveBeenCalledWith(
         "Hit 1",
         0,
         "choreo-1",
@@ -564,11 +574,35 @@ describe("MCP tools", () => {
         { name: "Hit 1", count: 0, choreoId: "choreo-1" },
         makeExtra(),
       );
-      expect(HitService.create).toHaveBeenCalledWith(
+      expect(HitService.mcpCreate).toHaveBeenCalledWith(
         "Hit 1",
         0,
         "choreo-1",
         [],
+        "user-123",
+        false,
+      );
+    });
+  });
+
+  describe("create_hits", () => {
+    test("calls HitService.mcpBulkCreate with all params", async () => {
+      await toolCallbacks.create_hits.handler(
+        {
+          choreoId: "choreo-1",
+          hits: [
+            { name: "Hit 1", count: 0, memberIds: ["m1"] },
+            { name: "Hit 2", count: 4 },
+          ],
+        },
+        makeExtra(),
+      );
+      expect(HitService.mcpBulkCreate).toHaveBeenCalledWith(
+        [
+          { name: "Hit 1", count: 0, memberIds: ["m1"] },
+          { name: "Hit 2", count: 4 },
+        ],
+        "choreo-1",
         "user-123",
         false,
       );
@@ -689,16 +723,40 @@ describe("MCP tools", () => {
   });
 
   describe("create_position", () => {
-    test("calls PositionService.findOrCreate with all params", async () => {
+    test("calls PositionService.mcpFindOrCreate with all params", async () => {
       await toolCallbacks.create_position.handler(
         { x: 1, y: 2, lineupId: "lineup-1", memberId: "m1" },
         makeExtra(),
       );
-      expect(PositionService.findOrCreate).toHaveBeenCalledWith(
+      expect(PositionService.mcpFindOrCreate).toHaveBeenCalledWith(
         1,
         2,
         "lineup-1",
         "m1",
+        "user-123",
+        false,
+      );
+    });
+  });
+
+  describe("create_positions", () => {
+    test("calls PositionService.mcpBulkFindOrCreate with all params", async () => {
+      await toolCallbacks.create_positions.handler(
+        {
+          lineupId: "lineup-1",
+          positions: [
+            { x: 1, y: 2, memberId: "m1" },
+            { x: 3, y: 4, memberId: "m2" },
+          ],
+        },
+        makeExtra(),
+      );
+      expect(PositionService.mcpBulkFindOrCreate).toHaveBeenCalledWith(
+        [
+          { x: 1, y: 2, memberId: "m1" },
+          { x: 3, y: 4, memberId: "m2" },
+        ],
+        "lineup-1",
         "user-123",
         false,
       );

@@ -14,6 +14,9 @@ router.use(requireBearerAuth({ verifier }));
 const transports: Record<string, StreamableHTTPServerTransport> = {};
 
 router.post("/", async (req, res) => {
+  logger.debug(
+    `[MCP] POST received — content-type: ${req.headers["content-type"]}, session-id: ${req.headers["mcp-session-id"] ?? "(none)"}, body: ${JSON.stringify(req.body)}`,
+  );
   const sessionId = req.headers["mcp-session-id"] as string | undefined;
   const existingTransport = sessionId ? transports[sessionId] : undefined;
   const method = req.body?.method ?? "(unknown)";
@@ -65,6 +68,9 @@ router.get("/", async (req, res) => {
 });
 
 router.delete("/", async (req, res) => {
+  logger.debug(
+    `[MCP] DELETE received — content-type: ${req.headers["content-type"]}, session-id: ${req.headers["mcp-session-id"] ?? "(none)"}, body: ${JSON.stringify(req.body)}`,
+  );
   const sessionId = req.headers["mcp-session-id"] as string | undefined;
   const transport = sessionId ? transports[sessionId] : undefined;
 

@@ -141,6 +141,9 @@ export default defineComponent({
               headers: {
                 Authorization: this.bearerToken,
               },
+              requestOptions: {
+                timeout: 3600000,
+              },
             },
           },
         },

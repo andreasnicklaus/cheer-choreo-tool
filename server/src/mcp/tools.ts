@@ -1,6 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import {
+  McpServer,
+  ResourceTemplate,
+} from "@modelcontextprotocol/sdk/server/mcp.js";
+import { completable } from "@modelcontextprotocol/sdk/server/completable.js";
 import { z } from "zod";
 import { getUserFromRequest, formatError } from "./helpers";
 import { type MatType } from "../db/models/choreo";
@@ -14,6 +18,77 @@ import HitService from "../services/HitService";
 import LineupService from "../services/LineupService";
 import PositionService from "../services/PositionService";
 import type { AuthInfo } from "./auth";
+
+// ─── Hit name parts for completions ────────────────────────────
+
+const PRE_DIRECTIONS = ["High", "Low"];
+const PRE_ACTIONS = ["Set", "Go", "Start", "Dip", "Half up"];
+const ACTIONS = [
+  "V",
+  "Elevator",
+  "Stretch",
+  "Lib",
+  "Tick Tock",
+  "Scale",
+  "Arabesque",
+  "Bike turn",
+  "Arch walk",
+  "Flick Flack",
+  "Penguin",
+  "Playmobile",
+  "Clap",
+  "Toetouch",
+  "Pyra",
+  "Split",
+  "Kneel",
+  "Kneeling",
+  "Full around",
+  "Half Around",
+  "Trophy",
+  "Basket",
+  "Log roll",
+  "Cradle",
+  "Throw",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+];
+const POST_DIRECTIONS = [
+  "to the right",
+  "right",
+  "to the left",
+  "left",
+  "to the back",
+  "back",
+  "forward",
+  "front",
+];
+const STANDALONE_HITS = [
+  "Clean",
+  "Set down",
+  "Run",
+  "Switch grip",
+  "Grab",
+  "End",
+];
+const ALL_HIT_PARTS = [
+  ...PRE_DIRECTIONS,
+  ...PRE_ACTIONS,
+  ...ACTIONS,
+  ...POST_DIRECTIONS,
+  ...STANDALONE_HITS,
+];
+
+function completeHitName(value: string): string[] {
+  const lower = value.toLowerCase();
+  return ALL_HIT_PARTS.filter((part) => part.toLowerCase().startsWith(lower));
+}
 
 // ─── Callback types ────────────────────────────────────────────
 
@@ -522,7 +597,7 @@ export const toolCallbacks: Record<string, ToolDef> = {
   create_hit: {
     description: "Create a new hit in a choreography with member associations",
     schema: {
-      name: z.string().describe("Hit name"),
+      name: completable(z.string().describe("Hit name"), completeHitName),
       count: z
         .number()
         .int()
@@ -537,7 +612,7 @@ export const toolCallbacks: Record<string, ToolDef> = {
     handler: async (args, extra) => {
       try {
         const { userId, isAdmin } = getUserFromRequest(extra.authInfo);
-        const hit = await HitService.create(
+        const hit = await HitService.mcpCreate(
           args.name,
           args.count,
           args.choreoId,
@@ -551,11 +626,52 @@ export const toolCallbacks: Record<string, ToolDef> = {
       }
     },
   },
+  create_hits: {
+    description:
+      "Bulk create multiple hits in a choreography. Always prefer this over calling create_hit multiple times.",
+    schema: {
+      choreoId: z.string().describe("The choreography UUID"),
+      hits: z
+        .array(
+          z.object({
+            name: completable(z.string().describe("Hit name"), completeHitName),
+            count: z
+              .number()
+              .int()
+              .min(0)
+              .describe("Count number (0-based, must be < choreo.counts)"),
+            memberIds: z
+              .array(z.string())
+              .optional()
+              .describe("Member UUIDs to associate"),
+          }),
+        )
+        .min(1)
+        .describe("Array of hits to create"),
+    },
+    handler: async (args, extra) => {
+      try {
+        const { userId, isAdmin } = getUserFromRequest(extra.authInfo);
+        const hits = await HitService.mcpBulkCreate(
+          args.hits,
+          args.choreoId,
+          userId,
+          isAdmin,
+        );
+        return { content: [{ type: "text", text: JSON.stringify(hits) }] };
+      } catch (error) {
+        return formatError(error);
+      }
+    },
+  },
   update_hit: {
     description: "Update a hit's properties and/or member associations",
     schema: {
       id: z.string().describe("The hit UUID"),
-      name: z.string().optional().describe("New hit name"),
+      name: completable(
+        z.string().optional().describe("New hit name"),
+        (val) => (val ? completeHitName(val) : ALL_HIT_PARTS),
+      ),
       memberIds: z
         .array(z.string())
         .optional()
@@ -717,7 +833,7 @@ export const toolCallbacks: Record<string, ToolDef> = {
     handler: async (args, extra) => {
       try {
         const { userId, isAdmin } = getUserFromRequest(extra.authInfo);
-        const position = await PositionService.findOrCreate(
+        const position = await PositionService.mcpFindOrCreate(
           args.x,
           args.y,
           args.lineupId,
@@ -726,6 +842,45 @@ export const toolCallbacks: Record<string, ToolDef> = {
           isAdmin,
         );
         return { content: [{ type: "text", text: JSON.stringify(position) }] };
+      } catch (error) {
+        return formatError(error);
+      }
+    },
+  },
+  create_positions: {
+    description:
+      "Bulk create positions for a lineup. Always prefer this over calling create_position multiple times.",
+    schema: {
+      lineupId: z.string().describe("The lineup UUID"),
+      positions: z
+        .array(
+          z.object({
+            x: z
+              .number()
+              .min(0)
+              .max(100)
+              .describe("X-coordinate as percentage (0=right, 100=left)"),
+            y: z
+              .number()
+              .min(0)
+              .max(100)
+              .describe("Y-coordinate as percentage (0=front, 100=back)"),
+            memberId: z.string().describe("Member UUID to place"),
+          }),
+        )
+        .min(1)
+        .describe("Array of positions to create"),
+    },
+    handler: async (args, extra) => {
+      try {
+        const { userId, isAdmin } = getUserFromRequest(extra.authInfo);
+        const positions = await PositionService.mcpBulkFindOrCreate(
+          args.positions,
+          args.lineupId,
+          userId,
+          isAdmin,
+        );
+        return { content: [{ type: "text", text: JSON.stringify(positions) }] };
       } catch (error) {
         return formatError(error);
       }
@@ -817,7 +972,12 @@ function loadResourceFiles(): Record<string, string> {
   return resources;
 }
 
-const MCP_INSTRUCTIONS = `IMPORTANT: Before using any Cheer Choreo Tool, always read the usage guide resources. Read ALL THREE: "guide://cheer-choreo-tool/guide", "guide://cheer-choreo-tool/hits", and "guide://cheer-choreo-tool/lineups". Together they describe: the data model hierarchy (Club → Team → SeasonTeam → Member/Choreo → Hit/Lineup → Position), hit naming conventions, lineup rules, position tables, required tool call order, parameter formats, and typical workflows. Key concept: Hits and Lineups are independent entities — hits describe actions at a count, lineups describe formations over a count range. They do not reference each other. Always clarify with the user whether they are digitizing an existing choreo or starting from scratch before creating data.`;
+const MCP_INSTRUCTIONS = `IMPORTANT: Before using any Cheer Choreo Tool, you MUST read all three guide resources by calling the readResource tool for each of these URIs:
+1. "guide://cheer-choreo-tool/guide" — data model hierarchy, available tools, parameters, workflows
+2. "guide://cheer-choreo-tool/hits" — hit naming conventions, pre-directions, pre-actions, actions, post-directions, standalone hits, examples
+3. "guide://cheer-choreo-tool/lineups" — lineup rules, count ranges, formation patterns by participant count, position tables, best practices
+
+Together they describe the complete usage guide. Key concept: Hits and Lineups are independent entities — hits describe actions at a count, lineups describe formations over a count range. They do not reference each other. Always clarify with the user whether they are digitizing an existing choreo or starting from scratch before creating data.`;
 
 export function createMcpServer(): McpServer {
   const server = new McpServer(
@@ -825,10 +985,74 @@ export function createMcpServer(): McpServer {
     { instructions: MCP_INSTRUCTIONS },
   );
 
+  // ─── Logging helper ────────────────────────────────────────
+  const sendLog = (
+    level: "debug" | "info" | "warning" | "error",
+    message: string,
+  ) => {
+    server.sendLoggingMessage({ level, data: message }).catch(() => {});
+  };
+
+  // ─── Change notification helper ────────────────────────────
+  const notifyResourceChanged = () => {
+    server.sendResourceListChanged();
+  };
+
+  // ─── Register tools with logging/notifications for bulk ops ─
   for (const [name, def] of Object.entries(toolCallbacks)) {
-    server.tool(name, def.description, def.schema, def.handler);
+    if (name === "create_hits" || name === "update_hits") {
+      const originalHandler = def.handler;
+      server.tool(name, def.description, def.schema, async (args, extra) => {
+        const count = args.hits?.length ?? 0;
+        sendLog("info", `${name}: processing ${count} hits`);
+        const result = await originalHandler(args, extra);
+        if (result.isError) {
+          sendLog("error", `${name}: failed`);
+        } else {
+          sendLog("info", `${name}: success (${count} hits)`);
+          notifyResourceChanged();
+        }
+        return result;
+      });
+    } else if (name === "create_positions" || name === "update_positions") {
+      const originalHandler = def.handler;
+      server.tool(name, def.description, def.schema, async (args, extra) => {
+        const count = args.positions?.length ?? 0;
+        sendLog("info", `${name}: processing ${count} positions`);
+        const result = await originalHandler(args, extra);
+        if (result.isError) {
+          sendLog("error", `${name}: failed`);
+        } else {
+          sendLog("info", `${name}: success (${count} positions)`);
+          notifyResourceChanged();
+        }
+        return result;
+      });
+    } else if (
+      name.startsWith("create_") ||
+      name.startsWith("update_") ||
+      name.startsWith("delete_")
+    ) {
+      const originalHandler = def.handler;
+      server.tool(name, def.description, def.schema, async (args, extra) => {
+        sendLog("info", `${name}: starting`);
+        const result = await originalHandler(args, extra);
+        if (result.isError) {
+          sendLog("error", `${name}: failed`);
+        } else {
+          sendLog("info", `${name}: success`);
+          notifyResourceChanged();
+        }
+        return result;
+      });
+    } else {
+      server.tool(name, def.description, def.schema, def.handler);
+    }
   }
 
+  sendLog("info", "Server initialized");
+
+  // ─── Static resources ──────────────────────────────────────
   const resources = loadResourceFiles();
 
   const resourceDefs: Array<{
@@ -874,6 +1098,163 @@ export function createMcpServer(): McpServer {
     );
   }
 
+  // ─── Parameterized resource templates with completions ─────
+  const choreoTemplate = new ResourceTemplate("choreo://{choreoId}", {
+    list: undefined,
+    complete: {
+      choreoId: async (value) => {
+        const choreos = await ChoreoService.getAll([], "", false);
+        return choreos
+          .map((c: { id: string }) => c.id)
+          .filter((id: string) => id.startsWith(value));
+      },
+    },
+  });
+
+  server.registerResource(
+    "choreo",
+    choreoTemplate,
+    {
+      description:
+        "A choreography by ID — includes hits, lineups, and participants",
+      mimeType: "application/json",
+    },
+    async (_uri, { choreoId }) => {
+      try {
+        const choreo = await ChoreoService.findById(
+          choreoId as string,
+          "",
+          false,
+        );
+        return {
+          contents: [
+            {
+              uri: `choreo://${choreoId}`,
+              text: JSON.stringify(choreo),
+              mimeType: "application/json",
+            },
+          ],
+        };
+      } catch (error) {
+        return {
+          contents: [
+            {
+              uri: `choreo://${choreoId}`,
+              text: JSON.stringify({
+                error: error instanceof Error ? error.message : "Unknown error",
+              }),
+              mimeType: "application/json",
+            },
+          ],
+        };
+      }
+    },
+  );
+
+  const hitTemplate = new ResourceTemplate("hit://{hitId}", {
+    list: undefined,
+    complete: {
+      hitId: async (value) => {
+        const hits = await HitService.getAll([], "", false);
+        return hits
+          .map((h: { id: string }) => h.id)
+          .filter((id: string) => id.startsWith(value));
+      },
+    },
+  });
+
+  server.registerResource(
+    "hit",
+    hitTemplate,
+    {
+      description: "A hit by ID with member associations",
+      mimeType: "application/json",
+    },
+    async (_uri, { hitId }) => {
+      try {
+        const hits = await HitService.getAll([], "", false);
+        const hit = hits.find((h: { id: string }) => h.id === hitId);
+        return {
+          contents: [
+            {
+              uri: `hit://${hitId}`,
+              text: JSON.stringify(hit ?? { error: "Hit not found" }),
+              mimeType: "application/json",
+            },
+          ],
+        };
+      } catch (error) {
+        return {
+          contents: [
+            {
+              uri: `hit://${hitId}`,
+              text: JSON.stringify({
+                error: error instanceof Error ? error.message : "Unknown error",
+              }),
+              mimeType: "application/json",
+            },
+          ],
+        };
+      }
+    },
+  );
+
+  const lineupTemplate = new ResourceTemplate("lineup://{lineupId}", {
+    list: undefined,
+    complete: {
+      lineupId: async (value) => {
+        const choreos = await ChoreoService.getAll([], "", false);
+        const allLineups: { id: string }[] = [];
+        for (const choreo of choreos) {
+          const lineups = await LineupService.findByChoreoId(choreo.id);
+          allLineups.push(...lineups);
+        }
+        return allLineups.map((l) => l.id).filter((id) => id.startsWith(value));
+      },
+    },
+  });
+
+  server.registerResource(
+    "lineup",
+    lineupTemplate,
+    {
+      description: "A lineup by ID with positions",
+      mimeType: "application/json",
+    },
+    async (_uri, { lineupId }) => {
+      try {
+        const positions = await PositionService.findByLineupId(
+          lineupId as string,
+          [],
+          "",
+          false,
+        );
+        return {
+          contents: [
+            {
+              uri: `lineup://${lineupId}`,
+              text: JSON.stringify({ id: lineupId, positions }),
+              mimeType: "application/json",
+            },
+          ],
+        };
+      } catch (error) {
+        return {
+          contents: [
+            {
+              uri: `lineup://${lineupId}`,
+              text: JSON.stringify({
+                error: error instanceof Error ? error.message : "Unknown error",
+              }),
+              mimeType: "application/json",
+            },
+          ],
+        };
+      }
+    },
+  );
+
+  // ─── Prompt ────────────────────────────────────────────────
   const allContent = Object.values(resources).join("\n\n");
 
   server.registerPrompt(
@@ -888,6 +1269,79 @@ export function createMcpServer(): McpServer {
         { role: "assistant", content: { type: "text", text: allContent } },
       ],
     }),
+  );
+
+  // ─── Sampling tool: suggest_formation ──────────────────────
+  server.tool(
+    "suggest_formation",
+    "Use LLM sampling to suggest a formation layout for participants on a mat type",
+    {
+      participantCount: z
+        .number()
+        .int()
+        .min(1)
+        .max(30)
+        .describe("Number of participants"),
+      matType: z.enum(["cheer", "square", "1:2", "3:4"]).describe("Mat type"),
+      hint: z
+        .string()
+        .optional()
+        .describe("Optional hint about the desired formation style"),
+    },
+    async (args) => {
+      try {
+        const prompt = [
+          `Suggest a cheerleading formation for ${args.participantCount} participants on a ${args.matType} mat.`,
+          args.hint ? `Style hint: ${args.hint}` : "",
+          "Return a JSON array of objects with x (0-100, left to right) and y (0-100, front to back) for each participant.",
+          "Return only the JSON array.",
+        ]
+          .filter(Boolean)
+          .join("\n");
+
+        const response = await server.server.createMessage({
+          messages: [{ role: "user", content: { type: "text", text: prompt } }],
+          maxTokens: 1024,
+        });
+
+        const text =
+          response.content.type === "text"
+            ? response.content.text
+            : JSON.stringify(response.content);
+
+        const jsonMatch = text.match(/\[[\s\S]*\]/);
+        if (jsonMatch) {
+          const positions = JSON.parse(jsonMatch[0]);
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify({
+                  participantCount: args.participantCount,
+                  matType: args.matType,
+                  positions,
+                }),
+              },
+            ],
+          };
+        }
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify({
+                participantCount: args.participantCount,
+                matType: args.matType,
+                rawSuggestion: text,
+              }),
+            },
+          ],
+        };
+      } catch (error) {
+        return formatError(error);
+      }
+    },
   );
 
   return server;

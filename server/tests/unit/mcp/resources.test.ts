@@ -167,10 +167,10 @@ describe("MCP guide resources", () => {
 
     const content = result.contents[0] as { text: string };
     expect(content.text).toContain("# Hits Guide");
-    expect(content.text).toContain("## Hit Naming Convention");
+    expect(content.text).toContain("CRITICAL: How Hit Names Are Built");
     expect(content.text).toContain("Pre-Directions");
     expect(content.text).toContain("Pre-Actions");
-    expect(content.text).toContain("## Example Hit Names");
+    expect(content.text).toContain("## Valid Examples");
   });
 
   test("lineups resource contains formation rules and position tables", async () => {

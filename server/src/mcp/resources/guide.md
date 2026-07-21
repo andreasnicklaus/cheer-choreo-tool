@@ -8,7 +8,7 @@ This MCP server provides access to the Cheer Choreo Tool, a choreography plannin
 
 A choreography consists of two independent core entities: **hits** and **lineups**. Understanding their independence is essential.
 
-- **Hits** describe _actions_ — named events like stunts, skills, or movements at a specific count. A hit is never a formation name.
+- **Hits** describe _actions_ — named events like stunts, skills, or movements at a specific count. Hit names are built from a fixed set of parts (see the hits sub-guide). A hit is never a formation name or a free-text description.
 - **Lineups** describe _formations_ — count ranges during which a set of member positions is held on the mat.
 
 **They are independent.** A hit can exist without a lineup. A lineup can exist without a hit. They do not reference each other. You do not need to create a lineup before creating a hit, and hits do not need to correspond to lineup boundaries.
@@ -128,6 +128,7 @@ The `id` is the member UUID; `color` is optional for visual identification.
 | ---------- | ---------------------------------------------- | --------------------- |
 | list_hits  | List all accessible hits                       | —                     |
 | create_hit | Create a hit at a count in a choreo            | name, count, choreoId |
+| create_hits | Bulk create multiple hits in a choreo         | choreoId, hits[] |
 | update_hit | Update a hit's name and/or member associations | id, [name, memberIds] |
 | delete_hit | Delete a hit                                   | id                    |
 
@@ -149,12 +150,13 @@ For a 32-count choreo, valid counts are 0-31.
 
 ### Positions
 
-| Tool            | Description                          | Required params          |
-| --------------- | ------------------------------------ | ------------------------ |
-| list_positions  | List positions for a lineup          | lineupId                 |
-| create_position | Place a member at (x, y) in a lineup | x, y, lineupId, memberId |
-| update_position | Move a position                      | id, [x, y]               |
-| delete_position | Delete a position                    | id                       |
+| Tool             | Description                            | Required params                       |
+| ---------------- | -------------------------------------- | ------------------------------------- |
+| list_positions   | List positions for a lineup            | lineupId                              |
+| create_position  | Place a member at (x, y) in a lineup   | x, y, lineupId, memberId              |
+| create_positions | Bulk create all positions for a lineup | lineupId, positions[{x, y, memberId}] |
+| update_position  | Move a position                        | id, [x, y]                            |
+| delete_position  | Delete a position                      | id                                    |
 
 **Coordinates:** X and Y are percentage values (0-100) representing position on the mat.
 
@@ -232,14 +234,14 @@ Here's a concrete example of setting up a choreography:
 6. create_choreo(name: "Opening Routine", counts: 32, seasonTeamId: "jkl-012", participants: [{ id: "mem-001" }])
    → Returns: { id: "choreo-001", name: "Opening Routine", counts: 32 }
 
-7. create_hit(name: "First Tumble", count: 8, choreoId: "choreo-001", memberIds: ["mem-001"])
-   → Returns: { id: "hit-001", name: "First Tumble", count: 8 }
+7. create_hit(name: "Elevator", count: 8, choreoId: "choreo-001", memberIds: ["mem-001"])
+   → Returns: { id: "hit-001", name: "Elevator", count: 8 }
 
 8. create_lineup(startCount: 0, endCount: 16, choreoId: "choreo-001")
    → Returns: { id: "lineup-001", startCount: 0, endCount: 16 }
 
-9. create_position(x: 50, y: 50, lineupId: "lineup-001", memberId: "mem-001")
-   → Returns: { id: "pos-001", x: 50, y: 50 }
+9. create_positions(lineupId: "lineup-001", positions: [{x: 50, y: 50, memberId: "mem-001"}])
+   → Returns: [{ id: "pos-001", x: 50, y: 50, MemberId: "mem-001" }]
 ```
 
 After creating entities, use `get_*` to fetch full details with nested relations.
@@ -251,7 +253,7 @@ After creating entities, use `get_*` to fetch full details with nested relations
 - **Hide IDs from users.** When presenting data back, show names and human-readable values, not UUIDs.
 - **Check existing data first.** Before creating new entities, use `list_*` and `get_*` to understand what already exists.
 - **Use `findOrCreate` for positions.** `create_position` with the same lineupId and memberId updates the existing position instead of creating a duplicate.
-- **Prefer bulk creation over singular creation.** Creating positions and hits one by one is slow. Use bulk operations whenever possible.
+- **Prefer `create_positions` (bulk) over `create_position` (singular).** Creating positions one by one is slow. Use `create_positions` with an array of `{x, y, memberId}` objects whenever you need to place multiple members in a lineup.
 
 ## Notes
 
@@ -259,5 +261,7 @@ After creating entities, use `get_*` to fetch full details with nested relations
 - UUIDs are strings (e.g. "550e8400-e29b-41d4-a716-446655440000").
 - Optional params shown in `[brackets]` above; omit them to leave the field unchanged.
 - `create_position` uses `findOrCreate` — calling it with the same lineupId and memberId updates the existing position instead of creating a duplicate.
+- `create_positions` bulk-creates all positions for a lineup in one call. Always prefer this over calling `create_position` multiple times.
+- **MCP tools use lightweight access checks** — they load only the minimal data needed for authorization (choreography owner), not the full choreography graph. This makes bulk operations much more memory-efficient.
 - For hit naming conventions and examples, refer to the hits sub-guide.
 - For lineup rules, formation patterns, and position tables, refer to the lineups sub-guide.

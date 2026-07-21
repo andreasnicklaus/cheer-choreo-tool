@@ -1,6 +1,7 @@
 import { NotFoundError, RequestOrderError } from "./../utils/errors";
 import Position from "../db/models/position";
 import Lineup from "../db/models/lineup";
+import Choreo from "../db/models/choreo";
 import LineupService from "./LineupService";
 import {
   checkReadAccess,
@@ -298,6 +299,204 @@ class PositionService {
     }
 
     return position.destroy();
+  }
+
+  /**
+   * Bulk find-or-create positions for a lineup.
+   * Performs access checks once, then creates all positions.
+   * @param {Array<{x: number, y: number, memberId: string}>} positions - Position data.
+   * @param {string} LineupId - The lineup ID.
+   * @param {string} actingUserId - The acting user ID.
+   * @param {boolean} isAdmin - Whether the acting user is an admin.
+   * @returns {Promise<Array>} Array of created or found positions.
+   */
+  async bulkFindOrCreate(
+    positions: Array<{ x: number; y: number; memberId: string }>,
+    LineupId: string,
+    actingUserId: string,
+    isAdmin = false,
+  ) {
+    logger.debug(
+      `PositionService bulkFindOrCreate ${JSON.stringify({
+        count: positions.length,
+        LineupId,
+        actingUserId,
+        isAdmin,
+      })}`,
+    );
+
+    // Perform access checks once
+    const lineup = await LineupService.findById(
+      LineupId,
+      actingUserId,
+      isAdmin,
+    );
+    if (!lineup) {
+      throw new NotFoundError(`Lineup not found`);
+    }
+    const choreo = await ChoreoService.findById(
+      lineup.ChoreoId,
+      actingUserId,
+      isAdmin,
+    );
+    if (!choreo) {
+      throw new NotFoundError(`Choreo not found`);
+    }
+    const ownerId = choreo.UserId;
+
+    await checkWriteAccess(ownerId, actingUserId, isAdmin);
+
+    const timeOfManualUpdate = new Date();
+    const results: Array<typeof Position.prototype> = [];
+
+    for (const pos of positions) {
+      const [position, _created] = await Position.findOrCreate({
+        where: {
+          x: pos.x,
+          y: pos.y,
+          LineupId,
+          MemberId: pos.memberId,
+          UserId: ownerId,
+        },
+        defaults: {
+          x: pos.x,
+          y: pos.y,
+          LineupId,
+          MemberId: pos.memberId,
+          UserId: ownerId,
+          timeOfManualUpdate,
+          creatorId: actingUserId,
+          updaterId: actingUserId,
+        },
+      });
+      results.push(position);
+    }
+
+    // Update lineup timestamp once after all positions
+    await LineupService.update(LineupId, {}, actingUserId, isAdmin);
+
+    return results;
+  }
+
+  /**
+   * MCP-optimized: Find or create a single position with lightweight access checks.
+   * Avoids loading the full Lineup/Choreo object graph.
+   */
+  async mcpFindOrCreate(
+    x: number,
+    y: number,
+    LineupId: string,
+    MemberId: string,
+    actingUserId: string,
+    isAdmin = false,
+    timeOfManualUpdate: Date = new Date(),
+  ) {
+    logger.debug(
+      `PositionService mcpFindOrCreate ${JSON.stringify({
+        x,
+        y,
+        LineupId,
+        MemberId,
+        actingUserId,
+        isAdmin,
+      })}`,
+    );
+
+    const lineup = await Lineup.findByPk(LineupId);
+    if (!lineup) {
+      throw new NotFoundError(`Lineup not found`);
+    }
+    const choreo = await Choreo.findByPk(lineup.ChoreoId);
+    if (!choreo) {
+      throw new NotFoundError(`Choreo not found`);
+    }
+    await checkWriteAccess(choreo.UserId, actingUserId, isAdmin);
+
+    const [position, created] = await Position.findOrCreate({
+      where: { x, y, LineupId, MemberId, UserId: choreo.UserId },
+      defaults: {
+        x,
+        y,
+        LineupId,
+        MemberId,
+        UserId: choreo.UserId,
+        timeOfManualUpdate,
+        creatorId: actingUserId,
+        updaterId: actingUserId,
+      },
+    });
+
+    if (created) {
+      await Lineup.update(
+        { updaterId: actingUserId },
+        { where: { id: LineupId } },
+      );
+    }
+
+    return position;
+  }
+
+  /**
+   * MCP-optimized: Bulk find-or-create positions with lightweight access checks.
+   * Avoids loading the full Lineup/Choreo object graph.
+   */
+  async mcpBulkFindOrCreate(
+    positions: Array<{ x: number; y: number; memberId: string }>,
+    LineupId: string,
+    actingUserId: string,
+    isAdmin = false,
+  ) {
+    logger.debug(
+      `PositionService mcpBulkFindOrCreate ${JSON.stringify({
+        count: positions.length,
+        LineupId,
+        actingUserId,
+        isAdmin,
+      })}`,
+    );
+
+    const lineup = await Lineup.findByPk(LineupId);
+    if (!lineup) {
+      throw new NotFoundError(`Lineup not found`);
+    }
+    const choreo = await Choreo.findByPk(lineup.ChoreoId);
+    if (!choreo) {
+      throw new NotFoundError(`Choreo not found`);
+    }
+    await checkWriteAccess(choreo.UserId, actingUserId, isAdmin);
+
+    const timeOfManualUpdate = new Date();
+    const results: Array<typeof Position.prototype> = [];
+
+    for (const pos of positions) {
+      const [position, _created] = await Position.findOrCreate({
+        where: {
+          x: pos.x,
+          y: pos.y,
+          LineupId,
+          MemberId: pos.memberId,
+          UserId: choreo.UserId,
+        },
+        defaults: {
+          x: pos.x,
+          y: pos.y,
+          LineupId,
+          MemberId: pos.memberId,
+          UserId: choreo.UserId,
+          timeOfManualUpdate,
+          creatorId: actingUserId,
+          updaterId: actingUserId,
+        },
+      });
+      results.push(position);
+    }
+
+    await Lineup.update(
+      { updaterId: actingUserId },
+      { where: { id: LineupId } },
+    );
+
+    return results;
   }
 
   async migrateCreatorUpdater() {
