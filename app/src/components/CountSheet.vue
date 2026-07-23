@@ -34,7 +34,7 @@
       </BTr>
     </BThead>
     <BTbody>
-      <BTr v-for="(acht, i) in achter" :key="i" :style="{ height: '1px' }">
+      <BTr v-for="(acht, i) in achter" :key="i">
         <BTd
           v-for="label in [
             $t('achter'),
@@ -222,5 +222,9 @@ export default defineComponent({
 <style lang="scss" scoped>
 td {
   padding: 0;
+}
+
+:deep(span) {
+  pointer-events: none;
 }
 </style>

@@ -190,10 +190,10 @@ export default class ChoreoPage extends TestPage {
     );
 
     const currentCount = 1;
-    await this.page
+    const hitButton = this.page
       .getByRole("button", { name: "-" })
-      .nth(currentCount)
-      .click();
+      .nth(currentCount);
+    await this.iClickButton(hitButton);
     await Promise.all(
       defaultLineups
         .filter(
@@ -409,7 +409,9 @@ export default class ChoreoPage extends TestPage {
   }
 
   async iSelectAllMembersInLineup() {
-    await this.page.getByRole("button", { name: "-" }).nth(1).click();
+    await this.iClickButton(
+      this.page.getByRole("button", { name: "-" }).nth(1)
+    );
 
     const selectAllButton = this.page.getByTestId(
       "selectAllMembersForLineup-button"
@@ -421,7 +423,9 @@ export default class ChoreoPage extends TestPage {
   }
 
   async iEditLineup() {
-    await this.page.getByRole("button", { name: "-" }).nth(1).click();
+    await this.iClickButton(
+      this.page.getByRole("button", { name: "-" }).nth(1)
+    );
 
     const editButton = this.page.getByTestId("editLineup-button");
     await this.iClickButton(editButton);
@@ -463,7 +467,9 @@ export default class ChoreoPage extends TestPage {
   }
 
   async iDeleteLineup() {
-    await this.page.getByRole("button", { name: "-" }).nth(1).click();
+    await this.iClickButton(
+      this.page.getByRole("button", { name: "-" }).nth(1)
+    );
 
     const deleteButton = this.page.getByTestId("deleteLineup-button");
     await this.iClickButton(deleteButton);
