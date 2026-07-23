@@ -114,8 +114,8 @@ async function ensureDirForFile(filePath) {
 }
 
 async function postProcessHtml(html) {
-  // replicate vue.config.js postProcess transforms
   let out = html
+    .replace(new RegExp(`http://localhost:${PORT}`, "g"), "")
     .replace(
       /<link href="(.*?)" rel="stylesheet">/g,
       `<link rel="preload" href="$1" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link href="$1" rel="stylesheet"></noscript>`
