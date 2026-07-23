@@ -42,6 +42,9 @@
       "url": "http://localhost:3000/mcp",
       "headers": {
         "Authorization": "Bearer <YOUR-JWT-TOKEN>"
+      },
+      "requestOptions": {
+        "timeout": 3600000
       }
     }
   }

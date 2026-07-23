@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "npm run icons && vite",
-    "build": "npm run icons && npm run docs && vite build && npm run prerender && npm run sitemap",
+    "build": "npm run icons && npm run docs && npm run build:vite && npm run prerender && npm run sitemap",
+    "build:vite": "vite build",
     "prerender": "node scripts/prerender.mjs",
     "preview": "vite preview",
     "icons": "vue-asset-generate -a ./public/Icon.png && vue-asset-generate -a ./public/Icon-Dark.png -o ./temp-icons --no-manifest && node scripts/copy-dark-favicon.mjs",

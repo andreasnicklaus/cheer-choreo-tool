@@ -103,7 +103,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { createMcpServer } from "@/mcp/tools";
 
-describe("MCP guide resource", () => {
+describe("MCP guide resources", () => {
   let client: Client;
   let server: ReturnType<typeof createMcpServer>;
 
@@ -121,42 +121,74 @@ describe("MCP guide resource", () => {
     await server.close();
   });
 
-  test("server provides instructions to guide agents", () => {
+  test("server provides instructions referencing all three resources", () => {
     const instructions = client.getInstructions();
     expect(instructions).toBeDefined();
-    expect(instructions).toContain("read the usage guide resource");
-    expect(instructions).toContain("guide://cheer-choreo-tool");
+    expect(instructions).toContain("guide://cheer-choreo-tool/guide");
+    expect(instructions).toContain("guide://cheer-choreo-tool/hits");
+    expect(instructions).toContain("guide://cheer-choreo-tool/lineups");
     expect(instructions).toContain("data model hierarchy");
   });
 
-  test("lists the guide resource", async () => {
+  test("lists three guide resources", async () => {
     const { resources } = await client.listResources();
-    expect(resources).toHaveLength(1);
-    expect(resources[0].name).toBe("guide");
-    expect(resources[0].uri).toBe("guide://cheer-choreo-tool");
-    expect(resources[0].mimeType).toBe("text/markdown");
+    expect(resources).toHaveLength(3);
+
+    const names = resources.map((r) => r.name).sort();
+    expect(names).toEqual(["guide", "hits", "lineups"]);
+
+    for (const resource of resources) {
+      expect(resource.mimeType).toBe("text/markdown");
+    }
   });
 
-  test("readResource returns guide content with expected sections", async () => {
+  test("guide resource contains data model and tools sections", async () => {
     const result = await client.readResource({
-      uri: "guide://cheer-choreo-tool",
+      uri: "guide://cheer-choreo-tool/guide",
     });
     expect(result.contents).toHaveLength(1);
 
     const content = result.contents[0] as { uri: string; text: string };
-    expect(content.text).toBeDefined();
-    const text = content.text;
-    expect(text).toContain("# Cheer Choreo Tool — MCP Usage Guide");
-    expect(text).toContain("## Data Model");
-    expect(text).toContain("## Tools");
-    expect(text).toContain("## Typical Workflow");
-    expect(text).toContain("## Auth");
-    expect(text).toContain("list_clubs");
-    expect(text).toContain("create_choreo");
-    expect(text).toContain("create_position");
+    expect(content.text).toContain("# Cheer Choreo Tool — MCP Usage Guide");
+    expect(content.text).toContain("## Data Model");
+    expect(content.text).toContain("## Tools");
+    expect(content.text).toContain("## Typical Workflow");
+    expect(content.text).toContain("## Auth");
+    expect(content.text).toContain("list_clubs");
+    expect(content.text).toContain("create_choreo");
+    expect(content.text).toContain("create_position");
   });
 
-  test("guide content is loaded from the resources directory", async () => {
+  test("hits resource contains naming conventions", async () => {
+    const result = await client.readResource({
+      uri: "guide://cheer-choreo-tool/hits",
+    });
+    expect(result.contents).toHaveLength(1);
+
+    const content = result.contents[0] as { text: string };
+    expect(content.text).toContain("# Hits Guide");
+    expect(content.text).toContain("CRITICAL: How Hit Names Are Built");
+    expect(content.text).toContain("Pre-Directions");
+    expect(content.text).toContain("Pre-Actions");
+    expect(content.text).toContain("## Valid Examples");
+  });
+
+  test("lineups resource contains formation rules and position tables", async () => {
+    const result = await client.readResource({
+      uri: "guide://cheer-choreo-tool/lineups",
+    });
+    expect(result.contents).toHaveLength(1);
+
+    const content = result.contents[0] as { text: string };
+    expect(content.text).toContain("# Lineups Guide");
+    expect(content.text).toContain("## Lineup Rules");
+    expect(content.text).toContain(
+      "Position Combinations by Participant Count",
+    );
+    expect(content.text).toContain("## Best Practices");
+  });
+
+  test("guide resource content matches its source file", async () => {
     const guidePath = path.resolve(
       __dirname,
       "../../../src/mcp/resources/guide.md",
@@ -164,11 +196,41 @@ describe("MCP guide resource", () => {
     const guideFile = fs.readFileSync(guidePath, "utf8");
 
     const result = await client.readResource({
-      uri: "guide://cheer-choreo-tool",
+      uri: "guide://cheer-choreo-tool/guide",
     });
     const content = result.contents[0] as { text: string };
 
     expect(content.text).toBe(guideFile);
+  });
+
+  test("hits resource content matches its source file", async () => {
+    const hitsPath = path.resolve(
+      __dirname,
+      "../../../src/mcp/resources/hits.md",
+    );
+    const hitsFile = fs.readFileSync(hitsPath, "utf8");
+
+    const result = await client.readResource({
+      uri: "guide://cheer-choreo-tool/hits",
+    });
+    const content = result.contents[0] as { text: string };
+
+    expect(content.text).toBe(hitsFile);
+  });
+
+  test("lineups resource content matches its source file", async () => {
+    const lineupsPath = path.resolve(
+      __dirname,
+      "../../../src/mcp/resources/lineups.md",
+    );
+    const lineupsFile = fs.readFileSync(lineupsPath, "utf8");
+
+    const result = await client.readResource({
+      uri: "guide://cheer-choreo-tool/lineups",
+    });
+    const content = result.contents[0] as { text: string };
+
+    expect(content.text).toBe(lineupsFile);
   });
 
   test("lists the read-guide prompt", async () => {
@@ -178,7 +240,7 @@ describe("MCP guide resource", () => {
     expect(prompts[0].description).toContain("usage guide");
   });
 
-  test("getPrompt returns guide content as messages", async () => {
+  test("getPrompt returns all guide content as messages", async () => {
     const result = await client.getPrompt({ name: "read-guide" });
     expect(result.messages).toHaveLength(1);
     expect(result.messages[0].role).toBe("assistant");
@@ -190,6 +252,7 @@ describe("MCP guide resource", () => {
     expect(content.type).toBe("text");
     expect(content.text).toContain("# Cheer Choreo Tool — MCP Usage Guide");
     expect(content.text).toContain("## Data Model");
-    expect(content.text).toContain("## Typical Workflow");
+    expect(content.text).toContain("# Hits Guide");
+    expect(content.text).toContain("# Lineups Guide");
   });
 });

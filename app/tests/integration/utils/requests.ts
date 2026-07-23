@@ -16,10 +16,8 @@ import { sharedWithMe, managedByMe } from "../testData/userAccess";
 const API_URL = "https://api.choreo-planer.de";
 
 export async function authAnyBackEndRequest(page: Page) {
-  await page.route("**/*", async (route) => {
-    const url = route.request().url();
-    const method = route.request().method();
-    if (url.includes(API_URL) && (await checkAuthorization(route.request()))) {
+  await page.route(`${API_URL}/**`, async (route) => {
+    if (await checkAuthorization(route.request())) {
       await route.fulfill({ status: 204 });
     } else await route.continue();
   });

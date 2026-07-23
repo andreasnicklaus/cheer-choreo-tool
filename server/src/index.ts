@@ -66,7 +66,7 @@ import { adminRouter } from "./routes/admin/index";
 const app = express();
 const port = 3000;
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "100mb" }));
 app.use(express.urlencoded({ extended: true }));
 const corsWhiteList = [
   process.env.FRONTEND_DOMAIN,
@@ -84,7 +84,8 @@ app.use(
       if (
         !origin ||
         corsWhiteList.includes(origin) ||
-        origin.includes("localhost")
+        origin.includes("localhost") ||
+        origin.includes("127.0.0.1")
       ) {
         callback(null, true);
       } else {

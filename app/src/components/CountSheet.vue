@@ -34,7 +34,7 @@
       </BTr>
     </BThead>
     <BTbody>
-      <BTr v-for="(acht, i) in achter" :key="i" :style="{ height: '1px' }">
+      <BTr v-for="(acht, i) in achter" :key="i">
         <BTd
           v-for="label in [
             $t('achter'),
@@ -54,10 +54,15 @@
             // border: 'none',
           }"
         >
-          <span v-show="label == $t('achter')">
-            {{ acht[label] ?? 0 + 1 }}
-          </span>
           <div
+            v-if="label == $t('achter')"
+            class="d-grid align-content-center"
+            style="height: 100%"
+          >
+            {{ ((acht[label] as number) ?? 0) + 1 }}
+          </div>
+          <div
+            v-else
             class="d-grid"
             :style="{
               height: '100%',
@@ -217,5 +222,9 @@ export default defineComponent({
 <style lang="scss" scoped>
 td {
   padding: 0;
+}
+
+:deep(span) {
+  pointer-events: none;
 }
 </style>

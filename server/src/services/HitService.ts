@@ -1,5 +1,7 @@
 import { NotFoundError } from "@/utils/errors";
 import Hit from "../db/models/hit";
+import Choreo from "../db/models/choreo";
+import db from "../db/db";
 import ChoreoService from "./ChoreoService";
 import {
   checkReadAccess,
@@ -267,6 +269,178 @@ class HitService {
 
     await ChoreoService.update(hit.ChoreoId, {}, actingUserId, isAdmin);
     return hit.destroy();
+  }
+
+  async bulkCreate(
+    hits: Array<{ name: string; count: number; memberIds?: string[] }>,
+    ChoreoId: string,
+    actingUserId: string,
+    isAdmin = false,
+  ) {
+    logger.debug(
+      `HitService bulkCreate ${JSON.stringify({ hits, ChoreoId, actingUserId, isAdmin })}`,
+    );
+
+    // Inherit ownerId from parent Choreo (access check happens once)
+    const choreo = await ChoreoService.findById(
+      ChoreoId,
+      actingUserId,
+      isAdmin,
+    );
+    if (!choreo) {
+      throw new NotFoundError(`Choreo with ID ${ChoreoId} not found`);
+    }
+    const ownerId = choreo.UserId;
+    await checkWriteAccess(ownerId, actingUserId, isAdmin);
+
+    const createdHits: Hit[] = [];
+    for (const { name, count, memberIds = [] } of hits) {
+      const [hit, _created] = await Hit.findOrCreate({
+        where: { name, count, ChoreoId, UserId: ownerId },
+        defaults: {
+          name,
+          count,
+          ChoreoId,
+          UserId: ownerId,
+          creatorId: actingUserId,
+          updaterId: actingUserId,
+        },
+      });
+      if (memberIds.length > 0) await hit.setMembers(memberIds);
+      createdHits.push(hit);
+    }
+
+    // Update choreography timestamp once
+    await ChoreoService.update(ChoreoId, {}, actingUserId, isAdmin);
+
+    return createdHits;
+  }
+
+  /**
+   * MCP-optimized: Create a single hit with lightweight access checks.
+   * Avoids loading the full choreography object graph.
+   */
+  async mcpCreate(
+    name: string,
+    count: number,
+    ChoreoId: string,
+    memberIds: Array<string> = [],
+    actingUserId: string,
+    isAdmin = false,
+  ) {
+    logger.debug(
+      `HitService mcpCreate ${JSON.stringify({
+        name,
+        count,
+        ChoreoId,
+        memberIds,
+        actingUserId,
+        isAdmin,
+      })}`,
+    );
+
+    const choreo = await Choreo.findByPk(ChoreoId);
+    if (!choreo) {
+      throw new NotFoundError(`Choreo with ID ${ChoreoId} not found`);
+    }
+    await checkWriteAccess(choreo.UserId, actingUserId, isAdmin);
+
+    const [hit, _created] = await Hit.findOrCreate({
+      where: { name, count, ChoreoId, UserId: choreo.UserId },
+      defaults: {
+        name,
+        count,
+        ChoreoId,
+        UserId: choreo.UserId,
+        creatorId: actingUserId,
+        updaterId: actingUserId,
+      },
+    });
+
+    if (memberIds.length > 0) await hit.setMembers(memberIds);
+
+    await Choreo.update(
+      { updaterId: actingUserId },
+      { where: { id: ChoreoId } },
+    );
+
+    return Hit.findByPk(hit.id, { include: "Members" });
+  }
+
+  /**
+   * MCP-optimized: Bulk create hits with lightweight access checks.
+   * Avoids loading the full choreography object graph.
+   */
+  async mcpBulkCreate(
+    hits: Array<{ name: string; count: number; memberIds?: string[] }>,
+    ChoreoId: string,
+    actingUserId: string,
+    isAdmin = false,
+  ) {
+    logger.info(
+      `HitService mcpBulkCreate ${JSON.stringify({
+        count: hits.length,
+        ChoreoId,
+        actingUserId,
+        isAdmin,
+      })}`,
+    );
+
+    const choreo = await Choreo.findByPk(ChoreoId);
+    if (!choreo) {
+      throw new NotFoundError(`Choreo with ID ${ChoreoId} not found`);
+    }
+    await checkWriteAccess(choreo.UserId, actingUserId, isAdmin);
+
+    const now = new Date().toISOString();
+    const membershipPairs: Array<[string, string]> = [];
+    const createdHits: Hit[] = [];
+
+    // findOrCreate per hit — handles duplicates and existing hits correctly
+    for (const { name, count, memberIds = [] } of hits) {
+      const [hit] = await Hit.findOrCreate({
+        where: { name, count, ChoreoId, UserId: choreo.UserId },
+        defaults: {
+          name,
+          count,
+          ChoreoId,
+          UserId: choreo.UserId,
+          creatorId: actingUserId,
+          updaterId: actingUserId,
+        },
+      });
+      for (const memberId of memberIds) {
+        membershipPairs.push([hit.id, memberId]);
+      }
+      createdHits.push(hit);
+    }
+
+    if (membershipPairs.length > 0) {
+      const values = membershipPairs.map(() => "(?, ?, ?, ?)").join(", ");
+      const flatParams = membershipPairs.flatMap(([hitId, memberId]) => [
+        hitId,
+        memberId,
+        now,
+        now,
+      ]);
+      db.query(
+        `INSERT INTO "HitMemberships" ("HitId", "MemberId", "createdAt", "updatedAt")
+         VALUES ${values}
+         ON CONFLICT DO NOTHING`,
+        { replacements: flatParams },
+      ).catch((err) =>
+        logger.error("mcpBulkCreate: failed to insert memberships", err),
+      );
+    }
+
+    Choreo.update(
+      { updaterId: actingUserId },
+      { where: { id: ChoreoId } },
+    ).catch((err) =>
+      logger.error("mcpBulkCreate: failed to update choreo updaterId", err),
+    );
+
+    return createdHits;
   }
 
   async migrateCreatorUpdater() {
