@@ -1,4 +1,20 @@
+name: cheer-tool
 services:
+  loadbalancer:
+    image: nginx:alpine
+    volumes:
+      - ./loadbalancer/nginx.conf:/etc/nginx/templates/default.conf.template:ro
+    environment:
+      NGINX_UPSTREAM_SERVERS: |
+        server cheer-tool-server-1:3000;
+        server cheer-tool-server-2:3000;
+    restart: unless-stopped
+    depends_on:
+      server:
+        condition: service_healthy
+    ports:
+      - 3000:80
+
   db:
     image: postgres:18-alpine
     restart: unless-stopped
@@ -24,8 +40,8 @@ services:
       - .server.env
     environment:
       - DB_HOST=db
-    ports:
-      - 3000:3000
+    deploy:
+      replicas: 2
     volumes:
       - ./logs:/usr/src/app/logs
       - ./uploads:/usr/src/app/uploads
