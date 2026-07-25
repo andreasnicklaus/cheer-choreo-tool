@@ -34,7 +34,8 @@
 - Feedback collection
 - Contact form with email notifications
 - RESTful API with OpenAPI/Swagger documentation
-- Dockerized deployment with automatic updates via Watchtower
+- AI-Powered MCP server for programmatic choreo management
+- Dockerized deployment with nginx load balancer and automatic updates via Watchtower
 
 ## Quick Start
 
@@ -79,8 +80,8 @@ This starts Docker Compose with the development configuration which enables hot 
 | ------------------- | ------------------------------------------------------ |
 | `npm run dev`       | Start with nodemon for hot reload (TypeScript via tsx) |
 | `npm run start`     | Start the production build                             |
-| `npm run build`     | Compile TypeScript and build                           |
-| `npm run test`      | Run all tests (lint + unit)                            |
+| `npm run build`     | Lint and compile TypeScript                            |
+| `npm run test`      | Run all tests (lint + typecheck + unit)                |
 | `npm run test:unit` | Run Jest unit tests                                    |
 | `npm run lint`      | Run ESLint                                             |
 | `npm run docs`      | Generate JSDoc documentation                           |
@@ -92,31 +93,64 @@ This starts Docker Compose with the development configuration which enables hot 
 server/
 ├── src/
 │   ├── db/
-│   │   ├── models/        # Sequelize models
-│   │   ├── db.ts          # Database connection
-│   │   ├── index.ts      # Model associations
-│   │   └── seed.ts       # Database seeding
-│   ├── middlewares/      # Express middleware
+│   │   ├── models/          # Sequelize models
+│   │   ├── migrations/      # Database migrations
+│   │   ├── db.ts            # Database connection
+│   │   ├── index.ts         # Model associations
+│   │   ├── seed.json        # Seed data
+│   │   └── seed.ts          # Database seeding
+│   ├── i18n/                # Internationalization
+│   │   ├── en.json5
+│   │   └── de.json5
+│   ├── mcp/                 # Model Context Protocol server
+│   │   ├── resources/       # MCP resource definitions
+│   │   ├── auth.ts          # MCP authentication
+│   │   ├── helpers.ts       # MCP helper functions
+│   │   ├── index.ts         # MCP entry point
+│   │   └── tools.ts         # MCP tool definitions
+│   ├── middlewares/          # Express middleware
 │   │   ├── errorHandlingMiddleware.ts
 │   │   ├── loggingMiddleware.ts
 │   │   ├── rateLimitMiddleware.ts
-│   │   └── requestQueue.ts
-│   ├── plugins/          # Plugin configurations
-│   │   ├── i18n.ts       # Internationalization
-│   │   ├── nodemailer.ts # Email setup
-│   │   └── winston.ts    # Logging setup
-│   ├── routes/           # API route handlers
-│   │   ├── admin/        # Admin endpoints
-│   │   └── *.ts          # REST endpoints
-│   ├── services/         # Business logic
-│   ├── utils/            # Utility functions
-│   ├── views/            # EJS templates
-│   │   ├── admin/        # Admin dashboard
-│   │   └── mail/         # Email templates
-│   └── index.ts          # Entry point
+│   │   ├── requestQueue.ts
+│   │   └── validateMiddleware.ts
+│   ├── plugins/             # Plugin configurations
+│   │   ├── i18n.ts          # Internationalization setup
+│   │   ├── nodemailer.ts    # Email setup
+│   │   ├── passport.ts      # OAuth authentication
+│   │   └── winston.ts       # Logging setup
+│   ├── public/              # Static assets
+│   ├── routes/              # API route handlers
+│   │   ├── admin/           # Admin endpoints
+│   │   ├── auth.ts
+│   │   ├── choreo.ts
+│   │   ├── club.ts
+│   │   ├── contact.ts
+│   │   ├── feedback.ts
+│   │   ├── hit.ts
+│   │   ├── lineup.ts
+│   │   ├── member.ts
+│   │   ├── notification.ts
+│   │   ├── position.ts
+│   │   ├── season.ts
+│   │   ├── seasonTeam.ts
+│   │   ├── team.ts
+│   │   └── user.ts
+│   ├── services/            # Business logic
+│   ├── utils/               # Utility functions
+│   ├── views/               # EJS templates
+│   │   ├── admin/           # Admin dashboard
+│   │   └── mail/            # Email templates
+│   ├── docDefs.ts           # Swagger documentation definitions
+│   └── index.ts             # Entry point
 ├── tests/
-│   └── unit/             # Jest unit tests
+│   └── unit/                # Jest unit tests
+├── loadbalancer/            # Nginx load balancer config
 ├── Dockerfile
+├── dev.Dockerfile
+├── arm32v7.Dockerfile
+├── eslint.config.mjs
+├── jest.config.ts
 ├── package.json
 └── tsconfig.json
 ```
@@ -134,7 +168,8 @@ graph
     Router --> ReverseProxy
     subgraph HomeServer
       subgraph Docker
-        ReverseProxy[Reverse Proxy] --> api
+        ReverseProxy[Reverse Proxy] --> LoadBalancer
+        LoadBalancer[Load Balancer] --> api
         sequelize --> db[(Postgres Database)]
         Unleash
         subgraph api[Choreo Planer API]
@@ -170,7 +205,7 @@ Once the server is running:
 npm run test
 ```
 
-This runs ESLint first, then executes Jest unit tests.
+This runs ESLint and type checking first, then executes Jest unit tests.
 
 ## Support
 

@@ -72,6 +72,7 @@ graph
         Watchtower
         Unleash
         ReverseProxy[Reverse Proxy]
+        LoadBalancer[Load Balancer]
         sequelize
         db[(Postgres Database)]
         dba[(Analytics Database)]
@@ -85,10 +86,12 @@ graph
     end
   end
 
-  ReverseProxy --> api
+  ReverseProxy --> LoadBalancer
   ReverseProxy --> Watchtower
   ReverseProxy --> Matomo
   ReverseProxy --> Unleash
+
+  LoadBalancer --> api
 
   sequelize --> db
   Matomo --> dba
