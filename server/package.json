@@ -107,7 +107,11 @@
   "overrides": {
     "express-robots-txt": {
       "express": "^5"
-    }
+    },
+    "esbuild": ">=0.28.1",
+    "fast-uri": ">=3.1.4",
+    "brace-expansion": ">=5.0.6",
+    "@hono/node-server": ">=2.0.5"
   },
   "nodemonConfig": {
     "ignore": [
