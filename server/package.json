@@ -80,7 +80,7 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "tsc-alias": "^1.8.17",
-    "typescript": "^6.0.0",
+    "typescript": "^7.0.0",
     "typescript-cp": "^0.1.9",
     "unleash-client": "^6.11.0",
     "winston": "^3.19.0",
