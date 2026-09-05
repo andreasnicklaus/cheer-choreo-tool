@@ -1,80 +1,80 @@
 <template>
-  <b-table-simple>
-    <b-tbody>
-      <b-tr>
-        <b-td class="font-weight-bold">{{
+  <BTableSimple>
+    <BTbody>
+      <BTr>
+        <BTd class="font-weight-bold">{{
           $t("shortcut-tutorial.naechster-count")
-        }}</b-td>
-        <b-td>
-          <b-icon-arrow-right class="mr-1" />
-          <b-badge variant="light">{{
+        }}</BTd>
+        <BTd>
+          <IBiArrowRight class="me-1" />
+          <BBadge variant="light">{{
             $t("shortcut-tutorial.pfeil-rechts")
-          }}</b-badge>
-        </b-td>
-      </b-tr>
-      <b-tr>
-        <b-td class="font-weight-bold">{{
+          }}</BBadge>
+        </BTd>
+      </BTr>
+      <BTr>
+        <BTd class="font-weight-bold">{{
           $t("shortcut-tutorial.voriger-count")
-        }}</b-td>
-        <b-td>
-          <b-icon-arrow-left class="mr-1" />
-          <b-badge variant="light">{{
+        }}</BTd>
+        <BTd>
+          <IBiArrowLeft class="me-1" />
+          <BBadge variant="light">{{
             $t("shortcut-tutorial.pfeil-links")
-          }}</b-badge>
-        </b-td>
-      </b-tr>
-      <b-tr>
-        <b-td class="font-weight-bold">{{
+          }}</BBadge>
+        </BTd>
+      </BTr>
+      <BTr>
+        <BTd class="font-weight-bold">{{
           $t("shortcut-tutorial.naechster-achter")
-        }}</b-td>
-        <b-td>
-          <b-icon-arrow-down class="mr-1" />
-          <b-badge variant="light">{{
+        }}</BTd>
+        <BTd>
+          <IBiArrowDown class="me-1" />
+          <BBadge variant="light">{{
             $t("shortcut-tutorial.pfeil-unten")
-          }}</b-badge>
-        </b-td>
-      </b-tr>
-      <b-tr>
-        <b-td class="font-weight-bold">{{
+          }}</BBadge>
+        </BTd>
+      </BTr>
+      <BTr>
+        <BTd class="font-weight-bold">{{
           $t("shortcut-tutorial.voriger-achter")
-        }}</b-td>
-        <b-td>
-          <b-icon-arrow-up class="mr-1" />
-          <b-badge variant="light">{{
+        }}</BTd>
+        <BTd>
+          <IBiArrowUp class="me-1" />
+          <BBadge variant="light">{{
             $t("shortcut-tutorial.pfeil-oben")
-          }}</b-badge>
-        </b-td>
-      </b-tr>
-      <b-tr>
-        <b-td class="font-weight-bold">{{
+          }}</BBadge>
+        </BTd>
+      </BTr>
+      <BTr>
+        <BTd class="font-weight-bold">{{
           $t("shortcut-tutorial.play-pause")
-        }}</b-td>
-        <b-td>
-          <b-badge variant="light">{{
+        }}</BTd>
+        <BTd>
+          <BBadge variant="light">{{
             $t("shortcut-tutorial.leerzeichen")
-          }}</b-badge>
-        </b-td>
-      </b-tr>
-      <b-tr>
-        <b-td class="font-weight-bold">{{
+          }}</BBadge>
+        </BTd>
+      </BTr>
+      <BTr>
+        <BTd class="font-weight-bold">{{
           $t("shortcut-tutorial.neuer-eintrag")
-        }}</b-td>
-        <b-td>
-          <b-badge variant="light"> H </b-badge> /
-          <b-badge variant="light"> N </b-badge> /
+        }}</BTd>
+        <BTd>
+          <BBadge variant="light"> H </BBadge> /
+          <BBadge variant="light"> N </BBadge> /
           {{ $t("shortcut-tutorial.doppelklick-auf-countsheet-zelle") }}
-        </b-td>
-      </b-tr>
-      <b-tr>
-        <b-td class="font-weight-bold">{{
+        </BTd>
+      </BTr>
+      <BTr>
+        <BTd class="font-weight-bold">{{
           $t("shortcut-tutorial.eintrag-aendern")
-        }}</b-td>
-        <b-td>
-          <b-badge variant="light"> Ä </b-badge>
-        </b-td>
-      </b-tr>
-    </b-tbody>
-  </b-table-simple>
+        }}</BTd>
+        <BTd>
+          <BBadge variant="light"> Ä </BBadge>
+        </BTd>
+      </BTr>
+    </BTbody>
+  </BTableSimple>
 </template>
 
 <script>

@@ -9,6 +9,8 @@
  *  responses:
  *    UnauthorizedError:
  *      description: Unauthorized
+ *    BadRequestError:
+ *      description: Bad Request
  *  schemas:
  *    JWT:
  *      type: string

@@ -9,11 +9,19 @@ import HitService from "./HitService";
 import MemberService from "./MemberService";
 import SeasonService from "./SeasonService";
 import TeamService from "./TeamService";
+import {
+  checkReadAccess,
+  checkWriteAccess,
+  checkDeleteAccess,
+  filterAccessibleOwnerIds,
+} from "../utils/accessControl";
+import { stripProtectedUpdateFields } from "@/utils/stripProtectedFields";
 
 const { Op } = require("sequelize");
 const { logger } = require("../plugins/winston");
 
 const defaultInclude = [
+  { association: "User" },
   {
     model: Team,
     as: "Teams",
@@ -22,7 +30,7 @@ const defaultInclude = [
         model: SeasonTeam,
         as: "SeasonTeams",
         include: [
-          { association: "Choreos" },
+          { association: "Choreos", include: [{ association: "User" }] },
           { association: "Season" },
           { association: "Members" },
         ],
@@ -39,18 +47,36 @@ const defaultInclude = [
  */
 class ClubService {
   /**
-   * Get all Clubs with specified UserId
+   * Get all Clubs with specified ownerId
    *
-   * @async
-   * @param {UUID} UserId
+   * @param {string[] | null} ownerIds
+   * @param {UUID} actingUserId
+   * @param {boolean} [isAdmin=false]
    * @param {Object} [options={ all: false }]
    * @param {boolean} [options.all=false]
    * @returns {Club[]}
    */
-  async getAll(UserId: string | null, options = { all: false }) {
-    logger.debug(`ClubService getAll ${JSON.stringify({ UserId, options })}`);
+  async getAll(
+    ownerIds: string[] | null,
+    actingUserId: string,
+    isAdmin = false,
+    options = { all: false },
+  ) {
+    logger.debug(
+      `ClubService getAll ${JSON.stringify({ ownerIds, actingUserId, isAdmin, options })}`,
+    );
+
+    const accessibleOwnerIds =
+      ownerIds && ownerIds.length > 0
+        ? await filterAccessibleOwnerIds(ownerIds, actingUserId, isAdmin)
+        : [actingUserId];
+
     return Club.findAll({
-      where: options.all ? {} : UserId ? { UserId } : {},
+      where: options.all
+        ? {}
+        : accessibleOwnerIds.length > 0
+          ? { UserId: { [Op.in]: accessibleOwnerIds } }
+          : { UserId: actingUserId },
       include: defaultInclude,
       order: [
         ["createdAt", "ASC"],
@@ -110,15 +136,25 @@ class ClubService {
   /**
    * Find Club by its ID
    *
-   * @async
    * @param {UUID} id
-   * @param {UUID} UserId
+   * @param {UUID} actingUserId
+   * @param {boolean} [isAdmin=false]
    * @returns {Club}
    */
-  async findById(id: string, UserId: string) {
-    logger.debug(`ClubService findById ${JSON.stringify({ id, UserId })}`);
+  async findById(id: string, actingUserId: string, isAdmin = false) {
+    logger.debug(
+      `ClubService findById ${JSON.stringify({ id, actingUserId, isAdmin })}`,
+    );
+
+    const club = await Club.findByPk(id);
+    if (!club) {
+      return null;
+    }
+
+    await checkReadAccess(club.UserId, actingUserId, isAdmin);
+
     return Club.findOne({
-      where: { id, UserId },
+      where: { id },
       include: defaultInclude,
       order: [
         [Club.associations.Teams, "name"],
@@ -142,15 +178,32 @@ class ClubService {
   /**
    * Find Club by its name
    *
-   * @async
    * @param {string} name
-   * @param {UUID} UserId
-   * @returns {Club}
+   * @param {UUID[]} ownerIds - Array of owner IDs the acting user has access to
+   * @param {UUID} actingUserId
+   * @param {boolean} [isAdmin=false]
+   * @returns {Club[]}
    */
-  async findByName(name: string, UserId: string) {
-    logger.debug(`ClubService findByName ${JSON.stringify({ name, UserId })}`);
+  async findByName(
+    name: string,
+    ownerIds: string[],
+    actingUserId: string,
+    isAdmin = false,
+  ) {
+    logger.debug(
+      `ClubService findByName ${JSON.stringify({ name, ownerIds, actingUserId, isAdmin })}`,
+    );
+
+    const accessibleOwnerIds =
+      ownerIds.length > 0
+        ? await filterAccessibleOwnerIds(ownerIds, actingUserId, isAdmin)
+        : [actingUserId];
+
     return Club.findAll({
-      where: { name, UserId },
+      where:
+        accessibleOwnerIds.length > 0
+          ? { name, UserId: { [Op.in]: accessibleOwnerIds } }
+          : { name },
       include: defaultInclude,
     });
   }
@@ -158,18 +211,34 @@ class ClubService {
   /**
    * Create a new Club
    *
-   * @async
    * @param {string} name
-   * @param {UUID} UserId
+   * @param {UUID|null} ownerId - Owner ID. If null/undefined, falls back to actingUserId
+   * @param {UUID} actingUserId
+   * @param {boolean} [isAdmin=false]
    * @returns {Club}
    */
-  async create(name: string, UserId: string) {
-    logger.debug(`ClubService create ${JSON.stringify({ name, UserId })}`);
-    return Club.create({ name, UserId }).then((club: Club) =>
-      Club.count({ where: { UserId } }).then(async (count: number) => {
+  async create(
+    name: string,
+    ownerId: string,
+    actingUserId: string,
+    isAdmin = false,
+  ) {
+    logger.debug(
+      `ClubService create ${JSON.stringify({ name, ownerId, actingUserId, isAdmin })}`,
+    );
+
+    await checkWriteAccess(ownerId, actingUserId, isAdmin);
+
+    return Club.create({
+      name,
+      UserId: ownerId,
+      creatorId: actingUserId,
+      updaterId: actingUserId,
+    }).then((club: Club) =>
+      Club.count({ where: { UserId: ownerId } }).then(async (count: number) => {
         if (count <= 1) {
-          await this.seedDemo(club, UserId);
-          const foundClub = await this.findById(club.id, UserId);
+          await this.seedDemo(club, ownerId, actingUserId);
+          const foundClub = await this.findById(club.id, actingUserId, isAdmin);
           if (!foundClub) {
             logger.error(`Club with id ${club.id} not found after creation`);
             throw new NotFoundError(
@@ -186,103 +255,125 @@ class ClubService {
   /**
    * Seed a demo team and choreo for a Club
    *
-   * @async
    * @param {Club} club
-   * @param {UUID} UserId
+   * @param {UUID} ownerId
+   * @param {UUID} actingUserId
    * @returns {void}
    */
-  async seedDemo(club: Club, UserId: string) {
-    logger.debug(`ClubService seedDemo ${JSON.stringify({ club, UserId })}`);
-    return SeasonService.getAll(null).then((seasons: Season[]) => {
-      const currentSeason = seasons.find(
-        (s) => s.year == new Date().getFullYear(),
-      ) as Season;
-      return TeamService.create(
-        "Demo-Team",
-        club.id,
-        currentSeason.id,
-        UserId,
-      ).then((team: Team | null) => {
-        if (!team) return;
-        const seasonTeam = team.SeasonTeams[0];
-        Promise.all([
-          MemberService.create(
-            "Tina Turnerin",
-            "Tini",
-            "T",
-            seasonTeam.id,
-            UserId,
-          ),
-          MemberService.create(
-            "Zoe Zuverlässig",
-            "Zoe",
-            "Z",
-            seasonTeam.id,
-            UserId,
-          ),
-          MemberService.create(
-            "Fenja Flyer",
-            "Fipsi",
-            "F",
-            seasonTeam.id,
-            UserId,
-          ),
-        ]).then((members) =>
-          ChoreoService.create(
-            "Demo-Choreo",
-            25,
-            undefined,
-            seasonTeam.id,
-            members.map((m) => ({ id: m.id })),
-            UserId,
-          ).then((choreo: Choreo) => {
-            Promise.all([
-              HitService.create(
-                "Pose",
-                0,
-                choreo.id,
-                members.map((m) => m.id),
-                UserId,
-              ),
-              HitService.create(
-                "Flick-Flack",
-                2,
-                choreo.id,
-                [members[0].id],
-                UserId,
-              ),
-            ]);
-          }),
-        );
-      });
-    });
+  async seedDemo(club: Club, ownerId: string, actingUserId: string) {
+    logger.debug(
+      `ClubService seedDemo ${JSON.stringify({ club, ownerId, actingUserId })}`,
+    );
+    return SeasonService.getAll(null, actingUserId).then(
+      (seasons: Season[]) => {
+        const currentSeason = seasons.find(
+          (s) => s.year == new Date().getFullYear(),
+        ) as Season;
+        return TeamService.create(
+          "Demo-Team",
+          club.id,
+          currentSeason.id,
+          ownerId,
+          actingUserId,
+        ).then((team: Team | null) => {
+          if (!team) return;
+          const seasonTeam = team.SeasonTeams[0];
+          return Promise.all([
+            MemberService.create(
+              "Tina Turnerin",
+              "Tini",
+              "T",
+              seasonTeam.id,
+              actingUserId,
+            ),
+            MemberService.create(
+              "Zoe Zuverlässig",
+              "Zoe",
+              "Z",
+              seasonTeam.id,
+              actingUserId,
+            ),
+            MemberService.create(
+              "Fenja Flyer",
+              "Fipsi",
+              "F",
+              seasonTeam.id,
+              actingUserId,
+            ),
+          ]).then((members) =>
+            ChoreoService.create(
+              "Demo-Choreo",
+              25,
+              undefined,
+              seasonTeam.id,
+              members.map((m) => ({ id: m.id })),
+              ownerId,
+              actingUserId,
+            ).then((choreo: Choreo | null) => {
+              if (!choreo) return;
+              return Promise.all([
+                HitService.create(
+                  "Pose",
+                  0,
+                  choreo.id,
+                  members.map((m) => m.id),
+                  actingUserId,
+                ),
+                HitService.create(
+                  "Flick-Flack",
+                  2,
+                  choreo.id,
+                  [members[0].id],
+                  actingUserId,
+                ),
+              ]);
+            }),
+          );
+        });
+      },
+    );
   }
 
   /**
-   * Find or create (if it does not exist) a Club
+   * Find or create a club.
    *
-   * @async
    * @param {string} name
-   * @param {UUID} UserId
+   * @param {UUID|null} ownerId - Owner ID. If null/undefined, falls back to actingUserId
+   * @param {UUID} actingUserId
+   * @param {boolean} [isAdmin=false]
    * @returns {Club}
    */
-  async findOrCreate(name: string, UserId: string) {
+  async findOrCreate(
+    name: string,
+    ownerId: string,
+    actingUserId: string,
+    isAdmin = false,
+  ): Promise<[Club, boolean]> {
     logger.debug(
-      `ClubService findOrCreate ${JSON.stringify({ name, UserId })}`,
+      `ClubService findOrCreate ${JSON.stringify({ name, ownerId, actingUserId, isAdmin })}`,
     );
-    const [club, _created] = await Club.findOrCreate({
-      where: { name, UserId },
+
+    await checkWriteAccess(ownerId, actingUserId, isAdmin);
+
+    const [club, created] = await Club.findOrCreate({
+      where: { name, UserId: ownerId },
+      defaults: {
+        name,
+        UserId: ownerId,
+        creatorId: actingUserId,
+        updaterId: actingUserId,
+      },
     });
-    return club;
+    return [club, created];
   }
 
   /**
    * Update a Club
    *
-   * @async
    * @param {UUID} id
    * @param {Object} data
-   * @param {UUID} UserId
+   * @param {UUID} actingUserId
+   * @param {boolean} [isAdmin=false]
    * @param {Object} [options={ all: false }]
    * @param {boolean} [options.all=false]
    * @returns {Club}
@@ -290,51 +381,70 @@ class ClubService {
   async update(
     id: string,
     data: object,
-    UserId: string | null,
+    actingUserId: string,
+    isAdmin = false,
     options = { all: false },
   ) {
     logger.debug(
-      `ClubService update ${JSON.stringify({ id, data, UserId, options })}`,
+      `ClubService update ${JSON.stringify({ id, data, actingUserId, isAdmin, options })}`,
     );
-    return Club.findOne({
-      where: options.all || !UserId ? { id } : { id, UserId },
-    }) // njsscan-ignore: node_nosqli_injection
-      .then(async (foundClub) => {
-        if (foundClub) {
-          await foundClub.update(data);
-          return foundClub.save();
-        } else {
-          logger.error(`No club found with ID ${id} when updating`);
-          throw new NotFoundError(`No club found with ID ${id} when updating`);
-        }
-      });
+
+    const club = await Club.findByPk(id);
+    if (!club) {
+      throw new NotFoundError(`No club found with ID ${id} when updating`);
+    }
+
+    await checkWriteAccess(club.UserId, actingUserId, isAdmin);
+
+    await club.update({
+      ...stripProtectedUpdateFields(data),
+      updaterId: actingUserId,
+    });
+    return club.save();
   }
 
   /**
    * Remove a Club
    *
-   * @async
    * @param {UUID} id
-   * @param {UUID} UserId
+   * @param {UUID} actingUserId
+   * @param {boolean} [isAdmin=false]
    * @param {Object} [options={ all: false }]
    * @param {boolean} [options.all=false]
    * @returns {Promise<void>}
    */
-  async remove(id: string, UserId: string | null, options = { all: false }) {
+  async remove(
+    id: string,
+    actingUserId: string,
+    isAdmin = false,
+    options = { all: false },
+  ) {
     logger.debug(
-      `ClubService remove ${JSON.stringify({ id, UserId, options })}`,
+      `ClubService remove ${JSON.stringify({ id, actingUserId, isAdmin, options })}`,
     );
-    return Club.findOne({
-      where: options.all || !UserId ? { id } : { id, UserId },
-    }) // njsscan-ignore: node_nosqli_injection
-      .then((foundClub) => {
-        if (foundClub) {
-          return foundClub.destroy();
-        } else {
-          logger.error(`No club found with ID ${id} when deleting`);
-          throw new NotFoundError(`No club found with ID ${id} when deleting`);
-        }
-      });
+
+    const club = await Club.findByPk(id);
+    if (!club) {
+      throw new NotFoundError(`No club found with ID ${id} when deleting`);
+    }
+
+    await checkDeleteAccess(club.UserId, actingUserId, isAdmin);
+
+    return club.destroy();
+  }
+
+  async migrateCreatorUpdater() {
+    logger.debug(`ClubService migrateCreatorUpdater`);
+
+    const clubs = await Club.findAll({
+      where: { creatorId: { [Op.is]: null }, UserId: { [Op.not]: null } },
+    });
+
+    await Promise.all(
+      clubs.map((club) =>
+        club.update({ creatorId: club.UserId, updaterId: club.UserId }),
+      ),
+    );
   }
 }
 

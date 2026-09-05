@@ -40,5 +40,3 @@ test("should generate a video with the default configuration", async ({
 test("should disable the generate button when no members are selected", async () => {
   await videoPage.iTryVideoGenerationWithNoMembers();
 });
-
-// TODO: find a way to test the video content

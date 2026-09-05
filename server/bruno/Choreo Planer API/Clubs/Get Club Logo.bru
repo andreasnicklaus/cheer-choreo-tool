@@ -1,0 +1,17 @@
+meta {
+  name: Get Club Logo
+  method: GET
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/club/:id/clubLogo
+  body: none
+  auth: inherit
+}
+
+
+params:path {
+  id: 
+}

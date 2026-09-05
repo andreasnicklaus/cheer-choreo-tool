@@ -1,23 +1,26 @@
 <template>
-  <b-modal
-    :id="`modal-deleteLineup-${this.id}`"
+  <BModal
+    :id="`modal-deleteLineup-${id}`"
+    ref="modal"
     :title="$t('modals.delete-lineup.aufstellung-loeschen')"
     centered
     @hidden="resetDeleteLineupModal"
     @ok="deleteLineup"
   >
     <p class="m-0">{{ $t("du-kannst-das-nicht-rueckgaengig-machen") }}</p>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="danger">{{ $t("loeschen") }}</b-button>
-      <b-button @click="cancel" variant="outline-secondary">
+    <template #footer="{ ok, cancel }">
+      <BButton variant="danger" @click="ok">{{ $t("loeschen") }}</BButton>
+      <BButton variant="light" @click="cancel">
         {{ $t("abbrechen") }}
-      </b-button>
+      </BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import LineupService from "@/services/LineupService";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * @module Modal:DeleteLineupModal
@@ -35,33 +38,35 @@ import LineupService from "@/services/LineupService";
  *  <Button @click="() => $refs.deleteLineupModal.open('abc')" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "DeleteLineupModal",
-  data: () => ({
-    id: (Math.random() + 1).toString(36).substring(7),
-    deleteLineupId: null,
-  }),
   props: {
     choreo: {
       type: Object,
+      default: null,
     },
   },
+  emits: ["updateLineups"],
+  data: () => ({
+    id: (Math.random() + 1).toString(36).substring(7),
+    deleteLineupId: null as string | null,
+  }),
   methods: {
-    open(deleteLineupId) {
+    open(deleteLineupId: string) {
       this.deleteLineupId = deleteLineupId;
-      this.$bvModal.show(`modal-deleteLineup-${this.id}`);
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     resetDeleteLineupModal() {
       this.deleteLineupId = null;
     },
     deleteLineup() {
-      LineupService.remove(this.deleteLineupId).then(() => {
+      LineupService.remove(this.deleteLineupId!).then(() => {
         this.$emit(
           "updateLineups",
-          this.choreo.Lineups.filter((l) => l.id != this.deleteLineupId)
+          this.choreo.Lineups.filter((l: any) => l.id != this.deleteLineupId)
         );
       });
     },
   },
-};
+});
 </script>

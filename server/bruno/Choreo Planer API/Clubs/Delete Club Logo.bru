@@ -1,0 +1,17 @@
+meta {
+  name: Delete Club Logo
+  method: DELETE
+  type: http
+  seq: 8
+}
+
+delete {
+  url: {{baseUrl}}/club/:id/clubLogo
+  body: none
+  auth: inherit
+}
+
+
+params:path {
+  id: 
+}

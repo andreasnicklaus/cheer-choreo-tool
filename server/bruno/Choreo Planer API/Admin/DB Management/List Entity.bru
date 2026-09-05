@@ -1,0 +1,21 @@
+meta {
+  name: List Entity
+  method: GET
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/admin/db/{{entity}}
+  body: none
+  auth: none
+}
+
+params:path {
+  entity: clubs
+}
+
+params:query {
+  UserId: 
+  s: 
+}

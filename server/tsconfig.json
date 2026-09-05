@@ -10,11 +10,12 @@
     "strict": true,
     "resolveJsonModule": true,
     "removeComments": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "*": ["./src/*"],
+      "@/*": ["./src/*"]
     },
-    "isolatedModules": true
+    "isolatedModules": true,
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*", "src/public/*.{ico}", "tests/**/*"]
 }

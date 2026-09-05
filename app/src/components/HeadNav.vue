@@ -1,395 +1,473 @@
 <template>
-  <b-navbar toggleable="sm">
-    <b-navbar-brand
-      :to="{ name: 'Home', params: { locale: $root.$i18n.locale } }"
+  <BNavbar sticky="top" toggleable="sm" class="me-2" no-auto-close>
+    <BNavbarBrand
+      :to="{ name: 'Home', params: { locale: $i18n.locale } }"
+      class="em-primary"
     >
       <img
         :src="
           $store.getters.isChristmasTime
-            ? '/Icon-Christmas.png'
+            ? isDark
+              ? '/Icon-ChristmasDark.svg'
+              : '/Icon-ChristmasLight.svg'
             : $store.getters.isEasterTime
-              ? '/Icon-Easter.png'
-              : '/Icon.png'
+              ? isDark
+                ? '/Icon-EasterDark.svg'
+                : '/Icon-EasterLight.svg'
+              : isDark
+                ? '/Icon-PrimaryDark.svg'
+                : '/Icon-PrimaryLight.svg'
         "
         :alt="$t('choreo-planer-icon')"
         width="50"
         height="50"
       />
-    </b-navbar-brand>
+      <span class="ms-2 hero em">{{ $t("general.ChoreoPlaner") }}</span>
+    </BNavbarBrand>
 
-    <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+    <BNavbarToggle target="nav-collapse"></BNavbarToggle>
 
-    <b-collapse id="nav-collapse" is-nav>
-      <b-navbar-nav>
-        <b-nav-item
-          :to="{ name: 'Home', params: { locale: $root.$i18n.locale } }"
-          v-bind:active-class="
-            $route.name == 'Home' ? 'router-link-active' : ''
-          "
+    <BCollapse id="nav-collapse" is-nav>
+      <BNavbarNav>
+        <!-- <BNavItem
+          :to="{ name: 'Home', params: { locale: $i18n.locale } }"
+          :active-class="$route.name == 'Home' ? 'router-link-active' : ''"
         >
-          <b-icon-house-fill class="mr-1" />
+          <IBiHouseFill class="me-1" />
           {{ $t("nav.start") }}
-        </b-nav-item>
-        <b-nav-item
-          :to="{ name: 'Start', params: { locale: $root.$i18n.locale } }"
+        </BNavItem> -->
+        <BNavItem
+          :to="{ name: 'Start', params: { locale: $i18n.locale } }"
           :disabled="!$store.state.loggedIn"
         >
           {{ $t("nav.uebersicht") }}
-        </b-nav-item>
+        </BNavItem>
 
-        <b-nav-item-dropdown :disabled="!$store.state.loggedIn">
+        <BNavItemDropdown
+          :disabled="!$store.state.loggedIn"
+          auto-close="outside"
+        >
           <template #button-content>
             <span :class="{ 'router-link-active': $route.name == 'Choreo' }">
-              {{ $tc("choreo", 2) }}
+              {{ $t("choreo", 2) }}
             </span>
           </template>
-          <b-dropdown-group
+          <BDropdownGroup
             v-for="team in teams.filter((t) =>
-              t.SeasonTeams.some((st) => st.Choreos?.length > 0)
+              t.SeasonTeams.some(
+                (st) => st.Choreos?.length && st.Choreos.length > 0
+              )
             )"
             :key="team.id"
             :header="team.name"
           >
-            <b-dropdown-text
+            <BDropdownText
               v-for="seasonTeam in team.SeasonTeams.filter(
-                (st) => st.Choreos?.length > 0
+                (st) => st.Choreos?.length && st.Choreos.length > 0
               )"
               :key="seasonTeam.id"
               v-b-toggle="`collapse-${seasonTeam.id}`"
               class="dropdown-submenu"
             >
               <span class="d-flex justify-content-between align-items-center">
-                {{ seasonTeam.Season.name }}
-                <b-icon-caret-down-fill class="ml-auto" variant="secondary" />
+                {{ seasonTeam.Season?.name }}
+                <IBiCaretDownFill class="ms-auto" variant="secondary" />
               </span>
-              <b-collapse :id="`collapse-${seasonTeam.id}`">
-                <b-dropdown-item
+              <BCollapse :id="`collapse-${seasonTeam.id}`">
+                <BDropdownItem
                   v-for="choreo in seasonTeam.Choreos"
                   :key="choreo.id"
                   :to="{
                     name: 'Choreo',
                     params: {
                       choreoId: choreo.id,
-                      locale: $root.$i18n.locale,
+                      locale: $i18n.locale,
                     },
                   }"
                 >
                   {{ choreo.name }}
-                </b-dropdown-item>
-              </b-collapse>
-            </b-dropdown-text>
-            <b-dropdown-divider />
-          </b-dropdown-group>
-          <b-dropdown-item
-            variant="success"
-            @click="() => $refs.createChoreoModal.open()"
-            v-show="$store.state.clubId"
+                </BDropdownItem>
+              </BCollapse>
+            </BDropdownText>
+            <BDropdownDivider />
+          </BDropdownGroup>
+          <BDropdownText
+            v-show="!teams || teams.length == 0"
+            class="text-muted small"
+            :style="{ color: 'var(--bs-secondary-color) !important' }"
           >
-            <b-icon-plus />
+            <IBiPatchExclamation class="me-1 mb-1" />
+            {{ $t("general.empty-list") }}
+          </BDropdownText>
+          <BDropdownItem
+            v-show="$store.state.clubId"
+            variant="success"
+            @click="openCreateChoreoModal"
+          >
+            <IBiPlus />
             {{ $t("nav.neue-choreo") }}
-          </b-dropdown-item>
-        </b-nav-item-dropdown>
-        <b-nav-item-dropdown :disabled="!$store.state.loggedIn">
+          </BDropdownItem>
+        </BNavItemDropdown>
+        <BNavItemDropdown :disabled="!$store.state.loggedIn">
           <template #button-content>
             <span :class="{ 'router-link-active': $route.name == 'Team' }">
-              {{ $tc("team", 2) }}
+              {{ $t("team", 2) }}
             </span>
           </template>
-          <b-dropdown-item
+          <BDropdownItem
             v-for="team in teams"
             :key="team.id"
             :to="{
               name: 'Team',
-              params: { teamId: team.id, locale: $root.$i18n.locale },
+              params: { teamId: team.id, locale: $i18n.locale },
             }"
           >
             {{ team.name }}
-          </b-dropdown-item>
-          <b-dropdown-divider v-show="teams && teams.length > 0" />
-          <b-dropdown-item
-            variant="success"
-            @click="() => $refs.createTeamModal.open()"
-            v-show="$store.state.clubId"
+          </BDropdownItem>
+          <BDropdownDivider v-show="teams && teams.length > 0" />
+          <BDropdownText
+            v-show="!teams || teams.length == 0"
+            class="text-muted small"
+            :style="{ color: 'var(--bs-secondary-color) !important' }"
           >
-            <b-icon-plus />
+            <IBiPatchExclamation class="me-1 mb-1" />
+            {{ $t("general.empty-list") }}
+          </BDropdownText>
+          <BDropdownItem
+            v-show="$store.state.clubId"
+            variant="success"
+            @click="openCreateTeamModal"
+          >
+            <IBiPlus />
             {{ $t("nav.neues-team") }}
-          </b-dropdown-item>
-        </b-nav-item-dropdown>
-      </b-navbar-nav>
+          </BDropdownItem>
+        </BNavItemDropdown>
+      </BNavbarNav>
 
-      <b-navbar-nav class="ml-auto align-items-sm-center">
-        <b-nav-item-dropdown
+      <BNavbarNav class="ms-auto align-items-sm-center">
+        <BNavItemDropdown
+          v-show="$store.state.loggedIn && !$store.state.isMobile"
           no-caret
           right
-          :class="{ 'mr-3': $store.state.isMobile }"
-          v-show="$store.state.loggedIn"
+          :class="{ 'me-3': $store.state.isMobile }"
+          data-testid="notification-button"
         >
           <template #button-content>
-            <b-icon-bell />
-            <span v-show="$store.state.isMobile" class="ml-2">{{
+            <IBiBell />
+            <span v-show="$store.state.isMobile" class="ms-2">{{
               $t("nav.benachrichtigungen")
             }}</span>
-            <b-badge
+            <BBadge
+              v-show="notifications.filter((n) => !n.read).length > 0"
               pill
               variant="danger"
-              v-show="notifications.filter((n) => !n.read).length > 0"
               :style="{
                 position: 'absolute',
                 right: 0,
                 top: $store.state.isMobile ? null : 0,
               }"
-              >{{ notifications.filter((n) => !n.read).length }}</b-badge
+              >{{ notifications.filter((n) => !n.read).length }}</BBadge
             >
           </template>
-          <b-dropdown-text
-            style="width: 400px"
-            class="text-center"
+          <BDropdownText
             v-show="
               notifications.filter((n) => showAllNotifications || !n.read)
                 .length == 0
             "
-          >
-            <b-icon-bell />
-            {{ $t("nav.du-hast-noch-keine-benachrichtigungen-erhalten") }}
-          </b-dropdown-text>
-          <b-dropdown-text
             style="width: 400px"
-            text-class="p-0"
+            class="text-center"
+          >
+            <IBiBell />
+            {{ $t("nav.du-hast-noch-keine-benachrichtigungen-erhalten") }}
+          </BDropdownText>
+          <BDropdownText
             v-for="notification in notifications.filter(
               (n) => showAllNotifications || !n.read
             )"
             :key="notification.id"
+            style="width: 400px"
+            text-class="p-0"
           >
-            <b-card border-variant="light" class="notification-card">
-              <b-row>
-                <b-col>
-                  <b-card-sub-title>
-                    <b-badge
+            <BCard border-variant="light" class="notification-card" @click.stop>
+              <BRow>
+                <BCol>
+                  <BCardSubtitle>
+                    <BBadge
+                      v-show="!notification.read"
                       pill
                       variant="success"
-                      class="mr-1"
-                      v-show="!notification.read"
-                      >{{ $t("nav.neu-0") }}</b-badge
+                      class="me-1"
+                      >{{ $t("nav.neu-0") }}</BBadge
                     >
-                    <b-badge pill variant="primary">{{
+                    <BBadge pill variant="primary">{{
                       toTimeAgo(notification.createdAt)
-                    }}</b-badge>
-                  </b-card-sub-title>
-                  <b-card-title class="mt-1 mb-2"
-                    ><vue-markdown
+                    }}</BBadge>
+                  </BCardSubtitle>
+                  <BCardTitle class="mt-1 mb-2">
+                    <Markdown
+                      :source="notification.title.replace(/  +/g, ' ')"
                       :breaks="false"
+                      :html="true"
                       class="notification-card-text"
-                      :anchorAttributes="{ target: '_blank' }"
-                    >
-                      {{ notification.title.replace(/  +/g, " ") }}
-                    </vue-markdown>
-                  </b-card-title>
-                </b-col>
-                <b-col cols="auto">
-                  <b-button
+                      :anchor-attributes="{ target: '_blank' }"
+                    />
+                  </BCardTitle>
+                </BCol>
+                <BCol cols="auto" @click.stop>
+                  <BButton
                     variant="link"
-                    @click="
+                    data-testid="toggleReadStatus-button"
+                    @click.stop="
                       () =>
                         notification.read
                           ? markNotificationAsNotRead(notification.id)
                           : markNotificationAsRead(notification.id)
                     "
                   >
-                    <b-icon-envelope v-show="notification.read" />
-                    <b-icon-envelope-open v-show="!notification.read" />
-                  </b-button>
-                  <b-button
+                    <IBiEnvelope v-show="notification.read" />
+                    <IBiEnvelopeOpen v-show="!notification.read" />
+                  </BButton>
+                  <BButton
                     variant="link"
-                    @click="() => deleteNotification(notification.id)"
+                    @click.stop="() => deleteNotification(notification.id)"
                   >
-                    <b-icon-trash variant="danger" />
-                  </b-button>
-                </b-col>
-              </b-row>
-              <vue-markdown
+                    <IBiTrash variant="danger" />
+                  </BButton>
+                </BCol>
+              </BRow>
+              <Markdown
                 :breaks="false"
                 class="notification-card-text"
-                :anchorAttributes="{ target: '_blank' }"
-              >
-                {{ notification.message.replace(/  +/g, " ") }}
-              </vue-markdown>
-            </b-card>
-          </b-dropdown-text>
-          <b-dropdown-text v-show="!showAllNotifications">
-            <b-button
-              block
-              @click="() => (showAllNotifications = true)"
+                :anchor-attributes="{ target: '_blank' }"
+                :source="notification.message.replace(/  +/g, ' ')"
+                :html="true"
+              />
+            </BCard>
+          </BDropdownText>
+          <BDropdownText v-if="!showAllNotifications" class="d-grid">
+            <BButton
               variant="link"
               :disabled="notifications.length == 0"
-              >{{ $t("nav.alte-nachrichten-anzeigen") }}</b-button
-            ></b-dropdown-text
+              @click.stop="() => (showAllNotifications = true)"
+              >{{ $t("nav.alte-nachrichten-anzeigen") }}</BButton
+            ></BDropdownText
           >
-          <b-dropdown-text v-show="showAllNotifications">
-            <b-button
-              block
-              @click="() => (showAllNotifications = false)"
+          <BDropdownText v-else class="d-grid">
+            <BButton
               variant="link"
               :disabled="notifications.length == 0"
-              >{{ $t("nav.alte-nachrichten-ausblenden") }}</b-button
+              @click.stop="() => (showAllNotifications = false)"
+              >{{ $t("nav.alte-nachrichten-ausblenden") }}</BButton
             >
-          </b-dropdown-text>
-        </b-nav-item-dropdown>
+          </BDropdownText>
+        </BNavItemDropdown>
 
-        <b-nav-item-dropdown
-          variant="link"
-          no-caret
-          data-testid="locale-switch"
-        >
+        <BNavItemDropdown variant="link" no-caret data-testid="locale-switch">
           <template #button-content>
-            <flag
-              :squared="false"
-              :iso="flags.find((f) => f.lang == $root.$i18n.locale)?.flag"
+            <CountryFlag
+              :iso="flags.find((f) => f.lang == $i18n.locale)?.flag"
+              mode="rounded"
             />
-            <span v-show="$store.state.isMobile">
-              {{ flags.find((f) => f.lang == $root.$i18n.locale)?.localName }}
+
+            <span v-show="$store.state.isMobile" class="ms-2">
+              {{ flags.find((f) => f.lang == $i18n.locale)?.localName }}
             </span>
           </template>
-          <b-dropdown-item
+          <BDropdownItem
             v-for="({ lang, flag, localName }, i) in flags"
             :key="`lang${i}`"
             :value="lang"
-            @click="() => LanguageService.setLanguage(lang)"
+            @click.prevent="() => LanguageService.setLanguage(lang)"
           >
-            <flag :squared="false" :iso="flag" class="mr-1" />
+            <CountryFlag :iso="flag" mode="rounded" class="me-1" />
             <span>{{ localName }}</span>
-          </b-dropdown-item>
-        </b-nav-item-dropdown>
+          </BDropdownItem>
+        </BNavItemDropdown>
 
-        <b-nav-item
-          @click="share"
-          v-b-tooltip.hover.bottom
-          :title="$t('nav.teilen')"
+        <BNavItem
           v-show="shareable"
+          v-b-tooltip.hover.bottom="$t('nav.teilen')"
+          @click="share"
         >
-          <b-icon-share />
-          <span class="d-sm-none ml-2">{{ $t("nav.teilen") }}</span>
-        </b-nav-item>
+          <IBiShare />
+          <span class="d-sm-none ms-2">{{ $t("nav.teilen") }}</span>
+        </BNavItem>
 
-        <b-nav-item
-          class="d-sm-block d-none"
+        <BNavItem
           v-show="onlineStatus != null"
-          v-b-tooltip.hover.bottom
-          :title="
-            onlineStatus
+          v-b-tooltip.hover.bottom="
+            onlineStatus == true
               ? $t('nav.server-sind-online') +
                 (serverVersion && ` (${serverVersion || $t('errors.unknown')})`)
               : $t('nav.server-sind-offline')
           "
+          class="d-sm-block d-none"
           data-testid="serverStatus"
         >
-          <b-icon-check-circle
-            variant="success"
-            v-show="onlineStatus === true"
-          />
-          <b-icon-x-circle variant="danger" v-show="onlineStatus === false" />
-        </b-nav-item>
-        <b-nav-item
-          :to="{ name: 'Help', params: { locale: $root.$i18n.locale } }"
-          v-b-tooltip.hover.bottom
-          :title="$t('general.help')"
+          <IBiCheckCircle v-show="onlineStatus === true" class="text-success" />
+          <IBiXCircle v-show="onlineStatus === false" class="text-danger" />
+        </BNavItem>
+        <BNavItem
+          v-b-tooltip.hover.bottom="$t('general.help')"
+          :to="{ name: 'Help', params: { locale: $i18n.locale } }"
         >
-          <b-icon-question-circle />
-          <span class="d-sm-none ml-2">{{ $t("general.help") }}</span>
-        </b-nav-item>
-        <b-nav-item
+          <IBiQuestionCircle />
+          <span class="d-sm-none ms-2">{{ $t("general.help") }}</span>
+        </BNavItem>
+        <BNavItem
+          v-b-tooltip.hover.bottom="
+            isDark ? $t('nav.hellen-modus') : $t('nav.dunklen-modus')
+          "
+          button
+          @click.prevent="toggleTheme"
+        >
+          <IBiSunFill v-if="isDark" class="me-2" />
+          <IBiMoonStarsFill v-else class="me-2" />
+          <span class="d-sm-none">{{
+            isDark ? $t("nav.hellen-modus") : $t("nav.dunklen-modus")
+          }}</span>
+        </BNavItem>
+        <BButton
+          v-if="!$store.state.loggedIn"
+          variant="primary"
+          class="text-white"
           :to="
             $store.state.loggedIn
-              ? null
-              : { name: 'Login', params: { locale: $root.$i18n.locale } }
+              ? undefined
+              : { name: 'Login', params: { locale: $i18n.locale } }
           "
         >
-          <b-button
-            variant="primary"
-            :style="{ color: 'white' }"
-            v-show="!$store.state.loggedIn"
-            :block="$store.state.isMobile"
-          >
-            {{ $t("anmelden") }}
-          </b-button>
-          <b-dropdown
-            v-show="$store.state.loggedIn"
-            :variant="$store.state.isMobile ? 'outline-secondary' : 'light'"
-            right
-            :block="$store.state.isMobile"
-          >
-            <template #button-content>
-              <b-avatar
+          {{ $t("anmelden") }}
+        </BButton>
+        <BDropdown
+          v-if="$store.state.loggedIn && !$store.state.isMobile"
+          :variant="$store.state.isMobile ? 'outline-secondary' : 'light'"
+          data-testid="account-dropdown"
+          class="d-sm-block d-none"
+          placement="bottom-start"
+        >
+          <template #button-content>
+            <BAvatar
+              size="25px"
+              variant="light"
+              :src="currentProfilePictureBlob"
+            />
+            <span v-show="$store.state.isMobile" class="mx-2">{{
+              me?.username
+            }}</span>
+          </template>
+          <BDropdownGroup :header="$t('konto')">
+            <BDropdownItem
+              :to="{
+                name: 'Account',
+                params: { locale: $i18n.locale },
+              }"
+            >
+              <BAvatar
                 size="25px"
-                variant="light"
+                class="me-2"
+                variant="primary"
                 :src="currentProfilePictureBlob"
               />
-              <span v-show="$store.state.isMobile" class="mx-2">{{
-                user?.username
-              }}</span>
-            </template>
-            <b-dropdown-group :header="$t('konto')">
-              <b-dropdown-item
-                :to="{
-                  name: 'Account',
-                  params: { locale: $root.$i18n.locale },
-                }"
-              >
-                <b-avatar
-                  size="25px"
-                  class="mr-2"
-                  variant="primary"
-                  :src="currentProfilePictureBlob"
-                />
-                {{ user?.username }}
-              </b-dropdown-item>
-            </b-dropdown-group>
+              {{ me?.username }}
+            </BDropdownItem>
+          </BDropdownGroup>
 
-            <b-dropdown-divider />
+          <BDropdownDivider />
 
-            <b-dropdown-group :header="$t('nav.vereine')">
-              <b-dropdown-item
-                v-for="club in clubs"
-                :key="club.id"
-                :variant="club.id == $store.state.clubId ? 'primary' : null"
-                @click="selectCurrentClub(club.id)"
-              >
-                {{ club.name }}
-              </b-dropdown-item>
-            </b-dropdown-group>
-            <b-dropdown-item
-              variant="success"
-              @click="() => $refs.createClubModal.open()"
+          <BDropdownGroup :header="$t('nav.vereine')">
+            <BDropdownItem
+              v-for="club in clubs"
+              :key="club.id"
+              :variant="club.id == $store.state.clubId ? 'primary' : null"
+              @click="selectCurrentClub(club.id)"
             >
-              <b-icon-plus />
-              {{ $t("nav.neuer-verein") }}
-            </b-dropdown-item>
-            <b-dropdown-divider />
-            <b-dropdown-item variant="danger" @click="logout">
-              <b-icon-door-open class="mr-2" />
-              {{ $t("nav.ausloggen") }}
-            </b-dropdown-item>
-          </b-dropdown>
-        </b-nav-item>
-      </b-navbar-nav>
-    </b-collapse>
+              {{ club.name }}
+            </BDropdownItem>
+          </BDropdownGroup>
+          <BDropdownItem variant="success" @click="openCreateClubModal">
+            <IBiPlus />
+            {{ $t("nav.neuer-verein") }}
+          </BDropdownItem>
+          <BDropdownDivider />
+          <BDropdownItem
+            variant="danger"
+            data-testid="logout-button"
+            @click="logout"
+          >
+            <IBiDoorOpen class="me-2" />
+            {{ $t("nav.ausloggen") }}
+          </BDropdownItem>
+        </BDropdown>
+        <div v-if="$store.state.loggedIn && $store.state.isMobile">
+          <hr />
+          <p class="text-muted fs-7 mb-0">{{ $t("konto") }}</p>
+          <BNavItem
+            v-show="$store.state.loggedIn && $store.state.isMobile"
+            :to="{
+              name: 'Account',
+              params: { locale: $i18n.locale },
+            }"
+          >
+            <BAvatar
+              size="25px"
+              class="me-2"
+              variant="primary"
+              :src="currentProfilePictureBlob"
+            />
+            {{ me?.username }}
+          </BNavItem>
+          <hr />
+          <p class="text-muted fs-7 mb-0">{{ $t("nav.vereine") }}</p>
+          <BNavItem
+            v-for="club in clubs"
+            :key="club.id"
+            :variant="club.id == $store.state.clubId ? 'primary' : null"
+            @click="selectCurrentClub(club.id)"
+          >
+            {{ club.name }}
+          </BNavItem>
+          <BNavItem variant="success" @click="openCreateClubModal">
+            <IBiPlus />
+            {{ $t("nav.neuer-verein") }}
+          </BNavItem>
+          <hr />
+          <BNavItem
+            variant="danger"
+            data-testid="logout-button"
+            @click="logout"
+          >
+            <IBiDoorOpen class="me-2" />
+            {{ $t("nav.ausloggen") }}
+          </BNavItem>
+        </div>
+      </BNavbarNav>
+    </BCollapse>
 
-    <CreateClubModal ref="createClubModal" @clubCreated="reloadPage" />
+    <CreateClubModal
+      ref="createClubModal"
+      :me="me"
+      @club-created="reloadPage"
+    />
 
     <CreateChoreoModal
       ref="createChoreoModal"
       :teams="teams"
-      @addChoreo="reloadPage"
+      :me="me"
+      @add-choreo="reloadPage"
     />
 
     <CreateTeamModal
-      ref="createTeamModal"
-      @teamCreated="onTeamCreated"
       v-if="$store.state.loggedIn"
+      ref="createTeamModal"
+      :me="me"
+      @team-created="onTeamCreated"
     />
-  </b-navbar>
+  </BNavbar>
 </template>
 
-<script>
+<script lang="ts">
+import { useTheme } from "@/composables/useTheme";
 import AuthService from "@/services/AuthService";
 import ClubService from "@/services/ClubService";
 import CreateChoreoModal from "./modals/CreateChoreoModal.vue";
@@ -398,10 +476,13 @@ import CreateTeamModal from "./modals/CreateTeamModal.vue";
 import LanguageService from "@/services/LanguageService";
 import MessagingService from "@/services/MessagingService";
 import NotificationService from "@/services/NotificationService";
-import VueMarkdown from "vue-markdown-v2";
 import toTimeAgo from "@/utils/time";
 import { error, warn } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
+import CountryFlag from "vue3-country-flag-icon";
+import Markdown from "vue3-markdown-it";
+import { defineComponent } from "vue";
+import { Choreo, Club, Notification, OwnerAccess, Team, User } from "@/types";
 
 /**
  * @module Component:HeadNav
@@ -409,7 +490,6 @@ import ERROR_CODES from "@/utils/error_codes";
  * @vue-data {Array} teams - List of teams the user owns.
  * @vue-data {Array} choreos - List of choreographies associated with the user.
  * @vue-data {Array} clubs - List of clubs the user owns.
- * @vue-data {Object} user=null - The currently logged-in user object.
  * @vue-data {Boolean} shareable=false - Whether the current page can be shared using the Web Share API.
  * @vue-data {Array} flags - List of available languages with their flags and local names.
  * @vue-data {Object} currentProfilePictureBlob=null - Blob URL for the user's profile picture.
@@ -426,19 +506,28 @@ import ERROR_CODES from "@/utils/error_codes";
  *
  * @example <HeadNav :teams="teams" />
  */
-export default {
+export default defineComponent({
   name: "HeadNav",
   components: {
     CreateChoreoModal,
     CreateClubModal,
     CreateTeamModal,
-    VueMarkdown,
+    Markdown,
+    CountryFlag,
+  },
+  props: {
+    onlineStatus: {
+      type: Boolean,
+    },
+    serverVersion: {
+      type: String,
+      default: null,
+    },
   },
   data: () => ({
-    teams: [],
-    choreos: [],
-    clubs: [],
-    user: null,
+    teams: [] as Team[],
+    choreos: [] as Choreo[],
+    clubs: [] as Club[],
     shareable: false,
     flags: [
       {
@@ -449,36 +538,71 @@ export default {
       { flag: "us", lang: "en", localName: "English" },
     ],
     LanguageService,
-    currentProfilePictureBlob: null,
-    loadInterval: null,
-    loadNotificationsInterval: null,
-    notifications: [],
+    currentProfilePictureBlob: undefined as string | undefined,
+    loadInterval: null as ReturnType<typeof setInterval> | null,
+    loadNotificationsInterval: null as ReturnType<typeof setInterval> | null,
+    notifications: [] as Notification[],
     showAllNotifications: false,
     showNotificationsDropdown: false,
   }),
-  props: {
-    onlineStatus: {
-      type: Boolean,
+  computed: {
+    isDark() {
+      return useTheme().isDark.value;
     },
-    serverVersion: {
-      type: String,
-      default: null,
+    owners(): OwnerAccess[] {
+      return this.$store.state.owners;
+    },
+    me(): User | undefined {
+      return this.$store.state.me ?? undefined;
+    },
+    shareData() {
+      return {
+        url: window.location.href,
+        title: document.title,
+        text: this.$t("nav.schau-dir-das-an"),
+      };
     },
   },
+  watch: {
+    "$store.state.loggedIn": {
+      handler() {
+        this.load();
+      },
+      immediate: true,
+    },
+    "$store.state.clubId": {
+      handler() {
+        this.load();
+      },
+      immediate: true,
+    },
+  },
+  created() {
+    setTimeout(this.checkEmailConfirmation, 1000);
+    this.loadInterval = setInterval(this.load, 60_000);
+    this.loadNotificationsInterval = setInterval(
+      this.loadNotifications,
+      10_000
+    );
+  },
+  mounted() {
+    if (navigator.canShare && typeof navigator.share === "function")
+      this.shareable = navigator.canShare(this.shareData);
+  },
+  beforeUnmount() {
+    if (this.loadInterval) clearInterval(this.loadInterval);
+    if (this.loadNotificationsInterval)
+      clearInterval(this.loadNotificationsInterval);
+  },
   methods: {
+    toggleTheme() {
+      useTheme().toggleTheme();
+    },
     load() {
       if (this.$store.state.loggedIn) {
-        AuthService.getUserInfo()
-          .then((user) => {
-            this.user = user;
-            this.loadProfileImage();
-          })
-          .catch(() => {
-            error(
-              "Could not load user info",
-              ERROR_CODES.USER_INFO_QUERY_FAILED
-            );
-          });
+        this.$store.dispatch("loadUserInfo").catch(() => {
+          error("Could not load user info", ERROR_CODES.USER_INFO_QUERY_FAILED);
+        });
 
         if (this.$store.state.clubId) {
           ClubService.getById(this.$store.state.clubId)
@@ -486,7 +610,7 @@ export default {
               this.teams = club?.Teams || [];
               this.choreos = this.teams
                 .map((t) => t.SeasonTeams.map((st) => st.Choreos))
-                .flat(Infinity);
+                .flat(Infinity) as Choreo[];
             })
             .catch(() => {
               error(
@@ -504,10 +628,9 @@ export default {
             if (!this.$store.state.clubId)
               this.$store.commit("setClubId", club.id);
             this.teams = club?.Teams || [];
-            // TODO: check if this still works outside of DEV
             this.choreos = this.teams
               .map((t) => t.SeasonTeams.map((st) => st.Choreos))
-              .flat(Infinity);
+              .flat(Infinity) as Choreo[];
           })
           .catch(() => {
             error("Could not load clubs", ERROR_CODES.CLUB_QUERY_FAILED);
@@ -530,7 +653,7 @@ export default {
           });
     },
     checkEmailConfirmation() {
-      if (this.user?.email && !this.user?.emailConfirmed) {
+      if (this.me && this.me?.email && !this.me?.emailConfirmed) {
         warn(
           "You logged into an account without email or without confirmed email address. Please add and confirm your email address to ensure that all features work properly."
         );
@@ -544,14 +667,14 @@ export default {
     logout() {
       AuthService.logout();
     },
-    selectCurrentClub(id) {
+    selectCurrentClub(id: string) {
       this.$store.commit("setClubId", id);
     },
-    onTeamCreated(team) {
+    onTeamCreated(team: Team) {
       this.teams.push(team);
       this.$router.push({
         name: "Team",
-        params: { teamId: team.id, locale: this.$root.$i18n.locale },
+        params: { teamId: team.id, locale: this.$i18n.locale },
       });
     },
     reloadPage() {
@@ -561,84 +684,69 @@ export default {
       navigator.share(this.shareData);
     },
     loadProfileImage() {
-      if (this.user?.profilePictureExtension == null)
-        this.currentProfilePictureBlob = null;
+      if (this.$store.state.me?.profilePictureExtension == null)
+        this.currentProfilePictureBlob = undefined;
       else
         AuthService.getProfileImage(
-          this.user.id,
-          this.user.profilePictureExtension
+          this.$store.state.me.id,
+          this.$store.state.me.profilePictureExtension
         ).then((response) => {
-          this.currentProfilePictureBlob = URL.createObjectURL(response.data);
+          this.currentProfilePictureBlob = URL.createObjectURL(
+            response.data
+          ) as string;
         });
     },
     toTimeAgo,
-    markNotificationAsNotRead(notificationId) {
+    markNotificationAsNotRead(notificationId: string) {
       NotificationService.markAsNotRead(notificationId).then(() => {
         this.loadNotifications();
       });
     },
-    markNotificationAsRead(notificationId) {
+    markNotificationAsRead(notificationId: string) {
       NotificationService.markAsRead(notificationId).then(() => {
         this.loadNotifications();
       });
     },
-    deleteNotification(notificationId) {
+    deleteNotification(notificationId: string) {
       NotificationService.delete(notificationId).then(() => {
         this.loadNotifications();
       });
     },
-  },
-  watch: {
-    "$store.state.loggedIn": {
-      handler() {
-        this.load();
-      },
-      immediate: true,
+    openCreateChoreoModal() {
+      (
+        this.$refs.createChoreoModal as InstanceType<typeof CreateChoreoModal>
+      ).open();
     },
-    "$store.state.clubId": {
-      handler() {
-        this.load();
-      },
-      immediate: true,
+    openCreateTeamModal() {
+      (
+        this.$refs.createTeamModal as InstanceType<typeof CreateTeamModal>
+      ).open();
     },
-  },
-  created() {
-    this.load();
-    setTimeout(this.checkEmailConfirmation, 1000);
-    this.loadInterval = setInterval(this.load, 60_000);
-    this.loadNotificationsInterval = setInterval(
-      this.loadNotifications,
-      10_000
-    );
-  },
-  mounted() {
-    if (navigator.canShare && navigator.share)
-      this.shareable = navigator.canShare(this.shareData);
-  },
-  beforeUnmount() {
-    if (this.loadInterval) clearInterval(this.loadInterval);
-    if (this.loadNotificationsInterval)
-      clearInterval(this.loadNotificationsInterval);
-  },
-  computed: {
-    shareData() {
-      return {
-        url: window.location.href,
-        title: document.title,
-        text: this.$t("nav.schau-dir-das-an"),
-      };
+    openCreateClubModal() {
+      (
+        this.$refs.createClubModal as InstanceType<typeof CreateClubModal>
+      ).open();
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>
-.dropdown-submenu:hover:not(:has(div.collapse:hover)) {
-  color: #16181b;
-  background-color: #e9ecef;
+.navbar {
+  background: var(--color-navbar-bg);
+  // border-radius: 16px;
+  box-shadow: 0 4px 50px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  // border: 1px solid rgba(0, 0, 0, 0.16);
 }
 
-.b-dropdown-text {
+.dropdown-submenu:hover:not(:has(div.collapse:hover)) {
+  color: var(--bs-body-color);
+  background-color: var(--color-accent-soft);
+}
+
+.BDropdownText {
   font-weight: initial;
 }
 </style>

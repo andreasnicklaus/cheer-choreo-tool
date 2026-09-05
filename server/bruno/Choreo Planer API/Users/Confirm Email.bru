@@ -1,0 +1,16 @@
+meta {
+  name: Confirm Email
+  method: GET
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/user/confirmEmail/:id
+  body: none
+  auth: none
+}
+
+params:path {
+  id: 
+}

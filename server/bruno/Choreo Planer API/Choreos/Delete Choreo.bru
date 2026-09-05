@@ -1,0 +1,17 @@
+meta {
+  name: Delete Choreo
+  method: DELETE
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/choreo/:id
+  body: none
+  auth: inherit
+}
+
+
+params:path {
+  id: 
+}

@@ -1,11 +1,15 @@
 <template>
-  <b-skeleton-wrapper :loading="!currentPositions">
+  <BPlaceholderWrapper :loading="!currentPositions">
     <template #loading>
-      <b-skeleton :width="width + 'px'" :height="_height + 'px'"> </b-skeleton>
+      <BPlaceholder
+        :width="width + 'px'"
+        :height="_height + 'px'"
+        animation="wave"
+      />
     </template>
     <svg
       ref="svgCanvas"
-      :class="`svgCanvas ${matType}`"
+      :class="`svgCanvas ${matType} m-2`"
       :height="_height"
       :width="width"
       xmlns="http://www.w3.org/2000/svg"
@@ -44,26 +48,26 @@
         :r="dotRadius"
         :stroke="
           teamMembers.find((tm) => tm.id == position.MemberId)
-            .ChoreoParticipation.color
+            ?.ChoreoParticipation.color
         "
         stroke-width="2"
         :fill="
-          selectedMemberId && position.Member.id == selectedMemberId.id
+          selectedMemberId && position.Member?.id == selectedMemberId
             ? teamMembers.find((tm) => tm.id == position.MemberId)
-                .ChoreoParticipation.color + '22'
+                ?.ChoreoParticipation.color + '22'
             : teamMembers.find((tm) => tm.id == position.MemberId)
-                .ChoreoParticipation.color + '55'
+                ?.ChoreoParticipation.color + '55'
         "
-        @mousedown="() => mouseEnter(position.MemberId)"
-        @mouseup="mouseLeave"
         :style="{
           opacity:
-            selectedMemberId && position.Member.id == selectedMemberId.id
+            selectedMemberId && position.Member?.id == selectedMemberId
               ? 0.7
               : 1,
           cx: (position.x * width) / 100 + 'px',
           cy: (position.y * _height) / 100 + 'px',
         }"
+        @mousedown="() => mouseEnter(position.MemberId)"
+        @mouseup="mouseLeave"
       />
       <text
         v-for="position in proposedPositions"
@@ -81,9 +85,9 @@
         }"
       >
         {{
-          position.Member.abbreviation ||
-          position.Member.nickname ||
-          position.Member.name
+          position.Member?.abbreviation ||
+          position.Member?.nickname ||
+          position.Member?.name
         }}
       </text>
       <text
@@ -101,9 +105,9 @@
         }"
       >
         {{
-          position.Member.abbreviation ||
-          position.Member.nickname ||
-          position.Member.name
+          position.Member?.abbreviation ||
+          position.Member?.nickname ||
+          position.Member?.name
         }}
       </text>
       <text
@@ -122,11 +126,14 @@
         {{ i + 1 }}
       </text>
     </svg>
-  </b-skeleton-wrapper>
+  </BPlaceholderWrapper>
 </template>
 
-<script>
+<script lang="ts">
+import { Member, Participant, Position } from "@/types";
 import gsap from "gsap";
+import { PropType } from "vue";
+import { defineComponent } from "vue";
 
 /**
  * @module Component:MatComponent
@@ -153,20 +160,15 @@ import gsap from "gsap";
  * @example <Mat :currentPositions="positions" :teamMembers="members" @positionChange="handler" />
  * @example <Mat :currentPositions="positions" :teamMembers="members" :width="800" :height="400" :dotRadius="30" :snapping="false" :transitionMs="500" :interactive="false" matType="cheer" :proposedPositions="proposedPositions" @positionChange="handler" />
  */
-export default {
+export default defineComponent({
   name: "MatComponent",
-  data: () => ({
-    selectedMemberId: null,
-    snappingDistance: 2,
-    positions: null,
-  }),
   props: {
     currentPositions: {
-      type: Array,
+      type: Array as PropType<Position[]>,
       default: () => [],
     },
     teamMembers: {
-      type: Array,
+      type: Array as PropType<Participant[]>,
       default: () => [],
     },
     width: {
@@ -176,6 +178,7 @@ export default {
     height: {
       type: Number,
       required: false,
+      default: null,
     },
     dotRadius: {
       type: Number,
@@ -198,15 +201,20 @@ export default {
       default: "square",
     },
     proposedPositions: {
-      type: Array,
+      type: Array as PropType<Position[]>,
       default: () => [],
     },
   },
-  mounted() {
-    this.positions = this.currentPositions;
+  emits: ["positionChange"],
+  data() {
+    return {
+      selectedMemberId: null as string | null,
+      snappingDistance: 2,
+      positions: [...(this.currentPositions || [])] as Position[],
+    };
   },
   computed: {
-    _height() {
+    _height(): number {
       switch (this.matType) {
         case "1:2":
           return this.width / 2;
@@ -217,11 +225,21 @@ export default {
       }
     },
   },
+  watch: {
+    currentPositions: {
+      handler(value: any) {
+        this.positions = value;
+      },
+    },
+  },
+  mounted() {
+    this.positions = this.currentPositions;
+  },
   methods: {
-    mouseEnter(member) {
+    mouseEnter(member: string) {
       if (!this.interactive) return;
       this.selectedMemberId = member;
-      this.$refs[`svgCanvas`].addEventListener(
+      (this.$refs.svgCanvas as HTMLElement).addEventListener(
         "mousemove",
         this.mouseMove,
         false
@@ -230,14 +248,18 @@ export default {
     mouseLeave() {
       if (!this.interactive) return;
       if (!this.selectedMemberId) return;
-      this.$refs[`svgCanvas`].removeEventListener("mousemove", this.mouseMove);
+      (this.$refs.svgCanvas as HTMLElement).removeEventListener(
+        "mousemove",
+        this.mouseMove
+      );
       this.selectedMemberId = null;
     },
-    mouseMove(event) {
+    mouseMove(event: MouseEvent) {
       if (!this.selectedMemberId) return;
 
-      const { x: canvasX, y: canvasY } =
-        this.$refs.svgCanvas.getBoundingClientRect();
+      const { x: canvasX, y: canvasY } = (
+        this.$refs.svgCanvas as HTMLElement
+      ).getBoundingClientRect();
 
       const selectedPosition = this.currentPositions.find(
         (p) => p.MemberId == this.selectedMemberId
@@ -256,14 +278,14 @@ export default {
         if (otherPositions.length > 0) {
           const closestX = otherPositions.sort(
             (a, b) => Math.abs(a.x - xNew) - Math.abs(b.x - xNew)
-          )[0].x;
-          if (Math.abs(closestX - xNew) < this.snappingDistance)
+          )[0]?.x;
+          if (closestX && Math.abs(closestX - xNew) < this.snappingDistance)
             xNew = closestX;
 
           const closestY = otherPositions.sort(
             (a, b) => Math.abs(a.y - yNew) - Math.abs(b.y - yNew)
-          )[0].y;
-          if (Math.abs(closestY - yNew) < this.snappingDistance)
+          )[0]?.y;
+          if (closestY && Math.abs(closestY - yNew) < this.snappingDistance)
             yNew = closestY;
         }
       }
@@ -274,12 +296,14 @@ export default {
       const pos = this.positions.find(
         (p) => p.MemberId == this.selectedMemberId
       );
-      pos.x = xNew;
-      pos.y = yNew;
+      if (pos) {
+        pos.x = xNew;
+        pos.y = yNew;
+      }
 
       this.$emit("positionChange", this.selectedMemberId, xNew, yNew);
     },
-    animatePositions(oldPositions, newPositions) {
+    animatePositions(oldPositions: Position[], newPositions: Position[]) {
       if (newPositions && oldPositions)
         newPositions.forEach((np) => {
           const op = oldPositions.find((p) => p.MemberId == np.MemberId);
@@ -310,35 +334,34 @@ export default {
           }
         });
     },
-    acceptProposedPosition(memberId, x, y) {
-      this.$emit("positionChange", memberId, x, y);
+    acceptProposedPosition(memberId: string, x: number, y: number) {
+      if (this.interactive) this.$emit("positionChange", memberId, x, y);
     },
   },
-  watch: {
-    currentPositions: {
-      handler(value) {
-        this.positions = value;
-      },
-    },
-  },
-};
+});
 </script>
 
 <style lang="scss" scoped>
 .svgCanvas {
-  border: 1px solid #a5a8f7;
+  border: 1px solid var(--color-mat-border);
   border-radius: 4px;
-  background-color: #e5e5f7;
+  background-color: var(--color-mat-bg);
   -webkit-touch-callout: none;
   -webkit-user-select: none;
-  -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
   background-repeat: repeat;
 
   &.cheer {
-    background-image: linear-gradient(to right, #444cf766 5px, #e5e5f744 5px);
+    --mat-line-width: 3.5px;
+    background-image: linear-gradient(
+      to right,
+      var(--color-mat-grid) var(--mat-line-width),
+      var(--color-mat-bg) var(--mat-line-width)
+        calc(100% - var(--mat-line-width)),
+      var(--color-mat-grid) calc(100% - var(--mat-line-width))
+    );
   }
 }
 </style>

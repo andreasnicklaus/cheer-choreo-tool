@@ -1,5 +1,16 @@
 import { defaultClubs } from "./club";
 import { defaultUserId } from "./defaultUserId";
+import { ownerUser } from "./userAccess";
+
+export type UserAccess = {
+  id: string;
+  ownerUserId: string;
+  childUserId: string;
+  role: string;
+  enabled: boolean;
+  accepted: boolean;
+  owner: typeof ownerUser;
+};
 
 export type User = {
   id: string;
@@ -10,8 +21,10 @@ export type User = {
   username: string;
   email: string;
   emailConfirmed: boolean;
+  provider: string;
   profilePictureExtension: string | null;
   Clubs: typeof defaultClubs;
+  childAccess?: UserAccess[];
 };
 
 export const defaultUser: User = {
@@ -23,6 +36,44 @@ export const defaultUser: User = {
   username: "Default User",
   email: "default.user@choreo-planer.de",
   emailConfirmed: true,
+  provider: "local",
   profilePictureExtension: null,
   Clubs: defaultClubs,
+  childAccess: [],
+};
+
+export const googleUser: User = {
+  ...defaultUser,
+  id: "google-user-id",
+  provider: "google",
+  email: "google.user@example.com",
+};
+
+export const githubUser: User = {
+  ...defaultUser,
+  id: "github-user-id",
+  provider: "github",
+  email: "github.user@example.com",
+};
+
+export const facebookUser: User = {
+  ...defaultUser,
+  id: "facebook-user-id",
+  provider: "facebook",
+  email: "facebook.user@example.com",
+};
+
+export const sharedUser: User = {
+  ...defaultUser,
+  childAccess: [
+    {
+      id: "access-shared-1",
+      ownerUserId: ownerUser.id,
+      childUserId: defaultUserId,
+      role: "coach",
+      enabled: true,
+      accepted: true,
+      owner: ownerUser,
+    },
+  ],
 };

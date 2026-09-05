@@ -1,0 +1,26 @@
+meta {
+  name: Update Member
+  method: PUT
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{baseUrl}}/member/:id
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+params:path {
+  id: 
+}
+
+body:json {
+  {
+    "name": "Jane Doe"
+  }
+}

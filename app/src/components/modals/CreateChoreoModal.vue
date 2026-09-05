@@ -1,22 +1,22 @@
-<template>
-  <b-modal
+﻿<template>
+  <BModal
     :id="`modal-newChoreo-${id}`"
+    ref="modal"
     :title="$t('nav.neue-choreo')"
-    centered
     scrollable
     size="xl"
     @show="resetChoreoModal"
     @ok="createChoreo"
   >
-    <b-form>
-      <b-form-group
+    <BForm>
+      <BFormGroup
         :label="$t('name')"
         label-class="label-with-colon"
         :state="newChoreoNameIsValid"
         :invalid-feedback="newChoreoNameStateFeedback"
         :valid-feedback="$t('login.gueltig')"
       >
-        <b-form-input
+        <BFormInput
           v-model="newChoreoName"
           :state="newChoreoNameIsValid"
           required
@@ -25,28 +25,28 @@
             $t('modals.create-choreo.example-name', [new Date().getFullYear()])
           "
         />
-      </b-form-group>
-      <b-form-group
+      </BFormGroup>
+      <BFormGroup
         :label="$t('modals.create-choreo.laenge')"
         label-class="label-with-colon"
       >
-        <b-row>
-          <b-col>
-            <b-form-group
+        <BRow>
+          <BCol>
+            <BFormGroup
               :description="$t('achter')"
               :state="newChoreoAchterIsValid"
               :invalid-feedback="newChoreoAchterStateFeedback"
             >
-              <b-form-input
+              <BFormInput
+                v-model="newChoreoAchter"
                 type="number"
                 min="1"
-                v-model="newChoreoAchter"
                 :state="newChoreoAchterIsValid"
               />
-            </b-form-group>
-          </b-col>
-          <b-col>
-            <b-form-group
+            </BFormGroup>
+          </BCol>
+          <BCol>
+            <BFormGroup
               :description="
                 $t(
                   'modals.change-length.counts-zusaetzliche-counts-nach-den-achtern'
@@ -55,16 +55,16 @@
               :state="newChoreoCountIsValid"
               :invalid-feedback="newChoreoCountStateFeedback"
             >
-              <b-form-input
+              <BFormInput
+                v-model="newChoreoCount"
                 type="number"
                 min="0"
                 max="7"
-                v-model="newChoreoCount"
                 :state="newChoreoCountIsValid"
               />
-            </b-form-group>
-          </b-col>
-        </b-row>
+            </BFormGroup>
+          </BCol>
+        </BRow>
         <p class="text-muted">
           {{
             $t("modals.create-choreo.geschaetzte-zeit-timeestimationstring", [
@@ -72,9 +72,9 @@
             ])
           }}
         </p>
-      </b-form-group>
+      </BFormGroup>
 
-      <b-form-group
+      <BFormGroup
         label-class="label-with-colon"
         :state="newChoreoMatTypeIsValid"
         :invalid-feedback="newChoreoMatTypeStateFeedback"
@@ -83,35 +83,50 @@
           {{ $t("mat") }}
           <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
         </template>
-        <b-form-select
+        <BFormSelect
           v-model="newChoreoMatType"
           required
           :state="newChoreoMatTypeIsValid"
           :options="matTypeOptions"
         />
-      </b-form-group>
+      </BFormGroup>
 
-      <b-form-group
-        :label="this.$tc('team', 1)"
+      <BFormGroup
+        v-if="showOwnerSelect"
+        :label="$t('accountView.owner')"
+        label-class="label-with-colon"
+        :state="selectedOwnerIsValid"
+        :invalid-feedback="newChoreoOwnerStateFeedback"
+      >
+        <BFormSelect
+          v-model="selectedOwnerId"
+          :state="selectedOwnerIsValid"
+          :options="ownerOptions"
+          :placeholder="$t('accountView.owner')"
+        />
+      </BFormGroup>
+
+      <BFormGroup
+        :label="$t('team', 1)"
         label-class="label-with-colon"
         :state="newChoreoTeamIsValid"
         :invalid-feedback="newChoreoTeamStateFeedback"
       >
-        <b-form-select
+        <BFormSelect
           v-model="newChoreoTeamId"
           :state="newChoreoTeamIsValid"
           required
           :options="teams.map((t) => ({ value: t.id, text: t.name }))"
         />
-      </b-form-group>
-      <b-form-group
-        :label="$tc('season', 1)"
+      </BFormGroup>
+      <BFormGroup
+        :label="$t('season', 1)"
         label-class="label-with-colon"
         :state="newChoreoSeasonIsValid"
         :invalid-feedback="newChoreoSeasonStateFeedback"
         :valid-feedback="$t('login.gueltig')"
       >
-        <b-form-select
+        <BFormSelect
           v-model="newChoreoSeasonId"
           :state="newChoreoSeasonIsValid"
           required
@@ -120,95 +135,98 @@
             teams
               .find((t) => t.id == newChoreoTeamId)
               ?.SeasonTeams?.map((st) => ({
-                value: st.Season.id,
-                text: st.Season.name,
+                value: st.Season?.id,
+                text: st.Season?.name,
               }))
           "
         />
-      </b-form-group>
-      <b-form-group :label="$t('teilnehmer')" label-class="label-with-colon">
-        <b-skeleton-wrapper
+      </BFormGroup>
+      <BFormGroup :label="$t('teilnehmer')" label-class="label-with-colon">
+        <BPlaceholderWrapper
           :loading="!newChoreoTeamIsValid || !newChoreoSeasonIsValid"
         >
           <template #loading>
-            <b-skeleton v-for="(_, i) in Array(3)" :key="i" />
+            <BPlaceholder
+              v-for="(_, i) in Array(3)"
+              :key="i"
+              animation="wave"
+            />
           </template>
-          <b-button-group>
-            <b-button
+          <BButtonGroup class="mb-2">
+            <BButton
               variant="light"
-              @click="
-                () =>
-                  (this.newChoreoParticipantIds = participantOptions.map(
-                    (po) => po.value
-                  ))
-              "
               :disabled="
                 newChoreoParticipantIds?.length == participantOptions?.length
               "
-            >
-              <b-icon-check-all />
-              {{ $t("alle-auswaehlen") }}
-            </b-button>
-            <b-button
-              variant="light"
-              @click="() => (this.newChoreoParticipantIds = [])"
-              :disabled="newChoreoParticipantIds?.length == 0"
-            >
-              <b-icon-slash /> {{ $t("keine-auswaehlen") }}
-            </b-button>
-            <b-button
-              variant="light"
               @click="
                 () =>
-                  (this.newChoreoParticipantIds = participantOptions
-                    .filter((po) => !newChoreoParticipantIds.includes(po.value))
-                    .map((po) => po.value))
+                  (newChoreoParticipantIds = participantOptions.map(
+                    (po) => po.value
+                  ))
               "
+            >
+              <IBiCheckAll />
+              {{ $t("alle-auswaehlen") }}
+            </BButton>
+            <BButton
+              variant="light"
+              :disabled="newChoreoParticipantIds?.length == 0"
+              @click="() => (newChoreoParticipantIds = [])"
+            >
+              <IBiSlash /> {{ $t("keine-auswaehlen") }}
+            </BButton>
+            <BButton
+              variant="light"
               :disabled="
                 newChoreoParticipantIds?.length == 0 ||
                 newChoreoParticipantIds?.length == participantOptions?.length
               "
+              @click="
+                () =>
+                  (newChoreoParticipantIds = participantOptions
+                    .filter((po) => !newChoreoParticipantIds.includes(po.value))
+                    .map((po) => po.value))
+              "
             >
-              <b-icon-arrow-repeat />
+              <IBiArrowRepeat />
               {{ $t("auswahl-wechseln") }}
-            </b-button>
-          </b-button-group>
-          <b-checkbox-group
+            </BButton>
+          </BButtonGroup>
+          <BFormCheckboxGroup
             :id="`participant-checkbox-group-${id}`"
-            :name="`participant-checkbox-group-${id}`"
             v-model="newChoreoParticipantIds"
+            :name="`participant-checkbox-group-${id}`"
             :style="{ columnCount: 2 }"
             stacked
           >
-            <b-form-checkbox
+            <BFormCheckbox
               v-for="option in participantOptions"
               :key="option.value"
               :value="option.value"
             >
-              <b-row
+              <BRow
                 align-h="between"
                 align-v="start"
                 :style="{ minWidth: '300px', minHeight: '38px' }"
               >
-                <b-col cols="auto">
+                <BCol cols="auto">
                   {{ option.text }}
-                </b-col>
-                <b-col :style="{ width: '100px' }" cols="auto">
-                  <b-input
-                    type="color"
-                    v-model="option.color"
+                </BCol>
+                <BCol :style="{ width: '100px' }" cols="auto">
+                  <BInput
                     v-show="newChoreoParticipantIds.includes(option.value)"
+                    v-model="option.color"
+                    type="color"
                   />
-                </b-col>
-              </b-row>
-            </b-form-checkbox>
-          </b-checkbox-group>
-        </b-skeleton-wrapper>
-      </b-form-group>
-    </b-form>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button
-        @click="ok"
+                </BCol>
+              </BRow>
+            </BFormCheckbox>
+          </BFormCheckboxGroup>
+        </BPlaceholderWrapper>
+      </BFormGroup>
+    </BForm>
+    <template #footer="{ ok, cancel }">
+      <BButton
         variant="success"
         :disabled="
           !newChoreoNameIsValid ||
@@ -218,20 +236,24 @@
           !newChoreoSeasonIsValid ||
           newChoreoParticipantIds.length == 0
         "
+        @click="ok"
       >
         {{ $t("erstellen") }}
-      </b-button>
-      <b-button @click="cancel" variant="danger">{{
+      </BButton>
+      <BButton variant="outline-danger" @click="cancel">{{
         $t("abbrechen")
-      }}</b-button>
+      }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import ChoreoService from "@/services/ChoreoService";
 import ColorService from "@/services/ColorService";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
+import { defineComponent, PropType } from "vue";
+import type { Team, Member, Season, SeasonTeam } from "@/types";
+import type { OwnerAccess } from "@/types";
 
 /**
  * @module Modal:CreateChoreoModal
@@ -245,6 +267,7 @@ import NewVersionBadge from "@/components/NewVersionBadge.vue";
  * @vue-data {Number|null} newChoreoSeasonId=null
  * @vue-data {Array} newChoreoParticipantIds
  * @vue-data {Array} participantOptions
+ * @vue-data {String|null} selectedOwnerId=null
  *
  * @vue-prop {Array} teams
  *
@@ -264,6 +287,8 @@ import NewVersionBadge from "@/components/NewVersionBadge.vue";
  * @vue-computed {String|null} newChoreoMatTypeStateFeedback
  * @vue-computed {Boolean} newChoreoSeasonIsValid
  * @vue-computed {String|null} newChoreoSeasonStateFeedback
+ * @vue-computed {Array} ownerOptions
+ * @vue-computed {Boolean} showOwnerSelect
  *
  * @vue-event {Object} addChoreo
  *
@@ -273,102 +298,28 @@ import NewVersionBadge from "@/components/NewVersionBadge.vue";
  *  <Button @click="() => $refs.createChoreoModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "CreateChoreoModal",
   components: { NewVersionBadge },
+  props: {
+    teams: {
+      type: Array as PropType<Team[]>,
+      default: () => [],
+    },
+  },
+  emits: ["addChoreo"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
-    newChoreoName: null,
+    newChoreoName: undefined as string | undefined,
     newChoreoAchter: 1,
     newChoreoCount: 0,
     newChoreoMatType: "cheer",
-    newChoreoTeamId: null,
-    newChoreoSeasonId: null,
-    newChoreoParticipantIds: [],
-    participantOptions: [],
+    newChoreoTeamId: undefined as string | undefined,
+    newChoreoSeasonId: undefined as string | undefined,
+    newChoreoParticipantIds: [] as string[],
+    participantOptions: [] as { text: string; value: string; color: string }[],
+    selectedOwnerId: undefined as string | undefined,
   }),
-  props: {
-    teams: {
-      type: Array,
-    },
-  },
-  mounted() {
-    // this.open();
-  },
-  methods: {
-    open(teamId = null, seasonId = null) {
-      this.$bvModal.show(`modal-newChoreo-${this.id}`);
-      if (teamId) {
-        this.newChoreoTeamId = teamId;
-
-        if (seasonId) {
-          this.newChoreoSeasonId = seasonId;
-          this.updateParticipantOptions();
-        }
-      }
-    },
-    resetChoreoModal() {
-      this.newChoreoName = null;
-      this.newChoreoAchter = 1;
-      this.newChoreoCount = 0;
-      this.newChoreoMatType = "cheer";
-      this.newChoreoTeamId = this.teams[0]?.id;
-
-      const seasonTeamsOfSelectedTeam = this.teams.find(
-        (t) => t.id == this.newChoreoTeamId
-      )?.SeasonTeams;
-
-      if (seasonTeamsOfSelectedTeam && seasonTeamsOfSelectedTeam.length == 1) {
-        this.newChoreoSeasonId = seasonTeamsOfSelectedTeam[0].Season.id;
-        this.updateParticipantOptions();
-      } else {
-        this.newChoreoSeasonId = null;
-        this.newChoreoParticipantIds = [];
-      }
-    },
-    updateParticipantOptions() {
-      if (!this.selectedSeasonTeam) this.participantOptions = [];
-      else {
-        this.participantOptions = this.selectedSeasonTeam.Members.map((m) => ({
-          text: m.name,
-          value: m.id,
-          color: ColorService.getRandom(),
-        }));
-        this.newChoreoParticipantIds = this.participantOptions.map(
-          (o) => o.value
-        );
-      }
-    },
-    createChoreo() {
-      const count =
-        parseInt(this.newChoreoAchter) * 8 + parseInt(this.newChoreoCount);
-      const seasonTeamId = this.selectedSeasonTeam.id;
-      const participants = this.newChoreoParticipantIds
-        .map((pId) => this.participantOptions.find((o) => o.value == pId))
-        .map((o) => ({ id: o.value, color: o.color }));
-      ChoreoService.create(
-        this.newChoreoName,
-        count,
-        this.newChoreoMatType,
-        seasonTeamId,
-        participants
-      ).then((choreo) => {
-        this.$emit("addChoreo", choreo);
-      });
-    },
-  },
-  watch: {
-    newChoreoTeamId: {
-      handler() {
-        this.updateParticipantOptions();
-      },
-    },
-    newChoreoSeasonId: {
-      handler() {
-        this.updateParticipantOptions();
-      },
-    },
-  },
   computed: {
     selectedTeam() {
       return this.teams.find((t) => t.id == this.newChoreoTeamId);
@@ -377,12 +328,13 @@ export default {
       if (!this.selectedTeam) return null;
 
       return this.selectedTeam.SeasonTeams.find(
-        (st) => this.newChoreoSeasonId == st.Season.id
+        (st) => this.newChoreoSeasonId == st.Season?.id
       );
     },
     timeEstimationString() {
       const date = new Date(
-        (parseInt(this.newChoreoAchter) * 8 + parseInt(this.newChoreoCount)) *
+        (parseInt(String(this.newChoreoAchter)) * 8 +
+          parseInt(String(this.newChoreoCount))) *
           400
       );
       const minutes = date.getMinutes();
@@ -399,41 +351,29 @@ export default {
       if (!this.newChoreoName) return this.$t("erforderlich");
       if (this.newChoreoName.length < 2)
         return this.$t("modals.create-choreo.min-choreoname-length");
-      return null;
+      return undefined;
     },
     newChoreoCountIsValid() {
       return (
-        this.newChoreoCount != null &&
-        this.newChoreoCount !== "" &&
-        parseInt(this.newChoreoCount) >= 0 &&
-        parseInt(this.newChoreoCount) <= 7
+        Number(this.newChoreoCount) >= 0 && Number(this.newChoreoCount) <= 7
       );
     },
     newChoreoCountStateFeedback() {
-      if (!this.newChoreoCount || this.newChoreoCount == "")
-        return this.$t("erforderlich");
-      if (
-        parseInt(this.newChoreoCount) < 0 ||
-        parseInt(this.newChoreoCount) > 7
-      )
+      if (!this.newChoreoCount) return this.$t("erforderlich");
+      if (Number(this.newChoreoCount) < 0 || Number(this.newChoreoCount) > 7)
         return this.$t(
           "modals.create-choreo.extra-count-muss-zwischen-0-und-7-liegen"
         );
-      return null;
+      return undefined;
     },
     newChoreoAchterIsValid() {
-      return (
-        this.newChoreoAchter != null &&
-        this.newChoreoAchter !== "" &&
-        parseInt(this.newChoreoAchter) > 0
-      );
+      return Number(this.newChoreoAchter) > 0;
     },
     newChoreoAchterStateFeedback() {
-      if (!this.newChoreoAchter || this.newChoreoAchter == "")
-        return this.$t("erforderlich");
-      if (parseInt(this.newChoreoAchter) <= 0)
+      if (!this.newChoreoAchter) return this.$t("erforderlich");
+      if (Number(this.newChoreoAchter) <= 0)
         return this.$t("modals.create-choreo.min-achter");
-      return null;
+      return undefined;
     },
     newChoreoTeamIsValid() {
       return (
@@ -445,7 +385,7 @@ export default {
       if (!this.newChoreoTeamId) return this.$t("erforderlich");
       if (!this.teams.map((t) => t.id).includes(this.newChoreoTeamId))
         return this.$t("errors.unerwarteter-fehler");
-      return null;
+      return undefined;
     },
     newChoreoMatTypeIsValid() {
       return (
@@ -457,12 +397,12 @@ export default {
       if (!this.newChoreoMatType) return this.$t("erforderlich");
       if (!["cheer", "square", "1:2", "3:4"].includes(this.newChoreoMatType))
         return this.$t("errors.unerwarteter-fehler");
-      return null;
+      return undefined;
     },
     newChoreoSeasonIsValid() {
       return (
         this.newChoreoSeasonId != null &&
-        this.selectedTeam?.SeasonTeams.map((st) => st.Season.id)
+        this.selectedTeam?.SeasonTeams.map((st) => st.Season?.id)
           .flat(Infinity)
           .includes(this.newChoreoSeasonId)
       );
@@ -470,15 +410,153 @@ export default {
     newChoreoSeasonStateFeedback() {
       if (!this.newChoreoSeasonId) return this.$t("erforderlich");
       if (
-        !this.selectedTeam?.SeasonTeams.map((st) => st.Season.id)
+        !this.selectedTeam?.SeasonTeams.map((st) => st.Season?.id)
           .flat(Infinity)
           .includes(this.newChoreoSeasonId)
       )
         return this.$t("errors.unerwarteter-fehler");
-      return null;
+      return undefined;
+    },
+    ownerOptions() {
+      const options = this.$store.state.owners.map((o: OwnerAccess) => {
+        const baseText = o.owner?.username || o.owner?.email || o.ownerUserId;
+        const isYou =
+          this.$store.state.me && o.ownerUserId === this.$store.state.me.id;
+        return {
+          value: o.ownerUserId,
+          text: isYou ? `${baseText} (you)` : baseText,
+        };
+      });
+
+      if (
+        this.$store.state.me &&
+        !options.some(
+          (o: { value: string; text: string }) =>
+            o.value === this.$store.state.me.id
+        )
+      ) {
+        options.push({
+          value: this.$store.state.me.id,
+          text: `${this.$store.state.me.username || this.$store.state.me.email || this.$store.state.me.id} (you)`,
+        });
+      }
+
+      return options;
+    },
+    showOwnerSelect() {
+      return this.$store.state.owners.length > 0;
+    },
+    selectedOwnerIsValid() {
+      return (
+        this.selectedOwnerId != null &&
+        (this.$store.state.owners
+          .map((o: OwnerAccess) => o.ownerUserId)
+          .includes(this.selectedOwnerId) ||
+          this.selectedOwnerId === this.$store.state.me?.id)
+      );
+    },
+    newChoreoOwnerStateFeedback() {
+      if (!this.selectedOwnerId) return this.$t("erforderlich");
+      if (
+        !this.$store.state.owners
+          .map((o: OwnerAccess) => o.ownerUserId)
+          .includes(this.selectedOwnerId) &&
+        this.selectedOwnerId !== this.$store.state.me?.id
+      )
+        return this.$t("errors.unerwarteter-fehler");
+      return undefined;
     },
   },
-};
+  watch: {
+    newChoreoTeamId: {
+      handler() {
+        this.updateParticipantOptions();
+      },
+    },
+    newChoreoSeasonId: {
+      handler() {
+        this.updateParticipantOptions();
+      },
+    },
+  },
+  mounted() {
+    // this.open();
+  },
+  methods: {
+    open(
+      teamId: string | undefined = undefined,
+      seasonId: string | undefined = undefined
+    ) {
+      (this.$refs.modal as any).show();
+      if (teamId) {
+        this.newChoreoTeamId = teamId;
+        if (seasonId) {
+          this.newChoreoSeasonId = seasonId;
+          this.updateParticipantOptions();
+        }
+      }
+      if (this.$store.state.me?.id) {
+        this.selectedOwnerId = this.$store.state.me?.id;
+      }
+    },
+    resetChoreoModal() {
+      this.newChoreoName = undefined;
+      this.newChoreoAchter = 1;
+      this.newChoreoCount = 0;
+      this.newChoreoMatType = "cheer";
+      this.newChoreoTeamId = this.teams[0]?.id;
+      this.selectedOwnerId = undefined;
+      const seasonTeamsOfSelectedTeam = this.teams.find(
+        (t) => t.id == this.newChoreoTeamId
+      )?.SeasonTeams;
+      if (seasonTeamsOfSelectedTeam && seasonTeamsOfSelectedTeam.length == 1) {
+        this.newChoreoSeasonId = seasonTeamsOfSelectedTeam[0]?.Season?.id;
+        this.updateParticipantOptions();
+      } else {
+        this.newChoreoSeasonId = undefined;
+        this.newChoreoParticipantIds = [];
+      }
+    },
+    updateParticipantOptions() {
+      if (!this.selectedSeasonTeam) this.participantOptions = [];
+      else {
+        this.participantOptions = (this.selectedSeasonTeam?.Members ?? []).map(
+          (m) => ({
+            text: m.name,
+            value: m.id,
+            color: ColorService.getRandom(),
+          })
+        );
+        this.newChoreoParticipantIds = this.participantOptions.map(
+          (o) => o.value
+        );
+      }
+    },
+    createChoreo() {
+      const count =
+        Number(this.newChoreoAchter) * 8 + Number(this.newChoreoCount);
+      const seasonTeamId = (this.selectedSeasonTeam as SeasonTeam).id;
+      const participants = this.newChoreoParticipantIds
+        .map((pId) => this.participantOptions.find((o) => o.value == pId))
+        .filter(Boolean)
+        .map((o) => ({
+          id: (o as NonNullable<typeof o>).value,
+          color: (o as NonNullable<typeof o>).color,
+        }));
+      const ownerId = this.selectedOwnerId || null;
+      ChoreoService.create(
+        this.newChoreoName as string,
+        count,
+        this.newChoreoMatType,
+        seasonTeamId,
+        participants,
+        ownerId
+      ).then((choreo) => {
+        this.$emit("addChoreo", choreo);
+      });
+    },
+  },
+});
 </script>
 
 <style lang="scss" scoped>

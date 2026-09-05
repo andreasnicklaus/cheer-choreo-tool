@@ -1,6 +1,6 @@
-import { defaultSeasonTeams } from "./seasonTeam";
 import { defaultTeam } from "./defaultTeam";
 import { defaultUserId } from "./defaultUserId";
+import { defaultUser } from "./user";
 import { defaultHits } from "./hit";
 import { defaultLineups } from "./lineup";
 import { defaultMembers } from "./member";
@@ -34,7 +34,12 @@ type Choreo = {
   Hits: typeof defaultHits;
   Lineups: typeof defaultLineups;
   Participants: typeof defaultMembers;
-  SeasonTeam: (typeof defaultSeasonTeams)[0];
+  SeasonTeam: (typeof emptySeasonTeams)[0];
+  creator?: typeof defaultUser;
+  creatorId?: string;
+  updater?: typeof defaultUser;
+  updaterId?: string;
+  User?: typeof defaultUser;
 };
 
 export const defaultChoreos: Choreo[] = [
@@ -52,6 +57,11 @@ export const defaultChoreos: Choreo[] = [
     Lineups: defaultLineups,
     Participants: defaultMembers,
     SeasonTeam: emptySeasonTeams[0],
+    creator: defaultUser,
+    creatorId: defaultUserId,
+    updater: defaultUser,
+    updaterId: defaultUserId,
+    User: defaultUser,
   },
 ];
 
@@ -70,5 +80,33 @@ export const emptyChoreos: Choreo[] = [
     Lineups: [],
     Participants: [],
     SeasonTeam: emptySeasonTeams[0],
+    creator: defaultUser,
+    creatorId: defaultUserId,
+    updater: defaultUser,
+    updaterId: defaultUserId,
+    User: defaultUser,
+  },
+];
+
+export const sharedChoreos: Choreo[] = [
+  {
+    id: "8047e84e-cebb-435a-8772-5709b9ab82f3",
+    name: "Shared Choreo",
+    counts: 60,
+    createdAt: "2025-06-09T10:37:01.158Z",
+    updatedAt: "2025-06-09T10:37:01.158Z",
+    deletedAt: null,
+    UserId: "other-user-id",
+    ClubId: "20f5bc46-de1b-4316-beaa-df927bbe57fc",
+    Team: defaultTeam,
+    Hits: defaultHits,
+    Lineups: defaultLineups,
+    Participants: defaultMembers,
+    SeasonTeam: emptySeasonTeams[0],
+    creator: { ...defaultUser, id: "other-user-id", username: "Other User" },
+    creatorId: "other-user-id",
+    updater: { ...defaultUser, id: "other-user-id", username: "Other User" },
+    updaterId: "other-user-id",
+    User: { ...defaultUser, id: "other-user-id", username: "Other User" },
   },
 ];

@@ -1,0 +1,26 @@
+meta {
+  name: Update Club
+  method: PUT
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/club/:id
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+params:path {
+  id: 
+}
+
+body:json {
+  {
+    "name": "Updated Club Name"
+  }
+}

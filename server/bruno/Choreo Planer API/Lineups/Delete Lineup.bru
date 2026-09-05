@@ -1,0 +1,17 @@
+meta {
+  name: Delete Lineup
+  method: DELETE
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{baseUrl}}/lineup/:id
+  body: none
+  auth: inherit
+}
+
+
+params:path {
+  id: 
+}

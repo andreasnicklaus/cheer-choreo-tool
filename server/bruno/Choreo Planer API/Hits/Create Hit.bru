@@ -1,0 +1,25 @@
+meta {
+  name: Create Hit
+  method: POST
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/hit/
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Umdrehen",
+    "count": 0,
+    "choreoId": "{{id}}",
+    "MemberIds": ["{{id}}"]
+  }
+}

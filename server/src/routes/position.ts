@@ -1,11 +1,29 @@
 import { NextFunction, Response, Request, Router } from "express";
+import { z } from "zod";
 import Position from "../db/models/position";
 import Lineup from "../db/models/lineup";
 import PositionService from "../services/PositionService";
 import LineupService from "../services/LineupService";
 import { requestQueue } from "@/middlewares/requestQueue";
+import { validate } from "@/middlewares/validateMiddleware";
+import { uuidParams } from "@/utils/zodSchemas";
 
 const { default: AuthService } = require("../services/AuthService");
+
+const positionQuerySchema = z.object({
+  lineupId: z.uuid().optional(),
+});
+
+const createPositionSchema = z.object({
+  x: z.number(),
+  y: z.number(),
+  MemberId: z.uuid(),
+  lineupId: z.uuid(),
+});
+const updatePositionSchema = createPositionSchema.partial();
+
+type PositionQuery = z.infer<typeof positionQuerySchema>;
+type CreatePositionBody = z.infer<typeof createPositionSchema>;
 
 const router = Router();
 
@@ -39,9 +57,15 @@ const router = Router();
 router.get(
   "/",
   AuthService.authenticateUser(),
+  validate(positionQuerySchema, "query"),
   (req: Request, res: Response, next: NextFunction) => {
-    if (req.query.lineupId)
-      PositionService.findByLineupId(req.query.lineupId as string, req.UserId)
+    const query = req.query as PositionQuery;
+    if (query.lineupId)
+      PositionService.findByLineupId(
+        query.lineupId,
+        req.ownerIds,
+        req.actingUserId,
+      )
         .then((foundPositions: Position[]) => {
           res.send(foundPositions);
           return next();
@@ -92,18 +116,19 @@ router.get(
 router.post(
   "/",
   AuthService.authenticateUser(),
+  validate(createPositionSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { x, y, MemberId, lineupId } = req.body;
+    const { x, y, MemberId, lineupId } = req.body as CreatePositionBody;
 
-    PositionService.findOrCreate(x, y, lineupId, MemberId, req.UserId)
+    PositionService.findOrCreate(x, y, lineupId, MemberId, req.actingUserId)
       .then(async (position: Position) => {
         return Promise.all([
           position.setMember(MemberId),
-          LineupService.findById(lineupId, req.UserId).then(
+          LineupService.findById(lineupId, req.actingUserId).then(
             (lineup: Lineup | null) => lineup?.addPosition(position),
           ),
         ]).then(() =>
-          PositionService.findById(position.id, req.UserId).then(
+          PositionService.findById(position.id, req.actingUserId).then(
             (p: Position | null) => {
               res.send(p);
               next();
@@ -151,9 +176,11 @@ router.post(
 router.put(
   "/:id",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
+  validate(updatePositionSchema),
   requestQueue("positionUpdate"),
   (req: Request, res: Response, next: NextFunction) => {
-    PositionService.update(req.params.id, null, req.body, req.UserId)
+    PositionService.update(req.params.id, null, req.body, req.actingUserId)
       .then((position: Position) => {
         res.send(position);
         next();
@@ -188,8 +215,9 @@ router.put(
 router.delete(
   "/:id",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
-    PositionService.remove(req.params.id, req.UserId)
+    PositionService.remove(req.params.id, req.actingUserId)
       .then(() => {
         res.send();
         next();

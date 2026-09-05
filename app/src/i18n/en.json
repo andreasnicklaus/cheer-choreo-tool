@@ -15,6 +15,7 @@
     "unbekannter-fehler": "An unknown error occurred. Reload the page or log in again to display the page.",
     "zuletzt-geaendert-am": "Last updated",
     "konto-loeschen-descriptions": "Only delete your account if you no longer want to use the app. Your data will be marked as inactive.",
+    "konto-loeschen-descriptions-social": "Since you logged in via an external service, you cannot delete your account here. Deactivate your account in the settings of the respective service.",
     "gefahrenbereich": "Danger zone",
     "profilbild": "Profile picture",
     "bild-entfernen": "Remove image",
@@ -24,7 +25,8 @@
     "als-aktiven-verein-auswaehlen": "Select as active club",
     "du-hast-diesen-verein-als-aktiven-verein-ausgewaehlt": "You selected this club as the active club.",
     "cant-delete-only-club": "You can't remove your only club! \nCreate another club first.",
-    "cant-delete-active-club": "You cannot delete your active club! \nFirst select another one first.",
+    "cant-delete-active-club": "You cannot delete your active club! \nFirst select another one.",
+    "cant-delete-access": "You don't have permission to delete this club.",
     "verein-loeschen": "Delete club",
     "deine-nutzerinformationen-wurden-gespeichert": "Your user information was saved!",
     "deine-vereinsinformationen-wurden-gespeichert": "Your club information was saved!",
@@ -32,7 +34,36 @@
     "es-ist-nicht-moeglich-bilder-hochzuladen-die-groesser-al-mb-gross-sind": "It is not possible to upload images that are larger than {0} MB. Select a smaller file!",
     "die-e-mail-zur-bestaetigung-deiner-e-mail-adresse-wurde-erneut-verschickt-check-dein-postfach": "The email to confirm your email address has been sent. Check your mailbox!",
     "e-mail-versandt": "Email sent",
-    "settings-saved": "Your settings were saved!"
+    "settings-saved": "Your settings were saved!",
+    "zugriff": "Access",
+    "owner": "Owner",
+    "mit-mir-geteilt": "Shared with me",
+    "mit-mir-geteilt-info": "People who have given you access to their choreos.",
+    "von-mir-verwaltet": "Managed by me",
+    "von-mir-verwaltet-info": "People you have given access to your choreos.",
+    "access-tab-help": "Here you can manage who has access to your choreos. Add people by email and choose what they are allowed to do.",
+    "no-shared-with-me": "Ask somebody to share access to their choreos with you.",
+    "no-managed-by-me": "Add a user to share your choreos with them.",
+    "benutzer-hinzufuegen": "Add user",
+    "rolle": "Role",
+    "aktiv": "Active",
+    "status": "Status",
+    "angenommen": "Accepted",
+    "ausstehend": "Pending",
+    "annehmen": "Accept",
+    "role": {
+      "coach": "Coach",
+      "assistant": "Assistant",
+      "athlete": "Athlete"
+    },
+    "no-clubs-info": "You currently do not belong to any clubs. Either create one or ask the owner of you club to give you access to it.",
+    "ai-access": "AI Access",
+    "ai-access-description": "Generate an access token to connect AI assistants to your choreos.",
+    "ai-access-configure": "Configure",
+    "mcp-token-expiry-7d": "Valid for 7 days",
+    "mcp-token-expiry-30d": "Valid for 30 days",
+    "mcp-token-expiry-90d": "Valid for 90 days",
+    "mcp-token-expiry-365d": "Valid for 1 year"
   },
   "achter": "Eight",
   "alle-auswaehlen": "Select all",
@@ -104,9 +135,9 @@
     "social-login-anbieter-text-3": "Facebook: https://www.facebook.com/about/privacy"
   },
   "download": "Download",
-  "du-kannst-das-nicht-rueckgaengig-machen": "You can't undo that.",
+  "du-kannst-das-nicht-rueckgaengig-machen": "You can't undo that!",
   "du-kannst-diese-aktion-nicht-rueckgaengig-machen": "You cannot undo this action.",
-  "e-mail-adresse": "E-mail address",
+  "e-mail-adresse": "Email address",
   "editView": {
     "alle-mitglieder-deines-teams-stehen-schon-auf-der-matte": "All members of your team are already on the mat.",
     "anleitung": "Instructions",
@@ -163,7 +194,7 @@
     },
     "funktionen-and-features": "Features",
     "funktionen-wuenschen": {
-      "answer": "**Yes!** We look forward to any features that we can incorporate into the choreo planner. If you wish for a feature, please feel free to send us an email to [info@choreoplaner.de](mailto:info@choreo-planer.de) or a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner</a>. We will then consider whether we can implement this feature. If do, we will of course inform you about it.",
+      "answer": "**Yes!** We look forward to any features that we can incorporate into the choreo planner. If you wish for a feature, please feel free to send us an email to [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) or a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a>. We will then consider whether we can implement this feature. If we do, we will of course inform you about it.",
       "question": "Can I request features?"
     },
     "neue-season": {
@@ -172,15 +203,15 @@
     },
     "probleme-loesen": "Solving problems",
     "probleme-melden": {
-      "answer": "Problems can currently only be reported by email to [info@choreoplaner.de] (mailto: info@choreoplaner.de) or as a DM on Instagram to <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_ blank\">@choreoplaner</a>. A contact form is planned.",
+      "answer": "Problems can currently only be reported by email to [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) or as a DM on Instagram to <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a>. A contact form is planned.",
       "question": "How can I report problems?"
     },
     "versehentlich-geloescht": {
-      "answer": "Yes, but not yourself! You can contact us at any time. Then the following data can be restored: <ul class = \"ml-3\"> <li>User accounts</li> <li>Clubs</li> <li>Teams</li> <li>Seasons</li> <li>Choreos</li> <li>Rosters</li> </ul> Please describe in your contact by email to [info@choreoplaner.de](mailto: info@choreoplaner.de) or as a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_ blank\">@choreoplaner</a> the date and the time of deletion so that we can quickly solve your problem.",
+      "answer": "Yes, but not yourself! You can contact us at any time. Then the following data can be restored: <ul class = \"ms-3\"> <li>User accounts</li> <li>Clubs</li> <li>Teams</li> <li>Seasons</li> <li>Choreos</li> <li>Rosters</li> </ul> Please describe in your contact by email to [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) or as a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a> the date and the time of deletion so that we can quickly solve your problem.",
       "question": "I accidentally deleted something. Can I undo that?"
     },
     "warum-offline": {
-      "answer": "The choreo planner is a **free** project. Therefore, the servers may not always be reached. We have prepared a list of reasons why you cannot reach the servers:<ol class = \"ml-3\"><li> The servers are serviced by us. In this case you can't do anything except to wait and hope that we are finished quickly. If you would like to know when the servers can be reached again, you are welcome to send us an email to [info@choreoplaner.de](mailto:info@choreo-planer.de) or a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner</a>. </li><li> Our internet connection failed. Since there is no budget available to insure a fail-safe internet connection, it can happen that our internet connection fails. In this case you can't do anything except to wait and hope that we are finished quickly. If you would like to know when the servers can be reached again, you are welcome to send us an email to [info@choreoplaner.de](mailto:info@choreo-planer.de) or a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner</a>. </li><li> Your internet connection has failed. If you have already loaded our website, you can charge the website again without an internet connection, but you cannot charge new data. In this case, you can try to restore your internet connection. If you need help, you can't write us email, because you have no internet. </li></ol>If you would like to support the choreo planner, you can support us by articipating in project development or making a donation. We have not yet prepared a way for that, but we are working on it. If you would like to support us, you are welcome to send us an email to [info@choreoplaner.de](mailto:info@choreo-planer.de) or a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">@choreoplaner </a>.",
+      "answer": "The choreo planner is a **free** project. Therefore, the servers may not always be reached. We have prepared a list of reasons why you cannot reach the servers:<ol class = \"ms-3\"><li>The servers are serviced by us. In this case you can't do anything except to wait and hope that we are finished quickly. If you would like to know when the servers can be reached again, you are welcome to send us an email to [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) or a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a>.</li><li>Our internet connection failed. Since there is no budget available to insure a fail-safe internet connection, it can happen that our internet connection fails. In this case you can't do anything except to wait and hope that we are finished quickly. If you would like to know when the servers can be reached again, you are welcome to send us an email to [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) or a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a>.</li><li>Your internet connection has failed. If you have already loaded our website, you can charge the website again without an internet connection, but you cannot charge new data. In this case, you can try to restore your internet connection. If you need help, you can't write us email, because you have no internet. </li></ol>If you would like to support the choreo planner, you can support us by participating in project development or making a donation. We have not yet prepared a way for that, but we are working on it. If you would like to support us, you are welcome to send us an email to [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) or a DM on Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a>.",
       "question": "Why can the server be offline?"
     },
     "was-ist-choreo-planer": {
@@ -200,8 +231,12 @@
       "question": "Who is the choreo planner for?"
     },
     "zusammenarbeiten": {
-      "answer": "A \"live sharing\" as is known from Google Docs or similar online tools is not planned. Instead, it is planned that coaches of an association **share access**. This should also make it easy to move participants between teams. A possible \"create extra access\" for an account is planned.",
+      "answer": "Yes, you can! Go to your account settings and open the **Access** tab. Click **Add user**, enter their email address and pick a role. They will get an invitation and need to accept it before they can see your data.\n\n**Here is what each role can do:**\n- **Coach** can view, edit and delete your choreos\n- **Assistant** can view and edit your choreos\n- **Athlete** can view your choreos\n\nYou can change their role or revoke access at any time.",
       "question": "Can I work with others?"
+    },
+    "ki-nutzen": {
+      "answer": "Yes! The Choreo Planner supports **MCP** (Model Context Protocol), which allows AI assistants like Claude, Cursor, and others to connect directly to your choreos. To set it up, go to your **Account** settings and open the **Danger zone** tab. Click **Configure** under **AI Access** to generate a token and get the configuration you need for your AI tool.",
+      "question": "Can I use AI to help me create my choreos?"
     }
   },
   "feedback": {
@@ -219,7 +254,15 @@
     "help": "Help",
     "offline": "Offline",
     "reject": "Reject",
-    "accept": "Accept"
+    "accept": "Accept",
+    "contact-email": "info{'@'}choreo-planer.de",
+    "shared-with-you-by": "Shared with you by",
+    "created-by": "Created by",
+    "last-updated-by": "Last updated by",
+    "you": "you",
+    "no-delete-permission": "You don't have permission to delete this.",
+    "no-edit-permission": "You don't have permission to edit this.",
+    "empty-list": "Empty list"
   },
   "HelpView": {
     "fuer-deine-suche-gibt-es-keine-ergebnisse": "There are no results for your search \"{searchTerm}\"",
@@ -309,7 +352,7 @@
     "generierung-lokal-im-browser": "Generation locally in the browser",
     "gib-deinem-ersten-verein-einen-namen": "Give your club a name",
     "gib-videos-und-countsheets": "Let participants take videos and countsheets home ",
-    "importiere-teilnehmer-in-neue-seasonkader": "Import participants into new season squad",
+    "importiere-teilnehmer-in-neue-seasonkader": "Import participants into new season squads",
     "interesse-geweckt": "Interested?",
     "lade-das-pdf-herunter": "Download the PDF",
     "lade-das-video-runter": "Download the video",
@@ -348,6 +391,8 @@
     "waehle-aus-wer-soll": "Select who should appear on the video",
     "waehle-mit-allen-aus": "Choose whether you want to have a video with everybody on the mat or selected people",
     "warte-bis-video": "Wait until your video is finished",
+    "choreos-that-impress": "Create choreos that {0}",
+    "choreos-that-impress-word": "impress",
     "zum-loslegen": "Register now to get started and create the first team:",
     "personalisierung": "Personalization",
     "branding-deines-vereins": "Your club's branding",
@@ -364,7 +409,10 @@
     "about-funktionen": "What can Choreo Planner do?",
     "about-funktionen-text": "Create choreographies with intuitive tools for visualizing formations, manage members in clubs, teams, and seasons, generate PDFs of countsheets, and export animation videos to easily share your choreos with the team.",
     "about-zielgruppe": "Who is Choreo Planner for?",
-    "about-zielgruppe-text": "Choreo Planner is for coaches who want to digitize and simplify their choreography planning. The end products (countsheets, images, and videos) can be shared with team members to facilitate learning the choreographies."
+    "about-zielgruppe-text": "Choreo Planner is for coaches who want to digitize and simplify their choreography planning. The end products (countsheets, images, and videos) can be shared with team members to facilitate learning the choreographies.",
+    "ai-supported-title": "AI-Powered Choreo Creation",
+    "ai-supported-description": "Let AI agents create and manage your choreographies through the Model Context Protocol (MCP). From clubs and teams to lineups and positions — all via natural language.",
+    "ai-supported-cta": "Get started"
   },
   "impressumView": {
     "angaben-gemaess-5-tmg": "Information according to § 5 TMG",
@@ -408,7 +456,7 @@
   "login": {
     "benutzername-mindestens-laenge": "Your username must be at least 6 characters long.",
     "bitte-angeben": "Please enter",
-    "dein-online-zugang": "Your online access",
+    "dein-online-zugang": "Your access",
     "du-hast-noch-kein-konto": "You don't have an account yet?",
     "du-hast-schon-ein-konto": "You already have an account?",
     "echte-email": "Your email address must be a valid email address.",
@@ -434,7 +482,11 @@
     "passwort-vergessen": "Forgot your password?",
     "account-exists": "It seems that there is already a user with this name or email address ...",
     "login-link-was-sent": "A password link was sent to your email address. Check your mailbox!",
-    "erfolg": "Success"
+    "erfolg": "Success",
+    "information-text-4": {
+      "visit-our-help-center": "Visit our help center",
+      "need-more-information": "Need some more help?"
+    }
   },
   "meta": {
     "account": {
@@ -444,7 +496,7 @@
       "description": "The data protection declaration of the choreo planner. Information on contact and liability regarding the use of the choreo planner."
     },
     "defaults": {
-      "description": "Plan your choreographies quickly and easily with the choreo planner! Perfect for cheerleading, dance and floor gymnastics. 100% free. Try now!",
+      "description": "Plan your choreos quickly and easily with the choreo planner! Perfect for cheerleading, dance and floor gymnastics. 100% free. Try now!",
       "keywords": "choreo, choreography, cheer, cheerleading, dance, planner, editor, video, log in, register, countsheet",
       "title": "The best free online tool for choreo sport"
     },
@@ -458,7 +510,7 @@
       "description": "The imprint of the choreo planner. Information on contact and liability regarding the use of the choreo planner."
     },
     "loginView": {
-      "description": "Register now and plan your choreographies! Access to all functions of the free choreo planner for cheerleading, dance and gymnastics."
+      "description": "Register now and plan your choreos! Access to all functions of the free choreo planner for cheerleading, dance and gymnastics."
     },
     "pdfView": {
       "description": "Export your choreo countsheet as a PDF!"
@@ -468,6 +520,9 @@
     },
     "video": {
       "description": "Export the lineups of your choreo as a video!"
+    },
+    "contact": {
+      "description": "Send a message to the ChoreoPlaner team for support or inquiries. Email us at info{'@'}choreo-planer.de."
     }
   },
   "modals": {
@@ -504,10 +559,13 @@
       "min-choreoname-length": "Min. 2 characters"
     },
     "create-club": {
-      "example-team-names": "TSG Salach e.V., Glamorous cheerleaders, ...",
+      "example-team-names": "Glamorous Cheerleader, TSG Salach e.V. ...",
       "min-vereinsname-length": "Min. 3 characters",
       "neuer-verein": "New club",
-      "vereinsname": "Club name"
+      "vereinsname": "Club name",
+      "ausstehende-einladungen": "Pending invitations",
+      "oder-neuen-verein-erstellen": "or create a new club",
+      "go-to-settings": "Go to settings"
     },
     "create-hit": {
       "wie-heisst-der-neue-eintrag": "What is the name of the new entry?"
@@ -532,7 +590,7 @@
       "jahr-info": "The year of an extra season helps to sort. Leave the field empty if the squad cannot be assigned to a specific year.",
       "keine-mitglieder-kopieren": "Copy no members",
       "min-team-mitglied": "Min. 1 team member required",
-      "name-der-event-gruppe": "Name of the event group:",
+      "name-der-event-gruppe": "Name of the event group",
       "name-info": "The name of an extra season describes a squad and choreos for which purpose or period.",
       "neue-season": "New season",
       "regulaere-season": "Regular season",
@@ -574,7 +632,7 @@
       "countsheet-info-2": "{0} click on {1} or use the shortcuts {2} or {3} or make a {4} in the countsheet to create a new entry. You can set the name and choose who this entry applies. By default, the entry is created on the current count.",
       "countsheet-info-3": "{0} Entries can be found in the list of list and countsheet entries. Click on {1} next to the entry you want to edit or use the shortcut {2} and click on {3} after editing to save your changes.",
       "countsheet-info-box": "If you make the trouble to indicate who the entry applies, you can later hand out personal countsheets.",
-      "doppelklick-auf-die-zelle": "Double click on the cell",
+      "doppelklick-auf-die-zelle": "double click on the cell",
       "download-info-1": "{0} Click in the menu at the top right on {1} and select {2} to put together and download the countsheet.",
       "download-info-2": "{0} Click in the menu at the top right on {1} and select {2} to create and download your video.",
       "eintraege-bearbeiten": "Edit entries",
@@ -584,7 +642,7 @@
       "lineup-text-2": "{0} To create your first lineup, simply click on a participant on the mat and place the marker {1} to the desired area. A new lineup is automatically created or the participant is added to an existing lineup.",
       "lineup-text-3": "{0} If lineups do not apply equally for everyone, you need several lists on the same count. If necessary, remove participants from the lineup by clicking on the list of lineups and countsheet entries on {1} and removing the ticks at the participants. Then click on {2}, select the participants for the second group and then pull the markers to the right place on the mat.",
       "steuerung": "Controls",
-      "ueberschneidung-warnung": "If you define lineups that overlap for a participant, animations are not displayed correctly!",
+      "ueberschneidung-warnung": "If you define multiple lineups that overlap for a participant, animations are not displayed correctly!",
       "video-und-countsheet-downloaden": "Download video and countsheet"
     },
     "import-member": {
@@ -592,8 +650,35 @@
       "team-mitglied": "Team member",
       "team-mitglied-importieren": "Import a team member"
     },
+    "invite-user": {
+      "title": "Invite user",
+      "info": "If a user exists with this email address, we will share access to your account with them.",
+      "send": "Send invitation",
+      "error": "The invitation could not be sent.",
+      "role": "Role",
+      "what-each-role-can-do": "What each role can do:"
+    },
     "loading": {
       "wird-geladen": "Loading"
+    },
+    "mcp-info": {
+      "title": "Work with AI",
+      "description": "Connect AI assistants like Claude, Cursor, or OpenCode to your choreos. Once set up, you can plan, edit, and refine choreos together with AI — directly from your favorite tools.",
+      "server-url": "Server URL",
+      "server-url-description": "Use this URL to connect to the server:",
+      "authentication": "Access Token",
+      "authentication-description": "Generate an access token to authenticate with the server.",
+      "generate-token": "Generate Token",
+      "token-success": "Token generated successfully! Copy it now and store it securely.",
+      "token-warning": "This token will only be shown once. Store it in a safe place!",
+      "configuration": "Client Configuration",
+      "configuration-description": "Copy the settings for your AI tool into its configuration:",
+      "claude-desktop": "Claude Desktop",
+      "opencode": "OpenCode",
+      "cursor": "Cursor",
+      "generic": "Generic",
+      "security": "Security",
+      "security-description": "Treat your token like a password. Never share it with others and store it in a safe place."
     },
     "mobile-choreo-edit": {
       "am-handy-nicht-moeglich": "Not possible on a small screen",
@@ -626,18 +711,49 @@
     },
     "reset-password": {
       "lost-password": "Request a login link",
-      "no-email-info": "Accounts without an email address can only be reset manually. Send an email to info@choreoplaner.de!",
+      "no-email-info": "Accounts without an email address can only be reset manually. Send an email to info{'@'}choreo-planer.de!",
       "email-info": "If your account is connected to an email address, you can have a login link sent to you via email, with which you can log in for 24 hours. You can then change your password on the profile page.",
       "login-link-schicken": "Send login link"
     },
     "change-mat": {
       "layout-der-buehne-matte-aendern": "Change the layout of the mat",
       "layout-aendern": "Change the layout"
+    },
+    "contact": {
+      "thank-you": "Thank you!",
+      "send-us-a-message": "Send us a message",
+      "something-went-wrong": "Something went wrong",
+      "success": "Success!",
+      "ups": "Ups ...",
+      "your-message-was-sent-successfully": "Your message was sent successfully!",
+      "try-again": "Try again",
+      "your-name": "Your Name:",
+      "what-should-we-call-you": "What should we call you?",
+      "enter-name": "Enter name",
+      "email-address": "Email address:",
+      "well-never-share-your-email-with-anyone-else": "We'll never share your email with anyone else.",
+      "enter-email": "Enter email",
+      "category": "Category:",
+      "what-do-you-need-help-with": "What do you need help with?",
+      "ask-a-question": "Ask a question",
+      "report-a-bug": "Report a bug",
+      "request-a-feature": "Request a feature",
+      "other": "Other",
+      "subject": "Subject:",
+      "which-expertise-should-the-respondent-have": "Which expertise should the respondent have?",
+      "subject-of-your-message": "Subject of your message",
+      "message": "Message:",
+      "let-us-know-what-youre-concerned-about": "Let us know what you're concerned about",
+      "enter-your-message-to-us": "Enter your message to us",
+      "there-was-an-error-with-your-message": "There was an error with your message.",
+      "please-enter-a-valid-email-address": "Please enter a valid email address"
     }
   },
   "name": "Name",
   "nav": {
     "ausloggen": "Log out",
+    "dunklen-modus": "Activate dark mode",
+    "hellen-modus": "Activate light mode",
     "checkEmail": {
       "text": "You should find the link to confirm your mailbox. Please also check your spam folder.",
       "title": "Please confirm your email address"
@@ -816,6 +932,45 @@
     "current-locale": "Current Locale",
     "available-locales": "Available Locales",
     "warning": "%cAttention: %cThis console could be used to obtain information about your browser or device. Only give out information if you can independently verify that you are in contact with a representative of Choreo Planer.",
-    "welcome": "%cWelcome to Choreo Planner\n%cThank you for your commitment to choreo sports! You can use this console to find out some information about the application and your browser.\n\nHere are a few helpful links:\nChoreo Planner on IG:     https://www.instagram.com/choreoplaner\nGet help:                           https://www.choreo-planer.de/hilfe\nContact us:                       info@choreo-planer.de"
+    "welcome": "%cWelcome to Choreo Planner\n%cThank you for your commitment to choreo sports! You can use this console to find out some information about the application and your browser.\n\nHere are a few helpful links:\nChoreo Planner on IG:     https://www.instagram.com/choreoplaner\nGet help:                           https://www.choreo-planer.de/hilfe\nContact us:                       info{'@'}choreo-planer.de"
+  },
+  "contact": {
+    "contact": "Contact",
+    "help-and-support": "Help & Support",
+    "contact-and-support": "Contact & Support",
+    "got-questions": "Got questions?",
+    "you-can-reach-us-at": "You can reach us at",
+    "well-get-back-to-you": "We'll get back to you as soon we can, typically within 24 hours!",
+    "send-a-message": "Send a message!",
+    "fill-out-our-contact-form": "Fill out our contact form to send us a short message",
+    "write-an-email": "Write an email",
+    "compose-an-email-to-our-support-team": "Compose an email to our support team",
+    "send-an-email": "Send an email",
+    "documentation-and-faq": "Documentation & FAQ",
+    "learn-about-the-choreo-planer": "Learn about the choreo planer and find answers to common questions",
+    "help-and-quick-fixes": "Help & quick fixes",
+    "looking-for-a-contact-form": "Looking for a contact form?",
+    "to-write-a-direct-message-to-the-developer-team": "to write a direct message to the developer team."
+  },
+  "services": {
+    "ContactService": {
+      "dear-choreo-planer-team": "Dear Choreo Planer Team,\n\n",
+      "best-regards": "\nBest regards!",
+      "best-regards-username": "\nBest regards\n{username}"
+    }
+  },
+  "auth": {
+    "signInWithGoogle": "Sign in with Google",
+    "signInWithGithub": "Sign in with GitHub",
+    "signInWithFacebook": "Sign in with Facebook",
+    "orContinueWith": "or",
+    "socialLoginFailed": "Social login failed. Please try again.",
+    "socialLoginDisabled": "Social login is currently disabled.",
+    "redirecting": "Redirecting...",
+    "connectedViaProvider": "Connected via {provider}"
+  },
+  "accessOverviewTable": {
+    "edit": "Edit",
+    "read": "Read"
   }
 }

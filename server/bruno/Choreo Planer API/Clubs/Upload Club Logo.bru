@@ -1,0 +1,21 @@
+meta {
+  name: Upload Club Logo
+  method: PUT
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{baseUrl}}/club/:id/clubLogo
+  body: formUrlEncoded
+  auth: inherit
+}
+
+
+params:path {
+  id: 
+}
+
+body:form-urlencoded {
+  clubLogo: 
+}

@@ -1,0 +1,18 @@
+meta {
+  name: Remove Participant
+  method: DELETE
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{baseUrl}}/choreo/:id/participants/{{participationId}}
+  body: none
+  auth: inherit
+}
+
+
+params:path {
+  id: 
+  participationId: 
+}
