@@ -31,11 +31,19 @@ import db from "../db";
  *        UserId:
  *          type: string
  *          format: uuid
+ *        creatorId:
+ *          type: string
+ *          format: uuid
+ *        updaterId:
+ *          type: string
+ *          format: uuid
  */
 /**
  * @typedef SeasonTeam
  * @property {UUID} id
  * @property {UUID} UserId
+ * @property {UUID} creatorId
+ * @property {UUID} updaterId
  * @memberof module:Models
  */
 class SeasonTeam extends Model<
@@ -50,6 +58,11 @@ class SeasonTeam extends Model<
 
   declare User: NonAttribute<User>;
   declare UserId: ForeignKey<User["id"]>;
+
+  declare creator: NonAttribute<User>;
+  declare updater: NonAttribute<User>;
+  declare creatorId: ForeignKey<User["id"]>;
+  declare updaterId: ForeignKey<User["id"]>;
 
   declare Team: NonAttribute<Team>;
   declare TeamId: ForeignKey<Team["id"]>;

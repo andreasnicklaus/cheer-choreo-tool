@@ -4,6 +4,7 @@
   "baseBranchPatterns": ["dev"],
   "prConcurrentLimit": 5,
   "minimumReleaseAge": "7 days",
+  "labels": ["dependencies"],
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch"],

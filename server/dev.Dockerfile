@@ -1,4 +1,4 @@
-FROM node:22-alpine
+FROM node:24-alpine
 WORKDIR /usr/src/app
 
 ENV TZ=Europe/Amsterdam
@@ -11,5 +11,5 @@ RUN cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN apk del tzdata
 
 COPY package*.json ./
-RUN npm i
+RUN npm ci
 CMD [ "npm", "run", "dev" ]

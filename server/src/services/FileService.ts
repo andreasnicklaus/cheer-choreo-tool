@@ -20,7 +20,7 @@ const profilePictureStorage = multer.diskStorage({
     file: Express.Multer.File,
     cb: (error: Error | null, filename: string) => void,
   ) => {
-    cb(null, `${req.UserId}.${file.originalname.split(".").pop()}`);
+    cb(null, `${req.actingUserId}.${file.originalname.split(".").pop()}`);
   },
 });
 const clubLogoStorage = multer.diskStorage({
@@ -52,7 +52,7 @@ const generalStorage = multer.diskStorage({
     file: Express.Multer.File,
     cb: (error: Error | null, filename: string) => void,
   ) => {
-    cb(null, `${req.UserId}.${file.originalname.split(".").pop()}`);
+    cb(null, `${req.actingUserId}.${file.originalname.split(".").pop()}`);
   },
 });
 

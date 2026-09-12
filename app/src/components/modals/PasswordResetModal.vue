@@ -1,66 +1,67 @@
 <template>
-  <b-modal
+  <BModal
     :id="`passwordReset-modal-${id}`"
+    ref="modal"
     centered
     @show="resetPasswordResetModal"
-    @ok="initializePasswordReset"
+    @ok.prevent="initializePasswordReset"
     @close="close"
   >
-    <template #modal-title>
+    <template #title>
       {{ $t("modals.reset-password.lost-password") }}
       <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
     </template>
-    <b-form-group
+    <BFormGroup
       :label="$t('e-mail-adresse')"
       label-class="label-with-colon"
       :description="$t('modals.reset-password.no-email-info')"
       :state="emailIsValid"
       :invalid-feedback="emailError"
     >
-      <b-input-group>
-        <b-form-input
+      <BInputGroup>
+        <BFormInput
           v-model="email"
           autofocus
           placeholder="info@choreo-planer.de"
           :state="emailIsValid"
         />
-        <b-input-group-append>
-          <b-input-group-text
-            v-b-tooltip.hover
-            :title="$t('modals.reset-password.email-info')"
+        <template #append>
+          <BInputGroupText
+            v-b-tooltip.hover="$t('modals.reset-password.email-info')"
           >
-            <b-icon-info-circle />
-          </b-input-group-text>
-        </b-input-group-append>
-      </b-input-group>
-    </b-form-group>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button
+            <IBiInfoCircle />
+          </BInputGroupText>
+        </template>
+      </BInputGroup>
+    </BFormGroup>
+    <template #footer="{ ok, cancel }">
+      <BButton
         type="submit"
-        @click="ok"
         variant="outline-success"
         :disabled="!emailIsValid"
+        @click="ok"
       >
-        <b-spinner small v-if="loading" />
+        <BSpinner v-if="loading" small />
         <span v-else>{{
           $t("modals.reset-password.login-link-schicken")
         }}</span>
-      </b-button>
-      <b-button @click="cancel" variant="secondary">{{
+      </BButton>
+      <BButton variant="secondary" @click="cancel">{{
         $t("abbrechen")
-      }}</b-button>
+      }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import AuthService from "@/services/AuthService";
 import MessagingService from "@/services/MessagingService";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
 import { error } from "@/utils/logging";
 import ERROR_CODES from "@/utils/error_codes";
-
-const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
+import { emailRegex } from "@/utils/validation";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * @module Modal:PasswordResetModal
@@ -80,28 +81,43 @@ const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/;
  *  <Button @click="() => $refs.passwordResetModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "LoadingModal",
   components: { NewVersionBadge },
+  emits: ["passwordResetRequested"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
-    email: null,
+    email: "",
     loading: false,
   }),
+  computed: {
+    emailIsValid() {
+      if (this.email.length === 0) return false;
+      const match = this.email.match(emailRegex);
+      return match != null && match.length > 0;
+    },
+    emailError() {
+      if (this.email == null || this.email.length == 0)
+        return this.$t("login.bitte-angeben");
+      const emailRegexMatches = this.email.match(emailRegex);
+      if (!emailRegexMatches || emailRegexMatches.length <= 0)
+        return this.$t("login.echte-email");
+      else return undefined;
+    },
+  },
   methods: {
     open() {
-      this.$bvModal.show(`passwordReset-modal-${this.id}`);
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     close() {
-      this.$bvModal.hide(`passwordReset-modal-${this.id}`);
+      (this.$refs.modal as InstanceType<typeof BModal>).hide();
     },
     resetPasswordResetModal() {
-      this.email = null;
+      this.email = "";
       this.loading = false;
     },
-    initializePasswordReset(event) {
+    initializePasswordReset(event: any) {
       this.loading = true;
-      event.preventDefault();
       AuthService.requestSSO(this.email)
         .then(() => {
           this.$emit("passwordResetRequested");
@@ -117,18 +133,5 @@ export default {
         });
     },
   },
-  computed: {
-    emailIsValid() {
-      return this.email != null && this.email.match(emailRegex)?.length > 0;
-    },
-    emailError() {
-      if (this.email == null || this.email.length == 0)
-        return this.$t("login.bitte-angeben");
-      const emailRegexMatches = this.email.match(emailRegex);
-      if (!emailRegexMatches || emailRegexMatches.length <= 0)
-        return this.$t("login.echte-email");
-      else return null;
-    },
-  },
-};
+});
 </script>

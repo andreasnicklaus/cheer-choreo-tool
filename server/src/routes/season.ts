@@ -1,8 +1,18 @@
 import { NextFunction, Response, Request, Router } from "express";
+import { z } from "zod";
 import Season from "../db/models/season";
 import SeasonService from "../services/SeasonService";
+import { validate } from "@/middlewares/validateMiddleware";
 
 const { default: AuthService } = require("../services/AuthService");
+
+const createSeasonSchema = z.object({
+  name: z.string().min(1),
+  year: z.number().int(),
+  ownerId: z.uuid().optional(),
+});
+
+type CreateSeasonBody = z.infer<typeof createSeasonSchema>;
 
 const router = Router();
 
@@ -31,7 +41,7 @@ router.get(
   "/",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    return SeasonService.getAll(req.UserId)
+    return SeasonService.getAll(req.ownerIds || null, req.actingUserId)
       .then((seasonList: Season[]) => {
         res.send(seasonList);
         return next();
@@ -63,6 +73,9 @@ router.get(
  *                 type: string
  *               year:
  *                 type: integer
+ *               ownerId:
+ *                 type: string | null
+ *                 description: Owner ID. If null/undefined, falls back to actingUserId
  *     responses:
  *       200:
  *         description: Season created successfully
@@ -76,9 +89,15 @@ router.get(
 router.post(
   "/",
   AuthService.authenticateUser(),
+  validate(createSeasonSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { name, year } = req.body;
-    return SeasonService.create(name, year, req.UserId)
+    const { name, year, ownerId } = req.body as CreateSeasonBody;
+    return SeasonService.create(
+      name,
+      year,
+      ownerId || req.actingUserId,
+      req.actingUserId,
+    )
       .then((season: Season) => {
         res.send(season);
         return next();

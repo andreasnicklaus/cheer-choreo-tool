@@ -1,0 +1,27 @@
+meta {
+  name: Update Lineup
+  method: PUT
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{baseUrl}}/lineup/:id
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+params:path {
+  id: 
+}
+
+body:json {
+  {
+    "startCount": 10,
+    "endCount": 8
+  }
+}

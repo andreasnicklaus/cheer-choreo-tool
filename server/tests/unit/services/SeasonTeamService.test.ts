@@ -12,6 +12,7 @@ jest.mock("@/plugins/winston", () => ({
     error: jest.fn(),
   },
   debug: jest.fn(),
+  info: jest.fn(),
 }));
 
 jest.mock("@/db/db", () => {
@@ -26,6 +27,16 @@ jest.mock("@/db/db", () => {
 jest.mock("@/plugins/nodemailer", () => ({
   sendMail: jest.fn(),
   verify: jest.fn().mockResolvedValue(true),
+}));
+
+jest.mock("@/services/FeatureFlagService", () => ({
+  __esModule: true,
+  default: {
+    isEnabled: jest.fn().mockResolvedValue(true),
+  },
+  FeatureFlagKey: {
+    ACCESS_SHARING: "access-sharing",
+  },
 }));
 
 let user = { id: "test-id" };
@@ -65,7 +76,7 @@ describe("SeasonTeamService", () => {
   test("getAll returns all seasonTeams", async () => {
     await SeasonTeam.create({ UserId: user.id });
     await SeasonTeam.create({ UserId: user.id });
-    const result = await SeasonTeamService.getAll();
+    const result = await SeasonTeamService.getAll([user.id], user.id);
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(2);
   });
@@ -85,7 +96,7 @@ describe("SeasonTeamService", () => {
   });
 
   test("create creates a new SeasonTeam", async () => {
-    const team = await Team.create({ name: "test-team" });
+    const team = await Team.create({ name: "test-team", UserId: user.id });
     const seasons = await Season.create({ name: "test-season" });
     const season = await SeasonTeamService.create(
       team.id,
@@ -99,8 +110,11 @@ describe("SeasonTeamService", () => {
   });
 
   test("copyMemberIntoSeasonTeam copies a member into a new SeasonTeam", async () => {
-    const team = await Team.create({ name: "test-team" });
-    const season = await Season.create({ name: "test-season" });
+    const team = await Team.create({ name: "test-team", UserId: user.id });
+    const season = await Season.create({
+      name: "test-season",
+      UserId: user.id,
+    });
     const member = await Member.create({
       name: "test-member",
       abbreviation: "tm",
@@ -125,7 +139,7 @@ describe("SeasonTeamService", () => {
   });
 
   test("copyMembersIntoSeasonTeam copies a member into a new SeasonTeam", async () => {
-    const team = await Team.create({ name: "test-team" });
+    const team = await Team.create({ name: "test-team", UserId: user.id });
     const season = await Season.create({ name: "test-season" });
     const member = await Member.create({
       name: "test-member",
@@ -151,14 +165,17 @@ describe("SeasonTeamService", () => {
   });
 
   test("remove should delete seasonTeam", async () => {
-    const season = await Season.create({ name: "test-season" });
+    const season = await Season.create({
+      name: "test-season",
+      UserId: user.id,
+    });
     const seasonTeam = await SeasonTeam.create({
       UserId: user.id,
       SeasonId: season.id,
     });
-    expect((await SeasonTeamService.getAll()).length).toBe(1);
+    expect((await SeasonTeamService.getAll([user.id], user.id)).length).toBe(1);
     await SeasonTeamService.remove(seasonTeam.id, user.id);
-    expect((await SeasonTeamService.getAll()).length).toBe(0);
+    expect((await SeasonTeamService.getAll([user.id], user.id)).length).toBe(0);
   });
 
   test("remove on non-existing seasonTeam should throw", async () => {

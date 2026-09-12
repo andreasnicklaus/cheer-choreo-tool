@@ -1,0 +1,17 @@
+meta {
+  name: Delete Club
+  method: DELETE
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/club/:id
+  body: none
+  auth: inherit
+}
+
+
+params:path {
+  id: 
+}

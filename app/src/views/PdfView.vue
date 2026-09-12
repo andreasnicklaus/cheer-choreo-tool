@@ -1,5 +1,5 @@
 <template>
-  <b-container class="text-center" data-view>
+  <BContainer class="text-center" data-view>
     <vue-html2pdf
       ref="html2pdf"
       :show-layout="false"
@@ -16,198 +16,206 @@
         margin: [15, 10],
         filename: choreo?.name ? choreo.name + '.pdf' : 'Countsheet.pdf',
       }"
+      @before-download="onBeforeDownload"
+      @has-downloaded="onHasDownloaded"
     >
-      <section slot="pdf-content">
-        <div v-for="(split, i) in hitSplits" :key="split.startIndex">
-          <b-row
-            align-h="between"
-            align-v="center"
-            class="mb-2"
-            :ref="`count-sheet-info-${split.startIndex}`"
-          >
-            <b-col cols="auto" v-if="includeChoreoName">
-              {{ choreo?.name }}
-            </b-col>
-            <b-col cols="auto" v-if="includeTeamName">
-              {{ choreo?.SeasonTeam.Team?.name }}
-            </b-col>
-            <b-col cols="auto" v-if="includeDate">
-              {{ new Date(date).toLocaleDateString("de-de") }}
-            </b-col>
-            <b-col cols="auto" v-if="includeLogo">
-              <img
-                :src="currentClubLogoBlob"
-                alt=""
-                height="60"
-                :style="{ maxWidth: '200px' }"
-              />
-            </b-col>
-            <b-col
-              cols="auto"
-              v-if="
-                includeMemberNames &&
-                includedMembers.length > 0 &&
-                includedMembers.length < teamMembers.length
-              "
-              class="text-start"
+      <template #pdf-content>
+        <section>
+          <div v-for="(split, i) in hitSplits" :key="split.startIndex">
+            <BRow
+              :ref="(el) => setCountSheetInfoRef(el, split.startIndex)"
+              align-h="between"
+              align-v="center"
+              class="mb-2"
             >
-              {{
-                teamMembers
-                  .filter((m) => includedMembers.includes(m.id))
-                  .map((m) => m.nickname || m.name)
-                  .join(", ")
-              }}
-            </b-col>
-          </b-row>
-          <CountSheet
-            :ref="`count-sheet-${split.startIndex}`"
-            :count="-1"
-            :startCount="split.startIndex"
-            :choreo="
-              choreo
-                ? {
-                    ...choreo,
-                    counts: split.nItems,
-                    Hits: choreo?.Hits.filter(
-                      (h) =>
-                        (!h.Members ||
-                          h.Members.length == 0 ||
-                          h.Members.length == teamMembers.length ||
-                          h.Members.some((m) =>
-                            includedMembers.includes(m.id)
-                          )) &&
-                        h.count >= split.startIndex &&
-                        h.count <= split.startIndex + split.nItems
-                    ),
-                  }
-                : choreo
-            "
-            :stickyHeader="false"
-            :fontSize="12"
-            :fixed="true"
-          />
-          <p class="text-center">{{ i + 1 }} / {{ hitSplits.length }}</p>
-          <div class="html2pdf__page-break" />
-        </div>
-      </section>
+              <BCol v-if="includeChoreoName" cols="auto">
+                {{ choreo?.name }}
+              </BCol>
+              <BCol v-if="includeTeamName" cols="auto">
+                {{ choreo?.SeasonTeam?.Team?.name }}
+              </BCol>
+              <BCol v-if="includeDate" cols="auto">
+                {{ new Date(date!).toLocaleDateString("de-de") }}
+              </BCol>
+              <BCol v-if="includeLogo" cols="auto">
+                <img
+                  :src="currentClubLogoBlob"
+                  alt=""
+                  height="60"
+                  :style="{ maxWidth: '200px' }"
+                />
+              </BCol>
+              <BCol
+                v-if="
+                  includeMemberNames &&
+                  includedMembers.length > 0 &&
+                  includedMembers.length < teamMembers.length
+                "
+                cols="auto"
+                class="text-start"
+              >
+                {{
+                  teamMembers
+                    .filter((m) => includedMembers.includes(m.id))
+                    .map((m) => m.nickname || m.name)
+                    .join(", ")
+                }}
+              </BCol>
+            </BRow>
+            <CountSheet
+              :ref="(el) => setCountSheetRef(el, split.startIndex)"
+              :count="-1"
+              :start-count="split.startIndex"
+              :choreo="
+                choreo
+                  ? ({
+                      ...choreo,
+                      counts: split.nItems,
+                      Hits: (choreo.Hits || []).filter(
+                        (h) =>
+                          (!h.Members ||
+                            h.Members.length == 0 ||
+                            h.Members.length == teamMembers.length ||
+                            h.Members.some((m) =>
+                              includedMembers.includes(m.id)
+                            )) &&
+                          h.count >= split.startIndex &&
+                          h.count <= split.startIndex + split.nItems
+                      ),
+                    } as Choreo)
+                  : undefined
+              "
+              :sticky-header="false"
+              :font-size="12"
+              :fixed="true"
+            />
+            <p class="text-center">{{ i + 1 }} / {{ hitSplits.length }}</p>
+            <div class="html2pdf__page-break" />
+          </div>
+        </section>
+      </template>
     </vue-html2pdf>
 
-    <b-card
-      class="text-left mb-4"
+    <BCard
+      class="text-start mb-4"
       :title="$t('pdf.countsheet-zusammenstellen')"
     >
-      <b-card-sub-title v-if="choreo">
+      <BCardSubtitle v-if="choreo">
         <p class="m-0">
           {{ $t("video-export-comp.ausgewaehlte-choreo") }}: {{ choreo.name }}
         </p>
         <p class="m-0">
-          {{ $tc("team", 1) }}: {{ choreo.SeasonTeam.Team.name }} ({{
-            choreo.SeasonTeam.Season.name
+          {{ $t("team", 1) }}: {{ choreo.SeasonTeam?.Team?.name }} ({{
+            choreo.SeasonTeam?.Season?.name
           }})
         </p>
-      </b-card-sub-title>
-      <b-card-sub-title v-else :style="{ height: '38.38px' }">
+      </BCardSubtitle>
+      <BCardSubtitle v-else :style="{ height: '38.38px' }">
         {{ $t("pdf.choreo-laedt") }}
-      </b-card-sub-title>
-      <b-card-body>
-        <b-row :style="{ rowGap: '16px' }">
-          <b-col md="6" cols="12">
-            <b-form-group
+      </BCardSubtitle>
+      <BCardBody>
+        <BRow :style="{ rowGap: '16px' }">
+          <BCol md="6" cols="12">
+            <BFormGroup
               :description="$t('pdf.das-datum-auf-das-countsheet-schreiben')"
               :state="dateIsValid"
               :invalid-feedback="dateStateFeedback"
             >
-              <b-form-checkbox v-model="includeDate">
+              <BFormCheckbox v-model="includeDate">
                 {{ $t("pdf.datum-anzeigen") }}
-              </b-form-checkbox>
-              <b-form-input
-                type="date"
+              </BFormCheckbox>
+              <BFormInput
                 v-model="date"
+                type="date"
                 :disabled="!includeDate"
                 :state="dateIsValid"
               />
-            </b-form-group>
-            <b-form-group
+            </BFormGroup>
+            <BFormGroup
               :description="
                 $t('pdf.den-team-namen-auf-das-countsheet-schreiben')
               "
             >
-              <b-form-checkbox v-model="includeTeamName">
+              <BFormCheckbox v-model="includeTeamName">
                 {{ $t("pdf.team-name-anzeigen") }}
-              </b-form-checkbox>
-            </b-form-group>
-            <b-form-group
+              </BFormCheckbox>
+            </BFormGroup>
+            <BFormGroup
               :description="
                 $t('pdf.den-choreo-namen-auf-das-countsheet-schreiben')
               "
             >
-              <b-form-checkbox v-model="includeChoreoName">
+              <BFormCheckbox v-model="includeChoreoName">
                 {{ $t("pdf.choreo-name-anzeigen") }}
-              </b-form-checkbox>
-            </b-form-group>
-            <b-form-group
+              </BFormCheckbox>
+            </BFormGroup>
+            <BFormGroup
               :description="
                 $t('pdf.die-namen-der-teilnehmer-auf-das-countsheet-schreiben')
               "
             >
-              <b-form-checkbox v-model="includeMemberNames">
+              <BFormCheckbox v-model="includeMemberNames">
                 {{ $t("pdf.teilnehmer-namen-anzeigen") }}
-              </b-form-checkbox>
-            </b-form-group>
-            <b-form-group
+              </BFormCheckbox>
+            </BFormGroup>
+            <BFormGroup
               :disabled="!currentClub?.logoExtension"
               :description="
                 $t('pdf.zeige-das-logo-deines-vereins-auf-dem-countsheet-an')
               "
             >
-              <b-form-checkbox v-model="includeLogo">
+              <BFormCheckbox v-model="includeLogo">
                 {{ $t("pdf.vereinslogo-anzeigen") }}
-              </b-form-checkbox>
-            </b-form-group>
-            <b-avatar
+              </BFormCheckbox>
+            </BFormGroup>
+            <BAvatar
+              v-if="currentClub?.logoExtension"
               size="60px"
               :src="currentClubLogoBlob"
-              v-if="currentClub?.logoExtension"
               :disabled="!includeLogo"
             >
-              <b-icon-house-fill v-if="!currentClubLogoBlob" font-scale="1.5" />
-            </b-avatar>
-          </b-col>
-          <b-col md="6" cols="12" class="mb-3">
-            <b-skeleton-wrapper
+              <IBiHouseFill v-if="!currentClubLogoBlob" font-scale="1.5" />
+            </BAvatar>
+          </BCol>
+          <BCol md="6" cols="12" class="mb-3">
+            <BPlaceholderWrapper
               :loading="
-                !choreo || !choreo.SeasonTeam.Team || !choreo.Participants
+                !choreo || !choreo.SeasonTeam?.Team || !choreo.Participants
               "
             >
               <template #loading>
-                <b-skeleton v-for="(_, i) in Array(3)" :key="i"></b-skeleton>
+                <BPlaceholder
+                  v-for="(_, i) in Array(3)"
+                  :key="i"
+                  animation="wave"
+                ></BPlaceholder>
               </template>
-              <b-form-group
+              <BFormGroup
                 :description="$t('pdf.fuer-wen-ist-das-countsheet')"
                 :state="includedMembersIsValid"
                 :invalid-feedback="includedMembersStateFeedback"
               >
-                <b-button-group class="mb-2">
-                  <b-button
+                <BButtonGroup class="mb-2">
+                  <BButton
                     variant="light"
+                    :disabled="includedMembers.length == teamMembers.length"
                     @click="
                       () => (includedMembers = teamMembers.map((m) => m.id))
                     "
-                    :disabled="includedMembers.length == teamMembers.length"
                   >
-                    <b-icon-check-all />
+                    <IBiCheckAll />
                     {{ $t("alle-auswaehlen") }}
-                  </b-button>
-                  <b-button
+                  </BButton>
+                  <BButton
                     variant="light"
-                    @click="() => (includedMembers = [])"
                     :disabled="includedMembers.length == 0"
+                    @click="() => (includedMembers = [])"
                   >
-                    <b-icon-slash />
+                    <IBiSlash />
                     {{ $t("keine-auswaehlen") }}
-                  </b-button>
-                </b-button-group>
-                <b-checkbox-group
+                  </BButton>
+                </BButtonGroup>
+                <BFormCheckboxGroup
                   v-model="includedMembers"
                   :style="{ columnCount: $store.state.isMobile ? 1 : 2 }"
                   stacked
@@ -218,55 +226,62 @@
                     }))
                   "
                 />
-              </b-form-group>
-            </b-skeleton-wrapper>
-          </b-col>
-          <b-col>
-            <b-alert
+              </BFormGroup>
+            </BPlaceholderWrapper>
+          </BCol>
+          <BCol>
+            <BAlert
               variant="warning"
               :show="
-                choreo &&
-                includeMemberNames &&
-                includedMembers.length >= teamMembers.length
+                !!(
+                  choreo &&
+                  includeMemberNames &&
+                  includedMembers.length >= teamMembers.length
+                )
               "
             >
               {{ $t("pdf.alle-namen-warnung") }}
-            </b-alert>
-          </b-col>
-        </b-row>
-      </b-card-body>
+            </BAlert>
+          </BCol>
+        </BRow>
+      </BCardBody>
       <template #footer>
         <div v-if="loading" class="text-center">
-          <b-spinner />
+          <BSpinner />
           <p>{{ slogan || $t("pdf.choreo-wird-geladen") }}</p>
         </div>
-        <b-button
-          block
-          v-else
-          @click="generatePdf"
-          variant="success"
-          :disabled="includedMembers.length == 0"
-        >
-          <b-icon-file-pdf />
-          {{ $t("pdf.pdf-generieren") }}
-        </b-button>
+        <div v-else class="d-grid">
+          <BButton
+            variant="success"
+            :disabled="includedMembers.length == 0"
+            @click="generatePdf"
+          >
+            <IBiFilePdf />
+            {{ $t("pdf.pdf-generieren") }}
+          </BButton>
+        </div>
       </template>
-    </b-card>
+    </BCard>
 
     <LoadingModal
       ref="loadingModal"
       :description="$t('pdf.pdf-wird-generiert')"
     />
-  </b-container>
+  </BContainer>
 </template>
 
-<script>
+<script lang="ts">
+import { useHead } from "@unhead/vue";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import CountSheet from "@/components/CountSheet.vue";
 import LoadingModal from "@/components/modals/LoadingModal.vue";
 import AuthService from "@/services/AuthService";
 import ChoreoService from "@/services/ChoreoService";
 import ClubService from "@/services/ClubService";
-import VueHtml2pdf from "vue-html2pdf";
+import type { Choreo, Member, Club } from "@/types";
+import VueHtml2pdf from "vue3-html2pdf";
+import { defineComponent } from "vue";
 
 /**
  * @vue-data {Object|null} user=null - The currently logged-in user.
@@ -297,132 +312,52 @@ import VueHtml2pdf from "vue-html2pdf";
  * @vue-computed {MetaInfo} metaInfo
  */
 
-export default {
+export default defineComponent({
   name: "PdfView",
   components: { CountSheet, VueHtml2pdf, LoadingModal },
-  data: () => ({
-    user: null,
-    choreoId: null,
-    choreo: null,
-    teamMembers: [],
-    hitSplits: [],
-    sloganIndex: 0,
-    sloganInterval: null,
-    includeDate: true,
-    includeTeamName: true,
-    includeChoreoName: true,
-    includeMemberNames: false,
-    includedMembers: [],
-    includeLogo: true,
-    loading: true,
-    date: new Date().toISOString().split("T")[0],
-    currentClubLogoBlob: null,
-  }),
-  methods: {
-    loadChoreo() {
-      ChoreoService.getById(this.choreoId).then((choreo) => {
-        this.choreo = choreo;
-        this.teamMembers = choreo.Participants.sort((a, b) =>
-          a.name.localeCompare(b.name)
-        );
-        this.includedMembers = choreo.Participants.map((m) => m.id);
-        this.calculateHitSplits().then(() => {
-          if (this.sloganInterval) clearInterval(this.sloganInterval);
-          this.loading = false;
-        });
-      });
-    },
-    loadUserInfo() {
-      return AuthService.getUserInfo().then((user) => {
-        this.user = user;
-        this.includeLogo = Boolean(this.currentClub?.logoExtension);
-        this.loadClubLogo();
-      });
-    },
-    generatePdf() {
-      this.sloganIndex = Math.floor(Math.random() * this.slogans.length);
-
-      this.$refs.loadingModal.open();
-
-      setTimeout(() => {
-        this.calculateHitSplits().then(() => {
-          this.$refs.loadingModal.close();
-          clearInterval(this.sloganInterval);
-          this.$refs.html2pdf.generatePdf();
-        });
-      }, 500);
-    },
-    async calculateHitSplits() {
-      let startIndex = 0;
-      let nItems = 8;
-
-      let confirmedHitSplits = [];
-
-      while (startIndex + nItems <= this.choreo.counts) {
-        this.hitSplits = [
-          ...confirmedHitSplits,
-          {
-            startIndex,
-            nItems,
-          },
-        ];
-
-        const [height, infoHeight] = await new Promise((resolve) => {
-          this.$nextTick(function () {
-            const countSheetSplit = this.$refs[`count-sheet-${startIndex}`][0];
-            const countSheetSplitInfo =
-              this.$refs[`count-sheet-info-${startIndex}`][0];
-            resolve([
-              countSheetSplit.$el.clientHeight,
-              countSheetSplitInfo.clientHeight,
-            ]);
-          });
-        });
-
-        const maxHeight = 950 - infoHeight;
-
-        if (height < maxHeight) {
-          nItems += 8;
-        } else {
-          confirmedHitSplits.push({ startIndex, nItems: nItems - 8 });
-
-          startIndex = startIndex + nItems - 8;
-          nItems = 8;
-        }
-      }
-
-      const lastElement = this.hitSplits.sort(
-        (a, b) => b.startIndex - a.startIndex
-      )[0];
-      lastElement.nItems = this.choreo.counts - lastElement.startIndex;
-
-      this.hitSplits = this.hitSplits.sort(
-        (a, b) => a.startIndex - b.startIndex
-      );
-    },
-    loadClubLogo() {
-      if (this.currentClub?.logoExtension == null)
-        this.currentClubLogoBlob = null;
-      else
-        ClubService.getClubLogo(
-          this.currentClub.id,
-          this.currentClub.logoExtension
-        ).then((response) => {
-          this.currentClubLogoBlob = URL.createObjectURL(response.data);
-        });
-    },
+  setup() {
+    const { t } = useI18n();
+    return { t };
   },
-  mounted() {
-    this.loadUserInfo();
-    this.choreoId = this.$route.params.choreoId;
-    this.loadChoreo();
-    this.sloganInterval = setInterval(() => {
-      this.sloganIndex = Math.floor(Math.random() * this.slogans.length);
-    }, 3000);
+  data() {
+    return {
+      user: null as
+        | (import("@/types").User & {
+            Clubs?: Array<import("@/types").Club & { logoExtension?: string }>;
+          })
+        | null,
+      choreoId: null as string | null,
+      choreo: null as
+        | (Choreo & {
+            Hits?: {
+              id: string;
+              name: string;
+              count: number;
+              Members?: { id: string; name: string; nickname?: string }[];
+            }[];
+          })
+        | null,
+      teamMembers: [] as Member[],
+      hitSplits: [] as { startIndex: number; nItems: number }[],
+      sloganIndex: 0,
+      sloganInterval: null as ReturnType<typeof setInterval> | null,
+      includeDate: true,
+      includeTeamName: true,
+      includeChoreoName: true,
+      includeMemberNames: false,
+      includedMembers: [] as string[],
+      includeLogo: true,
+      loading: true,
+      date: new Date().toISOString().split("T")[0] as string,
+      currentClubLogoBlob: undefined as string | undefined,
+      countSheetRefs: {} as Record<number, any>,
+      countSheetInfoRefs: {} as Record<number, any>,
+      savedTheme: null as string | null,
+    };
   },
   computed: {
     currentClub() {
-      return this.user?.Clubs.find((c) => c.id == this.$store.state.clubId);
+      return this.user?.Clubs?.find((c) => c.id == this.$store.state.clubId);
     },
     slogans() {
       return [
@@ -445,65 +380,213 @@ export default {
     dateIsValid() {
       return (
         !this.includeDate ||
-        (Boolean(this.date) && Boolean(new Date(this.date)))
+        (Boolean(this.date) && Boolean(new Date(this.date!)))
       );
     },
-    dateStateFeedback() {
-      if (!this.includeDate) return null;
-      if (Boolean(this.date) && Boolean(new Date(this.date)))
+    dateStateFeedback(): string | undefined {
+      if (!this.includeDate) return undefined;
+      if (Boolean(this.date) && Boolean(new Date(this.date!)))
         return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
     includedMembersIsValid() {
       return this.includedMembers.length > 0;
     },
-    includedMembersStateFeedback() {
+    includedMembersStateFeedback(): string | undefined {
       if (this.includedMembers.length <= 0)
         return this.$t("pdf.min-teilnehmer-erforderlich");
-      return null;
+      return undefined;
     },
   },
-  metaInfo() {
-    return {
-      title: `${this.choreo?.name || this.$t("pdf.laedt-choreo")} - ${this.$t(
-        "pdf.PDF"
-      )}`,
+  mounted() {
+    useHead({
+      title: computed(
+        () =>
+          `${this.choreo?.name || this.t("pdf.laedt-choreo")} - ${this.t(
+            "pdf.PDF"
+          )}`
+      ),
       meta: [
         {
-          vmid: "description",
           name: "description",
-          content: this.$t("meta.pdfView.description"),
+          content: computed(() => this.t("meta.pdfView.description")),
         },
         {
-          vmid: "twitter:description",
           name: "twitter:description",
-          content: this.$t("meta.pdfView.description"),
+          content: computed(() => this.t("meta.pdfView.description")),
         },
         {
-          vmid: "og:description",
           property: "og:description",
-          content: this.$t("meta.pdfView.description"),
+          content: computed(() => this.t("meta.pdfView.description")),
         },
         {
-          vmid: "og:title",
           property: "og:title",
-          content: `${
-            this.choreo?.name || this.$t("pdf.laedt-choreo")
-          } - ${this.$t("pdf.PDF")} - ${this.$t(
-            "general.ChoreoPlaner"
-          )} | ${this.$t("meta.defaults.title")}`,
+          content: computed(
+            () =>
+              `${
+                this.choreo?.name || this.t("pdf.laedt-choreo")
+              } - ${this.t("pdf.PDF")} - ${this.t(
+                "general.ChoreoPlaner"
+              )} | ${this.t("meta.defaults.title")}`
+          ),
         },
         {
-          vmid: "twitter:title",
           name: "twitter:title",
-          content: `${
-            this.choreo?.name || this.$t("pdf.laedt-choreo")
-          } - ${this.$t("pdf.PDF")} - ${this.$t(
-            "general.ChoreoPlaner"
-          )} | ${this.$t("meta.defaults.title")}`,
+          content: computed(
+            () =>
+              `${
+                this.choreo?.name || this.t("pdf.laedt-choreo")
+              } - ${this.t("pdf.PDF")} - ${this.t(
+                "general.ChoreoPlaner"
+              )} | ${this.t("meta.defaults.title")}`
+          ),
         },
       ],
-    };
+    });
+    this.loadUserInfo();
+    this.choreoId = this.$route.params.choreoId as string;
+    this.loadChoreo();
+    this.sloganInterval = setInterval(() => {
+      this.sloganIndex = Math.floor(Math.random() * this.slogans.length);
+    }, 3000) as unknown as ReturnType<typeof setInterval>;
   },
-};
+  methods: {
+    setCountSheetRef(el: any, startIndex: number) {
+      if (el) {
+        this.countSheetRefs[startIndex] = el;
+      }
+    },
+    setCountSheetInfoRef(el: any, startIndex: number) {
+      if (el) {
+        this.countSheetInfoRefs[startIndex] = el;
+      }
+    },
+    loadChoreo() {
+      ChoreoService.getById(this.choreoId!).then((choreo) => {
+        this.choreo = choreo as Choreo & {
+          Hits?: {
+            id: string;
+            name: string;
+            count: number;
+            Members?: { id: string; name: string; nickname?: string }[];
+          }[];
+        };
+        // Choreo.Participants are returned from the API as Member instances
+        // with a nested ChoreoParticipation (the join table). Cast to Participant
+        // (Member & { ChoreoParticipation }) and then treat as Member[] where needed.
+        this.teamMembers = choreo.Participants || [];
+        this.includedMembers = (choreo.Participants || []).map((m) => m.id);
+        this.calculateHitSplits().then(() => {
+          if (this.sloganInterval) clearInterval(this.sloganInterval!);
+          this.loading = false;
+        });
+      });
+    },
+    loadUserInfo() {
+      return AuthService.getUserInfo().then((user: any) => {
+        this.user = user;
+        this.includeLogo = Boolean(this.currentClub?.logoExtension);
+        this.loadClubLogo();
+      });
+    },
+    generatePdf() {
+      this.sloganIndex = Math.floor(Math.random() * this.slogans.length);
+
+      this.savedTheme = document.documentElement.getAttribute("data-bs-theme");
+      document.documentElement.setAttribute("data-bs-theme", "light");
+
+      (this.$refs.loadingModal as any).open();
+
+      setTimeout(() => {
+        this.calculateHitSplits().then(() => {
+          (this.$refs.loadingModal as any).close();
+          clearInterval(this.sloganInterval!);
+          (this.$refs.html2pdf as any).generatePdf();
+        });
+      }, 500);
+    },
+    onBeforeDownload() {},
+    onHasDownloaded() {
+      if (this.savedTheme) {
+        document.documentElement.setAttribute("data-bs-theme", this.savedTheme);
+        this.savedTheme = null;
+      }
+    },
+    async calculateHitSplits() {
+      let startIndex = 0;
+      let nItems = 8;
+
+      let confirmedHitSplits: { startIndex: number; nItems: number }[] = [];
+
+      while (startIndex + nItems <= this.choreo!.counts) {
+        this.hitSplits = [
+          ...confirmedHitSplits,
+          {
+            startIndex,
+            nItems,
+          },
+        ];
+
+        const [height, infoHeight] = await new Promise<[number, number]>(
+          (resolve, reject) => {
+            this.$nextTick(() => {
+              // Give slot content time to render and populate refs
+              setTimeout(() => {
+                const countSheetSplit = this.countSheetRefs[startIndex];
+                const countSheetSplitInfo = this.countSheetInfoRefs[startIndex];
+
+                if (!countSheetSplit || !countSheetSplitInfo) {
+                  console.error("Refs not found for startIndex:", startIndex, {
+                    countSheetSplit,
+                    countSheetSplitInfo,
+                    availableCountSheetRefs: Object.keys(this.countSheetRefs),
+                    availableInfoRefs: Object.keys(this.countSheetInfoRefs),
+                  });
+                  return reject(
+                    new Error(
+                      `Required refs not found for startIndex ${startIndex}. PDF generation cannot continue.`
+                    )
+                  );
+                }
+
+                resolve([
+                  countSheetSplit.$el.clientHeight,
+                  countSheetSplitInfo.$el.clientHeight,
+                ]);
+              }, 200);
+            });
+          }
+        );
+
+        const maxHeight = 950 - infoHeight;
+
+        if (height < maxHeight) {
+          nItems += 8;
+        } else {
+          confirmedHitSplits.push({ startIndex, nItems: nItems - 8 });
+
+          startIndex = startIndex + nItems - 8;
+          nItems = 8;
+        }
+      }
+
+      const lastElement = this.hitSplits.sort(
+        (a, b) => b.startIndex - a.startIndex
+      )[0]!;
+      lastElement.nItems = this.choreo!.counts - lastElement.startIndex;
+
+      this.hitSplits = this.hitSplits.sort(
+        (a, b) => a.startIndex - b.startIndex
+      );
+    },
+    loadClubLogo() {
+      if (this.currentClub?.logoExtension == null)
+        this.currentClubLogoBlob = undefined;
+      else
+        ClubService.getClubLogo(this.currentClub.id).then((response) => {
+          this.currentClubLogoBlob = URL.createObjectURL(response);
+        });
+    },
+  },
+});
 </script>

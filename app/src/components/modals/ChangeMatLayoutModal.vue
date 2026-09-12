@@ -1,49 +1,52 @@
 <template>
-  <b-modal
+  <BModal
     :id="`changeMatLayoutModal-${id}`"
+    ref="modal"
     centered
     @show="
       () => {
-        if (this.choreo) {
-          this.newMatType = this.choreo?.matType ?? 'cheer';
+        if (choreo) {
+          newMatType = choreo?.matType ?? 'cheer';
         }
       }
     "
     @ok="changeMatType"
   >
-    <template #modal-title>
+    <template #title>
       {{ $t("modals.change-mat.layout-der-buehne-matte-aendern") }}
       <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
     </template>
-    <b-form>
-      <b-form-group
+    <BForm>
+      <BFormGroup
         :label="$t('mat')"
         label-class="label-with-colon"
         :state="newMatTypeIsValid"
         :invalid-feedback="newMatTypeStateFeedback"
       >
-        <b-form-select
+        <BFormSelect
           v-model="newMatType"
           required
           :state="newMatTypeIsValid"
           :options="matTypeOptions"
         />
-      </b-form-group>
-    </b-form>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="success" :disabled="!newMatTypeIsValid">
+      </BFormGroup>
+    </BForm>
+    <template #footer="{ ok, cancel }">
+      <BButton variant="success" :disabled="!newMatTypeIsValid" @click="ok">
         {{ $t("modals.change-mat.layout-aendern") }}
-      </b-button>
-      <b-button @click="cancel" variant="danger">{{
+      </BButton>
+      <BButton variant="outline-danger" @click="cancel">{{
         $t("abbrechen")
-      }}</b-button>
+      }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import ChoreoService from "@/services/ChoreoService";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * @module Modal:ChangeMatLayoutModal
@@ -65,28 +68,20 @@ import NewVersionBadge from "@/components/NewVersionBadge.vue";
  *  <Button @click="() => $refs.changeMatLayoutModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "ChangeMatLayoutModal",
   components: { NewVersionBadge },
-  data: () => ({
-    id: (Math.random() + 1).toString(36).substring(7),
-    newMatType: null,
-  }),
   props: {
     choreo: {
       type: Object,
+      default: null,
     },
   },
-  methods: {
-    open() {
-      this.$bvModal.show(`changeMatLayoutModal-${this.id}`);
-    },
-    changeMatType() {
-      ChoreoService.changeMatType(this.choreo.id, this.newMatType).then(() => {
-        this.$emit("matTypeUpdate", this.newMatType);
-      });
-    },
-  },
+  emits: ["matTypeUpdate"],
+  data: () => ({
+    id: (Math.random() + 1).toString(36).substring(7),
+    newMatType: "cheer",
+  }),
   computed: {
     matTypeOptions() {
       return ChoreoService.matTypeOptions();
@@ -95,7 +90,7 @@ export default {
       if (!this.newMatType) return this.$t("erforderlich");
       if (!["cheer", "square", "1:2", "3:4"].includes(this.newMatType))
         return this.$t("errors.unerwarteter-fehler");
-      return null;
+      return undefined;
     },
     newMatTypeIsValid() {
       return (
@@ -104,5 +99,15 @@ export default {
       );
     },
   },
-};
+  methods: {
+    open() {
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
+    },
+    changeMatType() {
+      ChoreoService.changeMatType(this.choreo.id, this.newMatType).then(() => {
+        this.$emit("matTypeUpdate", this.newMatType);
+      });
+    },
+  },
+});
 </script>

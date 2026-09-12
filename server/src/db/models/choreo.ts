@@ -48,6 +48,12 @@ export const defaultMatType: MatType = "cheer";
  *          - 1:2
  *          - 3:4
  *          default: cheer
+ *        creatorId:
+ *          type: string
+ *          format: uuid
+ *        updaterId:
+ *          type: string
+ *          format: uuid
  */
 /**
  * @typedef Choreo
@@ -56,6 +62,8 @@ export const defaultMatType: MatType = "cheer";
  * @property {number} counts
  * @property {MatType} matType
  * @property {UUID} UserId
+ * @property {UUID} creatorId
+ * @property {UUID} updaterId
  * @memberof module:Models
  */
 /**
@@ -83,6 +91,11 @@ class Choreo extends Model<
 
   declare user: NonAttribute<User>;
   declare UserId: ForeignKey<User["id"]>;
+
+  declare creator: NonAttribute<User>;
+  declare updater: NonAttribute<User>;
+  declare creatorId: ForeignKey<User["id"]>;
+  declare updaterId: ForeignKey<User["id"]>;
 
   declare Lineups: NonAttribute<Lineup[]>;
   declare Hits: NonAttribute<Hit[]>;

@@ -1,83 +1,86 @@
 <template>
-  <b-modal
+  <BModal
     :id="`modal-newMember-${id}`"
+    ref="modal"
     :title="
       editMemberId
         ? $t('modals.create-member.mitglied-bearbeiten')
         : $t('modals.create-member.neues-mitglied')
     "
-    centered
+    scrollable
     @show="resetMemberModal"
     @hidden="resetMemberModal"
     @ok="saveMember"
   >
-    <b-form>
-      <b-row>
-        <b-col cols="7">
-          <b-form-group
+    <BForm>
+      <BRow>
+        <BCol cols="7">
+          <BFormGroup
             :label="$t('name')"
             label-class="label-with-colon"
             :state="newMemberNameIsValid"
             :invalid-feedback="newMemberNameStateFeedback"
           >
-            <b-form-input
+            <BFormInput
               v-model="newMemberName"
               :placeholder="$t('name')"
               autofocus
               required
               :state="newMemberNameIsValid"
             />
-          </b-form-group>
-        </b-col>
-        <b-col>
-          <b-form-group
+          </BFormGroup>
+        </BCol>
+        <BCol>
+          <BFormGroup
             :label="$t('abkuerzung')"
             label-class="label-with-colon"
             :state="abbreviationIsValid"
             :invalid-feedback="abbreviationStateFeedback"
           >
-            <b-form-input
+            <BFormInput
               v-model="newMemberAbbreviation"
               :placeholder="
                 proposedAbbreviation == -1 || !proposedAbbreviation
                   ? $t('abkuerzung')
-                  : proposedAbbreviation
+                  : String(proposedAbbreviation)
               "
               :state="abbreviationIsValid"
             />
-          </b-form-group>
-        </b-col>
-      </b-row>
-      <b-form-group
+          </BFormGroup>
+        </BCol>
+      </BRow>
+      <BFormGroup
         :label="$t('spitzname')"
         label-class="label-with-colon"
         :state="true"
       >
-        <b-form-input
+        <BFormInput
           v-model="newMemberNickname"
           :placeholder="$t('spitzname')"
           :state="true"
         />
-      </b-form-group>
-    </b-form>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button
+      </BFormGroup>
+    </BForm>
+    <template #footer="{ ok, cancel }">
+      <BButton
         type="submit"
-        @click="ok"
         variant="success"
         :disabled="!newMemberName || !abbreviationIsValid"
+        @click="ok"
       >
         {{ $t("speichern") }}
-      </b-button>
-      <b-button @click="cancel" variant="danger">{{
+      </BButton>
+      <BButton variant="outline-danger" @click="cancel">{{
         $t("abbrechen")
-      }}</b-button>
+      }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import MemberService from "@/services/MemberService";
+import { defineComponent, PropType } from "vue";
+import type { Team, Member } from "@/types";
 
 /**
  * @module Modal:CreateMemberModal
@@ -111,94 +114,54 @@ import MemberService from "@/services/MemberService";
  *  <Button @click="() => $refs.createMemberModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "CreateMemberModal",
-  data: () => ({
-    id: (Math.random() + 1).toString(36).substring(7),
-    newMemberName: null,
-    newMemberNickname: null,
-    newMemberAbbreviation: null,
-  }),
   props: {
     currentTeam: {
-      type: Object,
+      type: Object as PropType<Team>,
+      default: null,
     },
     editMemberId: {
       type: String,
+      default: null,
     },
     seasonTabIndex: {
       type: Number,
       default: 0,
     },
   },
-  methods: {
-    open() {
-      this.$bvModal.show(`modal-newMember-${this.id}`);
-    },
-    resetMemberModal() {
-      if (!this.editMemberId) {
-        this.newMemberName = null;
-        this.newMemberNickname = null;
-        this.newMemberAbbreviation = null;
-      } else {
-        const memberToUpdate = this.currentTeam.SeasonTeams[
-          this.seasonTabIndex
-        ].Members.find((m) => m.id == this.editMemberId);
-        this.newMemberName = memberToUpdate.name;
-        this.newMemberNickname = memberToUpdate.nickname;
-        this.newMemberAbbreviation = memberToUpdate.abbreviation;
-      }
-    },
-    saveMember() {
-      if (!this.editMemberId)
-        MemberService.create(
-          this.newMemberName?.trim(),
-          this.newMemberNickname?.trim(),
-          this.newMemberAbbreviation?.trim() || this.proposedAbbreviation,
-          this.currentTeam.SeasonTeams[this.seasonTabIndex].id
-        ).then((member) => {
-          this.$emit("memberCreated", member);
-        });
-      else {
-        const data = {
-          name: this.newMemberName.trim(),
-          nickname: this.newMemberNickname?.trim(),
-          abbreviation:
-            this.newMemberAbbreviation?.trim() || this.proposedAbbreviation,
-        };
-        MemberService.update(this.editMemberId, data).then((member) => {
-          this.$emit("memberUpdated", member);
-        });
-      }
-    },
-  },
+  emits: ["memberCreated", "memberUpdated"],
+  data: () => ({
+    id: (Math.random() + 1).toString(36).substring(7),
+    newMemberName: undefined as string | undefined,
+    newMemberNickname: undefined as string | undefined,
+    newMemberAbbreviation: undefined as string | undefined,
+  }),
   computed: {
     newMemberNameIsValid() {
-      return (
-        Boolean(this.newMemberName) && this.newMemberName.trim().length > 0
-      );
+      return (this.newMemberName?.trim().length ?? 0) > 0;
     },
     newMemberNameStateFeedback() {
-      if (!this.newMemberName || this.newMemberName.trim().length <= 0)
+      if (!this.newMemberName || (this.newMemberName?.trim().length ?? 0) <= 0)
         return this.$t("erforderlich");
-      return null;
+      return undefined;
     },
-    proposedAbbreviation() {
+    proposedAbbreviation(): string | number | null {
       if (!this.newMemberName) return null;
       let abbreviationFound = false;
-      let result = null;
+      let result: string | number | null = null;
       let substringLength = 1;
       while (!abbreviationFound) {
-        const proposal = this.newMemberName
+        const proposal = (this.newMemberName ?? "")
           .split(" ")
           .filter((s) => s)
           .map((s) => s.substring(0, substringLength).toUpperCase())
           .join("");
-        if (
-          !this.currentTeam.SeasonTeams[this.seasonTabIndex].Members.map(
+        const existingAbbreviations =
+          this.currentTeam.SeasonTeams[this.seasonTabIndex]?.Members?.map(
             (m) => m.abbreviation
-          ).includes(proposal)
-        ) {
+          ) ?? [];
+        if (!existingAbbreviations.includes(proposal)) {
           result = proposal;
           abbreviationFound = true;
         } else if (proposal.length <= substringLength) {
@@ -211,9 +174,8 @@ export default {
     abbreviationIsValid() {
       return Boolean(
         this.newMemberAbbreviation
-          ? !this.currentTeam.SeasonTeams[this.seasonTabIndex].Members.filter(
-              (m) => m.id != this.editMemberId
-            )
+          ? !(this.currentTeam.SeasonTeams[this.seasonTabIndex]?.Members ?? [])
+              .filter((m) => m.id != this.editMemberId)
               .map((m) => m.abbreviation)
               .includes(this.newMemberAbbreviation)
           : this.proposedAbbreviation != -1
@@ -226,17 +188,69 @@ export default {
         );
       if (
         this.newMemberAbbreviation &&
-        this.currentTeam.SeasonTeams[this.seasonTabIndex].Members.filter(
-          (m) => m.id != this.editMemberId
-        )
+        (this.currentTeam.SeasonTeams[this.seasonTabIndex]?.Members ?? [])
+          .filter((m) => m.id != this.editMemberId)
           .map((m) => m.abbreviation)
           .includes(this.newMemberAbbreviation)
       )
         return this.$t(
           "modals.create-member.es-existiert-bereits-ein-mitglied-mit-dieser-abkuerzung"
         );
-      return null;
+      return undefined;
     },
   },
-};
+  methods: {
+    open() {
+      (this.$refs.modal as any).show();
+    },
+    resetMemberModal() {
+      if (!this.editMemberId) {
+        this.newMemberName = undefined;
+        this.newMemberNickname = undefined;
+        this.newMemberAbbreviation = undefined;
+      } else {
+        const currentTeam = this.currentTeam as Team;
+        const memberToUpdate = currentTeam.SeasonTeams[
+          this.seasonTabIndex
+        ]?.Members?.find((m) => m.id == this.editMemberId);
+        if (memberToUpdate) {
+          this.newMemberName = memberToUpdate.name;
+          this.newMemberNickname = memberToUpdate.nickname;
+          this.newMemberAbbreviation = memberToUpdate.abbreviation;
+        }
+      }
+    },
+    saveMember() {
+      const currentTeam = this.currentTeam as Team;
+      const seasonTeam = currentTeam.SeasonTeams[this.seasonTabIndex];
+      if (!seasonTeam) return;
+      if (!this.editMemberId)
+        MemberService.create(
+          this.newMemberName?.trim() ?? "",
+          this.newMemberNickname?.trim() ?? "",
+          this.newMemberAbbreviation?.trim() ||
+            (typeof this.proposedAbbreviation === "string"
+              ? this.proposedAbbreviation
+              : ""),
+          seasonTeam.id
+        ).then((member) => {
+          this.$emit("memberCreated", member);
+        });
+      else {
+        const data: Partial<Member> = {
+          name: (this.newMemberName as string).trim(),
+          nickname: this.newMemberNickname?.trim(),
+          abbreviation:
+            this.newMemberAbbreviation?.trim() ||
+            (typeof this.proposedAbbreviation === "string"
+              ? this.proposedAbbreviation
+              : undefined),
+        };
+        MemberService.update(this.editMemberId, data).then((member) => {
+          this.$emit("memberUpdated", member);
+        });
+      }
+    },
+  },
+});
 </script>

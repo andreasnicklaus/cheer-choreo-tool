@@ -1,4 +1,8 @@
 services:
+  loadbalancer:
+    environment:
+      NGINX_UPSTREAM_SERVERS: |
+        server cheer-tool-server-1:3000;
 
   db: 
     ports:
@@ -11,11 +15,9 @@ services:
     image: anicklaus/cheer-tool:dev
     env_file:
       - .server.dev.env
+    deploy:
+      replicas: 1
     volumes:
       - ./server/tsconfig.json:/usr/src/app/tsconfig.json
       - ./server/src:/usr/src/app/src
       - ./server/dist:/usr/src/app/dist
-
-  vector:
-    deploy:
-      replicas: 0

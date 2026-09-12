@@ -29,6 +29,12 @@ import db from "../db";
  *          maximum: 5
  *        text:
  *          type: string
+ *        creatorId:
+ *          type: string
+ *          format: uuid
+ *        updaterId:
+ *          type: string
+ *          format: uuid
  */
 
 /**
@@ -37,6 +43,8 @@ import db from "../db";
  * @property {number} stars
  * @property {string} [text]
  * @property {UUID} [UserId]
+ * @property {UUID} creatorId
+ * @property {UUID} updaterId
  * @memberof module:Models
  */
 class Feedback extends Model<
@@ -53,6 +61,11 @@ class Feedback extends Model<
 
   declare User: NonAttribute<User>;
   declare UserId: ForeignKey<User["id"]>;
+
+  declare creator: NonAttribute<User>;
+  declare updater: NonAttribute<User>;
+  declare creatorId: ForeignKey<User["id"]>;
+  declare updaterId: ForeignKey<User["id"]>;
 }
 
 Feedback.init(

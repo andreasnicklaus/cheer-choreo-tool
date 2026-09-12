@@ -5,6 +5,25 @@ const MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
 const MILLIS_PER_HOUR = 60 * MILLIS_PER_MINUTE;
 const MILLIS_PER_DAY = 24 * MILLIS_PER_HOUR;
 
+const SECONDS_PER_MINUTE = 60;
+const SECONDS_PER_HOUR = 60 * SECONDS_PER_MINUTE;
+const SECONDS_PER_DAY = 24 * SECONDS_PER_HOUR;
+
+export function formatDuration(totalSeconds: number): string {
+  const days = Math.floor(totalSeconds / SECONDS_PER_DAY);
+  const hours = Math.floor((totalSeconds % SECONDS_PER_DAY) / SECONDS_PER_HOUR);
+  const minutes = Math.floor(
+    (totalSeconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE,
+  );
+
+  const parts: string[] = [];
+  if (days > 0) parts.push(`${days}d`);
+  if (hours > 0) parts.push(`${hours}h`);
+  if (minutes > 0 || parts.length === 0) parts.push(`${minutes}m`);
+
+  return parts.join(" ");
+}
+
 export function timeStringToMillis(timeString: string) {
   let result = 0;
   Array.from(timeString.matchAll(/(\d{1,3})s/g)).forEach(

@@ -8,7 +8,6 @@ import express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const helmet = require("helmet");
-const { rateLimit } = require("express-rate-limit");
 const robots = require("express-robots-txt");
 const permissionsPolicy = require("permissions-policy");
 
@@ -23,12 +22,24 @@ import {
   errorLoggingMiddleWare,
   loggerMiddleWare,
 } from "./middlewares/loggingMiddleware";
+import { totalRateLimit } from "./middlewares/rateLimitMiddleware";
 
 const favicon = require("serve-favicon");
 
 // LOGGER
 const { logger } = require("./plugins/winston");
 import logConfig from "@/utils/logConfig";
+
+// HEALTH
+import { getHealthReport } from "@/utils/healthCheck";
+
+// SESSION
+import session from "express-session";
+
+// PASSPORT
+import passport from "passport";
+import { configurePassport } from "./plugins/passport";
+configurePassport();
 
 // ROUTERS
 import { choreoRouter } from "./routes/choreo";
@@ -44,6 +55,10 @@ import { seasonRouter } from "./routes/season";
 import { seasonTeamRouter } from "./routes/seasonTeam";
 import { feedbackRouter } from "./routes/feedback";
 import { notificationRouter } from "./routes/notification";
+import { contactRouter } from "./routes/contact";
+
+// MCP
+import { mcpRouter } from "./mcp";
 
 // ADMIN ROUTER
 import { adminRouter } from "./routes/admin/index";
@@ -51,32 +66,40 @@ import { adminRouter } from "./routes/admin/index";
 const app = express();
 const port = 3000;
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "100mb" }));
 app.use(express.urlencoded({ extended: true }));
-const corsWhiteList = [process.env.FRONTEND_DOMAIN, "http://localhost:8080"];
+const corsWhiteList = [
+  process.env.FRONTEND_DOMAIN,
+  "http://localhost:8080",
+  "http://localhost:8081",
+  "http://localhost:8082",
+  "http://localhost:8083",
+];
 app.use(
   cors({
     origin: function (
       origin: string | undefined,
       callback: { (err: Error | null, allow?: boolean): void },
     ) {
-      if (corsWhiteList.indexOf(origin) !== -1) {
+      if (
+        !origin ||
+        corsWhiteList.includes(origin) ||
+        origin.includes("localhost") ||
+        origin.includes("127.0.0.1")
+      ) {
         callback(null, true);
       } else {
         callback(null, false);
       }
     },
+    allowedHeaders: "*",
+    exposedHeaders: ["X-CSRF-Token", "mcp-session-id"],
   }),
 );
 app.use(robots(__dirname + "/public/robots.txt"));
 
 app.set("trust proxy", 1);
-app.use(
-  rateLimit({
-    windowMs: 1 * 60 * 1000, // 1 minutes
-    max: 100,
-  }),
-);
+app.use(totalRateLimit);
 
 app.use((_req: Request, res: Response, next: NextFunction) => {
   res.locals.cspNonce = require("crypto").randomBytes(32).toString("hex");
@@ -190,6 +213,25 @@ require("./plugins/i18n");
 const i18n = require("i18n");
 app.use(i18n.init);
 
+// SESSION & PASSPORT
+const sessionSecret = process.env.SESSION_SECRET || "choreo-session-secret";
+app.use(
+  session({
+    secret: sessionSecret,
+    resave: false,
+    saveUninitialized: false,
+    name: "choreo.sid",
+    cookie: {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 10 * 60 * 1000, // 10 minutes — only needed during OAuth flow
+    },
+  }),
+);
+app.use(passport.initialize());
+app.use(passport.session());
+
 /**
  * @swagger
  * tags:
@@ -201,17 +243,19 @@ app.use(i18n.init);
  * @openapi
  * /:
  *    get:
- *      description: Status page for the API server
+ *      description: Server Status
  *      tags:
  *      - General
  *      responses:
  *        200:
  *          description: Returns a status page with a positive status message and the server version
  */
-app.get("/", (_req: Request, res: Response) => {
+app.get("/", async (_req: Request, res: Response) => {
+  const health = await getHealthReport();
   res.render("../src/views/status", {
     version,
     frontendDomain: process.env.FRONTEND_DOMAIN,
+    health,
   }); // njsscan-ignore: express_lfr_warning
 });
 
@@ -234,15 +278,90 @@ app.get("/version", (_req: Request, res: Response) => {
  * @openapi
  * /health:
  *   get:
- *     description: Healthcheck
+ *     description: Healthcheck with detailed service status
  *     tags:
  *     - General
  *     responses:
  *       200:
- *         description: Returns status code 200 for healthchecks (not logged)
+ *         description: All required services are healthy
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   enum: [healthy, degraded, unhealthy]
+ *                 version:
+ *                   type: string
+ *                 uptime:
+ *                   type: integer
+ *                 formattedUptime:
+ *                   type: string
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                 services:
+ *                   type: object
+ *                   properties:
+ *                     database:
+ *                       type: object
+ *                       properties:
+ *                         status:
+ *                           type: string
+ *                           enum: [healthy, unhealthy]
+ *                         required:
+ *                           type: boolean
+ *                         message:
+ *                           type: string
+ *                     mail:
+ *                       type: object
+ *                       properties:
+ *                         status:
+ *                           type: string
+ *                           enum: [healthy, unhealthy, unconfigured, error]
+ *                         required:
+ *                           type: boolean
+ *                         message:
+ *                           type: string
+ *                     featureFlags:
+ *                       type: object
+ *                       properties:
+ *                         status:
+ *                           type: string
+ *                           enum: [healthy, unhealthy, unconfigured, error]
+ *                         required:
+ *                           type: boolean
+ *                         message:
+ *                           type: string
+ *                     logging:
+ *                       type: object
+ *                       properties:
+ *                         status:
+ *                           type: string
+ *                           enum: [healthy, unconfigured]
+ *                         required:
+ *                           type: boolean
+ *                 featureFlags:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                       enabled:
+ *                         type: boolean
+ *                 oauthProviders:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *       503:
+ *         description: One or more required services are unhealthy
  */
-app.get("/health", (_req: Request, res: Response, next: NextFunction) => {
-  res.status(200).send();
+app.get("/health", async (_req: Request, res: Response, next: NextFunction) => {
+  const report = await getHealthReport();
+  const httpStatus = report.services.database.status === "healthy" ? 200 : 503;
+  res.status(httpStatus).json(report);
   next();
 });
 
@@ -255,10 +374,12 @@ app.use("/member", memberRouter);
 app.use("/position", positionRouter);
 app.use("/user", userRouter);
 app.use("/auth", authRouter);
+app.use("/mcp", mcpRouter);
 app.use("/season", seasonRouter);
 app.use("/seasonTeam", seasonTeamRouter);
 app.use("/feedback", feedbackRouter);
 app.use("/notifications", notificationRouter);
+app.use("/contact", contactRouter);
 
 app.use("/admin", adminRouter);
 
@@ -272,7 +393,8 @@ const swaggerOptions = {
     openapi: "3.1.1",
     info: {
       title: "Choreo Planer",
-      description: "This is the Choreo Planer API documentation",
+      description:
+        "This is the official Choreo Planer API documentation. Use this documentation as reference to integrate with the Choreo Planer backend.",
       license: {
         name: "MIT",
         url: "https://mit-license.org/",
@@ -282,6 +404,10 @@ const swaggerOptions = {
         email: "admin@choreo-planer.de",
       },
       version,
+    },
+    externalDocs: {
+      description: "Backend Code Documentation",
+      url: "https://api.choreo-planer.de/docs/",
     },
     servers: [
       {
@@ -363,20 +489,15 @@ function startServer() {
   logConfig();
 
   db.authenticate()
-    .then(() => {
-      logger.info("DB Connection established");
+    .then(() => logger.info("DB Connection established"))
+    .catch((e) =>
+      logger.warn("DB not available at startup: " + (e.message || String(e))),
+    );
 
-      app.listen(port, (error) => {
-        if (error) throw error;
-        logger.info(`App listening on http://localhost:${port}`);
-      });
-    })
-    .catch(() => {
-      logger.error(
-        "Unable to authenticate with the database. Restarting in 1 sec",
-      );
-      setTimeout(startServer, 1000);
-    });
+  app.listen(port, (error) => {
+    if (error) throw error;
+    logger.info(`App listening on http://localhost:${port}`);
+  });
 }
 
 startServer();

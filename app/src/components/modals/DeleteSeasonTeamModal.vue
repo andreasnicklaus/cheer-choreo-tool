@@ -1,23 +1,26 @@
 <template>
-  <b-modal
+  <BModal
     :id="`modal-deleteSeasonTeam-${id}`"
+    ref="modal"
     :title="$t('modals.delete-season.season-loeschen')"
     centered
-    @show="reset"
+    @hidden="reset"
     @ok="deleteSeasonTeam"
   >
     <p class="m-0">{{ $t("du-kannst-das-nicht-rueckgaengig-machen") }}</p>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="danger">{{ $t("loeschen") }}</b-button>
-      <b-button @click="cancel" variant="outline-secondary">
+    <template #footer="{ ok, cancel }">
+      <BButton variant="danger" @click="ok">{{ $t("loeschen") }}</BButton>
+      <BButton variant="light" @click="cancel">
         {{ $t("abbrechen") }}
-      </b-button>
+      </BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import SeasonTeamService from "@/services/SeasonTeamService";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * @module Modal:DeleteSeasonTeamModal
@@ -33,25 +36,26 @@ import SeasonTeamService from "@/services/SeasonTeamService";
  *  <Button @click="() => $refs.deleteSeasonTeamModal.open('abc')" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "DeleteSeasonTeamModal",
+  emits: ["seasonTeamDeleted"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
-    deleteSeasonTeamId: null,
+    deleteSeasonTeamId: null as string | null,
   }),
   methods: {
-    open(deleteSeasonTeamId) {
-      this.$bvModal.show(`modal-deleteSeasonTeam-${this.id}`);
+    open(deleteSeasonTeamId: string) {
       this.deleteSeasonTeamId = deleteSeasonTeamId;
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     reset() {
       this.deleteSeasonTeamId = null;
     },
     deleteSeasonTeam() {
-      SeasonTeamService.remove(this.deleteSeasonTeamId).then(() => {
+      SeasonTeamService.remove(this.deleteSeasonTeamId!).then(() => {
         this.$emit("seasonTeamDeleted", this.deleteSeasonTeamId);
       });
     },
   },
-};
+});
 </script>

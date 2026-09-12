@@ -1,0 +1,16 @@
+meta {
+  name: Revoke Email
+  method: GET
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/user/revokeEmail/:id
+  body: none
+  auth: none
+}
+
+params:path {
+  id: 
+}

@@ -1,0 +1,17 @@
+meta {
+  name: Get Hit by ID
+  method: GET
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/hit/:id
+  body: none
+  auth: inherit
+}
+
+
+params:path {
+  id: 
+}

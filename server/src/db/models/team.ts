@@ -48,6 +48,11 @@ class Team extends Model<InferAttributes<Team>, InferCreationAttributes<Team>> {
   declare user: NonAttribute<User>;
   declare UserId: ForeignKey<User["id"]>;
 
+  declare creator: NonAttribute<User>;
+  declare updater: NonAttribute<User>;
+  declare creatorId: ForeignKey<User["id"]>;
+  declare updaterId: ForeignKey<User["id"]>;
+
   declare Club: NonAttribute<Club>;
   declare ClubId: ForeignKey<Club["id"]>;
 

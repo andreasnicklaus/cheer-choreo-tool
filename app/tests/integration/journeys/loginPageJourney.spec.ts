@@ -6,6 +6,10 @@ import {
   mockRegistrationRequest,
   mockSsoLoginRequest,
 } from "../utils/requests";
+import {
+  mockOAuthProviderRequest,
+  mockOAuthProviderError,
+} from "../utils/oauthRequests";
 import { defaultChoreos } from "../testData/choreo";
 
 let loginPage: LoginPage;
@@ -26,7 +30,7 @@ test.describe("Not yet logged in", () => {
     await loginPage.iSwitchToRegistration();
     await loginPage.iInputUserName("newUserName");
     await loginPage.iInputEmail("newUserName@gmail.com");
-    await loginPage.iInputPassword("newPassword");
+    await loginPage.iInputPassword("newPassword", "Register");
     await loginPage.iInputPasswordRepetition("newPassword");
     await loginPage.iClickOnRegisterButton();
     await loginPage.iCheckRedirectionToPage();
@@ -36,7 +40,7 @@ test.describe("Not yet logged in", () => {
     await loginPage.iSwitchToRegistration();
     await loginPage.iInputUserName("newUserName");
     await loginPage.iInputEmail("newUserName@gmail.com");
-    await loginPage.iInputPassword("falsePassword");
+    await loginPage.iInputPassword("falsePassword", "Register");
     await loginPage.iInputPasswordRepetition("falsePassword");
     await loginPage.iClickOnRegisterButton();
     await loginPage.iCheckErrorAlert(
@@ -53,7 +57,7 @@ test.describe("Not yet logged in", () => {
     await loginPage.iSwitchToRegistration();
     await loginPage.iInputUserName("newUserName");
     await loginPage.iInputEmail("newUserName@gmail.com");
-    await loginPage.iInputPassword("newPassword");
+    await loginPage.iInputPassword("newPassword", "Register");
     await loginPage.iInputPasswordRepetition("newPassword");
     await loginPage.iClickOnRegisterButton();
     await loginPage.iCheckRedirectionToPage(redirectUrl);
@@ -61,14 +65,14 @@ test.describe("Not yet logged in", () => {
   test("should log in", async () => {
     await mockLoginRequest(loginPage.page);
     await loginPage.iInputUserName("newUserName");
-    await loginPage.iInputPassword("newPassword");
+    await loginPage.iInputPassword("newPassword", "Log in");
     await loginPage.iClickOnLoginButton();
     await loginPage.iCheckRedirectionToPage();
   });
   test("should display an error message on login", async () => {
     await mockLoginRequest(loginPage.page);
     await loginPage.iInputUserName("newUserName");
-    await loginPage.iInputPassword("falsePassword");
+    await loginPage.iInputPassword("falsePassword", "Log in");
     await loginPage.iClickOnLoginButton();
     await loginPage.iCheckErrorAlert();
   });
@@ -80,7 +84,7 @@ test.describe("Not yet logged in", () => {
       `/login?redirectUrl=${encodeURIComponent(redirectUrl)}`
     );
     await loginPage.iInputUserName("newUserName");
-    await loginPage.iInputPassword("newPassword");
+    await loginPage.iInputPassword("newPassword", "Log in");
     await loginPage.iClickOnLoginButton();
     await loginPage.iCheckRedirectionToPage(redirectUrl);
   });
@@ -97,6 +101,80 @@ test.describe("Already logged in", () => {
   test("should go to the redirect URL if already logged in", async () => {
     await loginPage.page.goto("/login?redirectUrl=/en/hilfe");
     await loginPage.iCheckRedirectionToPage("/en/hilfe");
+  });
+});
+
+test.describe("Social login", () => {
+  test("should display Google OAuth button when feature flags are enabled", async () => {
+    await loginPage.iSeeGoogleButton();
+  });
+
+  test("should display GitHub OAuth button when feature flags are enabled", async () => {
+    await loginPage.iSeeGitHubButton();
+  });
+
+  test("should display Facebook OAuth button when feature flags are enabled", async () => {
+    await loginPage.iSeeFacebookButton();
+  });
+
+  test("should NOT display OAuth buttons when social login feature flag is disabled", async () => {
+    await loginPage.iDisableSocialLogin();
+    await loginPage.goToPage();
+    await loginPage.iDontSeeOAuthButtons();
+  });
+
+  test("should complete Google OAuth login flow", async () => {
+    await mockOAuthProviderRequest(loginPage.page, "google");
+    await Promise.all([
+      loginPage.page.waitForURL("/en/start"),
+      loginPage.iClickOnGoogleButton(),
+    ]);
+    await loginPage.iVerifyLoginToken();
+  });
+
+  test("should complete GitHub OAuth login flow", async () => {
+    await mockOAuthProviderRequest(loginPage.page, "github");
+    await Promise.all([
+      loginPage.page.waitForURL("/en/start"),
+      loginPage.iClickOnGitHubButton(),
+    ]);
+    await loginPage.iVerifyLoginToken();
+  });
+
+  test("should complete Facebook OAuth login flow", async () => {
+    await mockOAuthProviderRequest(loginPage.page, "facebook");
+    await Promise.all([
+      loginPage.page.waitForURL("/en/start"),
+      loginPage.iClickOnFacebookButton(),
+    ]);
+    await loginPage.iVerifyLoginToken();
+  });
+
+  test("should show error on failed Google OAuth", async () => {
+    await mockOAuthProviderError(loginPage.page, "google");
+    await Promise.all([
+      loginPage.page.waitForURL("/en/login"),
+      loginPage.iClickOnGoogleButton(),
+    ]);
+    await loginPage.iSeeSocialLoginError();
+  });
+
+  test("should show error on failed GitHub OAuth", async () => {
+    await mockOAuthProviderError(loginPage.page, "github");
+    await Promise.all([
+      loginPage.page.waitForURL("/en/login"),
+      loginPage.iClickOnGitHubButton(),
+    ]);
+    await loginPage.iSeeSocialLoginError();
+  });
+
+  test("should show error on failed Facebook OAuth", async () => {
+    await mockOAuthProviderError(loginPage.page, "facebook");
+    await Promise.all([
+      loginPage.page.waitForURL("/en/login"),
+      loginPage.iClickOnFacebookButton(),
+    ]);
+    await loginPage.iSeeSocialLoginError();
   });
 });
 

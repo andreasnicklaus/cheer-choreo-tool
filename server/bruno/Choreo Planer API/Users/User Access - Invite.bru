@@ -1,0 +1,23 @@
+meta {
+  name: User Access - Invite
+  method: POST
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/user/access
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "childEmail": "salachglam-athlete@cheer.com",
+    "role": "athlete"
+  }
+}

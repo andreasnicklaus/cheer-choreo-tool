@@ -1,8 +1,23 @@
 import { NextFunction, Response, Request, Router } from "express";
+import { z } from "zod";
 import SeasonTeam from "../db/models/seasonTeam";
 import SeasonTeamService from "../services/SeasonTeamService";
+import { validate } from "@/middlewares/validateMiddleware";
+import { uuidParams } from "@/utils/zodSchemas";
 
 const { default: AuthService } = require("../services/AuthService");
+
+const createSeasonTeamSchema = z.object({
+  teamId: z.uuid(),
+  seasonId: z.uuid(),
+  MemberIds: z.array(z.uuid()).optional().default([]),
+});
+const copyMembersSchema = z.object({
+  MemberIds: z.array(z.uuid()),
+});
+
+type CreateSeasonTeamBody = z.infer<typeof createSeasonTeamSchema>;
+type CopyMembersBody = z.infer<typeof copyMembersSchema>;
 
 const router = Router();
 
@@ -29,7 +44,7 @@ const router = Router();
  *                 type: string
  *               seasonId:
  *                 type: string
- *               memberIds:
+ *               MemberIds:
  *                 type: array
  *                 items:
  *                   type: string
@@ -46,9 +61,19 @@ const router = Router();
 router.post(
   "/",
   AuthService.authenticateUser(),
+  validate(createSeasonTeamSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { teamId, seasonId, memberIds = [] } = req.body;
-    return SeasonTeamService.create(teamId, seasonId, memberIds, req.UserId)
+    const {
+      teamId,
+      seasonId,
+      MemberIds = [],
+    } = req.body as CreateSeasonTeamBody;
+    return SeasonTeamService.create(
+      teamId,
+      seasonId,
+      MemberIds,
+      req.actingUserId,
+    )
       .then((seasonTeam: SeasonTeam | null) => {
         res.send(seasonTeam);
         return next();
@@ -79,7 +104,7 @@ router.post(
  *           schema:
  *             type: object
  *             properties:
- *               memberIds:
+ *               MemberIds:
  *                 type: array
  *                 items:
  *                   type: string
@@ -98,16 +123,18 @@ router.post(
 router.put(
   "/:id",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
+  validate(copyMembersSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { memberIds } = req.body;
+    const { MemberIds } = req.body as CopyMembersBody;
     return SeasonTeamService.copyMembersIntoSeasonTeam(
       req.params.id,
-      memberIds,
-      req.UserId,
+      MemberIds,
+      req.actingUserId,
     )
       .then((memberList) => {
         res.send(memberList);
-        next();
+        return next();
       })
       .catch((e: Error) => next(e));
   },
@@ -137,8 +164,9 @@ router.put(
 router.delete(
   "/:id",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
-    return SeasonTeamService.remove(req.params.id, req.UserId)
+    return SeasonTeamService.remove(req.params.id, req.actingUserId)
       .then(() => {
         res.send();
         return next();

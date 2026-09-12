@@ -1,0 +1,12 @@
+meta {
+  name: Delete Profile Picture
+  method: DELETE
+  type: http
+  seq: 9
+}
+
+delete {
+  url: {{baseUrl}}/auth/me/profilePicture
+  body: none
+  auth: inherit
+}

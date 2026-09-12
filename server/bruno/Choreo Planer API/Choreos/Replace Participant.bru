@@ -1,0 +1,27 @@
+meta {
+  name: Replace Participant
+  method: PATCH
+  type: http
+  seq: 8
+}
+
+patch {
+  url: {{baseUrl}}/choreo/:id/participants
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+params:path {
+  id: 
+}
+
+body:json {
+  {
+    "memberToRemoveId": "{{id}}",
+    "memberToAddId": "new-member-id"
+  }
+}

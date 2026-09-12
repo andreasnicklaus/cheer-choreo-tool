@@ -33,6 +33,12 @@ import db from "../db";
  *          type: string
  *        abbreviation:
  *          type: string
+ *        creatorId:
+ *          type: string
+ *          format: uuid
+ *        updaterId:
+ *          type: string
+ *          format: uuid
  */
 
 /**
@@ -43,6 +49,8 @@ import db from "../db";
  * @property {string} [nickname]
  * @property {string} abbreviation
  * @property {UUID} UserId
+ * @property {UUID} creatorId
+ * @property {UUID} updaterId
  * @memberof module:Models
  */
 class Member extends Model<
@@ -60,6 +68,11 @@ class Member extends Model<
 
   declare user: NonAttribute<User>;
   declare UserId: ForeignKey<User["id"]>;
+
+  declare creator: NonAttribute<User>;
+  declare updater: NonAttribute<User>;
+  declare creatorId: ForeignKey<User["id"]>;
+  declare updaterId: ForeignKey<User["id"]>;
 
   declare SeasonTeam: NonAttribute<SeasonTeam>;
   declare SeasonTeamId: ForeignKey<SeasonTeam["id"]>;

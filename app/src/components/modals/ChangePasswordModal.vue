@@ -1,33 +1,35 @@
 <template>
-  <b-modal
+  <BModal
     :id="`changePasswordModal-${id}`"
+    ref="modal"
     :title="$t('accountView.passwort-aendern')"
     centered
     @ok="changePassword"
     @show="
       () => {
-        this.newPassword = null;
-        this.passwordRepetition = null;
+        newPassword = null;
+        passwordRepetition = null;
       }
     "
   >
-    <b-form>
-      <b-form-group
+    <BForm>
+      <BFormGroup
         :state="newPasswordIsValid"
         :invalid-feedback="newPasswordStateFeedback"
         :valid-feedback="$t('modals.change-password.dein-passwort-ist-gueltig')"
         :label="$t('modals.change-password.neues-passwort')"
         label-class="label-with-colon"
       >
-        <b-form-input
+        <BFormInput
           v-model="newPassword"
           :placeholder="$t('modals.change-password.neues-passwort')"
+          type="password"
           autofocus
           required
           :state="newPasswordIsValid"
         />
-      </b-form-group>
-      <b-form-group
+      </BFormGroup>
+      <BFormGroup
         :state="passwordRepetitionIsValid"
         :invalid-feedback="passwordRepetitionStateFeedback"
         :valid-feedback="
@@ -38,34 +40,37 @@
         :label="$t('modals.change-password.wiederholung')"
         label-class="label-with-colon"
       >
-        <b-form-input
+        <BFormInput
           v-model="passwordRepetition"
           :placeholder="$t('modals.change-password.neues-passwort')"
           required
+          type="password"
           :state="passwordRepetitionIsValid"
         />
-      </b-form-group>
-    </b-form>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button
-        @click="ok"
+      </BFormGroup>
+    </BForm>
+    <template #footer="{ ok, cancel }">
+      <BButton
         variant="success"
         :disabled="!newPasswordIsValid || !passwordRepetitionIsValid"
+        @click="ok"
       >
         {{ $t("modals.change-password.password-aendern") }}
-      </b-button>
-      <b-button @click="cancel" variant="danger">{{
+      </BButton>
+      <BButton variant="outline-danger" @click="cancel">{{
         $t("abbrechen")
-      }}</b-button>
+      }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import AuthService from "@/services/AuthService";
 import MessagingService from "@/services/MessagingService";
 import ERROR_CODES from "@/utils/error_codes";
 import { error, log } from "@/utils/logging";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * @module Modal:ChangePasswordModal
@@ -81,48 +86,21 @@ import { error, log } from "@/utils/logging";
  *
  * @example <ChangePasswordModal />
  */
-export default {
+export default defineComponent({
   name: "ChangePasswordModal",
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
-    newPassword: null,
-    passwordRepetition: null,
+    newPassword: null as string | null,
+    passwordRepetition: null as string | null,
   }),
-  methods: {
-    open() {
-      this.$bvModal.show(`changePasswordModal-${this.id}`);
-    },
-    changePassword() {
-      AuthService.changePassword(this.newPassword)
-        .then(() => {
-          log("Your password has been changed");
-          MessagingService.showSuccess(
-            this.$t("modals.change-password.dein-passwort-wurde-geaendert"),
-            this.$t("modals.change-password.passwort-geaendert")
-          );
-        })
-        .catch(() => {
-          error(
-            "Password replacement is not allowed",
-            ERROR_CODES.PASSWORD_CHANGE_NOT_ALLOWED
-          );
-          MessagingService.showError(
-            this.$t(
-              "modals.change-password.dein-neues-passwort-ist-nicht-erlaubt"
-            ),
-            this.$t("accountView.das-hat-nicht-funktioniert")
-          );
-        });
-    },
-  },
   computed: {
     newPasswordIsValid() {
-      return Boolean(this.newPassword) && this.newPassword.length >= 6;
+      return Boolean(this.newPassword && this.newPassword.length >= 6);
     },
     newPasswordStateFeedback() {
       if (!this.newPassword || this.newPassword.length < 6)
         return this.$t("modals.change-password.min-password-length");
-      return null;
+      return undefined;
     },
     passwordRepetitionIsValid() {
       return (
@@ -136,8 +114,36 @@ export default {
         return this.$t(
           "modals.change-password.die-wiederholung-entspricht-nicht-dem-ersten-passwort"
         );
-      return null;
+      return undefined;
     },
   },
-};
+  methods: {
+    open() {
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
+    },
+    changePassword() {
+      if (this.newPassword && this.passwordRepetition)
+        AuthService.changePassword(this.newPassword)
+          .then(() => {
+            log("Your password has been changed");
+            MessagingService.showSuccess(
+              this.$t("modals.change-password.dein-passwort-wurde-geaendert"),
+              this.$t("modals.change-password.passwort-geaendert")
+            );
+          })
+          .catch(() => {
+            error(
+              "Password replacement is not allowed",
+              ERROR_CODES.PASSWORD_CHANGE_NOT_ALLOWED
+            );
+            MessagingService.showError(
+              this.$t(
+                "modals.change-password.dein-neues-passwort-ist-nicht-erlaubt"
+              ),
+              this.$t("accountView.das-hat-nicht-funktioniert")
+            );
+          });
+    },
+  },
+});
 </script>

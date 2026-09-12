@@ -1,7 +1,9 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "removeComments": false,
+    "types": ["node"]
   },
   "include": ["src/**/*", "src/public/*.{ico}"]
 }

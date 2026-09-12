@@ -1,6 +1,8 @@
 import { NextFunction, Response, Request, Router } from "express";
 import NotificationModel from "../db/models/notification";
 import NotificationService from "../services/NotificationService";
+import { validate } from "@/middlewares/validateMiddleware";
+import { uuidParams } from "@/utils/zodSchemas";
 
 const { default: AuthService } = require("../services/AuthService");
 
@@ -31,7 +33,7 @@ router.get(
   "/",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    NotificationService.getAll(req.UserId)
+    NotificationService.getAll(req.actingUserId)
       .then((notificationList: NotificationModel[]) => {
         res.send(notificationList);
         return next();
@@ -64,8 +66,9 @@ router.get(
 router.post(
   "/:id/read",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
-    return NotificationService.markRead(req.params.id, req.UserId)
+    return NotificationService.markRead(req.params.id, req.actingUserId)
       .then((notification: NotificationModel) => {
         res.send(notification);
         return next();
@@ -98,8 +101,9 @@ router.post(
 router.post(
   "/:id/unread",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
-    return NotificationService.markUnread(req.params.id, req.UserId)
+    return NotificationService.markUnread(req.params.id, req.actingUserId)
       .then((notification: NotificationModel) => {
         res.send(notification);
         return next();
@@ -132,8 +136,9 @@ router.post(
 router.delete(
   "/:id",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
-    return NotificationService.remove(req.params.id, req.UserId)
+    return NotificationService.remove(req.params.id, req.actingUserId)
       .then(() => {
         res.send();
         return next();

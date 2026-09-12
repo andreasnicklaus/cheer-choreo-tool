@@ -1,23 +1,26 @@
 <template>
-  <b-modal
+  <BModal
     :id="`modal-deleteMember-${id}`"
+    ref="modal"
     :title="$t('modals.delete-member.teilnehmer-loeschen')"
     centered
-    @show="resetMemberDeleteModal"
+    @hidden="resetMemberDeleteModal"
     @ok="deleteMember"
   >
     <p class="m-0">{{ $t("du-kannst-das-nicht-rueckgaengig-machen") }}</p>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="danger">{{ $t("loeschen") }}</b-button>
-      <b-button @click="cancel" variant="outline-secondary">
+    <template #footer="{ ok, cancel }">
+      <BButton variant="danger" @click="ok">{{ $t("loeschen") }}</BButton>
+      <BButton variant="light" @click="cancel">
         {{ $t("abbrechen") }}
-      </b-button>
+      </BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import MemberService from "@/services/MemberService";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * @module Modal:DeleteMemberModal
@@ -33,25 +36,26 @@ import MemberService from "@/services/MemberService";
  *  <Button @click="() => $refs.deleteMemberModal.open('abc')" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "DeleteMemberModal",
+  emits: ["memberDeleted"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
-    deleteMemberId: null,
+    deleteMemberId: null as string | null,
   }),
   methods: {
-    open(deleteMemberId) {
-      this.$bvModal.show(`modal-deleteMember-${this.id}`);
+    open(deleteMemberId: string) {
       this.deleteMemberId = deleteMemberId;
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     resetMemberDeleteModal() {
       this.deleteMemberId = null;
     },
     deleteMember() {
-      MemberService.remove(this.deleteMemberId).then(() => {
+      MemberService.remove(this.deleteMemberId!).then(() => {
         this.$emit("memberDeleted", this.deleteMemberId);
       });
     },
   },
-};
+});
 </script>

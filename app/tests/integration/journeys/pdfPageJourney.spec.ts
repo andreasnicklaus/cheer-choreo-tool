@@ -33,4 +33,3 @@ test("should disable the generate button when no members are selected", async ()
 test("should show a warning when displaying participant names, but all are selected", async () => {
   await pdfPage.iShowWarningForDisplayingParticipantNames();
 });
-// TODO: find a way to test the pdf content

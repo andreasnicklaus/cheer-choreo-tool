@@ -31,6 +31,12 @@ import db from "../db";
  *          type: number
  *        y:
  *          type: number
+ *        creatorId:
+ *          type: string
+ *          format: uuid
+ *        updaterId:
+ *          type: string
+ *          format: uuid
  */
 
 /**
@@ -39,6 +45,8 @@ import db from "../db";
  * @property {number} x
  * @property {number} y
  * @property {UUID} UserId
+ * @property {UUID} creatorId
+ * @property {UUID} updaterId
  * @memberof module:Models
  */
 
@@ -57,6 +65,11 @@ class Position extends Model<
 
   declare user: NonAttribute<User>;
   declare UserId: ForeignKey<User["id"]>;
+
+  declare creator: NonAttribute<User>;
+  declare updater: NonAttribute<User>;
+  declare creatorId: ForeignKey<User["id"]>;
+  declare updaterId: ForeignKey<User["id"]>;
 
   declare Lineup: NonAttribute<Lineup>;
   declare LineupId: ForeignKey<Lineup["id"]>;
