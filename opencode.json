@@ -48,6 +48,11 @@
       "headers": {
         "Authorization": "Bearer <YOUR-JWT-TOKEN>"
       }
+    },
+    "exa": {
+      "type": "remote",
+      "url": "https://mcp.exa.ai/mcp",
+      "enabled": true
     }
   }
 }
