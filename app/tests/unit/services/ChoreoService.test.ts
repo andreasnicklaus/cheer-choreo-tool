@@ -30,10 +30,10 @@ describe("ChoreoService", () => {
       expect(result).toEqual([{ key: "value" }]);
     });
 
-    test("should throw error on query request failure", () => {
+    test("should throw error on query request failure", async () => {
       ax.get.mockRejectedValue(new Error("Network Error"));
 
-      expect(ChoreoService.getByTeam("teamId", "query")).rejects.toThrow(
+      await expect(ChoreoService.getByTeam("teamId", "query")).rejects.toThrow(
         "Network Error"
       );
 
@@ -52,10 +52,10 @@ describe("ChoreoService", () => {
       expect(result).toEqual({ key: "value" });
     });
 
-    test("should throw error on query request failure", () => {
+    test("should throw error on query request failure", async () => {
       ax.get.mockRejectedValue(new Error("Network Error"));
 
-      expect(ChoreoService.getById("choreoId")).rejects.toThrow(
+      await expect(ChoreoService.getById("choreoId")).rejects.toThrow(
         "Network Error"
       );
 
@@ -77,12 +77,12 @@ describe("ChoreoService", () => {
       expect(result).toEqual({ key: "value" });
     });
 
-    test("should throw error on change name request failure", () => {
+    test("should throw error on change name request failure", async () => {
       ax.put.mockRejectedValue(new Error("Network Error"));
 
-      expect(ChoreoService.changeName("choreoId", "newName")).rejects.toThrow(
-        "Network Error"
-      );
+      await expect(
+        ChoreoService.changeName("choreoId", "newName")
+      ).rejects.toThrow("Network Error");
 
       expect(ax.put).toHaveBeenCalledTimes(1);
     });
@@ -102,10 +102,10 @@ describe("ChoreoService", () => {
       expect(result).toEqual({ key: "value" });
     });
 
-    test("should throw error on change length request failure", () => {
+    test("should throw error on change length request failure", async () => {
       ax.put.mockRejectedValue(new Error("Network Error"));
 
-      expect(ChoreoService.changeLength("choreoId", 120)).rejects.toThrow(
+      await expect(ChoreoService.changeLength("choreoId", 120)).rejects.toThrow(
         "Network Error"
       );
 
@@ -130,12 +130,12 @@ describe("ChoreoService", () => {
       expect(result).toEqual({ key: "value" });
     });
 
-    test("should throw error on change mat type request failure", () => {
+    test("should throw error on change mat type request failure", async () => {
       ax.put.mockRejectedValue(new Error("Network Error"));
 
-      expect(ChoreoService.changeMatType("choreoId", "spring")).rejects.toThrow(
-        "Network Error"
-      );
+      await expect(
+        ChoreoService.changeMatType("choreoId", "spring")
+      ).rejects.toThrow("Network Error");
 
       expect(ax.put).toHaveBeenCalledTimes(1);
     });
@@ -166,10 +166,10 @@ describe("ChoreoService", () => {
       expect(result).toEqual({ key: "value" });
     });
 
-    test("should throw error on create request failure", () => {
+    test("should throw error on create request failure", async () => {
       ax.post.mockRejectedValue(new Error("Network Error"));
 
-      expect(
+      await expect(
         ChoreoService.create({ teamId: "teamId", name: "New Choreo" })
       ).rejects.toThrow("Network Error");
 
@@ -189,10 +189,12 @@ describe("ChoreoService", () => {
       expect(result).toEqual({ key: "value" });
     });
 
-    test("should throw error on remove request failure", () => {
+    test("should throw error on remove request failure", async () => {
       ax.delete.mockRejectedValue(new Error("Network Error"));
 
-      expect(ChoreoService.remove("choreoId")).rejects.toThrow("Network Error");
+      await expect(ChoreoService.remove("choreoId")).rejects.toThrow(
+        "Network Error"
+      );
 
       expect(ax.delete).toHaveBeenCalledTimes(1);
     });
@@ -220,10 +222,10 @@ describe("ChoreoService", () => {
       expect(result).toEqual({ key: "value" });
     });
 
-    test("should throw error on add participant request failure", () => {
+    test("should throw error on add participant request failure", async () => {
       ax.post.mockRejectedValue(new Error("Network Error"));
 
-      expect(
+      await expect(
         ChoreoService.addParticipant("choreoId", "participantId")
       ).rejects.toThrow("Network Error");
 
@@ -248,10 +250,10 @@ describe("ChoreoService", () => {
       expect(result).toEqual({ key: "value" });
     });
 
-    test("should throw error on remove participant request failure", () => {
+    test("should throw error on remove participant request failure", async () => {
       ax.delete.mockRejectedValue(new Error("Network Error"));
 
-      expect(
+      await expect(
         ChoreoService.removeParticipant("choreoId", "participantId")
       ).rejects.toThrow("Network Error");
 
@@ -281,10 +283,10 @@ describe("ChoreoService", () => {
       expect(result).toEqual({ key: "value" });
     });
 
-    test("should throw error on replace participant request failure", () => {
+    test("should throw error on replace participant request failure", async () => {
       ax.patch.mockRejectedValue(new Error("Network Error"));
 
-      expect(
+      await expect(
         ChoreoService.replaceParticipant(
           "choreoId",
           "oldParticipantId",
@@ -314,10 +316,10 @@ describe("ChoreoService", () => {
       expect(result).toEqual({ key: "value" });
     });
 
-    test("should throw error on change participant color request failure", () => {
+    test("should throw error on change participant color request failure", async () => {
       ax.patch.mockRejectedValue(new Error("Network Error"));
 
-      expect(
+      await expect(
         ChoreoService.changeParticipantColor(
           "choreoId",
           "participantId",
