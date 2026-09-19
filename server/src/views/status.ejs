@@ -56,6 +56,24 @@
     <h1>🎉 <%= t('status.server-sind-online') %></h1>
     <p><%= t('status.aktuelle-version')%> <%= version %></p>
 
+    <%
+      var statusHealthy = t('status.healthy');
+      var statusNotConfigured = t('status.not-configured');
+      var statusUnhealthy = t('status.unhealthy');
+      function statusDot(s) {
+        if (s === 'healthy') return '🟢';
+        if (s === 'unconfigured') return '🟡';
+        return '🔴';
+      }
+      function statusLabel(s) {
+        if (s === 'healthy') return statusHealthy;
+        if (s === 'unconfigured') return statusNotConfigured;
+        if (s === 'unhealthy') return statusUnhealthy;
+        return statusHealthy;
+      }
+      var providerIcon = { google: 'bi-google', github: 'bi-github', facebook: 'bi-facebook' };
+    %>
+
     <div
       style="
         margin: 12px 0px;
@@ -72,6 +90,55 @@
     <a href="mailto:info@choreo-planer.de"
       ><%= t('status.kontakt-aufnehmen') %></a
     >
+
+    <div style="max-width: 600px; min-width: 350px; margin: 24px auto; text-align: left; background: #f8f9fa; border-radius: 8px; padding: 16px 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); font-size: 0.85rem; color: #555;">
+      <h2 style="margin: 0 0 8px; font-size: 1rem; color: #333;"><%= t('status.service-status') %></h2>
+
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 4px 0;"><%= t('status.database') %></td>
+          <td style="padding: 4px 0; text-align: right;">
+            <span><%= statusDot(health.services.database.status) %> <%= statusLabel(health.services.database.status) %></span>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 4px 0;"><%= t('status.email') %></td>
+          <td style="padding: 4px 0; text-align: right;">
+            <span><%= statusDot(health.services.mail.status) %> <%= statusLabel(health.services.mail.status) %></span>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 4px 0;"><%= t('status.feature-flags') %></td>
+          <td style="padding: 4px 0; text-align: right;">
+            <span><%= statusDot(health.services.featureFlags.status) %> <%= statusLabel(health.services.featureFlags.status) %></span>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 4px 0;"><%= t('status.logging') %></td>
+          <td style="padding: 4px 0; text-align: right;">
+            <span><%= statusDot(health.services.logging.status) %> <%= statusLabel(health.services.logging.status) %></span>
+          </td>
+        </tr>
+      </table>
+
+      <% if (health.oauthProviders && health.oauthProviders.length > 0) { %>
+        <h3 style="margin: 12px 0 4px; font-size: 0.9rem; color: #333;"><%= t('status.oauth-providers') %></h3>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <% health.oauthProviders.forEach(function(p) { %>
+            <span style="background: #e9ecef; padding: 4px 12px; border-radius: 14px; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px;">
+              <i class="bi <%= providerIcon[p] || 'bi-box-arrow-in-right' %>"></i>
+              <span style="text-transform: capitalize;"><%= p %></span>
+            </span>
+          <% }); %>
+        </div>
+      <% } %>
+
+
+
+      <p style="margin: 12px 0 0; font-size: 0.75rem; color: #999;">
+        <%= t('status.uptime') %>: <%= health.formattedUptime %>
+      </p>
+    </div>
 
     <a href="/admin" id="adminLink"> <i class="bi bi-person-fill-gear"></i></a>
     <footer
@@ -92,6 +159,7 @@
         spread: 100,
         origin: { y: 0.8 },
       });
+
     </script>
   </body>
 </html>

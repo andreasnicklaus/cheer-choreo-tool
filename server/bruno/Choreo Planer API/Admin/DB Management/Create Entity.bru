@@ -1,0 +1,27 @@
+meta {
+  name: Create Entity
+  method: POST
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/admin/db/{{entity}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+params:path {
+  entity: clubs
+}
+
+body:json {
+  {
+    "name": "New Entity",
+    "UserId": "{{id}}"
+  }
+}

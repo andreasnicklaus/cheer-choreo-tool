@@ -1,0 +1,27 @@
+meta {
+  name: Update Entity
+  method: POST
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/admin/db/{{entity}}/update
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+params:path {
+  entity: clubs
+}
+
+body:json {
+  {
+    "id": "{{id}}",
+    "name": "Updated Name"
+  }
+}

@@ -1,4 +1,15 @@
-module.exports = {
-  presets: ["@vue/cli-plugin-babel/preset"],
-  plugins: ["@babel/plugin-proposal-optional-chaining"],
+export default {
+  presets: [
+    ["@babel/preset-typescript"],
+    [
+      "@babel/preset-env",
+      {
+        targets: {
+          browsers: ["> 1%", "last 2 versions", "not dead"],
+        },
+        useBuiltIns: "entry",
+        corejs: 3,
+      },
+    ],
+  ],
 };

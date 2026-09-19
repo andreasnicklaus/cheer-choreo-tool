@@ -1,0 +1,17 @@
+meta {
+  name: Delete Team
+  method: DELETE
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/team/:id
+  body: none
+  auth: inherit
+}
+
+
+params:path {
+  id: 
+}

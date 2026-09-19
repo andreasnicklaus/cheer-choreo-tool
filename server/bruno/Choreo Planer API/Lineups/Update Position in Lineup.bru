@@ -1,0 +1,28 @@
+meta {
+  name: Update Position in Lineup
+  method: PUT
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{baseUrl}}/lineup/:id/position/{{positionId}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+params:path {
+  id: 
+  positionId: 
+}
+
+body:json {
+  {
+    "x": 150,
+    "y": 250
+  }
+}

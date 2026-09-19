@@ -1,4 +1,4 @@
-FROM node:22-alpine
+FROM node:24-alpine
 WORKDIR /usr/src/app
 
 ENV TZ=Europe/Amsterdam
@@ -12,7 +12,7 @@ RUN apk del tzdata
 ENV NODE_ENV=production
 
 COPY package*.json ./
-RUN npm i --omit=dev
+RUN npm ci --omit=dev
 
 COPY ./ ./
 RUN npm run build

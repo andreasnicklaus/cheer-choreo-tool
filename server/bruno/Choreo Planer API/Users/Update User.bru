@@ -1,0 +1,22 @@
+meta {
+  name: Update User
+  method: PUT
+  type: http
+  seq: 1
+}
+
+put {
+  url: {{baseUrl}}/user/
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "username": "updated-username"
+  }
+}

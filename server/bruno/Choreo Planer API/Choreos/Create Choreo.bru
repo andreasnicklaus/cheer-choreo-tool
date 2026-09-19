@@ -1,0 +1,26 @@
+meta {
+  name: Create Choreo
+  method: POST
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/choreo/
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "RM 2023",
+    "counts": 377,
+    "matType": "square",
+    "seasonTeamId": "{{id}}",
+    "participants": []
+  }
+}

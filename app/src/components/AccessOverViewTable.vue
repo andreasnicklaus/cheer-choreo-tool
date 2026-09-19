@@ -1,0 +1,58 @@
+<template>
+  <BTable
+    :items="[
+      {
+        role: $t('accountView.role.coach'),
+        read: true,
+        edit: true,
+        delete: true,
+      },
+      {
+        role: $t('accountView.role.assistant'),
+        read: true,
+        edit: true,
+        delete: false,
+      },
+      {
+        role: $t('accountView.role.athlete'),
+        read: true,
+        edit: false,
+        delete: false,
+      },
+    ]"
+    :fields="[
+      { key: 'role', label: $t('modals.invite-user.role') },
+      {
+        key: 'read',
+        label: $t('accessOverviewTable.read'),
+        class: 'text-center',
+      },
+      {
+        key: 'edit',
+        label: $t('accessOverviewTable.edit'),
+        class: 'text-center',
+      },
+      { key: 'delete', label: $t('loeschen'), class: 'text-center' },
+    ]"
+  >
+    <template #cell(read)="data">
+      <IBiCheckCircleFill v-if="data.value" color="var(--bs-success)" />
+      <IBiX v-else color="var(--bs-danger)" />
+    </template>
+    <template #cell(edit)="data">
+      <IBiCheckCircleFill v-if="data.value" color="var(--bs-success)" />
+      <IBiX v-else color="var(--bs-danger)" />
+    </template>
+    <template #cell(delete)="data">
+      <IBiCheckCircleFill v-if="data.value" color="var(--bs-success)" />
+      <IBiX v-else color="var(--bs-danger)" />
+    </template>
+  </BTable>
+</template>
+
+<script lang="ts">
+import { defineComponent } from "vue";
+export default defineComponent({
+  name: "AccessOverViewTable",
+});
+</script>

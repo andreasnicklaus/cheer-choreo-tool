@@ -115,6 +115,16 @@ const config: Config = {
   // A preset that is used as a base for Jest's configuration
   preset: "ts-jest",
 
+  // Configure ts-jest to ignore TS5107 deprecation warning (Jest only)
+  globals: {
+    "ts-jest": {
+      diagnostics: {
+        // ignore the TypeScript diagnostic TS5107 during test compilation
+        ignoreCodes: [5107],
+      },
+    },
+  },
+
   // Run tests from one or more projects
   // projects: undefined,
 

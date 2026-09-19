@@ -1,11 +1,16 @@
 <template>
-  <b-badge v-show="show" variant="success" class="newVersionBadge px-2">{{
-    $t("neu").toUpperCase()
-  }}</b-badge>
+  <BBadge
+    v-if="show"
+    variant="success"
+    class="newVersionBadge d-inline-flex gap-1 align-items-center"
+  >
+    <IBiPatchExclamationFill />{{ $t("neu").toUpperCase() }}</BBadge
+  >
 </template>
 
-<script>
+<script lang="ts">
 import VersionService from "@/services/VersionService";
+import { defineComponent, PropType } from "vue";
 
 /**
  * @module Component:NewVersionBadge
@@ -20,21 +25,21 @@ import VersionService from "@/services/VersionService";
  * @example <NewVersionBadge :versions="['1.2.3', '1.2.4']" />
  */
 
-export default {
+export default defineComponent({
   name: "NewVersionBadge",
-  data: () => ({
-    show: false,
-  }),
   props: {
     version: {
       type: String,
-      required: false,
+      default: "",
     },
     versions: {
-      type: Array,
-      required: false,
+      type: Array as PropType<string[]>,
+      default: () => [],
     },
   },
+  data: () => ({
+    show: false,
+  }),
 
   mounted() {
     this.init();
@@ -48,7 +53,7 @@ export default {
         );
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

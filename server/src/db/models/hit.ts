@@ -35,6 +35,12 @@ import db from "../db";
  *          minimum: 0
  *        name:
  *          type: string
+ *        creatorId:
+ *          type: string
+ *          format: uuid
+ *        updaterId:
+ *          type: string
+ *          format: uuid
  */
 
 /**
@@ -43,6 +49,8 @@ import db from "../db";
  * @property {number} count
  * @property {string} name
  * @property {UUID} UserId
+ * @property {UUID} creatorId
+ * @property {UUID} updaterId
  * @memberof module:Models
  */
 class Hit extends Model<InferAttributes<Hit>, InferCreationAttributes<Hit>> {
@@ -56,6 +64,11 @@ class Hit extends Model<InferAttributes<Hit>, InferCreationAttributes<Hit>> {
 
   declare user: NonAttribute<User>;
   declare UserId: ForeignKey<User["id"]>;
+
+  declare creator: NonAttribute<User>;
+  declare updater: NonAttribute<User>;
+  declare creatorId: ForeignKey<User["id"]>;
+  declare updaterId: ForeignKey<User["id"]>;
 
   declare Choreo: NonAttribute<Choreo>;
   declare ChoreoId: ForeignKey<Choreo["id"]>;

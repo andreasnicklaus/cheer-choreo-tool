@@ -8,9 +8,10 @@ jest.mock("@/plugins/winston", () => ({
   logger: {
     debug: jest.fn(),
     error: jest.fn(),
+    info: jest.fn(),
   },
   debug: jest.fn(),
-  error: jest.fn(),
+  info: jest.fn(),
 }));
 
 jest.mock("@/db/db", () => {
@@ -27,7 +28,17 @@ jest.mock("@/plugins/nodemailer", () => ({
   verify: jest.fn().mockResolvedValue(true),
 }));
 
-let user = { id: "test-id" };
+jest.mock("@/services/FeatureFlagService", () => ({
+  __esModule: true,
+  default: {
+    isEnabled: jest.fn().mockResolvedValue(true),
+  },
+  FeatureFlagKey: {
+    ACCESS_SHARING: "access-sharing",
+  },
+}));
+
+let user: { id: string } = { id: "test-id" };
 
 describe("LineupService", () => {
   beforeAll(async () => {
@@ -97,6 +108,7 @@ describe("LineupService", () => {
       expect(updated.endCount).toBe(3);
     }
   });
+
   test("update throws error for invalid lineup id", async () => {
     expect(
       LineupService.update("invalid-lineup-id", { endCount: 3 }, user.id),
@@ -104,8 +116,8 @@ describe("LineupService", () => {
   });
 
   test("findById should find existing lineup", async () => {
-    const notFoundAdmin = await LineupService.findById("", user.id);
-    expect(notFoundAdmin).toBeNull();
+    const notFound = await LineupService.findById("", user.id);
+    expect(notFound).toBeNull();
 
     const choreo = await Choreo.create({
       name: "test-choreo",
@@ -125,8 +137,8 @@ describe("LineupService", () => {
   });
 
   test("findByChoreoId should find existing lineup", async () => {
-    const notFoundAdmin = await LineupService.findByChoreoId("");
-    expect(notFoundAdmin.length).toBe(0);
+    const notFound = await LineupService.findByChoreoId("");
+    expect(notFound.length).toBe(0);
 
     const choreo = await Choreo.create({
       name: "test-choreo",
@@ -158,7 +170,7 @@ describe("LineupService", () => {
     expect(await LineupService.findById(lineup.id, user.id)).toBeNull();
   });
 
-  test("remove on non-existing admin should throw", async () => {
+  test("remove on non-existing lineup should throw", async () => {
     expect(() =>
       LineupService.remove("non-existing-id", user.id),
     ).rejects.toThrow();
