@@ -22,7 +22,7 @@ class ChoreoParticipation extends Model<
   InferAttributes<ChoreoParticipation>,
   InferCreationAttributes<ChoreoParticipation>
 > {
-  declare id: string;
+  declare id: CreationOptional<string>;
   declare color?: string;
 
   declare createdAt: CreationOptional<Date>;
@@ -32,9 +32,9 @@ class ChoreoParticipation extends Model<
   declare user: NonAttribute<User>;
   declare UserId: ForeignKey<User["id"]>;
 
-  declare choreo: NonAttribute<Choreo>;
+  declare Choreo: NonAttribute<Choreo>;
   declare ChoreoId: ForeignKey<Choreo["id"]>;
-  declare member: NonAttribute<Member>;
+  declare Member: NonAttribute<Member>;
   declare MemberId: ForeignKey<Member["id"]>;
 }
 

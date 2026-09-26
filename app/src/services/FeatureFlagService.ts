@@ -1,0 +1,72 @@
+﻿import { UnleashClient } from "unleash-proxy-client";
+import { debug, warn } from "@/utils/logging";
+import env from "../utils/env";
+
+const FEATURE_FLAG_API_KEY = env.VITE_FEATURE_FLAG_API_KEY;
+
+const unleash = new UnleashClient({
+  url: "https://features.choreo-planer.de/api/frontend",
+  clientKey: FEATURE_FLAG_API_KEY as string,
+  appName: "choreo-planer-ui",
+});
+
+/**
+ * Known feature flag keys used by the UI.
+ * @readonly
+ * @enum {string}
+ */
+export const FeatureFlagKeys = {
+  MOBILE_EDITING: "mobile-editing",
+  CONTACT_FORM_WITH_LOGIN: "contact-with-login",
+  CONTACT_FORM_WITHOUT_LOGIN: "contact-without-login",
+  ACCESS_SHARING: "access-sharing",
+  SOCIAL_LOGIN: "social-login",
+  GOOGLE_OAUTH: "google-oauth",
+  GITHUB_OAUTH: "github-oauth",
+  FACEBOOK_OAUTH: "facebook-oauth",
+} as const;
+
+type FeatureFlagKey = (typeof FeatureFlagKeys)[keyof typeof FeatureFlagKeys];
+
+/**
+ * Client-side FeatureFlagService using the a proxy client.
+ *
+ * The service starts the client once and exposes helper methods
+ * to check whether flags are enabled. Consumers should await the
+ * initialization before querying flags to ensure the client has fetched
+ * the current toggle state.
+ */
+class FeatureFlagService {
+  unleash: UnleashClient;
+  initialization: Promise<void>;
+
+  /**
+   * Initialize the service and start background polling.
+   * @constructor
+   */
+  constructor() {
+    this.unleash = unleash;
+    // Start the background polling
+    this.initialization = this.unleash.start();
+  }
+
+  /**
+   * Check whether a feature flag is enabled.
+   *
+   * Waits for the client to finish initial startup before querying.
+   * Logs a warning for unknown flags.
+   *
+   * @param {string} flagName - The feature flag key to check.
+   * @returns {Promise<boolean>} Resolves to true when the flag is enabled.
+   */
+  async isEnabled(flagName: string): Promise<boolean> {
+    await this.initialization;
+    if (!Object.values(FeatureFlagKeys).includes(flagName as FeatureFlagKey))
+      warn(`Unknown feature flag: ${flagName}`);
+    const result = this.unleash.isEnabled(flagName);
+    debug(`Feature flag "${flagName}" is ${result ? "enabled" : "disabled"}`);
+    return result;
+  }
+}
+
+export default new FeatureFlagService();

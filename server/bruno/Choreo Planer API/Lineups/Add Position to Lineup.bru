@@ -1,0 +1,28 @@
+meta {
+  name: Add Position to Lineup
+  method: POST
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/lineup/:id/position
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+params:path {
+  id: 
+}
+
+body:json {
+  {
+    "x": 100,
+    "y": 200,
+    "MemberId": "{{id}}"
+  }
+}

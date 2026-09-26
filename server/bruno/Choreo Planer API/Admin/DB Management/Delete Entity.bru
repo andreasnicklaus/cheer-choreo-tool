@@ -1,0 +1,17 @@
+meta {
+  name: Delete Entity
+  method: DELETE
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/admin/db/{{entity}}/:id
+  body: none
+  auth: none
+}
+
+params:path {
+  entity: clubs
+  id: 
+}

@@ -1,0 +1,16 @@
+meta {
+  name: Delete Admin
+  method: DELETE
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{baseUrl}}/admin/admins/:id
+  body: none
+  auth: none
+}
+
+params:path {
+  id: 
+}

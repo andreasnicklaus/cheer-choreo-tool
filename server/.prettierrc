@@ -2,7 +2,7 @@
   "trailingComma": "all",
   "overrides": [
     {
-      "files": ["**/*.jsonc"],
+      "files": ["**/*.json5"],
       "options": {
         "trailingComma": "none"
       }

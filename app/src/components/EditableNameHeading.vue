@@ -1,58 +1,70 @@
 <template>
   <h1>
-    <b-row align-h="start" align-v="center" no-gutters>
-      <b-col cols="auto" class="mr-2" v-if="name">
+    <BRow align-h="start" align-v="center" no-gutters>
+      <BCol v-if="name" cols="auto" class="me-2">
         <em>{{ name }}</em>
-      </b-col>
-      <b-col>
+      </BCol>
+      <BCol>
         <b v-if="!edit" class="mt-2">
           {{ value || placeholder || $t("neu") }}
         </b>
-        <b-button
+        <BButton
           v-if="!edit"
           variant="light"
-          class="ml-2"
+          class="ms-2"
           @click="() => startEditing()"
         >
-          <b-icon-pen />
-        </b-button>
+          <IBiPen data-testid="edit-button" />
+        </BButton>
 
-        <b-input-group
-          v-else
-          @keydown.esc="cancelEditing"
-          @keydown.enter="approveEdit"
-        >
-          <b-form-input
-            v-model="valueReplica"
+        <BInputGroup v-else>
+          <BFormInput
+            v-model="valueReplica as string"
+            type="text"
             autofocus
             :style="{
-              fontSize: '2rem',
               fontWeight: 'bold',
-              color: '#2c3e50',
+              color: 'var(--bs-body-color)',
               border: 'none',
               fontSize: '40px',
               height: '1em',
               textDecoration: 'underline dotted',
             }"
             class="p-0"
+            data-testid="editHeading-input"
+            @keydown="
+              (e: any) => {
+                if (e.key === 'Escape') cancelEditing();
+                if (e.key === 'Enter') approveEdit();
+              }
+            "
           />
           <template #append>
-            <b-button-group>
-              <b-button variant="success" @click="() => approveEdit()">
-                <b-icon-check />
-              </b-button>
-              <b-button variant="danger" @click="() => cancelEditing()">
-                <b-icon-x />
-              </b-button>
-            </b-button-group>
+            <BButtonGroup>
+              <BButton
+                variant="success"
+                data-testid="approve-edit-button"
+                @click="() => approveEdit()"
+              >
+                <IBiCheck />
+              </BButton>
+              <BButton
+                variant="danger"
+                data-testid="cancel-edit-button"
+                @click="() => cancelEditing()"
+              >
+                <IBiX />
+              </BButton>
+            </BButtonGroup>
           </template>
-        </b-input-group>
-      </b-col>
-    </b-row>
+        </BInputGroup>
+      </BCol>
+    </BRow>
   </h1>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from "vue";
 /**
  * @module Component:EditableNameHeading
  *
@@ -68,7 +80,7 @@
  * @example <EditableNameHeading name="Title" v-model="value" />
  * @example <EditableNameHeading name="Title" v-model="value" placeholder="Enter name" />
  */
-export default {
+export default defineComponent({
   name: "EditableNameHeading",
   props: {
     name: {
@@ -77,14 +89,17 @@ export default {
     },
     value: {
       type: String,
+      default: "",
     },
     placeholder: {
       type: String,
+      default: "",
     },
   },
+  emits: ["input"],
   data: () => ({
     edit: false,
-    valueReplica: null,
+    valueReplica: undefined as String | undefined,
   }),
   watch: {
     value() {
@@ -105,5 +120,5 @@ export default {
       this.edit = false;
     },
   },
-};
+});
 </script>

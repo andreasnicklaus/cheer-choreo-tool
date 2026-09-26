@@ -1,0 +1,17 @@
+meta {
+  name: Mark Notification Read
+  method: POST
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/notifications/:id/read
+  body: none
+  auth: inherit
+}
+
+
+params:path {
+  id: 
+}

@@ -1,14 +1,63 @@
 import { NextFunction, Request, Response, Router } from "express";
+import { z } from "zod";
 import User from "../db/models/user";
-import { UniqueConstraintError, ValidationError } from "sequelize";
+import { UniqueConstraintError } from "sequelize";
 import UserService from "../services/UserService";
 import MailService from "../services/MailService";
 import NotificationService from "../services/NotificationService";
 import FileService from "../services/FileService";
+import { validate } from "@/middlewares/validateMiddleware";
+import passport, { AuthenticateOptions } from "passport";
+import FeatureFlagService, {
+  FeatureFlagKey,
+} from "@/services/FeatureFlagService";
+import { AuthProvider, isProviderConfigured } from "@/plugins/passport";
+import { logger } from "@/plugins/winston";
 
 const bcrypt = require("bcrypt");
 const path = require("node:path");
 const { default: AuthService } = require("../services/AuthService");
+
+const registerSchema = z.object({
+  username: z.string().min(6),
+  email: z.email().optional().nullable().default(null),
+  password: z.string().min(8),
+});
+
+const loginSchema = z.object({
+  username: z.string().min(1),
+  password: z.string().min(1),
+});
+
+const ssoRequestSchema = z.object({
+  email: z.email(),
+});
+
+const ssoSchema = z.object({
+  ssoToken: z.string().min(1),
+});
+
+const profilePictureParams = z.object({
+  filename: z.string().min(1),
+});
+
+const updateMeSchema = z.object({
+  username: z.string().min(6).optional(),
+  email: z.email().optional(),
+  emailConfirmed: z.boolean().optional(),
+});
+
+const mcpTokenSchema = z.object({
+  expiresIn: z.string().optional().default("30d"),
+});
+
+type RegisterBody = z.infer<typeof registerSchema>;
+type LoginBody = z.infer<typeof loginSchema>;
+type SsoRequestBody = z.infer<typeof ssoRequestSchema>;
+type SsoBody = z.infer<typeof ssoSchema>;
+type ProfilePictureParams = z.infer<typeof profilePictureParams>;
+type UpdateMeBody = z.infer<typeof updateMeSchema>;
+type McpTokenBody = z.infer<typeof mcpTokenSchema>;
 
 /**
  * @swagger
@@ -118,34 +167,49 @@ const router = Router();
  *              type: string
  *              example: User already exists
  */
-router.post("/", (req: Request, res: Response, next: NextFunction) => {
-  const { username, password, email } = req.body;
-  UserService.create(username, password, email, false, req.locale)
-    .then((user: User) => {
-      const token = AuthService.generateAccessToken(user.id);
-      res.send(token);
-      next();
-    })
-    .catch((e: Error) => {
-      if (e instanceof UniqueConstraintError) {
-        const ue = e as UniqueConstraintError;
-        res
-          .status(400)
-          .send(
-            Object.keys(ue.fields).includes("username") ||
-              Object.keys(ue.fields).includes("email")
-              ? req.t("errors.user-already-exists")
-              : null,
-          );
-        return next();
-      } else if (e instanceof ValidationError) {
-        const ve = e as ValidationError;
-        res.status(400).send(ve.errors[0].message);
-        return next();
-      }
-      next(e);
-    });
-});
+router.post(
+  "/",
+  validate(registerSchema),
+  (req: Request, res: Response, next: NextFunction) => {
+    const { username, password, email } = req.body as RegisterBody;
+
+    const searchIdentifier = email ? [username, email] : username;
+
+    UserService.findDeletedByUsernameOrEmail(searchIdentifier)
+      .then((deletedUser) => {
+        if (deletedUser) {
+          res.status(403).send(req.t("errors.account-deleted"));
+          return next();
+        }
+        return createUser();
+      })
+      .catch((e: Error) => next(e));
+
+    function createUser() {
+      UserService.create(username, password, email as string, false, req.locale)
+        .then((user: User) => {
+          const token = AuthService.generateAccessToken(user.id);
+          res.send(token);
+          next();
+        })
+        .catch((e: Error) => {
+          if (e instanceof UniqueConstraintError) {
+            const ue = e as UniqueConstraintError;
+            res
+              .status(400)
+              .send(
+                Object.keys(ue.fields).includes("username") ||
+                  Object.keys(ue.fields).includes("email")
+                  ? req.t("errors.user-already-exists")
+                  : null,
+              );
+            return next();
+          }
+          next(e);
+        });
+    }
+  },
+);
 
 /**
  * @openapi
@@ -166,28 +230,42 @@ router.post("/", (req: Request, res: Response, next: NextFunction) => {
  *      404:
  *        description: User was not found
  */
-router.post("/login", (req: Request, res: Response, next: NextFunction) => {
-  const { username, password } = req.body;
-  UserService.findByUsernameOrEmail(username, { scope: "withPasswordHash" })
-    .then(async (user: User | null) => {
-      if (!user || !bcrypt.compareSync(password, user.password)) {
-        res.status(404).send();
-        return;
-      }
+router.post(
+  "/login",
+  validate(loginSchema),
+  (req: Request, res: Response, next: NextFunction) => {
+    const { username, password } = req.body as LoginBody;
+    UserService.findByUsernameOrEmail(username, { scope: "withPasswordHash" })
+      .then(async (user: User | null) => {
+        if (!user) {
+          const deletedUser =
+            await UserService.findDeletedByUsernameOrEmail(username);
+          if (deletedUser) {
+            res.status(403).send(req.t("errors.account-deleted"));
+            return;
+          }
+          res.status(404).send();
+          return;
+        }
+        if (!bcrypt.compareSync(password, user.password)) {
+          res.status(404).send();
+          return;
+        }
 
-      // if (user.email && !user.emailConfirmed)
-      //   return res.status(400).send({
-      //     type: "EmailUnconfirmed",
-      //     message:
-      //       "Du musst dein E-Mail-Adresse bestätigen, um dein Konto zu aktivieren",
-      //   });
-      await UserService.update(user.id, { lastLoggedIn: Date.now() });
-      const token = AuthService.generateAccessToken(user.id);
-      res.send(token);
-      next();
-    })
-    .catch((e: Error) => next(e));
-});
+        // if (user.email && !user.emailConfirmed)
+        //   return res.status(400).send({
+        //     type: "EmailUnconfirmed",
+        //     message:
+        //       "Du musst dein E-Mail-Adresse bestätigen, um dein Konto zu aktivieren",
+        //   });
+        await UserService.update(user.id, { lastLoggedIn: Date.now() });
+        const token = AuthService.generateAccessToken(user.id);
+        res.send(token);
+        next();
+      })
+      .catch((e: Error) => next(e));
+  },
+);
 
 /**
  * @openapi
@@ -216,12 +294,9 @@ router.post("/login", (req: Request, res: Response, next: NextFunction) => {
  */
 router.post(
   "/ssoRequest",
+  validate(ssoRequestSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { email } = req.body;
-    if (!email) {
-      res.status(400).send(req.t("responses.email-required"));
-      return next();
-    }
+    const { email } = req.body as SsoRequestBody;
 
     AuthService.generateSsoToken(email, req.locale)
       .then(() => {
@@ -256,28 +331,28 @@ router.post(
  *              type: string
  *              example: A SSO token is required. Please contact admin@choreo-planer.de
  */
-router.post("/sso", (req: Request, res: Response, next: NextFunction) => {
-  const { ssoToken } = req.body;
-  if (!ssoToken) {
-    res.status(400).send(req.t("responses.sso-token-required"));
-    return next();
-  }
+router.post(
+  "/sso",
+  validate(ssoSchema),
+  (req: Request, res: Response, next: NextFunction) => {
+    const { ssoToken } = req.body as SsoBody;
 
-  AuthService.resolveSsoToken(ssoToken, req.locale)
-    .then((user: User) => {
-      if (!user) {
-        res.status(404).send(req.t("responses.user-not-found"));
+    AuthService.resolveSsoToken(ssoToken, req.locale)
+      .then((user: User) => {
+        if (!user) {
+          res.status(404).send(req.t("responses.user-not-found"));
+          return next();
+        }
+        const token = AuthService.generateAccessToken(user.id);
+        res.send(token);
         return next();
-      }
-      const token = AuthService.generateAccessToken(user.id);
-      res.send(token);
-      return next();
-    })
-    .catch((e: Error) => {
-      res.status(400).send(e.message);
-      return next();
-    });
-});
+      })
+      .catch((e: Error) => {
+        res.status(400).send(e.message);
+        return next();
+      });
+  },
+);
 
 /**
  * @openapi
@@ -302,10 +377,9 @@ router.get(
   "/me",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    UserService.findById(req.UserId)
+    UserService.findById(req.actingUserId)
       .then((user: User | null) => {
         res.send(user);
-        return next();
       })
       .catch((e: Error) => next(e));
   },
@@ -333,13 +407,14 @@ router.get(
 router.put(
   "/me",
   AuthService.authenticateUser(),
+  validate(updateMeSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { username, email, emailConfirmed } = req.body;
+    const { username, email, emailConfirmed } = req.body as UpdateMeBody;
     const data = { username, email, emailConfirmed };
-    if (email && email != req.User.email) data.emailConfirmed = false;
-    UserService.update(req.UserId, data)
+    if (email && email != req.ActingUser.email) data.emailConfirmed = false;
+    UserService.update(req.actingUserId, data)
       .then((user: User | null) => {
-        if (user && email != req.User.email)
+        if (user && email != req.ActingUser.email)
           return MailService.sendEmailConfirmationEmail(
             user.username,
             user.id,
@@ -347,10 +422,8 @@ router.put(
             req.locale,
           ).then(() => {
             res.send();
-            return next();
           });
         res.send(user);
-        return next();
       })
       .catch((e: Error) => next(e));
   },
@@ -366,7 +439,15 @@ router.put(
  *    security:
  *      - userAuthentication: []
  *    requestBody:
- *      $ref: '#/components/requestBodies/LoginRequestBody'
+ *      required: true
+ *      content:
+ *        multipart/form-data:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              profilePicture:
+ *                type: string
+ *                format: binary
  *    responses:
  *      200:
  *        description: Upload successful
@@ -392,11 +473,11 @@ router.put(
     if (!req.file) res.status(400).send(req.t("responses.no-file-uploaded"));
     else {
       const profilePictureExtension = req.file.filename.split(".").pop();
-      UserService.update(req.UserId, {
+      UserService.update(req.actingUserId, {
         profilePictureExtension,
       }).then((user: User | null) => {
         FileService.clearProfilePictureFolder(
-          req.UserId,
+          req.actingUserId,
           profilePictureExtension,
         );
         res.send(user);
@@ -434,11 +515,12 @@ router.put(
 router.get(
   "/me/profilePicture/:filename",
   AuthService.authenticateUser(),
+  validate(profilePictureParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
-    const { filename } = req.params;
+    const { filename } = req.params as ProfilePictureParams;
     const root = path.join(__dirname, "../../uploads/profilePictures");
 
-    if (filename.startsWith(req.UserId))
+    if (filename.startsWith(req.actingUserId))
       return res.sendFile(filename, { root });
 
     return next();
@@ -464,13 +546,133 @@ router.delete(
   "/me/profilePicture",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    UserService.update(req.UserId, { profilePictureExtension: null })
+    UserService.update(req.actingUserId, { profilePictureExtension: null })
       .then(() => {
-        FileService.clearProfilePictureFolder(req.UserId);
+        FileService.clearProfilePictureFolder(req.actingUserId);
         res.send();
         return next();
       })
       .catch((e: Error) => next(e));
+  },
+);
+
+const supportedSocialProviders = [
+  AuthProvider.GOOGLE,
+  AuthProvider.GITHUB,
+  AuthProvider.FACEBOOK,
+];
+
+async function checkSocialLoginEnabled(
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const enabled = await FeatureFlagService.isEnabled(
+    FeatureFlagKey.SOCIAL_LOGIN,
+  );
+  if (!enabled) {
+    logger.warn(
+      "Social login request blocked because social login is disabled",
+    );
+    return res.status(404).json({ error: "Social login is disabled" });
+  }
+  next();
+}
+
+// Important: place dynamic provider routes at the end so they don't shadow static routes like /me
+router.get(
+  "/:provider",
+  checkSocialLoginEnabled,
+  (req: Request, res: Response, next: NextFunction) => {
+    const { provider } = req.params;
+
+    if (!supportedSocialProviders.includes(provider as AuthProvider)) {
+      logger.warn(`Unsupported social provider requested: ${provider}`);
+      return res.status(400).json({
+        error: `Unsupported provider: ${provider}`,
+        fix: "Use one of: google, github, facebook",
+      });
+    }
+
+    if (!isProviderConfigured(provider)) {
+      logger.warn(
+        `Social provider ${provider} requested but not configured; check environment variables`,
+      );
+      return res.status(503).json({
+        error: `${provider} login is currently not available`,
+      });
+    }
+
+    const authOptions: AuthenticateOptions = {};
+    if (provider === AuthProvider.GOOGLE) {
+      authOptions.scope = ["profile", "email"];
+    } else if (provider === AuthProvider.GITHUB) {
+      authOptions.scope = ["user:email"];
+    } else if (provider === AuthProvider.FACEBOOK) {
+      authOptions.scope = ["email"];
+    }
+    // passport-oauth2 requires `state: true` (boolean, not string) to activate
+    // the SessionStore which auto-generates and verifies a random state for CSRF.
+    // The @types/passport type has state?:string which is inaccurate here.
+    (authOptions as { scope?: string[]; state?: boolean }).state = true;
+
+    passport.authenticate(provider, authOptions)(req, res, next);
+  },
+);
+
+router.get(
+  "/:provider/callback",
+  checkSocialLoginEnabled,
+  (req: Request, res: Response, next: NextFunction) => {
+    const { provider } = req.params;
+
+    if (!supportedSocialProviders.includes(provider as AuthProvider)) {
+      logger.warn(`Unsupported social provider callback: ${provider}`);
+      return res.status(400).json({
+        error: `Unsupported provider: ${provider}`,
+        fix: "Use one of: google, github, facebook",
+      });
+    }
+
+    if (!isProviderConfigured(provider)) {
+      logger.warn(
+        `Social provider ${provider} callback received but provider not configured`,
+      );
+      const redirectUrl = `${process.env.OAUTH_REDIRECT_BASE_URL}/auth/callback?error=provider_not_available&errorDescription=${encodeURIComponent(
+        `${provider} login is currently not available`,
+      )}`;
+      return res.redirect(redirectUrl);
+    }
+
+    passport.authenticate(
+      provider,
+      { session: false },
+      (err: unknown, user: unknown) => {
+        if (err || !user) {
+          const errorCode =
+            err instanceof Error
+              ? "authentication_error"
+              : "authentication_failed";
+          const errorDescription =
+            err instanceof Error
+              ? err.message
+              : `Authentication callback failed for provider ${provider}`;
+          const redirectUrl = `${process.env.OAUTH_REDIRECT_BASE_URL}/auth/callback?error=${encodeURIComponent(errorCode)}&errorDescription=${encodeURIComponent(errorDescription)}`;
+          logger.error(
+            `Social auth callback error for provider=${provider}: ${errorDescription}`,
+          );
+          return res.redirect(redirectUrl);
+        }
+
+        const userId = (user as { id: string }).id;
+        const token = AuthService.generateAccessToken(userId);
+        const redirectUrl = `${process.env.OAUTH_REDIRECT_BASE_URL}/auth/callback?token=${encodeURIComponent(token)}`;
+        logger.debug(
+          `Social auth callback succeeded for provider=${provider} userId=${userId}`,
+        );
+        return res.redirect(redirectUrl);
+      },
+    )(req, res, next);
   },
 );
 
@@ -493,7 +695,7 @@ router.get(
   "/me/resendEmailConfirmationLink",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {
-    UserService.findById(req.UserId)
+    UserService.findById(req.actingUserId)
       .then((user: User | null) => {
         if (!user) {
           res.status(404).send(req.t("responses.user-not-found"));
@@ -515,6 +717,19 @@ router.get(
         });
       })
       .catch((e: Error) => next(e));
+  },
+);
+
+router.post(
+  "/mcp-token",
+  AuthService.authenticateUser(),
+  validate(mcpTokenSchema),
+  (req: Request, res: Response) => {
+    const { expiresIn } = req.body as McpTokenBody;
+    const token = AuthService.generateAccessToken(req.actingUserId, {
+      expiresIn,
+    });
+    res.send({ token });
   },
 );
 

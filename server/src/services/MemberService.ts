@@ -1,5 +1,14 @@
 import { NotFoundError } from "@/utils/errors";
 import Member from "../db/models/member";
+import SeasonTeam from "../db/models/seasonTeam";
+import TeamService from "./TeamService";
+import {
+  checkReadAccess,
+  checkWriteAccess,
+  checkDeleteAccess,
+  filterAccessibleOwnerIds,
+} from "../utils/accessControl";
+import { stripProtectedUpdateFields } from "@/utils/stripProtectedFields";
 
 const { Op } = require("sequelize");
 const { logger } = require("../plugins/winston");
@@ -13,25 +22,51 @@ const { logger } = require("../plugins/winston");
 class MemberService {
   /**
    * Get all members for a user.
-   * @param {string} UserId - The user ID.
+   * @param {UUID[]} ownerIds - The owner IDs.
+   * @param {UUID} actingUserId - The acting user ID.
    * @param {Object} options - Options for fetching members.
    * @param {boolean} options.all - Whether to fetch all members or only those associated with the user.
    * @returns {Promise<Array>} List of members.
    */
-  async getAll(UserId: string, options = { all: false }) {
-    logger.debug(`MemberService getAll ${JSON.stringify({ UserId, options })}`);
-    return Member.findAll({ where: options.all ? {} : { UserId } });
+  async getAll(
+    ownerIds: string[],
+    actingUserId: string,
+    isAdmin = false,
+    options = { all: false },
+  ) {
+    logger.debug(
+      `MemberService getAll ${JSON.stringify({ ownerIds, actingUserId, isAdmin, options })}`,
+    );
+
+    const accessibleOwnerIds =
+      ownerIds.length > 0
+        ? await filterAccessibleOwnerIds(ownerIds, actingUserId, isAdmin)
+        : [actingUserId];
+
+    return Member.findAll({
+      where: options.all ? {} : { UserId: { [Op.in]: accessibleOwnerIds } },
+    });
   }
 
   /**
    * Find a member by ID.
-   * @param {string} id - The member ID.
-   * @param {string} UserId - The user ID.
+   * @param {UUID} id - The member ID.
+   * @param {UUID} actingUserId - The acting user ID.
    * @returns {Promise<Object|null>} The member object or null if not found.
    */
-  async findById(id: string, UserId: string) {
-    logger.debug(`MemberService findById ${JSON.stringify({ id, UserId })}`);
-    return Member.findOne({ where: { id, UserId } }); // njsscan-ignore: node_nosqli_injection
+  async findById(id: string, actingUserId: string, isAdmin = false) {
+    logger.debug(
+      `MemberService findById ${JSON.stringify({ id, actingUserId, isAdmin })}`,
+    );
+
+    const member = await Member.findByPk(id);
+    if (!member) {
+      return null;
+    }
+
+    await checkReadAccess(member.UserId, actingUserId, isAdmin);
+
+    return Member.findOne({ where: { id } }); // njsscan-ignore: node_nosqli_injection
   }
 
   /**
@@ -71,9 +106,9 @@ class MemberService {
    * Create a new member.
    * @param {string} name - The name of the member.
    * @param {string} nickname - The nickname of the member.
-   * @param {string} abbreviation - The abbreviation for the member.
-   * @param {string} SeasonTeamId - The season team ID.
-   * @param {string} UserId - The user ID.
+   * @param {string | null} abbreviation - The abbreviation for the member.
+   * @param {UUID} SeasonTeamId - The season team ID.
+   * @param {UUID} actingUserId - The acting user ID.
    * @returns {Promise<Object>} The created member object.
    */
   async create(
@@ -81,7 +116,8 @@ class MemberService {
     nickname: string,
     abbreviation: string | null,
     SeasonTeamId: string,
-    UserId: string,
+    actingUserId: string,
+    isAdmin = false,
   ) {
     if (!abbreviation)
       abbreviation = name
@@ -95,25 +131,45 @@ class MemberService {
         nickname,
         abbreviation,
         SeasonTeamId,
-        UserId,
+        actingUserId,
+        isAdmin,
       })}`,
     );
-    return Member.create({
+
+    // Inherit ownerId from parent SeasonTeam
+    const foundSeasonTeam = await SeasonTeam.findByPk(SeasonTeamId);
+    if (!foundSeasonTeam) {
+      throw new NotFoundError(`SeasonTeam with ID ${SeasonTeamId} not found`);
+    }
+    const ownerId = foundSeasonTeam.UserId;
+
+    await checkWriteAccess(ownerId, actingUserId, isAdmin);
+
+    const member = await Member.create({
       name,
       nickname,
       abbreviation,
       SeasonTeamId,
-      UserId,
+      UserId: ownerId,
+      creatorId: actingUserId,
+      updaterId: actingUserId,
     });
+
+    const seasonTeam = await SeasonTeam.findByPk(SeasonTeamId);
+    if (seasonTeam) {
+      await TeamService.update(seasonTeam.TeamId, {}, actingUserId, isAdmin);
+    }
+
+    return member;
   }
 
   /**
    * Find or create a member.
    * @param {string} name - The name of the member.
    * @param {string} nickname - The nickname of the member.
-   * @param {string} abbreviation - The abbreviation for the member.
-   * @param {string} SeasonTeamId - The season team ID.
-   * @param {string} UserId - The user ID.
+   * @param {string | null} abbreviation - The abbreviation for the member.
+   * @param {UUID} SeasonTeamId - The season team ID.
+   * @param {UUID} actingUserId - The acting user ID.
    * @returns {Promise<Object>} The found or created member object.
    */
   async findOrCreate(
@@ -121,7 +177,8 @@ class MemberService {
     nickname: string | null,
     abbreviation: string | null,
     SeasonTeamId: string,
-    UserId: string,
+    actingUserId: string,
+    isAdmin = false,
   ) {
     logger.debug(
       `MemberService findOrCreate ${JSON.stringify({
@@ -129,9 +186,19 @@ class MemberService {
         nickname,
         abbreviation,
         SeasonTeamId,
-        UserId,
+        actingUserId,
+        isAdmin,
       })}`,
     );
+
+    // Inherit ownerId from parent SeasonTeam
+    const foundSeasonTeam = await SeasonTeam.findByPk(SeasonTeamId);
+    if (!foundSeasonTeam) {
+      throw new NotFoundError(`SeasonTeam with ID ${SeasonTeamId} not found`);
+    }
+    const ownerId = foundSeasonTeam.UserId;
+
+    await checkWriteAccess(ownerId, actingUserId, isAdmin);
 
     const defaultAbbreviation = name
       .split(" ")
@@ -148,81 +215,122 @@ class MemberService {
       name,
       abbreviation: abbreviation || defaultAbbreviation,
       SeasonTeamId,
-      UserId,
+      UserId: ownerId,
     };
     if (nickname !== null) {
       whereClause.nickname = nickname;
     }
     const [member, _created] = await Member.findOrCreate({
-      where: whereClause,
+      where: { name, SeasonTeamId, UserId: ownerId },
+      defaults: {
+        name,
+        abbreviation: abbreviation || defaultAbbreviation,
+        SeasonTeamId,
+        UserId: ownerId,
+        creatorId: actingUserId,
+        updaterId: actingUserId,
+      },
     });
     return member;
   }
 
   /**
-   * Update a member's information.
-   * @param {string} id - The member ID.
+   * Update a member.
+   * @param {UUID} id - The member ID.
    * @param {Object} data - The data to update.
-   * @param {string} UserId - The user ID.
-   * @param {Object} options - Options for updating members.
-   * @param {boolean} options.all - Whether to update all members or only those associated with the user.
-   * @returns {Promise<Object>} The updated member object.
+   * @param {UUID} actingUserId - The acting user ID.
+   * @param {boolean} [isAdmin=false]
+   * @param {Object} [options={ all: false }] - Options for updating.
+   * @param {boolean} [options.all=false] - Whether to update all members.
+   * @returns {Promise<Object>} The updated member.
    */
   async update(
     id: string,
     data: object,
-    UserId: string | null,
+    actingUserId: string,
+    isAdmin = false,
     options = { all: false },
   ) {
     logger.debug(
-      `MemberService update ${JSON.stringify({ id, data, UserId })}`,
+      `MemberService update ${JSON.stringify({ id, data, actingUserId, isAdmin, options })}`,
     );
-    return Member.findOne({
-      where: options.all || !UserId ? { id } : { id, UserId },
-    }) // njsscan-ignore: node_nosqli_injection
-      .then(async (foundMember) => {
-        if (foundMember) {
-          await foundMember.update(data);
-          await foundMember.save();
-          return Member.findOne({
-            where: options.all
-              ? { id }
-              : UserId !== null
-                ? { id, UserId }
-                : { id },
-          }); // njsscan-ignore: node_nosqli_injection
-        } else {
-          logger.error(`No member found with ID ${id} when updating`);
-          throw new NotFoundError(
-            `No member found with ID ${id} when updating`,
-          );
-        }
-      });
+
+    const foundMember = await Member.findByPk(id);
+    if (!foundMember) {
+      logger.error(`No member found with ID ${id} when updating`);
+      throw new NotFoundError(`No member found with ID ${id} when updating`);
+    }
+
+    await checkWriteAccess(foundMember.UserId, actingUserId, isAdmin);
+
+    const oldSeasonTeamId = foundMember.SeasonTeamId;
+
+    await foundMember.update({
+      ...stripProtectedUpdateFields(data),
+      updaterId: actingUserId,
+    });
+    await foundMember.save();
+
+    const seasonTeam = await SeasonTeam.findByPk(
+      foundMember.SeasonTeamId || oldSeasonTeamId,
+    );
+    if (seasonTeam) {
+      await TeamService.update(seasonTeam.TeamId, {}, actingUserId, isAdmin);
+    }
+
+    return Member.findByPk(id);
   }
 
   /**
    * Remove a member.
-   * @param {string} id - The member ID.
-   * @param {string} UserId - The user ID.
-   * @param {Object} options - Options for removing members.
-   * @param {boolean} options.all - Whether to remove all members or only those associated with the user.
+   * @param {UUID} id - The member ID.
+   * @param {UUID} actingUserId - The acting user ID.
+   * @param {boolean} [isAdmin=false]
+   * @param {Object} [options={ all: false }] - Options for removing members.
+   * @param {boolean} [options.all=false] - Whether to remove all members.
    * @returns {Promise<void>} Resolves when the member is removed.
    */
-  async remove(id: string, UserId: string | null, options = { all: false }) {
-    logger.debug(`MemberService remove ${JSON.stringify({ id, UserId })}`);
-    return Member.findOne({
-      where: options.all || !UserId ? { id } : { id, UserId },
-    }) // njsscan-ignore: node_nosqli_injection
-      .then((foundMember) => {
-        if (foundMember) {
-          return foundMember.destroy();
-        } else {
-          logger.error(`No member found with ID ${id} when deleting`);
-          throw new NotFoundError(
-            `No member found with ID ${id} when deleting`,
-          );
-        }
-      });
+  async remove(
+    id: string,
+    actingUserId: string,
+    isAdmin = false,
+    options = { all: false },
+  ) {
+    logger.debug(
+      `MemberService remove ${JSON.stringify({ id, actingUserId, isAdmin, options })}`,
+    );
+
+    const foundMember = await Member.findByPk(id);
+    if (!foundMember) {
+      logger.error(`No member found with ID ${id} when deleting`);
+      throw new NotFoundError(`No member found with ID ${id} when deleting`);
+    }
+
+    await checkDeleteAccess(foundMember.UserId, actingUserId, isAdmin);
+
+    const seasonTeamId = foundMember.SeasonTeamId;
+    if (seasonTeamId) {
+      const seasonTeam = await SeasonTeam.findByPk(seasonTeamId);
+      if (seasonTeam) {
+        await TeamService.update(seasonTeam.TeamId, {}, actingUserId, isAdmin);
+      }
+    }
+
+    return foundMember.destroy();
+  }
+
+  async migrateCreatorUpdater() {
+    logger.debug(`MemberService migrateCreatorUpdater`);
+
+    const members = await Member.findAll({
+      where: { creatorId: { [Op.is]: null }, UserId: { [Op.not]: null } },
+    });
+
+    await Promise.all(
+      members.map((member) =>
+        member.update({ creatorId: member.UserId, updaterId: member.UserId }),
+      ),
+    );
   }
 }
 

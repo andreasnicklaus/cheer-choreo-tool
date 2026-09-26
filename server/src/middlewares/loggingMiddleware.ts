@@ -12,7 +12,7 @@ export function loggerMiddleWare(
   _res: Response,
   next: NextFunction,
 ) {
-  if (req.path == "/health") return next();
+  if (["/health", "/mcp"].includes(req.path)) return next();
   if (!req.body) req.body = {};
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

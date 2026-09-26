@@ -1,12 +1,22 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
-  "baseBranchPatterns": ["dev"],
+  "extends": [
+    "config:recommended"
+  ],
+  "baseBranchPatterns": [
+    "main"
+  ],
   "prConcurrentLimit": 5,
   "minimumReleaseAge": "7 days",
+  "labels": [
+    "dependencies"
+  ],
   "packageRules": [
     {
-      "matchUpdateTypes": ["minor", "patch"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
       "automerge": true
     }
   ]

@@ -1,23 +1,26 @@
 <template>
-  <b-modal
-    :id="`modal-deleteHit-${this.id}`"
+  <BModal
+    :id="`modal-deleteHit-${id}`"
+    ref="modal"
     :title="$t('modals.delete-hit.countsheet-eintrag-loeschen')"
     centered
     @hidden="resetDeleteHitModal"
     @ok="deleteHit"
   >
     <p class="m-0">{{ $t("du-kannst-das-nicht-rueckgaengig-machen") }}</p>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="danger">{{ $t("loeschen") }}</b-button>
-      <b-button @click="cancel" variant="outline-secondary">
+    <template #footer="{ ok, cancel }">
+      <BButton variant="danger" @click="ok">{{ $t("loeschen") }}</BButton>
+      <BButton variant="light" @click="cancel">
         {{ $t("abbrechen") }}
-      </b-button>
+      </BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import HitService from "@/services/HitService";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * @module Modal:DeleteHitModal
@@ -35,33 +38,35 @@ import HitService from "@/services/HitService";
  *  <Button @click="() => $refs.deleteHitModal.open('abc')" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "DeleteHitModal",
-  data: () => ({
-    id: (Math.random() + 1).toString(36).substring(7),
-    deleteHitId: null,
-  }),
   props: {
     choreo: {
       type: Object,
+      default: null,
     },
   },
+  emits: ["updateHits"],
+  data: () => ({
+    id: (Math.random() + 1).toString(36).substring(7),
+    deleteHitId: null as string | null,
+  }),
   methods: {
-    open(deleteHitId) {
+    open(deleteHitId: string) {
       this.deleteHitId = deleteHitId;
-      this.$bvModal.show(`modal-deleteHit-${this.id}`);
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     resetDeleteHitModal() {
       this.deleteHitId = null;
     },
     deleteHit() {
-      HitService.remove(this.deleteHitId).then(() => {
+      HitService.remove(this.deleteHitId!).then(() => {
         this.$emit(
           "updateHits",
-          this.choreo.Hits.filter((h) => h.id != this.deleteHitId)
+          this.choreo.Hits.filter((h: any) => h.id != this.deleteHitId)
         );
       });
     },
   },
-};
+});
 </script>

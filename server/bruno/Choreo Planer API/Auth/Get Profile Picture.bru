@@ -1,0 +1,17 @@
+meta {
+  name: Get Profile Picture
+  method: GET
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/auth/me/profilePicture/{{filename}}
+  body: none
+  auth: inherit
+}
+
+
+params:path {
+  filename: 
+}

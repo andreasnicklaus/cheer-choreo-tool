@@ -1,4 +1,5 @@
 import { expect, Page } from "@playwright/test";
+import * as fs from "fs";
 import { defaultChoreos } from "../testData/choreo";
 import TestPage from "./page";
 
@@ -30,22 +31,38 @@ export default class PdfPage extends TestPage {
 
   async iGeneratePdf() {
     const generateButton = this.page.getByRole("button", {
-      name: "file pdf Generate PDF",
+      name: "Generate PDF",
     });
+
+    const downloadPromise = this.page.waitForEvent("download");
     await this.iClickButton(generateButton);
 
     await expect(this.page.getByText("PDF is being generated")).toBeVisible();
 
-    // make sure the loading popup disappears in time
+    const download = await downloadPromise;
+    const pdfPath = await download.path();
+    if (pdfPath) {
+      const stats = fs.statSync(pdfPath);
+      expect(stats.size).toBeGreaterThan(50_000);
+
+      const header = fs
+        .readFileSync(pdfPath, {
+          encoding: "utf8",
+          flag: "r",
+        })
+        .slice(0, 5);
+      expect(header).toBe("%PDF-");
+    }
+
     await expect(
       this.page.getByText("PDF is being generated")
     ).not.toBeVisible();
   }
 
   async iTryPdfGenerationWithNoMembers() {
-    await this.page.getByRole("button", { name: "slash Select none" }).click();
+    await this.page.getByRole("button", { name: "Select none" }).click();
     const generateButton = this.page.getByRole("button", {
-      name: "file pdf Generate PDF",
+      name: "Generate PDF",
     });
     await expect(generateButton).toBeDisabled();
   }
