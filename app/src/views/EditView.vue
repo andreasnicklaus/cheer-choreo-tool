@@ -978,24 +978,30 @@ export default defineComponent({
       y: number,
       MemberId: string
     ) {
-      return PositionService.create(lineupToUpdate.id, x, y, MemberId).then(
-        (position) => {
-          let lineupCopy = this.choreo?.Lineups;
-          if (!lineupCopy) lineupCopy = [];
-          let positionsCopy = lineupCopy.find(
-            (l) => l.id == lineupToUpdate.id
-          )?.Positions;
-          if (!positionsCopy) positionsCopy = [];
-          positionsCopy = positionsCopy.filter((p) => p.MemberId != MemberId);
-          positionsCopy.push(position);
-          const foundLineup = lineupCopy.find((l) => l.id == lineupToUpdate.id);
-          if (foundLineup) foundLineup.Positions = positionsCopy;
-          if (this.choreo) this.choreo.Lineups = lineupCopy;
-          this.showSuccessMessage(this.$t("lineup", 1));
-          this.updateProposedPositions();
-          this.setLastUpdaterToMe();
-        }
+      const existingPosition = lineupToUpdate.Positions?.find(
+        (p) => p.MemberId == MemberId && p.id
       );
+
+      const request = existingPosition
+        ? PositionService.update(lineupToUpdate.id, existingPosition.id!, x, y)
+        : PositionService.create(lineupToUpdate.id, x, y, MemberId);
+
+      return request.then((position) => {
+        let lineupCopy = this.choreo?.Lineups;
+        if (!lineupCopy) lineupCopy = [];
+        let positionsCopy = lineupCopy.find(
+          (l) => l.id == lineupToUpdate.id
+        )?.Positions;
+        if (!positionsCopy) positionsCopy = [];
+        positionsCopy = positionsCopy.filter((p) => p.MemberId != MemberId);
+        positionsCopy.push(position);
+        const foundLineup = lineupCopy.find((l) => l.id == lineupToUpdate.id);
+        if (foundLineup) foundLineup.Positions = positionsCopy;
+        if (this.choreo) this.choreo.Lineups = lineupCopy;
+        this.showSuccessMessage(this.$t("lineup", 1));
+        this.updateProposedPositions();
+        this.setLastUpdaterToMe();
+      });
     },
     onKeyPress(event: KeyboardEvent) {
       // Prevent keyboard shortcuts if the user is typing in a text input field

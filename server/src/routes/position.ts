@@ -1,9 +1,7 @@
 import { NextFunction, Response, Request, Router } from "express";
 import { z } from "zod";
 import Position from "../db/models/position";
-import Lineup from "../db/models/lineup";
 import PositionService from "../services/PositionService";
-import LineupService from "../services/LineupService";
 import { requestQueue } from "@/middlewares/requestQueue";
 import { validate } from "@/middlewares/validateMiddleware";
 import { uuidParams } from "@/utils/zodSchemas";
@@ -112,6 +110,14 @@ router.get(
  *               $ref: '#/components/schemas/Position'
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
+ *       409:
+ *         description: A different position already occupies this member slot in
+ *           the lineup, or the placement conflicts with an overlapping lineup
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Lineup consistency conflict introduced: duplicatePosition:...
  */
 router.post(
   "/",
@@ -121,21 +127,14 @@ router.post(
     const { x, y, MemberId, lineupId } = req.body as CreatePositionBody;
 
     PositionService.findOrCreate(x, y, lineupId, MemberId, req.actingUserId)
-      .then(async (position: Position) => {
-        return Promise.all([
-          position.setMember(MemberId),
-          LineupService.findById(lineupId, req.actingUserId).then(
-            (lineup: Lineup | null) => lineup?.addPosition(position),
-          ),
-        ]).then(() =>
-          PositionService.findById(position.id, req.actingUserId).then(
-            (p: Position | null) => {
-              res.send(p);
-              next();
-            },
-          ),
-        );
-      })
+      .then((position: Position) =>
+        PositionService.findById(position.id, req.actingUserId).then(
+          (p: Position | null) => {
+            res.send(p);
+            next();
+          },
+        ),
+      )
       .catch((e: Error) => next(e));
   },
 );
@@ -168,10 +167,25 @@ router.post(
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Position'
+ *       400:
+ *         description: The update tried to move the position to another lineup
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Positions cannot be moved to another lineup
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  *       404:
  *         description: Position not found
+ *       409:
+ *         description: The member reassignment would place the member in two
+ *           overlapping lineups of the same choreo
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Lineup consistency conflict introduced: memberConflict:...
  */
 router.put(
   "/:id",

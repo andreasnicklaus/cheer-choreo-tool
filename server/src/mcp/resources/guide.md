@@ -252,7 +252,7 @@ After creating entities, use `get_*` to fetch full details with nested relations
 
 - **Hide IDs from users.** When presenting data back, show names and human-readable values, not UUIDs.
 - **Check existing data first.** Before creating new entities, use `list_*` and `get_*` to understand what already exists.
-- **Use `findOrCreate` for positions.** `create_position` with the same lineupId and memberId updates the existing position instead of creating a duplicate.
+- **`create_position` is find-or-create by exact coordinates.** Calling it with the same `lineupId`, `memberId`, **and** the same `x`/`y` returns the existing position instead of creating a duplicate. It does **not** move a member: a different `x`/`y` for a member who already has a position in that lineup is rejected with a 409 conflict. Use `update_position` to move an existing position.
 - **Prefer `create_positions` (bulk) over `create_position` (singular).** Creating positions one by one is slow. Use `create_positions` with an array of `{x, y, memberId}` objects whenever you need to place multiple members in a lineup.
 
 ## Notes
@@ -260,7 +260,7 @@ After creating entities, use `get_*` to fetch full details with nested relations
 - All `list_*` tools return arrays; use `get_*` for full detail with nested relations.
 - UUIDs are strings (e.g. "550e8400-e29b-41d4-a716-446655440000").
 - Optional params shown in `[brackets]` above; omit them to leave the field unchanged.
-- `create_position` uses `findOrCreate` — calling it with the same lineupId and memberId updates the existing position instead of creating a duplicate.
+- `create_position` is find-or-create by exact coordinates: the same `lineupId`, `memberId`, and `x`/`y` returns the existing position, while different coordinates for a member who already occupies that lineup are rejected with a 409 conflict. Use `update_position` to move a position.
 - `create_positions` bulk-creates all positions for a lineup in one call. Always prefer this over calling `create_position` multiple times.
 - **MCP tools use lightweight access checks** — they load only the minimal data needed for authorization (choreography owner), not the full choreography graph. This makes bulk operations much more memory-efficient.
 - For hit naming conventions and examples, refer to the hits sub-guide.

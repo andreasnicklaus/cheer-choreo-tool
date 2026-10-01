@@ -698,7 +698,7 @@ import CreateLineupModal from "./modals/CreateLineupModal.vue";
 import DeleteLineupModal from "./modals/DeleteLineupModal.vue";
 import DeleteHitModal from "./modals/DeleteHitModal.vue";
 import { defineComponent, PropType } from "vue";
-import type { Lineup } from "@/types";
+import { error as logError } from "@/utils/logging";
 
 interface LocalMember {
   id: string;
@@ -976,43 +976,48 @@ export default defineComponent({
           ? selectedLineup.Positions.map((p: LocalPosition) => p.MemberId)
           : this.teamMembers.map((m: LocalMember) => m.id);
     },
-    saveLineup() {
+    async saveLineup() {
       const startAchter = Number(this.editLineupStartAchter);
       const startCount = Number(this.editLineupStartCount);
       const endAchter = Number(this.editLineupEndAchter);
       const endCount = Number(this.editLineupEndCount);
       const absoluteStartCount = (startAchter - 1) * 8 + startCount - 1;
       const absoluteEndCount = (endAchter - 1) * 8 + endCount - 1;
-      LineupService.update(this.editLineupId!, {
-        startCount: absoluteStartCount,
-        endCount: absoluteEndCount,
-      }).then((lineup: Lineup | LocalLineup) => {
+      const editLineupId = this.editLineupId!;
+
+      try {
+        const lineup = await LineupService.update(editLineupId, {
+          startCount: absoluteStartCount,
+          endCount: absoluteEndCount,
+        });
         const lineupLocal = lineup as LocalLineup;
+
+        const existingPositions =
+          this.lineupsForCurrentCount.find(
+            (l: LocalLineup) => l.id == lineupLocal.id
+          )!.Positions ?? [];
+
         const memberIdsWithoutPositions = this.teamMembers
           .filter((m: LocalMember) => !this.editLineupMembers.includes(m.id))
           .map((m: LocalMember) => m.id);
-        const positionsToDelete = (
-          this.lineupsForCurrentCount.find(
-            (l: LocalLineup) => l.id == lineupLocal.id
-          )!.Positions ?? []
-        ).filter((p: LocalPosition) =>
+        const positionsToDelete = existingPositions.filter((p: LocalPosition) =>
           memberIdsWithoutPositions.includes(p.MemberId)
         );
-        const positionDeletion = Promise.all(
+
+        const deletedPositionIds = await Promise.all(
           positionsToDelete.map((p: LocalPosition) =>
             PositionService.remove(p.id!).then(() => p.id!)
           )
         );
 
-        const memberIdsOfMembersWithPosition = (
-          this.lineupsForCurrentCount.find(
-            (l: LocalLineup) => l.id == lineupLocal.id
-          )!.Positions ?? []
-        ).map((p: LocalPosition) => p.MemberId);
+        const memberIdsOfMembersWithPosition = existingPositions.map(
+          (p: LocalPosition) => p.MemberId
+        );
         const memberIdsToAdd = this.editLineupMembers.filter(
           (mId: string) => !memberIdsOfMembersWithPosition.includes(mId)
         );
-        const positionCreation = Promise.all(
+
+        const createdPositions = await Promise.all(
           memberIdsToAdd.map((mId: string) => {
             const positionOfMember = this.currentPositions.find(
               (p: LocalCurrentPosition) => p.MemberId == mId
@@ -1026,25 +1031,23 @@ export default defineComponent({
           })
         );
 
-        return Promise.all([positionDeletion, positionCreation]).then(
-          ([deletedPositionIds, createdPositions]) => {
-            const lineupCopy = this.choreo!.Lineups.filter(
-              (l: LocalLineup) => l.id != lineupLocal.id
-            );
-
-            const positionsCopy = (lineupLocal.Positions ?? []).filter(
-              (p: LocalPosition) => !deletedPositionIds.includes(p.id!)
-            );
-            positionsCopy.push(...(createdPositions as LocalPosition[]));
-            lineupLocal.Positions = positionsCopy;
-
-            lineupCopy.push(lineupLocal);
-            this.$emit("updateLineups", lineupCopy);
-          }
+        const lineupCopy = this.choreo!.Lineups.filter(
+          (l: LocalLineup) => l.id != lineupLocal.id
         );
-      });
 
-      this.editLineupId = null;
+        const positionsCopy = (lineupLocal.Positions ?? []).filter(
+          (p: LocalPosition) => !deletedPositionIds.includes(p.id!)
+        );
+        positionsCopy.push(...(createdPositions as LocalPosition[]));
+        lineupLocal.Positions = positionsCopy;
+
+        lineupCopy.push(lineupLocal);
+        this.$emit("updateLineups", lineupCopy);
+
+        this.editLineupId = null;
+      } catch (e) {
+        logError(e);
+      }
     },
     addAllMembersToLineup(lineupId: string) {
       const lineupToUpdate = this.lineupsForCurrentCount.find(
