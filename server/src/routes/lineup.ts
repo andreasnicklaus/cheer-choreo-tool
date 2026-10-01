@@ -15,7 +15,15 @@ const createLineupSchema = z.object({
   endCount: z.number().int(),
   choreoId: z.uuid(),
 });
-const updateLineupSchema = createLineupSchema.partial();
+// Strict so that unknown keys (notably `choreoId`) are rejected with a 400
+// instead of silently being stripped: a lineup cannot be moved to another
+// choreography. LineupService.update re-checks this for non-HTTP callers.
+const updateLineupSchema = z
+  .object({
+    startCount: z.number().int(),
+    endCount: z.number().int(),
+  })
+  .strict();
 
 const lineupPositionParams = z.object({
   id: z.uuid(),
@@ -72,6 +80,14 @@ const router = Router();
  *               $ref: '#/components/schemas/Lineup'
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
+ *       409:
+ *         description: The lineup overlaps another lineup of the same choreo, or
+ *           a member already holds a position in an overlapping lineup
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Lineup consistency conflict introduced: lineupOverlap:...
  */
 router.post(
   "/",
@@ -92,7 +108,10 @@ router.post(
  * @openapi
  * /lineup/{id}:
  *   put:
- *     description: Update a lineup by ID
+ *     description: |
+ *       Update a lineup by ID. Only `startCount` and `endCount` can be changed:
+ *       a lineup cannot be moved to another choreo and its owner cannot be
+ *       reassigned.
  *     tags:
  *       - Lineups
  *     security:
@@ -108,7 +127,12 @@ router.post(
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Lineup'
+ *             type: object
+ *             properties:
+ *               startCount:
+ *                 type: integer
+ *               endCount:
+ *                 type: integer
  *     responses:
  *       200:
  *         description: Lineup updated successfully
@@ -116,10 +140,25 @@ router.post(
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Lineup'
+ *       400:
+ *         description: The update tried to move the lineup to another choreo
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Lineups cannot be moved to another choreography
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
  *       404:
  *         description: Lineup not found
+ *       409:
+ *         description: The new count range overlaps another lineup of the same
+ *           choreo, or a member already holds a position in an overlapping lineup
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Lineup consistency conflict introduced: lineupOverlap:...
  */
 router.put(
   "/:id",
@@ -185,6 +224,14 @@ router.put(
  *               $ref: '#/components/schemas/Position'
  *       401:
  *         $ref: '#/components/responses/UnauthorizedError'
+ *       409:
+ *         description: The placement would put the member in two overlapping
+ *           lineups of the same choreo
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Lineup consistency conflict introduced: memberConflict:...
  */
 router.post(
   "/:id/position",
@@ -193,22 +240,23 @@ router.post(
   validate(addPositionSchema),
   (req: Request, res: Response, next: NextFunction) => {
     const { x, y, MemberId, timeOfManualUpdate } = req.body as AddPositionBody;
-    PositionService.create(x, y, req.actingUserId, timeOfManualUpdate as string)
-      .then(async (position: Position) => {
-        return Promise.all([
-          position.setMember(MemberId),
-          LineupService.findById(req.params.id, req.actingUserId).then(
-            (lineup: Lineup | null) => lineup?.addPosition(position),
-          ),
-        ]).then(() =>
-          PositionService.findById(position.id, req.actingUserId).then(
-            (p: Position | null) => {
-              res.send(p);
-              next();
-            },
-          ),
-        );
-      })
+    PositionService.create(
+      x,
+      y,
+      req.params.id,
+      MemberId,
+      req.actingUserId,
+      false,
+      timeOfManualUpdate ? new Date(timeOfManualUpdate) : new Date(),
+    )
+      .then((position: Position) =>
+        PositionService.findById(position.id, req.actingUserId).then(
+          (p: Position | null) => {
+            res.send(p);
+            next();
+          },
+        ),
+      )
       .catch((e: Error) => next(e));
   },
 );

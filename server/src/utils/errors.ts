@@ -16,3 +16,6 @@ export class AuthorizationError extends Error {
 export class AccessDeniedError extends Error {
   name = "AccessDeniedError";
 }
+export class LineupConflictError extends Error {
+  name = "LineupConflictError";
+}

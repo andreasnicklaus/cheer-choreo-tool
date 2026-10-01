@@ -64,11 +64,23 @@ describe("PositionService", () => {
       UserId: user.id,
       ChoreoId: choreo.id,
     });
-    const result = await PositionService.create(1, 2, lineup.id, user.id);
+    const member = await Member.create({
+      name: "TestMember",
+      abbreviation: "TM",
+      UserId: user.id,
+    });
+    const result = await PositionService.create(
+      1,
+      2,
+      lineup.id,
+      member.id,
+      user.id,
+    );
     expect(result).toBeDefined();
     expect(result.x).toBe(1);
     expect(result.y).toBe(2);
     expect(result.UserId).toBe(user.id);
+    expect(result.MemberId).toBe(member.id);
   });
   test("findOrCreate finds or creates a position", async () => {
     const choreo = await Choreo.create({

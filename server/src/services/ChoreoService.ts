@@ -1,4 +1,5 @@
 import { NotFoundError } from "@/utils/errors";
+import type { Transaction } from "sequelize";
 import Choreo, { defaultMatType, MatType } from "../db/models/choreo";
 import ChoreoParticipation from "../db/models/choreoParticipation";
 import Hit from "../db/models/hit";
@@ -590,6 +591,8 @@ class ChoreoService {
    * @param {boolean} [isAdmin=false]
    * @param {Object} [options={ all: false }] - Options for the query.
    * @param {Boolean} [options.all=false] - Whether to fetch all choreographies.
+   * @param {Transaction} [transaction] - Ambient transaction to join, used when
+   * a lineup mutation is guarded and must be rolled back atomically.
    * @returns {Promise<Choreo>} The updated choreography.
    */
   async update(
@@ -598,6 +601,7 @@ class ChoreoService {
     actingUserId: string,
     isAdmin = false,
     options = { all: false },
+    transaction?: Transaction,
   ) {
     logger.debug(
       `ChoreoService update ${JSON.stringify({ id, data, actingUserId, isAdmin, options })}`,
@@ -611,11 +615,13 @@ class ChoreoService {
 
     await checkWriteAccess(foundChoreo.UserId, actingUserId, isAdmin);
 
-    await foundChoreo.update({
-      ...stripProtectedUpdateFields(data),
-      updaterId: actingUserId,
-    });
-    await foundChoreo.save();
+    await foundChoreo.update(
+      {
+        ...stripProtectedUpdateFields(data),
+        updaterId: actingUserId,
+      },
+      { transaction },
+    );
     return this.findById(id, actingUserId, isAdmin, options);
   }
 

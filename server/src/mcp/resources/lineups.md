@@ -37,6 +37,8 @@ As a rough estimate: a choreography with **320 counts** should have between **10
 
 **If lineups overlap, then only for different members.** Multiple lineups on the same count are possible, for example if one half of participants moves while the other is stationary. A single member can never be part in two overlapping formations.
 
+The server enforces this: a lineup create/update or a position placement that would make two lineups of the same choreography overlap, or put one member into two overlapping lineups, is rejected with a **409 conflict**. Overlaps that already existed before your change are grandfathered — you can still edit grandfathered data as long as your change does not introduce a *new* violation, so a cleanup that only reduces conflicts is always allowed.
+
 ### Choreography must end with a lineup
 
 **One lineup in every choreography must have `endCount` equal to the choreography's `counts`.** This ensures the choreography has an active formation all the way to the end. The last lineup typically spans the final few counts (e.g., if `counts=320`, a lineup with `startCount=316, endCount=320`).
