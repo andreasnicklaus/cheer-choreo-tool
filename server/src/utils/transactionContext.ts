@@ -14,7 +14,7 @@ const transactionStorage = new AsyncLocalStorage<Transaction>();
  *
  * @template T
  * @param {Transaction} transaction - The transaction to expose to `work`.
- * @param {() => Promise<T>} work - The callback run inside the transaction context.
+ * @param {function(): Promise<T>} work - The callback run inside the transaction context.
  * @returns {Promise<T>} The resolved value of `work`.
  */
 export function runInTransaction<T>(

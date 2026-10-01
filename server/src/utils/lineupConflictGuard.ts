@@ -198,7 +198,7 @@ function describeNewViolations(
  * @param {Array<string | null | undefined>} choreoIds - Choreographies affected
  * by the mutation; null/undefined/duplicate entries are filtered and the rest
  * are locked in sorted order to avoid deadlocks.
- * @param {() => Promise<T>} work - The mutation to run under the guard.
+ * @param {function(): Promise<T>} work - The mutation to run under the guard.
  * @returns {Promise<T>} The value returned by `work`.
  * @throws {LineupConflictError} If `work` introduces a new lineup overlap,
  * member conflict, or duplicate position; the transaction is rolled back.
