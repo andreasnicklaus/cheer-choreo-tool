@@ -53,6 +53,22 @@
       "type": "remote",
       "url": "https://mcp.exa.ai/mcp",
       "enabled": true
+    },
+    "cheer-choreo-database": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "mcp-postgres-server"
+      ],
+      "environment": {
+        "PG_HOST": "your_host",
+        "PG_PORT": "5432",
+        "PG_USER": "your_user",
+        "PG_PASSWORD": "your_password",
+        "PG_DATABASE": "your_database",
+        "PG_ALLOW_WRITE": "false"
+      }
     }
   }
 }
