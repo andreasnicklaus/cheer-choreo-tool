@@ -190,7 +190,7 @@
   "faq": {
     "allgemeines": "Allgemeines",
     "anmeldung": {
-      "answer": "Du hast drei Möglichkeiten:\n\n- **Registrieren** mit Benutzername und Passwort\n- **Anmelden** mit **Google**, **GitHub** oder **Facebook**\n- **Passwort zurücksetzen**, falls du es vergessen hast\n\nDie Registrierung findest du auf der Startseite. Ein Hinweis: Wenn du dich mit einem Social-Login-Anbieter registrierst, meldest du dich danach immer über diesen Anbieter an — es gibt dafür kein separates Passwort.",
+      "answer": "Du hast drei Möglichkeiten:\n\n- **Registrieren** mit Benutzername und Passwort\n- **Anmelden** mit **Google**, **GitHub** oder **Facebook**\n- **Passwort zurücksetzen**, falls du es vergessen hast\n\nDie Registrierung findest du auf der Startseite. Ein Hinweis: Wenn du dich mit einem Social-Login-Anbieter registrierst, meldest du dich danach immer über diesen Anbieter an - es gibt dafür kein separates Passwort.",
       "question": "Wie melde ich mich an? Kann ich Google, GitHub oder Facebook nutzen?"
     },
     "app-installieren": {
@@ -198,7 +198,7 @@
       "question": "Kann ich den Choreo Planer als App installieren?"
     },
     "aufstellung-bauen": {
-      "answer": "Jedes Mitglied deines Kaders bekommt einen Marker, den du auf die Matte ziehst. Sobald du ein Teilnehmenden platzierst, wird automatisch eine Aufstellung angelegt — gibt es auf diesem Count schon eine Aufstellung, wird das Teilnehmenden einfach hinzugefügt. Eine Aufstellung hält immer **einen Count**, für die nächste Aufstellung springst du also auf den nächsten Count.\n\n**Zwei Einstellungen erleichtern dir das Arbeiten:**\n- **Positionen horizontal und vertikal ausrichten** rastet deine Marker in gerade Reihen und Spalten ein.\n- **Beim Bearbeiten den Count mitwechseln** springt auf den nächsten Count, sobald du den aktuellen fertig hast — so kannst du eine ganze Choreo bauen, ohne ständig zurück- und herzuspringen.\n\nWenn eine Aufstellung nicht für alle gleich gilt, brauchst du auf demselben Count mehrere Gruppen. Entferne die betroffenen Teilnehmenden dafür in der Liste aus der Aufstellung, klicke dann auf **Aufstellung hinzufügen**, wähle die zweite Gruppe aus und ziehe deren Marker an die richtige Stelle.",
+      "answer": "Jedes Mitglied deines Kaders bekommt einen Marker, den du auf die Matte ziehst. Sobald du ein Teilnehmenden platzierst, wird automatisch eine Aufstellung angelegt - gibt es auf diesem Count schon eine Aufstellung, wird das Teilnehmenden einfach hinzugefügt. Eine Aufstellung hält immer **einen Count**, für die nächste Aufstellung springst du also auf den nächsten Count.\n\n**Zwei Einstellungen erleichtern dir das Arbeiten:**\n- **Positionen horizontal und vertikal ausrichten** rastet deine Marker in gerade Reihen und Spalten ein.\n- **Beim Bearbeiten den Count mitwechseln** springt auf den nächsten Count, sobald du den aktuellen fertig hast - so kannst du eine ganze Choreo bauen, ohne ständig zurück- und herzuspringen.\n\nWenn eine Aufstellung nicht für alle gleich gilt, brauchst du auf demselben Count mehrere Gruppen. Entferne die betroffenen Teilnehmenden dafür in der Liste aus der Aufstellung, klicke dann auf **Aufstellung hinzufügen**, wähle die zweite Gruppe aus und ziehe deren Marker an die richtige Stelle.",
       "question": "Wie erstelle ich eine Aufstellung?"
     },
     "countsheet-als-pdf": {
@@ -206,12 +206,12 @@
       "question": "Wie exportiere ich ein Countsheet als PDF?"
     },
     "countsheet-ansicht": {
-      "answer": "Im Countsheet siehst du alle Einträge deiner Choreo auf einen Blick. Jeder Eintrag ist durch einen **Count**, einen **Namen** und die **Teilnehmenden**, für die er gilt, definiert. Alle Einträge findest du in der Liste an Aufstellung und Countsheet-Einträgen.\n\n- Ein **Doppelklick auf eine Countsheet-Zelle** legt einen neuen Eintrag auf diesem Count an.\n- Klicke neben dem Eintrag auf das **Bearbeiten-Symbol** oder nutze die Taste **Ä**, um ihn zu ändern.\n\nDas Countsheet ist nicht nur eine Liste — es ist das, was du an dein Team ausgibst. Weil jeder Eintrag weiß, für wen er gilt, kannst du später für jede Teilnehmende ein persönliches Countsheet erstellen.",
+      "answer": "Im Countsheet siehst du alle Einträge deiner Choreo auf einen Blick. Jeder Eintrag ist durch einen **Count**, einen **Namen** und die **Teilnehmenden**, für die er gilt, definiert. Alle Einträge findest du in der Liste an Aufstellung und Countsheet-Einträgen.\n\n- Ein **Doppelklick auf eine Countsheet-Zelle** legt einen neuen Eintrag auf diesem Count an.\n- Klicke neben dem Eintrag auf das **Bearbeiten-Symbol** oder nutze die Taste **Ä**, um ihn zu ändern.\n\nDas Countsheet ist nicht nur eine Liste - es ist das, was du an dein Team ausgibst. Weil jeder Eintrag weiß, für wen er gilt, kannst du später für jede Teilnehmende ein persönliches Countsheet erstellen.",
       "question": "Was ist die Countsheet-Ansicht?"
     },
     "countsheets": "Hits & Countsheets",
     "counts-und-achter": {
-      "answer": "Du navigierst über die Schaltflächen über der Matte: **Voriger Count**, **Nächster Count**, **Voriger Achter**, **Nächster Achter**, **Zum Anfang springen** und **Zum Ende springen**.\n\nEin **Achter** besteht aus acht Counts — die Achter-Schaltflächen sind also der schnellste Weg durch eine lange Choreo. Der aktuelle Count wird immer angezeigt, und mit **Beim Bearbeiten den Count mitwechseln** kann der Editor die Counts beim Erstellen automatisch weiterschalten.",
+      "answer": "Du navigierst über die Schaltflächen über der Matte: **Voriger Count**, **Nächster Count**, **Voriger Achter**, **Nächster Achter**, **Zum Anfang springen** und **Zum Ende springen**.\n\nEin **Achter** besteht aus acht Counts - die Achter-Schaltflächen sind also der schnellste Weg durch eine lange Choreo. Der aktuelle Count wird immer angezeigt, und mit **Beim Bearbeiten den Count mitwechseln** kann der Editor die Counts beim Erstellen automatisch weiterschalten.",
       "question": "Wie navigiere ich zwischen Counts und Achtern?"
     },
     "choreo-abspielen": {
@@ -227,16 +227,16 @@
     },
     "editor": "Der Editor",
     "eintrag-anlegen": {
-      "answer": "Ein Eintrag — dein Hit oder Stunt — ist durch den **Count**, an dem er passiert, einen **Namen** und die **Teilnehmenden**, für die er gilt, definiert.\n\n1. Springe auf den Count, auf dem der Hit passiert.\n2. Klicke auf **Count-Eintrag hinzufügen**, drücke **H** oder **N** oder mache einen **Doppelklick auf die Countsheet-Zelle**.\n3. Vergib einen Namen und wähle, für wen der Eintrag gilt. Standardmäßig wird der Eintrag für den aktuellen Count angelegt.\n\nDu kannst einen Eintrag allen, niemandem oder einer beliebigen Auswahl deiner Teilnehmenden zuweisen. Falls du dir beim Anlegen noch nicht sicher bist, für wen er gilt, kannst du das später ergänzen — alle Einträge findest du in der Liste an Aufstellung und Countsheet-Einträgen.",
+      "answer": "Ein Eintrag - dein Hit oder Stunt - ist durch den **Count**, an dem er passiert, einen **Namen** und die **Teilnehmenden**, für die er gilt, definiert.\n\n1. Springe auf den Count, auf dem der Hit passiert.\n2. Klicke auf **Count-Eintrag hinzufügen**, drücke **H** oder **N** oder mache einen **Doppelklick auf die Countsheet-Zelle**.\n3. Vergib einen Namen und wähle, für wen der Eintrag gilt. Standardmäßig wird der Eintrag für den aktuellen Count angelegt.\n\nDu kannst einen Eintrag allen, niemandem oder einer beliebigen Auswahl deiner Teilnehmenden zuweisen. Falls du dir beim Anlegen noch nicht sicher bist, für wen er gilt, kannst du das später ergänzen - alle Einträge findest du in der Liste an Aufstellung und Countsheet-Einträgen.",
       "question": "Wie lege ich einen Hit oder Stunt an?"
     },
     "erste-choreo": {
-      "answer": "Der Choreo Planer funktioniert in vier Schritten: **Verein**, **Team**, **Season**, **Choreo**.\n\n1. Lege deinen Verein an und gib ihm einen Namen — optional kannst du direkt das Logo deines Vereins hochladen.\n2. Lege in dem Verein ein Team an.\n3. Starte für das Team eine Season und fülle den Seasonkader.\n4. Füge der Season eine Choreo hinzu und öffne den Editor.\n\nAuf der Startseite kannst du außerdem mit den **Filtern** deine Choreos nach Name, Team, Season und Länge finden.",
+      "answer": "Der Choreo Planer funktioniert in vier Schritten: **Verein**, **Team**, **Season**, **Choreo**.\n\n1. Lege deinen Verein an und gib ihm einen Namen - optional kannst du direkt das Logo deines Vereins hochladen.\n2. Lege in dem Verein ein Team an.\n3. Starte für das Team eine Season und fülle den Seasonkader.\n4. Füge der Season eine Choreo hinzu und öffne den Editor.\n\nAuf der Startseite kannst du außerdem mit den **Filtern** deine Choreos nach Name, Team, Season und Länge finden.",
       "question": "Wie erstelle ich meine erste Choreo?"
     },
     "exportieren": "Exportieren",
     "farbe-zuweisen": {
-      "answer": "Öffne in deiner Choreo den **Team**-Tab. In der Tabelle der Teilnehmenden kannst du für jede Person eine eigene **Farbe** festlegen. Die Farbe wird dann auf der Matte und in deinen Exporten verwendet — das macht Aufstellungen mit vielen Personen viel übersichtlicher und du siehst auf einen Blick, wer zu welcher Gruppe gehört.",
+      "answer": "Öffne in deiner Choreo den **Team**-Tab. In der Tabelle der Teilnehmenden kannst du für jede Person eine eigene **Farbe** festlegen. Die Farbe wird dann auf der Matte und in deinen Exporten verwendet - das macht Aufstellungen mit vielen Personen viel übersichtlicher und du siehst auf einen Blick, wer zu welcher Gruppe gehört.",
       "question": "Wie weise ich einer Person eine Farbe zu?"
     },
     "funktionen-and-features": "Funktionen & Features",
@@ -245,11 +245,11 @@
       "question": "Kann ich mir Funktionen wünschen?"
     },
     "kader-verwalten": {
-      "answer": "Deinen Kader verwaltest du an zwei Stellen:\n\n- Im **Team**-Tab deiner Choreo legst du fest, wer auf der Matte steht, und kannst Teilnehmende beim Choreografieren **ein- und auswechseln** — perfekt für Last-Minute-Änderungen.\n- Auf der **Teamseite** pflegst du den Kader einer Season. Für jede Person kannst du **Name**, **Spitzname** und **Abkürzung** anlegen, bearbeiten und löschen. Der Spitzname ist das, was du im Editor nutzt, die Abkürzung hält deine Countsheets kurz.",
+      "answer": "Deinen Kader verwaltest du an zwei Stellen:\n\n- Im **Team**-Tab deiner Choreo legst du fest, wer auf der Matte steht, und kannst Teilnehmende beim Choreografieren **ein- und auswechseln** - perfekt für Last-Minute-Änderungen.\n- Auf der **Teamseite** pflegst du den Kader einer Season. Für jede Person kannst du **Name**, **Spitzname** und **Abkürzung** anlegen, bearbeiten und löschen. Der Spitzname ist das, was du im Editor nutzt, die Abkürzung hält deine Countsheets kurz.",
       "question": "Wie verwalte ich meinen Kader und meine Teilnehmenden?"
     },
     "laenge-und-matte": {
-      "answer": "Beides änderst du in den **Choreo-Einstellungen**:\n\n- **Länge**: Passe die Anzahl der Counts und Achter an deine Routine an.\n- **Mattenlayout**: Wähle zwischen Cheerleading-Matte, **Garde**, **Bühne (3:4)** und **Bühne (1:1)**. Das Layout bestimmt die Form deiner Matte — wähle also das, das zu deiner Auftrittsfläche passt.\n\nDeine Aufstellungen behalten ihre Positionen auf der Matte, du kannst das Layout also ändern, ohne deine Choreografie zu verlieren.",
+      "answer": "Beides änderst du in den **Choreo-Einstellungen**:\n\n- **Länge**: Passe die Anzahl der Counts und Achter an deine Routine an.\n- **Mattenlayout**: Wähle zwischen Cheerleading-Matte, **Garde**, **Bühne (3:4)** und **Bühne (1:1)**. Das Layout bestimmt die Form deiner Matte - wähle also das, das zu deiner Auftrittsfläche passt.\n\nDeine Aufstellungen behalten ihre Positionen auf der Matte, du kannst das Layout also ändern, ohne deine Choreografie zu verlieren.",
       "question": "Wie ändere ich die Länge meiner Choreo oder das Mattenlayout?"
     },
     "neue-season": {
@@ -257,12 +257,12 @@
       "question": "Muss ich für jede Season ein neues Team anlegen?"
     },
     "positionsvorschlaege": {
-      "answer": "Positionsvorschläge ersparen dir viel Ziehen. Anhand der Bewegung deiner Teilnehmenden und der bereits angelegten Linien schlägt der Choreo Planer dir eine Aufstellung für den nächsten Count vor.\n\nDu wirst dann gefragt, ob du die vorgeschlagene Aufstellung verwenden möchtest — du kannst sie **annehmen** oder **ablehnen**. Wenn du nicht mehr gefragt werden möchtest, wähle **Ablehnen und ausschalten**, um die Vorschläge abzuschalten. Du kannst sie im Editor jederzeit wieder einschalten.",
+      "answer": "Positionsvorschläge ersparen dir viel Ziehen. Anhand der Bewegung deiner Teilnehmenden und der bereits angelegten Linien schlägt der Choreo Planer dir eine Aufstellung für den nächsten Count vor.\n\nDu wirst dann gefragt, ob du die vorgeschlagene Aufstellung verwenden möchtest - du kannst sie **annehmen** oder **ablehnen**. Wenn du nicht mehr gefragt werden möchtest, wähle **Ablehnen und ausschalten**, um die Vorschläge abzuschalten. Du kannst sie im Editor jederzeit wieder einschalten.",
       "question": "Was sind Positionsvorschläge?"
     },
     "probleme-loesen": "Probleme lösen",
     "probleme-melden": {
-      "answer": "Am besten über unser [Kontaktformular](/contact) — beschreibe dort einfach dein Problem und wir melden uns bei dir. Alternativ kannst du uns eine Mail an [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) schreiben oder eine DM auf Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a>.",
+      "answer": "Am besten über unser [Kontaktformular](/contact) - beschreibe dort einfach dein Problem und wir melden uns bei dir. Alternativ kannst du uns eine Mail an [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) schreiben oder eine DM auf Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a>.",
       "question": "Wie kann ich Probleme melden?"
     },
     "tastenkuerzel": {
@@ -274,7 +274,7 @@
       "question": "Kann ich Teilnehmende aus einem anderen Team oder einer anderen Season importieren?"
     },
     "vereine-und-logo": {
-      "answer": "Ja! Gehe in deine Kontoeinstellungen und öffne den **Verein**-Tab. Dort kannst du:\n\n- **Mehrere Vereine** anlegen und über den **aktiven Verein** wechseln\n- das **Logo** deines Vereins hochladen\n\nDein Logo erscheint dann auf deinen exportierten **Countsheets** und als **Wasserzeichen in deinen Videos**. So sehen deine PDFs und Videos nach deinem Verein aus — und nicht nach der Choreo von jemand anderem.",
+      "answer": "Ja! Gehe in deine Kontoeinstellungen und öffne den **Verein**-Tab. Dort kannst du:\n\n- **Mehrere Vereine** anlegen und über den **aktiven Verein** wechseln\n- das **Logo** deines Vereins hochladen\n\nDein Logo erscheint dann auf deinen exportierten **Countsheets** und als **Wasserzeichen in deinen Videos**. So sehen deine PDFs und Videos nach deinem Verein aus - und nicht nach der Choreo von jemand anderem.",
       "question": "Kann ich mehrere Vereine verwalten und unser Logo hinzufügen?"
     },
     "versehentlich-geloescht": {
@@ -282,7 +282,7 @@
       "question": "Ich habe aus Versehen etwas gelöscht. Kann ich das rückgängig machen?"
     },
     "video-export-langsam": {
-      "answer": "Dein Video wird **lokal in deinem Browser** erstellt, die Geschwindigkeit hängt also von deinem Gerät ab — eine lange Choreo mit vielen Teilnehmenden kann eine Weile dauern. Schneller geht es, wenn du:\n\n- nur die **Teilnehmenden** auswählst, die du wirklich brauchst, statt alle\n- die Choreo kürzt oder nur den Abschnitt exportierst, den du brauchst\n- andere Anwendungen und Browser-Tabs schließt, während das Video erstellt wird\n\nRuckelt das Video danach, liegt es am selben Grund: Die Qualität hängt von der Leistung deines Geräts ab. Lässt sich das Video gar nicht abspielen, [melde es uns bitte](/contact).",
+      "answer": "Dein Video wird **lokal in deinem Browser** erstellt, die Geschwindigkeit hängt also von deinem Gerät ab - eine lange Choreo mit vielen Teilnehmenden kann eine Weile dauern. Schneller geht es, wenn du:\n\n- nur die **Teilnehmenden** auswählst, die du wirklich brauchst, statt alle\n- die Choreo kürzt oder nur den Abschnitt exportierst, den du brauchst\n- andere Anwendungen und Browser-Tabs schließt, während das Video erstellt wird\n\nRuckelt das Video danach, liegt es am selben Grund: Die Qualität hängt von der Leistung deines Geräts ab. Lässt sich das Video gar nicht abspielen, [melde es uns bitte](/contact).",
       "question": "Warum dauert das Erstellen des Videos so lange?"
     },
     "warum-offline": {

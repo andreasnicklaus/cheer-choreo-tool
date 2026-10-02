@@ -43,17 +43,15 @@ export function isMailHealthy(): boolean {
 }
 
 export function verify() {
-  if (
-    !(
-      process.env.SMTP_SERVER &&
-      process.env.SMTP_PORT &&
-      process.env.SMTP_FROM_ADDRESS &&
-      process.env.SMTP_USER &&
-      process.env.SMTP_PASSWORD &&
-      process.env.EMAIL_ADMIN_ADDRESSES &&
-      process.env.BACKEND_DOMAIN
-    )
-  ) {
+  if (!(
+    process.env.SMTP_SERVER &&
+    process.env.SMTP_PORT &&
+    process.env.SMTP_FROM_ADDRESS &&
+    process.env.SMTP_USER &&
+    process.env.SMTP_PASSWORD &&
+    process.env.EMAIL_ADMIN_ADDRESSES &&
+    process.env.BACKEND_DOMAIN
+  )) {
     mailLogger.warn(
       "Mail not configured — SMTP env vars missing. Skipping verification.",
     );

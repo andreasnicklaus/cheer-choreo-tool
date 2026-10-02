@@ -190,7 +190,7 @@
   "faq": {
     "allgemeines": "General",
     "anmeldung": {
-      "answer": "You have three options:\n\n- **Register** with a username and a password\n- **Log in** with **Google**, **GitHub** or **Facebook**\n- **Reset your password** if you have forgotten it\n\nYou will find the registration on the start page. One thing to note: if you register with a social login provider, you will log in with that provider from then on — there is no separate password for it.",
+      "answer": "You have three options:\n\n- **Register** with a username and a password\n- **Log in** with **Google**, **GitHub** or **Facebook**\n- **Reset your password** if you have forgotten it\n\nYou will find the registration on the start page. One thing to note: if you register with a social login provider, you will log in with that provider from then on - there is no separate password for it.",
       "question": "How do I log in? Can I use Google, GitHub or Facebook?"
     },
     "app-installieren": {
@@ -198,7 +198,7 @@
       "question": "Can I install the choreo planner as an app?"
     },
     "aufstellung-bauen": {
-      "answer": "Every participant of your roster gets a marker that you drag onto the mat. As soon as you place a participant, a lineup is created automatically — if a lineup already exists on this count, the participant is simply added to it. A lineup always lasts **one count**, so you move to the next count to create the next formation.\n\n**Two settings make this easier:**\n- **Align positions horizontally and vertically** snaps your markers into straight rows and columns.\n- **Move the count along while editing** jumps to the next count as soon as you are done with the current one, so you can build a whole choreo without jumping back and forth.\n\nIf a lineup does not apply to everyone, you need several groups on the same count. Remove the affected participants from the lineup in the list, click **Add a lineup**, select the second group and drag its markers to their positions.",
+      "answer": "Every participant of your roster gets a marker that you drag onto the mat. As soon as you place a participant, a lineup is created automatically - if a lineup already exists on this count, the participant is simply added to it. A lineup always lasts **one count**, so you move to the next count to create the next formation.\n\n**Two settings make this easier:**\n- **Align positions horizontally and vertically** snaps your markers into straight rows and columns.\n- **Move the count along while editing** jumps to the next count as soon as you are done with the current one, so you can build a whole choreo without jumping back and forth.\n\nIf a lineup does not apply to everyone, you need several groups on the same count. Remove the affected participants from the lineup in the list, click **Add a lineup**, select the second group and drag its markers to their positions.",
       "question": "How do I build a formation (lineup)?"
     },
     "countsheet-als-pdf": {
@@ -206,7 +206,7 @@
       "question": "How do I export a countsheet as a PDF?"
     },
     "countsheet-ansicht": {
-      "answer": "The countsheet shows all entries of your choreo at a glance. Every entry is defined by a **count**, a **name** and the **participants** it applies to. You find all of them in the list next to the lineups.\n\n- A **double-click on a countsheet cell** creates a new entry on that count.\n- Click the **edit icon** next to an entry, or press **Ä** on your keyboard, to change it.\n\nThe countsheet is not only a list — it is what you hand out to your team. Because each entry knows who it applies to, you can later generate a personal countsheet for every single participant.",
+      "answer": "The countsheet shows all entries of your choreo at a glance. Every entry is defined by a **count**, a **name** and the **participants** it applies to. You find all of them in the list next to the lineups.\n\n- A **double-click on a countsheet cell** creates a new entry on that count.\n- Click the **edit icon** next to an entry, or press **Ä** on your keyboard, to change it.\n\nThe countsheet is not only a list - it is what you hand out to your team. Because each entry knows who it applies to, you can later generate a personal countsheet for every single participant.",
       "question": "What is the countsheet view?"
     },
     "countsheets": "Hits & countsheets",
@@ -227,12 +227,12 @@
     },
     "editor": "The editor",
     "eintrag-anlegen": {
-      "answer": "An entry — your hit or stunt — is defined by the **count** it happens on, a **name** and the **participants** it applies to.\n\n1. Jump to the count where the hit happens.\n2. Click **Add count entry**, press **H** or **N**, or double-click the cell in the countsheet.\n3. Give the entry a name and choose who it applies to. By default, the entry is created on the current count.\n\nYou can assign an entry to everyone, to nobody, or to any selection of your participants. If you are not sure who it applies to, you can fill that in later — you will find all entries in the list next to the lineups.",
+      "answer": "An entry - your hit or stunt - is defined by the **count** it happens on, a **name** and the **participants** it applies to.\n\n1. Jump to the count where the hit happens.\n2. Click **Add count entry**, press **H** or **N**, or double-click the cell in the countsheet.\n3. Give the entry a name and choose who it applies to. By default, the entry is created on the current count.\n\nYou can assign an entry to everyone, to nobody, or to any selection of your participants. If you are not sure who it applies to, you can fill that in later - you will find all entries in the list next to the lineups.",
       "question": "How do I add a hit or stunt?"
     },
     "exportieren": "Exporting",
     "erste-choreo": {
-      "answer": "The choreo planner is built in four steps: **club**, **team**, **season**, **choreo**.\n\n1. Create your club and give it a name — optionally add your club logo.\n2. Create a team in your club.\n3. Start a season for that team and fill the season roster.\n4. Add a choreo to the season and open the editor.\n\nOn the start page you can also use the **filters** to find choreos by name, team, season and length.",
+      "answer": "The choreo planner is built in four steps: **club**, **team**, **season**, **choreo**.\n\n1. Create your club and give it a name - optionally add your club logo.\n2. Create a team in your club.\n3. Start a season for that team and fill the season roster.\n4. Add a choreo to the season and open the editor.\n\nOn the start page you can also use the **filters** to find choreos by name, team, season and length.",
       "question": "How do I create my first choreo?"
     },
     "farbe-zuweisen": {
@@ -245,7 +245,7 @@
       "question": "Can I request features?"
     },
     "kader-verwalten": {
-      "answer": "You manage your roster in two places:\n\n- In the **Team** tab of your choreo you decide who stands on the mat, and you can **substitute** participants in and out while you are choreographing — perfect for last-minute changes.\n- On your **team page** you maintain the roster of a season. For each participant you can create, edit and delete a **name**, a **nickname** and an **abbreviation**. The nickname is what you use in the editor, the abbreviation keeps your countsheets short.",
+      "answer": "You manage your roster in two places:\n\n- In the **Team** tab of your choreo you decide who stands on the mat, and you can **substitute** participants in and out while you are choreographing - perfect for last-minute changes.\n- On your **team page** you maintain the roster of a season. For each participant you can create, edit and delete a **name**, a **nickname** and an **abbreviation**. The nickname is what you use in the editor, the abbreviation keeps your countsheets short.",
       "question": "How do I manage my roster and participants?"
     },
     "laenge-und-matte": {
@@ -257,12 +257,12 @@
       "question": "Do I have to create a new team for every season?"
     },
     "positionsvorschlaege": {
-      "answer": "Position proposals save you a lot of dragging. Based on the movement of your participants and the lines you have already created, the choreo planner suggests a lineup for the next count.\n\nYou are then asked whether you want to use the proposed lineup — you can **accept** it or **reject** it. If you do not want to be asked again, choose **Reject and disable** to switch the proposals off. You can switch them back on in the editor at any time.",
+      "answer": "Position proposals save you a lot of dragging. Based on the movement of your participants and the lines you have already created, the choreo planner suggests a lineup for the next count.\n\nYou are then asked whether you want to use the proposed lineup - you can **accept** it or **reject** it. If you do not want to be asked again, choose **Reject and disable** to switch the proposals off. You can switch them back on in the editor at any time.",
       "question": "What are position proposals?"
     },
     "probleme-loesen": "Solving problems",
     "probleme-melden": {
-      "answer": "The best way is our [contact form](/contact) — just describe your problem there and we will get back to you. Alternatively you can write us an email to [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) or send a DM on Instagram to <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a>.",
+      "answer": "The best way is our [contact form](/contact) - just describe your problem there and we will get back to you. Alternatively you can write us an email to [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) or send a DM on Instagram to <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a>.",
       "question": "How can I report problems?"
     },
     "tastenkuerzel": {
@@ -274,7 +274,7 @@
       "question": "Can I import members from another team or season?"
     },
     "vereine-und-logo": {
-      "answer": "Yes! Go to your account settings and open the **Club** tab. There you can:\n\n- Create **several clubs** and switch between them with the **active club**\n- Upload the **logo** of your club\n\nYour logo then appears on your exported **countsheets** and as a **watermark on your videos**. This way your PDFs and videos look like your club's — and not like somebody else's choreo.",
+      "answer": "Yes! Go to your account settings and open the **Club** tab. There you can:\n\n- Create **several clubs** and switch between them with the **active club**\n- Upload the **logo** of your club\n\nYour logo then appears on your exported **countsheets** and as a **watermark on your videos**. This way your PDFs and videos look like your club's - and not like somebody else's choreo.",
       "question": "Can I manage several clubs and add our logo?"
     },
     "versehentlich-geloescht": {
@@ -282,7 +282,7 @@
       "question": "I accidentally deleted something. Can I undo that?"
     },
     "video-export-langsam": {
-      "answer": "Your video is generated **locally in your browser**, so the speed depends on your device — a long choreo with many participants can take a while. To make it faster, you can:\n\n- Choose only the **participants** you actually need instead of all of them\n- Shorten the choreo, or export only the section you need\n- Close other applications and browser tabs while the video is created\n\nIf the video does not play smoothly afterwards, that has the same cause: the quality depends on the performance of your device. If the video cannot be played at all, please [let us know](/contact).",
+      "answer": "Your video is generated **locally in your browser**, so the speed depends on your device - a long choreo with many participants can take a while. To make it faster, you can:\n\n- Choose only the **participants** you actually need instead of all of them\n- Shorten the choreo, or export only the section you need\n- Close other applications and browser tabs while the video is created\n\nIf the video does not play smoothly afterwards, that has the same cause: the quality depends on the performance of your device. If the video cannot be played at all, please [let us know](/contact).",
       "question": "Why is creating the video so slow?"
     },
     "warum-offline": {
