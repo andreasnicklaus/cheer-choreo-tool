@@ -59,7 +59,7 @@ Every request requires a JWT Bearer token in the Authorization header.
 The token identifies the user and determines which data they can access.
 
 - **Access control:** Users can only see and modify data they own or have been granted access to.
-- **Admin users:** Bypass ownership checks and can access all data.
+- **Admin privileges are not available over MCP:** every request is treated as a regular user, even if the account is an admin elsewhere.
 - **First-class entities** (Club, Team, Season, SeasonTeam) cannot be deleted.
 - **Child entities** (Member, Choreo, Hit, Lineup, Position) can be deleted.
 

@@ -149,6 +149,27 @@ describe("MCP guide resources", () => {
     }
   });
 
+  test("does not expose parameterized choreo/hit/lineup resource templates", async () => {
+    const { resourceTemplates } = await client.listResourceTemplates();
+
+    const templateUris = (resourceTemplates ?? []).map((t) => t.uriTemplate);
+    expect(templateUris).not.toContain("choreo://{choreoId}");
+    expect(templateUris).not.toContain("hit://{hitId}");
+    expect(templateUris).not.toContain("lineup://{lineupId}");
+  });
+
+  test("reading a choreo/hit/lineup URI is rejected", async () => {
+    await expect(
+      client.readResource({ uri: "choreo://any-id" }),
+    ).rejects.toThrow();
+    await expect(
+      client.readResource({ uri: "hit://any-id" }),
+    ).rejects.toThrow();
+    await expect(
+      client.readResource({ uri: "lineup://any-id" }),
+    ).rejects.toThrow();
+  });
+
   test("guide resource contains data model and tools sections", async () => {
     const result = await client.readResource({
       uri: "guide://cheer-choreo-tool/guide",
