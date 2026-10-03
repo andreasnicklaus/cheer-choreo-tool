@@ -320,7 +320,13 @@ describe("HitService", () => {
 
     test("throws NotFoundError when choreo does not exist", async () => {
       await expect(
-        HitService.mcpCreate("GhostHit", 1, "non-existent-choreo-id", [], user.id),
+        HitService.mcpCreate(
+          "GhostHit",
+          1,
+          "non-existent-choreo-id",
+          [],
+          user.id,
+        ),
       ).rejects.toThrow("not found");
     });
 
@@ -388,7 +394,9 @@ describe("HitService", () => {
         matType: "cheer",
         UserId: user.id,
       });
-      const hits = [{ name: "BulkWithMember", count: 1, memberIds: [member.id] }];
+      const hits = [
+        { name: "BulkWithMember", count: 1, memberIds: [member.id] },
+      ];
       const result = await HitService.mcpBulkCreate(hits, choreo.id, user.id);
       expect(result.length).toBe(1);
     });

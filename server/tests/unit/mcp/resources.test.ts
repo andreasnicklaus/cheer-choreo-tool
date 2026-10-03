@@ -130,16 +130,44 @@ describe("MCP guide resources", () => {
     expect(instructions).toContain("data model hierarchy");
   });
 
-  test("lists three guide resources", async () => {
+  test("server advertises the faq resources as optional", () => {
+    const instructions = client.getInstructions();
+    expect(instructions).toContain("guide://cheer-choreo-tool/faq");
+    expect(instructions).toContain("guide://cheer-choreo-tool/faq-de");
+    expect(instructions).toContain("OPTIONAL");
+  });
+
+  test("lists five resources", async () => {
     const { resources } = await client.listResources();
-    expect(resources).toHaveLength(3);
+    expect(resources).toHaveLength(5);
 
     const names = resources.map((r) => r.name).sort();
-    expect(names).toEqual(["guide", "hits", "lineups"]);
+    expect(names).toEqual(["faq", "faq-de", "guide", "hits", "lineups"]);
 
     for (const resource of resources) {
       expect(resource.mimeType).toBe("text/markdown");
     }
+  });
+
+  test("does not expose parameterized choreo/hit/lineup resource templates", async () => {
+    const { resourceTemplates } = await client.listResourceTemplates();
+
+    const templateUris = (resourceTemplates ?? []).map((t) => t.uriTemplate);
+    expect(templateUris).not.toContain("choreo://{choreoId}");
+    expect(templateUris).not.toContain("hit://{hitId}");
+    expect(templateUris).not.toContain("lineup://{lineupId}");
+  });
+
+  test("reading a choreo/hit/lineup URI is rejected", async () => {
+    await expect(
+      client.readResource({ uri: "choreo://any-id" }),
+    ).rejects.toThrow();
+    await expect(
+      client.readResource({ uri: "hit://any-id" }),
+    ).rejects.toThrow();
+    await expect(
+      client.readResource({ uri: "lineup://any-id" }),
+    ).rejects.toThrow();
   });
 
   test("guide resource contains data model and tools sections", async () => {
@@ -188,6 +216,45 @@ describe("MCP guide resources", () => {
     expect(content.text).toContain("## Best Practices");
   });
 
+  test("faq resource contains the end-user faq in english", async () => {
+    const result = await client.readResource({
+      uri: "guide://cheer-choreo-tool/faq",
+    });
+    expect(result.contents).toHaveLength(1);
+
+    const content = result.contents[0] as { text: string };
+    expect(content.text).toContain("# Cheer Choreo Tool - End-User FAQ");
+    expect(content.text).toContain("web app UI");
+    expect(content.text).toContain("## General");
+    expect(content.text).toContain("## Features");
+    expect(content.text).toContain("## The editor");
+    expect(content.text).toContain("## Hits & countsheets");
+    expect(content.text).toContain("## Exporting");
+    expect(content.text).toContain("## Solving problems");
+    expect(content.text).toContain("## Data protection");
+    expect(content.text).toContain(
+      "### How do I export a countsheet as a PDF?",
+    );
+  });
+
+  test("faq-de resource contains the end-user faq in german", async () => {
+    const result = await client.readResource({
+      uri: "guide://cheer-choreo-tool/faq-de",
+    });
+    expect(result.contents).toHaveLength(1);
+
+    const content = result.contents[0] as { text: string };
+    expect(content.text).toContain("# Choreo Planer - FAQ für Endnutzer");
+    expect(content.text).toContain("Web-Oberfläche der App");
+    expect(content.text).toContain("## Allgemeines");
+    expect(content.text).toContain("## Funktionen & Features");
+    expect(content.text).toContain("## Der Editor");
+    expect(content.text).toContain("## Hits & Countsheets");
+    expect(content.text).toContain("## Exportieren");
+    expect(content.text).toContain("## Probleme lösen");
+    expect(content.text).toContain("## Datenschutz");
+  });
+
   test("guide resource content matches its source file", async () => {
     const guidePath = path.resolve(
       __dirname,
@@ -233,6 +300,36 @@ describe("MCP guide resources", () => {
     expect(content.text).toBe(lineupsFile);
   });
 
+  test("faq resource content matches its source file", async () => {
+    const faqPath = path.resolve(
+      __dirname,
+      "../../../src/mcp/resources/faq.md",
+    );
+    const faqFile = fs.readFileSync(faqPath, "utf8");
+
+    const result = await client.readResource({
+      uri: "guide://cheer-choreo-tool/faq",
+    });
+    const content = result.contents[0] as { text: string };
+
+    expect(content.text).toBe(faqFile);
+  });
+
+  test("faq-de resource content matches its source file", async () => {
+    const faqDePath = path.resolve(
+      __dirname,
+      "../../../src/mcp/resources/faq-de.md",
+    );
+    const faqDeFile = fs.readFileSync(faqDePath, "utf8");
+
+    const result = await client.readResource({
+      uri: "guide://cheer-choreo-tool/faq-de",
+    });
+    const content = result.contents[0] as { text: string };
+
+    expect(content.text).toBe(faqDeFile);
+  });
+
   test("lists the read-guide prompt", async () => {
     const { prompts } = await client.listPrompts();
     expect(prompts).toHaveLength(1);
@@ -254,5 +351,16 @@ describe("MCP guide resources", () => {
     expect(content.text).toContain("## Data Model");
     expect(content.text).toContain("# Hits Guide");
     expect(content.text).toContain("# Lineups Guide");
+  });
+
+  test("getPrompt excludes the opt-in faq resources", async () => {
+    const result = await client.getPrompt({ name: "read-guide" });
+    const content = result.messages[0].content as {
+      type: string;
+      text: string;
+    };
+
+    expect(content.text).not.toContain("End-User FAQ");
+    expect(content.text).not.toContain("FAQ für Endnutzer");
   });
 });

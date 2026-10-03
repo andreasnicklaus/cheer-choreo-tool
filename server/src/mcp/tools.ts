@@ -1,9 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import {
-  McpServer,
-  ResourceTemplate,
-} from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { completable } from "@modelcontextprotocol/sdk/server/completable.js";
 import { z } from "zod";
 import { getUserFromRequest, formatError } from "./helpers";
@@ -712,7 +709,8 @@ export const toolCallbacks: Record<string, ToolDef> = {
     schema: { choreoId: z.string().describe("The choreography UUID") },
     handler: async (args, extra) => {
       try {
-        getUserFromRequest(extra.authInfo);
+        const { userId, isAdmin } = getUserFromRequest(extra.authInfo);
+        await ChoreoService.findById(args.choreoId, userId, isAdmin);
         const lineups = await LineupService.findByChoreoId(args.choreoId);
         return { content: [{ type: "text", text: JSON.stringify(lineups) }] };
       } catch (error) {
@@ -959,7 +957,7 @@ function loadResourceFiles(): Record<string, string> {
     throw new Error("Unable to locate MCP resource directory");
   }
 
-  const files = ["guide.md", "hits.md", "lineups.md"];
+  const files = ["guide.md", "hits.md", "lineups.md", "faq.md", "faq-de.md"];
   const resources: Record<string, string> = {};
 
   for (const file of files) {
@@ -977,7 +975,13 @@ const MCP_INSTRUCTIONS = `IMPORTANT: Before using any Cheer Choreo Tool, you MUS
 2. "guide://cheer-choreo-tool/hits" — hit naming conventions, pre-directions, pre-actions, actions, post-directions, standalone hits, examples
 3. "guide://cheer-choreo-tool/lineups" — lineup rules, count ranges, formation patterns by participant count, position tables, best practices
 
-Together they describe the complete usage guide. Key concept: Hits and Lineups are independent entities — hits describe actions at a count, lineups describe formations over a count range. They do not reference each other. Always clarify with the user whether they are digitizing an existing choreo or starting from scratch before creating data.`;
+Together they describe the complete usage guide. Key concept: Hits and Lineups are independent entities — hits describe actions at a count, lineups describe formations over a count range. They do not reference each other. Always clarify with the user whether they are digitizing an existing choreo or starting from scratch before creating data.
+
+OPTIONAL — two further resources describe the web app itself rather than tool use. Read them ONLY when the user asks about app features, the editor workflow, countsheets, exporting, or troubleshooting:
+- "guide://cheer-choreo-tool/faq" — the end-user FAQ (English)
+- "guide://cheer-choreo-tool/faq-de" — dasselbe FAQ auf Deutsch
+
+Do not read them by default. Most of their content describes clicking and dragging in the browser, which you cannot perform over MCP — the three guides above cover everything you can actually do.`;
 
 export function createMcpServer(): McpServer {
   const server = new McpServer(
@@ -1078,6 +1082,18 @@ export function createMcpServer(): McpServer {
       description:
         "Lineup rules and position tables — count ranges, formation patterns by participant count, and best practices",
     },
+    {
+      name: "faq",
+      path: "faq",
+      description:
+        "End-user FAQ for the web app (English) — editor workflow, countsheets, exporting, roster management, and troubleshooting. Describes UI actions, not MCP tool use",
+    },
+    {
+      name: "faq-de",
+      path: "faq-de",
+      description:
+        "End-user FAQ for the web app (German) — editor workflow, countsheets, exporting, roster management, and troubleshooting. Describes UI actions, not MCP tool use",
+    },
   ];
 
   for (const def of resourceDefs) {
@@ -1098,164 +1114,12 @@ export function createMcpServer(): McpServer {
     );
   }
 
-  // ─── Parameterized resource templates with completions ─────
-  const choreoTemplate = new ResourceTemplate("choreo://{choreoId}", {
-    list: undefined,
-    complete: {
-      choreoId: async (value) => {
-        const choreos = await ChoreoService.getAll([], "", false);
-        return choreos
-          .map((c: { id: string }) => c.id)
-          .filter((id: string) => id.startsWith(value));
-      },
-    },
-  });
-
-  server.registerResource(
-    "choreo",
-    choreoTemplate,
-    {
-      description:
-        "A choreography by ID — includes hits, lineups, and participants",
-      mimeType: "application/json",
-    },
-    async (_uri, { choreoId }) => {
-      try {
-        const choreo = await ChoreoService.findById(
-          choreoId as string,
-          "",
-          false,
-        );
-        return {
-          contents: [
-            {
-              uri: `choreo://${choreoId}`,
-              text: JSON.stringify(choreo),
-              mimeType: "application/json",
-            },
-          ],
-        };
-      } catch (error) {
-        return {
-          contents: [
-            {
-              uri: `choreo://${choreoId}`,
-              text: JSON.stringify({
-                error: error instanceof Error ? error.message : "Unknown error",
-              }),
-              mimeType: "application/json",
-            },
-          ],
-        };
-      }
-    },
-  );
-
-  const hitTemplate = new ResourceTemplate("hit://{hitId}", {
-    list: undefined,
-    complete: {
-      hitId: async (value) => {
-        const hits = await HitService.getAll([], "", false);
-        return hits
-          .map((h: { id: string }) => h.id)
-          .filter((id: string) => id.startsWith(value));
-      },
-    },
-  });
-
-  server.registerResource(
-    "hit",
-    hitTemplate,
-    {
-      description: "A hit by ID with member associations",
-      mimeType: "application/json",
-    },
-    async (_uri, { hitId }) => {
-      try {
-        const hits = await HitService.getAll([], "", false);
-        const hit = hits.find((h: { id: string }) => h.id === hitId);
-        return {
-          contents: [
-            {
-              uri: `hit://${hitId}`,
-              text: JSON.stringify(hit ?? { error: "Hit not found" }),
-              mimeType: "application/json",
-            },
-          ],
-        };
-      } catch (error) {
-        return {
-          contents: [
-            {
-              uri: `hit://${hitId}`,
-              text: JSON.stringify({
-                error: error instanceof Error ? error.message : "Unknown error",
-              }),
-              mimeType: "application/json",
-            },
-          ],
-        };
-      }
-    },
-  );
-
-  const lineupTemplate = new ResourceTemplate("lineup://{lineupId}", {
-    list: undefined,
-    complete: {
-      lineupId: async (value) => {
-        const choreos = await ChoreoService.getAll([], "", false);
-        const allLineups: { id: string }[] = [];
-        for (const choreo of choreos) {
-          const lineups = await LineupService.findByChoreoId(choreo.id);
-          allLineups.push(...lineups);
-        }
-        return allLineups.map((l) => l.id).filter((id) => id.startsWith(value));
-      },
-    },
-  });
-
-  server.registerResource(
-    "lineup",
-    lineupTemplate,
-    {
-      description: "A lineup by ID with positions",
-      mimeType: "application/json",
-    },
-    async (_uri, { lineupId }) => {
-      try {
-        const positions = await PositionService.findByLineupId(
-          lineupId as string,
-          [],
-          "",
-          false,
-        );
-        return {
-          contents: [
-            {
-              uri: `lineup://${lineupId}`,
-              text: JSON.stringify({ id: lineupId, positions }),
-              mimeType: "application/json",
-            },
-          ],
-        };
-      } catch (error) {
-        return {
-          contents: [
-            {
-              uri: `lineup://${lineupId}`,
-              text: JSON.stringify({
-                error: error instanceof Error ? error.message : "Unknown error",
-              }),
-              mimeType: "application/json",
-            },
-          ],
-        };
-      }
-    },
-  );
-
   // ─── Prompt ────────────────────────────────────────────────
-  const allContent = Object.values(resources).join("\n\n");
+  const promptResources = ["guide.md", "hits.md", "lineups.md"];
+  const allContent = promptResources
+    .map((file) => resources[file])
+    .filter((content): content is string => Boolean(content))
+    .join("\n\n");
 
   server.registerPrompt(
     "read-guide",

@@ -164,7 +164,7 @@ export default defineComponent({
         },
         {
           name: this.$t("faq.probleme-loesen"),
-          order: 3,
+          order: 6,
           faqs: [
             {
               title: this.$t("faq.probleme-melden.question"),
@@ -173,6 +173,14 @@ export default defineComponent({
             {
               title: this.$t("faq.versehentlich-geloescht.question"),
               markdown: this.$t("faq.versehentlich-geloescht.answer"),
+            },
+            {
+              title: this.$t("faq.video-export-langsam.question"),
+              markdown: this.$t("faq.video-export-langsam.answer"),
+            },
+            {
+              title: this.$t("faq.warum-offline.question"),
+              markdown: this.$t("faq.warum-offline.answer"),
             },
           ],
         },
@@ -189,8 +197,60 @@ export default defineComponent({
               markdown: this.$t("faq.was-ist-choreo-planer.answer"),
             },
             {
-              title: this.$t("faq.warum-offline.question"),
-              markdown: this.$t("faq.warum-offline.answer"),
+              title: this.$t("faq.anmeldung.question"),
+              markdown: this.$t("faq.anmeldung.answer"),
+            },
+            {
+              title: this.$t("faq.erste-choreo.question"),
+              markdown: this.$t("faq.erste-choreo.answer"),
+            },
+            {
+              title: this.$t("faq.app-installieren.question"),
+              markdown: this.$t("faq.app-installieren.answer"),
+            },
+          ],
+        },
+        {
+          name: this.$t("faq.editor"),
+          order: 3,
+          faqs: [
+            {
+              title: this.$t("faq.aufstellung-bauen.question"),
+              markdown: this.$t("faq.aufstellung-bauen.answer"),
+            },
+            {
+              title: this.$t("faq.counts-und-achter.question"),
+              markdown: this.$t("faq.counts-und-achter.answer"),
+            },
+            {
+              title: this.$t("faq.choreo-abspielen.question"),
+              markdown: this.$t("faq.choreo-abspielen.answer"),
+            },
+            {
+              title: this.$t("faq.positionsvorschlaege.question"),
+              markdown: this.$t("faq.positionsvorschlaege.answer"),
+            },
+            {
+              title: this.$t("faq.laenge-und-matte.question"),
+              markdown: this.$t("faq.laenge-und-matte.answer"),
+            },
+            {
+              title: this.$t("faq.farbe-zuweisen.question"),
+              markdown: this.$t("faq.farbe-zuweisen.answer"),
+            },
+          ],
+        },
+        {
+          name: this.$t("faq.countsheets"),
+          order: 4,
+          faqs: [
+            {
+              title: this.$t("faq.eintrag-anlegen.question"),
+              markdown: this.$t("faq.eintrag-anlegen.answer"),
+            },
+            {
+              title: this.$t("faq.countsheet-ansicht.question"),
+              markdown: this.$t("faq.countsheet-ansicht.answer"),
             },
           ],
         },
@@ -211,12 +271,38 @@ export default defineComponent({
               markdown: this.$t("faq.neue-season.answer"),
             },
             {
+              title: this.$t("faq.kader-verwalten.question"),
+              markdown: this.$t("faq.kader-verwalten.answer"),
+            },
+            {
+              title: this.$t("faq.teilnehmer-importieren.question"),
+              markdown: this.$t("faq.teilnehmer-importieren.answer"),
+            },
+            {
+              title: this.$t("faq.vereine-und-logo.question"),
+              markdown: this.$t("faq.vereine-und-logo.answer"),
+            },
+            {
               title: this.$t("faq.zusammenarbeiten.question"),
               markdown: this.$t("faq.zusammenarbeiten.answer"),
             },
             {
               title: this.$t("faq.ki-nutzen.question"),
               markdown: this.$t("faq.ki-nutzen.answer"),
+            },
+          ],
+        },
+        {
+          name: this.$t("faq.exportieren"),
+          order: 5,
+          faqs: [
+            {
+              title: this.$t("faq.countsheet-als-pdf.question"),
+              markdown: this.$t("faq.countsheet-als-pdf.answer"),
+            },
+            {
+              title: this.$t("faq.choreo-video.question"),
+              markdown: this.$t("faq.choreo-video.answer"),
             },
           ],
         },
