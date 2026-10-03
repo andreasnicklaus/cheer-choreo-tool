@@ -131,9 +131,15 @@ jobs:
         run: echo www.choreo-planer.de > dist/CNAME
 
       - name: Upload Built files
-        uses: actions/upload-artifact@v7
+        id: deployment
+        uses: actions/upload-pages-artifact@v5
         with:
           name: github-pages
+          path: app/dist
+      - name: Upload Built files
+        uses: actions/upload-artifact@v7
+        with:
+          name: ui-pages
           path: app/dist
 
   test-integration:
@@ -169,7 +175,7 @@ jobs:
           key: ${{ runner.os }}-node-modules-${{ hashFiles('app/package-lock.json') }}
       - uses: actions/download-artifact@v8
         with:
-          name: github-pages
+          name: ui-pages
           path: app/dist
       - name: Cache Playwright browsers
         id: playwright-cache
