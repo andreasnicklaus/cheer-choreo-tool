@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { dbRouter } from "./db";
+import { dbRouter } from "@/routes/admin/db";
 import { userRouter } from "./users";
 import { adminsRouter } from "./admins";
 import { notificationRouter } from "./notification";

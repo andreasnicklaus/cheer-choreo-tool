@@ -1,5 +1,5 @@
 import logger from "@/plugins/winston";
-import db from "./db";
+import db from "@/db/db";
 import Choreo from "@/db/models/choreo";
 import ChoreoParticipation from "@/db/models/choreoParticipation";
 import Club from "@/db/models/club";
@@ -14,9 +14,10 @@ import SeasonTeam from "@/db/models/seasonTeam";
 import Team from "@/db/models/team";
 import User from "@/db/models/user";
 import UserAccess from "@/db/models/userAccess";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import Admin from "@/db/models/admin";
 import seed from "./seed";
 import migrate from "./migrations";
-require("@/db/models/admin");
 
 Team.hasMany(SeasonTeam, {
   onDelete: "CASCADE",
