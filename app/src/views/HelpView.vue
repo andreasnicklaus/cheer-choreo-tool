@@ -178,6 +178,10 @@ export default defineComponent({
               title: this.$t("faq.video-export-langsam.question"),
               markdown: this.$t("faq.video-export-langsam.answer"),
             },
+            {
+              title: this.$t("faq.warum-offline.question"),
+              markdown: this.$t("faq.warum-offline.answer"),
+            },
           ],
         },
         {
@@ -193,20 +197,16 @@ export default defineComponent({
               markdown: this.$t("faq.was-ist-choreo-planer.answer"),
             },
             {
-              title: this.$t("faq.erste-choreo.question"),
-              markdown: this.$t("faq.erste-choreo.answer"),
-            },
-            {
               title: this.$t("faq.anmeldung.question"),
               markdown: this.$t("faq.anmeldung.answer"),
             },
             {
-              title: this.$t("faq.app-installieren.question"),
-              markdown: this.$t("faq.app-installieren.answer"),
+              title: this.$t("faq.erste-choreo.question"),
+              markdown: this.$t("faq.erste-choreo.answer"),
             },
             {
-              title: this.$t("faq.warum-offline.question"),
-              markdown: this.$t("faq.warum-offline.answer"),
+              title: this.$t("faq.app-installieren.question"),
+              markdown: this.$t("faq.app-installieren.answer"),
             },
           ],
         },
@@ -237,10 +237,6 @@ export default defineComponent({
             {
               title: this.$t("faq.farbe-zuweisen.question"),
               markdown: this.$t("faq.farbe-zuweisen.answer"),
-            },
-            {
-              title: this.$t("faq.tastenkuerzel.question"),
-              markdown: this.$t("faq.tastenkuerzel.answer"),
             },
           ],
         },

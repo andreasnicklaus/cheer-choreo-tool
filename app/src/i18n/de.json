@@ -191,7 +191,7 @@
     "allgemeines": "Allgemeines",
     "anmeldung": {
       "answer": "Du hast drei Möglichkeiten:\n\n- **Registrieren** mit Benutzername und Passwort\n- **Anmelden** mit **Google**, **GitHub** oder **Facebook**\n- **Passwort zurücksetzen**, falls du es vergessen hast\n\nDie Registrierung findest du auf der Startseite. Ein Hinweis: Wenn du dich mit einem Social-Login-Anbieter registrierst, meldest du dich danach immer über diesen Anbieter an - es gibt dafür kein separates Passwort.",
-      "question": "Wie melde ich mich an? Kann ich Google, GitHub oder Facebook nutzen?"
+      "question": "Wie melde ich mich an?"
     },
     "app-installieren": {
       "answer": "Ja! Der Choreo Planer lässt sich auf deinem Desktop oder Mobilgerät installieren. Je nach Browser findest du einen **Installieren**-Button oder den Eintrag **App installieren** im Menü deines Browsers. Die App nimmt keinen Speicherplatz auf deinem Gerät ein und erleichtert das Starten der Anwendung.",
@@ -264,10 +264,6 @@
     "probleme-melden": {
       "answer": "Am besten über unser [Kontaktformular](/contact) - beschreibe dort einfach dein Problem und wir melden uns bei dir. Alternativ kannst du uns eine Mail an [info{'@'}choreo-planer.de](mailto:info{'@'}choreo-planer.de) schreiben oder eine DM auf Instagram an <a href=\"https://www.instagram.com/choreoplaner/\" target=\"_blank\">{'@'}choreoplaner</a>.",
       "question": "Wie kann ich Probleme melden?"
-    },
-    "tastenkuerzel": {
-      "answer": "Ja, der Editor bringt eine Anleitung für Tastenkürzel mit. Die wichtigsten Kürzel sind:\n\n| Taste | Aktion |\n| --- | --- |\n| **Pfeil links** | Voriger Count |\n| **Pfeil rechts** | Nächster Count |\n| **Pfeil oben** | Voriger Achter |\n| **Pfeil unten** | Nächster Achter |\n| **Leertaste** | Play/Pause |\n| **H** oder **N** | Neuer Eintrag |\n| **Ä** | Eintrag ändern |\n| **Doppelklick** auf Countsheet-Zelle | Neuer Eintrag |\n\nDie vollständige Anleitung findest du im Editor über **Anleitung**.",
-      "question": "Gibt es Tastenkürzel?"
     },
     "teilnehmer-importieren": {
       "answer": "Ja, damit du nicht noch einmal alles eintippen musst:\n\n- Wenn du eine **neue Season startest**, kannst du den Kader einer bestehenden Season übernehmen.\n- Auf deiner **Teamseite** kannst du Teilnehmende aus jedem anderen Team oder jeder anderen Season deiner Vereine importieren.\n\nDie importierten Daten kannst du danach anpassen und natürlich alle entfernen, die in dieser Season nicht dabei sind.",
