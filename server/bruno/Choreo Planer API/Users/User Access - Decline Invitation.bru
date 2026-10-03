@@ -1,0 +1,17 @@
+meta {
+  name: User Access - Decline Invitation
+  method: POST
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{baseUrl}}/user/access/:id/decline
+  body: none
+  auth: inherit
+}
+
+
+params:path {
+  id: 
+}

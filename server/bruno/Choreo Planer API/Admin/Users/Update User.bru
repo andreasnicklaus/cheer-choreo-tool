@@ -1,0 +1,23 @@
+meta {
+  name: Update User
+  method: POST
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/admin/users/update
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "id": "{{id}}",
+    "username": "updateduser"
+  }
+}

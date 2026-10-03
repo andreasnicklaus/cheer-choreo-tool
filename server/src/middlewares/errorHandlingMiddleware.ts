@@ -1,6 +1,8 @@
 import {
+  AccessDeniedError,
   AuthorizationError,
   FaultyInputError,
+  LineupConflictError,
   NotFoundError,
   RequestOrderError,
 } from "@/utils/errors";
@@ -9,6 +11,7 @@ import { NextFunction, Request, Response } from "express";
 /**
  * Middleware to send an appropriate status code response depending on the occurring error.
  * - {@link NotFoundError}: status code 404
+ * - {@link LineupConflictError}: status code 409
  * @param {Error} err Error to handle and to log
  * @param {Request} req Incoming request object
  * @param {Response} res Outgoing response object
@@ -21,7 +24,11 @@ function errorHandlingMiddleWare(
   next: NextFunction,
 ) {
   if (!res.headersSent) {
-    if (error instanceof RequestOrderError) res.status(409).send(error.message);
+    if (
+      error instanceof RequestOrderError ||
+      error instanceof LineupConflictError
+    )
+      res.status(409).send(error.message);
     else if (error instanceof NotFoundError)
       res
         .status(404)
@@ -34,10 +41,12 @@ function errorHandlingMiddleWare(
       res
         .status(401)
         .send(`Unauthorized${error.message ? `: ${error.message}` : ""}`);
+    else if (error instanceof AccessDeniedError)
+      res.status(403).send(req.t("responses.access-denied"));
     else
       res.status(500).render("../src/views/error.ejs", {
         action: "generic error handling",
-        data: JSON.stringify({ userId: req.UserId, url: req.url }),
+        data: JSON.stringify({ userId: req.actingUserId, url: req.url }),
         error: error,
         timestamp: new Date().toLocaleString(req.locale),
       }); // njsscan-ignore: express_lfr_warning

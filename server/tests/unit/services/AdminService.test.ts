@@ -9,6 +9,7 @@ jest.mock("@/plugins/winston", () => ({
     error: jest.fn(),
   },
   debug: jest.fn(),
+  info: jest.fn(),
 }));
 
 jest.mock("@/db/db", () => {
@@ -36,10 +37,7 @@ describe("AdminServices", () => {
   });
 
   beforeEach(async () => {
-    const admins = await Admin.findAll();
-    admins.forEach(
-      async (admin: Admin) => await admin.destroy({ force: true }),
-    );
+    await Admin.destroy({ where: {}, force: true });
   });
 
   test("getCount should return the actual count", async () => {
@@ -49,15 +47,24 @@ describe("AdminServices", () => {
   });
 
   test("findOrCreate should find existing admin", async () => {
-    const admin1 = await AdminService.findOrCreate(adminName, adminPw);
-    const admin2 = await AdminService.findOrCreate(adminName, adminPw);
+    const [admin1, _created1] = await AdminService.findOrCreate(
+      adminName,
+      adminPw,
+    );
+    const [admin2, _created2] = await AdminService.findOrCreate(
+      adminName,
+      adminPw,
+    );
     expect(admin1.id).toBe(admin2.id);
   });
 
   test("findOrCreate should create new admin", async () => {
     const newAdminName = "newAdmin";
     const newAdminPw = "newAdminPw";
-    const admin = await AdminService.findOrCreate(newAdminName, newAdminPw);
+    const [admin, _created] = await AdminService.findOrCreate(
+      newAdminName,
+      newAdminPw,
+    );
     expect(admin.username).toBe(newAdminName);
     expect(await AdminService.getCount()).toBe(1);
   });
@@ -76,7 +83,10 @@ describe("AdminServices", () => {
     const newAdminPw = "newAdminPw2";
     const notFoundAdmin = await AdminService.findById("");
     expect(notFoundAdmin).toBeNull();
-    const admin = await AdminService.findOrCreate(newAdminName, newAdminPw);
+    const [admin, _] = await AdminService.findOrCreate(
+      newAdminName,
+      newAdminPw,
+    );
     const foundAdmin = await AdminService.findById(admin.id);
     expect(foundAdmin).not.toBeNull();
     expect(foundAdmin?.username).toBe(newAdminName);
@@ -101,7 +111,7 @@ describe("AdminServices", () => {
   });
 
   test("update should update admin", async () => {
-    const admin = await AdminService.findOrCreate(adminName, adminPw);
+    const [admin, _] = await AdminService.findOrCreate(adminName, adminPw);
     const newAdminName = "updatedAdmin";
     await AdminService.update(admin.id, { username: newAdminName });
     const updatedAdmin = await AdminService.findById(admin.id);
@@ -115,7 +125,7 @@ describe("AdminServices", () => {
   });
 
   test("remove should delete admin", async () => {
-    const admin = await AdminService.findOrCreate(adminName, adminPw);
+    const [admin, _] = await AdminService.findOrCreate(adminName, adminPw);
     expect(await AdminService.getCount()).toBe(1);
     await AdminService.remove(admin.id);
     expect(await AdminService.getCount()).toBe(0);

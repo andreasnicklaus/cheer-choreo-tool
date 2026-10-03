@@ -2,7 +2,7 @@
   "cookies": [],
   "origins": [
     {
-      "origin": "localhost:3000",
+      "origin": "localhost:3001",
       "localStorage": [
         {
           "name": "isTestEnvironment",

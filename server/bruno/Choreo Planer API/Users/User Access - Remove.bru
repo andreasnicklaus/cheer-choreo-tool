@@ -1,0 +1,17 @@
+meta {
+  name: User Access - Remove
+  method: DELETE
+  type: http
+  seq: 9
+}
+
+delete {
+  url: {{baseUrl}}/user/access/:id
+  body: none
+  auth: inherit
+}
+
+
+params:path {
+  id: 
+}

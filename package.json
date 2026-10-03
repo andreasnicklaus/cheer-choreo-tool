@@ -1,0 +1,21 @@
+{
+  "name": "cheer-choreo-tool",
+  "version": "1.0.0",
+  "description": "<div align=\"center\">\r <img src=\"app/public/Icon.png/\" width=\"200\" height=\"200\" alt=\"Choreo Planer Icon\">",
+  "homepage": "https://github.com/andreasnicklaus/cheer-choreo-tool#readme",
+  "bugs": {
+    "url": "https://github.com/andreasnicklaus/cheer-choreo-tool/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andreasnicklaus/cheer-choreo-tool.git"
+  },
+  "license": "ISC",
+  "author": "Andreas Nicklaus",
+  "type": "commonjs",
+  "scripts": {
+    "docker": "docker compose up --build",
+    "docker:dev": "docker compose -f docker-compose.yml -f dev.docker-compose.yml up --build",
+    "mcp": "docker run --rm -p 127.0.0.1:6274:6274 -p 127.0.0.1:6277:6277 -e HOST=0.0.0.0 -e MCP_AUTO_OPEN_ENABLED=false ghcr.io/modelcontextprotocol/inspector:latest"
+  }
+}

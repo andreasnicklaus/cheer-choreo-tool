@@ -1,8 +1,56 @@
 import { NextFunction, Request, Response, Router } from "express";
+import { z } from "zod";
 import Choreo from "../db/models/choreo";
 import ChoreoService from "../services/ChoreoService";
 import { NotFoundError } from "@/utils/errors";
+import { validate } from "@/middlewares/validateMiddleware";
+import { colorHex, uuidParams, uuidParamsOptional } from "@/utils/zodSchemas";
+
 const { default: AuthService } = require("../services/AuthService");
+
+const createChoreoSchema = z.object({
+  name: z.string().min(1),
+  counts: z.number().int().min(0),
+  matType: z.string().min(1),
+  seasonTeamId: z.uuid(),
+  participants: z
+    .array(z.object({ id: z.uuid(), color: colorHex.optional() }))
+    .optional()
+    .default([]),
+  ownerId: z.uuid().optional(),
+});
+const updateChoreoSchema = createChoreoSchema.partial();
+
+const choreoParticipationParams = z.object({
+  id: z.uuid(),
+  participationId: z.uuid(),
+});
+const choreoParticipantParams = z.object({
+  id: z.uuid(),
+  participantId: z.uuid(),
+});
+
+const addParticipantSchema = z.object({
+  MemberId: z.uuid(),
+  color: colorHex.optional(),
+});
+
+const replaceParticipantSchema = z.object({
+  memberToRemoveId: z.uuid(),
+  memberToAddId: z.uuid(),
+});
+
+const changeColorSchema = z.object({
+  color: colorHex,
+});
+
+type CreateChoreoBody = z.infer<typeof createChoreoSchema>;
+type UpdateChoreoBody = z.infer<typeof updateChoreoSchema>;
+type AddParticipantBody = z.infer<typeof addParticipantSchema>;
+type ReplaceParticipantBody = z.infer<typeof replaceParticipantSchema>;
+type ChangeColorBody = z.infer<typeof changeColorSchema>;
+type ChoreoParticipationParams = z.infer<typeof choreoParticipationParams>;
+type ChoreoParticipantParams = z.infer<typeof choreoParticipantParams>;
 
 /**
  * @swagger
@@ -53,17 +101,18 @@ const router = Router();
 router.get(
   "/{:id}",
   AuthService.authenticateUser(),
+  validate(uuidParamsOptional, "params"),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.params.id)
-      ChoreoService.findById(req.params.id, req.UserId)
-        .then((foundChoreo: Choreo) => {
+      ChoreoService.findById(req.params.id, req.actingUserId)
+        .then((foundChoreo: Choreo | null) => {
           if (!foundChoreo) throw new NotFoundError();
           else res.send(foundChoreo);
           return next();
         })
         .catch((e: Error) => next(e));
     else {
-      ChoreoService.getAll(req.UserId)
+      ChoreoService.getAll(req.ownerIds, req.actingUserId)
         .then((choreoList: Choreo[]) => {
           res.send(choreoList);
           return next();
@@ -106,6 +155,9 @@ router.get(
  *                 type: array
  *                 items:
  *                   type: string
+ *               ownerId:
+ *                 type: string | null
+ *                 description: Owner ID. If null/undefined, falls back to actingUserId
  *     responses:
  *       200:
  *         description: Choreo created successfully
@@ -119,17 +171,20 @@ router.get(
 router.post(
   "/",
   AuthService.authenticateUser(),
+  validate(createChoreoSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { name, counts, matType, seasonTeamId, participants } = req.body;
+    const { name, counts, matType, seasonTeamId, participants, ownerId } =
+      req.body as CreateChoreoBody;
     return ChoreoService.create(
       name,
       counts,
-      matType,
+      matType as Choreo["matType"],
       seasonTeamId,
       participants,
-      req.UserId,
+      ownerId || req.actingUserId,
+      req.actingUserId,
     )
-      .then((choreo: Choreo) => {
+      .then((choreo: Choreo | null) => {
         res.send(choreo);
         return next();
       })
@@ -173,9 +228,15 @@ router.post(
 router.put(
   "/:id",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
+  validate(updateChoreoSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    return ChoreoService.update(req.params.id, req.body, req.UserId)
-      .then((choreo: Choreo) => {
+    return ChoreoService.update(
+      req.params.id,
+      req.body as UpdateChoreoBody,
+      req.actingUserId,
+    )
+      .then((choreo: Choreo | null) => {
         res.send(choreo);
         return next();
       })
@@ -209,8 +270,9 @@ router.put(
 router.delete(
   "/:id",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
-    return ChoreoService.remove(req.params.id, req.UserId)
+    return ChoreoService.remove(req.params.id, req.actingUserId)
       .then(() => {
         res.send();
         return next();
@@ -256,12 +318,15 @@ router.delete(
 router.post(
   "/:id/participants",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
+  validate(addParticipantSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { MemberId, color } = req.body;
+    const { MemberId, color } = req.body as AddParticipantBody;
     return ChoreoService.addParticipant(
       req.params.id,
       MemberId,
-      req.UserId,
+      req.actingUserId,
+      false,
       color,
     )
       .then(() => {
@@ -301,10 +366,13 @@ router.post(
 router.delete(
   "/:id/participants/:participationId",
   AuthService.authenticateUser(),
+  validate(choreoParticipationParams, "params"),
   (req: Request, res: Response, next: NextFunction) => {
+    const params = req.params as ChoreoParticipationParams;
     return ChoreoService.removeParticipant(
-      req.params.id,
-      req.params.participationId,
+      params.id,
+      params.participationId,
+      req.actingUserId,
     )
       .then(() => {
         res.send();
@@ -356,15 +424,18 @@ router.delete(
 router.patch(
   "/:id/participants",
   AuthService.authenticateUser(),
+  validate(uuidParams, "params"),
+  validate(replaceParticipantSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { memberToRemoveId, memberToAddId } = req.body;
+    const { memberToRemoveId, memberToAddId } =
+      req.body as ReplaceParticipantBody;
     return ChoreoService.replaceParticipant(
       req.params.id,
       memberToAddId,
       memberToRemoveId,
-      req.UserId,
+      req.actingUserId,
     )
-      .then((choreo: Choreo) => {
+      .then((choreo: Choreo | null) => {
         res.send(choreo);
         return next();
       })
@@ -412,12 +483,16 @@ router.patch(
 router.patch(
   "/:id/participants/:participantId",
   AuthService.authenticateUser(),
+  validate(choreoParticipantParams, "params"),
+  validate(changeColorSchema),
   (req: Request, res: Response, next: NextFunction) => {
-    const { color } = req.body;
+    const { color } = req.body as ChangeColorBody;
+    const params = req.params as ChoreoParticipantParams;
     return ChoreoService.changeParticipationColor(
-      req.params.id,
-      req.params.participantId,
+      params.id,
+      params.participantId,
       color,
+      req.actingUserId,
     )
       .then(() => {
         res.send();

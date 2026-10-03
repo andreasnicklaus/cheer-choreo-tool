@@ -13,3 +13,9 @@ export class MisconfigurationError extends Error {
 export class AuthorizationError extends Error {
   name = "AuthorizationError";
 }
+export class AccessDeniedError extends Error {
+  name = "AccessDeniedError";
+}
+export class LineupConflictError extends Error {
+  name = "LineupConflictError";
+}

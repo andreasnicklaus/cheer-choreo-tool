@@ -31,4 +31,12 @@ export default abstract class TestPage {
     await input.fill(value);
     await expect(input).toHaveValue(value);
   }
+
+  async iOpenMobileMenu() {
+    const menuToggle = this.page.getByRole("button", {
+      name: "Toggle navigation",
+    });
+    await this.iClickButton(menuToggle);
+    return new Promise((resolve) => setTimeout(resolve, 200));
+  }
 }

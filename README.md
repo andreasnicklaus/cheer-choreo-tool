@@ -12,7 +12,7 @@
 ![Website status](https://img.shields.io/website?url=https%3A%2F%2Fwww.choreo-planer.de&style=for-the-badge)
 ![Backend status](https://img.shields.io/website?url=https%3A%2F%2Fapi.choreo-planer.de&style=for-the-badge&label=Backend)
 
-![Backend server build status](<https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/docker-server-image.yml?style=for-the-badge&logo=docker&logoColor=white&label=Backend%20Build%20(Server)>)
+![Backend server build status](https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/server.yml?style=for-the-badge&logo=docker&logoColor=white&label=Backend%20Build%20(Server))
 ![Frontend build status](https://img.shields.io/github/actions/workflow/status/andreasnicklaus/cheer-choreo-tool/pages.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=Frontend%20Build)
 
 ![Last commit](https://img.shields.io/github/last-commit/andreasnicklaus/cheer-choreo-tool?style=for-the-badge&label=Last%20Major%20Update)
@@ -31,6 +31,19 @@
 
 [![](https://img.shields.io/badge/Visit%20www.choreo--planer.de-orange?style=for-the-badge&logo=googlechrome&logoColor=white)](https://www.choreo-planer.de)
 
+## Features
+
+- **Choreography Planning** – Create and manage choreos with counts, hits, lineups, and member positions on multiple mat types
+- **Member Management** – Organize teams, season squads, and participants across clubs
+- **Season Transitions** – Start new seasons, carry over rosters, and define custom seasons
+- **File Generation** – Export countsheets as PDF, lineups as images, and videos as MP4/WebM
+- **Video Export** – Generate choreo videos locally in the browser with customizable duration and format
+- **Sharing & Collaboration** – Grant access to coaches and team members for real-time collaboration
+- **Personalization** – Brand with club logos, team colors, and custom mat layouts
+- **AI-Powered (MCP)** – Connect AI agents via the Model Context Protocol to create and manage choreos programmatically
+- **Data Security** – Encrypted transfer, password-protected access, and regular backups
+- **Multi-Language** – Full English and German support
+
 ## Architecture
 
 ```mermaid
@@ -38,11 +51,11 @@ graph
 
   subgraph Github
     subgraph pages[Github Pages]
-      subgraph vue[Vue JS UI]
+      subgraph vue[Vue 3 + Vite UI]
         VueMatomo
-        bootstrap-vue
-        vue-18n
-        vue-meta
+        bootstrap-vue-next
+        vue-i18n
+        unhead
       end
     end
     githubactions(Github Actions)
@@ -57,7 +70,9 @@ graph
         ReverseProxy
         Matomo
         Watchtower
+        Unleash
         ReverseProxy[Reverse Proxy]
+        LoadBalancer[Load Balancer]
         sequelize
         db[(Postgres Database)]
         dba[(Analytics Database)]
@@ -71,9 +86,12 @@ graph
     end
   end
 
-  ReverseProxy --> api
+  ReverseProxy --> LoadBalancer
   ReverseProxy --> Watchtower
   ReverseProxy --> Matomo
+  ReverseProxy --> Unleash
+
+  LoadBalancer --> api
 
   sequelize --> db
   Matomo --> dba
@@ -107,6 +125,40 @@ graph
 See [LICENSE](LICENSE) for the license of this project.
 
 ## :sparkles: Version history
+
+### 1.0.0 -  2026-07-12 (alias: 0.13.3)
+
+- MCP support
+- Migrating Vue to Typescript
+- Visual bugfixes
+- Social Login: Allow users to log in via Google, Github or Facebook
+- Sharing access to different users in order to work on the same clubs, teams and choreos
+
+### 0.13.0 - 2026-04-06
+
+#### ⚠️ Breaking Changes
+
+- Migrated from Vue 2 to Vue 3 with Composition API
+- Migrated from Vue CLI to Vite build system
+- Migrated from Jest to Vitest for unit testing
+- Upgraded Bootstrap 4 → Bootstrap 5
+
+#### Added
+
+- Development agent skills for AI-assisted development
+- ESLint with strict rules and auto-fix
+- VSCode extension recommendations
+- CI/CD workflow improvements with better caching
+- Support for soft-deleted user accounts with recover functionality
+
+#### Changed
+
+- vue-meta replaced with @unhead/vue
+- Various dependency updates
+
+#### Fixed
+
+- Spelling and translation errors
 
 ### 0.12.0 - 2025-12-22
 

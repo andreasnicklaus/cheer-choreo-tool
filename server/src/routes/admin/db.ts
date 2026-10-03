@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
+import { z } from "zod";
 import User from "../../db/models/user";
 import Club from "../../db/models/club";
 import Team from "../../db/models/team";
@@ -16,6 +17,43 @@ import ChoreoService from "../../services/ChoreoService";
 import search from "../../utils/fuzzySearch";
 import sequelizeDataTypeToHtmlInputType from "../../utils/datatypeConverter";
 import { FaultyInputError } from "@/utils/errors";
+import { validate } from "../../middlewares/validateMiddleware";
+
+const entityEnum = z.enum(["clubs", "teams", "seasons", "members", "choreos"]);
+const entityParams = z.object({ entity: entityEnum });
+const entityDeleteParams = z.object({
+  entity: entityEnum,
+  id: z.string().min(1),
+});
+const dbGetQuerySchema = z.object({
+  UserId: z.string().optional(),
+  s: z.string().optional(),
+});
+const dbCreateBodySchema = z.object({
+  name: z.string().optional(),
+  UserId: z.string().optional(),
+  ClubId: z.string().optional(),
+  SeasonId: z.string().optional(),
+  SeasonTeamId: z.string().optional(),
+  nickname: z.string().optional(),
+  abbreviation: z.string().optional(),
+  year: z.coerce.number().optional(),
+  counts: z.coerce.number().optional(),
+  matType: z.string().optional(),
+});
+const dbUpdateBodySchema = z.object({
+  id: z.string().min(1),
+  name: z.string().optional(),
+  UserId: z.string().optional(),
+  ClubId: z.string().optional(),
+  SeasonId: z.string().optional(),
+  SeasonTeamId: z.string().optional(),
+  nickname: z.string().optional(),
+  abbreviation: z.string().optional(),
+  year: z.coerce.number().optional(),
+  counts: z.coerce.number().optional(),
+  matType: z.string().optional(),
+});
 
 type entityList = { value: string; name: string }[];
 
@@ -30,9 +68,12 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
 
 router.get(
   "/:entity",
+  validate(entityParams, "params"),
+  validate(dbGetQuerySchema, "query"),
   async (req: Request, res: Response, next: NextFunction) => {
     const UserId = (req.query.UserId ?? null) as string;
     const searchTerm = req.query.s ?? null;
+    const adminId = req.Admin?.id || req.AdminId;
 
     let columns, data;
     let model;
@@ -51,30 +92,49 @@ router.get(
     switch (req.params.entity) {
       case "clubs":
         columns = ["name"];
-        data = await ClubService.getAll(UserId, { all: !UserId });
+        data = await ClubService.getAll(
+          UserId ? [UserId] : null,
+          adminId,
+          true,
+          { all: !UserId },
+        );
         model = Club;
         break;
       case "teams":
         columns = ["name"];
-        data = await TeamService.getAll(UserId, { all: !UserId });
+        data = await TeamService.getAll(
+          UserId ? [UserId] : null,
+          adminId,
+          true,
+          { all: !UserId },
+        );
         model = Team;
         extraData.clubList = (
-          await ClubService.getAll(null, { all: true })
+          await ClubService.getAll([], adminId, true, { all: true })
         ).map((club: Club) => ({ value: club.id, name: club.name }));
         break;
       case "seasons":
         columns = ["year", "name"];
-        data = await SeasonService.getAll(UserId, { all: !UserId });
+        data = await SeasonService.getAll(
+          UserId ? [UserId] : null,
+          adminId,
+          true,
+          { all: !UserId },
+        );
         model = Season;
         break;
       case "members":
         columns = ["name", "nickname", "abbreviation"];
-        data = await MemberService.getAll(UserId, { all: !UserId });
+        data = UserId
+          ? await MemberService.getAll([UserId], adminId, true, { all: false })
+          : await MemberService.getAll([], adminId, true, { all: true });
         model = Member;
         extraData.teamList = (
-          await TeamService.getAll(null, { all: true })
+          await TeamService.getAll([], adminId, true, { all: true })
         ).map((team: Team) => ({ value: team.id, name: team.name }));
-        extraData.seasonTeamList = (await SeasonTeamService.getAll())
+        extraData.seasonTeamList = (
+          await SeasonTeamService.getAll([], adminId, true)
+        )
           .filter((seasonTeam: SeasonTeam) => seasonTeam.User)
           .map((seasonTeam: SeasonTeam) => {
             return {
@@ -87,9 +147,13 @@ router.get(
         break;
       case "choreos":
         columns = ["name", "counts", "matType"];
-        data = await ChoreoService.getAll(UserId, { all: !UserId });
+        data = UserId
+          ? await ChoreoService.getAll([UserId], adminId, true, { all: false })
+          : await ChoreoService.getAll([], adminId, true, { all: true });
         model = Choreo;
-        extraData.seasonTeamList = (await SeasonTeamService.getAll())
+        extraData.seasonTeamList = (
+          await SeasonTeamService.getAll([], adminId, true)
+        )
           .filter((seasonTeam: SeasonTeam) => seasonTeam.User)
           .map((seasonTeam: SeasonTeam) => {
             return {
@@ -141,6 +205,8 @@ router.get(
 
 router.post(
   "/:entity",
+  validate(entityParams, "params"),
+  validate(dbCreateBodySchema, "body"),
   async (req: Request, res: Response, next: NextFunction) => {
     const { entity } = req.params;
     const data = req.body;
@@ -159,19 +225,26 @@ router.post(
         case "clubs":
           {
             const { name, UserId } = data;
-            await ClubService.create(name, UserId);
+            await ClubService.create(name, UserId, UserId, true);
           }
           break;
         case "teams":
           {
             const { name, ClubId, SeasonId, UserId } = data;
-            await TeamService.create(name, ClubId, SeasonId, UserId);
+            await TeamService.create(
+              name,
+              ClubId,
+              SeasonId,
+              UserId,
+              UserId,
+              true,
+            );
           }
           break;
         case "seasons":
           {
             const { name, year, UserId } = data;
-            await SeasonService.create(name, year, UserId);
+            await SeasonService.create(name, year, UserId, UserId, true);
           }
           break;
         case "members":
@@ -183,6 +256,7 @@ router.post(
               abbreviation,
               SeasonTeamId,
               UserId,
+              true,
             );
           }
           break;
@@ -196,6 +270,8 @@ router.post(
               SeasonTeamId,
               [],
               UserId,
+              UserId,
+              true,
             );
           }
           break;
@@ -212,9 +288,12 @@ router.post(
 
 router.post(
   "/:entity/update",
+  validate(entityParams, "params"),
+  validate(dbUpdateBodySchema, "body"),
   async (req: Request, res: Response, next: NextFunction) => {
     const { entity } = req.params;
     const { id, ...data } = req.body;
+    const adminId = req.Admin?.id || req.AdminId;
 
     // Sanitize data to remove empty strings and convert "null" strings to null
     Object.keys(data).forEach((key) => {
@@ -246,7 +325,7 @@ router.post(
         return next(new FaultyInputError(req.t("errors.invalid-entity")));
     }
     try {
-      await service.update(id, data, null, { all: true });
+      await service.update(id, data, adminId, true, { all: true });
       res.redirect(`${req.baseUrl}/${entity}`); // njsscan-ignore: express_open_redirect
     } catch (e) {
       next(e);
@@ -256,8 +335,10 @@ router.post(
 
 router.delete(
   "/:entity/:id",
+  validate(entityDeleteParams, "params"),
   async (req: Request, res: Response, next: NextFunction) => {
     const { entity, id } = req.params;
+    const adminId = req.Admin?.id || req.AdminId;
 
     let service;
     switch (entity) {
@@ -281,7 +362,7 @@ router.delete(
     }
 
     try {
-      await service.remove(id, null, { all: true });
+      await service.remove(id, adminId, true, { all: true });
       res.redirect(`${req.baseUrl}/${entity}`); // njsscan-ignore: express_open_redirect
     } catch (e) {
       next(e);

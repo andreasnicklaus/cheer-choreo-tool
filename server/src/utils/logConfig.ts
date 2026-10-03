@@ -39,6 +39,25 @@ function logConfig() {
     ? "<redacted>"
     : "not defined"; // njsscan-ignore: node_password
 
+  const FeatureFlagApiKey = process.env.UNLEASH_API_KEY
+    ? "<redacted>"
+    : "not defined";
+
+  const GoogleClientId = process.env.GOOGLE_CLIENT_ID || "not defined";
+  const GoogleClientSecret = process.env.GOOGLE_CLIENT_SECRET
+    ? "<redacted>"
+    : "not defined"; // njsscan-ignore: node_secret
+
+  const GithubClientId = process.env.GITHUB_CLIENT_ID || "not defined";
+  const GithubClientSecret = process.env.GITHUB_CLIENT_SECRET
+    ? "<redacted>"
+    : "not defined"; // njsscan-ignore: node_secret
+
+  const FacebookAppId = process.env.FACEBOOK_APP_ID || "not defined";
+  const FacebookAppSecret = process.env.FACEBOOK_APP_SECRET
+    ? "<redacted>"
+    : "not defined"; // njsscan-ignore: node_secret
+
   logger.info("################");
   logger.info("Configuration:");
   logger.info("################");
@@ -68,6 +87,15 @@ function logConfig() {
   logger.info("");
   logger.info(`  Log Source Token:      ${LogSourceToken}`);
   logger.info(`  Log Ingesting Host:    ${LogIngestingHost}`);
+  logger.info("");
+  logger.info(`  Feature Flag API Key:  ${FeatureFlagApiKey}`);
+  logger.info("");
+  logger.info(`  Google Client ID:      ${GoogleClientId}`);
+  logger.info(`  Google Client Secret:  ${GoogleClientSecret}`);
+  logger.info(`  Github Client ID:      ${GithubClientId}`);
+  logger.info(`  Github Client Secret:  ${GithubClientSecret}`);
+  logger.info(`  Facebook App ID:       ${FacebookAppId}`);
+  logger.info(`  Facebook App Secret:   ${FacebookAppSecret}`);
   logger.info("################");
 }
 

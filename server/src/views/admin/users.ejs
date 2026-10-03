@@ -37,9 +37,14 @@
           </thead>
           <tbody class="table-group-divider">
             <% userList.forEach((user, i) => { %>
-            <tr title="<%= user.id %>">
+            <tr title="<%= user.id %>" %>">
               <th scope="row"><%= i + 1 %></th>
-              <td><%= user.username %></td>
+              <td>
+                <%= user.username %>
+                <% if (user.deletedAt) { %>
+                <span class="badge text-bg-secondary ms-1"><%= t('admin.users.deleted') %></span>
+                <% } %>
+              </td>
               <td>
                 <%= user.email %> <% if (user.email && user.emailConfirmed) { %>
                 <i class="bi-check-circle-fill text-success"></i>
@@ -55,6 +60,18 @@
               </td>
               <td>
                 <div class="btn-group">
+                  <% if (user.deletedAt) { %>
+                  <button
+                    type="button"
+                    class="btn btn-success btn-sm"
+                    data-recover-id="<%= user.id %>"
+                    data-bs-toggle="modal"
+                    data-bs-target="#userRecoverModal"
+                    data-bs-username="<%= user.username %>"
+                  >
+                    <i class="bi bi-bootstrap-reboot"></i>
+                  </button>
+                  <% } else { %>
                   <button
                     type="button"
                     class="btn btn-warning btn-sm"
@@ -74,6 +91,7 @@
                   >
                     <i class="bi bi-trash-fill"></i>
                   </button>
+                  <% } %>
                 </div>
               </td>
             </tr>
@@ -85,11 +103,15 @@
               <td>
                 <b> <%= userList.length %> </b>
                 <%= tn('entities.user', 2) %>
+                <% const deletedCount = userList.filter(u => u.deletedAt).length; %>
+                <% if (deletedCount > 0) { %>
+                (<%= deletedCount %> <%= t('admin.users.deleted') %>)
+                <% } %>
               </td>
               <td>
-                <b> <%= userList.filter(u => u.email).length %> </b>
+                <b> <%= userList.filter(u => u.email && !u.deletedAt).length %> </b>
                 <%= t('admin.users.users-with-email') %> (<%=
-                userList.filter(u=> u.email &&!u.emailConfirmed ).length %>
+                userList.filter(u=> u.email &&!u.emailConfirmed && !u.deletedAt).length %>
                 <i class="bi-question-circle-fill text-warning"></i>)
               </td>
               <td></td>
@@ -294,6 +316,50 @@
       </div>
     </div>
 
+    <!-- Modal: Recover User -->
+    <div
+      class="modal fade"
+      id="userRecoverModal"
+      tabindex="-1"
+      aria-labelledby="userRecoverModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="userRecoverModalLabel">
+              <%= t('admin.users.recover-user') %>
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <form id="userRecoverForm" method="POST">
+            <div class="modal-body">
+              <p><%= t('admin.users.recover-user-confirmation') %></p>
+              <input type="hidden" name="id" id="recoverUserId" />
+              <p class="fw-bold" id="recoverUsername"></p>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-bs-dismiss="modal"
+              >
+                <%= t('general.close') %>
+              </button>
+              <button type="submit" class="btn btn-success">
+                <i class="bi bi-check2"></i> <%= t('admin.users.recover') %>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <footer><%- include('./partials/footer'); %></footer>
 
     <script type="text/javascript" defer nonce="<%= cspNonce %>">
@@ -346,6 +412,42 @@
               alert("<%= t('errors.something-went-wrong') %>");
             });
         }
+      }
+
+      const recoverModal = document.getElementById("userRecoverModal");
+      if (recoverModal) {
+        recoverModal.addEventListener("show.bs.modal", (event) => {
+          const button = event.relatedTarget;
+          const id = button.getAttribute("data-recover-id");
+          const username = button.getAttribute("data-bs-username");
+          const modalId = recoverModal.querySelector("#recoverUserId");
+          const modalUsername = recoverModal.querySelector("#recoverUsername");
+          modalId.value = id;
+          modalUsername.textContent = username;
+        });
+      }
+
+      const recoverForm = document.getElementById("userRecoverForm");
+      if (recoverForm) {
+        recoverForm.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const formData = new FormData(recoverForm);
+          const id = formData.get("id");
+          fetch("/admin/users/recover", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({ id: id }),
+          })
+            .then(() => {
+              window.location.reload();
+            })
+            .catch((err) => {
+              console.error(err);
+              alert("<%= t('errors.something-went-wrong') %>");
+            });
+        });
       }
     </script>
   </body>

@@ -1,147 +1,113 @@
 <template>
-  <b-modal
+  <BModal
     :id="`howToModal-${id}`"
+    ref="modal"
     :title="$t('modals.howto.anleitung')"
-    hide-footer
+    no-footer
     scrollable
     size="xl"
   >
-    <b-tabs fill>
-      <b-tab :title="$tc('lineup', 2)">
-        <b-card :title="$tc('lineup', 2)" border-variant="light">
-          <b-card-text>
+    <BTabs fill>
+      <BTab :title="$t('lineup', 2)">
+        <BCard :title="$t('lineup', 2)" border-variant="light">
+          <BCardText>
             <p>
               {{ $t("modals.howto.lineup-text-1") }}
             </p>
             <hr />
-            <i18n path="modals.howto.lineup-text-2" tag="p">
+            <I18n-t keypath="modals.howto.lineup-text-2" tag="p">
               <b>{{ $t("modals.howto.aufstellungen-anlegen") }}:</b>
-              <span
-                :style="{
-                  height: '24px',
-                  width: '24px !important',
-                  backgroundColor: '#ffab0655',
-                  borderRadius: '50%',
-                  border: 'solid 2px #ffab06',
-                  display: 'inline-block',
-                }"
-              />
-            </i18n>
+              <span class="tutorial-dot" />
+            </I18n-t>
             <hr />
-            <i18n path="modals.howto.lineup-text-3" tag="p">
+            <I18n-t keypath="modals.howto.lineup-text-3" tag="p">
               <b>{{ $t("modals.howto.aufstellungen-aufteilen") }}:</b>
-              <b-icon-pen />
-              <b-button
-                variant="light"
-                disabled
-                :style="{ display: 'inline-block' }"
-              >
-                <b-icon-plus />{{ $t("modals.howto.aufstellung-hinzufuegen") }}
-              </b-button>
-            </i18n>
+              <IBiPen />
+              <BButton variant="light" :style="{ display: 'inline-block' }">
+                <IBiPlus />{{ $t("modals.howto.aufstellung-hinzufuegen") }}
+              </BButton>
+            </I18n-t>
             <hr />
-            <b-alert variant="warning" show>
+            <BAlert variant="warning" show>
               {{ $t("modals.howto.ueberschneidung-warnung") }}
-            </b-alert>
-          </b-card-text>
-        </b-card>
-      </b-tab>
-      <b-tab :title="$tc('countsheet', 1)">
-        <b-card :title="$tc('countsheet', 1)" border-variant="light">
-          <b-card-text>
+            </BAlert>
+          </BCardText>
+        </BCard>
+      </BTab>
+      <BTab :title="$t('countsheet', 1)">
+        <BCard :title="$t('countsheet', 1)" border-variant="light">
+          <BCardText>
             <p>
               {{ $t("modals.howto.countsheet-info-1") }}
             </p>
             <hr />
-            <i18n path="modals.howto.countsheet-info-2" tag="p">
+            <I18n-t keypath="modals.howto.countsheet-info-2" tag="p">
               <b>{{ $t("modals.howto.eintraege-hinzufuegen") }}:</b>
-              <b-button
-                variant="outline-success"
-                disabled
-                :style="{ display: 'inline-block' }"
-              >
-                <b-icon-plus />{{ $t("modals.howto.eintrag-hinzufuegen") }}
-              </b-button>
-              <b-badge variant="light">H</b-badge>
-              <b-badge variant="light">N</b-badge>
+              <BButton variant="success" :style="{ display: 'inline-block' }">
+                <IBiPlus />{{ $t("countOverview.count-eintrag-hinzufuegen") }}
+              </BButton>
+              <BBadge variant="light">H</BBadge>
+              <BBadge variant="light">N</BBadge>
               <b>{{ $t("modals.howto.doppelklick-auf-die-zelle") }}</b>
-            </i18n>
-            <b-alert variant="info" show>
+            </I18n-t>
+            <BAlert variant="info" show>
               {{ $t("modals.howto.countsheet-info-box") }}
-            </b-alert>
+            </BAlert>
             <hr />
-            <i18n path="modals.howto.countsheet-info-3" tag="p">
+            <I18n-t keypath="modals.howto.countsheet-info-3" tag="p">
               <b>{{ $t("modals.howto.eintraege-bearbeiten") }}:</b>
-              <b-icon-pen />
-              <b-badge variant="light">Ä</b-badge>
-              <b-button
-                variant="success"
-                disabled
-                :style="{ display: 'inline-block' }"
-              >
-                <b-icon-check />
-              </b-button>
-            </i18n>
-          </b-card-text>
-        </b-card>
-      </b-tab>
-      <b-tab :title="$t('modals.howto.steuerung')">
-        <b-card :title="$t('modals.howto.steuerung')" border-variant="light">
+              <IBiPen />
+              <BBadge variant="light">Ä</BBadge>
+              <BButton variant="success" :style="{ display: 'inline-block' }">
+                <IBiCheck />
+              </BButton>
+            </I18n-t>
+          </BCardText>
+        </BCard>
+      </BTab>
+      <BTab :title="$t('modals.howto.steuerung')">
+        <BCard :title="$t('modals.howto.steuerung')" border-variant="light">
           <EditViewShortcutTutorial />
-        </b-card>
-      </b-tab>
-      <b-tab :title="$t('modals.howto.video-und-countsheet-downloaden')">
-        <b-card
+        </BCard>
+      </BTab>
+      <BTab :title="$t('modals.howto.video-und-countsheet-downloaden')">
+        <BCard
           :title="$t('modals.howto.video-und-countsheet-downloaden')"
           border-variant="light"
         >
-          <b-card-text>
-            <i18n path="modals.howto.download-info-1" tag="p">
+          <BCardText>
+            <I18n-t keypath="modals.howto.download-info-1" tag="p">
               <b>{{ $t("modals.howto.countsheet-als-pdf-downloaden") }}:</b>
-              <b-button
-                variant="light"
-                disabled
-                :style="{ display: 'inline-block' }"
-              >
-                <b-icon-three-dots-vertical />
-              </b-button>
-              <b-button
-                variant="light"
-                disabled
-                :style="{ display: 'inline-block' }"
-              >
-                <b-icon-file-pdf /> {{ $t("Home.countsheet-als-pdf") }}
-              </b-button>
-            </i18n>
+              <BButton variant="light" :style="{ display: 'inline-block' }">
+                <IBiThreeDotsVertical />
+              </BButton>
+              <BButton variant="light" :style="{ display: 'inline-block' }">
+                <IBiFilePdf /> {{ $t("Home.countsheet-als-pdf") }}
+              </BButton>
+            </I18n-t>
             <hr />
-            <i18n path="modals.howto.download-info-2" tag="p">
+            <I18n-t keypath="modals.howto.download-info-2" tag="p">
               <b
                 >{{ $t("modals.howto.aufstellungen-als-video-downloaden") }}:</b
               >
-              <b-button
-                variant="light"
-                disabled
-                :style="{ display: 'inline-block' }"
-              >
-                <b-icon-three-dots-vertical />
-              </b-button>
-              <b-button
-                variant="light"
-                disabled
-                :style="{ display: 'inline-block' }"
-              >
-                <b-icon-film /> {{ $t("editView.video-exportieren") }}
-              </b-button>
-            </i18n>
-          </b-card-text>
-        </b-card>
-      </b-tab>
-    </b-tabs>
-  </b-modal>
+              <BButton variant="light" :style="{ display: 'inline-block' }">
+                <IBiThreeDotsVertical />
+              </BButton>
+              <BButton variant="light" :style="{ display: 'inline-block' }">
+                <IBiFilm /> {{ $t("editView.video-exportieren") }}
+              </BButton>
+            </I18n-t>
+          </BCardText>
+        </BCard>
+      </BTab>
+    </BTabs>
+  </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import EditViewShortcutTutorial from "../EditViewShortcutTutorial.vue";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * @module Modal:HowToModal
@@ -154,7 +120,7 @@ import EditViewShortcutTutorial from "../EditViewShortcutTutorial.vue";
  *  <Button @click="() => $refs.howToModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "HowToModal",
   components: { EditViewShortcutTutorial },
   data: () => ({
@@ -162,8 +128,19 @@ export default {
   }),
   methods: {
     open() {
-      this.$bvModal.show(`howToModal-${this.id}`);
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
   },
-};
+});
 </script>
+
+<style lang="scss" scoped>
+.tutorial-dot {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-color: rgba(255, 171, 6, 0.33);
+  border-radius: 50%;
+  border: 2px solid var(--color-tutorial-highlight);
+}
+</style>

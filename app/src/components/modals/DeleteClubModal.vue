@@ -1,23 +1,26 @@
 <template>
-  <b-modal
+  <BModal
     :id="`modal-deleteClub-${id}`"
+    ref="modal"
     :title="$t('modals.delete-club.verein-loeschen')"
     centered
-    @show="reset"
+    @hidden="reset"
     @ok="deleteClub"
   >
     <p class="m-0">{{ $t("du-kannst-das-nicht-rueckgaengig-machen") }}</p>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="danger">{{ $t("loeschen") }}</b-button>
-      <b-button @click="cancel" variant="outline-secondary">
+    <template #footer="{ ok, cancel }">
+      <BButton variant="danger" @click="ok">{{ $t("loeschen") }}</BButton>
+      <BButton variant="light" @click="cancel">
         {{ $t("abbrechen") }}
-      </b-button>
+      </BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import ClubService from "@/services/ClubService";
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 
 /**
  * @module Modal:DeleteClubModal
@@ -33,25 +36,26 @@ import ClubService from "@/services/ClubService";
  *  <Button @click="() => $refs.deleteClubModal.open('abc')" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "DeleteClubModal",
+  emits: ["clubDeleted"],
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
-    deleteClubId: null,
+    deleteClubId: null as string | null,
   }),
   methods: {
-    open(deleteClubId) {
-      this.$bvModal.show(`modal-deleteClub-${this.id}`);
+    open(deleteClubId: string) {
       this.deleteClubId = deleteClubId;
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     reset() {
       this.deleteClubId = null;
     },
     deleteClub() {
-      ClubService.remove(this.deleteClubId).then(() => {
+      ClubService.remove(this.deleteClubId!).then(() => {
         this.$emit("clubDeleted", this.deleteClubId);
       });
     },
   },
-};
+});
 </script>

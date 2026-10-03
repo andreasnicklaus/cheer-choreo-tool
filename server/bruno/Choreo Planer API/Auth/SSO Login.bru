@@ -1,0 +1,22 @@
+meta {
+  name: SSO Login
+  method: POST
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/auth/sso
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "ssoToken": "<token-from-sso-request>"
+  }
+}

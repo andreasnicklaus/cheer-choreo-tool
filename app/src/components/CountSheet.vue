@@ -1,5 +1,5 @@
 <template>
-  <b-table-simple
+  <BTableSimple
     lang="de"
     striped
     hover
@@ -9,12 +9,13 @@
     :style="{
       placeItems: 'center',
       fontSize: fontSize ? fontSize + 'px' : null,
+      overflowY: 'hidden',
     }"
     class="text-center"
   >
-    <b-thead head-variant="light">
-      <b-tr>
-        <b-th
+    <BThead head-variant="light">
+      <BTr>
+        <BTh
           v-for="field in [
             $t('achter'),
             '1',
@@ -29,12 +30,12 @@
           :key="field"
         >
           {{ field }}
-        </b-th>
-      </b-tr>
-    </b-thead>
-    <b-tbody>
-      <b-tr v-for="(acht, i) in achter" :key="i" :style="{ height: '1px' }">
-        <b-td
+        </BTh>
+      </BTr>
+    </BThead>
+    <BTbody>
+      <BTr v-for="(acht, i) in achter" :key="i">
+        <BTd
           v-for="label in [
             $t('achter'),
             '1',
@@ -53,50 +54,82 @@
             // border: 'none',
           }"
         >
-          <span v-show="label == $t('achter')">
-            {{ acht[label] + 1 }}
-          </span>
-          <b-button
-            v-show="
-              label != $t('achter') && i * 8 + parseInt(label) <= choreo.counts
-            "
-            :disabled="!interactive"
-            class="p-1 py-2"
-            squared
-            :style="{
-              wordBreak: 'break-word',
-              hyphens: 'auto',
-              minWidth: '50px',
-              height: '100%',
-              fontSize: fontSize ? fontSize + 'px' : null,
-              color:
-                Math.floor(count / 8) == i && count % 8 == label - 1
-                  ? 'white'
-                  : null,
-            }"
-            block
-            @click="() => setCount(i, parseInt(label - 1))"
-            @dblclick="() => $emit('openCreateHitModal')"
-            :variant="
-              Math.floor(count / 8) == i && count % 8 == label - 1
-                ? 'primary'
-                : 'outline-primary'
-            "
+          <div
+            v-if="label == $t('achter')"
+            class="d-grid align-content-center"
+            style="height: 100%"
           >
-            <span v-show="acht[label].length > 0">
-              <p class="mb-0" v-for="hit in acht[label]" :key="hit.name">
-                {{ hit.name }}
-              </p>
-            </span>
-            <span v-show="acht[label].length == 0">-</span>
-          </b-button>
-        </b-td>
-      </b-tr>
-    </b-tbody>
-  </b-table-simple>
+            {{ ((acht[label] as number) ?? 0) + 1 }}
+          </div>
+          <div
+            v-else
+            class="d-grid"
+            :style="{
+              height: '100%',
+            }"
+          >
+            <BButton
+              v-show="
+                label != $t('achter') &&
+                i * 8 + parseInt(label) <= choreo.counts
+              "
+              class="p-1 py-2"
+              squared
+              :style="{
+                wordBreak: 'break-word',
+                hyphens: 'auto',
+                minWidth: '50px',
+                height: '100%',
+                fontSize: fontSize ? fontSize + 'px' : null,
+                color:
+                  Math.floor(count / 8) == i && count % 8 == parseInt(label) - 1
+                    ? 'var(--bs-white)'
+                    : null,
+              }"
+              :variant="
+                Math.floor(count / 8) == i && count % 8 == parseInt(label) - 1
+                  ? 'primary'
+                  : 'outline-primary'
+              "
+              @click="
+                () => {
+                  if (interactive) setCount(i, parseInt(label) - 1);
+                }
+              "
+              @dblclick="
+                () => {
+                  if (interactive) $emit('openCreateHitModal');
+                }
+              "
+            >
+              <span
+                v-show="
+                  acht[label] &&
+                  label !== $t('achter') &&
+                  (acht[label] as Hit[]).length > 0
+                "
+              >
+                <p
+                  v-for="hit in acht[label] as Hit[]"
+                  :key="hit.name"
+                  class="mb-0"
+                >
+                  {{ hit.name }}
+                </p>
+              </span>
+              <span v-show="(acht[label] as Hit[]).length == 0">-</span>
+            </BButton>
+          </div>
+        </BTd>
+      </BTr>
+    </BTbody>
+  </BTableSimple>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, PropType } from "vue";
+import type { Choreo, Hit } from "@/types";
+
 /**
  * @module Component:CountSheet
  *
@@ -117,7 +150,7 @@
  * @example <CountSheet :count="0" :fontSize="16" @setCounter="handler" @openCreateHitModal="handler" />
  * @example <CountSheet :count="0" :choreo="choreoObj" :interactive="false" :stickyHeader="false" :fontSize="18" :startCount="2" :fixed="true" @setCounter="handler" @openCreateHitModal="handler" />
  */
-export default {
+export default defineComponent({
   name: "CountSheet",
   props: {
     count: {
@@ -125,7 +158,8 @@ export default {
       required: true,
     },
     choreo: {
-      type: Object,
+      type: Object as PropType<Choreo>,
+      default: () => ({}),
     },
     interactive: {
       type: Boolean,
@@ -137,6 +171,7 @@ export default {
     },
     fontSize: {
       type: Number,
+      default: 14,
     },
     startCount: {
       type: Number,
@@ -147,16 +182,7 @@ export default {
       default: false,
     },
   },
-  methods: {
-    setCount(achter, count) {
-      this.$emit("setCounter", achter * 8 + count);
-    },
-    findActionsForCount(count) {
-      return this.choreo.Hits.filter((a) => {
-        return a.count == count;
-      });
-    },
-  },
+  emits: ["openCreateHitModal", "setCounter"],
   computed: {
     achter() {
       if (!this.choreo) return [];
@@ -180,11 +206,25 @@ export default {
       return window.innerHeight - 30 + "px";
     },
   },
-};
+  methods: {
+    setCount(achter: number, count: number) {
+      this.$emit("setCounter", achter * 8 + count);
+    },
+    findActionsForCount(count: number) {
+      return this.choreo.Hits.filter((a) => {
+        return a.count == count;
+      });
+    },
+  },
+});
 </script>
 
 <style lang="scss" scoped>
 td {
   padding: 0;
+}
+
+:deep(span) {
+  pointer-events: none;
 }
 </style>

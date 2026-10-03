@@ -1,6 +1,7 @@
 <template>
-  <b-modal
+  <BModal
     :id="`comfirmEmailModal-${id}`"
+    ref="modal"
     :title="$t('modals.confirm-email.bestaetige-deine-e-mail-adresse')"
     centered
     :header-bg-variant="isError ? 'danger' : 'success'"
@@ -10,18 +11,20 @@
       {{ $t("modals.confirm-email.info-1") }}
     </p>
     <p>{{ $t("modals.confirm-email.info-2") }}</p>
-    <template #modal-footer="{ cancel }">
-      <b-button
-        @click="cancel"
+    <template #footer="{ cancel }">
+      <BButton
         :variant="isError ? 'outline-danger' : 'outline-success'"
+        @click="cancel"
       >
         {{ $t("feedback.schliessen") }}
-      </b-button>
+      </BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from "vue";
+import { BModal } from "bootstrap-vue-next";
 /**
  * @module Modal:ConfirmEmailModal
  *
@@ -30,8 +33,8 @@
  *
  * @example <ConfirmEmailModal />
  */
-export default {
-  name: "HowToModal",
+export default defineComponent({
+  name: "ConfirmEmailModal",
   data: () => ({
     id: (Math.random() + 1).toString(36).substring(7),
     isError: false,
@@ -39,8 +42,8 @@ export default {
   methods: {
     open(isError = false) {
       this.isError = isError;
-      this.$bvModal.show(`comfirmEmailModal-${this.id}`);
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
   },
-};
+});
 </script>

@@ -1,22 +1,23 @@
 <template>
-  <b-modal
+  <BModal
     :id="`modal-newHit-${id}`"
+    ref="modal"
     :title="$t('shortcut-tutorial.neuer-eintrag')"
-    centered
+    scrollable
     size="lg"
     @show="resetModal"
     @hidden="resetModal"
     @ok="createHit"
   >
-    <b-form>
-      <b-form-group
+    <BForm>
+      <BFormGroup
         :label="$t('name')"
         label-class="label-with-colon"
         :state="newHitNameIsValid"
         :invalid-feedback="newHitNameStateFeedback"
-        valid-feedback="Gültig!"
+        :valid-feedback="$t('login.gueltig')"
       >
-        <b-form-input
+        <BFormInput
           v-model="newHitName"
           :placeholder="$t('modals.create-hit.wie-heisst-der-neue-eintrag')"
           autofocus
@@ -25,110 +26,108 @@
           list="hitName-options"
         />
         <datalist
-          id="hitName-options"
           v-if="newHitName && newHitName.length > 1"
+          id="hitName-options"
         >
           <option
-            v-for="proposal in hitNameProposals.filter((p) =>
-              p.toLowerCase().startsWith(newHitName.toLowerCase())
-            )"
-            :key="proposal"
+            v-for="hitProposal in filteredHitNameProposals"
+            :key="hitProposal"
           >
-            {{ proposal }}
+            {{ hitProposal }}
           </option>
         </datalist>
-      </b-form-group>
-      <b-row>
-        <b-col cols="6">
-          <b-form-group
+      </BFormGroup>
+      <BRow>
+        <BCol cols="6">
+          <BFormGroup
             :description="$t('achter')"
             :state="newHitAchterIsValid"
             :invalid-feedback="newHitAchterStateFeedback"
             :valid-feedback="$t('login.gueltig')"
           >
-            <b-form-input
+            <BFormInput
               v-model="newHitAchter"
               type="number"
               min="1"
               :max="Math.ceil(maxCount / 8)"
               :state="newHitAchterIsValid"
             />
-          </b-form-group>
-        </b-col>
-        <b-col cols="6">
-          <b-form-group
-            :description="$tc('count', 1)"
+          </BFormGroup>
+        </BCol>
+        <BCol cols="6">
+          <BFormGroup
+            :description="$t('count', 1)"
             :state="newHitCountIsValid"
             :invalid-feedback="newHitCountStateFeedback"
             :valid-feedback="$t('login.gueltig')"
           >
-            <b-form-input
+            <BFormInput
               v-model="newHitCount"
               type="number"
               min="1"
               :max="8"
               :state="newHitCountIsValid"
             />
-          </b-form-group>
-        </b-col>
-      </b-row>
+          </BFormGroup>
+        </BCol>
+      </BRow>
 
       <hr />
 
-      <b-form-group
+      <BFormGroup
         :label="$t('teilnehmer')"
         label-class="label-with-colon"
         :state="newHitMembersIsValid"
         :invalid-feedback="newHitMembersStateFeedback"
         :valid-feedback="$t('login.gueltig')"
       >
-        <b-button-group>
-          <b-button
+        <BButtonGroup class="mb-2">
+          <BButton
             variant="light"
-            @click="() => (this.newHitMembers = teamMembers.map((m) => m.id))"
             :disabled="newHitMembers?.length == teamMembers?.length"
+            @click="() => (newHitMembers = teamMembers.map((m) => m.id))"
           >
-            <b-icon-check-all />
+            <IBiCheckAll />
             {{ $t("alle-auswaehlen") }}
-          </b-button>
-          <b-button
+          </BButton>
+          <BButton
             variant="light"
-            @click="() => (this.newHitMembers = [])"
             :disabled="newHitMembers?.length == 0"
+            @click="() => (newHitMembers = [])"
           >
-            <b-icon-slash /> {{ $t("keine-auswaehlen") }}
-          </b-button>
-          <b-button
+            <IBiSlash /> {{ $t("keine-auswaehlen") }}
+          </BButton>
+          <BButton
             variant="light"
-            @click="
-              () =>
-                (this.newHitMembers = teamMembers
-                  .filter((m) => !newHitMembers.includes(m.id))
-                  .map((m) => m.id))
-            "
             :disabled="
               newHitMembers?.length == 0 ||
               newHitMembers?.length == teamMembers?.length
             "
+            @click="
+              () =>
+                (newHitMembers = teamMembers
+                  .filter((m) => !newHitMembers?.includes(m.id))
+                  .map((m) => m.id))
+            "
           >
-            <b-icon-arrow-repeat />
+            <IBiArrowRepeat />
             {{ $t("auswahl-wechseln") }}
-          </b-button>
-        </b-button-group>
-        <b-form-checkbox-group
+          </BButton>
+        </BButtonGroup>
+        <BFormCheckbox-group
           id="memberSelection"
           v-model="newHitMembers"
           stacked
           :style="{ columnCount: 2 }"
         >
-          <b-form-checkbox
+          <BFormCheckbox
             v-for="member in teamMembers"
             :key="member.id"
             :value="member.id"
           >
-            <b-row no-gutters class="mb-1">
+            <BRow no-gutters class="mb-1">
               <div
-                class="mr-2"
+                class="me-2"
                 :style="{
                   height: '24px',
                   width: '24px',
@@ -138,15 +137,14 @@
                 }"
               ></div>
               {{ member.nickname || member.name }}
-            </b-row>
-          </b-form-checkbox>
-        </b-form-checkbox-group>
-      </b-form-group>
-    </b-form>
-    <template #modal-footer="{ ok, cancel }">
-      <b-button
+            </BRow>
+          </BFormCheckbox>
+        </BFormCheckbox-group>
+      </BFormGroup>
+    </BForm>
+    <template #footer="{ ok, cancel }">
+      <BButton
         type="submit"
-        @click="ok"
         variant="success"
         :disabled="
           !newHitNameIsValid ||
@@ -154,69 +152,72 @@
           !newHitCountIsValid ||
           !newHitMembersIsValid
         "
+        @click="ok"
       >
         {{ $t("speichern") }}
-      </b-button>
-      <b-button @click="cancel" variant="danger">{{
+      </BButton>
+      <BButton variant="outline-danger" @click="cancel">{{
         $t("abbrechen")
-      }}</b-button>
+      }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
-<script>
+<script lang="ts">
 import HitService from "@/services/HitService";
+import { defineComponent, PropType } from "vue";
+import type { Member, Hit, Participant } from "@/types";
 
-function generateHitNameProposals() {
-  const preDirections = [null, "this.$t('hits.high')", "this.$t('hits.low')"];
+function generateHitNameProposals(t: (key: string) => string) {
+  const preDirections = [null, t("hits.high"), t("hits.low")];
   const postDirections = [
     null,
-    "this.$t('hits.nach-rechts')",
-    "this.$t('hits.rechts')",
-    "this.$t('hits.nach-links')",
-    "this.$t('hits.links')",
-    "this.$t('hits.nach-hinten')",
-    "this.$t('hits.hinten')",
-    "this.$t('hits.nach-vorne')",
-    "this.$t('hits.vorne')",
+    t("hits.nach-rechts"),
+    t("hits.rechts"),
+    t("hits.nach-links"),
+    t("hits.links"),
+    t("hits.nach-hinten"),
+    t("hits.hinten"),
+    t("hits.nach-vorne"),
+    t("hits.vorne"),
   ];
 
   const preActions = [
     null,
-    "this.$t('hits.set')",
-    "this.$t('hits.go')",
-    "this.$t('hits.start')",
-    "this.$t('hits.dip')",
-    "this.$t('hits.half-up')",
+    t("hits.set"),
+    t("hits.go"),
+    t("hits.start"),
+    t("hits.dip"),
+    t("hits.half-up"),
   ];
 
   const actions = [
     null,
     "V",
-    "this.$t('hits.elevator')",
-    "this.$t('hits.stretch')",
-    "this.$t('hits.lib')",
-    "this.$t('hits.tick-tock')",
-    "this.$t('hits.scale')",
-    "this.$t('hits.arabesque')",
-    "this.$t('hits.rad')",
-    "this.$t('hits.bogengang')",
-    "this.$t('hits.flick-flack')",
-    "this.$t('hits.pinguin')",
-    "this.$t('hits.playmobil')",
-    "this.$t('hits.clap')",
-    "this.$t('hits.toetouch')",
-    "this.$t('hits.pyra')",
-    "this.$t('hits.radwende')",
-    "this.$t('hits.spagat')",
-    "this.$t('hits.kneel')",
-    "this.$t('hits.knien')",
-    "this.$t('hits.full-around')",
-    "this.$t('hits.half-around')",
-    "this.$t('hits.trophy')",
-    "this.$t('hits.basket')",
-    "this.$t('hits.log-roll')",
-    "this.$t('hits.cradle')",
+    t("hits.elevator"),
+    t("hits.stretch"),
+    t("hits.lib"),
+    t("hits.tick-tock"),
+    t("hits.scale"),
+    t("hits.arabesque"),
+    t("hits.rad"),
+    t("hits.bogengang"),
+    t("hits.flick-flack"),
+    t("hits.pinguin"),
+    t("hits.playmobil"),
+    t("hits.clap"),
+    t("hits.toetouch"),
+    t("hits.pyra"),
+    t("hits.radwende"),
+    t("hits.spagat"),
+    t("hits.kneel"),
+    t("hits.knien"),
+    t("hits.full-around"),
+    t("hits.half-around"),
+    t("hits.trophy"),
+    t("hits.basket"),
+    t("hits.log-roll"),
+    t("hits.cradle"),
     "1",
     "2",
     "3",
@@ -226,16 +227,16 @@ function generateHitNameProposals() {
     "7",
     "8",
     "9",
-    "this.$t('hits.wurf')",
+    t("hits.wurf"),
   ];
 
   const standAlones = [
-    "this.$t('hits.clean')",
-    "this.$t('hits.raussetzen')",
-    "this.$t('hits.loslaufen')",
-    "this.$t('hits.umgreifen')",
-    "this.$t('hits.greifen')",
-    "this.$t('hits.ende')",
+    t("hits.clean"),
+    t("hits.raussetzen"),
+    t("hits.loslaufen"),
+    t("hits.umgreifen"),
+    t("hits.greifen"),
+    t("hits.ende"),
   ];
 
   const combinations = preDirections
@@ -252,9 +253,10 @@ function generateHitNameProposals() {
     })
     .flat(Infinity);
 
-  return [...standAlones, ...combinations].filter((s) => s && s.length > 0);
+  return [...standAlones, ...combinations].filter(
+    (s) => s && s.length > 0
+  ) as string[];
 }
-const hitNameProposals = generateHitNameProposals();
 
 /**
  * @module Modal:CreateHitModal
@@ -289,30 +291,23 @@ const hitNameProposals = generateHitNameProposals();
  *  <Button @click="() => $refs.createHitModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "CreateHitModal",
-  data: () => ({
-    id: (Math.random() + 1).toString(36).substring(7),
-    newHitName: null,
-    newHitAchter: 1,
-    newHitCount: 1,
-    newHitMembers: null,
-    hitNameProposals,
-  }),
   props: {
     teamMembers: {
-      type: Array,
+      type: Array as PropType<Participant[]>,
       default: () => [],
     },
     choreoId: {
       type: String,
+      default: "",
     },
     count: {
       type: Number,
       default: 0,
     },
     hitsForCurrentCount: {
-      type: Array,
+      type: Array as PropType<Hit[]>,
       default: () => [],
     },
     maxCount: {
@@ -321,14 +316,68 @@ export default {
       min: 0,
     },
   },
+  emits: ["hitCreated"],
+  data: () => ({
+    id: (Math.random() + 1).toString(36).substring(7),
+    newHitName: undefined as string | undefined,
+    newHitAchter: 1,
+    newHitCount: 1,
+    newHitMembers: undefined as string[] | undefined,
+    hitNameProposals: [] as string[],
+  }),
+  computed: {
+    filteredHitNameProposals(): string[] {
+      return this.hitNameProposals.filter(
+        (p) =>
+          this.newHitName != null &&
+          p.toLowerCase().startsWith(this.newHitName.toLowerCase())
+      );
+    },
+    newHitNameIsValid() {
+      const n = this.newHitName;
+      return n != null && n.trim().length >= 3;
+    },
+    newHitNameStateFeedback() {
+      if (!this.newHitName) return this.$t("erforderlich");
+      if (this.newHitName.trim().length < 3)
+        return this.$t("countOverview.hit-name-min-laenge");
+      return undefined;
+    },
+    newHitAchterIsValid() {
+      return Boolean(this.newHitAchter);
+    },
+    newHitAchterStateFeedback() {
+      if (!this.newHitAchter) return this.$t("erforderlich");
+      return undefined;
+    },
+    newHitCountIsValid() {
+      return Boolean(this.newHitCount);
+    },
+    newHitCountStateFeedback() {
+      if (!this.newHitCount) return this.$t("erforderlich");
+      return undefined;
+    },
+    newHitMembersIsValid() {
+      const m = this.newHitMembers;
+      return m != null && m.length > 0;
+    },
+    newHitMembersStateFeedback() {
+      if (!this.newHitMembers || this.newHitMembers.length == 0)
+        return this.$t("erforderlich");
+      return undefined;
+    },
+  },
+  mounted() {
+    this.hitNameProposals = generateHitNameProposals(this.$t) as string[];
+  },
   methods: {
     open() {
-      this.$bvModal.show(`modal-newHit-${this.id}`);
+      (this.$refs.modal as any).show();
     },
     resetModal() {
       this.newHitAchter = Math.floor(this.count / 8) + 1;
       this.newHitCount = (this.count % 8) + 1;
-      this.newHitName = "";
+      this.newHitName = undefined;
       if (!this.newHitMembers)
         this.newHitMembers = this.teamMembers
           .filter(
@@ -341,9 +390,9 @@ export default {
     },
     createHit() {
       const count =
-        (parseInt(this.newHitAchter) - 1) * 8 + parseInt(this.newHitCount) - 1;
+        (Number(this.newHitAchter) - 1) * 8 + Number(this.newHitCount) - 1;
       HitService.create(
-        this.newHitName,
+        this.newHitName as string,
         count,
         this.choreoId,
         this.newHitMembers
@@ -352,38 +401,5 @@ export default {
       });
     },
   },
-  computed: {
-    newHitNameIsValid() {
-      return Boolean(this.newHitName) && this.newHitName.trim().length >= 3;
-    },
-    newHitNameStateFeedback() {
-      if (!this.newHitName) return this.$t("erforderlich");
-      if (this.newHitName.trim().length < 3)
-        return this.$t("countOverview.hit-name-min-laenge");
-      return null;
-    },
-    newHitAchterIsValid() {
-      return Boolean(this.newHitAchter);
-    },
-    newHitAchterStateFeedback() {
-      if (!this.newHitAchter) return this.$t("erforderlich");
-      return null;
-    },
-    newHitCountIsValid() {
-      return Boolean(this.newHitCount);
-    },
-    newHitCountStateFeedback() {
-      if (!this.newHitCount) return this.$t("erforderlich");
-      return null;
-    },
-    newHitMembersIsValid() {
-      return Boolean(this.newHitMembers) && this.newHitMembers.length > 0;
-    },
-    newHitMembersStateFeedback() {
-      if (!this.newHitMembers || this.newHitMembers.length == 0)
-        return this.$t("erforderlich");
-      return null;
-    },
-  },
-};
+});
 </script>

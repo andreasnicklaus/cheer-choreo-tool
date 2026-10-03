@@ -1,0 +1,27 @@
+meta {
+  name: Update Position
+  method: PUT
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{baseUrl}}/position/:id
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+params:path {
+  id: 
+}
+
+body:json {
+  {
+    "x": 120,
+    "y": 180
+  }
+}

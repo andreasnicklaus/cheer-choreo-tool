@@ -1,0 +1,27 @@
+meta {
+  name: Change Participant Color
+  method: PATCH
+  type: http
+  seq: 9
+}
+
+patch {
+  url: {{baseUrl}}/choreo/:id/participants/{{participantId}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+params:path {
+  id: 
+  participantId: 
+}
+
+body:json {
+  {
+    "color": "#00FF00"
+  }
+}

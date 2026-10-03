@@ -1,0 +1,17 @@
+meta {
+  name: Delete Position
+  method: DELETE
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{baseUrl}}/position/:id
+  body: none
+  auth: inherit
+}
+
+
+params:path {
+  id: 
+}

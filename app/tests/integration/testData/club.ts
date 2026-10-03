@@ -4,7 +4,7 @@ import { defaultTeams } from "./team";
 export const defaultClubs = [
   {
     id: "20f5bc46-de1b-4316-beaa-df927bbe57fc",
-    name: "Default Club",
+    name: "Main Club",
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     deletedAt: null,

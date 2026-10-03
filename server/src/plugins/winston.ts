@@ -5,9 +5,13 @@ import { LogtailTransport } from "@logtail/winston";
 const $SOURCE_TOKEN = process.env.BETTERSTACK_LOG_SOURCE_TOKEN as string;
 const $INGESTING_HOST = process.env.BETTERSTACK_LOG_INGESTING_HOST;
 
-const betterStackLogTail = new Logtail($SOURCE_TOKEN, {
-  endpoint: `https://${$INGESTING_HOST}`,
-});
+const logtailTransports: winston.transport[] = [];
+if ($SOURCE_TOKEN && $INGESTING_HOST) {
+  const betterStackLogTail = new Logtail($SOURCE_TOKEN, {
+    endpoint: `https://${$INGESTING_HOST}`,
+  });
+  logtailTransports.push(new LogtailTransport(betterStackLogTail));
+}
 
 const logger = winston.createLogger({
   level: "debug",
@@ -20,7 +24,7 @@ const logger = winston.createLogger({
   ),
   // Log to the console and a file
   transports: [
-    new LogtailTransport(betterStackLogTail),
+    ...logtailTransports,
     new winston.transports.Console({
       level: "info",
     }),
@@ -64,7 +68,7 @@ const mailLogger = winston.createLogger({
   ),
   // Log to the console and a file
   transports: [
-    new LogtailTransport(betterStackLogTail),
+    ...logtailTransports,
     new winston.transports.Console(),
     new winston.transports.File({
       filename: "./logs/mail.log",
@@ -72,6 +76,13 @@ const mailLogger = winston.createLogger({
     }),
   ],
 });
+
+export function isLoggingConfigured(): boolean {
+  return !!(
+    process.env.BETTERSTACK_LOG_SOURCE_TOKEN &&
+    process.env.BETTERSTACK_LOG_INGESTING_HOST
+  );
+}
 
 export { logger, dbLogger, mailLogger };
 export default logger;

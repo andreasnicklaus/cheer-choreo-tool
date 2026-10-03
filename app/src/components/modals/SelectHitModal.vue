@@ -1,12 +1,13 @@
 <template>
-  <b-modal
+  <BModal
     :id="`modal-selectHitToUpdate-${id}`"
+    ref="modal"
     centered
-    @ok="() => selectHit()"
-    @hidden="() => (hitIdToUpdate = null)"
     :title="$t('modals.selectHit.welchen-eintrag-willst-du-aendern')"
+    @ok="() => selectHit()"
+    @hidden="() => (hitIdToUpdate = undefined)"
   >
-    <b-form-radio-group
+    <BFormRadioGroup
       id="hitToUpdateSelectGroup"
       v-model="hitIdToUpdate"
       :options="hitsForCurrentCount.map((h) => ({ text: h.name, value: h.id }))"
@@ -14,16 +15,23 @@
       stacked
       autofocus
     />
-    <template #modal-footer="{ ok, cancel }">
-      <b-button @click="ok" variant="success">{{ $t("auswaehlen") }}</b-button>
-      <b-button @click="cancel" variant="outline-danger">{{
+    <template #footer="{ ok, cancel }">
+      <BButton variant="success" @click="ok">{{ $t("auswaehlen") }}</BButton>
+      <BButton variant="outline-danger" @click="cancel">{{
         $t("abbrechen")
-      }}</b-button>
+      }}</BButton>
     </template>
-  </b-modal>
+  </BModal>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, PropType } from "vue";
+import { BModal } from "bootstrap-vue-next";
+
+interface HitOption {
+  id: string;
+  name: string;
+}
 /**
  * @module Modal:SelectHitModal
  *
@@ -40,25 +48,26 @@
  *   <Button @click="() => $refs.selectHitModal.open()" />
  * </template>
  */
-export default {
+export default defineComponent({
   name: "SelectHitModal",
-  data: () => ({
-    id: (Math.random() + 1).toString(36).substring(7),
-    hitIdToUpdate: null,
-  }),
   props: {
     hitsForCurrentCount: {
-      type: Array,
+      type: Array as PropType<HitOption[]>,
+      default: () => [],
     },
   },
+  emits: ["selection"],
+  data: () => ({
+    id: (Math.random() + 1).toString(36).substring(7),
+    hitIdToUpdate: undefined as string | undefined,
+  }),
   methods: {
     open() {
-      this.$bvModal.show(`modal-selectHitToUpdate-${this.id}`);
-      this.hitsForCurrentCount[0].id;
+      (this.$refs.modal as InstanceType<typeof BModal>).show();
     },
     selectHit() {
       this.$emit("selection", this.hitIdToUpdate);
     },
   },
-};
+});
 </script>

@@ -1,0 +1,26 @@
+meta {
+  name: User Access - Update
+  method: PUT
+  type: http
+  seq: 8
+}
+
+put {
+  url: {{baseUrl}}/user/access/:id
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+params:path {
+  id: 
+}
+
+body:json {
+  {
+    "role": "coach"
+  }
+}

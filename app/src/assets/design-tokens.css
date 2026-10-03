@@ -1,0 +1,444 @@
+/* ============================================
+   Design Tokens — Cheer Choreo Tool
+   ============================================
+   Strategy:
+   - Define palette shades first (50 – 900)
+   - Assign semantic tokens to shade variables
+   - Only raw values for outliers & brand colors
+   ============================================ */
+
+:root,
+[data-bs-theme="light"] {
+  /* ==========================================
+     Primary palette (purple)
+     ========================================== */
+  --primary-50: #f3e5f5;
+  --primary-100: #e0bce6;
+  --primary-200: #ce93d8;
+  --primary-300: #bc6dca;
+  --primary-400: #ab47bc;
+  --primary-500: #9f34b1;
+  --primary-600: #9321a7;
+  --primary-700: #7e1ea0;
+  --primary-800: #6a1b9a;
+  --primary-900: #4a136c;
+
+  /* ==========================================
+     Secondary palette (teal / cyan)
+     ========================================== */
+  --secondary-50: #e0f7fa;
+  --secondary-100: #e0f2f1;
+  --secondary-200: #80cbc4;
+  --secondary-300: #60b9b6;
+  --secondary-400: #40a7a9;
+  --secondary-500: #20959c;
+  --secondary-600: #00838f;
+  --secondary-700: #00897b;
+  --secondary-800: #00695c;
+  --secondary-900: #004d40;
+
+  /* ==========================================
+     App-specific custom tokens
+     ========================================== */
+  --color-footer-bg: var(--primary-800);
+  --color-footer-text: var(--primary-100);
+  --color-footer-text-hover: #f6ebf8;
+  --color-primary-hover: var(--primary-600);
+  --shadow-lg: 0px 0px 25px rgba(37, 37, 37, 0.15);
+  --color-mat-border: #a5a8f7;
+  --color-mat-bg: #e5e5f7;
+  --color-mat-grid: #a9abf1;
+  --color-pulse-shadow: var(--bs-secondary);
+  --color-tutorial-highlight: #ffab06;
+  --color-accent: var(--secondary-600);
+  --color-accent-soft: var(--secondary-50);
+  --color-surface: #f5eaf7;
+
+  /* ==========================================
+     Bootstrap semantic overrides
+     ========================================== */
+  --bs-card-bg: var(--color-surface);
+  --bs-card-cap-bg: var(--color-surface);
+  --bs-body-bg: var(--color-surface);
+  --bs-body-color: #2c0b41;
+  --bs-tertiary-bg: #f8f0f8;
+  --bs-tertiary-bg-rgb: 248, 240, 248;
+  --bs-primary: var(--primary-400);
+  --bs-primary-rgb: 171, 71, 188;
+  --bs-primary-bg-subtle: var(--primary-50);
+  --bs-primary-text-emphasis: var(--primary-800);
+  --bs-primary-border-subtle: var(--primary-200);
+  --bs-link-color: var(--color-accent);
+  --bs-link-color-rgb: 0, 131, 143;
+  --bs-link-hover-color: var(--secondary-800);
+  --bs-link-hover-color-rgb: 0, 105, 92;
+  --bs-secondary: var(--secondary-700);
+  /* --bs-secondary-color: #668784; */
+  --bs-secondary-rgb: 0, 137, 123;
+  --bs-secondary-hover: var(--secondary-800);
+  --bs-secondary-bg-subtle: var(--secondary-100);
+  --bs-secondary-text-emphasis: var(--secondary-900);
+  --bs-secondary-border-subtle: var(--secondary-200);
+  --bs-border-color: var(--secondary-200);
+  --bs-form-switch-focus-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%234db6ac'/%3e%3c/svg%3e");
+
+  /* ==========================================
+     Social Login Colors
+     ========================================== */
+  --color-facebook-text: #1877f2;
+  --color-facebook-bg: #1877f2;
+  --color-facebook-text-hover: white;
+  --color-facebook-bg-hover: #1877f2;
+  --color-github-text: #0a241b;
+  --color-github-bg: #0a241b;
+  --color-github-text-hover: #bfffd1;
+  --color-github-bg-hover: #101411;
+  --color-google-text: #202020;
+  --color-google-bg: #202020;
+  --color-google-text-hover: #f5f5f5;
+  --color-google-bg-hover: #202020;
+
+  --hero-gradient-start: var(--bs-primary);
+  --hero-gradient-mid: var(--color-primary-hover);
+  --hero-gradient-end: #4a529b;
+
+  /* Pre-computed helpers for HTML-to-PDF compatibility */
+  --callout-bg: rgba(171, 71, 188, 0.06);
+  --callout-accent-bg: rgba(0, 131, 143, 0.06);
+  --body-bg-grad-1: rgba(171, 71, 188, 0.15);
+  --body-bg-grad-2: rgba(171, 71, 188, 0.1);
+  --body-bg-grad-3: rgba(0, 131, 143, 0.1);
+  --focus-ring-primary: rgba(171, 71, 188, 0.25);
+  --focus-ring-secondary: rgba(0, 137, 123, 0.25);
+  --color-navtabs-active-bg: rgba(245, 234, 247, 0.8);
+  --color-navbar-bg: rgba(245, 234, 247, 0.8);
+}
+
+[data-bs-theme="dark"] {
+  /* ==========================================
+     Primary palette (purple)
+     50 = lightest, 900 = darkest
+     ========================================== */
+  --primary-50: #d8bcde;
+  --primary-100: #d29ddc;
+  --primary-200: #cc7eda;
+  --primary-300: #c96ed9;
+  --primary-400: #c65fd8;
+  --primary-500: #bc51ff;
+  --primary-600: #9b38d0;
+  --primary-700: #7b1fa2;
+  --primary-800: #5a1c78;
+  --primary-900: #3a1a4e;
+
+  /* ==========================================
+     Secondary palette (teal / cyan)
+     50 = lightest, 900 = darkest
+     ========================================== */
+  --secondary-50: #b3c6a7;
+  --secondary-100: #99c8b5;
+  --secondary-200: #80cbc4;
+  --secondary-300: #4dd0e1;
+  --secondary-400: #4db6ac;
+  --secondary-500: #33a79c;
+  --secondary-600: #19988b;
+  --secondary-700: #00897b;
+  --secondary-800: #0d3230;
+  --secondary-900: #0a2a30;
+
+  /* ==========================================
+     App-specific custom tokens
+     ========================================== */
+  --color-footer-bg: var(--primary-900);
+  --color-footer-text: var(--primary-50);
+  --color-footer-text-hover: #ffffff;
+  --color-primary-hover: var(--primary-500);
+  --shadow-lg: 0px 0px 25px rgba(0, 0, 0, 0.25);
+  --color-mat-border: #a5a8f7;
+  --color-mat-bg: #e5e5f7;
+  --color-mat-grid: #a9abf1;
+  --color-pulse-shadow: var(--bs-secondary);
+  --color-tutorial-highlight: #ffab06;
+  --color-accent: var(--secondary-300);
+  --color-accent-soft: var(--secondary-900);
+  --color-surface: #23102f;
+
+  /* ==========================================
+     Bootstrap semantic overrides
+     ========================================== */
+  --bs-card-bg: var(--color-surface);
+  --bs-card-cap-bg: var(--color-surface);
+  --bs-body-bg: var(--color-surface);
+  --bs-body-color: #ebcbf0;
+  --bs-tertiary-bg: #261135;
+  --bs-tertiary-bg-rgb: 38, 17, 53;
+  --bs-primary: var(--primary-200);
+  --bs-primary-rgb: 204, 126, 218;
+  --bs-primary-bg-subtle: var(--primary-900);
+  --bs-primary-text-emphasis: var(--primary-400);
+  --bs-primary-border-subtle: var(--primary-700);
+  --bs-link-color: var(--color-accent);
+  --bs-link-color-rgb: 77, 208, 225;
+  --bs-link-hover-color: var(--secondary-500);
+  --bs-link-hover-color-rgb: 51, 167, 156;
+  --bs-border-color: var(--primary-900);
+  --bs-form-switch-focus-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%2380cbc4'/%3e%3c/svg%3e");
+  --bs-secondary: var(--secondary-400);
+  /* --bs-secondary-color: #64e0d4; */
+  --bs-secondary-rgb: 77, 182, 172;
+  --bs-secondary-hover: var(--secondary-200);
+  --bs-secondary-bg-subtle: var(--secondary-800);
+  --bs-secondary-text-emphasis: var(--secondary-200);
+  --bs-secondary-border-subtle: var(--secondary-700);
+
+  /* ==========================================
+     Social Login Colors
+     ========================================== */
+  --color-facebook-text: #1877f2;
+  --color-facebook-bg: #1877f2;
+  --color-facebook-text-hover: white;
+  --color-facebook-bg-hover: #1877f2;
+  --color-github-text: #bfffd1;
+  --color-github-bg: #bfffd1;
+  --color-github-text-hover: #08872b;
+  --color-github-bg-hover: #e4ebe6;
+  --color-google-text: #f5f5f5;
+  --color-google-bg: #f5f5f5;
+  --color-google-text-hover: #202020;
+  --color-google-bg-hover: #f5f5f5;
+
+  /* ---- Bootstrap variant overrides ----
+     Make "light" / "dark" theme-aware so
+     variant="light" renders dark in dark mode. */
+  --bs-light-rgb: 45, 47, 50;
+  --bs-light-bg: #251132;
+  --bs-light-bg-subtle: #2c143b;
+  --bs-light-color: #dee2e6;
+  --bs-dark-rgb: 26, 28, 30;
+  --bs-dark-bg: #1a1c1e;
+  --bs-dark-color: #adb5bd;
+
+  --hero-gradient-start: var(--color-primary-hover);
+  --hero-gradient-mid: var(--color-primary-hover);
+  --hero-gradient-end: #8591f0;
+
+  /* Pre-computed helpers for HTML-to-PDF compatibility */
+  --callout-bg: rgba(204, 126, 218, 0.06);
+  --callout-accent-bg: rgba(77, 208, 225, 0.06);
+  --body-bg-grad-1: rgba(204, 126, 218, 0.15);
+  --body-bg-grad-2: rgba(204, 126, 218, 0.1);
+  --body-bg-grad-3: rgba(77, 208, 225, 0.1);
+  --focus-ring-primary: rgba(204, 126, 218, 0.25);
+  --focus-ring-secondary: rgba(77, 182, 172, 0.25);
+  --color-navtabs-active-bg: rgba(35, 16, 47, 0.8);
+  --color-navbar-bg: rgba(35, 16, 47, 0.8);
+
+  & .text-bg-light {
+    color: #dee2e6 !important;
+  }
+}
+
+/* ---- Nav-pills override ----
+   Wire active pill background to theme primary
+   instead of Bootstrap's hardcoded #0d6efd. */
+:root,
+[data-bs-theme] .nav-pills {
+  --bs-nav-pills-link-active-bg: var(--bs-primary);
+}
+:root .nav-tabs {
+  --bs-nav-tabs-link-active-bg: var(--color-navtabs-active-bg);
+}
+
+/* ---- Button variant overrides ----
+   Wire primary, secondary, light to theme tokens.
+   .btn-success/danger/warning/info keep their
+   semantic defaults (function overrides design). */
+
+.btn-primary {
+  --bs-btn-bg: var(--bs-primary);
+  --bs-btn-border-color: var(--bs-primary);
+  --bs-btn-hover-bg: var(--color-primary-hover);
+  --bs-btn-hover-border-color: var(--color-primary-hover);
+  --bs-btn-active-bg: var(--color-primary-hover);
+  --bs-btn-active-border-color: var(--color-primary-hover);
+  --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb);
+  --bs-btn-disabled-bg: var(--bs-primary);
+  --bs-btn-disabled-border-color: var(--bs-primary);
+}
+
+.btn-secondary {
+  --bs-btn-bg: var(--bs-secondary);
+  --bs-btn-border-color: var(--bs-secondary);
+  --bs-btn-hover-bg: var(--bs-secondary-hover);
+  --bs-btn-hover-border-color: var(--bs-secondary-hover);
+  --bs-btn-active-bg: var(--bs-secondary-hover);
+  --bs-btn-active-border-color: var(--bs-secondary-hover);
+  --bs-btn-focus-shadow-rgb: var(--bs-secondary-rgb);
+  --bs-btn-disabled-bg: var(--bs-secondary);
+  --bs-btn-disabled-border-color: var(--bs-secondary);
+}
+
+.btn-light {
+  --bs-btn-bg: var(--color-surface);
+  --bs-btn-border-color: var(--bs-border-color);
+  --bs-btn-color: var(--bs-body-color);
+  --bs-btn-hover-bg: var(--color-accent-soft);
+  --bs-btn-hover-border-color: var(--bs-border-color);
+  --bs-btn-hover-color: var(--bs-body-color);
+  --bs-btn-active-bg: var(--color-accent-soft);
+  --bs-btn-active-border-color: var(--bs-border-color);
+  --bs-btn-active-color: var(--bs-body-color);
+  --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb);
+  --bs-btn-disabled-bg: var(--color-surface);
+  --bs-btn-disabled-border-color: var(--bs-border-color);
+  --bs-btn-disabled-color: var(--bs-body-color);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--bs-primary);
+  --bs-btn-border-color: var(--bs-primary);
+  --bs-btn-hover-bg: var(--bs-primary);
+  --bs-btn-hover-border-color: var(--bs-primary);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-bg: var(--bs-primary);
+  --bs-btn-active-border-color: var(--bs-primary);
+  --bs-btn-active-color: #fff;
+  --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb);
+  --bs-btn-disabled-color: var(--bs-primary);
+  --bs-btn-disabled-border-color: var(--bs-primary);
+}
+
+.btn-outline-secondary {
+  --bs-btn-color: var(--bs-secondary);
+  --bs-btn-border-color: var(--bs-secondary);
+  --bs-btn-hover-bg: var(--bs-secondary);
+  --bs-btn-hover-border-color: var(--bs-secondary);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-bg: var(--bs-secondary);
+  --bs-btn-active-border-color: var(--bs-secondary);
+  --bs-btn-active-color: #fff;
+  --bs-btn-focus-shadow-rgb: var(--bs-secondary-rgb);
+  --bs-btn-disabled-color: var(--bs-secondary);
+  --bs-btn-disabled-border-color: var(--bs-secondary);
+}
+
+/* ---- Font application ---- */
+body {
+  font-family: "Inter", "Roboto", Avenir, Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  min-height: 100vh;
+  background:
+    radial-gradient(
+      ellipse 600px 300px at 30vw 55vh,
+      var(--body-bg-grad-1),
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 450px at 70vw 30vh,
+      var(--body-bg-grad-2),
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 840px at 80vw 95vh,
+      var(--body-bg-grad-3),
+      transparent 100%
+    ),
+    var(--bs-body-bg);
+  background-attachment: fixed;
+}
+
+/* Colorful callout boxes */
+.callout {
+  padding: 1rem 1.25rem;
+  border-left: 4px solid var(--bs-primary);
+  background-color: var(--callout-bg);
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+}
+
+.callout-accent {
+  border-left: 4px solid var(--color-accent);
+  background-color: var(--callout-accent-bg);
+}
+
+/* Emphasis in primary / accent color */
+em,
+.em {
+  font-family: "Fraunces", Georgia, "Times New Roman", Times, serif;
+  color: var(--bs-primary);
+  font-weight: 600;
+  font-style: normal;
+}
+
+b:not(footer *):not(.regularColor),
+strong:not(.betteruptime-announcement *) {
+  color: var(--bs-primary-text-emphasis);
+}
+
+.hero {
+  background: linear-gradient(
+    to right,
+    var(--hero-gradient-start) 10%,
+    var(--hero-gradient-mid) 50%,
+    var(--hero-gradient-end)
+  );
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+  font-family: "Fraunces", Georgia, "Times New Roman", Times, serif;
+  font-weight: 700;
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family: "Courier New", Courier, monospace;
+}
+
+/* ---- Form check & switch overrides ----
+   Wire checked/focus states to theme tokens
+   instead of Bootstrap's hardcoded blues. */
+
+.form-check-input:checked {
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+.form-check-input:focus {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 0.25rem var(--focus-ring-primary);
+}
+
+.form-check-input[type="checkbox"]:indeterminate {
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+.form-switch .form-check-input:checked {
+  background-color: var(--bs-secondary);
+  border-color: var(--bs-secondary);
+}
+
+.form-switch .form-check-input:focus {
+  border-color: var(--bs-secondary);
+  box-shadow: 0 0 0 0.25rem var(--focus-ring-secondary);
+  --bs-form-switch-bg: var(--bs-form-switch-focus-bg);
+}
+
+:root {
+  scroll-behavior: auto;
+}
