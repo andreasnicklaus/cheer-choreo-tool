@@ -49,7 +49,7 @@
           ]"
           :key="label"
           :style="{
-            height: '1px',
+            height: '30px',
             verticalAlign: 'middle',
             borderWidth: 0,
           }"
