@@ -1,3 +1,11 @@
+# Choreo Planer API
+# The API documentation is public and discoverable so that coding agents and
+# API clients can find the machine-readable spec. Actual data endpoints stay
+# blocked from indexing, as before.
 User-agent: *
-Allow: /$
+Allow: /api-docs
+Allow: /api-docs/
+Allow: /openapi.json
+Allow: /version
+Allow: /health
 Disallow: /

@@ -415,7 +415,7 @@ const swaggerOptions = {
         description: "Development Server",
       },
       {
-        url: "https://www.choreo-planer.de",
+        url: process.env.BACKEND_DOMAIN || "https://api.choreo-planer.de",
         description: "Production Server",
       },
     ],
@@ -448,6 +448,55 @@ app.use(
     customfavIcon: "/favicon.ico",
   }),
 );
+
+/**
+ * @openapi
+ * /openapi.json:
+ *   get:
+ *     summary: Fetch the raw OpenAPI specification for this API
+ *     description: >
+ *       Machine-readable OpenAPI 3.1 document describing every endpoint,
+ *       schema and security requirement of the Choreo Planer API. The same
+ *       document powers the interactive documentation served at `/api-docs`.
+ *       Intended for coding agents, SDK generators and API clients.
+ *     tags:
+ *       - Meta
+ *     security: []
+ *     responses:
+ *       200:
+ *         description: The OpenAPI specification
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 openapi:
+ *                   type: string
+ *                   example: 3.1.1
+ *                 info:
+ *                   type: object
+ *                   properties:
+ *                     title:
+ *                       type: string
+ *                     version:
+ *                       type: string
+ *                 servers:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       url:
+ *                         type: string
+ *                         format: uri
+ *                       description:
+ *                         type: string
+ *                 paths:
+ *                   type: object
+ *                   additionalProperties: true
+ */
+app.get("/openapi.json", (_req: Request, res: Response) => {
+  res.json(specs);
+});
 
 app.use(
   "/docs",

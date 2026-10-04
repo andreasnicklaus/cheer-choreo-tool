@@ -846,6 +846,9 @@
     "alte-nachrichten-ausblenden": "Alte Nachrichten ausblenden"
   },
   "navigation": {
+    "api-documentation": "API-Dokumentation",
+    "api-specification": "OpenAPI-Spezifikation",
+    "backend-links": "Backend Links",
     "datenschutz": "Datenschutz",
     "externe-links": "Externe Links",
     "facebook": "Facebook",

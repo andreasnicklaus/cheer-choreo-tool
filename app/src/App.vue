@@ -56,6 +56,27 @@
         </BCol>
         <BCol cols="auto">
           <h5>
+            <b>{{ $t("navigation.backend-links") }}</b>
+          </h5>
+          <BButton
+            variant="link"
+            :href="`${getApiDomain()}api-docs/`"
+            target="_blank"
+            rel="noopener"
+          >
+            {{ $t("navigation.api-documentation") }} </BButton
+          ><br />
+          <BButton
+            variant="link"
+            :href="`${getApiDomain()}openapi.json`"
+            target="_blank"
+            rel="noopener"
+          >
+            {{ $t("navigation.api-specification") }}
+          </BButton>
+        </BCol>
+        <BCol cols="auto">
+          <h5>
             <b>{{ $t("navigation.externe-links") }}</b>
           </h5>
           <BButton
