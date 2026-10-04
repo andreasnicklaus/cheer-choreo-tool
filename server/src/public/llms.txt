@@ -1,0 +1,32 @@
+# Choreo Planer API
+
+> api.choreo-planer.de is the public API host for Choreo Planer, a free online
+> tool for planning cheerleading and dance choreography. It exposes a REST API
+> and a Model Context Protocol (MCP) server for managing clubs, teams, seasons,
+> members, choreos, hits, lineups and positions, and for exporting countsheets.
+
+The product lives at https://www.choreo-planer.de. This host serves the
+machine-readable API surfaces only. Data endpoints require authentication;
+the discovery, documentation and capability surfaces below are public.
+
+## API
+
+- [OpenAPI 3.1 specification](https://api.choreo-planer.de/openapi.json): Machine-readable description of every REST endpoint.
+- [Interactive API documentation](https://api.choreo-planer.de/api-docs): Swagger UI for browsing and testing endpoints.
+- [Generated API reference](https://api.choreo-planer.de/docs/): Per-module reference documentation.
+- [Service health](https://api.choreo-planer.de/health): Current status of all backing services.
+- [Version](https://api.choreo-planer.de/version): Deployed API version.
+
+## Agent access
+
+- [MCP server](https://api.choreo-planer.de/mcp): Model Context Protocol endpoint (streamable HTTP). The capability handshake (initialize, tools/list, ping) is public; calling tools requires a JWT bearer token.
+- [Authentication guide](https://api.choreo-planer.de/auth.md): How to obtain an MCP access token and send it as a bearer token.
+- [MCP server card](https://api.choreo-planer.de/mcp/server-card): Identity, transport and supported protocol versions for the MCP server.
+- [MCP catalog](https://api.choreo-planer.de/.well-known/ai-catalog.json): Discovery document advertising the MCP server card.
+- [Protected resource metadata](https://api.choreo-planer.de/.well-known/oauth-protected-resource): RFC 9728 metadata for the MCP endpoint.
+
+## More
+
+- [Website](https://www.choreo-planer.de): The Choreo Planer web application.
+- [Agentic Resource Discovery manifest](https://www.choreo-planer.de/.well-known/ard.json): Describes the REST API and the MCP server as agentic resources.
+- [Crawler policy](https://api.choreo-planer.de/robots.txt): robots.txt for this API host.

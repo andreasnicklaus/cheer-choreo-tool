@@ -1,3 +1,4 @@
+import type { NextFunction, Request, Response } from "express";
 import { Router } from "express";
 import { requireBearerAuth } from "@modelcontextprotocol/sdk/server/auth/middleware/bearerAuth.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
@@ -10,9 +11,51 @@ const verifier = new JwtTokenVerifier();
 
 const router = Router();
 
-router.use(
-  requireBearerAuth({ verifier, resourceMetadataUrl: RESOURCE_METADATA_URL }),
-);
+/**
+ * JSON-RPC methods that an agent may call before authenticating.
+ *
+ * The capability handshake (`initialize`, `tools/list`, `ping`) is left public
+ * so scanners and agents can discover the server's WebMCP capabilities and
+ * enumerate tools without a bearer token. Everything else — notably
+ * `tools/call` and all `resources/*` and `prompts/*` reads — stays behind
+ * `requireBearerAuth`, which answers with a 401 and the RFC 9728
+ * `WWW-Authenticate` pointer to the protected-resource metadata.
+ */
+const PUBLIC_MCP_METHODS = new Set([
+  "initialize",
+  "notifications/initialized",
+  "tools/list",
+  "ping",
+]);
+
+const bearerAuth = requireBearerAuth({
+  verifier,
+  resourceMetadataUrl: RESOURCE_METADATA_URL,
+});
+
+/**
+ * Enforce bearer auth only for methods not in {@link PUBLIC_MCP_METHODS}.
+ *
+ * GET (stream resume) and DELETE (session teardown) always require a prior
+ * authenticated session, so they stay gated. For POST we inspect the JSON-RPC
+ * method and skip auth for the public capability handshake.
+ */
+const conditionalBearerAuth = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  if (req.method === "POST") {
+    const method = req.body?.method;
+    if (typeof method === "string" && PUBLIC_MCP_METHODS.has(method)) {
+      next();
+      return;
+    }
+  }
+  bearerAuth(req, res, next);
+};
+
+router.use(conditionalBearerAuth);
 
 const transports: Record<string, StreamableHTTPServerTransport> = {};
 
