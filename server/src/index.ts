@@ -366,6 +366,18 @@ app.get("/health", async (_req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
+// Public agent/LLM index. Served from src/public (copied to dist on build) so
+// that agents hitting the API host directly get a self-description and links to
+// the OpenAPI spec, docs and MCP server. Mounted before the data routers and
+// the MCP bearer-auth middleware so it stays publicly reachable.
+app.get("/llms.txt", (_req: Request, res: Response) => {
+  res.setHeader("Content-Type", "text/plain; charset=utf-8");
+  res.setHeader("Cache-Control", "public, max-age=3600");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+  res.sendFile("llms.txt", { root: path.join(__dirname, "public") });
+});
+
 // MCP discovery documents. Mounted before the MCP router so that
 // `/mcp/server-card` is not intercepted by the bearer auth middleware.
 app.use(mcpDiscoveryRouter);

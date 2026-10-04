@@ -130,6 +130,38 @@ jobs:
       - name: Create CNAME file
         run: echo www.choreo-planer.de > dist/CNAME
 
+      # GitHub Pages drops dot-directories (e.g. .well-known) unless a
+      # .nojekyll marker sits at the artifact root. Re-assert it here so the
+      # agent-discovery files under dist/.well-known/ are actually published.
+      - name: Ensure .nojekyll marker
+        run: touch dist/.nojekyll
+
+      # Fail loudly if the agent-discovery surfaces are missing from the build
+      # output, so a broken publish never ships silently.
+      - name: Verify agent-discovery files are present
+        run: |
+          set -e
+          required=(
+            ".well-known/ard.json"
+            ".well-known/agent-card.json"
+            ".well-known/mcp/server-card.json"
+            ".well-known/agent-skills/index.json"
+            ".well-known/api-catalog"
+            "llms.txt"
+            "robots.txt"
+          )
+          missing=0
+          for f in "${required[@]}"; do
+            if [ ! -f "dist/$f" ]; then
+              echo "::error::Missing expected published file: dist/$f"
+              missing=1
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            echo "Agent-discovery files missing from build output." >&2
+            exit 1
+          fi
+
       - name: Upload Built files
         id: deployment
         uses: actions/upload-pages-artifact@v5
