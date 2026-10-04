@@ -137,12 +137,19 @@ describe("MCP guide resources", () => {
     expect(instructions).toContain("OPTIONAL");
   });
 
-  test("lists five resources", async () => {
+  test("lists six resources", async () => {
     const { resources } = await client.listResources();
-    expect(resources).toHaveLength(5);
+    expect(resources).toHaveLength(6);
 
     const names = resources.map((r) => r.name).sort();
-    expect(names).toEqual(["faq", "faq-de", "guide", "hits", "lineups"]);
+    expect(names).toEqual([
+      "auth",
+      "faq",
+      "faq-de",
+      "guide",
+      "hits",
+      "lineups",
+    ]);
 
     for (const resource of resources) {
       expect(resource.mimeType).toBe("text/markdown");

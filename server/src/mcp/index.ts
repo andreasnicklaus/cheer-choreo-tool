@@ -3,13 +3,16 @@ import { requireBearerAuth } from "@modelcontextprotocol/sdk/server/auth/middlew
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import logger from "@/plugins/winston";
 import { JwtTokenVerifier } from "./auth";
+import { RESOURCE_METADATA_URL } from "./discovery";
 import { createMcpServer } from "./tools";
 
 const verifier = new JwtTokenVerifier();
 
 const router = Router();
 
-router.use(requireBearerAuth({ verifier }));
+router.use(
+  requireBearerAuth({ verifier, resourceMetadataUrl: RESOURCE_METADATA_URL }),
+);
 
 const transports: Record<string, StreamableHTTPServerTransport> = {};
 
