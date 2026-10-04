@@ -378,7 +378,7 @@
       id="featureCallouts2"
       class="featureCallouts row-reverse d-none d-md-flex"
     >
-      <BCol class="featureCallout h3">
+      <BCol class="featureCallout h3" :style="{ minWidth: '350px' }">
         <IBiPersonPlusFill class="text-success" /><br />
         1. {{ $t("anmelden") }}
         <ol>
