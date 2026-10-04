@@ -1,0 +1,29 @@
+# Choreo Planer — Developers & Agents
+
+> Scoped index for developers and AI agents integrating with Choreo Planer.
+
+## Start here
+
+- [Agent guide](https://www.choreo-planer.de/agents.md): When to use Choreo Planer and how to call it.
+- [Full agent guide](https://www.choreo-planer.de/llms-full.txt): The complete long-form agent guide.
+- [Authentication guide](https://api.choreo-planer.de/auth.md): Obtain and send a JWT bearer token.
+
+## Discovery documents
+
+- [Agent card (A2A)](https://www.choreo-planer.de/.well-known/agent-card.json): Capabilities, skills and contact endpoint.
+- [Agent skills index](https://www.choreo-planer.de/.well-known/agent-skills/index.json): Skills catalog backed by the REST API and MCP server.
+- [MCP server card](https://www.choreo-planer.de/.well-known/mcp/server-card.json): MCP identity, transport and tool previews.
+- [ard.json](https://www.choreo-planer.de/.well-known/ard.json): Agentic Resource Discovery manifest.
+- [ai-catalog.json](https://www.choreo-planer.de/.well-known/ai-catalog.json): AI Catalog discovery alias.
+- [ai-plugin.json](https://www.choreo-planer.de/.well-known/ai-plugin.json): ChatGPT / plugin manifest.
+- [skills.sh](https://www.choreo-planer.de/skills.sh): One-line bootstrap printing the connection details.
+
+## Source
+
+- [GitHub repository](https://github.com/andreasnicklaus/cheer-choreo-tool): Source and `AGENTS.md` coding-agent instructions.
+
+## Related indexes
+
+- [Main index](https://www.choreo-planer.de/llms.txt)
+- [Documentation index](https://www.choreo-planer.de/docs/llms.txt)
+- [API index](https://www.choreo-planer.de/api/llms.txt)

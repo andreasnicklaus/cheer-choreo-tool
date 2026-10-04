@@ -1,0 +1,15 @@
+{
+  "specVersion": "1.0",
+  "entries": [
+    {
+      "identifier": "urn:air:choreo-planer.de:mcp:cheer-choreo-tool",
+      "type": "application/mcp-server-card+json",
+      "url": "https://www.choreo-planer.de/.well-known/mcp/server-card.json"
+    },
+    {
+      "identifier": "urn:air:choreo-planer.de:api:rest",
+      "type": "application/openapi+json",
+      "url": "https://api.choreo-planer.de/openapi.json"
+    }
+  ]
+}

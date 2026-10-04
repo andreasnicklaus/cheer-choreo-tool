@@ -1,0 +1,18 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Choreo Planer",
+  "name_for_model": "choreo_planer",
+  "description_for_human": "Plan cheerleading and dance choreography: clubs, teams, seasons, members, choreos, hits, lineups and positions, and export countsheets as PDF or video.",
+  "description_for_model": "Create and manage cheerleading or dance choreographies as structured data. Use this to create or edit clubs, teams, seasons, members, choreographies (choreos), hits, lineups and positions, and to export countsheets. Prefer the MCP server at https://api.choreo-planer.de/mcp for tool access, or call the REST API described by the OpenAPI spec. Write operations require a JWT bearer token obtained as described at https://api.choreo-planer.de/auth.md.",
+  "auth": {
+    "type": "oauth",
+    "instructions": "Obtain a JWT bearer token as described at https://api.choreo-planer.de/auth.md and send it as 'Authorization: Bearer <token>'."
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://api.choreo-planer.de/openapi.json"
+  },
+  "logo_url": "https://www.choreo-planer.de/Icon.png",
+  "contact_email": "info@choreo-planer.de",
+  "legal_info_url": "https://www.choreo-planer.de/impressum"
+}
