@@ -59,6 +59,7 @@ import { contactRouter } from "./routes/contact";
 
 // MCP
 import { mcpRouter } from "./mcp";
+import { mcpDiscoveryRouter } from "./mcp/discovery";
 
 // ADMIN ROUTER
 import { adminRouter } from "./routes/admin/index";
@@ -364,6 +365,10 @@ app.get("/health", async (_req: Request, res: Response, next: NextFunction) => {
   res.status(httpStatus).json(report);
   next();
 });
+
+// MCP discovery documents. Mounted before the MCP router so that
+// `/mcp/server-card` is not intercepted by the bearer auth middleware.
+app.use(mcpDiscoveryRouter);
 
 app.use("/choreo", choreoRouter);
 app.use("/team", teamRouter);

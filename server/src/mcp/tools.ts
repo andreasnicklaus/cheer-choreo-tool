@@ -957,7 +957,14 @@ function loadResourceFiles(): Record<string, string> {
     throw new Error("Unable to locate MCP resource directory");
   }
 
-  const files = ["guide.md", "hits.md", "lineups.md", "faq.md", "faq-de.md"];
+  const files = [
+    "guide.md",
+    "hits.md",
+    "lineups.md",
+    "faq.md",
+    "faq-de.md",
+    "auth.md",
+  ];
   const resources: Record<string, string> = {};
 
   for (const file of files) {
@@ -1093,6 +1100,12 @@ export function createMcpServer(): McpServer {
       path: "faq-de",
       description:
         "End-user FAQ for the web app (German) — editor workflow, countsheets, exporting, roster management, and troubleshooting. Describes UI actions, not MCP tool use",
+    },
+    {
+      name: "auth",
+      path: "auth",
+      description:
+        "Authentication guide — how to obtain an MCP access token via /auth/login and /auth/mcp-token, and how to send it as a bearer token",
     },
   ];
 

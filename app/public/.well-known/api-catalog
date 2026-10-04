@@ -1,0 +1,75 @@
+{
+  "profile": [
+    "https://www.rfc-editor.org/info/rfc9727"
+  ],
+  "linkset": [
+    {
+      "anchor": "https://api.choreo-planer.de",
+      "item": [
+        {
+          "href": "https://api.choreo-planer.de/",
+          "type": "application/json",
+          "title": "REST API base: service status and deployed version"
+        },
+        {
+          "href": "https://api.choreo-planer.de/mcp",
+          "type": "application/json",
+          "title": "Model Context Protocol server endpoint (Streamable HTTP, JWT bearer auth)"
+        },
+        {
+          "href": "https://api.choreo-planer.de/mcp/server-card",
+          "type": "application/mcp-server-card+json",
+          "title": "MCP server card describing identity, transport and protocol versions"
+        },
+        {
+          "href": "https://api.choreo-planer.de/.well-known/ai-catalog.json",
+          "type": "application/ai-catalog+json",
+          "title": "AI Catalog advertising the MCP server card"
+        },
+        {
+          "href": "https://api.choreo-planer.de/.well-known/oauth-protected-resource",
+          "type": "application/json",
+          "title": "RFC 9728 protected resource metadata for the MCP endpoint"
+        }
+      ],
+      "service-desc": [
+        {
+          "href": "https://api.choreo-planer.de/openapi.json",
+          "type": "application/openapi+json",
+          "title": "OpenAPI 3.1 specification of all REST endpoints"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://api.choreo-planer.de/api-docs",
+          "type": "text/html",
+          "title": "Interactive API documentation (Swagger UI)"
+        },
+        {
+          "href": "https://api.choreo-planer.de/auth.md",
+          "type": "text/markdown",
+          "title": "Authentication guide: obtaining and using an MCP access token"
+        },
+        {
+          "href": "https://www.choreo-planer.de/docs/",
+          "type": "text/html",
+          "title": "Generated per-module API reference"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://api.choreo-planer.de/health",
+          "type": "application/json",
+          "title": "Health of all backing services"
+        }
+      ],
+      "service-meta": [
+        {
+          "href": "https://api.choreo-planer.de/version",
+          "type": "text/plain",
+          "title": "Deployed server version"
+        }
+      ]
+    }
+  ]
+}

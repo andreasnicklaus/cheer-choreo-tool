@@ -1,0 +1,61 @@
+{
+  "entries": [
+    {
+      "@context": "https://agenticresourcediscovery.org/context/v1",
+      "@id": "urn:air:choreo-planer.de:api:rest",
+      "identifier": "urn:air:choreo-planer.de:api:rest",
+      "displayName": "Choreo Planer REST API",
+      "type": "application/openapi+json",
+      "url": "https://api.choreo-planer.de/openapi.json",
+      "description": "OpenAPI 3.1 description of the Choreo Planer REST API for choreography, teams, clubs, members, positions, lineups, seasons and season-team assignments. Human-readable documentation is served at https://api.choreo-planer.de/api-docs.",
+      "capabilities": [
+        "choreo-service",
+        "team-service",
+        "club-service",
+        "member-service",
+        "position-service",
+        "lineup-service",
+        "season-service",
+        "season-team-service"
+      ],
+      "tags": [
+        "choreography",
+        "cheerleading",
+        "countsheet",
+        "openapi",
+        "rest",
+        "api"
+      ],
+      "representativeQueries": [
+        "how do I create a choreography through the Choreo Planer API",
+        "which endpoints does the Choreo Planer REST API expose",
+        "Choreo Planer OpenAPI specification",
+        "how do I manage cheer club members and positions via the API"
+      ]
+    },
+    {
+      "@context": "https://agenticresourcediscovery.org/context/v1",
+      "@id": "urn:air:choreo-planer.de:mcp:cheer-choreo-tool",
+      "identifier": "urn:air:choreo-planer.de:mcp:cheer-choreo-tool",
+      "displayName": "Choreo Planer MCP Server",
+      "type": "application/mcp-server-card+json",
+      "url": "https://api.choreo-planer.de/mcp/server-card",
+      "description": "Model Context Protocol server exposing Choreo Planer to agents. It covers the choreo, team, club, member, position, lineup, season and season-team services. Access requires a JWT bearer token, obtained as described at https://api.choreo-planer.de/auth.md.",
+      "capabilities": [
+        "choreo-service",
+        "team-service",
+        "club-service",
+        "member-service",
+        "position-service",
+        "season-team-service"
+      ],
+      "tags": ["mcp", "model-context-protocol", "agent", "choreography", "jwt"],
+      "representativeQueries": [
+        "create a new choreography for my cheer team",
+        "show the seasons of my cheerleading club",
+        "assign positions and counts to a lineup using an agent",
+        "export a countsheet as PDF or video"
+      ]
+    }
+  ]
+}
