@@ -78,6 +78,20 @@ export default defineConfig({
       devOptions: {
         enabled: true,
       },
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,webmanifest,txt,md}"],
+        globIgnores: ["**/Willkommen.png"],
+        navigateFallbackDenylist: [
+          /^\/llms\.txt$/,
+          /^\/robots\.txt$/,
+          /^\/[\w-]+\.md$/,
+          /^\/sitemap\.xml$/,
+          /^\/sitemap[-\w]*\.xml$/,
+          /^\/manifest\.json$/,
+          /^\/\.well-known\//,
+          /^\/docs\//,
+        ],
+      },
       includeAssets: [
         "favicon.ico",
         "favicon-dark.ico",

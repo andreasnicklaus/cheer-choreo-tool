@@ -1,5 +1,8 @@
 Sitemap: https://www.choreo-planer.de/sitemap.xml
 
+# NLWeb Schema Feeds: structured-data feed map
+Schemamap: https://www.choreo-planer.de/schema-map.xml
+
 # Agentic Resource Discovery: source of agent entries (ARD spec 5.1)
 Agentmap: https://www.choreo-planer.de/.well-known/ard.json
 

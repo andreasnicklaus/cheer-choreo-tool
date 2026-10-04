@@ -1,0 +1,49 @@
+{
+  "version": "1.0.0",
+  "name": "Choreo Planer",
+  "description": "Agent skills exposed by Choreo Planer, a free online tool for planning cheerleading and dance choreography. Every skill is backed by the public REST API (https://api.choreo-planer.de/openapi.json) and the MCP server (https://api.choreo-planer.de/mcp).",
+  "homepage": "https://www.choreo-planer.de",
+  "documentation": "https://api.choreo-planer.de/auth.md",
+  "skills": [
+    {
+      "name": "choreo-service",
+      "description": "Create, read, update and delete choreographies, including their hits, lineups and positions, and export countsheets as PDF or video.",
+      "endpoint": "https://api.choreo-planer.de/choreo"
+    },
+    {
+      "name": "team-service",
+      "description": "Manage teams and their season assignments for a cheerleading or dance club.",
+      "endpoint": "https://api.choreo-planer.de/team"
+    },
+    {
+      "name": "club-service",
+      "description": "Manage cheerleading and dance clubs and their metadata.",
+      "endpoint": "https://api.choreo-planer.de/club"
+    },
+    {
+      "name": "member-service",
+      "description": "Manage the members of a club and their team memberships.",
+      "endpoint": "https://api.choreo-planer.de/member"
+    },
+    {
+      "name": "position-service",
+      "description": "Manage the positions of members within a lineup for each count of a choreography.",
+      "endpoint": "https://api.choreo-planer.de/position"
+    },
+    {
+      "name": "lineup-service",
+      "description": "Manage lineups that group member positions for a choreography.",
+      "endpoint": "https://api.choreo-planer.de/lineup"
+    },
+    {
+      "name": "season-service",
+      "description": "Manage seasons used to scope teams and choreographies over time.",
+      "endpoint": "https://api.choreo-planer.de/season"
+    },
+    {
+      "name": "season-team-service",
+      "description": "Manage assignments between seasons and teams.",
+      "endpoint": "https://api.choreo-planer.de/seasonTeam"
+    }
+  ]
+}

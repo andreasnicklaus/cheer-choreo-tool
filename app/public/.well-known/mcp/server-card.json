@@ -1,0 +1,62 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json",
+  "name": "de.choreo-planer/cheer-choreo-tool",
+  "version": "1.0.0",
+  "title": "Choreo Planer MCP Server",
+  "description": "Create and manage cheerleading choreographies as structured data: clubs, teams, seasons, members, choreos, hits, lineups and positions.",
+  "websiteUrl": "https://www.choreo-planer.de",
+  "serverUrl": "https://api.choreo-planer.de/mcp",
+  "documentationUrl": "https://api.choreo-planer.de/auth.md",
+  "repository": {
+    "url": "https://github.com/andreasnicklaus/cheer-choreo-tool",
+    "source": "github",
+    "subfolder": "server"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://api.choreo-planer.de/mcp",
+      "supportedProtocolVersions": [
+        "2025-11-25",
+        "2025-06-18",
+        "2025-03-26",
+        "2024-11-05",
+        "2024-10-07"
+      ]
+    }
+  ],
+  "tools": [
+    {
+      "name": "choreo-service",
+      "description": "Create, read, update and delete choreographies, their hits, lineups and positions, and export countsheets."
+    },
+    {
+      "name": "team-service",
+      "description": "Manage teams and their season assignments."
+    },
+    {
+      "name": "club-service",
+      "description": "Manage cheerleading and dance clubs."
+    },
+    {
+      "name": "member-service",
+      "description": "Manage club and team members."
+    },
+    {
+      "name": "position-service",
+      "description": "Manage member positions within a lineup for each count."
+    },
+    {
+      "name": "lineup-service",
+      "description": "Manage lineups that group member positions for a choreography."
+    },
+    {
+      "name": "season-service",
+      "description": "Manage seasons used to scope teams and choreographies."
+    },
+    {
+      "name": "season-team-service",
+      "description": "Manage assignments between seasons and teams."
+    }
+  ]
+}
