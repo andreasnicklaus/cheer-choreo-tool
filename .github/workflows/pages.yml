@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   detect-changes:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     outputs:
       appChanged: ${{ steps.filter.outputs.app }}
     steps:
@@ -31,7 +31,7 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.appChanged == 'true'
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     defaults:
       run:
         working-directory: ./app
@@ -63,7 +63,7 @@ jobs:
     needs: [detect-changes, install]
     if: needs.detect-changes.outputs.appChanged == 'true'
     timeout-minutes: 10
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     defaults:
       run:
         working-directory: ./app
@@ -98,7 +98,7 @@ jobs:
     timeout-minutes: 15
     needs: [detect-changes, install]
     if: needs.detect-changes.outputs.appChanged == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     defaults:
       run:
         working-directory: ./app
@@ -146,7 +146,7 @@ jobs:
     needs: [detect-changes, build, install]
     if: needs.detect-changes.outputs.appChanged == 'true'
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     defaults:
       run:
         working-directory: ./app
@@ -182,7 +182,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('app/package-lock.json') }}
+          key: ${{ runner.os }}-${{ runner.arch }}-${{ env.ImageOS }}-playwright-${{ hashFiles('app/package-lock.json') }}
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
         if: steps.playwright-cache.outputs.cache-hit != 'true'
@@ -214,7 +214,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     steps:
       - name: Deploy to GitHub Pages
