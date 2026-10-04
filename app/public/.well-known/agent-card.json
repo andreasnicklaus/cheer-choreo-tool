@@ -1,0 +1,73 @@
+{
+  "protocolVersion": "0.3.0",
+  "name": "Choreo Planer",
+  "description": "Agent interface for Choreo Planer, a free online tool for planning cheerleading and dance choreography. Create and manage clubs, teams, seasons, members, choreographies, hits, lineups and positions, and export countsheets as PDF or video.",
+  "url": "https://api.choreo-planer.de/mcp",
+  "preferredTransport": "JSONRPC",
+  "version": "1.0.0",
+  "provider": {
+    "organization": "Choreo Planer",
+    "url": "https://www.choreo-planer.de"
+  },
+  "documentationUrl": "https://api.choreo-planer.de/auth.md",
+  "iconUrl": "https://www.choreo-planer.de/Icon.png",
+  "capabilities": {
+    "streaming": true,
+    "pushNotifications": false,
+    "stateTransitionHistory": false
+  },
+  "securitySchemes": {
+    "bearer": {
+      "type": "http",
+      "scheme": "bearer",
+      "bearerFormat": "JWT",
+      "description": "JWT bearer token. See https://api.choreo-planer.de/auth.md for how to obtain one."
+    }
+  },
+  "security": [{ "bearer": [] }],
+  "defaultInputModes": ["application/json", "text/plain"],
+  "defaultOutputModes": ["application/json", "text/plain"],
+  "skills": [
+    {
+      "id": "choreo-service",
+      "name": "Choreography management",
+      "description": "Create, read, update and delete choreographies, including their hits, lineups and positions, and export countsheets.",
+      "tags": ["choreography", "countsheet", "cheerleading", "export"],
+      "examples": [
+        "Create a new choreography for my cheer team",
+        "Assign positions and counts to a lineup",
+        "Export a countsheet as PDF or video"
+      ]
+    },
+    {
+      "id": "team-service",
+      "name": "Team management",
+      "description": "Manage teams and their season assignments.",
+      "tags": ["team", "season"]
+    },
+    {
+      "id": "club-service",
+      "name": "Club management",
+      "description": "Manage cheerleading and dance clubs.",
+      "tags": ["club"]
+    },
+    {
+      "id": "member-service",
+      "name": "Member management",
+      "description": "Manage club and team members.",
+      "tags": ["member", "roster"]
+    },
+    {
+      "id": "position-service",
+      "name": "Position management",
+      "description": "Manage positions of members within a lineup for each count.",
+      "tags": ["position", "lineup"]
+    },
+    {
+      "id": "season-service",
+      "name": "Season management",
+      "description": "Manage seasons and season-team assignments.",
+      "tags": ["season", "season-team"]
+    }
+  ]
+}

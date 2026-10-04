@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SchemaMap xmlns="http://nlweb.ai/schema/0.1">
+  <Feed>
+    <loc>https://www.choreo-planer.de/sitemap.xml</loc>
+    <type>application/xml</type>
+    <description>XML sitemap of all indexable Choreo Planer pages, with hreflang alternates.</description>
+  </Feed>
+  <Feed>
+    <loc>https://api.choreo-planer.de/openapi.json</loc>
+    <type>application/openapi+json</type>
+    <description>OpenAPI 3.1 specification describing every Choreo Planer REST endpoint.</description>
+  </Feed>
+  <Feed>
+    <loc>https://www.choreo-planer.de/.well-known/ard.json</loc>
+    <type>application/json</type>
+    <description>Agentic Resource Discovery manifest for the REST API and MCP server.</description>
+  </Feed>
+</SchemaMap>
