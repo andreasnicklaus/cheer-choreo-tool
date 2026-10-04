@@ -482,7 +482,7 @@
     "about-zielgruppe": "Who is Choreo Planner for?",
     "about-zielgruppe-text": "Choreo Planner is for coaches who want to digitize and simplify their choreography planning. The end products (countsheets, images, and videos) can be shared with team members to facilitate learning the choreographies.",
     "ai-supported-title": "AI-Powered Choreo Creation",
-    "ai-supported-description": "Let AI agents create and manage your choreographies through the Model Context Protocol (MCP). From clubs and teams to lineups and positions — all via natural language.",
+    "ai-supported-description": "Let AI agents create and manage your choreographies through the Model Context Protocol (MCP). From clubs and teams to lineups and positions via natural language.",
     "ai-supported-cta": "Get started"
   },
   "impressumView": {
@@ -846,6 +846,9 @@
     "alte-nachrichten-ausblenden": "Hide old messages"
   },
   "navigation": {
+    "api-documentation": "API Documentation",
+    "api-specification": "OpenAPI Specification",
+    "backend-links": "Backend Links",
     "datenschutz": "Data protection",
     "externe-links": "External links",
     "facebook": "Facebook",

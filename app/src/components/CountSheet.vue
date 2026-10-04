@@ -49,9 +49,9 @@
           ]"
           :key="label"
           :style="{
-            height: 'inherit',
+            height: '30px',
             verticalAlign: 'middle',
-            // border: 'none',
+            borderWidth: 0,
           }"
         >
           <div

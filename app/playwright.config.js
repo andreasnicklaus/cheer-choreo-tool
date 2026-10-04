@@ -44,6 +44,10 @@ export default defineConfig({
   use: {
     baseURL: "http://localhost:3001", // Base URL to use in actions like `await page.goto('/')`.
     trace: "on-first-retry", // Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer
+    // The app registers a PWA service worker with clientsClaim(). Once it controls
+    // the page, requests bypass page.route() in non-Chromium browsers, so mocked
+    // API responses would be ignored on a second navigation.
+    serviceWorkers: "block",
     locale: "en-GB",
     storageState: "tests/integration/testData/.localstorage-dev.json",
     trace: "retain-on-failure",

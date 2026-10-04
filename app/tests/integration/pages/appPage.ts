@@ -41,19 +41,30 @@ export default class AppPage extends TestPage {
       expect(footerLinks.nth(5)).toHaveText("Documentation"),
       expect(footerLinks.nth(5)).toHaveAttribute("href", "/docs/"),
 
-      // External Links
-      expect(footerLinks.nth(6)).toHaveText("Instagram"),
+      // Backend Links
+      expect(footerLinks.nth(6)).toHaveText("API Documentation"),
       expect(footerLinks.nth(6)).toHaveAttribute(
+        "href",
+        "https://api.choreo-planer.de/api-docs/"
+      ),
+      expect(footerLinks.nth(7)).toHaveText("OpenAPI Specification"),
+      expect(footerLinks.nth(7)).toHaveAttribute(
+        "href",
+        "https://api.choreo-planer.de/openapi.json"
+      ),
+      // External Links
+      expect(footerLinks.nth(8)).toHaveText("Instagram"),
+      expect(footerLinks.nth(8)).toHaveAttribute(
         "href",
         "https://www.instagram.com/choreoplaner/"
       ),
-      expect(footerLinks.nth(7)).toHaveText("Facebook"),
-      expect(footerLinks.nth(7)).toHaveAttribute(
+      expect(footerLinks.nth(9)).toHaveText("Facebook"),
+      expect(footerLinks.nth(9)).toHaveAttribute(
         "href",
         "https://www.facebook.com/choreoplaner/"
       ),
-      expect(footerLinks.nth(8)).toHaveText("Github"),
-      expect(footerLinks.nth(8)).toHaveAttribute(
+      expect(footerLinks.nth(10)).toHaveText("Github"),
+      expect(footerLinks.nth(10)).toHaveAttribute(
         "href",
         "https://github.com/andreasnicklaus/cheer-choreo-tool"
       ),
