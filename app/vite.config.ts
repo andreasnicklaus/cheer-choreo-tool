@@ -267,6 +267,7 @@ export default defineConfig({
         "src/i18n/**",
         "src/composables/**",
         "src/router/index.{ts,js}",
+        "src/utils/staleUiGuard.ts",
       ],
       thresholds: {
         branches: 80,
