@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "title": "Choreo Planer MCP Server",
   "description": "Create and manage cheerleading choreographies as structured data: clubs, teams, seasons, members, choreos, hits, lineups and positions.",
+  "iconUrl": "https://www.choreo-planer.de/Icon.png",
   "websiteUrl": "https://www.choreo-planer.de",
   "serverUrl": "https://api.choreo-planer.de/mcp",
   "documentationUrl": "https://api.choreo-planer.de/auth.md",
@@ -28,35 +29,91 @@
   "tools": [
     {
       "name": "choreo-service",
-      "description": "Create, read, update and delete choreographies, their hits, lineups and positions, and export countsheets."
+      "description": "Create, read, update and delete choreographies, their hits, lineups and positions, and export countsheets.",
+      "annotations": {
+        "title": "Choreography management",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
     },
     {
       "name": "team-service",
-      "description": "Manage teams and their season assignments."
+      "description": "Manage teams and their season assignments.",
+      "annotations": {
+        "title": "Team management",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
     },
     {
       "name": "club-service",
-      "description": "Manage cheerleading and dance clubs."
+      "description": "Manage cheerleading and dance clubs.",
+      "annotations": {
+        "title": "Club management",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
     },
     {
       "name": "member-service",
-      "description": "Manage club and team members."
+      "description": "Manage club and team members.",
+      "annotations": {
+        "title": "Member management",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
     },
     {
       "name": "position-service",
-      "description": "Manage member positions within a lineup for each count."
+      "description": "Manage member positions within a lineup for each count.",
+      "annotations": {
+        "title": "Position management",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
     },
     {
       "name": "lineup-service",
-      "description": "Manage lineups that group member positions for a choreography."
+      "description": "Manage lineups that group member positions for a choreography.",
+      "annotations": {
+        "title": "Lineup management",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
     },
     {
       "name": "season-service",
-      "description": "Manage seasons used to scope teams and choreographies."
+      "description": "Manage seasons used to scope teams and choreographies.",
+      "annotations": {
+        "title": "Season management",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
     },
     {
       "name": "season-team-service",
-      "description": "Manage assignments between seasons and teams."
+      "description": "Manage assignments between seasons and teams.",
+      "annotations": {
+        "title": "Season-team assignments",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
     }
   ]
 }

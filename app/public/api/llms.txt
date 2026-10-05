@@ -1,0 +1,29 @@
+# Choreo Planer — API
+
+> Scoped index for the Choreo Planer REST API and MCP server. Use this to
+> integrate programmatically or to connect an agent.
+
+## REST API
+
+- [OpenAPI 3.1 specification](https://api.choreo-planer.de/openapi.json): Machine-readable description of every REST endpoint.
+- [Interactive API documentation](https://api.choreo-planer.de/api-docs): Swagger UI for browsing and testing endpoints.
+- [API catalog](https://www.choreo-planer.de/.well-known/api-catalog): RFC 9727 catalog of the published APIs.
+- [Service health](https://api.choreo-planer.de/health): Current status of all backing services.
+
+Base URL: `https://api.choreo-planer.de`.
+
+## MCP server
+
+- [MCP server](https://api.choreo-planer.de/mcp): Model Context Protocol endpoint (Streamable HTTP). Requires a JWT bearer token.
+- [MCP server card](https://www.choreo-planer.de/.well-known/mcp/server-card.json): Identity, transport and supported protocol versions.
+- [ard.json](https://www.choreo-planer.de/.well-known/ard.json): Agentic Resource Discovery manifest.
+
+## Authentication
+
+- [Authentication guide](https://api.choreo-planer.de/auth.md): How to obtain an MCP access token and send it as a bearer token.
+
+## Related indexes
+
+- [Main index](https://www.choreo-planer.de/llms.txt)
+- [Documentation index](https://www.choreo-planer.de/docs/llms.txt)
+- [Developer index](https://www.choreo-planer.de/developers/llms.txt)

@@ -15,6 +15,13 @@ https://api.choreo-planer.de/mcp. Every feature is available at no cost.
 - [Pricing](https://www.choreo-planer.de/pricing.md): The full pricing statement. The tool is free.
 - [Contact](https://www.choreo-planer.de/contact): Reach the maintainers at info@choreo-planer.de.
 
+## Scoped indexes
+
+- [Full guide (llms-full.txt)](https://www.choreo-planer.de/llms-full.txt): The complete long-form agent guide in one file.
+- [Documentation index](https://www.choreo-planer.de/docs/llms.txt): Scoped context for user help and reference docs.
+- [API index](https://www.choreo-planer.de/api/llms.txt): Scoped context for the REST API and MCP server.
+- [Developer index](https://www.choreo-planer.de/developers/llms.txt): Scoped context for developers and agents.
+
 ## API
 
 - [OpenAPI 3.1 specification](https://api.choreo-planer.de/openapi.json): Machine-readable description of every REST endpoint.
@@ -25,12 +32,17 @@ https://api.choreo-planer.de/mcp. Every feature is available at no cost.
 
 ## Agent access
 
+- [Agent guide](https://www.choreo-planer.de/agents.md): When to use Choreo Planer and how to call it.
 - [MCP server](https://api.choreo-planer.de/mcp): Model Context Protocol endpoint for agent access. Requires a JWT bearer token.
 - [Authentication guide](https://api.choreo-planer.de/auth.md): How to obtain an MCP access token and send it as a bearer token.
-- [MCP server card](https://api.choreo-planer.de/mcp/server-card): Identity, transport and supported protocol versions for the MCP server.
-- [MCP catalog](https://api.choreo-planer.de/.well-known/ai-catalog.json): Discovery document advertising the MCP server card.
+- [MCP server card](https://www.choreo-planer.de/.well-known/mcp/server-card.json): Identity, transport, supported protocol versions and tool previews for the MCP server.
+- [Agent card (A2A)](https://www.choreo-planer.de/.well-known/agent-card.json): Agent-to-agent card describing capabilities and skills.
+- [Agent skills index](https://www.choreo-planer.de/.well-known/agent-skills/index.json): Catalog of agent skills backed by the REST API and MCP server.
+- [MCP catalog](https://www.choreo-planer.de/.well-known/ai-catalog.json): Discovery document advertising the MCP server card.
+- [ChatGPT / plugin manifest](https://www.choreo-planer.de/.well-known/ai-plugin.json): Plugin manifest pointing to the OpenAPI spec.
 - [Protected resource metadata](https://api.choreo-planer.de/.well-known/oauth-protected-resource): RFC 9728 metadata for the MCP endpoint.
 - [Agentic Resource Discovery manifest](https://www.choreo-planer.de/.well-known/ard.json): Describes the REST API and the MCP server as agentic resources.
+- [skills.sh](https://www.choreo-planer.de/skills.sh): One-line bootstrap printing the connection details.
 - [Crawler policy](https://www.choreo-planer.de/robots.txt): robots.txt, including explicit rules for AI crawlers.
 
 ## Legal

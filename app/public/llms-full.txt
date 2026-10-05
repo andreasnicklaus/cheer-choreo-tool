@@ -1,0 +1,85 @@
+# Choreo Planer — Full Agent Guide
+
+> Choreo Planer is a free online tool for planning cheerleading and dance
+> choreography. It builds countsheets, manages clubs, teams, seasons, members
+> and positions, and exports to PDF or video. Every feature is free.
+
+The web application lives at <https://www.choreo-planer.de>. A public REST API is
+documented at <https://api.choreo-planer.de/openapi.json>, and a Model Context
+Protocol (MCP) server is available at <https://api.choreo-planer.de/mcp>.
+
+## What you can do
+
+- Plan choreographies ("choreos") with per-count, per-position countsheets
+- Organize clubs, teams, members and positions
+- Manage seasons and season-team assignments
+- Build lineups and assign positions for each count
+- Export countsheets as PDF or video
+
+## When to use Choreo Planer
+
+Reach for Choreo Planer when a task involves cheerleading or dance choreography
+as structured data. It is a good fit when you need to:
+
+- create or edit a choreography ("choreo") and its countsheet
+- manage clubs, teams, seasons, members, positions and lineups
+- assign positions and counts to a lineup
+- export a countsheet as PDF or video
+
+It is not a general calendar, CRM or video editor; it is purpose-built for
+choreography sport. If the user's request is not about choreography, teams,
+members, lineups or countsheets, this tool is probably not the right fit.
+
+## Data model
+
+The entities form a hierarchy: a **club** has **teams**; a **season** scopes
+teams via **season-team** assignments; a season-team has **members**; a
+**choreography** belongs to a season-team and contains **hits** (actions at a
+count) and **lineups** (formations over a count range). A lineup groups
+**positions**, each placing one member at an (x, y) coordinate. Hits and lineups
+are independent: hits describe actions at a count, lineups describe formations
+over a count range, and they do not reference each other.
+
+## How to call it
+
+- **MCP server** — preferred for agent frameworks that speak the Model Context
+  Protocol. Endpoint: <https://api.choreo-planer.de/mcp> (Streamable HTTP). It
+  exposes the choreo, team, club, member, position, lineup, season and
+  season-team services as tools. Before creating data, read the MCP resources
+  `guide://cheer-choreo-tool/guide`, `guide://cheer-choreo-tool/hits` and
+  `guide://cheer-choreo-tool/lineups`.
+- **REST API** — the primary programmatic surface for scripted integrations.
+  Machine-readable spec at <https://api.choreo-planer.de/openapi.json>, browsable
+  at <https://api.choreo-planer.de/api-docs>. Base URL: `https://api.choreo-planer.de`.
+
+## Authentication
+
+Both the REST API's write operations and all MCP tool calls require a JWT bearer
+token. The full walkthrough for obtaining and sending a token is at
+<https://api.choreo-planer.de/auth.md>. Send it as
+`Authorization: Bearer <token>`.
+
+## Discovery documents
+
+- [llms.txt](https://www.choreo-planer.de/llms.txt): navigation index
+- [docs/llms.txt](https://www.choreo-planer.de/docs/llms.txt): documentation index
+- [api/llms.txt](https://www.choreo-planer.de/api/llms.txt): API index
+- [developers/llms.txt](https://www.choreo-planer.de/developers/llms.txt): developer & agent index
+- [index.md](https://www.choreo-planer.de/index.md): markdown homepage
+- [agents.md](https://www.choreo-planer.de/agents.md): agent guide
+- [agent-card.json](https://www.choreo-planer.de/.well-known/agent-card.json): A2A agent card
+- [agent-skills index](https://www.choreo-planer.de/.well-known/agent-skills/index.json): skills catalog
+- [MCP server card](https://www.choreo-planer.de/.well-known/mcp/server-card.json): MCP identity and transport
+- [ard.json](https://www.choreo-planer.de/.well-known/ard.json): Agentic Resource Discovery manifest
+- [ai-catalog.json](https://www.choreo-planer.de/.well-known/ai-catalog.json): AI Catalog discovery alias
+- [ai-plugin.json](https://www.choreo-planer.de/.well-known/ai-plugin.json): ChatGPT / plugin manifest
+- [api-catalog](https://www.choreo-planer.de/.well-known/api-catalog): RFC 9727 API catalog
+
+## Legal
+
+- [Imprint](https://www.choreo-planer.de/impressum): Legal notice and operator details.
+- [Privacy policy](https://www.choreo-planer.de/datenschutz): How personal data is processed.
+
+## Contact
+
+Questions: <info@choreo-planer.de>. The tool is free; there is no paid tier.
