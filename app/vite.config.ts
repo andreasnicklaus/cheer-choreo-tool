@@ -1,6 +1,7 @@
 import { defineConfig } from "vitest/config";
 import { readFileSync, existsSync, writeFileSync } from "fs";
 import { fileURLToPath, URL } from "node:url";
+import type { Plugin } from "vite";
 import vue from "@vitejs/plugin-vue";
 import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
 import Icons from "unplugin-icons/vite";
@@ -15,6 +16,20 @@ const betterStackConfig = JSON.parse(
 const featureFlagConfig = JSON.parse(
   readFileSync("./feature-flags.config.json", "utf-8")
 );
+
+function emitBuildVersionMarker(): Plugin {
+  return {
+    name: "emit-build-version-marker",
+    apply: "build",
+    generateBundle() {
+      this.emitFile({
+        type: "asset",
+        fileName: "version.json",
+        source: JSON.stringify({ version, builtAt: new Date().toISOString() }),
+      });
+    },
+  };
+}
 
 function preserveManifestTrailingNewline() {
   const ensureTrailingNewline = (filePath: string) => {
@@ -64,6 +79,7 @@ export default defineConfig({
     vue(),
     VueI18nPlugin({}),
     preserveManifestTrailingNewline(),
+    emitBuildVersionMarker(),
     Components({
       resolvers: [IconsResolve()],
       dts: true,
@@ -75,12 +91,14 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       injectRegister: "auto",
+      filename: "service-worker.js",
       devOptions: {
         enabled: true,
       },
       workbox: {
+        importScripts: ["/legacy-sw-cleanup.js"],
         globPatterns: ["**/*.{js,css,html,ico,png,svg,webmanifest,txt,md}"],
-        globIgnores: ["**/Willkommen.png"],
+        globIgnores: ["**/Willkommen.png", "legacy-sw-cleanup.js"],
         navigateFallbackDenylist: [
           /^\/llms\.txt$/,
           /^\/robots\.txt$/,
@@ -249,6 +267,7 @@ export default defineConfig({
         "src/i18n/**",
         "src/composables/**",
         "src/router/index.{ts,js}",
+        "src/utils/staleUiGuard.ts",
       ],
       thresholds: {
         branches: 80,

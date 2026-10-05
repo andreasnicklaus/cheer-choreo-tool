@@ -9,6 +9,7 @@ import vueMatomo from "vue-matomo";
 import "vue3-country-flag-icon/dist/CountryFlag.css";
 import "./assets/design-tokens.css";
 import { isPrerender } from "./utils/isPrerender";
+import { reloadIfUiIsStale } from "./utils/staleUiGuard";
 
 const app = createApp(App);
 
@@ -32,4 +33,7 @@ if (!isPrerender()) {
   window._paq.push(["requireConsent"]);
   window._paq.push(["trackPageView"]);
   window._paq.push(["enableHeartBeatTimer"]);
+
+  // Self-heal a client that is still running an older precached bundle.
+  reloadIfUiIsStale();
 }
