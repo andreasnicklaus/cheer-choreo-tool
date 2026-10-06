@@ -180,15 +180,55 @@ Feedback.belongsTo(User, { as: "updater", foreignKey: "updaterId" });
 NotificationModel.belongsTo(User, { as: "creator", foreignKey: "creatorId" });
 NotificationModel.belongsTo(User, { as: "updater", foreignKey: "updaterId" });
 
-const syncPromise = db
-  .sync({ alter: true })
-  .then(() => (process.env.NODE_ENV == "test" ? Promise.resolve() : seed()))
-  .then(migrate)
+const DB_SYNC_LOCK_KEY1 = 48151623;
+const DB_SYNC_LOCK_KEY2 = 2342;
+
+type DatabaseConnection = {
+  query: (text: string, values?: unknown[]) => Promise<unknown>;
+};
+
+async function withDbSyncLock(callback: () => Promise<void>): Promise<void> {
+  if (db.getDialect() !== "postgres") {
+    return callback();
+  }
+  const connection = (await db.connectionManager.getConnection({
+    type: "write",
+  })) as DatabaseConnection;
+  try {
+    await connection.query("SELECT pg_advisory_lock($1, $2);", [
+      DB_SYNC_LOCK_KEY1,
+      DB_SYNC_LOCK_KEY2,
+    ]);
+  } catch (err) {
+    db.connectionManager.releaseConnection(connection);
+    throw err;
+  }
+  try {
+    await callback();
+  } finally {
+    try {
+      await connection.query("SELECT pg_advisory_unlock($1, $2);", [
+        DB_SYNC_LOCK_KEY1,
+        DB_SYNC_LOCK_KEY2,
+      ]);
+    } finally {
+      db.connectionManager.releaseConnection(connection);
+    }
+  }
+}
+
+const syncPromise = withDbSyncLock(async () => {
+  await db.sync({ alter: true });
+  if (process.env.NODE_ENV !== "test") {
+    await seed();
+  }
+  await migrate();
+})
   .then(() => logger.info("Database sync complete"))
   .catch((e) => {
-    logger.warn(
-      "Database sync/seeding/migration deferred: " + (e.message || String(e)),
-    );
+    const detail =
+      e instanceof Error && e.stack ? e.stack : e.message || String(e);
+    logger.warn(`Database sync/seeding/migration deferred: ${detail}`);
   });
 
 export { syncPromise };
