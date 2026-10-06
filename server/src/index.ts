@@ -35,6 +35,7 @@ import { getHealthReport } from "@/utils/healthCheck";
 
 // SESSION
 import session from "express-session";
+import createMemoryStore from "memorystore";
 
 // PASSPORT
 import passport from "passport";
@@ -216,9 +217,13 @@ app.use(i18n.init);
 
 // SESSION & PASSPORT
 const sessionSecret = process.env.SESSION_SECRET || "choreo-session-secret";
+const MemoryStore = createMemoryStore(session);
 app.use(
   session({
     secret: sessionSecret,
+    store: new MemoryStore({
+      checkPeriod: 10 * 60 * 1000, // prune expired sessions every 10 minutes
+    }),
     resave: false,
     saveUninitialized: false,
     name: "choreo.sid",
