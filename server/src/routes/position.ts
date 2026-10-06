@@ -117,7 +117,7 @@ router.get(
  *           application/json:
  *             schema:
  *               type: string
- *               example: Lineup consistency conflict introduced: duplicatePosition:...
+ *               example: "Lineup consistency conflict introduced: duplicatePosition:..."
  */
 router.post(
   "/",
@@ -185,7 +185,7 @@ router.post(
  *           application/json:
  *             schema:
  *               type: string
- *               example: Lineup consistency conflict introduced: memberConflict:...
+ *               example: "Lineup consistency conflict introduced: memberConflict:..."
  */
 router.put(
   "/:id",

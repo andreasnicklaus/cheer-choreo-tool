@@ -87,7 +87,7 @@ const router = Router();
  *           application/json:
  *             schema:
  *               type: string
- *               example: Lineup consistency conflict introduced: lineupOverlap:...
+ *               example: "Lineup consistency conflict introduced: lineupOverlap:..."
  */
 router.post(
   "/",
@@ -158,7 +158,7 @@ router.post(
  *           application/json:
  *             schema:
  *               type: string
- *               example: Lineup consistency conflict introduced: lineupOverlap:...
+ *               example: "Lineup consistency conflict introduced: lineupOverlap:..."
  */
 router.put(
   "/:id",
@@ -231,7 +231,7 @@ router.put(
  *           application/json:
  *             schema:
  *               type: string
- *               example: Lineup consistency conflict introduced: memberConflict:...
+ *               example: "Lineup consistency conflict introduced: memberConflict:..."
  */
 router.post(
   "/:id/position",
