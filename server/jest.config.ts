@@ -34,6 +34,7 @@ const config: Config = {
     "<rootDir>/src/db/models",
     "<rootDir>/src/routes",
     "<rootDir>/src/middlewares",
+    "<rootDir>/src/types",
   ],
 
   // Indicates which provider should be used to instrument code for coverage
