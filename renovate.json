@@ -19,6 +19,12 @@
         "patch"
       ],
       "automerge": true
+    },
+    {
+      "matchUpdateTypes": [
+        "pin"
+      ],
+      "automerge": true
     }
   ],
   "vulnerabilityAlerts": {
