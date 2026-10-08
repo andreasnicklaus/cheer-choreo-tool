@@ -100,6 +100,6 @@
     "node-sass": "npm:sass@1.105.1",
     "jspdf": "4.2.1",
     "dompurify": ">=3.4.11",
-    "esbuild": "0.28.1"
+    "esbuild": "0.28.2"
   }
 }
