@@ -23,6 +23,7 @@
   ],
   "vulnerabilityAlerts": {
     "enabled": true,
+    "automerge": true,
     "labels": [
       "security"
     ],
