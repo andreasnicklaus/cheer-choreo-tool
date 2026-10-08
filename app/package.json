@@ -99,7 +99,7 @@
   "overrides": {
     "node-sass": "npm:sass@^1.98.0",
     "jspdf": "^4.2.1",
-    "dompurify": ">=3.4.11",
+    "dompurify": "3.4.12",
     "esbuild": "0.28.2"
   }
 }
