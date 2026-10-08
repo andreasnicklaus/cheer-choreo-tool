@@ -68,7 +68,14 @@ import { adminRouter } from "./routes/admin/index";
 const app = express();
 const port = 3000;
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json({ limit: "100mb" }));
+app.use(
+  bodyParser.json({
+    limit: "100mb",
+    verify: (req: Request, _res: Response, buf: Buffer) => {
+      req.rawBody = buf.toString("utf8", 0, Math.min(buf.length, 4096));
+    },
+  }),
+);
 app.use(express.urlencoded({ extended: true }));
 const corsWhiteList = [
   process.env.FRONTEND_DOMAIN,

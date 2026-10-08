@@ -35,11 +35,13 @@ export function loggerMiddleWare(
  */
 export function errorLoggingMiddleWare(
   err: Error,
-  _req: Request,
+  req: Request,
   _res: Response,
   next: NextFunction,
 ) {
   // Log the error message at the error level
-  logger.error(`${err.name}: ${err.message || "No error message provided"}`);
+  logger.error(
+    `${err.name}: ${err.message || "No error message provided"}; ${req.rawBody || "body not available"}`,
+  );
   next(err);
 }

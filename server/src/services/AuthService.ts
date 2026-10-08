@@ -39,21 +39,6 @@ type jwtContent = {
   UserId: string;
 };
 
-declare module "express-serve-static-core" {
-  interface Request {
-    UserId: string;
-    User: User;
-    Owners: User[];
-    ownerIds: string[];
-    ActingUser: User;
-    actingUserId: string;
-    AdminId: string;
-    Admin: Admin;
-    locale: string;
-    t: (key: string, options?: Record<string, object | string>) => string;
-  }
-}
-
 /**
  * Service for authentication operations.
  * Handles user login, registration, and authentication logic.
