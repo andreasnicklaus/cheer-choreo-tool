@@ -1,4 +1,4 @@
-FROM node:24 AS build
+FROM node:24.21.0 AS build
 WORKDIR /usr/src/app
 
 ENV NODE_ENV=production
@@ -6,7 +6,7 @@ ENV NODE_ENV=production
 COPY package*.json ./
 RUN npm i --omit=dev
 
-FROM arm32v7/node:22-alpine AS server
+FROM arm32v7/node:22.23.3-alpine AS server
 WORKDIR /usr/src/app
 COPY --from=build /usr/src/app/node_modules  ./node_modules
 COPY --from=build /usr/src/app/package*.json  ./
