@@ -30,7 +30,7 @@
   },
   "homepage": "https://www.choreo-planer.de",
   "dependencies": {
-    "@logtail/node": "0.5.11",
+    "@logtail/node": "0.5.12",
     "@logtail/winston": "0.5.11",
     "@modelcontextprotocol/sdk": "1.32.0",
     "@sequelize/postgres": "7.0.0-alpha.48",
