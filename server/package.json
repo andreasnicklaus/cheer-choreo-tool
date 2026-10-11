@@ -48,7 +48,7 @@
     "clean-jsdoc-theme": "5.2.0",
     "cors": "2.8.6",
     "dotenv": "18.0.5",
-    "ejs": "6.0.1",
+    "ejs": "7.0.1",
     "eslint": "9.39.5",
     "express": "5.2.1",
     "express-basic-auth": "1.2.1",
