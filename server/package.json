@@ -47,7 +47,7 @@
     "body-parser": "2.3.0",
     "clean-jsdoc-theme": "5.2.0",
     "cors": "2.8.6",
-    "dotenv": "18.0.5",
+    "dotenv": "18.0.6",
     "ejs": "7.0.1",
     "eslint": "9.39.5",
     "express": "5.2.1",
