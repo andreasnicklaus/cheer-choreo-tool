@@ -45,7 +45,7 @@
     "vue": "3.5.43",
     "vue-i18n": "11.4.13",
     "vue-matomo": "4.2.0",
-    "vue-router": "5.3.1",
+    "vue-router": "5.4.0",
     "vue3-country-flag-icon": "0.1.2",
     "vue3-html2pdf": "1.1.2",
     "vue3-markdown-it": "1.0.10",
