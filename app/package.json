@@ -84,7 +84,7 @@
     "typescript-eslint": "8.71.1",
     "unplugin-icons": "24.0.0",
     "unplugin-vue-components": "32.1.0",
-    "vite": "8.3.3",
+    "vite": "8.3.4",
     "vite-plugin-pwa": "2.0.0",
     "vitest": "5.0.3",
     "vue-pwa-asset-generator": "1.7.3",
