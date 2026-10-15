@@ -35,7 +35,7 @@
     "axios": "1.20.0",
     "axios-cache-interceptor": "1.12.3",
     "bootstrap": "5.3.8",
-    "bootstrap-icons": "1.13.1",
+    "bootstrap-icons": "1.13.2",
     "bootstrap-vue-next": "1.2.2",
     "gsap": "3.15.0",
     "javascript-time-ago": "2.6.4",
