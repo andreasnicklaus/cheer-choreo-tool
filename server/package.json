@@ -50,7 +50,7 @@
     "dotenv": "18.0.6",
     "ejs": "7.0.1",
     "eslint": "9.39.5",
-    "express": "5.2.1",
+    "express": "5.3.0",
     "express-basic-auth": "1.2.1",
     "express-rate-limit": "8.7.1",
     "express-robots-txt": "1.0.0",
@@ -107,7 +107,7 @@
   },
   "overrides": {
     "express-robots-txt": {
-      "express": "5.2.1"
+      "express": "5.3.0"
     },
     "esbuild": "0.28.2",
     "fast-uri": "4.2.1",
