@@ -1,5 +1,5 @@
 <template>
-  <BNavbar sticky="top" toggleable="sm" class="me-2" no-auto-close>
+  <BNavbar sticky="top" toggleable="sm" class="" no-auto-close>
     <BNavbarBrand
       :to="{ name: 'Home', params: { locale: $i18n.locale } }"
       class="em-primary"
@@ -27,7 +27,7 @@
 
     <BNavbarToggle target="nav-collapse"></BNavbarToggle>
 
-    <BCollapse id="nav-collapse" is-nav>
+    <BCollapse id="nav-collapse" is-nav class="me-2">
       <BNavbarNav>
         <!-- <BNavItem
           :to="{ name: 'Home', params: { locale: $i18n.locale } }"
