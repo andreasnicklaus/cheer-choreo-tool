@@ -30,6 +30,7 @@
           width="300"
           height="300"
           class="mb-5"
+          :style="{ width: 'clamp(200px, 40vw, 300px)', height: 'auto' }"
         />
         <div id="subtitle" class="w-100 d-flex flex-row align-items-center">
           <hr
@@ -46,7 +47,11 @@
             <span class="hero"> {{ $t("general.ChoreoPlaner") }}</span>
           </p>
         </div>
-        <h1 id="title" :style="{ fontSize: '4em' }" class="mb-4">
+        <h1
+          id="title"
+          :style="{ fontSize: 'clamp(1rem, 10vw, 4em)' }"
+          class="mb-4"
+        >
           <i18n-t keypath="Home.choreos-that-impress">
             <span id="impressSpan" class="hero">{{
               $t("Home.choreos-that-impress-word")
