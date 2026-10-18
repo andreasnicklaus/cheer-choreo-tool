@@ -88,7 +88,7 @@
     "vite-plugin-pwa": "2.0.0",
     "vitest": "5.0.3",
     "vue-pwa-asset-generator": "1.7.3",
-    "vue-tsc": "3.3.12"
+    "vue-tsc": "3.3.13"
   },
   "nodemonConfig": {
     "ignore": [
