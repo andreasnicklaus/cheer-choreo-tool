@@ -365,6 +365,10 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+* {
+  corner-shape: squircle;
+}
+
 html {
   width: 100vw;
   overflow-x: hidden;
