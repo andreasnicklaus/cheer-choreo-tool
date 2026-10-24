@@ -65,7 +65,7 @@
     "jsonc.min": "1.1.2",
     "jsonwebtoken": "9.0.3",
     "memorystore": "1.6.8",
-    "multer": "2.4.0",
+    "multer": "2.5.0",
     "nodemailer": "10.1.4",
     "p-queue": "9.3.5",
     "passport": "0.7.0",
