@@ -97,7 +97,7 @@
     "ext": "vue,js,ts,md"
   },
   "overrides": {
-    "node-sass": "npm:sass@1.106.0",
+    "node-sass": "npm:sass@1.106.1",
     "jspdf": "4.2.1",
     "dompurify": "3.4.17",
     "esbuild": "0.28.2"
