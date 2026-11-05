@@ -1,4 +1,4 @@
-# Cheer Choreo Tool — MCP Usage Guide
+# Cheer Choreo Tool - MCP Usage Guide
 
 ## Overview
 
@@ -8,8 +8,8 @@ This MCP server provides access to the Cheer Choreo Tool, a choreography plannin
 
 A choreography consists of two independent core entities: **hits** and **lineups**. Understanding their independence is essential.
 
-- **Hits** describe _actions_ — named events like stunts, skills, or movements at a specific count. Hit names are built from a fixed set of parts (see the hits sub-guide). A hit is never a formation name or a free-text description.
-- **Lineups** describe _formations_ — count ranges during which a set of member positions is held on the mat.
+- **Hits** describe _actions_ - named events like stunts, skills, or movements at a specific count. Hit names are built from a fixed set of parts (see the hits sub-guide). A hit is never a formation name or a free-text description.
+- **Lineups** describe _formations_ - count ranges during which a set of member positions is held on the mat.
 
 **They are independent.** A hit can exist without a lineup. A lineup can exist without a hit. They do not reference each other. You do not need to create a lineup before creating a hit, and hits do not need to correspond to lineup boundaries.
 
@@ -22,7 +22,7 @@ Before creating any choreography data, the agent should clarify the user's inten
 1. **Ask what the choreo is for.** Is it for a competition, training session, showcase, or something else? This affects the length, complexity, and style of the choreography.
 2. **Ask whether the user already has a choreo they want to digitize, or is starting from scratch.**
    - **Digitizing an existing choreo:** The user has positions and hits planned on paper, in another tool, or in their head. The workflow is bulk-creating positions and hits to match the existing plan. Ask the user to describe or share their choreography plan (e.g. count-by-count breakdown, formation diagrams).
-   - **Starting from scratch:** The user needs guidance on building a choreography from the beginning. Walk them through the workflow step by step — choosing a mat type, creating the choreo, adding members, then building lineups and hits iteratively.
+   - **Starting from scratch:** The user needs guidance on building a choreography from the beginning. Walk them through the workflow step by step - choosing a mat type, creating the choreo, adding members, then building lineups and hits iteratively.
 3. **Ask about team size and member count** before creating any positions. The member count directly determines which formation patterns are available.
 
 Only after these questions are answered should the agent begin creating clubs, teams, members, or choreographies.
@@ -69,7 +69,7 @@ The token identifies the user and determines which data they can access.
 
 | Tool        | Description                                    | Required params |
 | ----------- | ---------------------------------------------- | --------------- |
-| list_clubs  | List all accessible clubs                      | —               |
+| list_clubs  | List all accessible clubs                      | -               |
 | get_club    | Get a club with teams, members, choreos        | id              |
 | create_club | Create a club (seeds demo data for first club) | name            |
 | update_club | Update a club (e.g. rename)                    | id, [name]      |
@@ -78,7 +78,7 @@ The token identifies the user and determines which data they can access.
 
 | Tool        | Description                                    | Required params        |
 | ----------- | ---------------------------------------------- | ---------------------- |
-| list_teams  | List all accessible teams                      | —                      |
+| list_teams  | List all accessible teams                      | -                      |
 | get_team    | Get a team with season teams, members, choreos | id                     |
 | create_team | Create a team in a club for a season           | name, clubId, seasonId |
 | update_team | Update a team (e.g. rename)                    | id, [name]             |
@@ -87,21 +87,21 @@ The token identifies the user and determines which data they can access.
 
 | Tool          | Description                          | Required params |
 | ------------- | ------------------------------------ | --------------- |
-| list_seasons  | List all accessible seasons          | —               |
+| list_seasons  | List all accessible seasons          | -               |
 | create_season | Create a season (e.g. "Summer 2026") | name, year      |
 
 ### Season Teams
 
 | Tool               | Description                                        | Required params               |
 | ------------------ | -------------------------------------------------- | ----------------------------- |
-| list_season_teams  | List all season-team associations                  | —                             |
+| list_season_teams  | List all season-team associations                  | -                             |
 | create_season_team | Create a season-team link, optionally copy members | teamId, seasonId, [memberIds] |
 
 ### Members
 
 | Tool          | Description                   | Required params                            |
 | ------------- | ----------------------------- | ------------------------------------------ |
-| list_members  | List all accessible members   | —                                          |
+| list_members  | List all accessible members   | -                                          |
 | create_member | Add a member to a season team | name, nickname, abbreviation, seasonTeamId |
 | update_member | Update member info            | id, [name, nickname, abbreviation]         |
 | delete_member | Remove a member               | id                                         |
@@ -113,7 +113,7 @@ Pass `null` for abbreviation to auto-generate from the member's name.
 
 | Tool          | Description                                  | Required params                          |
 | ------------- | -------------------------------------------- | ---------------------------------------- |
-| list_choreos  | List all accessible choreographies           | —                                        |
+| list_choreos  | List all accessible choreographies           | -                                        |
 | get_choreo    | Get a choreo with hits, lineups, positions   | id                                       |
 | create_choreo | Create a choreo with participants            | name, counts, seasonTeamId, participants |
 | update_choreo | Update a choreo (e.g. name, counts, matType) | id, [name, counts, matType]              |
@@ -126,7 +126,7 @@ The `id` is the member UUID; `color` is optional for visual identification.
 
 | Tool        | Description                                    | Required params       |
 | ----------- | ---------------------------------------------- | --------------------- |
-| list_hits   | List all accessible hits                       | —                     |
+| list_hits   | List all accessible hits                       | -                     |
 | create_hit  | Create a hit at a count in a choreo            | name, count, choreoId |
 | create_hits | Bulk create multiple hits in a choreo          | choreoId, hits[]      |
 | update_hit  | Update a hit's name and/or member associations | id, [name, memberIds] |
@@ -262,6 +262,6 @@ After creating entities, use `get_*` to fetch full details with nested relations
 - Optional params shown in `[brackets]` above; omit them to leave the field unchanged.
 - `create_position` is find-or-create by exact coordinates: the same `lineupId`, `memberId`, and `x`/`y` returns the existing position, while different coordinates for a member who already occupies that lineup are rejected with a 409 conflict. Use `update_position` to move a position.
 - `create_positions` bulk-creates all positions for a lineup in one call. Always prefer this over calling `create_position` multiple times.
-- **MCP tools use lightweight access checks** — they load only the minimal data needed for authorization (choreography owner), not the full choreography graph. This makes bulk operations much more memory-efficient.
+- **MCP tools use lightweight access checks** - they load only the minimal data needed for authorization (choreography owner), not the full choreography graph. This makes bulk operations much more memory-efficient.
 - For hit naming conventions and examples, refer to the hits sub-guide.
 - For lineup rules, formation patterns, and position tables, refer to the lineups sub-guide.

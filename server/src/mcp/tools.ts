@@ -978,17 +978,17 @@ function loadResourceFiles(): Record<string, string> {
 }
 
 const MCP_INSTRUCTIONS = `IMPORTANT: Before using any Cheer Choreo Tool, you MUST read all three guide resources by calling the readResource tool for each of these URIs:
-1. "guide://cheer-choreo-tool/guide" — data model hierarchy, available tools, parameters, workflows
-2. "guide://cheer-choreo-tool/hits" — hit naming conventions, pre-directions, pre-actions, actions, post-directions, standalone hits, examples
-3. "guide://cheer-choreo-tool/lineups" — lineup rules, count ranges, formation patterns by participant count, position tables, best practices
+1. "guide://cheer-choreo-tool/guide" - data model hierarchy, available tools, parameters, workflows
+2. "guide://cheer-choreo-tool/hits" - hit naming conventions, pre-directions, pre-actions, actions, post-directions, standalone hits, examples
+3. "guide://cheer-choreo-tool/lineups" - lineup rules, count ranges, formation patterns by participant count, position tables, best practices
 
-Together they describe the complete usage guide. Key concept: Hits and Lineups are independent entities — hits describe actions at a count, lineups describe formations over a count range. They do not reference each other. Always clarify with the user whether they are digitizing an existing choreo or starting from scratch before creating data.
+Together they describe the complete usage guide. Key concept: Hits and Lineups are independent entities - hits describe actions at a count, lineups describe formations over a count range. They do not reference each other. Always clarify with the user whether they are digitizing an existing choreo or starting from scratch before creating data.
 
-OPTIONAL — two further resources describe the web app itself rather than tool use. Read them ONLY when the user asks about app features, the editor workflow, countsheets, exporting, or troubleshooting:
-- "guide://cheer-choreo-tool/faq" — the end-user FAQ (English)
-- "guide://cheer-choreo-tool/faq-de" — dasselbe FAQ auf Deutsch
+OPTIONAL - two further resources describe the web app itself rather than tool use. Read them ONLY when the user asks about app features, the editor workflow, countsheets, exporting, or troubleshooting:
+- "guide://cheer-choreo-tool/faq" - the end-user FAQ (English)
+- "guide://cheer-choreo-tool/faq-de" - dasselbe FAQ auf Deutsch
 
-Do not read them by default. Most of their content describes clicking and dragging in the browser, which you cannot perform over MCP — the three guides above cover everything you can actually do.`;
+Do not read them by default. Most of their content describes clicking and dragging in the browser, which you cannot perform over MCP - the three guides above cover everything you can actually do.`;
 
 export function createMcpServer(): McpServer {
   const server = new McpServer(
@@ -1075,37 +1075,37 @@ export function createMcpServer(): McpServer {
       name: "guide",
       path: "guide",
       description:
-        "Usage guide for the Cheer Choreo Tool MCP — data model, available tools, parameters, and typical workflows",
+        "Usage guide for the Cheer Choreo Tool MCP - data model, available tools, parameters, and typical workflows",
     },
     {
       name: "hits",
       path: "hits",
       description:
-        "Hit naming conventions — pre-directions, pre-actions, actions, post-directions, standalone hits, and examples",
+        "Hit naming conventions - pre-directions, pre-actions, actions, post-directions, standalone hits, and examples",
     },
     {
       name: "lineups",
       path: "lineups",
       description:
-        "Lineup rules and position tables — count ranges, formation patterns by participant count, and best practices",
+        "Lineup rules and position tables - count ranges, formation patterns by participant count, and best practices",
     },
     {
       name: "faq",
       path: "faq",
       description:
-        "End-user FAQ for the web app (English) — editor workflow, countsheets, exporting, roster management, and troubleshooting. Describes UI actions, not MCP tool use",
+        "End-user FAQ for the web app (English) - editor workflow, countsheets, exporting, roster management, and troubleshooting. Describes UI actions, not MCP tool use",
     },
     {
       name: "faq-de",
       path: "faq-de",
       description:
-        "End-user FAQ for the web app (German) — editor workflow, countsheets, exporting, roster management, and troubleshooting. Describes UI actions, not MCP tool use",
+        "End-user FAQ for the web app (German) - editor workflow, countsheets, exporting, roster management, and troubleshooting. Describes UI actions, not MCP tool use",
     },
     {
       name: "auth",
       path: "auth",
       description:
-        "Authentication guide — how to obtain an MCP access token via /auth/login and /auth/mcp-token, and how to send it as a bearer token",
+        "Authentication guide - how to obtain an MCP access token via /auth/login and /auth/mcp-token, and how to send it as a bearer token",
     },
   ];
 

@@ -1,4 +1,4 @@
-# Choreo Planer — API
+# Choreo Planer - API
 
 > Scoped index for the Choreo Planer REST API and MCP server. Use this to
 > integrate programmatically or to connect an agent.

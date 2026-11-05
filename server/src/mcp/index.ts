@@ -16,8 +16,8 @@ const router = Router();
  *
  * The capability handshake (`initialize`, `tools/list`, `ping`) is left public
  * so scanners and agents can discover the server's WebMCP capabilities and
- * enumerate tools without a bearer token. Everything else — notably
- * `tools/call` and all `resources/*` and `prompts/*` reads — stays behind
+ * enumerate tools without a bearer token. Everything else - notably
+ * `tools/call` and all `resources/*` and `prompts/*` reads - stays behind
  * `requireBearerAuth`, which answers with a 401 and the RFC 9728
  * `WWW-Authenticate` pointer to the protected-resource metadata.
  */
@@ -61,7 +61,7 @@ const transports: Record<string, StreamableHTTPServerTransport> = {};
 
 router.post("/", async (req, res) => {
   logger.debug(
-    `[MCP] POST received — content-type: ${req.headers["content-type"]}, session-id: ${req.headers["mcp-session-id"] ?? "(none)"}, body: ${JSON.stringify(req.body)}`,
+    `[MCP] POST received - content-type: ${req.headers["content-type"]}, session-id: ${req.headers["mcp-session-id"] ?? "(none)"}, body: ${JSON.stringify(req.body)}`,
   );
   const sessionId = req.headers["mcp-session-id"] as string | undefined;
   const existingTransport = sessionId ? transports[sessionId] : undefined;
@@ -69,13 +69,13 @@ router.post("/", async (req, res) => {
 
   if (existingTransport) {
     logger.debug(
-      `[MCP] ${method} — existing session ${existingTransport.sessionId}`,
+      `[MCP] ${method} - existing session ${existingTransport.sessionId}`,
     );
     await existingTransport.handleRequest(req, res, req.body);
     return;
   }
 
-  logger.debug(`[MCP] ${method} — new session`);
+  logger.debug(`[MCP] ${method} - new session`);
 
   const mcpServer = createMcpServer();
 
@@ -115,7 +115,7 @@ router.get("/", async (req, res) => {
 
 router.delete("/", async (req, res) => {
   logger.debug(
-    `[MCP] DELETE received — content-type: ${req.headers["content-type"]}, session-id: ${req.headers["mcp-session-id"] ?? "(none)"}, body: ${JSON.stringify(req.body)}`,
+    `[MCP] DELETE received - content-type: ${req.headers["content-type"]}, session-id: ${req.headers["mcp-session-id"] ?? "(none)"}, body: ${JSON.stringify(req.body)}`,
   );
   const sessionId = req.headers["mcp-session-id"] as string | undefined;
   const transport = sessionId ? transports[sessionId] : undefined;

@@ -184,7 +184,7 @@ describe("MCP guide resources", () => {
     expect(result.contents).toHaveLength(1);
 
     const content = result.contents[0] as { uri: string; text: string };
-    expect(content.text).toContain("# Cheer Choreo Tool — MCP Usage Guide");
+    expect(content.text).toContain("# Cheer Choreo Tool - MCP Usage Guide");
     expect(content.text).toContain("## Data Model");
     expect(content.text).toContain("## Tools");
     expect(content.text).toContain("## Typical Workflow");
@@ -354,7 +354,7 @@ describe("MCP guide resources", () => {
       text: string;
     };
     expect(content.type).toBe("text");
-    expect(content.text).toContain("# Cheer Choreo Tool — MCP Usage Guide");
+    expect(content.text).toContain("# Cheer Choreo Tool - MCP Usage Guide");
     expect(content.text).toContain("## Data Model");
     expect(content.text).toContain("# Hits Guide");
     expect(content.text).toContain("# Lineups Guide");

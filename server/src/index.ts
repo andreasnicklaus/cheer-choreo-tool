@@ -238,7 +238,7 @@ app.use(
       httpOnly: true,
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
-      maxAge: 10 * 60 * 1000, // 10 minutes — only needed during OAuth flow
+      maxAge: 10 * 60 * 1000, // 10 minutes - only needed during OAuth flow
     },
   }),
 );

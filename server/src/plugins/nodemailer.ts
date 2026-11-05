@@ -53,7 +53,7 @@ export function verify() {
     process.env.BACKEND_DOMAIN
   )) {
     mailLogger.warn(
-      "Mail not configured — SMTP env vars missing. Skipping verification.",
+      "Mail not configured - SMTP env vars missing. Skipping verification.",
     );
     return;
   }

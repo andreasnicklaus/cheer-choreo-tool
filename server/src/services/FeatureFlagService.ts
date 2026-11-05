@@ -71,7 +71,7 @@ class FeatureFlagService {
   async isEnabled(flagName: FeatureFlagKey) {
     if (!this.isConfigured()) {
       logger.warn(
-        `FeatureFlagService.isEnabled "${flagName}" — UNLEASH_API_KEY not set, returning false`,
+        `FeatureFlagService.isEnabled "${flagName}" - UNLEASH_API_KEY not set, returning false`,
       );
       return false;
     }
@@ -96,7 +96,7 @@ class FeatureFlagService {
   async getAll() {
     if (!this.isConfigured()) {
       logger.warn(
-        "FeatureFlagService.getAll — UNLEASH_API_KEY not set, returning empty array",
+        "FeatureFlagService.getAll - UNLEASH_API_KEY not set, returning empty array",
       );
       return [];
     }

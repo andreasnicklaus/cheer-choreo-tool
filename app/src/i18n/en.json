@@ -734,7 +734,7 @@
     },
     "mcp-info": {
       "title": "Work with AI",
-      "description": "Connect AI assistants like Claude, Cursor, or OpenCode to your choreos. Once set up, you can plan, edit, and refine choreos together with AI — directly from your favorite tools.",
+      "description": "Connect AI assistants like Claude, Cursor, or OpenCode to your choreos. Once set up, you can plan, edit, and refine choreos together with AI - directly from your favorite tools.",
       "server-url": "Server URL",
       "server-url-description": "Use this URL to connect to the server:",
       "authentication": "Access Token",

@@ -1,5 +1,5 @@
 #!/bin/sh
-# Choreo Planer — agent skills bootstrap
+# Choreo Planer - agent skills bootstrap
 #
 # Prints how an agent or developer connects to Choreo Planer. Safe to pipe:
 #   curl -fsSL https://www.choreo-planer.de/skills.sh | sh
@@ -13,7 +13,7 @@ BASE="https://www.choreo-planer.de"
 API="https://api.choreo-planer.de"
 
 cat <<EOF
-Choreo Planer — agent skills
+Choreo Planer - agent skills
 
 A free tool for planning cheerleading and dance choreography: clubs, teams,
 seasons, members, choreographies, hits, lineups and positions, with PDF/video
@@ -34,5 +34,5 @@ Discovery documents:
 Connect an MCP client (example, Claude Code):
   claude mcp add --transport http choreo-planer ${API}/mcp
 
-Write operations require a JWT bearer token — see ${API}/auth.md.
+Write operations require a JWT bearer token - see ${API}/auth.md.
 EOF

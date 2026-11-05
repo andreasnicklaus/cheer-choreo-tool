@@ -154,7 +154,7 @@ export async function snapshotLineupConflicts(
 
 /**
  * Diff two snapshots and return the violation keys present in `after` but not in
- * `before` — i.e. the conflicts a mutation newly introduced. Pre-existing
+ * `before` - i.e. the conflicts a mutation newly introduced. Pre-existing
  * violations appear in both and are omitted, which is what grandfathers them.
  *
  * @param {LineupConflictSnapshot} before - Snapshot taken before the mutation.
