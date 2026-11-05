@@ -198,6 +198,7 @@
             :name="`participant-checkbox-group-${id}`"
             :style="{ columnCount: 2 }"
             stacked
+            class="full-width-label"
           >
             <BFormCheckbox
               v-for="option in participantOptions"
@@ -207,7 +208,7 @@
               <BRow
                 align-h="between"
                 align-v="start"
-                :style="{ minWidth: '300px', minHeight: '38px' }"
+                :style="{ width: '100%', minHeight: '38px' }"
               >
                 <BCol cols="auto">
                   {{ option.text }}
@@ -563,5 +564,10 @@ export default defineComponent({
 input[type="color"] {
   padding: 0;
   border-width: 0;
+}
+
+.full-width-label :deep(.form-check-label) {
+  display: block;
+  width: 100%;
 }
 </style>
