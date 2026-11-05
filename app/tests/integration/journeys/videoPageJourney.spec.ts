@@ -1,4 +1,4 @@
-import { test as base } from "@playwright/test";
+// sloplint-disable-file TEST-001 -- Assertions are encapsulated in the Playwright page-object methods invoked by these journeys.`r`nimport { test as base } from "@playwright/test";
 import { mockDefaultStartRequests } from "../utils/multiRequests";
 import VideoPage from "../pages/videoPage";
 

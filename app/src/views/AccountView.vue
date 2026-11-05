@@ -37,6 +37,7 @@
             <BPlaceholder width="50%" height="24px" animation="wave" />
           </template>
           <h1>{{ user?.username }}</h1>
+          <!-- sloplint-disable-next-line UI-003 -- email and confirmation status provide account context that the username cannot -->
           <p class="text-muted">
             <span v-if="user?.email" class="d-block d-md-inline me-2">
               {{ user?.email }}

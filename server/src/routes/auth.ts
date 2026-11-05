@@ -679,7 +679,7 @@ router.get(
 /**
  * @openapi
  * /auth/me/resendEmailConfirmationLink:
- *  get:
+ *  post:
  *    description: Resend the email confirmation link in a new email, creates a notification
  *    tags:
  *    - Authorization & Account Management
@@ -691,7 +691,7 @@ router.get(
  *      401:
  *        $ref: '#/components/responses/UnauthorizedError'
  */
-router.get(
+router.post(
   "/me/resendEmailConfirmationLink",
   AuthService.authenticateUser(),
   (req: Request, res: Response, next: NextFunction) => {

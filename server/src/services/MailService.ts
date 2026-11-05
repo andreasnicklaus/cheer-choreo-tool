@@ -1,6 +1,7 @@
 import logger from "@/plugins/winston";
 import { sendMail, verify } from "../plugins/nodemailer";
 import User from "@/db/models/user";
+import { createEmailActionToken } from "@/utils/emailActionToken";
 const { timeStringToMillis } = require("../utils/time");
 const i18n = require("i18n");
 
@@ -110,6 +111,7 @@ class MailService {
       {
         username,
         userId,
+        revokeToken: createEmailActionToken(userId, "revoke-email"),
         backendDomain: process.env.BACKEND_DOMAIN,
       },
       [
@@ -156,6 +158,7 @@ class MailService {
         username,
         userId,
         userEmail,
+        confirmationToken: createEmailActionToken(userId, "confirm-email"),
         backendDomain: process.env.BACKEND_DOMAIN,
       },
       [

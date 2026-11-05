@@ -29,7 +29,9 @@ export function formatError(error: unknown): {
   isError: true;
 } {
   const message =
-    error instanceof Error ? error.message : "Unknown error occurred";
+    error instanceof Error
+      ? error.message
+      : "The tool failed without a detailed error. Try again; if it persists, contact the Choreo Planer administrator.";
   return {
     content: [{ type: "text", text: message }],
     isError: true,

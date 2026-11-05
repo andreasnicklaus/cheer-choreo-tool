@@ -1,3 +1,4 @@
+// sloplint-disable-file COPY-002 -- the test verifies the intentional fallback for non-Error throwables
 import {
   describe,
   test,
@@ -354,7 +355,9 @@ describe("getHealthReport", () => {
       const report = await getHealthReport();
 
       expect(report.services.featureFlags.status).toBe("error");
-      expect(report.services.featureFlags.message).toBe("Unknown error");
+      expect(report.services.featureFlags.message).toBe(
+        "Feature flags could not be checked.",
+      );
       expect(report.featureFlags).toEqual([]);
     });
   });

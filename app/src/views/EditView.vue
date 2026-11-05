@@ -1085,6 +1085,7 @@ export default defineComponent({
             .flat()[0];
 
           if (positionToUpdate) {
+            // sloplint-disable-next-line BE-002 -- this is an in-memory lookup in an already-loaded choreography
             const pos = this.choreo?.Lineups.find(
               (l) => l.id == positionToUpdate.LineupId
             )?.Positions.find((p) => p.id == positionToUpdate.id);
@@ -1448,6 +1449,7 @@ export default defineComponent({
         );
         if (!currentRelevantLineup) return null;
 
+        // sloplint-disable-next-line BE-002 -- this is an in-memory lookup in an already-loaded lineup
         let currentPosition = currentRelevantLineup.Positions.find(
           (pos) => pos.MemberId == member.id
         );

@@ -79,7 +79,6 @@ function buildProtectedResourceMetadata() {
 function sendPublicJson(res: Response, body: unknown, mediaType: string) {
   res.setHeader("Content-Type", mediaType);
   res.setHeader("Cache-Control", "public, max-age=3600");
-  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
   res.status(200).json(body);
 }
@@ -118,7 +117,6 @@ router.get(
 router.get("/auth.md", (_req: unknown, res: Response) => {
   res.setHeader("Content-Type", "text/markdown; charset=utf-8");
   res.setHeader("Cache-Control", "public, max-age=3600");
-  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
   res.sendFile("auth.md", { root: `${__dirname}/resources` });
 });

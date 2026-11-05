@@ -79,22 +79,23 @@ router.post(
               targetUsers = users.map((u) => u.id);
             });
           }
-          Promise.all(
-            targetUsers.map((userId: string) => {
-              return UserService.findById(userId).then((user: User | null) => {
-                if (user?.email && user.emailConfirmed) {
-                  const token = AuthService.generateAccessToken(user.id, {
-                    expiresIn: process.env.SSO_TOKEN_EXPIRES_IN,
-                  });
-                  return MailService.sendNotificationNotice(
-                    user.email,
-                    user.username,
-                    token,
-                    title,
-                    req.locale,
-                  );
-                }
+          const users = await User.findAll({ where: { id: targetUsers } });
+          await Promise.all(
+            users.flatMap((user) => {
+              if (!user.email || !user.emailConfirmed) return [];
+
+              const token = AuthService.generateAccessToken(user.id, {
+                expiresIn: process.env.SSO_TOKEN_EXPIRES_IN,
               });
+              return [
+                MailService.sendNotificationNotice(
+                  user.email,
+                  user.username,
+                  token,
+                  title,
+                  req.locale,
+                ),
+              ];
             }),
           );
         }

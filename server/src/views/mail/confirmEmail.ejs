@@ -27,7 +27,7 @@
           padding: 16px 24px;
           border-radius: 4px;
         "
-        href="<%= backendDomain %>/user/confirmEmail/<%= userId %>"
+        href="<%= backendDomain %>/user/confirmEmail/<%= confirmationToken %>"
       >
         <%= t('mail.confirmEmail.jetzt-bestaetigen') %>
       </a>
@@ -35,8 +35,8 @@
 
     <p>
       <%= t('mail.confirmEmail.info-text-2') %>
-      <a href="<%= backendDomain %>/user/confirmEmail/<%= userId %>">
-        <%= backendDomain %>/user/confirmEmail/<%= userId %>
+      <a href="<%= backendDomain %>/user/confirmEmail/<%= confirmationToken %>">
+        <%= backendDomain %>/user/confirmEmail/<%= confirmationToken %>
       </a>
     </p>
 

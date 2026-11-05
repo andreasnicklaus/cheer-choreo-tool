@@ -156,7 +156,11 @@ router.post(
       req.actingUserId,
     )
       .then((team: Team | null) => {
-        if (!team) throw new Error("Unknown error: Team could not be created");
+        if (!team) {
+          throw new Error(
+            "The team could not be created. Confirm the selected club and season, then try again.",
+          );
+        }
         NotificationService.createOne(
           req.t("notifications.team-created.title"),
           req.t("notifications.team-created.message", {

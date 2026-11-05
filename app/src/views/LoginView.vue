@@ -38,11 +38,19 @@
                 type="submit"
                 :style="{ color: 'white' }"
                 variant="primary"
-                class="me-2"
-                :disabled="!usernameIsValid || !passwordIsValid"
+                class="position-relative me-2"
+                :aria-busy="loading"
+                :disabled="!usernameIsValid || !passwordIsValid || loading"
               >
-                <BSpinner v-if="loading" small />
-                <span v-else> {{ $t("anmelden") }} </span>
+                <!-- sloplint-disable-next-line UI-008 -- the spinner overlays an invisible label that preserves the button dimensions -->
+                <BSpinner
+                  v-show="loading"
+                  small
+                  class="position-absolute top-50 start-50 translate-middle"
+                />
+                <span :class="{ invisible: loading }">
+                  {{ $t("anmelden") }}
+                </span>
               </BButton>
             </div>
             <BButton
@@ -56,15 +64,23 @@
 
           <p class="mt-3 mb-0">
             {{ $t("login.du-hast-noch-kein-konto") }}
-            <a href="#" @click="() => (tabIndex = 1)">
+            <button
+              type="button"
+              class="btn btn-link p-0"
+              @click="tabIndex = 1"
+            >
               {{ $t("registrieren") }}
-            </a>
+            </button>
           </p>
 
-          <a href="#" @click="openPasswordResetModal"
-            >{{ $t("login.passwort-vergessen") }}
+          <button
+            type="button"
+            class="btn btn-link p-0"
+            @click="openPasswordResetModal"
+          >
+            {{ $t("login.passwort-vergessen") }}
             <NewVersionBadge :versions="['0.10.3', '0.11.0']" />
-          </a>
+          </button>
         </BForm>
       </BTab>
       <BTab :title="$t('registrieren')" class="mt-4 p-3">
@@ -141,16 +157,25 @@
                 type="submit"
                 :style="{ color: 'white' }"
                 variant="primary"
-                class="me-2"
+                class="position-relative me-2"
+                :aria-busy="loading"
                 :disabled="
                   !usernameIsValid ||
                   !emailIsValid ||
                   !passwordIsValid ||
-                  !passwordRepetitionIsValid
+                  !passwordRepetitionIsValid ||
+                  loading
                 "
               >
-                <BSpinner v-if="loading" small />
-                <span v-else>{{ $t("registrieren") }}</span>
+                <!-- sloplint-disable-next-line UI-008 -- the spinner overlays an invisible label that preserves the button dimensions -->
+                <BSpinner
+                  v-show="loading"
+                  small
+                  class="position-absolute top-50 start-50 translate-middle"
+                />
+                <span :class="{ invisible: loading }">
+                  {{ $t("registrieren") }}
+                </span>
               </BButton>
             </div>
             <BButton
@@ -164,7 +189,13 @@
 
           <p class="my-3">
             {{ $t("login.du-hast-schon-ein-konto") }}
-            <a href="#" @click="() => (tabIndex = 0)">{{ $t("anmelden") }}</a>
+            <button
+              type="button"
+              class="btn btn-link p-0"
+              @click="tabIndex = 0"
+            >
+              {{ $t("anmelden") }}
+            </button>
           </p>
         </BForm>
 
@@ -181,9 +212,9 @@
             </I18n-t>
             <p>
               {{ $t("login.information-text-4.need-more-information") }}
-              <a href="#" @click="() => $router.push('/help')">{{
+              <router-link :to="`/${$i18n.locale}/help`">{{
                 $t("login.information-text-4.visit-our-help-center")
-              }}</a
+              }}</router-link
               >.
             </p>
           </BCardText>

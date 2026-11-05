@@ -77,25 +77,22 @@ app.use(
   }),
 );
 app.use(express.urlencoded({ extended: true }));
-const corsWhiteList = [
-  process.env.FRONTEND_DOMAIN,
-  "http://localhost:8080",
-  "http://localhost:8081",
-  "http://localhost:8082",
-  "http://localhost:8083",
-];
+const corsWhiteList = new Set(
+  [
+    process.env.FRONTEND_DOMAIN,
+    "http://localhost:8080",
+    "http://localhost:8081",
+    "http://localhost:8082",
+    "http://localhost:8083",
+  ].filter((origin): origin is string => Boolean(origin)),
+);
 app.use(
   cors({
     origin: function (
       origin: string | undefined,
       callback: { (err: Error | null, allow?: boolean): void },
     ) {
-      if (
-        !origin ||
-        corsWhiteList.includes(origin) ||
-        origin.includes("localhost") ||
-        origin.includes("127.0.0.1")
-      ) {
+      if (!origin || corsWhiteList.has(origin)) {
         callback(null, true);
       } else {
         callback(null, false);
@@ -223,7 +220,11 @@ const i18n = require("i18n");
 app.use(i18n.init);
 
 // SESSION & PASSPORT
-const sessionSecret = process.env.SESSION_SECRET || "choreo-session-secret";
+const sessionSecret =
+  process.env.SESSION_SECRET ||
+  (() => {
+    throw new Error("SESSION_SECRET is not set");
+  })();
 const MemoryStore = createMemoryStore(session);
 app.use(
   session({
@@ -385,7 +386,6 @@ app.get("/health", async (_req: Request, res: Response, next: NextFunction) => {
 app.get("/llms.txt", (_req: Request, res: Response) => {
   res.setHeader("Content-Type", "text/plain; charset=utf-8");
   res.setHeader("Cache-Control", "public, max-age=3600");
-  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
   res.sendFile("llms.txt", { root: path.join(__dirname, "public") });
 });

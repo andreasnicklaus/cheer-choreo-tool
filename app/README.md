@@ -28,7 +28,8 @@
 - Video and PDF export with FFmpeg.wasm
 - Responsive design (mobile-friendly)
 - Internationalization (English & German)
-- Feature flags via Unleash
+
+- Feature flags via Unleash <!-- sloplint-disable-line COPY-001 -- Unleash is the proper name of the feature-flag integration -->
 - Integration with backend API
 - PWA support (installable)
 

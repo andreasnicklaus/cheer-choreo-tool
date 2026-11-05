@@ -1001,6 +1001,7 @@ export function createMcpServer(): McpServer {
     level: "debug" | "info" | "warning" | "error",
     message: string,
   ) => {
+    // sloplint-disable-next-line BE-001 -- MCP logging notifications are best-effort and must not affect tool results
     server.sendLoggingMessage({ level, data: message }).catch(() => {});
   };
 

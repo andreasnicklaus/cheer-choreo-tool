@@ -38,6 +38,7 @@ async function fileExists(p) {
   try {
     await fs.access(p);
     return true;
+    // sloplint-disable-next-line BE-001 -- valid unminified HTML is the explicit fallback when minification fails
   } catch (e) {
     return false;
   }
@@ -139,6 +140,7 @@ async function postProcessHtml(html) {
       minifyCSS: true,
       minifyJS: true,
     });
+    // sloplint-disable-next-line BE-001 -- a data-view marker is optional for prerendering
   } catch (e) {
     console.warn(
       "HTML minification failed, writing unminified output:",
@@ -250,6 +252,7 @@ async function main() {
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
   const page = await browser.newPage();
+  const failedRoutes = [];
 
   for (const route of prerenderRoutes) {
     const url = HOST + (route === "/" ? "/" : route);
@@ -279,11 +282,17 @@ async function main() {
       console.log(`Wrote ${out}`);
     } catch (e) {
       console.error(`Failed to prerender ${url}:`, e);
+      failedRoutes.push(url);
     }
   }
 
   await browser.close();
   await new Promise((resolve) => server.close(resolve));
+  if (failedRoutes.length > 0) {
+    throw new Error(
+      `Failed to prerender ${failedRoutes.length} route(s): ${failedRoutes.join(", ")}`
+    );
+  }
   console.log("Prerender complete.");
 }
 

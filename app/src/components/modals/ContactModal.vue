@@ -137,11 +137,18 @@
       <BButton
         v-if="!messageWasSuccess && !messageWasError"
         variant="success"
+        class="position-relative"
+        :aria-busy="sending"
         :disabled="!allValid || sending"
         @click="ok"
       >
-        <BSpinner v-show="sending" small />
-        <span v-show="!sending">
+        <!-- sloplint-disable-next-line UI-008 -- the spinner overlays an invisible label that preserves the button dimensions -->
+        <BSpinner
+          v-show="sending"
+          small
+          class="position-absolute top-50 start-50 translate-middle"
+        />
+        <span :class="{ invisible: sending }">
           <IBiChatRightText class="me-2" />
           {{ $t("feedback.abschicken") }}
         </span>

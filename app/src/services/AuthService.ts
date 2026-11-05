@@ -299,7 +299,7 @@ class AuthService {
    */
   resendEmailConfirmationLink(): Promise<void> {
     debug("Requesting the email confirmation email to be sent again");
-    return ax.get("/auth/me/resendEmailConfirmationLink").then((res) => {
+    return ax.post("/auth/me/resendEmailConfirmationLink").then((res) => {
       debug("Successfully requesting resending of email confirmation email");
       return res.data;
     });

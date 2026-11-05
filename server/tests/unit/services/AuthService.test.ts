@@ -1,3 +1,4 @@
+// sloplint-disable-file TEST-001 -- middleware callbacks, notification creation, and mail delivery are this service's observable boundary effects
 import { describe, test, expect } from "@jest/globals";
 import { Sequelize } from "sequelize";
 
@@ -364,11 +365,13 @@ describe("AuthService", () => {
       status: jest.fn().mockReturnValue({ send: jest.fn() }),
     } as unknown as Response;
 
+    const next = jest.fn();
     await new Promise<void>((resolve, reject) => {
-      const next = jest.fn(() => resolve());
+      next.mockImplementation(() => resolve());
       middleware(req, res, next as unknown as NextFunction);
       setTimeout(() => reject(new Error("middleware did not call next")), 1000);
     });
+    expect(next).toHaveBeenCalledWith();
   });
 
   test("authenticateAdmin middleware should respond 401 on invalid credentials", async () => {

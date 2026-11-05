@@ -88,7 +88,10 @@ async function getFeatureFlagStatus(): Promise<{
       status: {
         status: "error",
         required: false,
-        message: error instanceof Error ? error.message : "Unknown error",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Feature flags could not be checked.",
       },
       flags: [],
     };

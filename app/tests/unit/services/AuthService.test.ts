@@ -1,3 +1,4 @@
+// sloplint-disable-file TEST-001 -- mocked service calls are the authentication service's observable boundary effects
 import { describe, test, expect, beforeEach, vi } from "vitest";
 
 import AuthService from "@/services/AuthService";
@@ -477,28 +478,28 @@ describe("AuthService", () => {
 
   describe("resendEmailConfirmationLink", () => {
     test("should call the resend email confirmation link endpoint", async () => {
-      ax.get.mockResolvedValue({
+      ax.post.mockResolvedValue({
         data: "Email confirmation link sent",
         status: 200,
       });
 
       const response = await AuthService.resendEmailConfirmationLink();
 
-      expect(ax.get).toHaveBeenCalledTimes(1);
-      expect(ax.get).toHaveBeenCalledWith(
+      expect(ax.post).toHaveBeenCalledTimes(1);
+      expect(ax.post).toHaveBeenCalledWith(
         "/auth/me/resendEmailConfirmationLink"
       );
       expect(response).toBe("Email confirmation link sent");
     });
 
     test("should throw error on resend email confirmation link request failure", async () => {
-      ax.get.mockRejectedValue(new Error("Request failed"));
+      ax.post.mockRejectedValue(new Error("Request failed"));
 
       await expect(AuthService.resendEmailConfirmationLink()).rejects.toThrow(
         "Request failed"
       );
 
-      expect(ax.get).toHaveBeenCalledTimes(1);
+      expect(ax.post).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -40,7 +40,7 @@ class FeatureFlagService {
         url: "https://features.choreo-planer.de/api",
         appName: "choreo-planer-server",
         customHeaders: {
-          Authorization: process.env.UNLEASH_API_KEY ?? "",
+          Authorization: (process.env.UNLEASH_API_KEY || (() => { throw new Error('UNLEASH_API_KEY is not set'); })()),
         },
       });
 

@@ -1,5 +1,7 @@
+// sloplint-disable-file TEST-001 -- mail delivery is the service's observable external effect
 import { describe, test, expect, jest } from "@jest/globals";
 process.env.EMAIL_ADMIN_ADDRESSES = "admin@example.com";
+process.env.TOKEN_SECRET = "test-token-secret";
 import MailService from "@/services/MailService";
 import { sendMail, verify } from "@/plugins/nodemailer";
 import { timeStringToMillis } from "@/utils/time";
@@ -102,7 +104,12 @@ describe("MailService", () => {
       "email@example.com",
       "i18nTranslation",
       "welcome.ejs",
-      { backendDomain: "Backend-Domain", userId: "id", username: "user" },
+      {
+        backendDomain: "Backend-Domain",
+        revokeToken: expect.any(String),
+        userId: "id",
+        username: "user",
+      },
       [
         {
           cid: "choreo-planer-icon",
@@ -130,6 +137,7 @@ describe("MailService", () => {
       "confirmEmail.ejs",
       {
         backendDomain: "Backend-Domain",
+        confirmationToken: expect.any(String),
         userId: "id",
         username: "user",
         userEmail: "email@example.com",

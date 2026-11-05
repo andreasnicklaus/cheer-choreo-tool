@@ -338,7 +338,6 @@ describe("HitService", () => {
         UserId: user.id,
       });
       const beforeUpdate = choreo.updatedAt;
-      await new Promise((r) => setTimeout(r, 10));
       await HitService.mcpCreate("UpdaterTest", 1, choreo.id, [], user.id);
       const updatedChoreo = await Choreo.findByPk(choreo.id);
       expect(updatedChoreo!.updatedAt.getTime()).toBeGreaterThanOrEqual(
@@ -399,6 +398,10 @@ describe("HitService", () => {
       ];
       const result = await HitService.mcpBulkCreate(hits, choreo.id, user.id);
       expect(result.length).toBe(1);
+      const associatedMembers = await result[0].getMembers();
+      expect(
+        associatedMembers.map((associatedMember) => associatedMember.id),
+      ).toContain(member.id);
     });
 
     test("handles empty hits array", async () => {

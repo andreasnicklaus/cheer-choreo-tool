@@ -15,6 +15,7 @@ const MOCKED_FEATURE_FLAGS = [
   { name: "social-login", enabled: false, stale: false },
 ];
 
+// sloplint-disable-next-line COPY-001 -- Unleash is the proper name of the feature-flag client library
 jest.mock("unleash-client", () => ({
   initialize: jest.fn(() => ({
     on: jest.fn((_event: string, callback: () => void) => {

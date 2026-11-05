@@ -13,7 +13,9 @@ function logConfig() {
     : "not defined"; // njsscan-ignore: node_password
 
   const tokenSecret = process.env.TOKEN_SECRET ? "<redacted>" : "not defined"; // njsscan-ignore: node_secret
+  // sloplint-disable-next-line SEC-001 -- diagnostic label only; never used as a token expiry fallback
   const jwtExpiresIn = process.env.JWT_EXPIRES_IN || "not defined";
+  // sloplint-disable-next-line SEC-001 -- diagnostic label only; never used as a token expiry fallback
   const ssoTokenExpiresIn = process.env.SSO_TOKEN_EXPIRES_IN || "not defined";
 
   const frontendDomain = process.env.FRONTEND_DOMAIN || "not defined";

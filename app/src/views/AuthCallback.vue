@@ -33,6 +33,7 @@ export default defineComponent({
       ) {
         this.$router
           .replace({ path: this.$route.path, query: cleanedQuery })
+          // sloplint-disable-next-line BE-001 -- query cleanup is best-effort and must not interrupt callback handling
           .catch(() => {});
       }
     };

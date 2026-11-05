@@ -1,3 +1,4 @@
+// sloplint-disable-file TEST-001 -- production seeding is the module initialization side effect under test
 import seed from "@/db/seed";
 import { describe, expect, test } from "@jest/globals";
 import { Sequelize } from "sequelize";
