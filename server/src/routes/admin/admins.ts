@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { z } from "zod";
-import Admin from "../../db/models/admin";
 import AdminService from "../../services/AdminService";
 import { validate } from "../../middlewares/validateMiddleware";
 import { uuidParams } from "../../utils/zodSchemas";
@@ -21,17 +20,31 @@ type UuidParams = z.infer<typeof uuidParams>;
 
 const router = Router();
 
-router.get("/", (req: Request, res: Response, next: NextFunction) => {
-  return AdminService.getAll()
-    .then((adminList: Admin[]) => {
-      return res.render("../src/views/admin/admins.ejs", {
-        username: req.Admin.username,
-        adminList,
-        currentAdmin: req.Admin,
-        currentAdminId: req.AdminId,
-      }); // njsscan-ignore: express_lfr_warning
-    })
-    .catch((e: Error) => next(e));
+router.get("/", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const page = Math.max(parseInt(String(req.query.page ?? "1"), 10) || 1, 1);
+    const limit = Math.max(
+      parseInt(String(req.query.limit ?? "25"), 10) || 25,
+      1,
+    );
+    const total = await AdminService.getCount();
+    const totalPages = Math.max(Math.ceil(total / limit), 1);
+    const safePage = Math.min(page, totalPages);
+    const offset = (safePage - 1) * limit;
+    const adminList = await AdminService.getAll({ limit, offset });
+    return res.render("../src/views/admin/admins.ejs", {
+      username: req.Admin.username,
+      adminList,
+      currentAdmin: req.Admin,
+      currentAdminId: req.AdminId,
+      page: safePage,
+      limit,
+      total,
+      totalPages,
+    }); // njsscan-ignore: express_lfr_warning
+  } catch (e) {
+    return next(e as Error);
+  }
 });
 
 router.post(

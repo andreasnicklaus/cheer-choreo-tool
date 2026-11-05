@@ -31,6 +31,7 @@ const dbGetQuerySchema = z.object({
 });
 const dbCreateBodySchema = z.object({
   name: z.string().optional(),
+  logoExtension: z.string().optional(),
   UserId: z.string().optional(),
   ClubId: z.string().optional(),
   SeasonId: z.string().optional(),
@@ -44,6 +45,7 @@ const dbCreateBodySchema = z.object({
 const dbUpdateBodySchema = z.object({
   id: z.string().min(1),
   name: z.string().optional(),
+  logoExtension: z.string().optional(),
   UserId: z.string().optional(),
   ClubId: z.string().optional(),
   SeasonId: z.string().optional(),
@@ -74,13 +76,20 @@ router.get(
     const UserId = (req.query.UserId ?? null) as string;
     const searchTerm = req.query.s ?? null;
     const adminId = req.Admin?.id || req.AdminId;
+    const page = Math.max(parseInt(String(req.query.page ?? "1"), 10) || 1, 1);
+    const limit = Math.max(
+      parseInt(String(req.query.limit ?? "25"), 10) || 25,
+      1,
+    );
 
     let columns, data;
     let model;
     const extraData: {
       userList: entityList;
+      userIdList?: entityList;
       clubList?: entityList;
       teamList?: entityList;
+      seasonList?: entityList;
       seasonTeamList?: entityList;
       matTypeList?: entityList;
     } = {
@@ -89,6 +98,7 @@ router.get(
         name: user.username,
       })),
     };
+    extraData.userIdList = extraData.userList;
     switch (req.params.entity) {
       case "clubs":
         columns = ["name"];
@@ -96,7 +106,7 @@ router.get(
           UserId ? [UserId] : null,
           adminId,
           true,
-          { all: !UserId },
+          { all: !UserId, lightweight: true },
         );
         model = Club;
         break;
@@ -106,12 +116,18 @@ router.get(
           UserId ? [UserId] : null,
           adminId,
           true,
-          { all: !UserId },
+          { all: !UserId, lightweight: true },
         );
         model = Team;
         extraData.clubList = (
           await ClubService.getAll([], adminId, true, { all: true })
         ).map((club: Club) => ({ value: club.id, name: club.name }));
+        extraData.seasonList = (
+          await SeasonService.getAll([], adminId, true, { all: true })
+        ).map((season: Season) => ({
+          value: season.id,
+          name: `${season.name}${season.year ? ` (${season.year})` : ""}`,
+        }));
         break;
       case "seasons":
         columns = ["year", "name"];
@@ -119,21 +135,27 @@ router.get(
           UserId ? [UserId] : null,
           adminId,
           true,
-          { all: !UserId },
+          { all: !UserId, lightweight: true },
         );
         model = Season;
         break;
       case "members":
         columns = ["name", "nickname", "abbreviation"];
         data = UserId
-          ? await MemberService.getAll([UserId], adminId, true, { all: false })
-          : await MemberService.getAll([], adminId, true, { all: true });
+          ? await MemberService.getAll([UserId], adminId, true, {
+              all: false,
+              lightweight: true,
+            })
+          : await MemberService.getAll([], adminId, true, {
+              all: true,
+              lightweight: true,
+            });
         model = Member;
         extraData.teamList = (
           await TeamService.getAll([], adminId, true, { all: true })
         ).map((team: Team) => ({ value: team.id, name: team.name }));
         extraData.seasonTeamList = (
-          await SeasonTeamService.getAll([], adminId, true)
+          await SeasonTeamService.getAll([], adminId, true, { all: true })
         )
           .filter((seasonTeam: SeasonTeam) => seasonTeam.User)
           .map((seasonTeam: SeasonTeam) => {
@@ -148,11 +170,17 @@ router.get(
       case "choreos":
         columns = ["name", "counts", "matType"];
         data = UserId
-          ? await ChoreoService.getAll([UserId], adminId, true, { all: false })
-          : await ChoreoService.getAll([], adminId, true, { all: true });
+          ? await ChoreoService.getAll([UserId], adminId, true, {
+              all: false,
+              lightweight: true,
+            })
+          : await ChoreoService.getAll([], adminId, true, {
+              all: true,
+              lightweight: true,
+            });
         model = Choreo;
         extraData.seasonTeamList = (
-          await SeasonTeamService.getAll([], adminId, true)
+          await SeasonTeamService.getAll([], adminId, true, { all: true })
         )
           .filter((seasonTeam: SeasonTeam) => seasonTeam.User)
           .map((seasonTeam: SeasonTeam) => {
@@ -172,8 +200,26 @@ router.get(
         break;
     }
 
-    if (searchTerm)
-      data = search(data, { keys: columns }, searchTerm as string);
+    const searchKeys = [
+      ...(columns as string[]),
+      "id",
+      "UserId",
+      "creatorId",
+      "updaterId",
+    ];
+    if (searchTerm) {
+      data = search(data, { keys: searchKeys }, searchTerm as string);
+    } else if (UserId && data) {
+      // Allow filtering by user even without a free-text search term.
+      data = data.filter((item) => item?.UserId === UserId);
+    }
+
+    const safeData = data ?? [];
+    const total = safeData.length;
+    const totalPages = Math.max(Math.ceil(total / limit), 1);
+    const safePage = Math.min(page, totalPages);
+    const start = (safePage - 1) * limit;
+    data = safeData.slice(start, start + limit);
 
     res.render("../src/views/admin/db.ejs", {
       username: req.Admin.username,
@@ -187,7 +233,18 @@ router.get(
             }
           ).getAttributes(),
         )
-          .filter(([key, value]) => !(value._autoGenerated || key == "id"))
+          .filter(
+            ([key, value]) =>
+              !(
+                value._autoGenerated ||
+                key == "id" ||
+                key == "createdAt" ||
+                key == "updatedAt" ||
+                key == "deletedAt" ||
+                key == "creatorId" ||
+                key == "updaterId"
+              ),
+          )
           .map(([key, value]) => ({
             column: key,
             type: sequelizeDataTypeToHtmlInputType(
@@ -196,6 +253,10 @@ router.get(
           })),
       ),
       entity: req.params.entity,
+      page: safePage,
+      limit,
+      total,
+      totalPages,
       ...extraData,
     }); // njsscan-ignore: express_lfr_warning
 
@@ -224,8 +285,19 @@ router.post(
       switch (entity) {
         case "clubs":
           {
-            const { name, UserId } = data;
-            await ClubService.create(name, UserId, UserId, true);
+            const { name, logoExtension, UserId } = data;
+            const club = await ClubService.create(name, UserId, UserId, true);
+            if (logoExtension) {
+              await ClubService.update(
+                club.id,
+                { logoExtension },
+                UserId,
+                true,
+                {
+                  all: true,
+                },
+              );
+            }
           }
           break;
         case "teams":

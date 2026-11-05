@@ -23,12 +23,17 @@ class UserService {
    * @param options.includeDeleted - Whether to include soft-deleted users. Defaults to false.
    * @returns {Promise<Array>} Array of user objects.
    */
-  async getAll(options: { includeDeleted?: boolean } = {}) {
+  async getAll(
+    options: { includeDeleted?: boolean; limit?: number; offset?: number } = {},
+  ) {
     logger.debug(`UserService getAll ${JSON.stringify({ options })}`);
+    const queryOptions: { limit?: number; offset?: number } = {};
+    if (options.limit != null) queryOptions.limit = options.limit;
+    if (options.offset != null) queryOptions.offset = options.offset;
     if (options.includeDeleted) {
-      return User.scope("includingDeleted").findAll();
+      return User.scope("includingDeleted").findAll(queryOptions);
     }
-    return User.findAll();
+    return User.findAll(queryOptions);
   }
 
   /**
@@ -110,8 +115,11 @@ class UserService {
    * Get the total count of users.
    * @returns {Promise<number>} The total count of users.
    */
-  getCount() {
-    logger.debug(`UserService getCount`);
+  getCount(options: { includeDeleted?: boolean } = {}) {
+    logger.debug(`UserService getCount ${JSON.stringify({ options })}`);
+    if (options.includeDeleted) {
+      return User.scope("includingDeleted").count();
+    }
     return User.count();
   }
 

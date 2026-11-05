@@ -57,10 +57,21 @@ class SeasonTeamService {
    * @param {boolean} [isAdmin=false]
    * @returns {Promise<Array>} List of all season teams.
    */
-  async getAll(ownerIds: string[], actingUserId: string, isAdmin = false) {
+  async getAll(
+    ownerIds: string[],
+    actingUserId: string,
+    isAdmin = false,
+    options: { all?: boolean } = { all: false },
+  ) {
     logger.debug(
-      `SeasonTeamService getAll ${JSON.stringify({ ownerIds, actingUserId, isAdmin })}`,
+      `SeasonTeamService getAll ${JSON.stringify({ ownerIds, actingUserId, isAdmin, options })}`,
     );
+
+    if (options.all) {
+      return SeasonTeam.findAll({
+        include: ["Season", "Team", "User"],
+      });
+    }
 
     const accessibleOwnerIds =
       ownerIds.length > 0

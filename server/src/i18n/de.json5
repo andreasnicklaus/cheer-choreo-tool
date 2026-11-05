@@ -29,6 +29,10 @@
       "email-confirmed": "E-Mail bestätigt",
       "min-6-characters": "Min. 6 Zeichen",
       password: "Passwort",
+      provider: "Anbieter",
+      "social-id": "Social ID",
+      "profile-picture-extension": "Profilbild-Erweiterung",
+      "copy-user-id": "Benutzer-ID kopieren",
       recover: "Wiederherstellen",
       "recover-user": "Benutzer wiederherstellen",
       "recover-user-confirmation": "Sind Sie sicher, dass Sie diesen Benutzer wiederherstellen möchten?",
@@ -93,7 +97,8 @@
     add: "Hinzufügen",
     "save-changes": "Änderungen speichern",
     unknown: "Unbekannt",
-    never: "nie"
+    never: "nie",
+    items: "Einträge"
   },
   errors: {
     "something-went-wrong": "Etwas ist schiefgelaufen",

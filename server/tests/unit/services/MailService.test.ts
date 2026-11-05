@@ -76,7 +76,12 @@ describe("MailService", () => {
       "admin@example.com",
       "Neuer Nutzer",
       "newUser.ejs",
-      { userEmail: "email@example.com", userId: "id", username: "user" },
+      {
+        userEmail: "email@example.com",
+        userId: "id",
+        username: "user",
+        userCount: 0,
+      },
       [
         {
           cid: "choreo-planer-icon",

@@ -43,7 +43,14 @@ class TeamService {
     ownerIds: string[] | null,
     actingUserId: string,
     isAdmin = false,
-    options = { all: false },
+    options: {
+      all?: boolean;
+      limit?: number;
+      offset?: number;
+      lightweight?: boolean;
+    } = {
+      all: false,
+    },
   ) {
     logger.debug(
       `TeamService getAll ${JSON.stringify({ ownerIds, actingUserId, isAdmin, options })}`,
@@ -60,7 +67,9 @@ class TeamService {
         : accessibleOwnerIds.length > 0
           ? { UserId: { [Op.in]: accessibleOwnerIds } }
           : { UserId: actingUserId },
-      include: defaultInclude,
+      include: options.lightweight ? [] : defaultInclude,
+      limit: options.limit,
+      offset: options.offset,
     });
   }
 

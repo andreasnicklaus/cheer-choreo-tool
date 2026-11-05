@@ -41,14 +41,12 @@
               name="<%= column %>"
               required="<%= Boolean(required) %>"
             >
-              <% if (locals[column.substring(0, column.length - 2).toLowerCase()
-              + 'List']) { %> <% locals[column.substring(0, column.length -
-              2).toLowerCase() + 'List'].forEach(option => { %>
+              <% if (locals[column.charAt(0).toLowerCase() + column.slice(1, column.length - 2) + 'List']) { %> <% locals[column.charAt(0).toLowerCase() + column.slice(1, column.length - 2) + 'List'].forEach(option => { %>
 
               <option value="<%= option.value %>"><%= option.name %></option>
 
-              <% }) %> <% } %> <% if (locals[column.toLowerCase() + 'List']) {
-              %> <% locals[column.toLowerCase() + 'List'].forEach(option => { %>
+              <% }) %> <% } %> <% if (locals[column.charAt(0).toLowerCase() + column.slice(1) + 'List']) {
+              %> <% locals[column.charAt(0).toLowerCase() + column.slice(1) + 'List'].forEach(option => { %>
               <option value="<%= option.value %>"><%= option.name %></option>
               <% }) %> <% } %> <% if (type != "ENUM") { %>
               <option value="null">

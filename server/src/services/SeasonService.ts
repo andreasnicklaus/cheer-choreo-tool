@@ -29,7 +29,14 @@ class SeasonService {
     ownerIds: string[] | null,
     actingUserId: string,
     isAdmin = false,
-    options = { all: false },
+    options: {
+      all?: boolean;
+      limit?: number;
+      offset?: number;
+      lightweight?: boolean;
+    } = {
+      all: false,
+    },
   ) {
     logger.debug(
       `SeasonService getAll ${JSON.stringify({ ownerIds, actingUserId, isAdmin, options })}`,
@@ -50,11 +57,15 @@ class SeasonService {
               },
             },
         order: [["year", "DESC NULLS LAST"], "createdAt"],
+        limit: options.limit,
+        offset: options.offset,
       });
     else
       return Season.findAll({
         where: options.all ? {} : { UserId: { [Op.is]: null } },
         order: [["year", "DESC NULLS LAST"], "createdAt"],
+        limit: options.limit,
+        offset: options.offset,
       });
   }
 

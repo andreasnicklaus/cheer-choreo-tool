@@ -44,7 +44,7 @@
         <form action="<%= path %>" method="get">
           <div class="row">
             <div class="col">
-              <input type="text" name="UserId" list="userSearch" placeholder="UserId" value="<%= query?.UserId %>" class="form-control" />
+              <input type="text" name="UserId" list="userSearch" placeholder="UserId" value="<%= query?.UserId %>" class="form-control" onchange="this.form.submit()" />
               <datalist id="userSearch">
                 <% userList.forEach(({value, name}) => { %>
                 <option value="<%= value %>"> <%= name %> </option>
@@ -52,7 +52,7 @@
               </datalist> 
               <% if (query.UserId) { %>
               <div id="userIdHelp" class="form-text">
-                <%= t('admin.db.last-search') %> <%= userList.find(option => option.value == query?.UserId).name %>
+                <%= t('admin.db.last-search') %> <%= (userList.find(option => option.value == query?.UserId) || {}).name || query?.UserId %>
                 </div>
                 <% } %>
             </div>
@@ -137,6 +137,7 @@
       <% } %>
     </main>
     
+    <%- include('./components/pagination'); %>
 
     <footer><%- include('./partials/footer'); %></footer>
     <script type="text/javascript" defer nonce="<%= cspNonce %>">

@@ -30,6 +30,7 @@
               <th scope="col">#</th>
               <th scope="col"><%= t('admin.users.username') %></th>
               <th scope="col"><%= t('admin.users.email') %></th>
+              <th scope="col"><%= t('admin.users.provider') %></th>
               <th scope="col"><%= t('entities.created-at') %></th>
               <th scope="col"><%= t('entities.lastLoggedIn') %></th>
               <th scope="col"><%= t('entities.actions') %></th>
@@ -52,6 +53,7 @@
                 <i class="bi-question-circle-fill text-warning"></i>
                 <% } %>
               </td>
+              <td><%= user.provider || 'local' %></td>
               <td><%= new Date(user.createdAt).toLocaleString(locale) %></td>
               <td>
                 <%= user.lastLoggedIn ? new
@@ -60,6 +62,14 @@
               </td>
               <td>
                 <div class="btn-group">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm copy-user-id-btn"
+                    data-user-id="<%= user.id %>"
+                    title="<%= t('admin.users.copy-user-id') %>"
+                  >
+                    <i class="bi bi-clipboard"></i>
+                  </button>
                   <% if (user.deletedAt) { %>
                   <button
                     type="button"
@@ -81,6 +91,9 @@
                     data-bs-username="<%= user.username %>"
                     data-bs-email="<%= user.email %>"
                     data-bs-email-confirmed="<%= user.emailConfirmed %>"
+                    data-bs-provider="<%= user.provider %>"
+                    data-bs-social-id="<%= user.socialId %>"
+                    data-bs-profile-picture-extension="<%= user.profilePictureExtension %>"
                   >
                     <i class="bi bi-pencil-fill"></i>
                   </button>
@@ -101,7 +114,7 @@
             <tr>
               <td></td>
               <td>
-                <b> <%= userList.length %> </b>
+                <b> <%= typeof total !== 'undefined' ? total : userList.length %> </b>
                 <%= tn('entities.user', 2) %>
                 <% const deletedCount = userList.filter(u => u.deletedAt).length; %>
                 <% if (deletedCount > 0) { %>
@@ -184,6 +197,23 @@
                 <label for="emailConfirmed" class="form-label"
                   ><%= t('admin.users.email-confirmed') %></label
                 >
+              </div>
+              <div class="mb-3">
+                <label for="provider" class="form-label"><%= t('admin.users.provider') %></label>
+                <select class="form-select" id="provider" name="provider">
+                  <option value="local">local</option>
+                  <option value="google">google</option>
+                  <option value="github">github</option>
+                  <option value="facebook">facebook</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="socialId" class="form-label"><%= t('admin.users.social-id') %></label>
+                <input type="text" class="form-control" id="socialId" name="socialId" />
+              </div>
+              <div class="mb-3">
+                <label for="profilePictureExtension" class="form-label"><%= t('admin.users.profile-picture-extension') %></label>
+                <input type="text" class="form-control" id="profilePictureExtension" name="profilePictureExtension" />
               </div>
               <div class="mb-3">
                 <label for="password" class="form-label"
@@ -286,6 +316,23 @@
                 </label>
               </div>
               <div class="mb-3">
+                <label for="provider" class="form-label"><%= t('admin.users.provider') %></label>
+                <select class="form-select" id="provider" name="provider">
+                  <option value="local">local</option>
+                  <option value="google">google</option>
+                  <option value="github">github</option>
+                  <option value="facebook">facebook</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="socialId" class="form-label"><%= t('admin.users.social-id') %></label>
+                <input type="text" class="form-control" id="socialId" name="socialId" />
+              </div>
+              <div class="mb-3">
+                <label for="profilePictureExtension" class="form-label"><%= t('admin.users.profile-picture-extension') %></label>
+                <input type="text" class="form-control" id="profilePictureExtension" name="profilePictureExtension" />
+              </div>
+              <div class="mb-3">
                 <label for="password" class="form-label"
                   ><%= t('admin.users.password') %></label
                 >
@@ -360,6 +407,26 @@
       </div>
     </div>
 
+    <script type="text/javascript" defer nonce="<%= cspNonce %>">
+      document.querySelectorAll(".copy-user-id-btn").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const userId = button.getAttribute("data-user-id");
+          try {
+            await navigator.clipboard.writeText(userId);
+            const icon = button.querySelector("i");
+            icon.className = "bi bi-clipboard-check";
+            setTimeout(() => {
+              icon.className = "bi bi-clipboard";
+            }, 1500);
+          } catch (err) {
+            window.prompt("Copy user id:", userId);
+          }
+        });
+      });
+    </script>
+
+    <%- include('./components/pagination'); %>
+
     <footer><%- include('./partials/footer'); %></footer>
 
     <script type="text/javascript" defer nonce="<%= cspNonce %>">
@@ -369,20 +436,32 @@
           const button = event.relatedTarget;
           const id = button.getAttribute("data-bs-id");
           const username = button.getAttribute("data-bs-username");
-          const email = button.getAttribute("data-bs-email");
-          const emailConfirmed = button.getAttribute("data-bs-email-confirmed");
-          const modalId = updateModal.querySelector("input[name='id']");
+           const email = button.getAttribute("data-bs-email");
+           const emailConfirmed = button.getAttribute("data-bs-email-confirmed");
+           const provider = button.getAttribute("data-bs-provider");
+           const socialId = button.getAttribute("data-bs-social-id");
+           const profilePictureExtension = button.getAttribute("data-bs-profile-picture-extension");
+           const modalId = updateModal.querySelector("input[name='id']");
           const modalUserName = updateModal.querySelector(
             "input[name='username']"
           );
           const modalEmail = updateModal.querySelector("input[name='email']");
-          const modalEmailConfirmed = updateModal.querySelector(
-            "input[name='emailConfirmed']"
-          );
-          modalId.value = id;
-          modalUserName.value = username;
-          modalEmail.value = email;
-          modalEmailConfirmed.checked = emailConfirmed === "true";
+           const modalEmailConfirmed = updateModal.querySelector(
+             "input[name='emailConfirmed']"
+           );
+           const modalProvider = updateModal.querySelector("select[name='provider']");
+           const modalSocialId = updateModal.querySelector("input[name='socialId']");
+           const modalProfilePictureExtension = updateModal.querySelector(
+             "input[name='profilePictureExtension']"
+           );
+           modalId.value = id;
+           modalUserName.value = username;
+           modalEmail.value = email;
+           modalEmailConfirmed.checked = emailConfirmed === "true";
+           if (modalProvider) modalProvider.value = provider || "local";
+           if (modalSocialId) modalSocialId.value = socialId || "";
+           if (modalProfilePictureExtension)
+             modalProfilePictureExtension.value = profilePictureExtension || "";
         });
       }
     </script>

@@ -41,16 +41,19 @@ class MailService {
    * @param {string} userEmail - The email of the new user.
    * @returns {Promise<void[]>} Resolves when all emails are sent.
    */
-  sendUserRegistrationNotice(
+  async sendUserRegistrationNotice(
     username: string,
     userId: string,
     userEmail: string,
+    userCount?: number,
   ) {
+    const resolvedUserCount = userCount ?? (await User.count());
     logger.debug(
       `MailService sendUserRegistrationNotice ${JSON.stringify({
         username,
         userId,
         userEmail,
+        userCount: resolvedUserCount,
       })}`,
     );
     return Promise.all(
@@ -63,6 +66,7 @@ class MailService {
             username,
             userId,
             userEmail,
+            userCount: resolvedUserCount,
           },
           [
             {
