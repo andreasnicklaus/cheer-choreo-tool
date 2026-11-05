@@ -48,7 +48,11 @@
                 %>
               </td>
               <td>
-                <%- notification.read ? '<i class="bi-check-circle-fill" style="color: var(--color-success);"></i>' : '<i class="bi-x-circle-fill" style="color: var(--color-danger);"></i>' %>
+                <% if (notification.read) { %>
+                <i class="bi bi-check-circle-fill" style="color: var(--color-success);"></i>
+                <% } else { %>
+                <i class="bi bi-x-circle-fill" style="color: var(--color-danger);"></i>
+                <% } %>
               </td>
               <td>
                 <%= new Date(notification.createdAt).toLocaleString(locale) %>
