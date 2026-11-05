@@ -13,7 +13,7 @@
     "build:ts": "tsc --project compile.tsconfig.json && tsc-alias --project compile.tsconfig.json && tscp --project compile.tsconfig.json",
     "test": "run-s test:prep test:unit",
     "test:prep": "npm run lint && tsc --noEmit",
-    "test:unit": "jest",
+    "test:unit": "npm run test:prep && jest",
     "clean": "rimraf dist",
     "lint": "run-s lint:eslint lint:sloplint",
     "lint:eslint": "eslint .",
