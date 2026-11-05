@@ -10,7 +10,9 @@
 
     <p>
       <b> <%= username %> </b>
-      hat sich eben um <%= timestamp %> registriert!
+      hat sich eben um <%= new Date().toLocaleString('de-DE') %> registriert!
+      <br />
+      Neue Anzahl der Nutzer: <%= userCount %>
       <br />
       Generierte User-ID:
       <span style="font-family: monospace"><%= userId %></span>

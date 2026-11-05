@@ -2,163 +2,173 @@
 <html lang="<%= locals.locale? locale : 'en' %>">
   <head>
     <%- include('./partials/head'); %>
-    <style>
-      .dashboardKPI {
-        display: inline-block;
-      }
-      .dashboardKPI h2 {
-        font-size: 1rem;
-        font-weight: 400;
-        margin-bottom: 0;
-      }
-      .dashboardKPI .KPI {
-        font-size: xx-large;
-        font-weight: 700;
-        margin-bottom: 0;
-      }
-      a.dashboardTile {
-        display: block;
-        text-decoration: none;
-      }
-    </style>
   </head>
   <body>
     <header><%- include('./partials/header'); %></header>
 
     <main class="container">
-      <h1><%= t('admin.index.dashboard') %></h1>
-      <div class="row" style="row-gap: 16px">
-        <% if (locals.newestFeedback) { %>
-        <div class="col-12">
-          <div class="px-5 py-4 bg-success-subtle rounded-3 mb-0">
-            <small class="text-muted"
-              ><%= t('admin.index.last-feedback') %></small
-            >
-            <p>
-              <%= newestFeedback.stars %> <% for( let index = 0; index <
-              parseInt(newestFeedback.stars); index++ ) { %>
-              <i class="bi-star-fill text-success"></i>
-              <% } %>
-            </p>
-            <b><%= newestFeedback.text %></b>
+      <div class="d-flex justify-content-between align-items-end mb-4">
+        <h1 class="mb-0"><%= t('admin.index.dashboard') %></h1>
+        <span class="text-muted" style="font-size: var(--text-sm);"><%= new Date().toLocaleDateString(locale) %></span>
+      </div>
+
+      <% if (locals.newestFeedback) { %>
+      <div class="panel mb-4" style="border-left: 3px solid var(--color-success);">
+        <small class="text-muted"><%= t('admin.index.last-feedback') %></small>
+        <p class="mb-1" style="font-size: var(--text-lg); font-weight: 600;">
+          <%= newestFeedback.stars %>
+          <% for( let index = 0; index < parseInt(newestFeedback.stars); index++ ) { %>
+          <i class="bi-star-fill" style="color: var(--color-success);"></i>
+          <% } %>
+        </p>
+        <b><%= newestFeedback.text %></b>
+      </div>
+      <% } %>
+
+      <div class="panel mb-4" style="padding: 0;">
+        <table class="table mb-0 dashboard-table">
+          <thead>
+            <tr>
+              <th><%= t('admin.index.dashboard') %></th>
+              <th class="text-end">Count</th>
+              <th class="text-end">Trend</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (locals.userCount) { %>
+            <tr class="dashboard-row" data-href="/admin/users" tabindex="0" role="link">
+              <td>
+                <i class="bi-people-fill me-2" style="color: var(--color-accent);"></i><span class="dashboard-row__label"><%= tn('entities.user', userCount) %></span>
+              </td>
+              <td class="text-end mono"><%= userCount %></td>
+              <td class="text-end mono"><span class="trend <%= userTrend > 0 ? 'trend--positive' : userTrend < 0 ? 'trend--negative' : 'trend--neutral' %>"><%= userTrend %></span></td>
+              <td class="text-end"><i class="bi-arrow-right dashboard-row__arrow"></i></td>
+            </tr>
+            <% } %>
+            <% if (locals.adminCount) { %>
+            <tr class="dashboard-row" data-href="/admin/admins" tabindex="0" role="link">
+              <td>
+                <i class="bi-person-fill-gear me-2" style="color: var(--color-accent);"></i><span class="dashboard-row__label"><%= tn('entities.admin', adminCount) %></span>
+              </td>
+              <td class="text-end mono"><%= adminCount %></td>
+              <td class="text-end mono"><span class="trend <%= adminTrend > 0 ? 'trend--positive' : adminTrend < 0 ? 'trend--negative' : 'trend--neutral' %>"><%= adminTrend %></span></td>
+              <td class="text-end"><i class="bi-arrow-right dashboard-row__arrow"></i></td>
+            </tr>
+            <% } %>
+            <% if (locals.clubCount) { %>
+            <tr class="dashboard-row" data-href="/admin/db/clubs" tabindex="0" role="link">
+              <td>
+                <i class="bi-house me-2" style="color: var(--color-accent);"></i><span class="dashboard-row__label"><%= tn('entities.club', clubCount) %></span>
+              </td>
+              <td class="text-end mono"><%= clubCount %></td>
+              <td class="text-end mono"><span class="trend <%= clubTrend > 0 ? 'trend--positive' : clubTrend < 0 ? 'trend--negative' : 'trend--neutral' %>"><%= clubTrend %></span></td>
+              <td class="text-end"><i class="bi-arrow-right dashboard-row__arrow"></i></td>
+            </tr>
+            <% } %>
+            <% if (locals.teamCount) { %>
+            <tr class="dashboard-row" data-href="/admin/db/teams" tabindex="0" role="link">
+              <td>
+                <i class="bi-people me-2" style="color: var(--color-accent);"></i><span class="dashboard-row__label"><%= tn('entities.team', teamCount) %></span>
+              </td>
+              <td class="text-end mono"><%= teamCount %></td>
+              <td class="text-end mono"><span class="trend <%= teamTrend > 0 ? 'trend--positive' : teamTrend < 0 ? 'trend--negative' : 'trend--neutral' %>"><%= teamTrend %></span></td>
+              <td class="text-end"><i class="bi-arrow-right dashboard-row__arrow"></i></td>
+            </tr>
+            <% } %>
+            <% if (locals.seasonCount) { %>
+            <tr class="dashboard-row" data-href="/admin/db/seasons" tabindex="0" role="link">
+              <td>
+                <i class="bi-calendar me-2" style="color: var(--color-accent);"></i><span class="dashboard-row__label"><%= tn('entities.season', seasonCount) %></span>
+              </td>
+              <td class="text-end mono"><%= seasonCount %></td>
+              <td class="text-end mono"><span class="trend <%= seasonTrend > 0 ? 'trend--positive' : seasonTrend < 0 ? 'trend--negative' : 'trend--neutral' %>"><%= seasonTrend %></span></td>
+              <td class="text-end"><i class="bi-arrow-right dashboard-row__arrow"></i></td>
+            </tr>
+            <% } %>
+            <% if (locals.seasonTeamCount) { %>
+            <tr>
+              <td>
+                <i class="bi-calendar-range me-2" style="color: var(--color-accent);"></i><%= tn('entities.seasonTeam', seasonTeamCount) %>
+              </td>
+              <td class="text-end mono"><%= seasonTeamCount %></td>
+              <td class="text-end mono"><span class="trend <%= seasonTeamTrend > 0 ? 'trend--positive' : seasonTeamTrend < 0 ? 'trend--negative' : 'trend--neutral' %>"><%= seasonTeamTrend %></span></td>
+              <td></td>
+            </tr>
+            <% } %>
+            <% if (locals.choreoCount) { %>
+            <tr class="dashboard-row" data-href="/admin/db/choreos" tabindex="0" role="link">
+              <td>
+                <i class="bi-layout-three-columns me-2" style="color: var(--color-accent);"></i><span class="dashboard-row__label"><%= tn('entities.choreo', choreoCount) %></span>
+              </td>
+              <td class="text-end mono"><%= choreoCount %></td>
+              <td class="text-end mono"><span class="trend <%= choreoTrend > 0 ? 'trend--positive' : choreoTrend < 0 ? 'trend--negative' : 'trend--neutral' %>"><%= choreoTrend %></span></td>
+              <td class="text-end"><i class="bi-arrow-right dashboard-row__arrow"></i></td>
+            </tr>
+            <% } %>
+            <% if (locals.memberCount) { %>
+            <tr class="dashboard-row" data-href="/admin/db/members" tabindex="0" role="link">
+              <td>
+                <i class="bi-people me-2" style="color: var(--color-accent);"></i><span class="dashboard-row__label"><%= tn('entities.member', memberCount) %></span>
+              </td>
+              <td class="text-end mono"><%= memberCount %></td>
+              <td class="text-end mono"><span class="trend <%= memberTrend > 0 ? 'trend--positive' : memberTrend < 0 ? 'trend--negative' : 'trend--neutral' %>"><%= memberTrend %></span></td>
+              <td class="text-end"><i class="bi-arrow-right dashboard-row__arrow"></i></td>
+            </tr>
+            <% } %>
+            <% if (locals.notificationPercentage != null) { %>
+            <tr class="dashboard-row" data-href="/admin/notifications" tabindex="0" role="link">
+              <td>
+                <i class="bi-bell me-2" style="color: var(--color-accent);"></i><span class="dashboard-row__label"><%= t('admin.index.notifications-opened') %></span>
+              </td>
+              <td class="text-end mono"><%= notificationPercentage %>%</td>
+              <td class="text-end mono"><span class="trend <%= typeof notificationTrend === 'number' && !Number.isNaN(notificationTrend) ? (notificationTrend > 0 ? 'trend--positive' : notificationTrend < 0 ? 'trend--negative' : 'trend--neutral') : 'trend--neutral' %>"><%= typeof notificationTrend === 'number' && !Number.isNaN(notificationTrend) ? notificationTrend : 'n/a' %></span></td>
+              <td class="text-end"><i class="bi-arrow-right dashboard-row__arrow"></i></td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+
+      <% if (locals.usersLoggedInPercentage != null || locals.feedbackAverage) { %>
+      <div class="row g-3">
+        <% if (locals.usersLoggedInPercentage != null) { %>
+        <div class="col-md-6">
+          <div class="panel">
+            <small class="text-muted"><%= t('admin.index.logged-in') %></small>
+            <div style="font-size: var(--text-3xl); font-weight: 600; font-family: var(--font-display); letter-spacing: var(--tracking-display);">
+              <%= usersLoggedInPercentage %>%
+            </div>
           </div>
         </div>
-        <% } %> <% if (locals.userCount) { %>
-        <div class="col-12 col-md-6">
-          <a
-            href="/admin/users"
-            class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
-          >
-            <%- include('./components/dashboardKpis', { trend: userTrend, count:
-            userCount, label: tn('entities.user', userCount), icon: 'person' })
-            %> <%- include('./components/dashboardKpis', { count:
-            usersLoggedInPercentage + "%", label: t('admin.index.logged-in') ,
-            icon: 'person-plus', trendText: "%", kpiTextVariant:
-            usersLoggedInPercentage >= 30 ? (usersLoggedInPercentage >= 50 ?
-            (usersLoggedInPercentage >= 90 ? 'success' : null) : 'warning') :
-            'danger', class: "ms-4" }) %>
-          </a>
-        </div>
-        <% } %> <% if (locals.adminCount) { %>
-        <div class="col-12 col-md-6">
-          <a
-            href="/admin/admins"
-            class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
-          >
-            <%- include('./components/dashboardKpis', { trend: adminTrend,
-            count: adminCount, label: tn('entities.admin', adminCount), icon:
-            'person-gear' }) %>
-          </a>
-        </div>
-        <% } %> <% if (locals.clubCount) { %>
-        <div class="col-6 col-md-3">
-          <a
-            href="/admin/db/clubs"
-            class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
-          >
-            <%- include('./components/dashboardKpis', { trend: clubTrend, count:
-            clubCount, label: tn('entities.club', clubCount), icon: 'house' })
-            %>
-          </a>
-        </div>
-        <% } %><% if (locals.teamCount) { %>
-        <div class="col-6 col-md-3">
-          <a
-            href="/admin/db/teams"
-            class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
-          >
-            <%- include('./components/dashboardKpis', { trend: teamTrend, count:
-            teamCount, label: tn('entities.team', teamCount), icon: 'people' })
-            %>
-          </a>
-        </div>
-        <% } %><% if (locals.seasonCount) { %>
-        <div class="col-6 col-md-3">
-          <a
-            href="/admin/db/seasons"
-            class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
-          >
-            <%- include('./components/dashboardKpis', { trend: seasonTrend,
-            count: seasonCount, label: tn('entities.season', seasonCount), icon:
-            'calendar' }) %>
-          </a>
-        </div>
-        <% } %><% if (locals.seasonTeamCount) { %>
-        <div class="col-6 col-md-3">
-          <div class="px-5 py-4 bg-body-secondary rounded-3 mb-0">
-            <%- include('./components/dashboardKpis', { trend: seasonTeamTrend,
-            count: seasonTeamCount, label: tn('entities.seasonTeam',
-            seasonTeamCount) , icon: 'calendar-range'}) %>
-          </div>
-        </div>
-        <% } %> <% if (locals.choreoCount) { %>
-        <div class="col-6 col-md-4">
-          <a
-            href="/admin/db/choreos"
-            class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
-          >
-            <%- include('./components/dashboardKpis', { trend: choreoTrend,
-            count: choreoCount, label: tn('entities.choreo', choreoCount), icon:
-            'layout-three-columns' }) %>
-          </a>
-        </div>
-        <% } %> <% if (locals.memberCount) { %>
-        <div class="col-6 col-md-4">
-          <a
-            href="/admin/db/members"
-            class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
-          >
-            <%- include('./components/dashboardKpis', { trend: memberTrend,
-            count: memberCount, label: tn('entities.member', memberCount), icon:
-            'people' }) %>
-          </a>
-        </div>
-        <% } %><% if (locals.notificationPercentage != null) { %>
-        <div class="col-6 col-md-4">
-          <a
-            href="/admin/notifications"
-            class="dashboardTile px-5 py-4 bg-body-secondary rounded-3 mb-0"
-          >
-            <%- include('./components/dashboardKpis', { trend:
-            notificationTrend, count: notificationPercentage + "%", label:
-            t('admin.index.notifications-opened'), icon: 'bell', trendText: "%",
-            kpiTextVariant: notificationPercentage >= 30 ?
-            (notificationPercentage >= 50 ? (notificationPercentage >= 90 ?
-            'success' : null) : 'warning') : 'danger' }) %>
-          </a>
-        </div>
-        <% } %> <% if (locals.feedbackAverage) { %>
-        <div class="col-6 col-md-4">
-          <div class="px-5 py-4 bg-body-secondary rounded-3 mb-0">
-            <%- include('./components/dashboardKpis', { trend: feedbackAverage -
-            feedbackAverageOfLastMonth, count: feedbackAverage, label:
-            t('entities.feedback'), icon: 'star' }) %>
+        <% } %>
+        <% if (locals.feedbackAverage) { %>
+        <div class="col-md-6">
+          <div class="panel">
+            <small class="text-muted"><%= t('entities.feedback') %></small>
+            <div style="font-size: var(--text-3xl); font-weight: 600; font-family: var(--font-display); letter-spacing: var(--tracking-display);">
+              <%= feedbackAverage %>
+            </div>
+            <small class="text-muted">last month <%= feedbackAverageOfLastMonth %></small>
           </div>
         </div>
         <% } %>
       </div>
+      <% } %>
     </main>
 
     <footer><%- include('./partials/footer'); %></footer>
+    <script nonce="<%= cspNonce %>">
+      document.querySelectorAll(".dashboard-row[data-href]").forEach((row) => {
+        const navigate = () => { window.location.href = row.dataset.href; };
+        row.addEventListener("click", navigate);
+        row.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            navigate();
+          }
+        });
+      });
+    </script>
   </body>
 </html>

@@ -18,19 +18,33 @@ const sendNotificationSchema = z.object({
 
 const router = Router();
 
-router.get("/", (req: Request, res: Response, next: NextFunction) => {
-  return Promise.all([
-    NotificationService.getAll(null, { all: true }),
-    UserService.getAll(),
-  ])
-    .then(([notificationList, userList]) => {
-      return res.render("../src/views/admin/notifications.ejs", {
-        username: req.Admin.username,
-        notificationList,
-        userList,
-      }); // njsscan-ignore: express_lfr_warning
-    })
-    .catch((e) => next(e));
+router.get("/", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const page = Math.max(parseInt(String(req.query.page ?? "1"), 10) || 1, 1);
+    const limit = Math.max(
+      parseInt(String(req.query.limit ?? "25"), 10) || 25,
+      1,
+    );
+    const total = await NotificationService.getCount(null, { all: true });
+    const totalPages = Math.max(Math.ceil(total / limit), 1);
+    const safePage = Math.min(page, totalPages);
+    const offset = (safePage - 1) * limit;
+    const [notificationList, userList] = await Promise.all([
+      NotificationService.getAll(null, { all: true, limit, offset }),
+      UserService.getAll(),
+    ]);
+    return res.render("../src/views/admin/notifications.ejs", {
+      username: req.Admin.username,
+      notificationList,
+      userList,
+      page: safePage,
+      limit,
+      total,
+      totalPages,
+    }); // njsscan-ignore: express_lfr_warning
+  } catch (e) {
+    return next(e as Error);
+  }
 });
 
 router.post(

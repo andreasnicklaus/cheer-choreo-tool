@@ -60,7 +60,14 @@ class ClubService {
     ownerIds: string[] | null,
     actingUserId: string,
     isAdmin = false,
-    options = { all: false },
+    options: {
+      all?: boolean;
+      limit?: number;
+      offset?: number;
+      lightweight?: boolean;
+    } = {
+      all: false,
+    },
   ) {
     logger.debug(
       `ClubService getAll ${JSON.stringify({ ownerIds, actingUserId, isAdmin, options })}`,
@@ -77,24 +84,28 @@ class ClubService {
         : accessibleOwnerIds.length > 0
           ? { UserId: { [Op.in]: accessibleOwnerIds } }
           : { UserId: actingUserId },
-      include: defaultInclude,
-      order: [
-        ["createdAt", "ASC"],
-        [Club.associations.Teams, "name"],
-        [
-          Club.associations.Teams,
-          Team.associations.SeasonTeams,
-          SeasonTeam.associations.Season,
-          "year",
-          "DESC NULLS LAST",
-        ],
-        [
-          Club.associations.Teams,
-          Team.associations.SeasonTeams,
-          SeasonTeam.associations.Season,
-          "name",
-        ],
-      ],
+      include: options.lightweight ? [] : defaultInclude,
+      limit: options.limit,
+      offset: options.offset,
+      order: options.lightweight
+        ? [["createdAt", "ASC"]]
+        : [
+            ["createdAt", "ASC"],
+            [Club.associations.Teams, "name"],
+            [
+              Club.associations.Teams,
+              Team.associations.SeasonTeams,
+              SeasonTeam.associations.Season,
+              "year",
+              "DESC NULLS LAST",
+            ],
+            [
+              Club.associations.Teams,
+              Team.associations.SeasonTeams,
+              SeasonTeam.associations.Season,
+              "name",
+            ],
+          ],
     });
   }
 

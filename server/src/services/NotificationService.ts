@@ -21,13 +21,35 @@ class NotificationService {
    * @param {boolean} options.all - Whether to fetch all notifications.
    * @returns {Promise<Array>} List of notifications.
    */
-  getAll(UserId: string | null, options = { all: false }) {
+  getAll(
+    UserId: string | null,
+    options: { all?: boolean; limit?: number; offset?: number } = {
+      all: false,
+    },
+  ) {
     logger.debug(
       `NotificationService getAll ${JSON.stringify({ UserId, options })}`,
     );
-    return NotificationModel.findAll({
+    const queryOptions: {
+      where: { UserId?: string };
+      order: [string, string][];
+      limit?: number;
+      offset?: number;
+    } = {
       where: options.all || !UserId ? {} : { UserId },
       order: [["createdAt", "DESC"]],
+    };
+    if (options.limit != null) queryOptions.limit = options.limit;
+    if (options.offset != null) queryOptions.offset = options.offset;
+    return NotificationModel.findAll(queryOptions);
+  }
+
+  getCount(UserId: string | null, options = { all: false }) {
+    logger.debug(
+      `NotificationService getCount ${JSON.stringify({ UserId, options })}`,
+    );
+    return NotificationModel.count({
+      where: options.all || !UserId ? {} : { UserId },
     });
   }
 

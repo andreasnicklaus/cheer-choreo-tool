@@ -87,7 +87,14 @@ class ChoreoService {
     ownerIds: string[],
     actingUserId: string,
     isAdmin = false,
-    options = { all: false },
+    options: {
+      all?: boolean;
+      limit?: number;
+      offset?: number;
+      lightweight?: boolean;
+    } = {
+      all: false,
+    },
   ) {
     logger.debug(
       `ChoreoService getAll ${JSON.stringify({ ownerIds, actingUserId, isAdmin, options })}`,
@@ -100,7 +107,9 @@ class ChoreoService {
 
     return Choreo.findAll({
       where: options.all ? {} : { UserId: { [Op.in]: accessibleOwnerIds } },
-      include: defaultInclude,
+      include: options.lightweight ? [] : defaultInclude,
+      limit: options.limit,
+      offset: options.offset,
     });
   }
 

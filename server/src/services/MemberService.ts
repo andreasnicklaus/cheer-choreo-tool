@@ -32,7 +32,14 @@ class MemberService {
     ownerIds: string[],
     actingUserId: string,
     isAdmin = false,
-    options = { all: false },
+    options: {
+      all?: boolean;
+      limit?: number;
+      offset?: number;
+      lightweight?: boolean;
+    } = {
+      all: false,
+    },
   ) {
     logger.debug(
       `MemberService getAll ${JSON.stringify({ ownerIds, actingUserId, isAdmin, options })}`,
@@ -45,6 +52,8 @@ class MemberService {
 
     return Member.findAll({
       where: options.all ? {} : { UserId: { [Op.in]: accessibleOwnerIds } },
+      limit: options.limit,
+      offset: options.offset,
     });
   }
 

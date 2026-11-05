@@ -74,9 +74,12 @@ class AdminService {
    * Get all Admins in the database.
    * @returns {Promise<Admin[]>} Array of all Admins.
    */
-  getAll() {
-    logger.debug(`AdminService getAll`);
-    return Admin.findAll();
+  getAll(options: { limit?: number; offset?: number } = {}) {
+    logger.debug(`AdminService getAll ${JSON.stringify({ options })}`);
+    const queryOptions: { limit?: number; offset?: number } = {};
+    if (options.limit != null) queryOptions.limit = options.limit;
+    if (options.offset != null) queryOptions.offset = options.offset;
+    return Admin.findAll(queryOptions);
   }
 
   /**

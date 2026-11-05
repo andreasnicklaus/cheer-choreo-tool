@@ -29,6 +29,10 @@
       "min-6-characters": "Min. 6 characters",
       "email-confirmed": "Email confirmed",
       password: "Password",
+      provider: "Provider",
+      "social-id": "Social ID",
+      "profile-picture-extension": "Profile Picture Extension",
+      "copy-user-id": "Copy User ID",
       "update-user": "Update User",
       "are-you-sure-you-want-to-delete-this-user": "Are you sure you want to delete this user?",
       deleted: "deleted",
@@ -93,7 +97,8 @@
     add: "Add",
     "save-changes": "Save changes",
     unknown: "Unknown",
-    never: "never"
+    never: "never",
+    items: "items"
   },
   errors: {
     "something-went-wrong": "Something went wrong",

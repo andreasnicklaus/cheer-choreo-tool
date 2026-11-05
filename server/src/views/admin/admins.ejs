@@ -14,7 +14,7 @@
         <div class="col col-auto">
           <button
             type="button"
-            class="btn btn-success btn-sm"
+            class="key key--primary"
             data-bs-toggle="modal"
             data-bs-target="#adminCreateModal"
           >
@@ -23,8 +23,9 @@
           </button>
         </div>
       </div>
-      <div class="table-responsive">
-        <table class="table table-striped table-hover">
+      <div class="panel" style="padding: 0;">
+        <div class="table-responsive">
+          <table class="table">
           <thead>
             <tr>
               <th scope="col">#</th>
@@ -45,7 +46,7 @@
                 <div class="btn-group">
                   <button
                     type="button"
-                    class="btn btn-warning btn-sm"
+                    class="key"
                     data-bs-toggle="modal"
                     data-bs-target="#adminUpdateModal"
                     data-bs-username="<%= admin.username %>"
@@ -55,7 +56,7 @@
                   </button>
                   <% if (admin.id !== currentAdminId) { %>
                   <button
-                    class="btn btn-danger btn-sm"
+                    class="key key--danger"
                     type="button"
                     data-delete-id="<%= admin.id %>"
                   >
@@ -70,13 +71,14 @@
           <tfoot class="table-group-divider">
             <tr>
               <td></td>
-              <td>
+              <td colspan="4">
                 <b> <%= adminList.length %> </b>
                 <%= tn('entities.admin', adminList.length) %>
               </td>
             </tr>
           </tfoot>
         </table>
+        </div>
       </div>
     </main>
 
@@ -136,13 +138,13 @@
             <div class="modal-footer">
               <button
                 type="button"
-                class="btn btn-outline-danger"
+                class="key"
                 data-bs-dismiss="modal"
               >
                 <i class="bi bi-trash"></i>
                 <%= t('general.close')%>
               </button>
-              <button type="submit" class="btn btn-success">
+              <button type="submit" class="key key--primary">
                 <i class="bi bi-check2"></i> <%= t('general.save-changes')%>
               </button>
             </div>
@@ -204,13 +206,13 @@
             <div class="modal-footer">
               <button
                 type="button"
-                class="btn btn-outline-danger"
+                class="key"
                 data-bs-dismiss="modal"
               >
                 <i class="bi bi-arrow-counterclockwise"></i>
                 <%= t('general.close') %>
               </button>
-              <button type="submit" class="btn btn-success">
+              <button type="submit" class="key key--primary">
                 <i class="bi bi-check2"></i> <%= t('general.save-changes') %>
               </button>
             </div>
@@ -218,6 +220,8 @@
         </div>
       </div>
     </div>
+
+    <%- include('./components/pagination'); %>
 
     <footer><%- include('./partials/footer'); %></footer>
 
