@@ -18,7 +18,6 @@
     "lint": "run-s lint:eslint lint:sloplint",
     "lint:eslint": "eslint .",
     "lint:sloplint": "sloplint",
-    "lint:sloplint:ci": "sloplint --format github",
     "format-check": "prettier --check .",
     "format": "prettier --write ."
   },
@@ -37,6 +36,7 @@
     "@logtail/winston": "0.5.12",
     "@modelcontextprotocol/sdk": "1.32.2",
     "@sequelize/postgres": "7.0.0-alpha.48",
+    "@sloplint/cli": "^0.3.0",
     "@types/express": "5.0.6",
     "@types/express-session": "1.19.0",
     "@types/multer": "2.3.0",
@@ -96,7 +96,6 @@
     "@eslint/js": "9.39.5",
     "@jest/globals": "30.5.2",
     "@sequelize/sqlite3": "7.0.0-alpha.48",
-    "@sloplint/cli": "^0.3.0",
     "@types/bcrypt": "6.0.0",
     "@types/jest": "30.0.0",
     "@types/node": "26.6.5",

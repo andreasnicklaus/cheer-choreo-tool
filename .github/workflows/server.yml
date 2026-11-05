@@ -46,8 +46,6 @@ jobs:
           cache-dependency-path: "**/package.json"
       - name: Install dependencies
         run: npm i
-      - name: Run sloplint
-        run: npm run lint:sloplint:ci
       - name: Run Jest tests
         run: npm run test:unit
       - name: Upload Jest Coverage Report

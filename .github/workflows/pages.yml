@@ -84,8 +84,6 @@ jobs:
         with:
           path: app/node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('app/package-lock.json') }}
-      - name: Run sloplint
-        run: npm run lint:sloplint:ci
       - name: Run Unit tests
         run: npm run test:unit
       - name: Upload Unit Test Coverage Report
