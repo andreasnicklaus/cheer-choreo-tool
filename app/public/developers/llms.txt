@@ -1,4 +1,4 @@
-# Choreo Planer — Developers & Agents
+# Choreo Planer - Developers & Agents
 
 > Scoped index for developers and AI agents integrating with Choreo Planer.
 

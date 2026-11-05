@@ -2,7 +2,7 @@
 
 ## What is a Lineup?
 
-A Lineup defines a **formation segment** within a choreography — the count range during which a specific set of member positions is held on the mat. Each lineup has a start count and end count, and contains positions that place members at specific (x, y) coordinates.
+A Lineup defines a **formation segment** within a choreography - the count range during which a specific set of member positions is held on the mat. Each lineup has a start count and end count, and contains positions that place members at specific (x, y) coordinates.
 
 ## Lineup Rules
 
@@ -16,7 +16,7 @@ These rules are critical. Violating them will produce a broken choreography.
 ### Gaps Between Lineups
 
 - **Do not cover the entire choreography in lineups.** Leave gaps between lineups for transitions, walks, and other non-formation movement.
-- **Breaks between lineups are typically 4–8 counts long.** A gap means no lineup is defined for those counts — this is intentional.
+- **Breaks between lineups are typically 4–8 counts long.** A gap means no lineup is defined for those counts - this is intentional.
 
 ### Estimating Lineup Count
 
@@ -37,7 +37,7 @@ As a rough estimate: a choreography with **320 counts** should have between **10
 
 **If lineups overlap, then only for different members.** Multiple lineups on the same count are possible, for example if one half of participants moves while the other is stationary. A single member can never be part in two overlapping formations.
 
-The server enforces this: a lineup create/update or a position placement that would make two lineups of the same choreography overlap, or put one member into two overlapping lineups, is rejected with a **409 conflict**. Overlaps that already existed before your change are grandfathered — you can still edit grandfathered data as long as your change does not introduce a _new_ violation, so a cleanup that only reduces conflicts is always allowed.
+The server enforces this: a lineup create/update or a position placement that would make two lineups of the same choreography overlap, or put one member into two overlapping lineups, is rejected with a **409 conflict**. Overlaps that already existed before your change are grandfathered - you can still edit grandfathered data as long as your change does not introduce a _new_ violation, so a cleanup that only reduces conflicts is always allowed.
 
 ### Choreography must end with a lineup
 
@@ -144,7 +144,7 @@ Multiple stunt groups should be spaced evenly across the mat (e.g., two groups a
 
 ### Lineup & Position Management
 
-- **Lineups need positions to be meaningful.** Always create positions for a lineup after creating it — an empty lineup is just a count range with no visual formation.
+- **Lineups need positions to be meaningful.** Always create positions for a lineup after creating it - an empty lineup is just a count range with no visual formation.
 - **Leave gaps between lineups.** Don't make every lineup span the entire choreo. Gaps create natural transition points and keep formations interesting.
 - **Not all lineups need all participants.** Some members may move off the mat, hold position, or be stationary during certain segments. Only create positions for active participants.
 - **Positions don't need to match lineup counts.** A lineup spanning counts 0–15 can have positions that only appear for part of that range (the positions exist for the whole lineup duration). During that lineup, multiple hits may happen. Hits do not need to necessarily happen during a lineup.
@@ -154,5 +154,5 @@ Multiple stunt groups should be spaced evenly across the mat (e.g., two groups a
 
 - **Prefer bulk creation over singular position creation.** Creating positions one by one is slow. Use `create_positions` with an array of `{x, y, memberId}` objects whenever you need to place multiple members in a lineup.
 - **Never create a lineup longer than 16 counts.** Break longer formation segments into multiple lineups.
-- **Always leave gaps between lineups.** The gaps (4–8 counts) represent transitions and walks — they are not mistakes.
+- **Always leave gaps between lineups.** The gaps (4–8 counts) represent transitions and walks - they are not mistakes.
 - **Neighbouring lineups must have different count ranges.** Two consecutive lineups with the same start/end counts are invalid.

@@ -1,4 +1,4 @@
-# Choreo Planer — Agent Guide (agents.md)
+# Choreo Planer - Agent Guide (agents.md)
 
 Choreo Planer is a free online tool for planning cheerleading and dance
 choreography. It builds countsheets and manages clubs, teams, seasons, members,
@@ -25,12 +25,12 @@ members, lineups or countsheets, this tool is probably not the right fit.
 
 ## How to call it
 
-- **MCP server** — preferred for agent frameworks that speak the Model Context
+- **MCP server** - preferred for agent frameworks that speak the Model Context
   Protocol. Endpoint: <https://api.choreo-planer.de/mcp> (Streamable HTTP). It
   exposes the choreo, team, club, member, position, lineup, season and
   season-team services as tools. Before creating data, read the MCP resources
   `guide://cheer-choreo-tool/guide`, `.../hits` and `.../lineups`.
-- **REST API** — the primary programmatic surface for scripted integrations.
+- **REST API** - the primary programmatic surface for scripted integrations.
   Machine-readable spec at <https://api.choreo-planer.de/openapi.json>, browsable
   at <https://api.choreo-planer.de/api-docs>. Base URL: `https://api.choreo-planer.de`.
 

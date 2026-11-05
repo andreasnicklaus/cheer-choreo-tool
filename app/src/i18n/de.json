@@ -734,7 +734,7 @@
     },
     "mcp-info": {
       "title": "Mit KI arbeiten",
-      "description": "Verbinde KI-Assistenten wie Claude, Cursor oder OpenCode mit deinen Choreos. Einmal eingerichtet, kannst du Choreos gemeinsam mit KI planen, bearbeiten und verfeinern — direkt aus deinen Lieblingstools.",
+      "description": "Verbinde KI-Assistenten wie Claude, Cursor oder OpenCode mit deinen Choreos. Einmal eingerichtet, kannst du Choreos gemeinsam mit KI planen, bearbeiten und verfeinern - direkt aus deinen Lieblingstools.",
       "server-url": "Server-URL",
       "server-url-description": "Verwende diese URL, um dich mit dem Server zu verbinden:",
       "authentication": "Zugriffstoken",

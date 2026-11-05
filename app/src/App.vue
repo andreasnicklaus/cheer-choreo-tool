@@ -369,6 +369,23 @@ export default defineComponent({
   corner-shape: squircle;
 }
 
+/* Keep genuinely circular elements round instead of squircle. */
+.b-avatar,
+.b-avatar *,
+.rounded-circle,
+.rounded-circle *,
+.spinner-border,
+.spinner-border *,
+.spinner-grow,
+.spinner-grow *,
+.tutorial-dot,
+.tutorial-dot *,
+.flag-icon,
+[style*="border-radius: 50%"],
+[style*="border-radius: 50%"] * {
+  corner-shape: round !important;
+}
+
 html {
   width: 100vw;
   overflow-x: hidden;

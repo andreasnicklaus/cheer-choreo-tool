@@ -18,7 +18,7 @@ nothing beyond what its owner can already see and edit in the web app.
 
 Base URL: `https://api.choreo-planer.de`
 
-## Step 1 — Log in
+## Step 1 - Log in
 
 ```http
 POST /auth/login
@@ -35,7 +35,7 @@ The response body is the **raw JWT as a plain string**, not a JSON object:
 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
 
-## Step 2 — Mint an MCP token
+## Step 2 - Mint an MCP token
 
 ```http
 POST /auth/mcp-token
@@ -57,7 +57,7 @@ The response is a JSON object:
 Requests to `/auth/mcp-token` must themselves carry a valid token from step 1,
 so this step cannot be performed anonymously.
 
-## Step 3 — Call the MCP server
+## Step 3 - Call the MCP server
 
 ```http
 POST /mcp

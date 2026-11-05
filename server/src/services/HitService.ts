@@ -396,7 +396,7 @@ class HitService {
     const membershipPairs: Array<[string, string]> = [];
     const createdHits: Hit[] = [];
 
-    // findOrCreate per hit — handles duplicates and existing hits correctly
+    // findOrCreate per hit - handles duplicates and existing hits correctly
     for (const { name, count, memberIds = [] } of hits) {
       const [hit] = await Hit.findOrCreate({
         where: { name, count, ChoreoId, UserId: choreo.UserId },

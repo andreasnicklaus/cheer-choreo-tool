@@ -459,7 +459,7 @@ describe("PositionService", () => {
       );
       const afterFirst = (await Lineup.findByPk(lineup.id))!.updatedAt;
       await new Promise((r) => setTimeout(r, 10));
-      // Second call finds existing position — lineup should NOT be updated
+      // Second call finds existing position - lineup should NOT be updated
       await PositionService.mcpFindOrCreate(
         1,
         2,
