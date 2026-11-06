@@ -99,6 +99,51 @@ class VersionService {
   resetCache(): void {
     this.serverVersion = null;
   }
+
+  /**
+   * Compare two versions and return true when their major or minor
+   * components differ. Patch-level differences are ignored.
+   *
+   * @param {string|null|undefined} a - First version string
+   * @param {string|null|undefined} b - Second version string
+   * @returns {boolean} True when major or minor versions differ
+   */
+  hasMajorMinorMismatch(
+    a: string | null | undefined,
+    b: string | null | undefined
+  ): boolean {
+    if (!a || !b) return false;
+
+    const parse = (value: string): string | null => {
+      const [major, minor, ..._patch] = value.trim().split(".");
+      return `${major}.${minor}`;
+    };
+
+    const parsedA = parse(a);
+    const parsedB = parse(b);
+
+    if (parsedA && parsedB) {
+      return parsedA !== parsedB;
+    }
+
+    return a !== b;
+  }
+
+  /** Alias kept for compatibility with callers/tests. */
+  isVersionMismatch(
+    a: string | null | undefined,
+    b: string | null | undefined
+  ): boolean {
+    return this.hasMajorMinorMismatch(a, b);
+  }
+
+  /** Alias kept for compatibility with callers/tests. */
+  hasVersionMismatch(
+    a: string | null | undefined,
+    b: string | null | undefined
+  ): boolean {
+    return this.hasMajorMinorMismatch(a, b);
+  }
 }
 
 export default new VersionService();

@@ -133,7 +133,7 @@
           >
             Version: {{ applicationVersion }}
             <span
-              v-show="serverVersion && serverVersion != applicationVersion"
+              v-show="versionMismatch"
               v-b-tooltip.hover="
                 `Die Version der Webseite (${applicationVersion}) entspricht nicht der Version der Server (${serverVersion})!`
               "
@@ -313,6 +313,17 @@ export default defineComponent({
     applicationVersion: env.VITE_VERSION,
     breakpoints,
   }),
+  computed: {
+    versionMismatch(): boolean {
+      return (
+        !!this.serverVersion &&
+        VersionService.hasMajorMinorMismatch(
+          this.applicationVersion,
+          this.serverVersion
+        )
+      );
+    },
+  },
   watch: {
     "breakpoints.screen.mobile": {
       handler(value) {

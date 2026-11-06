@@ -1,6 +1,7 @@
 import { expect, type Page } from "@playwright/test";
 import TestPage from "./page";
 import { defaultNotifications } from "../testData/notification";
+import { version as appVersion } from "../../../package.json";
 import { defaultUser } from "../testData/user";
 import { defaultSeasons } from "../testData/season";
 import { defaultChoreos } from "../testData/choreo";
@@ -100,7 +101,7 @@ export default class AppPage extends TestPage {
 
   iCheckAppVersion() {
     return Promise.all([
-      expect(this.page.getByText("Version:")).toContainText("1.0.0"),
+      expect(this.page.getByText("Version:")).toContainText(appVersion),
     ]);
   }
 
@@ -119,7 +120,7 @@ export default class AppPage extends TestPage {
     await this.page.getByTestId("serverVersionTooltip").hover();
     return expect(
       this.page.getByText(
-        `Die Version der Webseite (1.0.0) entspricht nicht der Version der Server (${serverVersion})!`
+        `Die Version der Webseite (${appVersion}) entspricht nicht der Version der Server (${serverVersion})!`
       )
     ).toBeVisible();
   }

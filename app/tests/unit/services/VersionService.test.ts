@@ -9,6 +9,7 @@ import {
 } from "vitest";
 import ax from "@/services/RequestService";
 import VersionService from "@/services/VersionService";
+import { version as packageVersion } from "../../../package.json";
 
 vi.mock("@/services/RequestService", () => ({
   default: {
@@ -28,7 +29,7 @@ describe("VersionService", () => {
 
   describe("getServerVersion", () => {
     test("should retrieve the server version", async () => {
-      const mockResponse = { data: "1.0.0" };
+      const mockResponse = { data: packageVersion };
       ax.get.mockResolvedValue(mockResponse);
 
       const result = await VersionService.getServerVersion();
@@ -47,13 +48,13 @@ describe("VersionService", () => {
     });
 
     test("should return cached value on second request", async () => {
-      ax.get.mockResolvedValueOnce({ data: "1.0.0" });
+      ax.get.mockResolvedValueOnce({ data: packageVersion });
       const firstResult = await VersionService.getServerVersion();
-      expect(firstResult).toEqual("1.0.0");
+      expect(firstResult).toEqual(packageVersion);
 
       ax.get.mockResolvedValueOnce({ data: "1.0.1" });
       const secondResult = await VersionService.getServerVersion();
-      expect(secondResult).toEqual("1.0.0");
+      expect(secondResult).toEqual(packageVersion);
     });
   });
 
@@ -68,11 +69,11 @@ describe("VersionService", () => {
     });
 
     test("should retrieve the app version from environment variable", () => {
-      vi.stubEnv("VITE_VERSION", "1.0.0");
+      vi.stubEnv("VITE_VERSION", packageVersion);
 
       const result = VersionService.getAppVersion();
 
-      expect(result).toBe("1.0.0");
+      expect(result).toBe(packageVersion);
     });
   });
 

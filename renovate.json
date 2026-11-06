@@ -9,6 +9,7 @@
   "prConcurrentLimit": 5,
   "minimumReleaseAge": "7 days",
   "rangeStrategy": "pin",
+  "bumpVersion": "patch",
   "labels": [
     "dependencies"
   ],
@@ -22,10 +23,12 @@
     },
     {
       "matchUpdateTypes": [
-        "major",
+        "major"
       ],
       "automerge": false,
-      "assignees": ["andreasnicklaus"]
+      "assignees": [
+        "andreasnicklaus"
+      ]
     },
     {
       "matchUpdateTypes": [

@@ -10,7 +10,7 @@ import store from "@/store";
 import AuthService from "@/services/AuthService";
 import MessagingService from "@/services/MessagingService";
 import ERROR_CODES from "@/utils/error_codes";
-import { error } from "@/utils/logging";
+import { error, debug } from "@/utils/logging";
 import { defineComponent } from "vue";
 
 export default defineComponent({
@@ -57,14 +57,14 @@ export default defineComponent({
 
     if (query.token) {
       AuthService.saveLoginToken(query.token.toString());
-      console.log("Login token saved, loading user info...");
+      debug("Login token saved, loading user info...");
       store.commit("setLoginState", true);
-      console.log("Login state set to true, dispatching loadUserInfo...");
-      console.log("User info loaded, redirecting to start...");
+      debug("Login state set to true, dispatching loadUserInfo...");
+      debug("User info loaded, redirecting to start...");
       this.$router
         .push({ name: "Start", params: { locale: this.$i18n.locale } })
         .then(() => {
-          console.log("Redirected to start");
+          debug("Redirected to start");
         })
         .catch(() => {
           error("Redundant navigation to start", ERROR_CODES.REDUNDANT_ROUTING);
