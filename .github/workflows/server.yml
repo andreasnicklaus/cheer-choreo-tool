@@ -69,7 +69,9 @@ jobs:
         uses: docker/setup-buildx-action@v4.4.1
       - name: Get package version
         id: package-version
-        run: echo "version=$(node -p \"require('./server/package.json').version\")" >> "$GITHUB_OUTPUT"
+        run: |
+          VERSION=$(node -p "require('./server/package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v6.2.0
