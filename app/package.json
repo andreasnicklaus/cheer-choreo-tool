@@ -1,6 +1,6 @@
 {
   "name": "choreo-tool",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "scripts": {
     "dev": "npm run icons && vite",
@@ -34,7 +34,7 @@
     "@ffmpeg/util": "0.12.2",
     "@intlify/unplugin-vue-i18n": "11.2.8",
     "@logtail/browser": "0.5.12",
-    "@sloplint/cli": "^0.3.0",
+    "@sloplint/cli": "0.3.0",
     "@unhead/vue": "3.4.3",
     "@vueuse/core": "15.0.0",
     "axios": "1.21.0",
@@ -45,7 +45,7 @@
     "gsap": "3.15.0",
     "javascript-time-ago": "2.6.4",
     "js-cookie": "3.0.8",
-    "npm-run-all2": "^9.0.4",
+    "npm-run-all2": "9.0.4",
     "register-service-worker": "1.7.2",
     "unleash-proxy-client": "3.8.2",
     "vue": "3.5.44",

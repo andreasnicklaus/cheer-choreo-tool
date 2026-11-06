@@ -1,6 +1,6 @@
 {
   "name": "server",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -36,7 +36,7 @@
     "@logtail/winston": "0.5.12",
     "@modelcontextprotocol/sdk": "1.32.2",
     "@sequelize/postgres": "7.0.0-alpha.48",
-    "@sloplint/cli": "^0.3.0",
+    "@sloplint/cli": "0.3.0",
     "@types/express": "5.0.6",
     "@types/express-session": "1.19.0",
     "@types/multer": "2.3.0",
@@ -70,7 +70,7 @@
     "memorystore": "1.6.8",
     "multer": "2.5.0",
     "nodemailer": "10.3.1",
-    "npm-run-all2": "^9.0.4",
+    "npm-run-all2": "9.0.4",
     "p-queue": "10.0.0",
     "passport": "0.7.0",
     "passport-facebook": "3.0.0",
