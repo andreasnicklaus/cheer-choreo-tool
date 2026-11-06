@@ -1,11 +1,11 @@
 meta {
   name: Resend Email Confirmation
-  method: GET
+  method: POST
   type: http
   seq: 10
 }
 
-get {
+post {
   url: {{baseUrl}}/auth/me/resendEmailConfirmationLink
   body: none
   auth: inherit

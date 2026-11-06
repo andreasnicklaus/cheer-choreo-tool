@@ -90,7 +90,7 @@ class MailService {
    * @param {string} locale - The locale for the email content.
    * @returns {Promise<void>} Resolves when the email is sent.
    */
-  sendWelcomeEmail(
+  async sendWelcomeEmail(
     username: string,
     userId: string,
     userEmail: string,
@@ -133,7 +133,7 @@ class MailService {
    * @param {string} locale - The locale for the email content.
    * @returns {Promise<void>} Resolves when the email is sent.
    */
-  sendEmailConfirmationEmail(
+  async sendEmailConfirmationEmail(
     username: string,
     userId: string,
     userEmail: string,

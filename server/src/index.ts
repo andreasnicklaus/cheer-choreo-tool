@@ -225,6 +225,9 @@ const sessionSecret =
   (() => {
     throw new Error("SESSION_SECRET is not set");
   })();
+if (!process.env.TOKEN_SECRET) {
+  throw new Error("TOKEN_SECRET is not set");
+}
 const MemoryStore = createMemoryStore(session);
 app.use(
   session({
