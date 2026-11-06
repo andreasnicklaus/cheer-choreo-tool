@@ -326,6 +326,7 @@ body {
   font-family: "Inter", "Roboto", Avenir, Helvetica, Arial, sans-serif;
   font-weight: 400;
   min-height: 100vh;
+  /* sloplint-disable-next-line UI-001 */
   background:
     radial-gradient(
       ellipse 600px 300px at 30vw 55vh,
@@ -374,7 +375,9 @@ strong:not(.betteruptime-announcement *) {
   color: var(--bs-primary-text-emphasis);
 }
 
+/* sloplint-disable-next-line UI-001, UI-009 */
 .hero {
+  /* sloplint-disable-next-line UI-001, UI-009 */
   background: linear-gradient(
     to right,
     var(--hero-gradient-start) 10%,

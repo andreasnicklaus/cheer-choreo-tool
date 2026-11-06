@@ -385,6 +385,17 @@ async function seed() {
 
             // Add participants
             if (ch.Participants.length > 0) {
+              // sloplint-disable-next-line BE-002 -- choreographies are created in this loop, so their existing participation rows cannot be fetched earlier
+              const existingParticipations = await ChoreoParticipation.findAll({
+                where: { ChoreoId: choreo.id },
+                attributes: ["MemberId"],
+              });
+              const participantIds = new Set(
+                existingParticipations.map(
+                  (participation) => participation.MemberId,
+                ),
+              );
+
               for (const p of ch.Participants) {
                 const participant = memberMap.get(p.toUpperCase());
                 if (!participant) {
@@ -393,19 +404,13 @@ async function seed() {
                     `Participant with abbreviation ${p} not found`,
                   );
                 }
-                // Check if participation already exists
-                const existing = await ChoreoParticipation.findOne({
-                  where: {
-                    ChoreoId: choreo.id,
-                    MemberId: participant.id,
-                  },
-                });
-                if (!existing) {
+                if (!participantIds.has(participant.id)) {
                   await ChoreoService.addParticipant(
                     choreo.id,
                     participant.id,
                     user.id,
                   );
+                  participantIds.add(participant.id);
                   stats.participants.created++;
                 } else {
                   stats.participants.existing++;

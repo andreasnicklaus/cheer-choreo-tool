@@ -1,3 +1,4 @@
+// sloplint-disable-file TEST-001 -- configuration logging is this utility's observable output
 import logger from "@/plugins/winston";
 import logConfig from "@/utils/logConfig";
 import { describe, expect, test } from "@jest/globals";

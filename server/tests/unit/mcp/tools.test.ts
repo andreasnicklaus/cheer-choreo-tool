@@ -1,3 +1,4 @@
+// sloplint-disable-file TEST-001 -- tool handlers are adapters; forwarding authenticated arguments to service methods is the observable contract
 import { describe, test, expect, beforeEach } from "@jest/globals";
 
 jest.mock("@/plugins/winston", () => ({

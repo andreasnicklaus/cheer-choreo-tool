@@ -11,7 +11,7 @@
   --color-rule-2: oklch(83% 0.012 252);
   --color-graphite: oklch(21% 0.024 262);
   --color-graphite-2: oklch(26.5% 0.026 262);
-  --color-graphite-ink: oklch(93% 0.010 250);
+  --color-graphite-ink: oklch(93% 0.01 250);
   --color-graphite-muted: oklch(69% 0.022 256);
   --color-accent: oklch(52% 0.19 258);
   --color-accent-2: oklch(76% 0.13 254);
@@ -48,8 +48,13 @@
   --cut-l: 16px;
   --rule-hair: 1px;
   --shadow-card: 0 1px 2px oklch(21% 0.028 262 / 0.06);
-  --shadow-key: 0 3px 0 0 var(--color-key-edge), 0 6px 8px -4px oklch(21% 0.028 262 / 0.28), inset 0 1px 0 oklch(100% 0 0 / 0.9);
-  --shadow-key-accent: 0 3px 0 0 var(--color-accent-edge), 0 6px 8px -4px oklch(30% 0.12 260 / 0.45), inset 0 1px 0 oklch(100% 0 0 / 0.22);
+  --shadow-key:
+    0 3px 0 0 var(--color-key-edge), 0 6px 8px -4px oklch(21% 0.028 262 / 0.28),
+    inset 0 1px 0 oklch(100% 0 0 / 0.9);
+  --shadow-key-accent:
+    0 3px 0 0 var(--color-accent-edge),
+    0 6px 8px -4px oklch(30% 0.12 260 / 0.45),
+    inset 0 1px 0 oklch(100% 0 0 / 0.22);
   --shadow-key-press: inset 0 1px 2px oklch(21% 0.028 262 / 0.14);
 
   /* App-scope type scale (ratio 1.125) */
@@ -84,7 +89,7 @@
     --color-paper: oklch(18% 0.02 262);
     --color-paper-2: oklch(22% 0.022 262);
     --color-paper-3: oklch(27% 0.024 262);
-    --color-ink: oklch(93% 0.010 250);
+    --color-ink: oklch(93% 0.01 250);
     --color-ink-2: oklch(78% 0.014 254);
     --color-muted: oklch(62% 0.016 256);
     --color-rule: oklch(30% 0.02 262);

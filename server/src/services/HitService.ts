@@ -1,7 +1,7 @@
 import { NotFoundError } from "@/utils/errors";
 import Hit from "../db/models/hit";
+import HitMembership from "../db/models/hitMembership";
 import Choreo from "../db/models/choreo";
-import db from "../db/db";
 import ChoreoService from "./ChoreoService";
 import {
   checkReadAccess,
@@ -392,8 +392,12 @@ class HitService {
     }
     await checkWriteAccess(choreo.UserId, actingUserId, isAdmin);
 
-    const now = new Date().toISOString();
-    const membershipPairs: Array<[string, string]> = [];
+    const membershipRows: Array<{
+      HitId: string;
+      MemberId: string;
+      createdAt: Date;
+      updatedAt: Date;
+    }> = [];
     const createdHits: Hit[] = [];
 
     // findOrCreate per hit - handles duplicates and existing hits correctly
@@ -410,34 +414,26 @@ class HitService {
         },
       });
       for (const memberId of memberIds) {
-        membershipPairs.push([hit.id, memberId]);
+        const now = new Date();
+        membershipRows.push({
+          HitId: hit.id,
+          MemberId: memberId,
+          createdAt: now,
+          updatedAt: now,
+        });
       }
       createdHits.push(hit);
     }
 
-    if (membershipPairs.length > 0) {
-      const values = membershipPairs.map(() => "(?, ?, ?, ?)").join(", ");
-      const flatParams = membershipPairs.flatMap(([hitId, memberId]) => [
-        hitId,
-        memberId,
-        now,
-        now,
-      ]);
-      db.query(
-        `INSERT INTO "HitMemberships" ("HitId", "MemberId", "createdAt", "updatedAt")
-         VALUES ${values}
-         ON CONFLICT DO NOTHING`,
-        { replacements: flatParams },
-      ).catch((err) =>
-        logger.error("mcpBulkCreate: failed to insert memberships", err),
-      );
+    if (membershipRows.length > 0) {
+      await HitMembership.bulkCreate(membershipRows, {
+        ignoreDuplicates: true,
+      });
     }
 
-    Choreo.update(
+    await Choreo.update(
       { updaterId: actingUserId },
       { where: { id: ChoreoId } },
-    ).catch((err) =>
-      logger.error("mcpBulkCreate: failed to update choreo updaterId", err),
     );
 
     return createdHits;

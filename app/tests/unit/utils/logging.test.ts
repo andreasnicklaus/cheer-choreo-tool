@@ -1,3 +1,4 @@
+// sloplint-disable-file TEST-001 -- console and log transport calls are the logging utility's observable effects
 import VersionService from "@/services/VersionService";
 import {
   debug,

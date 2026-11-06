@@ -17,7 +17,7 @@ export default class HomePage extends TestPage {
   iCheckAllSections() {
     const headingTitles = [
       { name: "Create choreos that impress", exact: true },
-      { name: "📝 Create choreos", exact: true },
+      { name: "Create choreos", exact: true },
       { name: "Share countsheets" },
       { name: "Create videos" },
       { name: "Interested?" },

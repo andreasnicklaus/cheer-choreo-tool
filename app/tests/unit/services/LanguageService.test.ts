@@ -1,3 +1,4 @@
+// sloplint-disable-file TEST-001 -- router navigation is the language service's observable boundary effect
 import { describe, test, expect, beforeEach, vi } from "vitest";
 import LanguageService from "@/services/LanguageService";
 import router from "@/router";

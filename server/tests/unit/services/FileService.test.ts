@@ -1,3 +1,4 @@
+// sloplint-disable-file TEST-001 -- filesystem calls are the service's observable external effects
 import { describe, test, expect } from "@jest/globals";
 import FileService from "@/services/FileService";
 import { Request, Response } from "express";

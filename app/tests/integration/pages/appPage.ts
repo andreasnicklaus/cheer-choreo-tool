@@ -110,9 +110,7 @@ export default class AppPage extends TestPage {
         ? `Servers are online (${serverVersion})`
         : "Servers are offline";
       await expect(this.page.getByTestId("serverStatus")).toBeVisible();
-      await new Promise((resolve) => setTimeout(resolve, 2000));
       await this.page.getByTestId("serverStatus").hover();
-      await new Promise((resolve) => setTimeout(resolve, 2000));
       await expect(this.page.getByText(expectedTitle)).toBeVisible();
     }
   }

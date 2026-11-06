@@ -1,3 +1,4 @@
+// sloplint-disable-file COPY-002 -- these cases verify the intentional fallback for non-Error throwables
 import { describe, test, expect } from "@jest/globals";
 import { getUserFromRequest, formatError } from "@/mcp/helpers";
 
@@ -45,12 +46,16 @@ describe("formatError", () => {
   test("formats unknown error with fallback message", () => {
     const result = formatError("string error");
     expect(result.isError).toBe(true);
-    expect(result.content[0].text).toBe("Unknown error occurred");
+    expect(result.content[0].text).toBe(
+      "The tool failed without a detailed error. Try again; if it persists, contact the Choreo Planer administrator.",
+    );
   });
 
   test("formats null error with fallback message", () => {
     const result = formatError(null);
     expect(result.isError).toBe(true);
-    expect(result.content[0].text).toBe("Unknown error occurred");
+    expect(result.content[0].text).toBe(
+      "The tool failed without a detailed error. Try again; if it persists, contact the Choreo Planer administrator.",
+    );
   });
 });

@@ -1,3 +1,4 @@
+// sloplint-disable-file TEST-001 -- each assertion exercises the exported emailRegex against concrete input
 import { describe, test, expect } from "vitest";
 import { emailRegex } from "@/utils/validation";
 

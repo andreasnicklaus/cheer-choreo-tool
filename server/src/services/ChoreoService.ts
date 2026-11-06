@@ -1,3 +1,4 @@
+// sloplint-disable-file UI-011 -- stored choreography participant colors are data values, not interface theme tokens
 import { NotFoundError } from "@/utils/errors";
 import type { Transaction } from "sequelize";
 import Choreo, { defaultMatType, MatType } from "../db/models/choreo";

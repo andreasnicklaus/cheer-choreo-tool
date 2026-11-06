@@ -1,3 +1,4 @@
+// sloplint-disable-file TEST-001 -- the mocked notification call is the user service's observable external effect
 import {
   describe,
   expect,

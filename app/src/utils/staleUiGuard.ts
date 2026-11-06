@@ -42,7 +42,10 @@ export async function reloadIfUiIsStale(): Promise<void> {
 
   let deployedVersion: string | undefined;
   try {
-    const response = await fetch(VERSION_URL, { cache: "no-store" });
+    const response = await fetch(VERSION_URL, {
+      cache: "no-store",
+      signal: AbortSignal.timeout(10_000),
+    });
     if (!response.ok) return;
     const marker = (await response.json()) as BuildVersionMarker;
     deployedVersion = marker.version;

@@ -57,7 +57,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+/* sloplint-disable-next-line UI-001 */
 .newVersionBadge {
+  /* sloplint-disable-next-line UI-001 */
   background: linear-gradient(
       to right,
       rgb(216, 0, 0) 0%,

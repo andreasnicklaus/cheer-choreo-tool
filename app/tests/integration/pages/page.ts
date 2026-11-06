@@ -37,6 +37,6 @@ export default abstract class TestPage {
       name: "Toggle navigation",
     });
     await this.iClickButton(menuToggle);
-    return new Promise((resolve) => setTimeout(resolve, 200));
+    await expect(this.page.locator(".navbar-collapse.show")).toBeVisible();
   }
 }

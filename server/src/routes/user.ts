@@ -5,6 +5,7 @@ import UserService from "../services/UserService";
 import UserAccessService from "../services/UserAccessService";
 import { validate } from "@/middlewares/validateMiddleware";
 import { uuidParams } from "@/utils/zodSchemas";
+import { verifyEmailActionToken } from "@/utils/emailActionToken";
 
 const { default: AuthService } = require("../services/AuthService");
 import { AccessRole } from "@/db/models/userAccess";
@@ -101,26 +102,54 @@ router.delete(
 
 /**
  * @openapi
- * /user/revokeEmail/{id}:
+ * /user/revokeEmail/{token}:
  *   get:
- *     description: Revoke a user's email address (renders a status page)
+ *     description: Displays an account deletion confirmation page for a signed email-action token
  *     tags:
  *       - Users
  *     parameters:
- *       - name: id
+ *       - name: token
  *         in: path
  *         required: true
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: Email revoked (renders a page)
+ *         description: Confirmation page rendered
+ *   post:
+ *     description: Deletes the account authorized by a signed email-action token
+ *     tags:
+ *       - Users
+ *     responses:
+ *       200:
+ *         description: Account deleted (renders a page)
  */
 router.get(
-  "/revokeEmail/:id",
-  validate(uuidParams, "params"),
+  "/revokeEmail/:token",
   (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params as UuidParams;
+    try {
+      verifyEmailActionToken(req.params.token, "revoke-email");
+      return res.render("../src/views/emailActionConfirmation.ejs", {
+        title: "Delete account",
+        message: "Confirm that you want to delete this account.",
+        submitLabel: "Delete account",
+        actionUrl: req.originalUrl,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  },
+);
+
+router.post(
+  "/revokeEmail/:token",
+  (req: Request, res: Response, next: NextFunction) => {
+    let id: string;
+    try {
+      id = verifyEmailActionToken(req.params.token, "revoke-email");
+    } catch (error) {
+      return next(error);
+    }
     UserService.remove(id)
       .then(() => {
         res.render("../src/views/emailRevoked.ejs", {
@@ -131,7 +160,7 @@ router.get(
       .catch((e: Error) => {
         res.render("../src/views/error.ejs", {
           action: "email-revocation",
-          data: JSON.stringify({ userId: req.params.id }),
+          data: JSON.stringify({ token: req.params.token }),
           error: e,
           timestamp: new Date().toLocaleString(req.locale),
         }); // njsscan-ignore: express_lfr_warning
@@ -141,26 +170,54 @@ router.get(
 
 /**
  * @openapi
- * /user/confirmEmail/{id}:
+ * /user/confirmEmail/{token}:
  *   get:
- *     description: Confirm a user's email address (renders a status page)
+ *     description: Displays an email confirmation page for a signed email-action token
  *     tags:
  *       - Users
  *     parameters:
- *       - name: id
+ *       - name: token
  *         in: path
  *         required: true
  *         schema:
  *           type: string
  *     responses:
  *       200:
+ *         description: Confirmation page rendered
+ *   post:
+ *     description: Confirms the email address authorized by a signed email-action token
+ *     tags:
+ *       - Users
+ *     responses:
+ *       200:
  *         description: Email confirmed (renders a page)
  */
 router.get(
-  "/confirmEmail/:id",
-  validate(uuidParams, "params"),
+  "/confirmEmail/:token",
   (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params as UuidParams;
+    try {
+      verifyEmailActionToken(req.params.token, "confirm-email");
+      return res.render("../src/views/emailActionConfirmation.ejs", {
+        title: "Confirm email address",
+        message: "Confirm that you want to verify this email address.",
+        submitLabel: "Confirm email address",
+        actionUrl: req.originalUrl,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  },
+);
+
+router.post(
+  "/confirmEmail/:token",
+  (req: Request, res: Response, next: NextFunction) => {
+    let id: string;
+    try {
+      id = verifyEmailActionToken(req.params.token, "confirm-email");
+    } catch (error) {
+      return next(error);
+    }
     UserService.update(id, { emailConfirmed: true })
       .then((_user: User | null) => {
         res.render("../src/views/emailConfirmed.ejs", {
@@ -171,7 +228,7 @@ router.get(
       .catch((e: Error) => {
         res.render("../src/views/error.ejs", {
           action: "email-confirmation",
-          data: JSON.stringify({ userId: req.params.id }),
+          data: JSON.stringify({ token: req.params.token }),
           error: e,
           timestamp: new Date().toLocaleString(req.locale),
         }); // njsscan-ignore: express_lfr_warning

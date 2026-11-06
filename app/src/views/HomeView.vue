@@ -108,7 +108,7 @@
     >
       <BRow align-v="center" align-h="center" class="w-100">
         <BCol cols="12" lg="6" class="mb-lg-0 mb-2">
-          <h2>📝 {{ $t("Home.choreos-erstellen") }}</h2>
+          <h2>{{ $t("Home.choreos-erstellen") }}</h2>
           <ol>
             <li>{{ $t("Home.choreo-benennen") }}</li>
             <li>
@@ -340,7 +340,7 @@
     <section id="sectionC">
       <BRow align-h="center">
         <BCol cols="12" lg="6" class="mb-lg-0 mb-2">
-          <h2>🫰 {{ $t("Home.countsheets-teilen") }}</h2>
+          <h2>{{ $t("Home.countsheets-teilen") }}</h2>
           <ol>
             <li>
               {{ $t("Home.mache-eintraege") }}
@@ -437,7 +437,7 @@
     <section id="sectionD">
       <BRow align-h="center">
         <BCol cols="12" lg="6">
-          <h2>🎞️ {{ $t("Home.videos-erstellen") }}</h2>
+          <h2>{{ $t("Home.videos-erstellen") }}</h2>
           <ol>
             <li>{{ $t("Home.gehe-zu-als-video-exportieren") }}</li>
             <li>

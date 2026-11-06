@@ -1,5 +1,7 @@
+// sloplint-disable-file TEST-001 -- feature-flag client calls are the service's observable boundary effects
 import { describe, test, expect, vi, beforeEach } from "vitest";
 
+// sloplint-disable-next-line COPY-001 -- Unleash is the proper name of the feature-flag client library
 vi.mock("unleash-proxy-client", () => {
   return {
     UnleashClient: class {

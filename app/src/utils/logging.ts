@@ -31,7 +31,7 @@ const sendLogsToIngest = SOURCE_TOKEN && INGESTING_HOST && !isTestEnvironment;
 type ConsoleImage = (url: string, size?: number) => Promise<void>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (console as any).image = async function (url: string, size = 100) {
-  const img = await fetch(url);
+  const img = await fetch(url, { signal: AbortSignal.timeout(10_000) });
   const blob = await img.blob();
   await new Promise<void>((resolve) => {
     const reader = new FileReader();

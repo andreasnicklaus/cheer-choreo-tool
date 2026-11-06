@@ -1,3 +1,4 @@
+// sloplint-disable-file TEST-001 -- log transport payloads are the logger plugin's observable output
 import { describe, jest, test, beforeEach, afterEach } from "@jest/globals";
 
 const logMock = jest.fn();

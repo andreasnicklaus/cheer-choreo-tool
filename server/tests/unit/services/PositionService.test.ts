@@ -418,7 +418,6 @@ describe("PositionService", () => {
         abbreviation: "MM",
       });
       const beforeUpdate = lineup.updatedAt;
-      await new Promise((r) => setTimeout(r, 10));
       await PositionService.mcpFindOrCreate(
         1,
         2,
@@ -458,7 +457,6 @@ describe("PositionService", () => {
         user.id,
       );
       const afterFirst = (await Lineup.findByPk(lineup.id))!.updatedAt;
-      await new Promise((r) => setTimeout(r, 10));
       // Second call finds existing position - lineup should NOT be updated
       await PositionService.mcpFindOrCreate(
         1,
@@ -588,7 +586,6 @@ describe("PositionService", () => {
         abbreviation: "BM",
       });
       const beforeUpdate = lineup.updatedAt;
-      await new Promise((r) => setTimeout(r, 10));
       await PositionService.mcpBulkFindOrCreate(
         [{ x: 1, y: 2, memberId: member.id }],
         lineup.id,

@@ -38,11 +38,18 @@
       <BButton
         type="submit"
         variant="outline-success"
-        :disabled="!emailIsValid"
+        class="position-relative"
+        :aria-busy="loading"
+        :disabled="!emailIsValid || loading"
         @click="ok"
       >
-        <BSpinner v-if="loading" small />
-        <span v-else>{{
+        <!-- sloplint-disable-next-line UI-008 -- the spinner overlays an invisible label that preserves the button dimensions -->
+        <BSpinner
+          v-show="loading"
+          small
+          class="position-absolute top-50 start-50 translate-middle"
+        />
+        <span :class="{ invisible: loading }">{{
           $t("modals.reset-password.login-link-schicken")
         }}</span>
       </BButton>

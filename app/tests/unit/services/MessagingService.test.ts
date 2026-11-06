@@ -1,3 +1,4 @@
+// sloplint-disable-file TEST-001, COPY-002 -- handler dispatch and generic-error fixtures are the messaging service's intentional test contracts
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import MessagingService from "@/services/MessagingService";
 

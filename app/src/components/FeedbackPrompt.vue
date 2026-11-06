@@ -58,11 +58,19 @@
               <BButton
                 variant="success"
                 :disabled="stars < 0 || stars > 4 || !feedbackText"
-                to="#"
+                class="position-relative"
+                :aria-busy="sending"
                 @click="ok"
               >
-                <BSpinner v-show="sending" small />
-                <span v-show="!sending"> {{ $t("feedback.abschicken") }} </span>
+                <!-- sloplint-disable-next-line UI-008 -- the spinner overlays an invisible label that preserves the button dimensions -->
+                <BSpinner
+                  v-show="sending"
+                  small
+                  class="position-absolute top-50 start-50 translate-middle"
+                />
+                <span :class="{ invisible: sending }">
+                  {{ $t("feedback.abschicken") }}
+                </span>
               </BButton>
             </BCol>
             <BCol cols="auto">

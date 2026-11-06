@@ -1,3 +1,4 @@
+// sloplint-disable-file TEST-001 -- next() and its error payload are the Express middleware's observable output
 import { Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { FaultyInputError } from "@/utils/errors";

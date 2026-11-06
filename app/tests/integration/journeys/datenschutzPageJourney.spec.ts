@@ -1,3 +1,4 @@
+// sloplint-disable-file TEST-001 -- Assertions are encapsulated in the Playwright page-object methods invoked by these journeys.
 import test from "@playwright/test";
 import DatenschutzPage from "../pages/datenschutzPage";
 import { mockDefaultStartRequests } from "../utils/multiRequests";

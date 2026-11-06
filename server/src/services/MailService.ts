@@ -1,6 +1,7 @@
 import logger from "@/plugins/winston";
 import { sendMail, verify } from "../plugins/nodemailer";
 import User from "@/db/models/user";
+import { createEmailActionToken } from "@/utils/emailActionToken";
 const { timeStringToMillis } = require("../utils/time");
 const i18n = require("i18n");
 
@@ -89,7 +90,7 @@ class MailService {
    * @param {string} locale - The locale for the email content.
    * @returns {Promise<void>} Resolves when the email is sent.
    */
-  sendWelcomeEmail(
+  async sendWelcomeEmail(
     username: string,
     userId: string,
     userEmail: string,
@@ -110,6 +111,7 @@ class MailService {
       {
         username,
         userId,
+        revokeToken: createEmailActionToken(userId, "revoke-email"),
         backendDomain: process.env.BACKEND_DOMAIN,
       },
       [
@@ -131,7 +133,7 @@ class MailService {
    * @param {string} locale - The locale for the email content.
    * @returns {Promise<void>} Resolves when the email is sent.
    */
-  sendEmailConfirmationEmail(
+  async sendEmailConfirmationEmail(
     username: string,
     userId: string,
     userEmail: string,
@@ -156,6 +158,7 @@ class MailService {
         username,
         userId,
         userEmail,
+        confirmationToken: createEmailActionToken(userId, "confirm-email"),
         backendDomain: process.env.BACKEND_DOMAIN,
       },
       [

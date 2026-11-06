@@ -1,3 +1,4 @@
+// sloplint-disable-file TEST-001 -- mail and logger calls are the plugin's observable external effects
 import {
   sendMail,
   verify,

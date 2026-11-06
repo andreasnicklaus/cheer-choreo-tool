@@ -141,7 +141,8 @@ describe("RequestService", () => {
     test("should not add Authorization header when no token exists", async () => {
       AuthService.getAuthToken.mockReturnValue(null);
       const config = { url: "/test", headers: {} };
-      await runRequestInterceptors(config);
+      const result = await runRequestInterceptors(config);
+      expect(result.headers.Authorization).toBeUndefined();
     });
 
     test("should add Accept-Language header when locale exists", async () => {

@@ -5,6 +5,7 @@ import ChoreoParticipation from "@/db/models/choreoParticipation";
 import Club from "@/db/models/club";
 import Feedback from "@/db/models/feedback";
 import Hit from "@/db/models/hit";
+import HitMembership from "@/db/models/hitMembership";
 import Lineup from "@/db/models/lineup";
 import Member from "@/db/models/member";
 import NotificationModel from "@/db/models/notification";
@@ -63,8 +64,8 @@ Member.belongsToMany(Choreo, {
 ChoreoParticipation.belongsTo(Choreo);
 ChoreoParticipation.belongsTo(Member);
 
-Hit.belongsToMany(Member, { through: "HitMemberships" });
-Member.belongsToMany(Hit, { through: "HitMemberships" });
+Hit.belongsToMany(Member, { through: HitMembership });
+Member.belongsToMany(Hit, { through: HitMembership });
 
 Lineup.hasMany(Position, {
   onDelete: "CASCADE",
