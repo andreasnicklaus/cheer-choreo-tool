@@ -160,7 +160,7 @@ router.post(
       .catch((e: Error) => {
         res.render("../src/views/error.ejs", {
           action: "email-revocation",
-          data: JSON.stringify({ userId: req.params.id }),
+          data: JSON.stringify({ token: req.params.token }),
           error: e,
           timestamp: new Date().toLocaleString(req.locale),
         }); // njsscan-ignore: express_lfr_warning
@@ -228,7 +228,7 @@ router.post(
       .catch((e: Error) => {
         res.render("../src/views/error.ejs", {
           action: "email-confirmation",
-          data: JSON.stringify({ userId: req.params.id }),
+          data: JSON.stringify({ token: req.params.token }),
           error: e,
           timestamp: new Date().toLocaleString(req.locale),
         }); // njsscan-ignore: express_lfr_warning

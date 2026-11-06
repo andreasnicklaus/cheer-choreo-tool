@@ -57,7 +57,30 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+/* sloplint-disable-next-line UI-001 */
 .newVersionBadge {
-  background-color: var(--color-accent);
+  /* sloplint-disable-next-line UI-001 */
+  background: linear-gradient(
+      to right,
+      rgb(216, 0, 0) 0%,
+      rgb(231, 139, 0) 10%,
+      rgb(200, 214, 0) 20%,
+      rgb(31, 220, 25) 30%,
+      rgb(14, 211, 208) 40%,
+      rgb(26, 198, 224) 50%,
+      rgb(0, 97, 208) 60%,
+      rgb(85, 0, 255) 70%,
+      rgb(169, 0, 231) 80%,
+      rgb(252, 0, 218) 90%,
+      rgb(216, 0, 0) 100%
+    )
+    0 0/5000% 100%;
+  animation: rainbow 20s linear infinite;
+}
+
+@keyframes rainbow {
+  to {
+    background-position: -500% 0;
+  }
 }
 </style>

@@ -326,7 +326,25 @@ body {
   font-family: "Inter", "Roboto", Avenir, Helvetica, Arial, sans-serif;
   font-weight: 400;
   min-height: 100vh;
-  background-color: var(--bs-body-bg);
+  /* sloplint-disable-next-line UI-001 */
+  background:
+    radial-gradient(
+      ellipse 600px 300px at 30vw 55vh,
+      var(--body-bg-grad-1),
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 450px at 70vw 30vh,
+      var(--body-bg-grad-2),
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 840px at 80vw 95vh,
+      var(--body-bg-grad-3),
+      transparent 100%
+    ),
+    var(--bs-body-bg);
+  background-attachment: fixed;
 }
 
 /* Colorful callout boxes */
@@ -357,8 +375,17 @@ strong:not(.betteruptime-announcement *) {
   color: var(--bs-primary-text-emphasis);
 }
 
+/* sloplint-disable-next-line UI-001, UI-009 */
 .hero {
-  color: var(--bs-primary-text-emphasis);
+  /* sloplint-disable-next-line UI-001, UI-009 */
+  background: linear-gradient(
+    to right,
+    var(--hero-gradient-start) 10%,
+    var(--hero-gradient-mid) 50%,
+    var(--hero-gradient-end)
+  );
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
   letter-spacing: -0.02em;
 }
 

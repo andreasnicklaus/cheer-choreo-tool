@@ -212,9 +212,11 @@
             </I18n-t>
             <p>
               {{ $t("login.information-text-4.need-more-information") }}
-              <router-link :to="`/${$i18n.locale}/help`">{{
-                $t("login.information-text-4.visit-our-help-center")
-              }}</router-link
+              <router-link
+                :to="{ name: 'Help', params: { locale: $i18n.locale } }"
+                >{{
+                  $t("login.information-text-4.visit-our-help-center")
+                }}</router-link
               >.
             </p>
           </BCardText>
