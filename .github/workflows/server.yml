@@ -80,7 +80,7 @@ jobs:
             anicklaus/cheer-tool
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
-            type=semver,pattern=${{ steps.package-version.outputs.version }},enable={{is_default_branch}}
+            type=raw,value=${{ steps.package-version.outputs.version }},enable={{is_default_branch}}
             type=ref,event=branch
             type=ref,event=tag
             type=ref,event=pr
