@@ -1,6 +1,6 @@
 {
   "name": "choreo-tool",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "private": true,
   "scripts": {
     "dev": "npm run icons && vite",
@@ -49,7 +49,7 @@
     "register-service-worker": "1.7.2",
     "unleash-proxy-client": "3.8.2",
     "vue": "3.5.44",
-    "vue-i18n": "11.4.16",
+    "vue-i18n": "11.4.17",
     "vue-matomo": "4.2.0",
     "vue-router": "5.4.0",
     "vue3-country-flag-icon": "0.1.2",
