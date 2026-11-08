@@ -1,6 +1,6 @@
 {
   "name": "choreo-tool",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "private": true,
   "scripts": {
     "dev": "npm run icons && vite",
@@ -75,7 +75,7 @@
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.7",
     "eslint-plugin-vue": "10.12.0",
-    "globals": "17.13.0",
+    "globals": "17.14.0",
     "html-minifier-terser": "7.2.0",
     "jsdoc": "4.0.5",
     "jsdoc-vuejs": "4.0.0",
