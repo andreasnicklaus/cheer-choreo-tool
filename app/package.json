@@ -1,6 +1,6 @@
 {
   "name": "choreo-tool",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "private": true,
   "scripts": {
     "dev": "npm run icons && vite",
@@ -66,8 +66,8 @@
     "@types/js-cookie": "3.0.6",
     "@types/node": "26.6.6",
     "@vitejs/plugin-vue": "6.0.10",
-    "@vitest/coverage-v8": "5.0.5",
-    "@vitest/ui": "5.0.5",
+    "@vitest/coverage-v8": "5.1.0",
+    "@vitest/ui": "5.1.0",
     "@vue/compiler-sfc": "3.5.44",
     "@vue/tsconfig": "0.9.1",
     "clean-jsdoc-theme": "5.2.1",
@@ -92,7 +92,7 @@
     "unplugin-vue-components": "32.1.0",
     "vite": "8.3.5",
     "vite-plugin-pwa": "2.0.0",
-    "vitest": "5.0.5",
+    "vitest": "5.1.0",
     "vue-pwa-asset-generator": "1.7.3",
     "vue-tsc": "3.3.13"
   },
