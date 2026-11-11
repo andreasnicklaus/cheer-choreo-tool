@@ -1,6 +1,6 @@
 {
   "name": "choreo-tool",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "private": true,
   "scripts": {
     "dev": "npm run icons && vite",
@@ -58,7 +58,7 @@
     "vuex": "4.1.0"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "7.29.9",
+    "@babel/eslint-parser": "7.29.13",
     "@babel/preset-typescript": "7.29.7",
     "@estruyf/github-actions-reporter": "1.14.0",
     "@iconify-json/bi": "1.2.7",
