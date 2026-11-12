@@ -49,7 +49,7 @@ async function acquireLock(transaction: Transaction, choreoId: string) {
     return;
   }
   await db.query(`SELECT pg_advisory_xact_lock(hashtextextended($1, 0))`, {
-    replacements: [`lineup-guard:${choreoId}`],
+    bind: [`lineup-guard:${choreoId}`],
     transaction,
   });
 }

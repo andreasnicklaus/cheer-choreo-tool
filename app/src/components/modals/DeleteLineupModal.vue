@@ -60,10 +60,12 @@ export default defineComponent({
       this.deleteLineupId = null;
     },
     deleteLineup() {
-      LineupService.remove(this.deleteLineupId!).then(() => {
+      const id = this.deleteLineupId;
+      if (!id) return;
+      LineupService.remove(id).then(() => {
         this.$emit(
           "updateLineups",
-          this.choreo.Lineups.filter((l: any) => l.id != this.deleteLineupId)
+          (this.choreo?.Lineups ?? []).filter((l: any) => l.id !== id)
         );
       });
     },

@@ -835,7 +835,13 @@ export default defineComponent({
           });
       }
     },
-    onPositionChange(MemberId: string, x: number, y: number, isRetry = false) {
+    onPositionChange(
+      MemberId: string,
+      x: number,
+      y: number,
+      isRetry = false,
+      showToast = true
+    ) {
       if (!this.choreoId || !this.choreo) return;
 
       const positionToUpdate = this.lineupsForCurrentCount
@@ -871,7 +877,7 @@ export default defineComponent({
                 y
               )
                 .then(() => {
-                  this.showSuccessMessage(this.$t("lineup", 1));
+                  if (showToast) this.showSuccessMessage(this.$t("lineup", 1));
                 })
                 .catch((e) => {
                   if (e.status === 409) {
@@ -927,7 +933,13 @@ export default defineComponent({
             if (this.choreo) this.choreo.Lineups = lineupCopy;
             this.lineupCreationInProgress = false;
 
-            return this.createPositionOnExistingLineup(lineup, x, y, MemberId);
+            return this.createPositionOnExistingLineup(
+              lineup,
+              x,
+              y,
+              MemberId,
+              showToast
+            );
           });
         } else {
           const memberTimeout = this.positionUpdates[MemberId];
@@ -961,7 +973,8 @@ export default defineComponent({
                 lineupToUpdate,
                 x,
                 y,
-                MemberId
+                MemberId,
+                showToast
               );
             }, 0),
             x,
@@ -976,7 +989,8 @@ export default defineComponent({
       lineupToUpdate: Lineup,
       x: number,
       y: number,
-      MemberId: string
+      MemberId: string,
+      showToast = true
     ) {
       const existingPosition = lineupToUpdate.Positions?.find(
         (p) => p.MemberId == MemberId && p.id
@@ -998,7 +1012,7 @@ export default defineComponent({
         const foundLineup = lineupCopy.find((l) => l.id == lineupToUpdate.id);
         if (foundLineup) foundLineup.Positions = positionsCopy;
         if (this.choreo) this.choreo.Lineups = lineupCopy;
-        this.showSuccessMessage(this.$t("lineup", 1));
+        if (showToast) this.showSuccessMessage(this.$t("lineup", 1));
         this.updateProposedPositions();
         this.setLastUpdaterToMe();
       });
@@ -1421,16 +1435,26 @@ export default defineComponent({
       }
     },
     async acceptProposedLineup() {
-      const [first, ...rest] = this.proposedPositions;
+      const proposals = [...this.proposedPositions];
+      const first = proposals[0];
       if (!first) return;
-      await this.onPositionChange(first.MemberId, first.x, first.y);
-      rest.forEach((proposedPosition) => {
+      await this.onPositionChange(
+        first.MemberId,
+        first.x,
+        first.y,
+        false,
+        false
+      );
+      proposals.slice(1).forEach((proposedPosition) => {
         this.onPositionChange(
           proposedPosition.MemberId,
           proposedPosition.x,
-          proposedPosition.y
+          proposedPosition.y,
+          false,
+          false
         );
       });
+      this.showSuccessMessage(this.$t("lineup", 1));
       this.updateProposedPositions();
     },
     rejectProposedLineup(event?: MouseEvent) {

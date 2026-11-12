@@ -17,6 +17,7 @@ import {
 import { stripProtectedUpdateFields } from "@/utils/stripProtectedFields";
 import { withLineupConflictGuard } from "@/utils/lineupConflictGuard";
 import { getTransaction } from "@/utils/transactionContext";
+import type { Transaction } from "sequelize";
 import ChoreoService from "./ChoreoService";
 
 const { Op } = require("sequelize");
@@ -208,6 +209,7 @@ class PositionService {
     ownerIds: string[],
     actingUserId: string,
     isAdmin = false,
+    transaction?: Transaction,
   ) {
     logger.debug(
       `PositionService findByLineupId ${JSON.stringify({ LineupId, ownerIds, actingUserId, isAdmin })}`,
@@ -224,6 +226,7 @@ class PositionService {
           ? { LineupId, UserId: { [Op.in]: accessibleOwnerIds } }
           : { LineupId, UserId: actingUserId },
       include: "Member",
+      transaction,
     });
   }
 
