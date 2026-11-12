@@ -1,6 +1,7 @@
 import { FaultyInputError, NotFoundError } from "@/utils/errors";
 import { withLineupConflictGuard } from "@/utils/lineupConflictGuard";
 import { getTransaction } from "@/utils/transactionContext";
+import type { Transaction } from "sequelize";
 import Lineup from "../db/models/lineup";
 import ChoreoService from "./ChoreoService";
 import {
@@ -185,7 +186,7 @@ class LineupService {
       `LineupService update ${JSON.stringify({ id, data, actingUserId, isAdmin })}`,
     );
 
-    const lineup = await Lineup.findByPk(id);
+    const lineup = await Lineup.findByPk(id, { transaction: getTransaction() });
     if (!lineup) {
       throw new NotFoundError(`No lineup found with ID ${id} when updating`);
     }
@@ -287,11 +288,11 @@ class LineupService {
    * @param {UUID} ChoreoId - The choreography ID.
    * @returns {Promise<Array>} List of lineups.
    */
-  async findByChoreoId(ChoreoId: string) {
+  async findByChoreoId(ChoreoId: string, transaction?: Transaction) {
     logger.debug(
       `LineupService findByChoreoId ${JSON.stringify({ ChoreoId })}`,
     );
-    return Lineup.findAll({ where: { ChoreoId } });
+    return Lineup.findAll({ where: { ChoreoId }, transaction });
   }
 
   /**

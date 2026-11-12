@@ -203,12 +203,13 @@ class ChoreoService {
     actingUserId: string,
     isAdmin = false,
     options = { all: false },
+    transaction?: Transaction,
   ) {
     logger.debug(
       `ChoreoService findById ${JSON.stringify({ id, actingUserId, isAdmin, options })}`,
     );
 
-    const choreo = await Choreo.findByPk(id);
+    const choreo = await Choreo.findByPk(id, { transaction });
     if (!choreo) {
       throw new NotFoundError(`Choreo with ID ${id} not found`);
     }
@@ -218,13 +219,14 @@ class ChoreoService {
     return Choreo.findOne({
       where: { id },
       include: defaultInclude,
+      transaction,
     }) // njsscan-ignore: node_nosqli_injection
       .then(async (choreo: Choreo | null) => {
         if (!choreo) {
           logger.error(`Choreo with ID ${id} not found`);
           throw new NotFoundError(`Choreo with ID ${id} not found`);
         }
-        const lineups = await LineupService.findByChoreoId(choreo.id);
+        const lineups = await LineupService.findByChoreoId(choreo.id, transaction);
         // Add Lineups property dynamically to dataValues
         (choreo.dataValues as { Lineups?: Lineup[] }).Lineups = lineups;
         await Promise.all(
@@ -235,6 +237,8 @@ class ChoreoService {
                   lineup.id,
                   [choreo.UserId],
                   actingUserId,
+                  false,
+                  transaction,
                 );
               return lineup;
             },
@@ -617,7 +621,7 @@ class ChoreoService {
       `ChoreoService update ${JSON.stringify({ id, data, actingUserId, isAdmin, options })}`,
     );
 
-    const foundChoreo = await Choreo.findByPk(id);
+    const foundChoreo = await Choreo.findByPk(id, { transaction });
     if (!foundChoreo) {
       logger.error(`No choreo found with ID ${id} when updating`);
       throw new NotFoundError(`No choreo found with ID ${id} when updating`);
@@ -632,7 +636,7 @@ class ChoreoService {
       },
       { transaction },
     );
-    return this.findById(id, actingUserId, isAdmin, options);
+    return this.findById(id, actingUserId, isAdmin, options, transaction);
   }
 
   /**
