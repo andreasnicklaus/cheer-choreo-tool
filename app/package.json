@@ -1,6 +1,6 @@
 {
   "name": "choreo-tool",
-  "version": "1.1.13",
+  "version": "1.1.14",
   "private": true,
   "scripts": {
     "dev": "npm run icons && vite",
@@ -33,7 +33,7 @@
     "@ffmpeg/ffmpeg": "0.12.15",
     "@ffmpeg/util": "0.12.2",
     "@intlify/unplugin-vue-i18n": "11.2.8",
-    "@logtail/browser": "0.5.12",
+    "@logtail/browser": "0.6.0",
     "@sloplint/cli": "0.3.0",
     "@unhead/vue": "3.4.3",
     "@vueuse/core": "15.0.0",
