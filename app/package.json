@@ -1,6 +1,6 @@
 {
   "name": "choreo-tool",
-  "version": "1.1.14",
+  "version": "1.1.15",
   "private": true,
   "scripts": {
     "dev": "npm run icons && vite",
@@ -94,7 +94,7 @@
     "vite-plugin-pwa": "2.0.0",
     "vitest": "5.1.0",
     "vue-pwa-asset-generator": "1.7.3",
-    "vue-tsc": "3.3.13"
+    "vue-tsc": "3.3.14"
   },
   "nodemonConfig": {
     "ignore": [
