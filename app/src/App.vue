@@ -1,6 +1,8 @@
 <template>
   <BApp id="app" :class="{ mobile: $store.state.isMobile }">
-    <AppInstallWindow />
+    <AppInstallWindow
+      v-if="$route.name === 'Home' || $route.name === 'HomeunLocalized'"
+    />
     <HeadNav :online-status="online" :server-version="serverVersion" />
     <router-view :style="{ minHeight: 'calc(100vh - 116px)' }" class="my-4" />
     <footer class="p-4 px-5 pt-5 d-flex flex-column align-items-center">
@@ -12,39 +14,25 @@
           <h5>
             <b>{{ $t("navigation.internalLinks") }}</b>
           </h5>
-          <BButton
-            variant="link"
-            :to="{ name: 'Home', params: { locale: $i18n.locale } }"
-          >
+          <BButton variant="link" :to="localizedFooterPath('Home')">
             {{ $t("navigation.StartPage") }} </BButton
           ><br />
-          <BButton
-            variant="link"
-            :to="{ name: 'Help', params: { locale: $i18n.locale } }"
-          >
+          <BButton variant="link" :to="localizedFooterPath('Help')">
             {{ $t("general.help") }} </BButton
           ><br />
-          <BButton
-            variant="link"
-            :to="{ name: 'Contact', params: { locale: $i18n.locale } }"
-            >{{ $t("contact.contact-and-support") }}</BButton
+          <BButton variant="link" :to="localizedFooterPath('Pricing')">
+            {{ $t("pricingView.title") }} </BButton
           ><br />
-          <BButton
-            variant="link"
-            :to="{
-              name: 'Impressum',
-              params: { locale: $i18n.locale },
-            }"
-          >
+          <BButton variant="link" :to="localizedFooterPath('About')">
+            {{ $t("aboutView.title") }} </BButton
+          ><br />
+          <BButton variant="link" :to="localizedFooterPath('Contact')">
+            {{ $t("contact.contact-and-support") }}</BButton
+          ><br />
+          <BButton variant="link" :to="localizedFooterPath('Impressum')">
             {{ $t("navigation.impressum") }} </BButton
           ><br />
-          <BButton
-            variant="link"
-            :to="{
-              name: 'Datenschutz',
-              params: { locale: $i18n.locale },
-            }"
-          >
+          <BButton variant="link" :to="localizedFooterPath('Datenschutz')">
             {{ $t("navigation.datenschutz") }} </BButton
           ><br />
           <BButton variant="link" @click="openFeedbackPrompt(true)">
@@ -105,6 +93,16 @@
         </BCol>
       </BRow>
       <hr :style="{ width: '100%', borderColor: '000225' }" class="my-3" />
+      <p class="text-center small mb-2">
+        {{ $t("navigation.free-open-source") }}
+        <a
+          class="ms-1"
+          href="https://github.com/andreasnicklaus/cheer-choreo-tool"
+          target="_blank"
+          rel="noopener"
+          >GitHub</a
+        >
+      </p>
       <BRow align-h="center" class="mt-1">
         <BCol cols="auto">
           <span class="me-2">
@@ -147,27 +145,6 @@
     </footer>
     <ConsentWindow />
     <FeedbackPrompt ref="feedbackPrompt" />
-
-    <!-- <script type="application/ld+json">
-      {{
-        {
-          "@context": "https://schema.org/",
-          "@type": "BreadcrumbList",
-          itemListElement: this.$route.path.split("/")
-            .filter((route, index) => index > 0)
-            .map((route, index) => ({
-              "@type": "ListItem",
-              position: index + 1,
-              name: this.$route.name || route,
-              item: `https://www.choreo-planer.de/${this.$route.path
-                .split("/")
-                .filter((route, index) => index > 0)
-                .slice(0, index + 1)
-                .join("/")}`,
-            }))
-        }
-      }}
-    </script> -->
   </BApp>
 </template>
 
@@ -178,6 +155,7 @@ import { useHead } from "@unhead/vue";
 import { useRoute } from "vue-router";
 import { getApiDomain } from "./services/RequestService";
 import { useI18n } from "vue-i18n";
+import { canonicalSlug } from "@/router/routeSlugs";
 import { useTheme } from "./composables/useTheme";
 import FeedbackPrompt from "./components/FeedbackPrompt.vue";
 
@@ -194,8 +172,15 @@ if (instance) {
   instance.appContext.app.config.globalProperties.$showToast = create as any;
 }
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const route = useRoute();
+
+function localizedFooterPath(routeKey: string): { path: string } {
+  const slug = canonicalSlug(routeKey, locale.value);
+  return slug
+    ? { path: `/${locale.value}/${slug}` }
+    : { path: `/${locale.value}` };
+}
 
 useHead({
   titleTemplate: (title) =>
@@ -282,6 +267,46 @@ useHead({
       rel: "canonical" as any,
       href: computed(() => "https://www.choreo-planer.de" + route.path),
     } as any,
+  ],
+  script: [
+    {
+      type: "application/ld+json" as "application/json",
+      textContent: computed(() => {
+        const pathSegments = route.path.split("/").filter(Boolean);
+        const locale =
+          typeof route.params.locale === "string"
+            ? route.params.locale
+            : undefined;
+        const routeSegments =
+          locale && pathSegments[0] === locale
+            ? pathSegments.slice(1)
+            : pathSegments;
+        const breadcrumbSegments = ["", ...routeSegments];
+        const basePath = locale ? `/${locale}` : "";
+
+        return JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: breadcrumbSegments.map((_, index) => {
+            const path = `${basePath}/${routeSegments
+              .slice(0, index)
+              .join("/")}`.replace(/\/$/, "");
+
+            return {
+              "@type": "ListItem",
+              position: index + 1,
+              name:
+                index === 0
+                  ? t("navigation.StartPage")
+                  : index === routeSegments.length
+                    ? String(route.name ?? routeSegments[index - 1])
+                    : routeSegments[index - 1],
+              item: `https://www.choreo-planer.de${path || "/"}`,
+            };
+          }),
+        });
+      }),
+    },
   ],
 });
 </script>

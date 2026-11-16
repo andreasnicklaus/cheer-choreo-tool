@@ -20,6 +20,8 @@ Protocol (MCP) server is available at <https://api.choreo-planer.de/mcp>.
 
 - [Help and FAQ](https://www.choreo-planer.de/hilfe): How to create an account, build a countsheet, assign positions, and export.
 - [Pricing](https://www.choreo-planer.de/pricing.md): The full pricing statement. The tool is free.
+- [Pricing page](https://www.choreo-planer.de/pricing): Pricing overview (free, 0 EUR).
+- [About](https://www.choreo-planer.de/about): About Choreo Planer and its maintainer.
 - [Contact](https://www.choreo-planer.de/contact): Reach the maintainers at <info@choreo-planer.de>.
 
 ## For agents and developers

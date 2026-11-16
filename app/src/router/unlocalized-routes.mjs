@@ -1,4 +1,9 @@
-export default [
+import { allSlugs } from "./routeSlugs.js";
+
+// Base route definitions. Localized slugs are NOT hard-coded here; they are
+// derived from routeSlugs.js via the helper below so that adding a language
+// only touches routeSlugs.js.
+const baseRoutes = [
   {
     path: "",
     name: "Home",
@@ -61,6 +66,18 @@ export default [
     meta: { prerender: true },
   },
   {
+    path: "pricing",
+    name: "Pricing",
+    component: () => import("../views/PricingView.vue"),
+    meta: { prerender: true },
+  },
+  {
+    path: "about",
+    name: "About",
+    component: () => import("../views/AboutView.vue"),
+    meta: { prerender: true },
+  },
+  {
     path: "contact",
     name: "Contact",
     component: () => import("../views/ContactView.vue"),
@@ -79,3 +96,26 @@ export default [
     meta: { prerender: true },
   },
 ];
+
+// Merge any hand-written aliases with the localized slugs from routeSlugs.js.
+// The canonical path itself is kept as `path`; localized variants become
+// aliases so /de/preise, /en/pricing, ... all resolve to the same route.
+function withLocalizedAliases(route) {
+  const existing = Array.isArray(route.alias)
+    ? route.alias
+    : route.alias
+      ? [route.alias]
+      : [];
+
+  const localized = allSlugs(route.name);
+  const aliases = [...new Set([...existing, ...localized])];
+
+  const filtered = aliases.filter((a) => a && a !== route.path);
+
+  const { alias: _originalAlias, ...rest } = route;
+  if (filtered.length) return { ...rest, alias: filtered };
+  if (route.alias) return { ...rest, alias: route.alias };
+  return rest;
+}
+
+export default baseRoutes.map(withLocalizedAliases);

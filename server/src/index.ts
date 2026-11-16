@@ -57,6 +57,7 @@ import { seasonTeamRouter } from "./routes/seasonTeam";
 import { feedbackRouter } from "./routes/feedback";
 import { notificationRouter } from "./routes/notification";
 import { contactRouter } from "./routes/contact";
+import { statsRouter } from "./routes/stats";
 
 // MCP
 import { mcpRouter } from "./mcp";
@@ -412,6 +413,7 @@ app.use("/seasonTeam", seasonTeamRouter);
 app.use("/feedback", feedbackRouter);
 app.use("/notifications", notificationRouter);
 app.use("/contact", contactRouter);
+app.use("/stats", statsRouter);
 
 app.use("/admin", adminRouter);
 

@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
+import { routeSlugs } from "../src/router/routeSlugs.js";
 
 const DIST_DIR = path.join(process.cwd(), "dist");
 const HOSTNAME = "https://www.choreo-planer.de";
@@ -63,21 +64,36 @@ async function main() {
   const locales = Array.from(localeSet).sort();
   const defaultLocale = locales.includes("en") ? "en" : locales[0] || null;
 
-  // group by base route (strip leading locale if present)
+  // Build a reverse map slug -> route key per locale so that localized slug
+  // variants (e.g. /de/preise and /en/pricing) are grouped together for
+  // hreflang alternates instead of being treated as unrelated pages.
+  const slugToKey = {};
+  for (const loc of locales) slugToKey[loc] = {};
+  for (const [key, slugs] of Object.entries(routeSlugs)) {
+    for (const [loc, slug] of Object.entries(slugs)) {
+      const normalized = slug ? slug : "";
+      if (!slugToKey[loc]) slugToKey[loc] = {};
+      slugToKey[loc][normalized] = key;
+    }
+  }
+
+  // group by route key (localized-slug aware)
   const groups = new Map();
   for (const e of entries) {
-    let base = e.route;
     const segs = e.route.split("/").filter(Boolean);
+    let locale = null;
+    let slug = "";
     if (segs.length && locales.includes(segs[0])) {
-      // remove leading locale
-      base = "/" + segs.slice(1).join("/") + (segs.length > 1 ? "/" : "/");
-      if (base === "//") base = "/";
+      locale = segs[0];
+      slug = segs.slice(1).join("/");
+    } else {
+      locale = defaultLocale;
+      slug = segs.join("/");
     }
-    if (!base.endsWith("/")) base = base + "/";
-    if (!groups.has(base)) groups.set(base, []);
-    // determine locale for this entry
-    const locale = segs.length && locales.includes(segs[0]) ? segs[0] : null;
-    groups.get(base).push({ route: e.route, lastmod: e.lastmod, locale });
+    const routeKey =
+      (slugToKey[locale] && slugToKey[locale][slug]) || slug || "(home)";
+    if (!groups.has(routeKey)) groups.set(routeKey, []);
+    groups.get(routeKey).push({ route: e.route, lastmod: e.lastmod, locale });
   }
 
   // defaults

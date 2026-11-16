@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import store from "@/store";
 import routes from "./routes";
+import { canonicalSlug, routeSlugs } from "./routeSlugs";
 import env from "../utils/env";
 import i18n from "@/plugins/vue-i18n";
 import LanguageService from "@/services/LanguageService";
@@ -35,6 +36,35 @@ router.beforeEach(
         });
       } else {
         return { ...to, params: { locale: i18n.global.locale } };
+      }
+    }
+
+    // Canonicalize localized slugs: a known slug that does not match the active
+    // locale redirects (replace) to that locale's preferred slug, e.g.
+    // /de/pricing -> /de/preise. Only known aliases are touched; unknown paths
+    // fall through to the normal SPA handling.
+    const slugLocale = to.params.locale as string | undefined;
+    if (slugLocale) {
+      const routeKey = String(to.name ?? "").replace(/unLocalized$/, "");
+      const preferred =
+        routeSlugs[routeKey] != null
+          ? canonicalSlug(routeKey, slugLocale)
+          : null;
+      if (preferred !== null && routeKey !== "Home") {
+        const segments = to.path.split("/").filter(Boolean);
+        const currentSlug =
+          segments.length > 1 ? segments[segments.length - 1] : "";
+        if (preferred !== currentSlug) {
+          const targetPath = preferred
+            ? `/${slugLocale}/${preferred}`
+            : `/${slugLocale}`;
+          return {
+            path: targetPath,
+            query: to.query,
+            hash: to.hash,
+            replace: true,
+          };
+        }
       }
     }
 
