@@ -131,7 +131,9 @@ export default class AppPage extends TestPage {
 
   async iCheckAppInstallWindow() {
     return Promise.all([
-      expect(this.page.getByText("Download the app! The app")).toBeVisible(),
+      expect(
+        this.page.getByRole("heading", { name: "Download the app!" })
+      ).toBeVisible(),
       expect(
         this.page.getByRole("button", { name: "No thanks!" })
       ).toBeVisible(),
