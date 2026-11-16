@@ -71,6 +71,40 @@ router.beforeEach(
           };
         }
       }
+    } else {
+      const segments = to.path.split("/").filter(Boolean);
+      if (segments.length === 1) {
+        const currentSlug = segments[0];
+        let matchedKey: string | null = null;
+        let matchedLocale: string | null = null;
+        for (const [key, slugs] of Object.entries(routeSlugs)) {
+          for (const [loc, slug] of Object.entries(
+            slugs as Record<string, string>
+          )) {
+            if (slug === currentSlug) {
+              matchedKey = key;
+              matchedLocale = loc;
+              break;
+            }
+          }
+          if (matchedKey) break;
+        }
+        if (matchedKey && matchedKey !== "Home") {
+          const locale = matchedLocale || defaultLocale;
+          const preferred = canonicalSlug(matchedKey, locale);
+          const targetPath = preferred
+            ? `/${locale}/${preferred}`
+            : `/${locale}`;
+          if (targetPath !== to.path) {
+            return {
+              path: targetPath,
+              query: to.query,
+              hash: to.hash,
+              replace: true,
+            };
+          }
+        }
+      }
     }
 
     const isPrivate = Boolean(to.meta.private);

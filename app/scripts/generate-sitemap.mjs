@@ -1,6 +1,11 @@
 import fs from "fs/promises";
 import path from "path";
-import { routeSlugs } from "../src/router/routeSlugs.js";
+import {
+  routeSlugs,
+  allSlugs,
+  canonicalSlug,
+  defaultLocale as defaultRouteLocale,
+} from "../src/router/routeSlugs.js";
 
 const DIST_DIR = path.join(process.cwd(), "dist");
 const HOSTNAME = "https://www.choreo-planer.de";
@@ -62,36 +67,63 @@ async function main() {
     if (segs.length && /^[a-z]{2}$/.test(segs[0])) localeSet.add(segs[0]);
   }
   const locales = Array.from(localeSet).sort();
-  const defaultLocale = locales.includes("en") ? "en" : locales[0] || null;
+  const defaultLocale = locales.includes(defaultRouteLocale)
+    ? defaultRouteLocale
+    : locales.includes("en")
+      ? "en"
+      : locales[0] || null;
 
   // Build a reverse map slug -> route key per locale so that localized slug
   // variants (e.g. /de/preise and /en/pricing) are grouped together for
   // hreflang alternates instead of being treated as unrelated pages.
   const slugToKey = {};
   for (const loc of locales) slugToKey[loc] = {};
-  for (const [key, slugs] of Object.entries(routeSlugs)) {
-    for (const [loc, slug] of Object.entries(slugs)) {
-      const normalized = slug ? slug : "";
+  // Map every slug variant of a route key (canonical + aliases from other
+  // locales) to that route key in every locale, so that e.g. /de/about and
+  // /en/ueber-uns are grouped with /about and /ueber-uns.
+  for (const key of Object.keys(routeSlugs)) {
+    const variants = allSlugs(key);
+    const slugs = variants.length ? variants : [""];
+    for (const loc of locales) {
       if (!slugToKey[loc]) slugToKey[loc] = {};
-      slugToKey[loc][normalized] = key;
+      for (const slug of slugs) {
+        const normalized = slug ? slug : "";
+        slugToKey[loc][normalized] = key;
+      }
     }
   }
 
   // group by route key (localized-slug aware)
   const groups = new Map();
   for (const e of entries) {
+    // Exclude generated docs from the sitemap entirely.
+    if (e.route === "/docs/" || e.route.startsWith("/docs/")) continue;
     const segs = e.route.split("/").filter(Boolean);
+    // Top-level (non-prefixed) URLs are redirects now, except for the root.
+    if (segs.length > 0 && !locales.includes(segs[0])) continue;
     let locale = null;
     let slug = "";
     if (segs.length && locales.includes(segs[0])) {
       locale = segs[0];
       slug = segs.slice(1).join("/");
     } else {
-      locale = defaultLocale;
+      // Root ("/") is the x-default only, not a "de" alternate.
+      locale = segs.length === 0 ? null : defaultLocale;
       slug = segs.join("/");
     }
     const routeKey =
-      (slugToKey[locale] && slugToKey[locale][slug]) || slug || "(home)";
+      (locale && slugToKey[locale] && slugToKey[locale][slug]) ||
+      (slug === "" ? "Home" : slug || "(home)");
+    // Skip non-canonical alias URLs (e.g. /de/about, /en/ueber-uns) so the
+    // sitemap only lists canonical locale/slug combinations.
+    if (
+      routeKey &&
+      routeKey !== "(home)" &&
+      Object.prototype.hasOwnProperty.call(routeSlugs, routeKey)
+    ) {
+      const canonical = canonicalSlug(routeKey, locale);
+      if (canonical !== null && canonical !== slug) continue;
+    }
     if (!groups.has(routeKey)) groups.set(routeKey, []);
     groups.get(routeKey).push({ route: e.route, lastmod: e.lastmod, locale });
   }
@@ -123,14 +155,18 @@ async function main() {
         if (found) xDefaultHref = `${HOSTNAME}${found.route}`;
       }
 
-      const alternateLinks =
-        variants
-          .map(
-            (a) =>
-              `    <xhtml:link rel="alternate" hreflang="${a.locale || "x-default"}" href="${HOSTNAME}${a.route}"/>`
-          )
-          .join("\n") +
-        `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${xDefaultHref}"/>`;
+      const linkMap = new Map();
+      for (const a of variants) {
+        const hl = a.locale || "x-default";
+        if (!linkMap.has(hl)) linkMap.set(hl, `${HOSTNAME}${a.route}`);
+      }
+      linkMap.set("x-default", xDefaultHref);
+      const alternateLinks = Array.from(linkMap.entries())
+        .map(
+          ([hl, href]) =>
+            `    <xhtml:link rel="alternate" hreflang="${hl}" href="${href}"/>`
+        )
+        .join("\n");
 
       const urlXml = `  <url>\n    <loc>${loc}</loc>\n${alternateLinks}\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>${DEFAULT_CHANGEFREQ}</changefreq>\n    <priority>${DEFAULT_PRIORITY}</priority>\n  </url>`;
       urlEntries.push(urlXml);

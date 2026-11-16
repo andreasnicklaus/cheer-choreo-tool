@@ -313,7 +313,10 @@ useHead({
                 index === 0
                   ? t("navigation.StartPage")
                   : index === routeSegments.length
-                    ? String(route.name ?? routeSegments[index - 1])
+                    ? String(route.name ?? routeSegments[index - 1]).replace(
+                        /unLocalized$/,
+                        ""
+                      )
                     : routeSegments[index - 1],
               item: `https://www.choreo-planer.de${path || "/"}`,
             };

@@ -66,13 +66,13 @@ const baseRoutes = [
     meta: { prerender: true },
   },
   {
-    path: "pricing",
+    path: "preise",
     name: "Pricing",
     component: () => import("../views/PricingView.vue"),
     meta: { prerender: true },
   },
   {
-    path: "about",
+    path: "ueber-uns",
     name: "About",
     component: () => import("../views/AboutView.vue"),
     meta: { prerender: true },

@@ -32,12 +32,12 @@ export const routeSlugs = {
   About: { de: "ueber-uns", en: "about" },
   Help: { de: "hilfe", en: "help" },
   Contact: { de: "kontakt", en: "contact" },
-  Impressum: { de: "impressum", en: "impressum" },
+  Impressum: { de: "impressum", en: "imprint" },
   Datenschutz: { de: "datenschutz", en: "privacy" },
 };
 
 // Convenience: the canonical slug for a route key in a given locale, falling
-// back to the English slug and finally to the route key itself.
+// back to the default (German) slug and finally to the route key itself.
 export function canonicalSlug(routeKey, locale) {
   const slugs = routeSlugs[routeKey];
   if (!slugs) return null;
