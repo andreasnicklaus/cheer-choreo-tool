@@ -50,7 +50,7 @@ export default class HomePage extends TestPage {
 
       expect(this.page.locator("#registerButton")).toBeVisible(),
       expect(this.page.locator("#registerButton")).toContainText(
-        "Log in / Register"
+        "Log in / Create free account"
       ),
       expect(this.page.locator("#helpLink")).toContainText("Help"),
       expect(this.page.locator("#helpLink")).toBeVisible(),
