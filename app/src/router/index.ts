@@ -1,7 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
 import store from "@/store";
 import routes from "./routes";
-import { canonicalSlug, routeSlugs } from "./routeSlugs";
+import {
+  canonicalSlug,
+  routeSlugs,
+  supportedLocales,
+  defaultLocale,
+} from "./routeSlugs";
 import env from "../utils/env";
 import i18n from "@/plugins/vue-i18n";
 import LanguageService from "@/services/LanguageService";
@@ -88,5 +93,33 @@ router.beforeEach(
     else return;
   }
 );
+
+// Resolve named routes for localized public pages to their locale-preferred slug
+// so that rendered `href` attributes (and programmatic navigation) use the
+// canonical URL directly instead of the static base path. The before-each guard
+// still canonicalizes any stale/alias URL that reaches it.
+const localizedRouteKeys = new Set(Object.keys(routeSlugs));
+
+function localizeRouteTarget(to: any, currentLocation: any) {
+  if (typeof to === "string" || !to || typeof to !== "object") return to;
+  const rawName = typeof to.name === "string" ? to.name : null;
+  const routeKey = rawName ? rawName.replace(/unLocalized$/, "") : null;
+  if (!routeKey || !localizedRouteKeys.has(routeKey)) return to;
+
+  const locale =
+    (typeof to.params?.locale === "string" && to.params.locale) ||
+    (typeof currentLocation?.params?.locale === "string" &&
+      currentLocation.params.locale) ||
+    defaultLocale;
+  if (!supportedLocales.includes(locale)) return to;
+
+  const slug = canonicalSlug(routeKey, locale);
+  const { name: _name, params: _params, ...rest } = to;
+  return { ...rest, path: slug ? `/${locale}/${slug}` : `/${locale}` };
+}
+
+const originalResolve = router.resolve.bind(router);
+router.resolve = ((to: any, currentLocation?: any) =>
+  originalResolve(localizeRouteTarget(to, currentLocation), currentLocation)) as typeof router.resolve;
 
 export default router;

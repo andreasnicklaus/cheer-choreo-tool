@@ -14,25 +14,46 @@
           <h5>
             <b>{{ $t("navigation.internalLinks") }}</b>
           </h5>
-          <BButton variant="link" :to="localizedFooterPath('Home')">
+          <BButton
+            variant="link"
+            :to="{ name: 'Home', params: { locale: $i18n.locale } }"
+          >
             {{ $t("navigation.StartPage") }} </BButton
           ><br />
-          <BButton variant="link" :to="localizedFooterPath('Help')">
+          <BButton
+            variant="link"
+            :to="{ name: 'Help', params: { locale: $i18n.locale } }"
+          >
             {{ $t("general.help") }} </BButton
           ><br />
-          <BButton variant="link" :to="localizedFooterPath('Pricing')">
+          <BButton
+            variant="link"
+            :to="{ name: 'Pricing', params: { locale: $i18n.locale } }"
+          >
             {{ $t("pricingView.title") }} </BButton
           ><br />
-          <BButton variant="link" :to="localizedFooterPath('About')">
+          <BButton
+            variant="link"
+            :to="{ name: 'About', params: { locale: $i18n.locale } }"
+          >
             {{ $t("aboutView.title") }} </BButton
           ><br />
-          <BButton variant="link" :to="localizedFooterPath('Contact')">
+          <BButton
+            variant="link"
+            :to="{ name: 'Contact', params: { locale: $i18n.locale } }"
+          >
             {{ $t("contact.contact-and-support") }}</BButton
           ><br />
-          <BButton variant="link" :to="localizedFooterPath('Impressum')">
+          <BButton
+            variant="link"
+            :to="{ name: 'Impressum', params: { locale: $i18n.locale } }"
+          >
             {{ $t("navigation.impressum") }} </BButton
           ><br />
-          <BButton variant="link" :to="localizedFooterPath('Datenschutz')">
+          <BButton
+            variant="link"
+            :to="{ name: 'Datenschutz', params: { locale: $i18n.locale } }"
+          >
             {{ $t("navigation.datenschutz") }} </BButton
           ><br />
           <BButton variant="link" @click="openFeedbackPrompt(true)">
@@ -155,7 +176,7 @@ import { useHead } from "@unhead/vue";
 import { useRoute } from "vue-router";
 import { getApiDomain } from "./services/RequestService";
 import { useI18n } from "vue-i18n";
-import { canonicalSlug } from "@/router/routeSlugs";
+
 import { useTheme } from "./composables/useTheme";
 import FeedbackPrompt from "./components/FeedbackPrompt.vue";
 
@@ -172,15 +193,8 @@ if (instance) {
   instance.appContext.app.config.globalProperties.$showToast = create as any;
 }
 
-const { t, locale } = useI18n();
+const { t } = useI18n();
 const route = useRoute();
-
-function localizedFooterPath(routeKey: string): { path: string } {
-  const slug = canonicalSlug(routeKey, locale.value);
-  return slug
-    ? { path: `/${locale.value}/${slug}` }
-    : { path: `/${locale.value}` };
-}
 
 useHead({
   titleTemplate: (title) =>

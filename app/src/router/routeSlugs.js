@@ -55,3 +55,13 @@ export function allSlugs(routeKey) {
   if (!slugs) return [];
   return [...new Set(Object.values(slugs).filter((s) => s !== undefined))];
 }
+
+// Build a locale-aware route location object for a localized public route.
+// Vue Router resolves named routes to their static base path (the default
+// locale's slug), so links rendered from a name keep the wrong slug for other
+// locales. Use this helper when you need the canonical path as an object that
+// can be passed to `:to` / `$router.push`.
+export function localizedRoute(routeKey, locale) {
+  const slug = canonicalSlug(routeKey, locale);
+  return { path: slug ? `/${locale}/${slug}` : `/${locale}` };
+}
