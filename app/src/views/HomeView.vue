@@ -90,6 +90,12 @@
               : `${$t("anmelden")} / ${$t("Home.cta-create-account")}`
           }}
         </BButton>
+        <router-link
+          id="helpLink"
+          :to="{ name: 'Help', params: { locale: $i18n.locale } }"
+        >
+          {{ $t("general.help") }}
+        </router-link>
       </BCol>
     </section>
 
@@ -1076,6 +1082,17 @@ export default defineComponent({
       },
       y: "15vh",
       width: "100%",
+    });
+
+    gsap.to("#helpLink", {
+      scrollTrigger: {
+        trigger: "#sectionA",
+        start: "center center",
+        end: "bottom 20%",
+        scrub: -1,
+      },
+      y: "15vh",
+      opacity: 0,
     });
 
     const homeViewWidth = document.getElementById("homeView")!.clientWidth;
