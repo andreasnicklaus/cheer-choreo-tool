@@ -40,7 +40,7 @@ export default class AppPage extends TestPage {
       expect(footerLinks.nth(4)).toHaveText("Contact & Support"),
       expect(footerLinks.nth(4)).toHaveAttribute("href", "/en/contact"),
       expect(footerLinks.nth(5)).toHaveText("Imprint"),
-      expect(footerLinks.nth(5)).toHaveAttribute("href", "/en/impressum"),
+      expect(footerLinks.nth(5)).toHaveAttribute("href", "/en/imprint"),
       expect(footerLinks.nth(6)).toHaveText("Data protection"),
       expect(footerLinks.nth(6)).toHaveAttribute("href", "/en/privacy"),
       expect(footerLinks.nth(7)).toHaveText("Documentation"),
