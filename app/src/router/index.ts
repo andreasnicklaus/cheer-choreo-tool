@@ -120,6 +120,9 @@ function localizeRouteTarget(to: any, currentLocation: any) {
 
 const originalResolve = router.resolve.bind(router);
 router.resolve = ((to: any, currentLocation?: any) =>
-  originalResolve(localizeRouteTarget(to, currentLocation), currentLocation)) as typeof router.resolve;
+  originalResolve(
+    localizeRouteTarget(to, currentLocation),
+    currentLocation
+  )) as typeof router.resolve;
 
 export default router;
