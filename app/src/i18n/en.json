@@ -308,6 +308,34 @@
     "ki-nutzen": {
       "answer": "Yes! The Choreo Planner supports **MCP** (Model Context Protocol), which allows AI assistants like Claude, Cursor, and others to connect directly to your choreos. To set it up, go to your **Account** settings and open the **Danger zone** tab. Click **Configure** under **AI Access** to generate a token and get the configuration you need for your AI tool.",
       "question": "Can I use AI to help me create my choreos?"
+    },
+    "kostenlos": {
+      "question": "Is Choreo Planer really free?",
+      "answer": "Yes. Choreo Planer is completely free: no paid plan, no expiring trial, and no feature behind a paywall. See the [pricing page](/pricing)."
+    },
+    "daten-export": {
+      "question": "Can I export my data?",
+      "answer": "Yes. You can export countsheets as PDF and choreographies as video (MP4 or WebM). Your data stays yours and can be downloaded at any time."
+    },
+    "browser-geraete": {
+      "question": "Which browsers and devices are supported?",
+      "answer": "Choreo Planer runs in modern browsers (Chrome, Firefox, Safari, Edge) on desktop and mobile. You can also install it as an app on supported devices."
+    },
+    "offline-nutzung": {
+      "question": "Can I use it offline?",
+      "answer": "Once installed, the app can be opened offline, but loading and saving data requires a connection to the server."
+    },
+    "datenschutz-faq": {
+      "question": "How is my data protected?",
+      "answer": "Access is password-protected, data transfer is encrypted (HTTPS), and data is backed up regularly. See the [privacy policy](/datenschutz)."
+    },
+    "team-groesse": {
+      "question": "Is there a limit on team size?",
+      "answer": "There is no hard limit on participants per team. Very large teams may affect performance on some devices."
+    },
+    "vs-tabellen": {
+      "question": "Why not just use a spreadsheet or paper?",
+      "answer": "Choreo Planer keeps formations, countsheets, and video export together, so changes stay consistent and can be shared with the whole team."
     }
   },
   "feedback": {
@@ -483,7 +511,16 @@
     "about-zielgruppe-text": "Choreo Planner is for coaches who want to digitize and simplify their choreography planning. The end products (countsheets, images, and videos) can be shared with team members to facilitate learning the choreographies.",
     "ai-supported-title": "AI-Powered Choreo Creation",
     "ai-supported-description": "Let AI agents create and manage your choreographies through the Model Context Protocol (MCP). From clubs and teams to lineups and positions via natural language.",
-    "ai-supported-cta": "Get started"
+    "ai-supported-cta": "Get started",
+    "demo-video-caption": "See a countsheet become a training video",
+    "testimonials-heading": "What teams say",
+    "testimonials-cta": "Be the first to share your experience",
+    "trust-opensource": "Open source on GitHub",
+    "stats-summary": "{choreos} choreographies planned by {users} coaches",
+    "stats-choreographies": "choreographies planned",
+    "stats-users": "coaches",
+    "hero-outcome": "Plan formations, countsheets and training videos for cheer, guard and dance teams completely for free.",
+    "cta-create-account": "Create free account"
   },
   "impressumView": {
     "angaben-gemaess-5-tmg": "Information according to § 5 TMG",
@@ -594,6 +631,9 @@
     },
     "contact": {
       "description": "Send a message to the ChoreoPlaner team for support or inquiries. Email us at info{'@'}choreo-planer.de."
+    },
+    "pricing": {
+      "description": "Pricing for Choreo Planer: the tool is completely free, with no paid plan, trial or paywall."
     }
   },
   "modals": {
@@ -857,7 +897,8 @@
     "impressum": "Imprint",
     "instagram": "Instagram",
     "internalLinks": "Internal Links",
-    "StartPage": "Start"
+    "StartPage": "Start",
+    "free-open-source": "Free & Open source on GitHub"
   },
   "neu": "New",
   "optionen": "Options",
@@ -1046,5 +1087,59 @@
   "accessOverviewTable": {
     "edit": "Edit",
     "read": "Read"
+  },
+  "pricingView": {
+    "title": "Pricing",
+    "free-badge": "Free. No paid plan. No trial expiry",
+    "intro": "Choreo Planer is free. There is no paid plan, no expiring trial, and no feature behind a paywall.",
+    "features-heading": "Everything included, at no cost",
+    "feature-choreos": "Choreography planning with countsheets",
+    "feature-teams": "Teams, clubs, members and positions",
+    "feature-seasons": "Seasons and season-team assignments",
+    "feature-lineups": "Lineups",
+    "feature-exports": "PDF export and video export",
+    "feature-api": "Access to the public REST API and the MCP server",
+    "feature-export-content": "Export of your own content",
+    "why-free-heading": "Why it is free",
+    "why-free-text": "Choreo Planer is a free online tool for choreography sport. It is built and maintained as a side project and paid for by its maintainer, so there is nothing to sell and no tier to upgrade to.",
+    "contact-heading": "Questions about pricing",
+    "contact-text": "Questions about pricing:",
+    "cta-register": "Create free account",
+    "cta-help": "Read the help",
+    "no-credit-card": "No credit card required. There is no paid plan at all.",
+    "faq-heading": "Frequently asked questions",
+    "faq-free-forever-q": "Is Choreo Planer really free forever?",
+    "faq-free-forever-a": "Yes. There is no paid plan, no expiring trial, and no feature behind a paywall.",
+    "faq-data-export-q": "Can I export my own content?",
+    "faq-data-export-a": "Yes. You can export your own content, including countsheets and videos.",
+    "faq-api-q": "Is the API available for free too?",
+    "faq-api-a": "Yes. Access to the public REST API and the MCP server is included.",
+    "faq-support-q": "How is the project funded?",
+    "faq-support-a": "Choreo Planer is a side project paid for by its maintainer, so there is nothing to sell."
+  },
+  "aboutView": {
+    "title": "About Choreo Planner",
+    "what-is-heading": "What is Choreo Planner?",
+    "what-is-text": "Choreo Planner is an online tool for coaches of cheerleading teams, dance groups, and other choreo sports. It allows you to digitally plan choreographies, create formations, manage countsheets, and generate training videos.",
+    "who-for-heading": "Who it is for",
+    "who-for-text": "Coaches and teams in cheerleading, guard, dance and other choreo sports who want to plan formations, countsheets and training videos.",
+    "updates-heading": "Recent updates",
+    "updates-text": "Choreo Planner is updated regularly. See the latest changes on GitHub.",
+    "roadmap-heading": "Roadmap",
+    "roadmap-text": "Planned features and ideas are tracked on GitHub.",
+    "roadmap-link": "Open roadmap on GitHub",
+    "contact-heading": "Contact and support",
+    "contact-text": "Questions or feedback? Reach out via the contact form or email.",
+    "maintainer": "Built and maintained by",
+    "highlights-heading": "Highlights",
+    "highlight-choreography": "Digital choreography planning with countsheets",
+    "highlight-formations": "Formations for cheerleading, guard, dance and more",
+    "highlight-video": "Training videos generated in the browser",
+    "highlight-export": "PDF and video export of your own content",
+    "highlight-api": "Access to the public REST API and the MCP server",
+    "links-heading": "Project links",
+    "link-github": "Source code on GitHub",
+    "link-changelog": "Version history / changelog",
+    "link-roadmap": "Roadmap on GitHub"
   }
 }

@@ -4,6 +4,7 @@ import path from "path";
 // use WHATWG URL API instead of deprecated url.parse
 import puppeteer from "puppeteer";
 import { minify as htmlMinify } from "html-minifier-terser";
+import { supportedLocales } from "../src/i18n/supportedLocales.js";
 
 const DIST_DIR = path.join(process.cwd(), "dist");
 const PORT = process.env.PRERENDER_PORT || 5000;
@@ -156,8 +157,9 @@ async function main() {
   const routesModule = await import("../src/router/unlocalized-routes.mjs");
   const routes = routesModule.default || routesModule;
 
-  // Default language slugs (match your router config)
-  const slugs = ["en", "de"];
+  // Supported locales (single source of truth). The first entry is the default
+  // (top-level) locale, i.e. German.
+  const slugs = supportedLocales;
   const defaultSlug = slugs[0];
 
   // Build set of routes to prerender (avoid duplicates), honoring per-route sitemap slugs and aliases

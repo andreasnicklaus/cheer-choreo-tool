@@ -101,7 +101,7 @@ test.describe("Already logged in", () => {
 
   test("should go to the redirect URL if already logged in", async () => {
     await loginPage.page.goto("/login?redirectUrl=/en/hilfe");
-    await loginPage.iCheckRedirectionToPage("/en/hilfe");
+    await loginPage.iCheckRedirectionToPage("/en/help");
   });
 });
 

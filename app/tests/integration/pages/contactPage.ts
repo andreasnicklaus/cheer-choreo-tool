@@ -24,7 +24,7 @@ export default class ContactPage extends TestPage {
   iCheckDocumentationLink() {
     return expect(this.page.getByText("Help & quick fixes")).toHaveAttribute(
       "href",
-      "/en/hilfe"
+      "/en/help"
     );
   }
 

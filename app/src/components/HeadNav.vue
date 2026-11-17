@@ -1,5 +1,5 @@
 <template>
-  <BNavbar sticky="top" toggleable="sm" class="" no-auto-close>
+  <BNavbar sticky="top" toggleable="md" class="" no-auto-close>
     <BNavbarBrand
       :to="{ name: 'Home', params: { locale: $i18n.locale } }"
       class="em-primary"
@@ -25,7 +25,7 @@
       <span class="ms-2 hero em">{{ $t("general.ChoreoPlaner") }}</span>
     </BNavbarBrand>
 
-    <BNavbarToggle target="nav-collapse"></BNavbarToggle>
+    <BNavbarToggle target="nav-collapse" class="me-2"></BNavbarToggle>
 
     <BCollapse id="nav-collapse" is-nav class="me-2">
       <BNavbarNav>
@@ -144,7 +144,7 @@
         </BNavItemDropdown>
       </BNavbarNav>
 
-      <BNavbarNav class="ms-auto align-items-sm-center">
+      <BNavbarNav class="ms-auto align-items-md-center">
         <BNavItemDropdown
           v-show="$store.state.loggedIn && !$store.state.isMobile"
           no-caret
@@ -269,7 +269,7 @@
               mode="rounded"
             />
 
-            <span v-show="$store.state.isMobile" class="ms-2">
+            <span class="ms-2 d-md-none">
               {{ flags.find((f) => f.lang == $i18n.locale)?.localName }}
             </span>
           </template>
@@ -290,7 +290,7 @@
           @click="share"
         >
           <IBiShare />
-          <span class="d-sm-none ms-2">{{ $t("nav.teilen") }}</span>
+          <span class="d-md-none ms-2">{{ $t("nav.teilen") }}</span>
         </BNavItem>
 
         <BNavItem
@@ -301,18 +301,25 @@
                 (serverVersion && ` (${serverVersion || $t('errors.unknown')})`)
               : $t('nav.server-sind-offline')
           "
-          class="d-sm-block d-none"
+          class="d-md-block d-none"
           data-testid="serverStatus"
         >
           <IBiCheckCircle v-show="onlineStatus === true" class="text-success" />
           <IBiXCircle v-show="onlineStatus === false" class="text-danger" />
         </BNavItem>
         <BNavItem
+          v-b-tooltip.hover.bottom="$t('pricingView.title')"
+          :to="{ name: 'Pricing', params: { locale: $i18n.locale } }"
+        >
+          <IBiTag />
+          <span class="d-md-none ms-2">{{ $t("pricingView.title") }}</span>
+        </BNavItem>
+        <BNavItem
           v-b-tooltip.hover.bottom="$t('general.help')"
           :to="{ name: 'Help', params: { locale: $i18n.locale } }"
         >
           <IBiQuestionCircle />
-          <span class="d-sm-none ms-2">{{ $t("general.help") }}</span>
+          <span class="d-md-none ms-2">{{ $t("general.help") }}</span>
         </BNavItem>
         <BNavItem
           v-b-tooltip.hover.bottom="
@@ -323,7 +330,7 @@
         >
           <IBiSunFill v-if="isDark" class="me-2" />
           <IBiMoonStarsFill v-else class="me-2" />
-          <span class="d-sm-none">{{
+          <span class="d-md-none">{{
             isDark ? $t("nav.hellen-modus") : $t("nav.dunklen-modus")
           }}</span>
         </BNavItem>

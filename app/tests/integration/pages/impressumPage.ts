@@ -2,7 +2,7 @@ import { expect, Page } from "@playwright/test";
 import TestPage from "./page";
 
 export default class ImpressumPage extends TestPage {
-  route = "/impressum";
+  route = "/en/imprint";
 
   constructor(page: Page) {
     super(page);

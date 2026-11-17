@@ -1,6 +1,7 @@
 import { createI18n } from "vue-i18n";
 import de from "../i18n/de.json";
 import en from "../i18n/en.json";
+import { supportedLocales } from "../i18n/supportedLocales.js";
 
 const messages = { de, en };
 
@@ -34,7 +35,14 @@ const dateTimeFormats = {
 const localStorageKey = "cp-locale";
 const storedLanguage = localStorage.getItem(localStorageKey);
 const usersLanguage = window.navigator.language.split("-")[0] ?? "";
-const availableLocales = Object.keys(messages);
+const availableLocales = supportedLocales;
+
+if (
+  !supportedLocales.every((locale) =>
+    new Set(Object.keys(messages)).has(locale)
+  )
+)
+  throw new Error("supportedLocales must match the keys of messages");
 
 let locale = "de";
 if (storedLanguage && availableLocales.includes(storedLanguage)) {
@@ -47,7 +55,7 @@ const i18n = createI18n({
   legacy: false,
   globalInjection: true,
   locale: locale,
-  fallbackLocale: "de",
+  fallbackLocale: "en",
   messages,
   datetimeFormats: dateTimeFormats,
   warnHtmlMessage: false,
