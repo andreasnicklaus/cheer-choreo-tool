@@ -2,6 +2,7 @@
   <BModal
     :id="`modal-newClub-${id}`"
     ref="modal"
+    data-testid="create-club-modal"
     :title="$t('modals.create-club.neuer-verein')"
     scrollable
     :no-close-on-backdrop="preventClosing && pendingInvites.length === 0"
@@ -69,6 +70,7 @@
       >
         <BFormSelect
           v-model="selectedOwnerId"
+          data-testid="owner-select"
           :state="selectedOwnerIsValid"
           :options="ownerOptions"
           :placeholder="$t('accountView.owner')"

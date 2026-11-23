@@ -318,41 +318,41 @@ export default class TeamPage extends TestPage {
   }
 
   async iSeeOwnerSelectInCreateTeamModal() {
-    const modal = this.page.getByRole("dialog", { name: "New team" });
-    await expect(modal.getByLabel("Owner")).toBeVisible();
+    const modal = this.page.getByTestId("create-team-modal");
+    await expect(modal.getByTestId("owner-select")).toBeVisible();
   }
 
   async iSeeOwnerSelectOptionInCreateTeamModal(text: string) {
-    const modal = this.page.getByRole("dialog", { name: "New team" });
+    const modal = this.page.getByTestId("create-team-modal");
     const options = await modal
-      .getByRole("combobox", { name: "Owner" })
+      .getByTestId("owner-select")
       .locator("option")
       .allTextContents();
     expect(options.some((o) => o.includes(text))).toBeTruthy();
   }
 
   async iDontSeeOwnerSelectInCreateTeamModal() {
-    const modal = this.page.getByRole("dialog", { name: "New team" });
-    await expect(modal.getByLabel("Owner")).not.toBeVisible();
+    const modal = this.page.getByTestId("create-team-modal");
+    await expect(modal.getByTestId("owner-select")).not.toBeVisible();
   }
 
   async iSeeOwnerSelectInCreateSeasonModal() {
-    const modal = this.page.getByRole("dialog", { name: "New season" });
-    await expect(modal.getByLabel("Owner")).toBeVisible();
+    const modal = this.page.getByTestId("create-season-modal");
+    await expect(modal.getByTestId("owner-select")).toBeVisible();
   }
 
   async iSeeOwnerSelectOptionInCreateSeasonModal(text: string) {
-    const modal = this.page.getByRole("dialog", { name: "New season" });
+    const modal = this.page.getByTestId("create-season-modal");
     const options = await modal
-      .getByRole("combobox", { name: "Owner" })
+      .getByTestId("owner-select")
       .locator("option")
       .allTextContents();
     expect(options.some((o) => o.includes(text))).toBeTruthy();
   }
 
   async iDontSeeOwnerSelectInCreateSeasonModal() {
-    const modal = this.page.getByRole("dialog", { name: "New season" });
-    await expect(modal.getByLabel("Owner")).not.toBeVisible();
+    const modal = this.page.getByTestId("create-season-modal");
+    await expect(modal.getByTestId("owner-select")).not.toBeVisible();
   }
 
   async iSeeOwnerDisplay(username: string) {
