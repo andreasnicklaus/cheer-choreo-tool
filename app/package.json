@@ -1,6 +1,6 @@
 {
   "name": "choreo-tool",
-  "version": "1.1.17",
+  "version": "1.1.18",
   "private": true,
   "scripts": {
     "dev": "npm run icons && vite",
@@ -65,7 +65,7 @@
     "@playwright/test": "1.65.1",
     "@types/js-cookie": "3.0.6",
     "@types/node": "26.6.6",
-    "@vitejs/plugin-vue": "6.0.10",
+    "@vitejs/plugin-vue": "6.0.11",
     "@vitest/coverage-v8": "5.1.0",
     "@vitest/ui": "5.1.0",
     "@vue/compiler-sfc": "3.5.45",
