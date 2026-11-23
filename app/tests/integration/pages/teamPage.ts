@@ -318,12 +318,12 @@ export default class TeamPage extends TestPage {
   }
 
   async iSeeOwnerSelectInCreateTeamModal() {
-    const modal = this.page.getByTestId("create-team-modal");
+    const modal = this.page.locator('[data-testid="create-team-modal"]:visible');
     await expect(modal.getByTestId("owner-select")).toBeVisible();
   }
 
   async iSeeOwnerSelectOptionInCreateTeamModal(text: string) {
-    const modal = this.page.getByTestId("create-team-modal");
+    const modal = this.page.locator('[data-testid="create-team-modal"]:visible');
     const options = await modal
       .getByTestId("owner-select")
       .locator("option")
@@ -332,17 +332,17 @@ export default class TeamPage extends TestPage {
   }
 
   async iDontSeeOwnerSelectInCreateTeamModal() {
-    const modal = this.page.getByTestId("create-team-modal");
+    const modal = this.page.locator('[data-testid="create-team-modal"]:visible');
     await expect(modal.getByTestId("owner-select")).not.toBeVisible();
   }
 
   async iSeeOwnerSelectInCreateSeasonModal() {
-    const modal = this.page.getByTestId("create-season-modal");
+    const modal = this.page.locator('[data-testid="create-season-modal"]:visible');
     await expect(modal.getByTestId("owner-select")).toBeVisible();
   }
 
   async iSeeOwnerSelectOptionInCreateSeasonModal(text: string) {
-    const modal = this.page.getByTestId("create-season-modal");
+    const modal = this.page.locator('[data-testid="create-season-modal"]:visible');
     const options = await modal
       .getByTestId("owner-select")
       .locator("option")
@@ -351,7 +351,7 @@ export default class TeamPage extends TestPage {
   }
 
   async iDontSeeOwnerSelectInCreateSeasonModal() {
-    const modal = this.page.getByTestId("create-season-modal");
+    const modal = this.page.locator('[data-testid="create-season-modal"]:visible');
     await expect(modal.getByTestId("owner-select")).not.toBeVisible();
   }
 
