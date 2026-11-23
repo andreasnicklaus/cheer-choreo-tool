@@ -1,6 +1,6 @@
 {
   "name": "server",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -100,7 +100,7 @@
     "@types/jest": "30.0.0",
     "@types/node": "26.6.6",
     "@types/sequelize": "6.12.0",
-    "concurrently": "10.0.6",
+    "concurrently": "10.0.7",
     "jest": "30.5.2",
     "jest-github-actions-reporter": "1.0.3",
     "live-server": "1.2.2",
