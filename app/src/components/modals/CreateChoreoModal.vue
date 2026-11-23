@@ -2,6 +2,7 @@
   <BModal
     :id="`modal-newChoreo-${id}`"
     ref="modal"
+    data-testid="create-choreo-modal"
     :title="$t('nav.neue-choreo')"
     scrollable
     size="xl"
@@ -100,6 +101,7 @@
       >
         <BFormSelect
           v-model="selectedOwnerId"
+          data-testid="owner-select"
           :state="selectedOwnerIsValid"
           :options="ownerOptions"
           :placeholder="$t('accountView.owner')"

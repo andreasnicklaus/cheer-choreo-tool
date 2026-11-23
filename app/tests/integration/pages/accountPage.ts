@@ -200,22 +200,28 @@ export default class AccountPage extends TestPage {
   }
 
   async iSeeOwnerSelectInCreateClubModal() {
-    const modal = this.page.getByRole("dialog", { name: "New club" });
-    await expect(modal.getByLabel("Owner")).toBeVisible();
+    const modal = this.page.locator(
+      '[data-testid="create-club-modal"]:visible'
+    );
+    await expect(modal.getByTestId("owner-select")).toBeVisible();
   }
 
   async iSeeOwnerSelectOptionInCreateClubModal(text: string) {
-    const modal = this.page.getByRole("dialog", { name: "New club" });
+    const modal = this.page.locator(
+      '[data-testid="create-club-modal"]:visible'
+    );
     const options = await modal
-      .getByRole("combobox", { name: "Owner" })
+      .getByTestId("owner-select")
       .locator("option")
       .allTextContents();
     expect(options.some((o) => o.includes(text))).toBeTruthy();
   }
 
   async iDontSeeOwnerSelectInCreateClubModal() {
-    const modal = this.page.getByRole("dialog", { name: "New club" });
-    await expect(modal.getByLabel("Owner")).not.toBeVisible();
+    const modal = this.page.locator(
+      '[data-testid="create-club-modal"]:visible'
+    );
+    await expect(modal.getByTestId("owner-select")).not.toBeVisible();
   }
 
   iSwitchToAccess() {

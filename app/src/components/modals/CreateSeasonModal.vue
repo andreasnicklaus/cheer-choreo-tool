@@ -2,6 +2,7 @@
   <BModal
     :id="`modal-newSeason-${id}`"
     ref="modal"
+    data-testid="create-season-modal"
     :title="$t('modals.create-season.neue-season')"
     scrollable
     @ok="create"
@@ -87,6 +88,7 @@
     >
       <BFormSelect
         v-model="selectedOwnerId"
+        data-testid="owner-select"
         :state="selectedOwnerIsValid"
         :options="ownerOptions"
         :placeholder="$t('accountView.owner')"
