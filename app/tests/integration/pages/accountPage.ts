@@ -200,12 +200,16 @@ export default class AccountPage extends TestPage {
   }
 
   async iSeeOwnerSelectInCreateClubModal() {
-    const modal = this.page.locator('[data-testid="create-club-modal"]:visible');
+    const modal = this.page.locator(
+      '[data-testid="create-club-modal"]:visible'
+    );
     await expect(modal.getByTestId("owner-select")).toBeVisible();
   }
 
   async iSeeOwnerSelectOptionInCreateClubModal(text: string) {
-    const modal = this.page.locator('[data-testid="create-club-modal"]:visible');
+    const modal = this.page.locator(
+      '[data-testid="create-club-modal"]:visible'
+    );
     const options = await modal
       .getByTestId("owner-select")
       .locator("option")
@@ -214,7 +218,9 @@ export default class AccountPage extends TestPage {
   }
 
   async iDontSeeOwnerSelectInCreateClubModal() {
-    const modal = this.page.locator('[data-testid="create-club-modal"]:visible');
+    const modal = this.page.locator(
+      '[data-testid="create-club-modal"]:visible'
+    );
     await expect(modal.getByTestId("owner-select")).not.toBeVisible();
   }
 

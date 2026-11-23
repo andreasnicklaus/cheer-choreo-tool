@@ -568,12 +568,16 @@ export default class ChoreoPage extends TestPage {
   }
 
   async iSeeOwnerSelectInCreateChoreoModal() {
-    const modal = this.page.locator('[data-testid="create-choreo-modal"]:visible');
+    const modal = this.page.locator(
+      '[data-testid="create-choreo-modal"]:visible'
+    );
     await expect(modal.getByTestId("owner-select")).toBeVisible();
   }
 
   async iSeeOwnerSelectOptionInCreateChoreoModal(text: string) {
-    const modal = this.page.locator('[data-testid="create-choreo-modal"]:visible');
+    const modal = this.page.locator(
+      '[data-testid="create-choreo-modal"]:visible'
+    );
     const options = await modal
       .getByTestId("owner-select")
       .locator("option")
@@ -582,7 +586,9 @@ export default class ChoreoPage extends TestPage {
   }
 
   async iDontSeeOwnerSelectInCreateChoreoModal() {
-    const modal = this.page.locator('[data-testid="create-choreo-modal"]:visible');
+    const modal = this.page.locator(
+      '[data-testid="create-choreo-modal"]:visible'
+    );
     await expect(modal.getByTestId("owner-select")).not.toBeVisible();
   }
 
