@@ -1,6 +1,6 @@
 {
   "name": "choreo-tool",
-  "version": "1.1.19",
+  "version": "1.1.20",
   "private": true,
   "scripts": {
     "dev": "npm run icons && vite",
@@ -39,7 +39,7 @@
     "@vueuse/core": "15.0.0",
     "axios": "1.21.1",
     "axios-cache-interceptor": "1.13.0",
-    "bootstrap": "5.3.8",
+    "bootstrap": "5.3.9",
     "bootstrap-icons": "1.13.2",
     "bootstrap-vue-next": "1.2.4",
     "gsap": "3.15.1",
