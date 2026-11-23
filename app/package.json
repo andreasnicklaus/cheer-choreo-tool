@@ -1,6 +1,6 @@
 {
   "name": "choreo-tool",
-  "version": "1.1.18",
+  "version": "1.1.19",
   "private": true,
   "scripts": {
     "dev": "npm run icons && vite",
@@ -37,7 +37,7 @@
     "@sloplint/cli": "0.3.0",
     "@unhead/vue": "3.4.3",
     "@vueuse/core": "15.0.0",
-    "axios": "1.21.0",
+    "axios": "1.21.1",
     "axios-cache-interceptor": "1.13.0",
     "bootstrap": "5.3.8",
     "bootstrap-icons": "1.13.2",
