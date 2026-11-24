@@ -1,6 +1,6 @@
 {
   "name": "server",
-  "version": "1.1.16",
+  "version": "1.1.17",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -44,8 +44,8 @@
     "@types/passport-facebook": "3.0.4",
     "@types/passport-github2": "1.2.9",
     "@types/passport-google-oauth20": "2.0.17",
-    "@typescript-eslint/eslint-plugin": "8.72.2",
-    "@typescript-eslint/parser": "8.72.2",
+    "@typescript-eslint/eslint-plugin": "8.73.0",
+    "@typescript-eslint/parser": "8.73.0",
     "bcrypt": "6.0.0",
     "body-parser": "2.4.0",
     "clean-jsdoc-theme": "5.3.0",
