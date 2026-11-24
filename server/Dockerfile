@@ -1,4 +1,4 @@
-FROM node:26.12.1-alpine
+FROM node:26.13.1-alpine
 WORKDIR /usr/src/app
 
 ENV TZ=Europe/Amsterdam

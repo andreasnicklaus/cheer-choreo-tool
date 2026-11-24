@@ -568,22 +568,28 @@ export default class ChoreoPage extends TestPage {
   }
 
   async iSeeOwnerSelectInCreateChoreoModal() {
-    const modal = this.page.getByRole("dialog", { name: "New choreo" });
-    await expect(modal.getByLabel("Owner")).toBeVisible();
+    const modal = this.page.locator(
+      '[data-testid="create-choreo-modal"]:visible'
+    );
+    await expect(modal.getByTestId("owner-select")).toBeVisible();
   }
 
   async iSeeOwnerSelectOptionInCreateChoreoModal(text: string) {
-    const modal = this.page.getByRole("dialog", { name: "New choreo" });
+    const modal = this.page.locator(
+      '[data-testid="create-choreo-modal"]:visible'
+    );
     const options = await modal
-      .getByRole("combobox", { name: "Owner" })
+      .getByTestId("owner-select")
       .locator("option")
       .allTextContents();
     expect(options.some((o) => o.includes(text))).toBeTruthy();
   }
 
   async iDontSeeOwnerSelectInCreateChoreoModal() {
-    const modal = this.page.getByRole("dialog", { name: "New choreo" });
-    await expect(modal.getByLabel("Owner")).not.toBeVisible();
+    const modal = this.page.locator(
+      '[data-testid="create-choreo-modal"]:visible'
+    );
+    await expect(modal.getByTestId("owner-select")).not.toBeVisible();
   }
 
   async iSeeOwnerDisplay(username: string) {

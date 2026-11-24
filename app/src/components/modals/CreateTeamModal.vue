@@ -2,6 +2,7 @@
   <BModal
     :id="`modal-newTeam-${id}`"
     ref="modal"
+    data-testid="create-team-modal"
     :title="$t('nav.neues-team')"
     scrollable
     @show="resetTeamModal"
@@ -32,6 +33,7 @@
       >
         <BFormSelect
           v-model="selectedOwnerId"
+          data-testid="owner-select"
           :state="selectedOwnerIsValid"
           :options="ownerOptions"
           :placeholder="$t('accountView.owner')"
