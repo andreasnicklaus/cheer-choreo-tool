@@ -1,6 +1,6 @@
 {
   "name": "choreo-tool",
-  "version": "1.1.35",
+  "version": "1.1.36",
   "private": true,
   "scripts": {
     "dev": "npm run icons && vite",
@@ -51,7 +51,7 @@
     "vue": "3.5.45",
     "vue-i18n": "11.4.22",
     "vue-matomo": "4.2.0",
-    "vue-router": "5.4.0",
+    "vue-router": "5.5.1",
     "vue3-country-flag-icon": "0.1.2",
     "vue3-html2pdf": "1.1.2",
     "vue3-markdown-it": "1.0.10",
