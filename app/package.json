@@ -1,6 +1,6 @@
 {
   "name": "choreo-tool",
-  "version": "1.1.34",
+  "version": "1.1.35",
   "private": true,
   "scripts": {
     "dev": "npm run icons && vite",
@@ -81,7 +81,7 @@
     "jsdoc-vuejs": "4.0.0",
     "jsdom": "31.0.1",
     "prettier": "3.9.10",
-    "puppeteer": "25.17.0",
+    "puppeteer": "25.18.1",
     "sass": "1.108.2",
     "sass-embedded": "1.108.2",
     "serve": "14.2.8",
