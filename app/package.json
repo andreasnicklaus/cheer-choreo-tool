@@ -1,6 +1,6 @@
 {
   "name": "choreo-tool",
-  "version": "1.1.32",
+  "version": "1.1.33",
   "private": true,
   "scripts": {
     "dev": "npm run icons && vite",
@@ -83,7 +83,7 @@
     "prettier": "3.9.10",
     "puppeteer": "25.17.0",
     "sass": "1.108.2",
-    "sass-embedded": "1.107.1",
+    "sass-embedded": "1.108.2",
     "serve": "14.2.8",
     "sitemap-generator": "8.5.1",
     "typescript": "6.0.3",
