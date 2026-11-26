@@ -21,47 +21,39 @@
             variant="link"
             :to="{ name: 'Home', params: { locale: $i18n.locale } }"
           >
-            {{ $t("navigation.StartPage") }} </BButton
-          ><br />
+            {{ $t("navigation.StartPage") }} </BButton><br />
           <BButton
             variant="link"
             :to="{ name: 'Help', params: { locale: $i18n.locale } }"
           >
-            {{ $t("general.help") }} </BButton
-          ><br />
+            {{ $t("general.help") }} </BButton><br />
           <BButton
             variant="link"
             :to="{ name: 'Pricing', params: { locale: $i18n.locale } }"
           >
-            {{ $t("pricingView.title") }} </BButton
-          ><br />
+            {{ $t("pricingView.title") }} </BButton><br />
           <BButton
             variant="link"
             :to="{ name: 'About', params: { locale: $i18n.locale } }"
           >
-            {{ $t("aboutView.title") }} </BButton
-          ><br />
+            {{ $t("aboutView.title") }} </BButton><br />
           <BButton
             variant="link"
             :to="{ name: 'Contact', params: { locale: $i18n.locale } }"
           >
-            {{ $t("contact.contact-and-support") }}</BButton
-          ><br />
+            {{ $t("contact.contact-and-support") }}</BButton><br />
           <BButton
             variant="link"
             :to="{ name: 'Impressum', params: { locale: $i18n.locale } }"
           >
-            {{ $t("navigation.impressum") }} </BButton
-          ><br />
+            {{ $t("navigation.impressum") }} </BButton><br />
           <BButton
             variant="link"
             :to="{ name: 'Datenschutz', params: { locale: $i18n.locale } }"
           >
-            {{ $t("navigation.datenschutz") }} </BButton
-          ><br />
+            {{ $t("navigation.datenschutz") }} </BButton><br />
           <BButton variant="link" @click="openFeedbackPrompt(true)">
-            {{ $t("navigation.feedback-geben") }} </BButton
-          ><br />
+            {{ $t("navigation.feedback-geben") }} </BButton><br />
           <BButton variant="link" href="/docs/" target="_blank">
             {{ $t("HelpView.documentation_capitalized") }}
           </BButton>
@@ -76,8 +68,7 @@
             target="_blank"
             rel="noopener"
           >
-            {{ $t("navigation.api-documentation") }} </BButton
-          ><br />
+            {{ $t("navigation.api-documentation") }} </BButton><br />
           <BButton
             variant="link"
             :href="`${getApiDomain()}openapi.json`"

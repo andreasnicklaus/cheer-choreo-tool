@@ -216,8 +216,7 @@
                 :to="{ name: 'Help', params: { locale: $i18n.locale } }"
                 >{{
                   $t("login.information-text-4.visit-our-help-center")
-                }}</router-link
-              >.
+                }}</router-link>.
             </p>
           </BCardText>
         </BCard>

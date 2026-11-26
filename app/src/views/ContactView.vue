@@ -11,8 +11,7 @@
           {{ $t("contact.you-can-reach-us-at") }}
           <a href="mailto:info@choreo-planer.de">{{
             $t("general.contact-email")
-          }}</a
-          >. {{ $t("contact.well-get-back-to-you") }}
+          }}</a>. {{ $t("contact.well-get-back-to-you") }}
         </p>
       </BCol>
       <BCol cols="12" class="my-5">

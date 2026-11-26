@@ -1,6 +1,6 @@
 {
   "name": "server",
-  "version": "1.1.18",
+  "version": "1.1.19",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -105,7 +105,7 @@
     "jest-github-actions-reporter": "1.0.3",
     "live-server": "1.2.2",
     "nodemon": "3.1.14",
-    "prettier": "3.9.10",
+    "prettier": "3.10.1",
     "ts-jest": "29.4.15",
     "tsx": "4.23.15"
   },
