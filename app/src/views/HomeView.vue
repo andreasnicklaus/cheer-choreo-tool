@@ -87,7 +87,7 @@
           {{
             $store.state.loggedIn
               ? $t("Home.zur-uebersicht")
-              : `${$t("anmelden")} / ${$t("registrieren")}`
+              : `${$t("anmelden")} / ${$t("Home.cta-create-account")}`
           }}
         </BButton>
         <router-link
@@ -211,10 +211,10 @@
       </BRow>
     </section>
 
-    <section id="section-ai" class="mb-3">
+    <section id="section-ai" class="mb-5">
       <BRow class="justify-content-center">
         <BCol cols="12" lg="8" class="text-center">
-          <h2 class="mb-2">
+          <h2 class="mb-3">
             <IBiStars class="text-primary me-2" />{{
               $t("Home.ai-supported-title")
             }}
@@ -223,6 +223,20 @@
           <p class="text-muted mb-3">
             {{ $t("Home.ai-supported-description") }}
           </p>
+          <div class="d-flex flex-wrap justify-content-center gap-2 mt-2 mb-4">
+            <BBadge variant="secondary">
+              {{ $t("Home.verschluesselter-datentransfer") }}
+            </BBadge>
+            <BBadge variant="secondary">
+              {{ $t("Home.regelmaessige-datensicherung") }}
+            </BBadge>
+            <BBadge variant="secondary">
+              {{ $t("Home.per-passwort-gesicherter-datenzugriff") }}
+            </BBadge>
+            <BBadge variant="secondary">
+              {{ $t("Home.trust-opensource") }}
+            </BBadge>
+          </div>
           <BButton
             variant="primary"
             :to="{
@@ -236,6 +250,34 @@
       </BRow>
     </section>
 
+    <section
+      v-if="statTargetChoreographies || statTargetUsers"
+      id="section-tags"
+      class="mb-5 text-center section-auto-height"
+    >
+      <BRow class="stats-grid g-3" align-h="center" align-v="center">
+        <BCol v-if="statTargetChoreographies" cols="12" md="5">
+          <div class="stat-card">
+            <strong class="stat-value tabular-nums mb-2">
+              {{ formatStat(statChoreographies) }}
+            </strong>
+            <span class="stat-label text-muted">
+              {{ $t("Home.stats-choreographies") }}
+            </span>
+          </div>
+        </BCol>
+        <BCol v-if="statTargetUsers" cols="12" md="5">
+          <div class="stat-card h-100">
+            <strong class="stat-value tabular-nums mb-2">
+              {{ formatStat(statUsers) }}
+            </strong>
+            <span class="stat-label text-muted">{{
+              $t("Home.stats-users")
+            }}</span>
+          </div>
+        </BCol>
+      </BRow>
+    </section>
     <div id="featureCallouts1" class="featureCallouts d-none d-md-flex">
       <BCol class="featureCallout h3">
         <IBiPeopleFill class="text-info" /><br />
@@ -498,12 +540,51 @@
       </BRow>
     </section>
 
-    <!-- TODO: Add an example video -->
+    <section v-if="demoVideoSrc" id="sectionDemo" class="text-center py-4 my-4">
+      <h2 class="mb-3">{{ $t("Home.demo-video-caption") }}</h2>
+      <div class="demo-video-wrapper mx-auto" style="max-width: 720px">
+        <video
+          :src="demoVideoSrc"
+          :poster="demoPosterSrc"
+          muted
+          playsinline
+          loop
+          :autoplay="!prefersReducedMotion"
+          preload="metadata"
+          class="w-100 rounded"
+        ></video>
+      </div>
+    </section>
+
+    <section
+      v-if="realTestimonials.length"
+      id="sectionTestimonials"
+      class="text-center py-4 mt-4 mb-5"
+    >
+      <h2 class="mb-3">{{ $t("Home.testimonials-heading") }}</h2>
+      <BRow align-h="center">
+        <BCol
+          v-for="(testimonial, i) in realTestimonials"
+          :key="i"
+          cols="12"
+          md="6"
+          lg="4"
+          class="mb-3"
+        >
+          <b-card class="text-start px-5 py-3">
+            <p class="mb-2 fs-5">“{{ testimonial.quote }}”</p>
+            <small class="text-muted">{{
+              [testimonial.name, testimonial.team].filter(Boolean).join(", ")
+            }}</small>
+          </b-card>
+        </BCol>
+      </BRow>
+    </section>
 
     <div
       v-show="!$store.state.loggedIn"
       id="interestedSection"
-      class="text-center py-5 px-3 callout-accent mb-5"
+      class="text-center py-5 px-3 callout-accent my-5"
     >
       <h2 class="mb-1">{{ $t("Home.interesse-geweckt") }}</h2>
       <p class="mb-4">
@@ -541,6 +622,12 @@
             <h3>{{ $t("Home.about-zielgruppe") }}</h3>
             <p>{{ $t("Home.about-zielgruppe-text") }}</p>
           </b-card>
+          <router-link
+            :to="{ name: 'About', params: { locale: $i18n.locale } }"
+            class="d-inline-block mt-2"
+          >
+            {{ $t("Home.about") }} ->
+          </router-link>
         </b-col>
       </b-row>
     </section>
@@ -593,7 +680,9 @@ import CountOverview from "@/components/CountOverview.vue";
 import CountSheet from "@/components/CountSheet.vue";
 import Mat from "@/components/Mat.vue";
 import NewVersionBadge from "@/components/NewVersionBadge.vue";
+import testimonialsData from "@/data/testimonials.json";
 import { useTheme } from "@/composables/useTheme";
+import { getApiDomain } from "@/services/RequestService";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 import { defineComponent } from "vue";
@@ -873,9 +962,28 @@ export default defineComponent({
         },
       ],
       selectedTeamMembers: [] as string[],
+      // Video-ready slot: set these to enable the demo <video> element, e.g.
+      // demoVideoSrc: "/demo/choreo-demo.mp4",
+      // demoPosterSrc: "/demo/choreo-demo-poster.webp",
+      demoVideoSrc: undefined as string | undefined,
+      demoPosterSrc: undefined as string | undefined,
+      statChoreographies: 0,
+      statUsers: 0,
+      statTargetChoreographies: 0,
+      statTargetUsers: 0,
+      statsAnimationStarted: false,
     };
   },
   computed: {
+    realTestimonials() {
+      return (testimonialsData as any[]).filter((t) => !t.placeholder);
+    },
+    prefersReducedMotion() {
+      return (
+        typeof window !== "undefined" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      );
+    },
     isDark() {
       return useTheme().isDark.value;
     },
@@ -975,6 +1083,7 @@ export default defineComponent({
       y: "15vh",
       width: "100%",
     });
+
     gsap.to("#helpLink", {
       scrollTrigger: {
         trigger: "#sectionA",
@@ -1150,6 +1259,71 @@ export default defineComponent({
         this.count = Math.floor(4 * self.progress) * 2;
       },
     });
+
+    this.loadStats();
+  },
+  methods: {
+    formatStat(value: number) {
+      const formattedValue = new Intl.NumberFormat(this.$i18n.locale, {
+        notation: "compact",
+        compactDisplay: "short",
+        maximumFractionDigits: 1,
+      }).format(value);
+
+      return value >= 1000 ? `> ${formattedValue}` : formattedValue;
+    },
+    animateStats() {
+      if (this.statsAnimationStarted || this.prefersReducedMotion) return;
+
+      this.statsAnimationStarted = true;
+      const counter = {
+        choreographies: 0,
+        users: 0,
+      };
+
+      gsap.to(counter, {
+        choreographies: this.statTargetChoreographies,
+        users: this.statTargetUsers,
+        duration: 1.6,
+        ease: "expo.out",
+        scrollTrigger: {
+          trigger: "#section-tags",
+          start: "top 90%",
+          once: true,
+        },
+        onUpdate: () => {
+          this.statChoreographies = Math.round(counter.choreographies);
+          this.statUsers = Math.round(counter.users);
+        },
+      });
+    },
+    async loadStats() {
+      try {
+        const response = await fetch(`${getApiDomain()}stats/public`, {
+          signal: AbortSignal.timeout(10_000),
+        });
+        if (!response.ok) return;
+        const data = (await response.json()) as {
+          choreographies?: number;
+          users?: number;
+        };
+        const targetChoreos = Number(data.choreographies) || 0;
+        const targetUsers = Number(data.users) || 0;
+
+        this.statTargetChoreographies = targetChoreos;
+        this.statTargetUsers = targetUsers;
+
+        if (this.prefersReducedMotion) {
+          this.statChoreographies = targetChoreos;
+          this.statUsers = targetUsers;
+          return;
+        }
+
+        this.$nextTick(() => this.animateStats());
+      } catch {
+        // Stats are non-critical; fail silently.
+      }
+    },
   },
 });
 </script>
@@ -1180,11 +1354,46 @@ section {
   }
   &#section-ai {
     min-height: auto;
-    padding: 2rem 0;
+    padding: 2% 0;
     & > .row {
       row-gap: 0;
     }
   }
+  &#section-tags,
+  &#sectionTestimonials,
+  &#sectionDemo {
+    min-height: auto;
+    padding: 2% 0;
+    & > .row {
+      row-gap: 0;
+    }
+  }
+}
+
+.stats-grid {
+  width: 100%;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 170px;
+  padding: 1.5rem;
+  background-color: rgba(var(--bs-primary-rgb), 0.06);
+}
+
+.stat-icon {
+  margin-bottom: 0.75rem;
+  font-size: 2rem;
+}
+
+.stat-value {
+  color: var(--bs-primary);
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1;
+  font-family: "Fraunces", Georgia, "Times New Roman", Times, serif;
 }
 
 ol,

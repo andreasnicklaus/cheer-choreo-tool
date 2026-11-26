@@ -308,6 +308,34 @@
     "ki-nutzen": {
       "answer": "Ja! Der Choreo Planer unterstützt **MCP** (Model Context Protocol), das es KI-Assistenten wie Claude, Cursor und anderen ermöglicht, sich direkt mit deinen Choreos zu verbinden. Um dies einzurichten, gehe in deine **Konto**-Einstellungen und öffne den **Gefahrenbereich**-Tab. Klicke unter **KI-Zugang** auf **Konfigurieren**, um ein Token zu generieren und die Konfiguration für dein KI-Tool zu erhalten.",
       "question": "Kann ich KI nutzen, um mir bei der Erstellung meiner Choreos zu helfen?"
+    },
+    "kostenlos": {
+      "question": "Ist der Choreo Planer wirklich kostenlos?",
+      "answer": "Ja. Der Choreo Planer ist vollstaendig kostenlos: kein kostenpflichtiger Plan, keine ablaufende Testphase und keine Funktion hinter einer Bezahlschranke. Siehe [Preise](/pricing)."
+    },
+    "daten-export": {
+      "question": "Kann ich meine Daten exportieren?",
+      "answer": "Ja. Du kannst Countsheets als PDF und Choreografien als Video (MP4 oder WebM) exportieren. Deine Daten gehoeren dir und koennen jederzeit heruntergeladen werden."
+    },
+    "browser-geraete": {
+      "question": "Welche Browser und Geraete werden unterstuetzt?",
+      "answer": "Der Choreo Planer laeuft in modernen Browsern (Chrome, Firefox, Safari, Edge) auf Desktop und Mobilgeraeten. Auf unterstuetzten Geraeten kannst du ihn auch als App installieren."
+    },
+    "offline-nutzung": {
+      "question": "Kann ich ihn offline nutzen?",
+      "answer": "Nach der Installation kann die App offline geoeffnet werden, aber das Laden und Speichern von Daten erfordert eine Verbindung zum Server."
+    },
+    "datenschutz-faq": {
+      "question": "Wie sind meine Daten geschuetzt?",
+      "answer": "Der Zugriff ist passwortgeschuetzt, die Datenübertragung ist verschluesselt (HTTPS) und die Daten werden regelmaessig gesichert. Siehe [Datenschutz](/datenschutz)."
+    },
+    "team-groesse": {
+      "question": "Gibt es eine Begrenzung der Teamgroesse?",
+      "answer": "Es gibt keine harte Begrenzung der Teilnehmenden pro Team. Sehr grosse Teams koennen auf manchen Geraeten die Leistung beeinflussen."
+    },
+    "vs-tabellen": {
+      "question": "Warum nicht einfach eine Tabelle oder Papier nutzen?",
+      "answer": "Der Choreo Planer hält Aufstellungen, Countsheets und Video-Export zusammen, sodass Aenderungen konsistent bleiben und mit dem ganzen Team geteilt werden koennen."
     }
   },
   "feedback": {
@@ -483,7 +511,16 @@
     "about-zielgruppe-text": "Der Choreo Planer ist für Trainerinnen und Trainer, die ihre Choreografieplanung digitalisieren und vereinfachen möchten. Die Endprodukte (Countsheets, Bilder und Videos) können an die Teammitglieder weitergegeben werden, um das Lernen der Choreos zu erleichtern.",
     "ai-supported-title": "KI-gestützte Choreo-Erstellung",
     "ai-supported-description": "Lass KI-Agenten deine Choreografien über das Model Context Protocol (MCP) erstellen und verwalten. Von Vereinen und Teams bis hin zu Aufstellungen und Positionen. Alles in natürlicher Sprache.",
-    "ai-supported-cta": "Loslegen"
+    "ai-supported-cta": "Loslegen",
+    "demo-video-caption": "Sieh, wie ein Countsheet zum Trainingsvideo wird",
+    "testimonials-heading": "Was Teams sagen",
+    "testimonials-cta": "Sei der Erste, der seine Erfahrung teilt",
+    "trust-opensource": "Open Source auf GitHub",
+    "stats-summary": "{choreos} Choreografien geplant von {users} Trainerinnen und Trainern",
+    "stats-choreographies": "geplante Choreografien",
+    "stats-users": "Trainerinnen und Trainer",
+    "hero-outcome": "Plane Aufstellungen, Countsheets und Trainingsvideos für Cheer-, Garde- und Tanzteams komplett kostenlos.",
+    "cta-create-account": "Kostenloses Konto erstellen"
   },
   "impressumView": {
     "angaben-gemaess-5-tmg": "Angaben gemäß § 5 TMG",
@@ -594,6 +631,9 @@
     },
     "contact": {
       "description": "Sende eine Nachricht an das Choreo Planer Team für Hilfe oder Anfragen. \nSchicke uns eine E-Mail an info{'@'}choreo-planer.de."
+    },
+    "pricing": {
+      "description": "Preise für den Choreo Planer: das Tool ist vollständig kostenlos, ohne kostenpflichtigen Plan, Testphase oder Bezahlschranke."
     }
   },
   "modals": {
@@ -857,7 +897,8 @@
     "impressum": "Impressum",
     "instagram": "Instagram",
     "internalLinks": "Interne Links",
-    "StartPage": "Startseite"
+    "StartPage": "Startseite",
+    "free-open-source": "Kostenlos & Open Source auf GitHub"
   },
   "neu": "Neu",
   "optionen": "Optionen",
@@ -1046,5 +1087,59 @@
   "accessOverviewTable": {
     "edit": "Bearbeiten",
     "read": "Ansehen"
+  },
+  "pricingView": {
+    "title": "Preise",
+    "free-badge": "Kostenlos. Kein kostenpflichtiger Plan. Keine Testphase",
+    "intro": "Der Choreo Planer ist kostenlos. Es gibt keinen kostenpflichtigen Plan, keine ablaufende Testphase und keine Funktion hinter einer Bezahlschranke.",
+    "features-heading": "Alles enthalten, ohne Kosten",
+    "feature-choreos": "Choreografie-Planung (\"Choreo\") mit Countsheets",
+    "feature-teams": "Teams, Vereine, Mitglieder und Positionen",
+    "feature-seasons": "Seasons und Season-Team-Zuordnungen",
+    "feature-lineups": "Aufstellungen",
+    "feature-exports": "PDF-Export und Video-Export",
+    "feature-api": "Zugriff auf die öffentliche REST-API und den MCP-Server",
+    "feature-export-content": "Export deiner eigenen Inhalte",
+    "why-free-heading": "Warum es kostenlos ist",
+    "why-free-text": "Der Choreo Planer ist ein kostenloses Online-Tool für Choreografie-Sport. Er wird als Nebenprojekt entwickelt und vom Maintainer finanziert, daher gibt es nichts zu verkaufen und keine Stufe, auf die man upgraden koennte.",
+    "contact-heading": "Fragen zu den Preisen",
+    "contact-text": "Fragen zu den Preisen:",
+    "cta-register": "Kostenloses Konto erstellen",
+    "cta-help": "Hilfe lesen",
+    "no-credit-card": "Keine Kreditkarte nötig. Es gibt überhaupt keinen kostenpflichtigen Plan.",
+    "faq-heading": "Häufige Fragen",
+    "faq-free-forever-q": "Ist der Choreo Planer wirklich dauerhaft kostenlos?",
+    "faq-free-forever-a": "Ja. Es gibt keinen kostenpflichtigen Plan, keine ablaufende Testphase und keine Funktion hinter einer Bezahlschranke.",
+    "faq-data-export-q": "Kann ich meine eigenen Inhalte exportieren?",
+    "faq-data-export-a": "Ja. Du kannst deine eigenen Inhalte exportieren, darunter Countsheets und Videos.",
+    "faq-api-q": "Ist die API ebenfalls kostenlos nutzbar?",
+    "faq-api-a": "Ja. Der Zugriff auf die öffentliche REST-API und den MCP-Server ist enthalten.",
+    "faq-support-q": "Wie wird das Projekt finanziert?",
+    "faq-support-a": "Der Choreo Planer ist ein Nebenprojekt, das vom Maintainer finanziert wird. Es gibt daher nichts zu verkaufen."
+  },
+  "aboutView": {
+    "title": "Über den Choreo Planer",
+    "what-is-heading": "Was ist der Choreo Planer?",
+    "what-is-text": "Der Choreo Planer ist ein Online-Tool für Trainerinnen und Trainer von Cheerleading-Teams, Tanzgruppen und anderen Choreo-Sportarten. Er ermöglicht es dir, Choreografien digital zu planen, Aufstellungen zu erstellen, Countsheets zu verwalten und Trainingsvideos zu generieren.",
+    "who-for-heading": "Für wen er ist",
+    "who-for-text": "Trainerinnen, Trainer und Teams im Cheerleading, Gardetanz, Tanz und anderen Choreo-Sportarten, die Aufstellungen, Countsheets und Trainingsvideos planen möchten.",
+    "updates-heading": "Letzte Aktualisierungen",
+    "updates-text": "Der Choreo Planer wird regelmäßig aktualisiert. Die neuesten Änderungen findest du auf GitHub.",
+    "roadmap-heading": "Roadmap",
+    "roadmap-text": "Geplante Funktionen und Ideen werden auf GitHub verfolgt.",
+    "roadmap-link": "Roadmap auf GitHub öffnen",
+    "contact-heading": "Kontakt und Support",
+    "contact-text": "Fragen oder Feedback? Melde dich über das Kontaktformular oder per E-Mail.",
+    "maintainer": "Entwickelt und betreut von",
+    "highlights-heading": "Highlights",
+    "highlight-choreography": "Digitale Choreografie-Planung mit Countsheets",
+    "highlight-formations": "Aufstellungen für Cheerleading, Gardetanz, Tanz und mehr",
+    "highlight-video": "Trainingsvideos direkt im Browser generieren",
+    "highlight-export": "PDF- und Video-Export deiner eigenen Inhalte",
+    "highlight-api": "Zugriff auf die öffentliche REST-API und den MCP-Server",
+    "links-heading": "Projekt-Links",
+    "link-github": "Quellcode auf GitHub",
+    "link-changelog": "Versionshistorie / Changelog",
+    "link-roadmap": "Roadmap auf GitHub"
   }
 }

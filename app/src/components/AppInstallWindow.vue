@@ -1,26 +1,30 @@
 <template>
   <BAlert
     :model-value="Boolean(installationPrompt)"
-    class="m-0 py-3 px-4"
+    class="m-0 py-2 px-3"
     fade
-    variant="light"
+    variant="info"
     body-class="w-100 me-2"
   >
     <BRow
-      class="justify-content-end justify-content-md-between"
-      align-v="center"
-      :style="{ rowGap: '1rem' }"
+      class="align-items-center justify-content-between"
+      :style="{ rowGap: '0.5rem' }"
     >
-      <BCol cols="12" md="auto">
-        <h4>{{ $t("app-install.app-herunterladen") }}</h4>
-        {{ $t("app-install.install-info") }}
+      <BCol cols="12" md="auto" class="py-0">
+        <h5 class="mb-0 fs-6">{{ $t("app-install.app-herunterladen") }}</h5>
+        <small class="d-block">{{ $t("app-install.install-info") }}</small>
       </BCol>
-      <BCol cols="auto">
-        <BButton variant="link" class="me-2" @click="dismiss">
+      <BCol cols="auto" class="py-0">
+        <BButton variant="link" size="sm" class="me-2" @click="dismiss">
           <u>{{ $t("app-install.nein-danke") }}</u>
         </BButton>
-        <BButton variant="success" class="text-white" @click="install">
-          <IBiDownload class="me-2" />
+        <BButton
+          variant="primary"
+          size="sm"
+          class="text-white"
+          @click="install"
+        >
+          <IBiDownload class="me-1" />
           {{ $t("app-install.installieren") }}
         </BButton>
       </BCol>
@@ -37,10 +41,10 @@ const cookieName = "install-dismissed";
 /**
  * @module Component:AppInstallWindow
  *
- * @vue-data {Object|null} installationPrompt=null - The installation prompt event, if available.
+ * Compact top banner (info variant) that offers to install the PWA. It still
+ * occupies space in the layout (shifts content down) instead of overlaying it.
  *
- * @example
- * <AppInstallWindow />
+ * @vue-data {Object|null} installationPrompt=null - The installation prompt event, if available.
  */
 export default defineComponent({
   name: "AppInstallWindow",
@@ -57,15 +61,22 @@ export default defineComponent({
 
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
+
+      // "install-dismissed": true = dismissed, false/null = not dismissed.
       const cookie = Cookies.get(cookieName);
-      if (cookie == null) {
+      if (cookie === "true") {
         this.installationPrompt = null;
+        return;
+      }
+
+      // First visit: persist "not dismissed" so subsequent visits behave consistently.
+      if (cookie == null) {
         Cookies.set(cookieName, "false", { expires: 30 });
       }
-      if (cookie == "false") {
-        this.installationPrompt = e;
-      } else this.installationPrompt = null;
+
+      this.installationPrompt = e;
     });
+
     window.addEventListener("appinstalled", () => {
       this.installationPrompt = null;
     });
@@ -79,6 +90,7 @@ export default defineComponent({
       if (this.installationPrompt?.prompt) {
         await this.installationPrompt.prompt();
       }
+      this.installationPrompt = null;
     },
   },
 });

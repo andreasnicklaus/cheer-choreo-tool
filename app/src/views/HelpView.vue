@@ -2,7 +2,7 @@
   <BContainer id="helpView" data-view>
     <BCard
       :title="$t('HelpView.hilfe-bekommen')"
-      border-variant="light"
+      border-variant="light-subtle"
       title-tag="h1"
     >
       <BInput
@@ -14,7 +14,7 @@
       <BCard
         v-for="(category, catId) in filteredFaqCategories"
         :key="category.name + category.order"
-        border-variant="light"
+        border-variant="light-subtle"
       >
         <h5 class="ms-1">{{ category.name }}</h5>
         <BAccordion flush>
@@ -55,39 +55,265 @@
         <a href="/docs/" target="_blank">{{ $t("HelpView.documentation") }}</a>
       </I18n-t>
     </BCard>
-
-    <!-- <script type="application/ld+json">
-      {{ {
-            "@context": "https://schema.org/",
-            "@type": "FAQPage",
-            mainEntity: faqCategories.map((category) => category.faqs.map((item) => ({
-              "@type": "Question",
-              name: item.title,
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: item.markdown
-                .replace(/\[(.*)\]\((.*)\)/g, '<a href="$2">$1</a>')
-                .replace(/\n/g, "")
-                .replace(/ +/g, " ")
-                .replace(/\\/g, "")
-                .replace(/\*\*(.*)\*\*/g, "<b>$1</b>"),
-              }
-            }))).flat(Infinity)
-          }
-        }}
-    </script> -->
   </BContainer>
 </template>
 
 <script lang="ts" setup>
 import { useHead } from "@unhead/vue";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import Markdown from "vue3-markdown-it";
 
 const { t } = useI18n();
+const searchTerm = ref<string | null>(null);
+
+interface FaqItem {
+  title: string;
+  markdown: string;
+}
+
+interface FaqCategory {
+  name: string;
+  order: number;
+  faqs: FaqItem[];
+}
+
+const faqCategories = computed<FaqCategory[]>(() =>
+  [
+    {
+      name: t("navigation.datenschutz"),
+      order: 999,
+      faqs: [
+        {
+          title: t("navigation.datenschutz"),
+          markdown: t("faq.datenschutz.answer"),
+        },
+        {
+          title: t("faq.weitergabe-an-dritte.question"),
+          markdown: t("faq.weitergabe-an-dritte.answer"),
+        },
+        {
+          title: t("faq.datenschutz-faq.question"),
+          markdown: t("faq.datenschutz-faq.answer"),
+        },
+      ],
+    },
+    {
+      name: t("faq.probleme-loesen"),
+      order: 6,
+      faqs: [
+        {
+          title: t("faq.probleme-melden.question"),
+          markdown: t("faq.probleme-melden.answer"),
+        },
+        {
+          title: t("faq.versehentlich-geloescht.question"),
+          markdown: t("faq.versehentlich-geloescht.answer"),
+        },
+        {
+          title: t("faq.video-export-langsam.question"),
+          markdown: t("faq.video-export-langsam.answer"),
+        },
+        {
+          title: t("faq.warum-offline.question"),
+          markdown: t("faq.warum-offline.answer"),
+        },
+        {
+          title: t("faq.browser-geraete.question"),
+          markdown: t("faq.browser-geraete.answer"),
+        },
+        {
+          title: t("faq.offline-nutzung.question"),
+          markdown: t("faq.offline-nutzung.answer"),
+        },
+      ],
+    },
+    {
+      name: t("faq.allgemeines"),
+      order: 1,
+      faqs: [
+        {
+          title: t("faq.zielgruppe.question"),
+          markdown: t("faq.zielgruppe.answer"),
+        },
+        {
+          title: t("faq.kostenlos.question"),
+          markdown: t("faq.kostenlos.answer"),
+        },
+        {
+          title: t("faq.vs-tabellen.question"),
+          markdown: t("faq.vs-tabellen.answer"),
+        },
+        {
+          title: t("faq.was-ist-choreo-planer.question"),
+          markdown: t("faq.was-ist-choreo-planer.answer"),
+        },
+        {
+          title: t("faq.anmeldung.question"),
+          markdown: t("faq.anmeldung.answer"),
+        },
+        {
+          title: t("faq.erste-choreo.question"),
+          markdown: t("faq.erste-choreo.answer"),
+        },
+        {
+          title: t("faq.app-installieren.question"),
+          markdown: t("faq.app-installieren.answer"),
+        },
+      ],
+    },
+    {
+      name: t("faq.editor"),
+      order: 3,
+      faqs: [
+        {
+          title: t("faq.aufstellung-bauen.question"),
+          markdown: t("faq.aufstellung-bauen.answer"),
+        },
+        {
+          title: t("faq.counts-und-achter.question"),
+          markdown: t("faq.counts-und-achter.answer"),
+        },
+        {
+          title: t("faq.choreo-abspielen.question"),
+          markdown: t("faq.choreo-abspielen.answer"),
+        },
+        {
+          title: t("faq.positionsvorschlaege.question"),
+          markdown: t("faq.positionsvorschlaege.answer"),
+        },
+        {
+          title: t("faq.laenge-und-matte.question"),
+          markdown: t("faq.laenge-und-matte.answer"),
+        },
+        {
+          title: t("faq.farbe-zuweisen.question"),
+          markdown: t("faq.farbe-zuweisen.answer"),
+        },
+      ],
+    },
+    {
+      name: t("faq.countsheets"),
+      order: 4,
+      faqs: [
+        {
+          title: t("faq.eintrag-anlegen.question"),
+          markdown: t("faq.eintrag-anlegen.answer"),
+        },
+        {
+          title: t("faq.countsheet-ansicht.question"),
+          markdown: t("faq.countsheet-ansicht.answer"),
+        },
+      ],
+    },
+    {
+      name: t("faq.funktionen-and-features"),
+      order: 2,
+      faqs: [
+        {
+          title: t("faq.funktionen-wuenschen.question"),
+          markdown: t("faq.funktionen-wuenschen.answer"),
+        },
+        {
+          title: t("faq.wie-viele-teams.question"),
+          markdown: t("faq.wie-viele-teams.answer"),
+        },
+        {
+          title: t("faq.team-groesse.question"),
+          markdown: t("faq.team-groesse.answer"),
+        },
+        {
+          title: t("faq.neue-season.question"),
+          markdown: t("faq.neue-season.answer"),
+        },
+        {
+          title: t("faq.kader-verwalten.question"),
+          markdown: t("faq.kader-verwalten.answer"),
+        },
+        {
+          title: t("faq.teilnehmer-importieren.question"),
+          markdown: t("faq.teilnehmer-importieren.answer"),
+        },
+        {
+          title: t("faq.vereine-und-logo.question"),
+          markdown: t("faq.vereine-und-logo.answer"),
+        },
+        {
+          title: t("faq.zusammenarbeiten.question"),
+          markdown: t("faq.zusammenarbeiten.answer"),
+        },
+        {
+          title: t("faq.ki-nutzen.question"),
+          markdown: t("faq.ki-nutzen.answer"),
+        },
+      ],
+    },
+    {
+      name: t("faq.exportieren"),
+      order: 5,
+      faqs: [
+        {
+          title: t("faq.countsheet-als-pdf.question"),
+          markdown: t("faq.countsheet-als-pdf.answer"),
+        },
+        {
+          title: t("faq.choreo-video.question"),
+          markdown: t("faq.choreo-video.answer"),
+        },
+        {
+          title: t("faq.daten-export.question"),
+          markdown: t("faq.daten-export.answer"),
+        },
+      ],
+    },
+  ].sort((a, b) => a.order - b.order)
+);
+
+const filteredFaqCategories = computed(() => {
+  if (!searchTerm.value) return faqCategories.value;
+
+  const term = searchTerm.value.toLowerCase();
+  return faqCategories.value
+    .map((category) => ({
+      ...category,
+      faqs: category.faqs.filter(
+        (faq) =>
+          category.name.toLowerCase().includes(term) ||
+          faq.title.toLowerCase().includes(term) ||
+          faq.markdown.toLowerCase().includes(term)
+      ),
+    }))
+    .filter((category) => category.faqs.length > 0);
+});
 
 useHead({
   title: computed(() => t("general.help")),
+  script: [
+    {
+      type: "application/ld+json" as "application/json",
+      textContent: computed(() =>
+        JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqCategories.value.flatMap((category) =>
+            category.faqs.map((item) => ({
+              "@type": "Question",
+              name: item.title,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: item.markdown
+                  .replace(/\[(.*)\]\((.*)\)/g, '<a href="$2">$1</a>')
+                  .replace(/\n/g, "")
+                  .replace(/ +/g, " ")
+                  .replace(/\\/g, "")
+                  .replace(/\*\*(.*)\*\*/g, "<b>$1</b>"),
+              },
+            }))
+          ),
+        })
+      ),
+    },
+  ],
   meta: [
     {
       name: "description",
@@ -105,225 +331,20 @@ useHead({
       property: "og:title",
       content: computed(
         () =>
-          `${t("general.help")} - ${t(
-            "general.ChoreoPlaner"
-          )} | ${t("meta.defaults.title")}`
+          `${t("general.help")} - ${t("general.ChoreoPlaner")} | ${t(
+            "meta.defaults.title"
+          )}`
       ),
     },
     {
       name: "twitter:title",
       content: computed(
         () =>
-          `${t("general.help")} - ${t(
-            "general.ChoreoPlaner"
-          )} | ${t("meta.defaults.title")}`
+          `${t("general.help")} - ${t("general.ChoreoPlaner")} | ${t(
+            "meta.defaults.title"
+          )}`
       ),
     },
   ],
-});
-</script>
-
-<script lang="ts">
-import Markdown from "vue3-markdown-it";
-import { defineComponent } from "vue";
-
-/**
- * @vue-data {string} searchTerm - The search term entered by the user.
- *
- * @vue-computed {Array} faqCategories - An array of FAQ categories, each containing a name, order, and an array of FAQs.
- * @vue-computed {Array} filteredFaqCategories - An array of FAQ categories filtered by the search term.
- *
- * @vue-computed {MetaInfo} metaInfo
- */
-export default defineComponent({
-  name: "HelpView",
-  components: {
-    Markdown,
-  },
-  data: function () {
-    return {
-      searchTerm: null as string | null,
-    };
-  },
-  computed: {
-    faqCategories() {
-      return [
-        {
-          name: this.$t("navigation.datenschutz"),
-          order: 999,
-          faqs: [
-            {
-              title: this.$t("navigation.datenschutz"),
-              markdown: this.$t("faq.datenschutz.answer"),
-            },
-            {
-              title: this.$t("faq.weitergabe-an-dritte.question"),
-              markdown: this.$t("faq.weitergabe-an-dritte.answer"),
-            },
-          ],
-        },
-        {
-          name: this.$t("faq.probleme-loesen"),
-          order: 6,
-          faqs: [
-            {
-              title: this.$t("faq.probleme-melden.question"),
-              markdown: this.$t("faq.probleme-melden.answer"),
-            },
-            {
-              title: this.$t("faq.versehentlich-geloescht.question"),
-              markdown: this.$t("faq.versehentlich-geloescht.answer"),
-            },
-            {
-              title: this.$t("faq.video-export-langsam.question"),
-              markdown: this.$t("faq.video-export-langsam.answer"),
-            },
-            {
-              title: this.$t("faq.warum-offline.question"),
-              markdown: this.$t("faq.warum-offline.answer"),
-            },
-          ],
-        },
-        {
-          name: this.$t("faq.allgemeines"),
-          order: 1,
-          faqs: [
-            {
-              title: this.$t("faq.zielgruppe.question"),
-              markdown: this.$t("faq.zielgruppe.answer"),
-            },
-            {
-              title: this.$t("faq.was-ist-choreo-planer.question"),
-              markdown: this.$t("faq.was-ist-choreo-planer.answer"),
-            },
-            {
-              title: this.$t("faq.anmeldung.question"),
-              markdown: this.$t("faq.anmeldung.answer"),
-            },
-            {
-              title: this.$t("faq.erste-choreo.question"),
-              markdown: this.$t("faq.erste-choreo.answer"),
-            },
-            {
-              title: this.$t("faq.app-installieren.question"),
-              markdown: this.$t("faq.app-installieren.answer"),
-            },
-          ],
-        },
-        {
-          name: this.$t("faq.editor"),
-          order: 3,
-          faqs: [
-            {
-              title: this.$t("faq.aufstellung-bauen.question"),
-              markdown: this.$t("faq.aufstellung-bauen.answer"),
-            },
-            {
-              title: this.$t("faq.counts-und-achter.question"),
-              markdown: this.$t("faq.counts-und-achter.answer"),
-            },
-            {
-              title: this.$t("faq.choreo-abspielen.question"),
-              markdown: this.$t("faq.choreo-abspielen.answer"),
-            },
-            {
-              title: this.$t("faq.positionsvorschlaege.question"),
-              markdown: this.$t("faq.positionsvorschlaege.answer"),
-            },
-            {
-              title: this.$t("faq.laenge-und-matte.question"),
-              markdown: this.$t("faq.laenge-und-matte.answer"),
-            },
-            {
-              title: this.$t("faq.farbe-zuweisen.question"),
-              markdown: this.$t("faq.farbe-zuweisen.answer"),
-            },
-          ],
-        },
-        {
-          name: this.$t("faq.countsheets"),
-          order: 4,
-          faqs: [
-            {
-              title: this.$t("faq.eintrag-anlegen.question"),
-              markdown: this.$t("faq.eintrag-anlegen.answer"),
-            },
-            {
-              title: this.$t("faq.countsheet-ansicht.question"),
-              markdown: this.$t("faq.countsheet-ansicht.answer"),
-            },
-          ],
-        },
-        {
-          name: this.$t("faq.funktionen-and-features"),
-          order: 2,
-          faqs: [
-            {
-              title: this.$t("faq.funktionen-wuenschen.question"),
-              markdown: this.$t("faq.funktionen-wuenschen.answer"),
-            },
-            {
-              title: this.$t("faq.wie-viele-teams.question"),
-              markdown: this.$t("faq.wie-viele-teams.answer"),
-            },
-            {
-              title: this.$t("faq.neue-season.question"),
-              markdown: this.$t("faq.neue-season.answer"),
-            },
-            {
-              title: this.$t("faq.kader-verwalten.question"),
-              markdown: this.$t("faq.kader-verwalten.answer"),
-            },
-            {
-              title: this.$t("faq.teilnehmer-importieren.question"),
-              markdown: this.$t("faq.teilnehmer-importieren.answer"),
-            },
-            {
-              title: this.$t("faq.vereine-und-logo.question"),
-              markdown: this.$t("faq.vereine-und-logo.answer"),
-            },
-            {
-              title: this.$t("faq.zusammenarbeiten.question"),
-              markdown: this.$t("faq.zusammenarbeiten.answer"),
-            },
-            {
-              title: this.$t("faq.ki-nutzen.question"),
-              markdown: this.$t("faq.ki-nutzen.answer"),
-            },
-          ],
-        },
-        {
-          name: this.$t("faq.exportieren"),
-          order: 5,
-          faqs: [
-            {
-              title: this.$t("faq.countsheet-als-pdf.question"),
-              markdown: this.$t("faq.countsheet-als-pdf.answer"),
-            },
-            {
-              title: this.$t("faq.choreo-video.question"),
-              markdown: this.$t("faq.choreo-video.answer"),
-            },
-          ],
-        },
-      ].sort((a, b) => a.order - b.order);
-    },
-    filteredFaqCategories() {
-      if (!this.searchTerm) return this.faqCategories;
-      return this.faqCategories
-        .map((fc) => ({
-          ...fc,
-          faqs: fc.faqs.filter((f) => {
-            const term = this.searchTerm!.toLowerCase();
-            return (
-              fc.name.toLowerCase().includes(term) ||
-              f.title.toLowerCase().includes(term) ||
-              f.markdown.toLowerCase().includes(term)
-            );
-          }),
-        }))
-        .filter((fc) => fc.faqs.length > 0);
-    },
-  },
 });
 </script>

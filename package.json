@@ -14,8 +14,10 @@
   "author": "Andreas Nicklaus",
   "type": "commonjs",
   "scripts": {
+    "format": "npm run format --prefix app && npm run format --prefix server",
     "docker": "docker compose up --build",
     "docker:dev": "docker compose -f docker-compose.yml -f dev.docker-compose.yml up --build",
+    "ui": "npm run dev --prefix app",
     "mcp": "docker run --rm -p 127.0.0.1:6274:6274 -p 127.0.0.1:6277:6277 -e HOST=0.0.0.0 -e MCP_AUTO_OPEN_ENABLED=false ghcr.io/modelcontextprotocol/inspector:latest"
   }
 }

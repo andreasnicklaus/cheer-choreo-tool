@@ -1,5 +1,6 @@
 *.env
 data
+!app/src/data/
 logs
 uploads
 pgbackups
