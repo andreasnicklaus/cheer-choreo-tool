@@ -14,6 +14,7 @@
   "author": "Andreas Nicklaus",
   "type": "commonjs",
   "scripts": {
+    "format": "npm run format --prefix app && npm run format --prefix server",
     "docker": "docker compose up --build",
     "docker:dev": "docker compose -f docker-compose.yml -f dev.docker-compose.yml up --build",
     "ui": "npm run dev --prefix app",

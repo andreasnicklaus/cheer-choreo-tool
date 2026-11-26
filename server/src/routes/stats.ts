@@ -21,22 +21,29 @@ const CACHE_TTL_MS = 5 * 60 * 1000;
  *       200:
  *         description: Aggregate counts
  */
-router.get("/public", openApiRateLimit, async (_req: Request, res: Response, next: NextFunction) => {
-  try {
-    const now = Date.now();
-    if (cached && now - cached.at < CACHE_TTL_MS) {
-      res.json({ choreographies: cached.choreographies, users: cached.users });
-      return;
+router.get(
+  "/public",
+  openApiRateLimit,
+  async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+      const now = Date.now();
+      if (cached && now - cached.at < CACHE_TTL_MS) {
+        res.json({
+          choreographies: cached.choreographies,
+          users: cached.users,
+        });
+        return;
+      }
+      const [choreographies, users] = await Promise.all([
+        ChoreoService.getCount(),
+        UserService.getCount(),
+      ]);
+      cached = { choreographies, users, at: now };
+      res.json({ choreographies, users });
+    } catch (err) {
+      next(err);
     }
-    const [choreographies, users] = await Promise.all([
-      ChoreoService.getCount(),
-      UserService.getCount(),
-    ]);
-    cached = { choreographies, users, at: now };
-    res.json({ choreographies, users });
-  } catch (err) {
-    next(err);
-  }
-});
+  },
+);
 
 export { router as statsRouter };

@@ -226,7 +226,10 @@ class ChoreoService {
           logger.error(`Choreo with ID ${id} not found`);
           throw new NotFoundError(`Choreo with ID ${id} not found`);
         }
-        const lineups = await LineupService.findByChoreoId(choreo.id, transaction);
+        const lineups = await LineupService.findByChoreoId(
+          choreo.id,
+          transaction,
+        );
         // Add Lineups property dynamically to dataValues
         (choreo.dataValues as { Lineups?: Lineup[] }).Lineups = lineups;
         await Promise.all(
