@@ -4,7 +4,10 @@
       v-if="$route.name === 'Home' || $route.name === 'HomeunLocalized'"
     />
     <HeadNav :online-status="online" :server-version="serverVersion" />
-    <router-view :style="{ minHeight: 'calc(100vh - 116px)' }" class="my-4" />
+    <router-view
+      :style="{ minHeight: 'calc(100vh - 116px)' }"
+      class="my-4 mb-5"
+    />
     <footer class="p-4 px-5 pt-5 d-flex flex-column align-items-center">
       <BRow
         class="w-75 justify-content-md-around justify-content-start"

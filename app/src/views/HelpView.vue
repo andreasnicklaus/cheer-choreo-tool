@@ -2,7 +2,7 @@
   <BContainer id="helpView" data-view>
     <BCard
       :title="$t('HelpView.hilfe-bekommen')"
-      border-variant="light"
+      border-variant="light-subtle"
       title-tag="h1"
     >
       <BInput
@@ -14,7 +14,7 @@
       <BCard
         v-for="(category, catId) in filteredFaqCategories"
         :key="category.name + category.order"
-        border-variant="light"
+        border-variant="light-subtle"
       >
         <h5 class="ms-1">{{ category.name }}</h5>
         <BAccordion flush>
