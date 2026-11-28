@@ -1,6 +1,6 @@
 {
   "name": "choreo-tool",
-  "version": "1.1.41",
+  "version": "1.1.42",
   "private": true,
   "scripts": {
     "dev": "npm run icons && vite",
@@ -48,7 +48,7 @@
     "npm-run-all2": "9.0.4",
     "register-service-worker": "1.7.2",
     "unleash-proxy-client": "3.8.2",
-    "vue": "3.5.45",
+    "vue": "3.5.46",
     "vue-i18n": "11.4.23",
     "vue-matomo": "4.2.0",
     "vue-router": "5.5.1",
@@ -68,7 +68,7 @@
     "@vitejs/plugin-vue": "6.0.11",
     "@vitest/coverage-v8": "5.1.1",
     "@vitest/ui": "5.1.1",
-    "@vue/compiler-sfc": "3.5.45",
+    "@vue/compiler-sfc": "3.5.46",
     "@vue/tsconfig": "0.9.1",
     "clean-jsdoc-theme": "5.3.0",
     "eslint": "9.39.5",
